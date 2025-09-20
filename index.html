@@ -21,14 +21,14 @@ async function askAI() {
   const responseDiv = document.getElementById("response");
   responseDiv.innerText = "Күте тұрыңыз... ⏳";
 
-  const res = await fetch("https://openrouter.ai/settings/provisioning-keys", {
+  const res = await fetch("https://openrouter.ai/settings/keys", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer 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",
+      "Authorization": "Bearer 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",
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: "openai/gpt-3.5-turbo",
+      model: "x-ai/grok-4-fast:free",
       messages: [{ role: "user", content: userText }]
     })
   });
@@ -40,6 +40,7 @@ async function askAI() {
 
 </body>
 </html>
+
 
 
 
