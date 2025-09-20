@@ -28,7 +28,7 @@ async function askAI() {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: "openai/gpt-4o-mini",
+      model: "openai/gpt-3.5-turbo",
       messages: [{ role: "user", content: userText }]
     })
   });
@@ -40,6 +40,7 @@ async function askAI() {
 
 </body>
 </html>
+
 
 
 
