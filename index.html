@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <title>Басты бет</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Сәлем! Бұл менің алғашқы сайтым</h1>
+  <a href="page2.html">Екінші бетке өту</a>
+  <h1>Groowin API Test</h1>
+
+<input type="text" id="userInput" placeholder="Сұрақ жазыңыз..." style="width:300px;">
+<button onclick="askAI()">Жіберу</button>
+
+<div id="response" style="margin-top:20px; font-weight:bold;"></div>
+  <script>
+async function askAI() {
+  const userText = document.getElementById("userInput").value;
+
+  const responseDiv = document.getElementById("response");
+  responseDiv.innerText = "Күте тұрыңыз... ⏳";
+
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": "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",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "openai/gpt-3.5-turbo",
+      messages: [{ role: "user", content: userText }]
+    })
+  });
+
+  const data = await res.json();
+  responseDiv.innerText = data.choices[0].message.content;
+}
+</script>
+
+</body>
+</html>
