@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Attendance confirmation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body style="padding:20px">
+  <h2>Тіркеу (Растау)</h2>
+  <div id="status">Жүктелуде...</div>
+  <div id="namesGrid" class="list-grid" style="margin-top:12px"></div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    // --- PASTE YOUR FIREBASE CONFIG HERE ---
+    // Қайталама: дәл smart-mugalim.html-дегі firebaseConfig-ті қой
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Helpers to read URL params
+    function qp(name){ const u = new URLSearchParams(location.search); return u.get(name); }
+    const listName = qp('list');
+    const token = qp('token');
+
+    if(!listName || !token){ document.getElementById('status').innerText = 'Қате: дұрыс URL емес'; }
+    else {
+      // check current token in DB for this list
+      db.ref('currentQR/' + listName).once('value').then(snap=>{
+        const cur = snap.val();
+        if(!cur || cur.token !== token){
+          document.getElementById('status').innerText = 'QR — дұрыс емес немесе мерзімі өткен. Қайта көріңіз.';
+          return;
+        }
+        // get list of names
+        db.ref('lists/' + listName).once('value').then(snap2=>{
+          const names = (snap2.val() && snap2.val().names) || [];
+          if(names.length === 0){ document.getElementById('status').innerText = 'Список табылмады'; return; }
+          document.getElementById('status').innerText = 'Сіздің атыңызды таңдаңыз, содан кейін "Растаймын" басыңыз.';
+          const grid = document.getElementById('namesGrid');
+          grid.innerHTML = '';
+          names.forEach(nm=>{
+            const d = document.createElement('div');
+            d.className = 'student-card';
+            d.textContent = nm;
+            d.style.cursor = 'pointer';
+            d.onclick = ()=>selectName(nm,d);
+            grid.appendChild(d);
+          });
+        });
+      });
+    }
+
+    let chosen = null;
+    function selectName(name, el){
+      // highlight selected
+      document.querySelectorAll('.student-card').forEach(x=>x.style.boxShadow='none');
+      el.style.boxShadow = '0 0 0 3px #60a5fa';
+      chosen = name;
+      // show confirm
+      showConfirm();
+    }
+
+    function showConfirm(){
+      const existing = document.getElementById('confirmBtn');
+      if(!existing){
+        const btn = document.createElement('button');
+        btn.id = 'confirmBtn';
+        btn.className = 'btn btn-primary';
+        btn.style.marginTop = '12px';
+        btn.textContent = 'Растаймын';
+        btn.onclick = confirmAttendance;
+        document.body.appendChild(btn);
+      }
+    }
+
+    function confirmAttendance(){
+      if(!chosen){ alert('Атыңызды таңдаңыз'); return; }
+      // check token again (to avoid race)
+      db.ref('currentQR/' + listName).once('value').then(snap=>{
+        const cur = snap.val();
+        if(!cur || cur.token !== token){
+          alert('QR мерзімі өткен немесе қате. Қайта сканерлеңіз.');
+          return;
+        }
+        // write attendance: attendance/{listName}/{encodedName} = {token, ts}
+        const key = encodeURIComponent(chosen);
+        db.ref('attendance/' + listName + '/' + key).set({token: token, ts: Date.now()}).then(()=>{
+          alert('Қабылданды! Рахмет.');
+          // optional: redirect or disable
+        }).catch(err=>alert('Қате: '+err.message));
+      });
+    }
+  </script>
+</body>
+</html>
