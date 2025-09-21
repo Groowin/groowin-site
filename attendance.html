@@ -16,26 +16,31 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    // --- PASTE YOUR FIREBASE CONFIG HERE ---
-    // Қайталама: дәл smart-mugalim.html-дегі firebaseConfig-ті қой
+    // Firebase config (same as above)
+    var firebaseConfig = {
+      apiKey: "AIzaSyDP2SHjJQYzu_lhWUbk1NBN6H65mR5YI_s",
+      authDomain: "groowin-attendance.firebaseapp.com",
+      projectId: "groowin-attendance",
+      storageBucket: "groowin-attendance.firebasestorage.app",
+      messagingSenderId: "737566994771",
+      appId: "1:737566994771:web:982cf9e32e968229f2b1a6",
+      measurementId: "G-WJXHCBGJBN"
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Helpers to read URL params
     function qp(name){ const u = new URLSearchParams(location.search); return u.get(name); }
     const listName = qp('list');
     const token = qp('token');
 
     if(!listName || !token){ document.getElementById('status').innerText = 'Қате: дұрыс URL емес'; }
     else {
-      // check current token in DB for this list
       db.ref('currentQR/' + listName).once('value').then(snap=>{
         const cur = snap.val();
         if(!cur || cur.token !== token){
           document.getElementById('status').innerText = 'QR — дұрыс емес немесе мерзімі өткен. Қайта көріңіз.';
           return;
         }
-        // get list of names
         db.ref('lists/' + listName).once('value').then(snap2=>{
           const names = (snap2.val() && snap2.val().names) || [];
           if(names.length === 0){ document.getElementById('status').innerText = 'Список табылмады'; return; }
@@ -56,11 +61,9 @@
 
     let chosen = null;
     function selectName(name, el){
-      // highlight selected
       document.querySelectorAll('.student-card').forEach(x=>x.style.boxShadow='none');
       el.style.boxShadow = '0 0 0 3px #60a5fa';
       chosen = name;
-      // show confirm
       showConfirm();
     }
 
@@ -79,43 +82,20 @@
 
     function confirmAttendance(){
       if(!chosen){ alert('Атыңызды таңдаңыз'); return; }
-      // check token again (to avoid race)
       db.ref('currentQR/' + listName).once('value').then(snap=>{
         const cur = snap.val();
         if(!cur || cur.token !== token){
           alert('QR мерзімі өткен немесе қате. Қайта сканерлеңіз.');
           return;
         }
-        // write attendance: attendance/{listName}/{encodedName} = {token, ts}
         const key = encodeURIComponent(chosen);
         db.ref('attendance/' + listName + '/' + key).set({token: token, ts: Date.now()}).then(()=>{
           alert('Қабылданды! Рахмет.');
-          // optional: redirect or disable
+          document.getElementById('status').innerText = 'Сіз растайдыңыз — рақмет!';
+          // optionally disable buttons
         }).catch(err=>alert('Қате: '+err.message));
       });
     }
   </script>
-  <!-- Firebase SDK қосу -->
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js"></script>
-
-<script>
-  // Firebase баптауы
-  const firebaseConfig = {
-    apiKey: "AIzaSyDP2SHjJQYzu_lhWUbk1NBN6H65mR5YI_s",
-    authDomain: "groowin-attendance.firebaseapp.com",
-    projectId: "groowin-attendance",
-    storageBucket: "groowin-attendance.firebasestorage.app",
-    messagingSenderId: "737566994771",
-    appId: "1:737566994771:web:982cf9e32e968229f2b1a6",
-    measurementId: "G-WJXHCBGJBN"
-  };
-
-  // Firebase іске қосу
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-
-  console.log("✅ Firebase қосылды");
-</script>
 </body>
 </html>
