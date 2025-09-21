@@ -3,61 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <title>Attendance</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #savedClasses { margin-top: 20px; }
+    .class-item { margin: 5px 0; }
+  </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>✅ Түгендеу</h2>
-    <a href="smart-mugalim.html">⬅ Smart Mugalim-ге</a>
-  </div>
+  <h2>📋 Түгендеу</h2>
+  
+  <textarea id="studentNames" rows="6" cols="40" placeholder="Оқушы аттарын әр жолға жаз..."></textarea><br><br>
+  
+  <input type="text" id="className" placeholder="Сыныптың атауын енгіз">
+  <button onclick="saveClass()">Сақтау</button>
+  <button onclick="deleteClass()">Кетiру</button>
+  
+  <h3>Сақталған списоктар:</h3>
+  <select id="savedClasses"></select>
+  
+  <div id="classList"></div>
 
-  <div class="content">
-    <h2>Оқушының қатысуын белгілеу</h2>
-
-    <input type="text" id="studentName" placeholder="Оқушы аты">
-    <button onclick="markAttendance()">Белгілеу</button>
-
-    <h3>Қатысқан оқушылар:</h3>
-    <ul id="attendanceList"></ul>
-  </div>
-
-  <!-- Firebase қосу -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDP2SHjJQYzu_lhWUbk1NBN6H65mR5YI_s",
-      authDomain: "groowin-attendance.firebaseapp.com",
-      projectId: "groowin-attendance",
-      storageBucket: "groowin-attendance.firebasestorage.app",
-      messagingSenderId: "737566994771",
-      appId: "1:737566994771:web:982cf9e32e968229f2b1a6",
-      measurementId: "G-WJXHCBGJBN"
+    // Браузерден бар сыныптарды жүктеу
+    window.onload = function() {
+      loadSavedClasses();
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    function saveClass() {
+      let className = document.getElementById("className").value.trim();
+      let studentNames = document.getElementById("studentNames").value.trim().split("\n");
 
-    function markAttendance() {
-      const name = document.getElementById("studentName").value;
-      if(name === "") return alert("Оқушы атын енгіз!");
-      const newRef = db.ref("attendance").push();
-      newRef.set({
-        name: name,
-        time: new Date().toLocaleString()
-      });
-      document.getElementById("studentName").value = "";
+      if (!className || studentNames.length === 0) {
+        alert("Сынып атауын және оқушы аттарын енгіз!");
+        return;
+      }
+
+      localStorage.setItem(className, JSON.stringify(studentNames));
+      loadSavedClasses();
+      alert("Сақталды ✅");
     }
 
-    db.ref("attendance").on("value", (snapshot) => {
-      const list = document.getElementById("attendanceList");
-      list.innerHTML = "";
-      snapshot.forEach(child => {
-        const li = document.createElement("li");
-        li.textContent = child.val().name + " - " + child.val().time;
-        list.appendChild(li);
-      });
-    });
+    function loadSavedClasses() {
+      let savedClasses = document.getElementById("savedClasses");
+      savedClasses.innerHTML = "";
+
+      for (let i = 0; i < localStorage.length; i++) {
+        let key = localStorage.key(i);
+        let option = document.createElement("option");
+        option.value = key;
+        option.textContent = key;
+        savedClasses.appendChild(option);
+      }
+    }
+
+    function deleteClass() {
+      let savedClasses = document.getElementById("savedClasses");
+      let className = savedClasses.value;
+
+      if (className) {
+        localStorage.removeItem(className);
+        loadSavedClasses();
+        alert("Өшірілді ❌");
+      }
+    }
   </script>
 </body>
 </html>
