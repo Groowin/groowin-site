@@ -21,10 +21,10 @@ async function askAI() {
   const responseDiv = document.getElementById("response");
   responseDiv.innerText = "Күте тұрыңыз... ⏳";
 
-  const res = await fetch("https://openrouter.ai/settings/provisioning-keys", {
+  const res = await fetch("https://openrouter.ai/settings/keys", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer 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",
+      "Authorization": "Bearer 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",
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -40,4 +40,5 @@ async function askAI() {
 
 </body>
 </html>
+
 
