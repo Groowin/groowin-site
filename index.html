@@ -2,46 +2,48 @@
 <html lang="kk">
 <head>
   <meta charset="UTF-8">
-  <title>Басты бет</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Groowin</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      font-family: Arial, sans-serif;
+    }
+    .sidebar {
+      width: 250px;
+      background: #202123;
+      color: white;
+      height: 100vh;
+      padding: 20px;
+    }
+    .sidebar button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #343541;
+      color: white;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      border-radius: 8px;
+    }
+    .sidebar button:hover {
+      background: #565869;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Сәлем! Бұл менің алғашқы сайтым</h1>
-  <a href="page2.html">Екінші бетке өту</a>
-  <h1>Groowin API Test</h1>
+  <div class="sidebar">
+    <button onclick="location.href='Smart Mugalim.html'">👨🏻‍🎓 Smart Mugalim</button>
+  </div>
 
-<input type="text" id="userInput" placeholder="Сұрақ жазыңыз..." style="width:300px;">
-<button onclick="askAI()">Жіберу</button>
-
-<div id="response" style="margin-top:20px; font-weight:bold;"></div>
-  <script>
-async function askAI() {
-  const userText = document.getElementById("userInput").value;
-
-  const responseDiv = document.getElementById("response");
-  responseDiv.innerText = "Күте тұрыңыз... ⏳";
-
-  const res = await fetch("https://openrouter.ai/settings/provisioning-keys", {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer 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",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: "openai/gpt-3.5-turbo",
-      messages: [{ role: "user", content: userText }]
-    })
-  });
-
-  const data = await res.json();
-  responseDiv.innerText = data.choices[0].message.content;
-}
-</script>
-
+  <div class="content">
+    <h1>Басты бет</h1>
+    <p>Groowin сайтына қош келдіңіз!</p>
+  </div>
 </body>
 </html>
-
-
-
-
-
