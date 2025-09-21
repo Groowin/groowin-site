@@ -1,26 +1,295 @@
-/* style.css */
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;display:flex;height:100vh}
-.sidebar{
-  width:260px;background:#111827;color:#fff;padding:20px;display:flex;flex-direction:column;
-}
-.sidebar h2{margin:0 0 16px 0}
-.sidebar button{
-  background:#1f2937;color:white;border:none;padding:12px;border-radius:8px;cursor:pointer;margin-bottom:8px;text-align:left;
-}
-.sidebar button:hover{background:#374151}
-.content{flex:1;padding:24px;background:#f3f4f6;overflow:auto}
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Smart Mugalim</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Smart Mugalim</h2>
+    <button onclick="showSection('tugen')">Түгендеу</button>
+    <!-- келесі батырмаларды кейін қосамыз -->
+  </div>
 
-/* Smart Mugalim specific */
-.top-buttons{display:flex;gap:8px;margin-bottom:12px}
-.panel-row{display:flex;gap:16px}
-.left-panel{width:260px;background:#fff;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-.right-panel{flex:1;background:#fff;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-.btn{padding:8px 10px;border-radius:6px;border:none;cursor:pointer}
-.btn-primary{background:#2563eb;color:white}
-.btn-ghost{background:#f3f4f6}
-.list-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.student-card{padding:8px;border-radius:6px;background:#f8fafc;border:1px solid #e6eef8;text-align:center}
-.student-present{background:#d1fae5;border-color:#34d399}
-.qr-img{width:220px;height:220px;border:1px solid #ddd;background:#fff;display:block}
-.timer{font-weight:bold;margin-top:8px}
+  <div class="content">
+    <div id="tugen" class="panel">
+      <div class="panel-row">
+        <div class="left-panel">
+          <h3>Түгендеу басқару</h3>
+          <label>Сынып атауы / списоктың аты</label>
+          <input id="className" placeholder="Мыс: 8A" style="width:100%;padding:8px;margin:8px 0"/>
+
+          <label>Оқушылар (әр жолға бір аты)</label>
+          <textarea id="namesInput" style="width:100%;height:120px;padding:8px" placeholder="Аты-жөні"></textarea>
+
+          <button class="btn btn-primary" onclick="saveList()">Сақтау</button>
+          <hr/>
+          <label>Сақталған списоктар</label>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <select id="savedLists" style="flex:1"></select>
+            <button class="btn btn-ghost" onclick="loadSelected()">Жүктеу</button>
+            <button class="btn" onclick="deleteSelected()">Жою</button>
+          </div>
+        </div>
+
+        <div class="right-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Жұмыс аймағы</h3>
+            <div>
+              <button class="btn" onclick="showTugenTab('list')">тізім</button>
+              <button class="btn" onclick="showTugenTab('qr')">QR</button>
+              <button class="btn" onclick="showTugenTab('geo')">геолокация</button>
+            </div>
+          </div>
+
+          <!-- Тізім көрінісі -->
+          <div id="tab-list" style="margin-top:12px">
+            <div id="listDisplay" class="list-grid"></div>
+            <div style="margin-top:12px">
+              <input id="saveAsName" placeholder="Сақталған списокқа ат қою (мыс: 8A_01)" style="padding:8px;width:60%"/>
+              <button class="btn" onclick="saveCurrentAs()">Сақтау атымен</button>
+            </div>
+          </div>
+
+          <!-- QR көрінісі -->
+          <div id="tab-qr" style="display:none;margin-top:12px">
+            <div style="display:flex;gap:16px;align-items:flex-start">
+              <div>
+                <label>Список таңдау</label><br/>
+                <select id="qrListSelect" style="width:200px"></select>
+                <div style="margin-top:8px">
+                  <button class="btn btn-primary" onclick="startQR()">Start QR</button>
+                  <button class="btn" onclick="stopQR()">Stop</button>
+                </div>
+                <div style="margin-top:12px">
+                  <img id="qrImage" class="qr-img" src="" alt="QR"/>
+                  <div class="timer" id="qrTimer">00</div>
+                </div>
+              </div>
+
+              <div style="flex:1">
+                <h4>Сақталған оқушылар (4 колонка)</h4>
+                <div id="qrListDisplay" class="list-grid"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Геолокация (бос) -->
+          <div id="tab-geo" style="display:none;margin-top:12px">
+            <p>Геолокация кейін қосылады.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (v8) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    // --- YOUR FIREBASE CONFIG (you provided) ---
+    var firebaseConfig = {
+      apiKey: "AIzaSyDP2SHjJQYzu_lhWUbk1NBN6H65mR5YI_s",
+      authDomain: "groowin-attendance.firebaseapp.com",
+      projectId: "groowin-attendance",
+      storageBucket: "groowin-attendance.firebasestorage.app",
+      messagingSenderId: "737566994771",
+      appId: "1:737566994771:web:982cf9e32e968229f2b1a6",
+      measurementId: "G-WJXHCBGJBN"
+    };
+    // init
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // UI helpers
+    function showSection(id){
+      document.querySelectorAll('.panel').forEach(el=>el.style.display='none');
+      document.getElementById(id).style.display='block';
+      if(id==='tugen') loadSavedLists();
+    }
+
+    function showTugenTab(tab){
+      document.getElementById('tab-list').style.display = (tab==='list')?'block':'none';
+      document.getElementById('tab-qr').style.display = (tab==='qr')?'block':'none';
+      document.getElementById('tab-geo').style.display = (tab==='geo')?'block':'none';
+    }
+
+    // Save list to Firebase
+    function saveList(){
+      const className = document.getElementById('className').value.trim();
+      if(!className){ alert('Сынып/список атауын енгізіңіз'); return; }
+      const names = document.getElementById('namesInput').value.split('\n').map(s=>s.trim()).filter(Boolean);
+      if(names.length===0){ alert('Оқушыларды енгізіңіз'); return; }
+
+      db.ref('lists/' + className).set({names: names}).then(()=>{
+        alert('Сақталды: ' + className);
+        loadSavedLists();
+      }).catch(err=>alert('Қате: '+err.message));
+    }
+
+    function loadSavedLists(){
+      db.ref('lists').once('value').then(snap=>{
+        const sel = document.getElementById('savedLists');
+        const qrSel = document.getElementById('qrListSelect');
+        sel.innerHTML=''; qrSel.innerHTML='';
+        const val = snap.val()||{};
+        Object.keys(val).forEach(k=>{
+          const o = document.createElement('option'); o.value=k; o.textContent=k; sel.appendChild(o);
+          const o2 = document.createElement('option'); o2.value=k; o2.textContent=k; qrSel.appendChild(o2);
+        });
+        if(Object.keys(val).length>0) loadList(Object.keys(val)[0]);
+      });
+    }
+
+    function loadSelected(){
+      const sel = document.getElementById('savedLists');
+      if(!sel.value){ alert('Тізімді таңдаңыз'); return; }
+      loadList(sel.value);
+    }
+
+    function deleteSelected(){
+      const sel = document.getElementById('savedLists');
+      if(!sel.value){ alert('Тізімді таңдаңыз'); return; }
+      if(!confirm('Сіз бұл списокты жойғыңыз келеді ме?')) return;
+      db.ref('lists/' + sel.value).remove().then(()=>{ loadSavedLists(); alert('Жойылды'); });
+    }
+
+    function loadList(name){
+      db.ref('lists/' + name).once('value').then(snap=>{
+        const data = snap.val();
+        const arr = (data && data.names) || [];
+        renderList(arr);
+      });
+    }
+
+    function renderList(arr, attendanceMap){
+      const container = document.getElementById('listDisplay');
+      container.innerHTML='';
+      arr.forEach((nm,i)=>{
+        const div = document.createElement('div');
+        div.className = 'student-card' + ((attendanceMap && attendanceMap[nm]) ? ' student-present' : '');
+        div.textContent = nm;
+        container.appendChild(div);
+      });
+
+      const qrContainer = document.getElementById('qrListDisplay');
+      qrContainer.innerHTML='';
+      arr.forEach((nm)=> {
+        const d = document.createElement('div');
+        d.className = 'student-card' + ((attendanceMap && attendanceMap[nm]) ? ' student-present' : '');
+        d.textContent = nm;
+        qrContainer.appendChild(d);
+      });
+    }
+
+    function saveCurrentAs(){
+      const name = document.getElementById('saveAsName').value.trim();
+      if(!name){ alert('Ат қойыңыз'); return; }
+      const nodes = Array.from(document.querySelectorAll('#listDisplay .student-card'));
+      if(nodes.length===0){ alert('Алдымен тізімді жүктеңіз'); return; }
+      const arr = nodes.map(n=>n.textContent);
+      db.ref('lists/' + name).set({names: arr}).then(()=>{ alert('Сақталды: ' + name); loadSavedLists(); });
+    }
+
+    // --- QR logic ---
+    let qrInterval = null;
+    let currentQR = null; // token
+    let currentListForQR = null;
+
+    function generateToken(){
+      return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8);
+    }
+
+    function startQR(){
+      const sel = document.getElementById('qrListSelect');
+      if(!sel.value){ alert('Список таңдаңыз'); return; }
+      const listName = sel.value;
+      currentListForQR = listName;
+      updateQROnce();
+      if(qrInterval) clearInterval(qrInterval);
+      qrInterval = setInterval(updateQROnce, 15000);
+      listenAttendance(listName);
+    }
+
+    function stopQR(){
+      if(qrInterval) { clearInterval(qrInterval); qrInterval = null; }
+      if(currentListForQR) db.ref('currentQR/' + currentListForQR).remove();
+      currentListForQR = null;
+      document.getElementById('qrImage').src = '';
+      document.getElementById('qrTimer').textContent = '';
+    }
+
+    function updateQROnce(){
+      if(!currentListForQR) return;
+      const token = generateToken();
+      const payload = { token: token, updated: Date.now(), expiresAt: Date.now() + 15000 };
+      db.ref('currentQR/' + currentListForQR).set(payload);
+      currentQR = token;
+      const url = location.origin + '/attendance.html?list=' + encodeURIComponent(currentListForQR) + '&token=' + encodeURIComponent(token);
+      const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(url);
+      document.getElementById('qrImage').src = qrUrl;
+      startTimer(15);
+      loadListAndAttendance(currentListForQR);
+    }
+
+    function startTimer(seconds){
+      let t = seconds;
+      const el = document.getElementById('qrTimer');
+      el.textContent = t;
+      const it = setInterval(()=>{
+        t--; if(t<=0){ clearInterval(it); el.textContent='0'; } else el.textContent = t;
+      },1000);
+    }
+
+    function listenAttendance(listName){
+      db.ref('lists/' + listName).on('value', snap=> {
+        const names = (snap.val() && snap.val().names) || [];
+        db.ref('attendance/' + listName).once('value').then(aSnap=>{
+          const att = aSnap.val() || {};
+          const map = {};
+          Object.keys(att).forEach(k=>{
+            const item = att[k];
+            if(item && item.token === currentQR) map[decodeURIComponent(k)] = true;
+          });
+          renderList(names, map);
+        });
+      });
+
+      db.ref('attendance/' + listName).on('value', snap=>{
+        const att = snap.val() || {};
+        db.ref('lists/' + listName).once('value').then(snap2=>{
+          const names = (snap2.val() && snap2.val().names) || [];
+          const map = {};
+          Object.keys(att).forEach(k=>{
+            const item = att[k];
+            if(item && item.token === currentQR) map[decodeURIComponent(k)] = true;
+          });
+          renderList(names, map);
+        });
+      });
+    }
+
+    function loadListAndAttendance(listName){
+      db.ref('lists/' + listName).once('value').then(snap=>{
+        const names = (snap.val() && snap.val().names) || [];
+        db.ref('attendance/' + listName).once('value').then(aSnap=>{
+          const att = aSnap.val() || {};
+          const map = {};
+          Object.keys(att).forEach(k=>{
+            const item = att[k];
+            if(item && item.token === currentQR) map[decodeURIComponent(k)] = true;
+          });
+          renderList(names, map);
+        });
+      });
+    }
+
+    // init
+    showSection('tugen');
+    loadSavedLists();
+  </script>
+</body>
+</html>
