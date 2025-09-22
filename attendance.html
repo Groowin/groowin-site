@@ -3,61 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <title>Attendance</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="sidebar">
-    <h2>✅ Түгендеу</h2>
-    <a href="smart-mugalim.html">⬅ Smart Mugalim-ге</a>
-  </div>
+  <script type="module">
+    // Firebase SDK-ны жүктеу
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } 
+      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  <div class="content">
-    <h2>Оқушының қатысуын белгілеу</h2>
-
-    <input type="text" id="studentName" placeholder="Оқушы аты">
-    <button onclick="markAttendance()">Белгілеу</button>
-
-    <h3>Қатысқан оқушылар:</h3>
-    <ul id="attendanceList"></ul>
-  </div>
-
-  <!-- Firebase қосу -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDP2SHjJQYzu_lhWUbk1NBN6H65mR5YI_s",
       authDomain: "groowin-attendance.firebaseapp.com",
       projectId: "groowin-attendance",
-      storageBucket: "groowin-attendance.firebasestorage.app",
+      storageBucket: "groowin-attendance.appspot.com",
       messagingSenderId: "737566994771",
       appId: "1:737566994771:web:982cf9e32e968229f2b1a6",
       measurementId: "G-WJXHCBGJBN"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    // Firebase қосу
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    function markAttendance() {
-      const name = document.getElementById("studentName").value;
-      if(name === "") return alert("Оқушы атын енгіз!");
-      const newRef = db.ref("attendance").push();
-      newRef.set({
-        name: name,
-        time: new Date().toLocaleString()
-      });
-      document.getElementById("studentName").value = "";
+    // Элементтерді таңдау
+    const saveBtn = () => document.getElementById("saveBtn");
+    const nameInput = () => document.getElementById("nameInput");
+    const listDiv = () => document.getElementById("list");
+
+    // Сақтау
+    async function saveName() {
+      const name = nameInput().value.trim();
+      if (name === "") return alert("Атын енгіз!");
+      await addDoc(collection(db, "attendance"), { name });
+      nameInput().value = "";
+      loadList();
     }
 
-    db.ref("attendance").on("value", (snapshot) => {
-      const list = document.getElementById("attendanceList");
-      list.innerHTML = "";
-      snapshot.forEach(child => {
-        const li = document.createElement("li");
-        li.textContent = child.val().name + " - " + child.val().time;
-        list.appendChild(li);
+    // Өшіру
+    async function deleteName(id) {
+      await deleteDoc(doc(db, "attendance", id));
+      loadList();
+    }
+
+    // Тізімді жүктеу
+    async function loadList() {
+      listDiv().innerHTML = "";
+      const querySnapshot = await getDocs(collection(db, "attendance"));
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const item = document.createElement("div");
+        item.textContent = data.name;
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Өшіру";
+        delBtn.onclick = () => deleteName(docSnap.id);
+        item.appendChild(delBtn);
+        listDiv().appendChild(item);
       });
-    });
+    }
+
+    // Батырмаларға байланыстыру
+    window.onload = () => {
+      document.getElementById("saveBtn").onclick = saveName;
+      document.getElementById("listBtn").onclick = loadList;
+    };
   </script>
+</head>
+<body>
+  <h2>Attendance</h2>
+  
+  <input type="text" id="nameInput" placeholder="Атын енгіз">
+  <button id="saveBtn">Сақтау</button>
+  <button id="listBtn">Тізім</button>
+  <button id="qrBtn">QR</button>
+  <button id="geoBtn">Геолокация</button>
+
+  <h3>Сақталған тізім:</h3>
+  <div id="list"></div>
 </body>
 </html>
