@@ -5,26 +5,65 @@
   <title>Attendance</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-    }
-    .navbar {
+      font-family: Arial, sans-serif;
       display: flex;
-      background: #4CAF50;
-      padding: 10px;
+      height: 100vh;
     }
-    .navbar button {
-      background: white;
+    /* Сол жақ панель */
+    .sidebar {
+      width: 220px;
+      background: #2c3e50;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 10px;
+    }
+    .sidebar h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .sidebar button {
+      background: none;
       border: none;
-      margin-right: 10px;
+      color: white;
+      padding: 10px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .sidebar button:hover {
+      background: #34495e;
+      border-radius: 5px;
+    }
+
+    /* Оң жақ контент */
+    .content {
+      flex: 1;
+      padding: 20px;
+      background: #f4f6f9;
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .topbar button {
+      background: #4CAF50;
+      color: white;
+      border: none;
       padding: 10px 15px;
       border-radius: 5px;
       cursor: pointer;
     }
-    .container {
-      padding: 20px;
+    .topbar button:hover {
+      background: #45a049;
     }
+
+    /* Тізім стилі */
     #list div {
       margin: 5px 0;
       padding: 8px;
@@ -33,6 +72,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: white;
     }
     #list button {
       background: red;
@@ -59,7 +99,6 @@
       measurementId: "G-WJXHCBGJBN"
     };
 
-    // Firebase қосу
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
@@ -98,33 +137,61 @@
       });
     }
 
+    // Контент ауыстыру
+    function showSection(section) {
+      document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+      document.getElementById(section).style.display = "block";
+    }
+
     // Бастапқы функциялар
     window.onload = () => {
       document.getElementById("saveBtn").onclick = saveName;
-      document.getElementById("listBtn").onclick = loadList;
+      document.getElementById("listBtn").onclick = () => { showSection("listSection"); loadList(); };
+      document.getElementById("qrBtn").onclick = () => showSection("qrSection");
+      document.getElementById("geoBtn").onclick = () => showSection("geoSection");
 
-      // Әзірше QR, Геолокация бос
-      document.getElementById("qrBtn").onclick = () => alert("QR функциясы қосылмаған");
-      document.getElementById("geoBtn").onclick = () => alert("Геолокация функциясы қосылмаған");
+      showSection("listSection"); // әуелгісі — Тізім
     };
   </script>
 </head>
 <body>
-  <!-- Жоғарғы панель -->
-  <div class="navbar">
-    <button id="listBtn">Тізім</button>
-    <button id="qrBtn">QR</button>
-    <button id="geoBtn">Геолокация</button>
+  <!-- Сол жақ панель -->
+  <div class="sidebar">
+    <h2>Навигация</h2>
+    <button onclick="location.href='index.html'">🏠 Басты бет</button>
+    <button onclick="location.href='Smart Mugalim.html'">👨🏻‍🎓 Smart Mugalim</button>
+    <button>✅ Түгендеу</button>
   </div>
 
-  <!-- Контейнер -->
-  <div class="container">
-    <h2>Қатысушыларды белгілеу</h2>
-    <input type="text" id="nameInput" placeholder="Атын енгіз">
-    <button id="saveBtn">Сақтау</button>
+  <!-- Оң жақ контент -->
+  <div class="content">
+    <div class="topbar">
+      <button id="listBtn">Тізім</button>
+      <button id="qrBtn">QR</button>
+      <button id="geoBtn">Геолокация</button>
+    </div>
 
-    <h3>Сақталған тізім:</h3>
-    <div id="list"></div>
+    <!-- Тізім -->
+    <div id="listSection" class="section">
+      <h2>Оқушылар тізімі</h2>
+      <input type="text" id="nameInput" placeholder="Атын енгіз">
+      <button id="saveBtn">Сақтау</button>
+
+      <h3>Сақталған тізім:</h3>
+      <div id="list"></div>
+    </div>
+
+    <!-- QR -->
+    <div id="qrSection" class="section" style="display:none;">
+      <h2>QR беті</h2>
+      <p>QR код шығару кейін қосылады.</p>
+    </div>
+
+    <!-- Геолокация -->
+    <div id="geoSection" class="section" style="display:none;">
+      <h2>Геолокация беті</h2>
+      <p>Геолокация функциясы кейін қосылады.</p>
+    </div>
   </div>
 </body>
 </html>
