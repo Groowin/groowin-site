@@ -3,8 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Attendance</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      display: flex;
+      background: #4CAF50;
+      padding: 10px;
+    }
+    .navbar button {
+      background: white;
+      border: none;
+      margin-right: 10px;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .container {
+      padding: 20px;
+    }
+    #list div {
+      margin: 5px 0;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #list button {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  </style>
   <script type="module">
-    // Firebase SDK-ны жүктеу
+    // Firebase SDK
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } 
       from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -23,17 +63,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Элементтерді таңдау
-    const saveBtn = () => document.getElementById("saveBtn");
-    const nameInput = () => document.getElementById("nameInput");
-    const listDiv = () => document.getElementById("list");
-
     // Сақтау
     async function saveName() {
-      const name = nameInput().value.trim();
+      const nameInput = document.getElementById("nameInput");
+      const name = nameInput.value.trim();
       if (name === "") return alert("Атын енгіз!");
       await addDoc(collection(db, "attendance"), { name });
-      nameInput().value = "";
+      nameInput.value = "";
       loadList();
     }
 
@@ -43,39 +79,52 @@
       loadList();
     }
 
-    // Тізімді жүктеу
+    // Тізімді шығару
     async function loadList() {
-      listDiv().innerHTML = "";
+      const listDiv = document.getElementById("list");
+      listDiv.innerHTML = "";
       const querySnapshot = await getDocs(collection(db, "attendance"));
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const item = document.createElement("div");
         item.textContent = data.name;
+
         const delBtn = document.createElement("button");
         delBtn.textContent = "Өшіру";
         delBtn.onclick = () => deleteName(docSnap.id);
+
         item.appendChild(delBtn);
-        listDiv().appendChild(item);
+        listDiv.appendChild(item);
       });
     }
 
-    // Батырмаларға байланыстыру
+    // Бастапқы функциялар
     window.onload = () => {
       document.getElementById("saveBtn").onclick = saveName;
       document.getElementById("listBtn").onclick = loadList;
+
+      // Әзірше QR, Геолокация бос
+      document.getElementById("qrBtn").onclick = () => alert("QR функциясы қосылмаған");
+      document.getElementById("geoBtn").onclick = () => alert("Геолокация функциясы қосылмаған");
     };
   </script>
 </head>
 <body>
-  <h2>Attendance</h2>
-  
-  <input type="text" id="nameInput" placeholder="Атын енгіз">
-  <button id="saveBtn">Сақтау</button>
-  <button id="listBtn">Тізім</button>
-  <button id="qrBtn">QR</button>
-  <button id="geoBtn">Геолокация</button>
+  <!-- Жоғарғы панель -->
+  <div class="navbar">
+    <button id="listBtn">Тізім</button>
+    <button id="qrBtn">QR</button>
+    <button id="geoBtn">Геолокация</button>
+  </div>
 
-  <h3>Сақталған тізім:</h3>
-  <div id="list"></div>
+  <!-- Контейнер -->
+  <div class="container">
+    <h2>Қатысушыларды белгілеу</h2>
+    <input type="text" id="nameInput" placeholder="Атын енгіз">
+    <button id="saveBtn">Сақтау</button>
+
+    <h3>Сақталған тізім:</h3>
+    <div id="list"></div>
+  </div>
 </body>
 </html>
