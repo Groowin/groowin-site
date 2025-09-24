@@ -1,290 +1,148 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="kk">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Smart Mugalim — Түгендеу</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Smart Mugalim</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"></script>
   <style>
-    /* Қосымша стильдер (style.css бар болса біріктіріп қалуы мүмкін) */
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;display:flex;height:100vh}
-    .sidebar{width:240px;background:#111827;color:#fff;padding:18px;display:flex;flex-direction:column}
-    .sidebar h2{margin:0 0 18px 0}
-    .nav-btn{background:none;border:none;color:#fff;padding:10px;text-align:left;cursor:pointer;border-radius:6px;margin-bottom:6px}
-    .nav-btn:hover{background:#374151}
-    .content{flex:1;padding:18px;display:flex;flex-direction:column;background:#f3f4f6;overflow:auto}
-    .topbar{display:flex;gap:8px;margin-bottom:12px}
-    .topbar button{padding:8px 12px;border-radius:6px;border:none;cursor:pointer;background:#2563eb;color:white}
-    .topbar button.ghost{background:#e5e7eb;color:#111}
-    .work{display:flex;gap:16px}
-    .left-work{width:360px;background:#fff;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-    .right-work{flex:1;background:#fff;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-    .student-item{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:6px;border:1px solid #eef2f7;margin-bottom:6px;background:#fbfdff}
-    .student-item .del{background:#ef4444;border:none;color:white;padding:6px 8px;border-radius:6px;cursor:pointer}
-    .saved-list-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:6px;border:1px solid #e6eef8;margin-bottom:6px;background:#fff}
-    .small{font-size:13px;color:#374151}
-    input[type="text"]{padding:8px;border:1px solid #d1d5db;border-radius:6px;width:100%}
-    textarea{width:100%;height:100px;padding:8px;border-radius:6px;border:1px solid #d1d5db}
-    .muted{color:#6b7280;font-size:13px}
+    body { margin:0; font-family: Arial, sans-serif; display:flex; height:100vh; }
+    .sidebar { width:200px; background:#2c3e50; color:#fff; padding:20px; }
+    .sidebar h2 { font-size:18px; margin-bottom:15px; }
+    .sidebar button { display:block; margin:10px 0; padding:10px; width:100%; border:none; background:#34495e; color:#fff; cursor:pointer; border-radius:5px; }
+    .sidebar button:hover { background:#1abc9c; }
+    .main { flex:1; display:flex; flex-direction:column; }
+    .header { background:#1abc9c; padding:10px; color:#fff; display:flex; justify-content:space-between; align-items:center; }
+    .content { flex:1; padding:20px; overflow-y:auto; }
+    .student-item { margin:5px 0; padding:8px; background:#ecf0f1; border-radius:5px; }
+    .qr-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; }
+    .qr-item { background:#ecf0f1; padding:10px; border-radius:5px; }
   </style>
 </head>
 <body>
-  <!-- Сол жақ панель (ұдайы көрінетін) -->
+  <!-- Сол жақ панель -->
   <div class="sidebar">
-    <h2>Groowin</h2>
-    <button class="nav-btn" onclick="location.href='index.html'">🏠 Басты бет</button>
-    <button class="nav-btn" onclick="location.href='smart-mugalim.html'">👨🏻‍🎓 Smart Mugalim</button>
-    <hr style="border:none;border-top:1px solid #26303a;margin:12px 0">
-    <div class="small muted">Навигация</div>
-    <button class="nav-btn" onclick="showSection('tugen')">✅ Түгендеу</button>
-    <!-- Болашақта тағы батырмалар -->
+    <h2>Smart Mugalim</h2>
+    <button onclick="showPage('tizim')">Тізім</button>
+    <button onclick="showPage('qr')">QR</button>
+    <button onclick="showPage('geo')">Геолокация</button>
   </div>
 
-  <!-- Оң жақ жұмыс аймағы -->
-  <div class="content">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-      <div>
-        <h3 style="margin:0">Smart Mugalim — Түгендеу</h3>
-        <div class="muted">Сол жақ бөлмеде навигация; оң жақта жұмыс аймағы</div>
-      </div>
-      <div class="muted">Жаңа</div>
+  <!-- Негізгі бөлік -->
+  <div class="main">
+    <div class="header">
+      <span>Smart Mugalim</span>
+      <button onclick="goHome()">Басты бет</button>
     </div>
-
-    <!-- Басты жоғарғы батырмалар (әрдайым тұрады) -->
-    <div class="topbar">
-      <button id="topListBtn">Тізім</button>
-      <button id="topQRBtn" class="ghost">QR</button>
-      <button id="topGeoBtn" class="ghost">Геолокация</button>
-    </div>
-
-    <!-- Жұмыс аймағы: тізім/qr/гео -->
-    <div class="work">
-      <!-- Сол жақтағы шағын басқару (сынып атауы, импорт, сақталған тізімдер) -->
-      <div class="left-work">
-        <h4 style="margin-top:0">Сынып / Список</h4>
-        <label class="small">Сынып атауы</label>
-        <input id="className" type="text" placeholder="Мыс: 8A" style="margin-bottom:8px"/>
-
-        <label class="small">Оқушы қосу (Enter басып қосыңыз)</label>
-        <input id="nameInput" type="text" placeholder="Аты-жөні және Enter" />
-
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button id="addNameBtn" class="topbar" style="padding:8px 10px;background:#10b981;color:white;border-radius:6px">Қосу</button>
-          <button id="saveClassBtn" style="padding:8px 10px;border-radius:6px;background:#2563eb;color:white;border:none">Сақтау</button>
-          <button id="clearCurrentBtn" style="padding:8px 10px;border-radius:6px;background:#ef4444;color:white;border:none">Тазалау</button>
-        </div>
-
-        <hr style="margin:12px 0;border:none;border-top:1px solid #eef2f7"/>
-
-        <h4 style="margin:0 0 8px 0">Тізімдер</h4>
-        <div id="savedLists" style="max-height:340px;overflow:auto"></div>
-      </div>
-
-      <!-- Оң жақ: негізгі жұмыс бөлігі (тізім көрінісі) -->
-      <div class="right-work">
-        <!-- Тізім -->
-        <div id="listSection" class="section">
-          <h4 style="margin-top:0">Ағымдағы тізім</h4>
-          <div id="currentClassName" class="muted">Сынып: —</div>
-          <div id="currentNames" style="margin-top:10px"></div>
-          <div style="margin-top:12px" class="muted">(Аттарды енгізу үшін жаныңыздағы өрісті қолданыңыз, Enter басқанда қосылады.)</div>
-        </div>
-
-        <!-- QR (әзірше бос) -->
-        <div id="qrSection" class="section" style="display:none">
-          <h4>QR</h4>
-          <p class="muted">QR жұмысын кейін қосамыз — қазір тесттік режим.</p>
-        </div>
-
-        <!-- Геолокация (бос) -->
-        <div id="geoSection" class="section" style="display:none">
-          <h4>Геолокация</h4>
-          <p class="muted">Геолокация кейін қосылады.</p>
-        </div>
-      </div>
+    <div class="content" id="content">
+      <!-- Әдепкі бет -->
+      <h2>Қош келдіңіз!</h2>
+      <p>Сол жақтағы мәзірден таңдаңыз.</p>
     </div>
   </div>
 
-  <!-- Firebase (Realtime DB v8) -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script type="module">
+    // Firebase қосу
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-  <script>
-    /*****  FIREBASE CONFIG (сен берген)  *****/
     const firebaseConfig = {
-      apiKey: "AIzaSyDP2SHjJQYzu_lhWUbk1NBN6H65mR5YI_s",
-      authDomain: "groowin-attendance.firebaseapp.com",
-      projectId: "groowin-attendance",
-      storageBucket: "groowin-attendance.firebasestorage.app",
-      messagingSenderId: "737566994771",
-      appId: "1:737566994771:web:982cf9e32e968229f2b1a6",
-      measurementId: "G-WJXHCBGJBN"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    /***** UI state *****/
-    let currentNames = [];        // ағымдағы енгізілген оқушылар
-    let currentClass = "";        // ағымдағы сынып атауы
-
-    // Элементтер
-    const nameInput = () => document.getElementById('nameInput');
-    const classNameInput = () => document.getElementById('className');
-    const currentNamesDiv = () => document.getElementById('currentNames');
-    const currentClassNameEl = () => document.getElementById('currentClassName');
-    const savedListsDiv = () => document.getElementById('savedLists');
-
-    // Бастапқы орнату
-    window.onload = () => {
-      // навигация / жоғарғы батырмалар
-      document.getElementById('topListBtn').onclick = () => { showOnly('list'); loadSavedLists(); };
-      document.getElementById('topQRBtn').onclick = () => { showOnly('qr'); };
-      document.getElementById('topGeoBtn').onclick = () => { showOnly('geo'); };
-
-      // сол жақ батырмалары
-      document.getElementById('addNameBtn').onclick = addNameFromInput;
-      document.getElementById('saveClassBtn').onclick = saveClass;
-      document.getElementById('clearCurrentBtn').onclick = clearCurrent;
-
-      // Enter-пен қосу
-      document.getElementById('nameInput').addEventListener('keydown', function(e){
-        if(e.key === 'Enter'){ e.preventDefault(); addNameFromInput(); }
-      });
-
-      // жүктеу
-      showSection('tugen'); // сол жақтың 'Түгендеу' көрсетілген болуы
-      showOnly('list');     // оң жақта әуелгісі — тізім
-      loadSavedLists();
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      databaseURL: "YOUR_DB_URL",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_BUCKET",
+      messagingSenderId: "YOUR_MSG_ID",
+      appId: "YOUR_APP_ID"
     };
 
-    /* UI көрсету/жасыру */
-    function showSection(name){
-      // тек ішкі жұмыс аймағын белсендендіру (парақ ішіндегі секция)
-      // but left sidebar always visible — we only ensure tugen is active
-      // (we kept only one feature now)
-      // nothing special here for left panel: it's static
-      // left 'Түгендеу' already active
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    function showPage(page) {
+      const content = document.getElementById("content");
+
+      if (page === "tizim") {
+        content.innerHTML = `
+          <h2>Сынып тізімі</h2>
+          <input type="text" id="studentName" placeholder="Аты-жөні" />
+          <button onclick="saveStudent()">Сақтау</button>
+          <div id="className"></div>
+          <h3>Тізім:</h3>
+          <div id="studentList"></div>
+        `;
+        loadStudents();
+      }
+
+      if (page === "qr") {
+        content.innerHTML = `
+          <h2>QR коды</h2>
+          <div>
+            <select id="classSelect"></select>
+          </div>
+          <div class="qr-grid" id="qrGrid"></div>
+        `;
+        loadClasses();
+      }
+
+      if (page === "geo") {
+        content.innerHTML = `
+          <h2>Геолокация</h2>
+          <p>Бұл бетте геолокация картасы көрсетіледі.</p>
+        `;
+      }
     }
 
-    function showOnly(tab){
-      document.getElementById('listSection').style.display = (tab==='list') ? 'block' : 'none';
-      document.getElementById('qrSection').style.display = (tab==='qr') ? 'block' : 'none';
-      document.getElementById('geoSection').style.display = (tab==='geo') ? 'block' : 'none';
-      // highlight top buttons simple effect
-      ['topListBtn','topQRBtn','topGeoBtn'].forEach(id=>{
-        document.getElementById(id).classList.remove('active');
-      });
-    }
+    // Сақтау функциясы
+    window.saveStudent = function() {
+      const nameInput = document.getElementById("studentName");
+      const name = nameInput.value.trim();
+      if (name === "") return;
 
-    /* Атын қосу (input арқылы) */
-    function addNameFromInput(){
-      const v = nameInput().value.trim();
-      if(!v) return;
-      currentNames.push(v);
-      nameInput().value = '';
-      renderCurrentNames();
-    }
+      push(ref(db, "students"), { name: name });
+      document.getElementById("className").innerText = "Сынып: 9А"; // мысалы
+      nameInput.value = "";
+    };
 
-    function renderCurrentNames(){
-      const cont = currentNamesDiv();
-      cont.innerHTML = '';
-      currentNames.forEach((nm, i) => {
-        const el = document.createElement('div');
-        el.className = 'student-item';
-        el.innerHTML = `<div>${nm}</div>`;
-        const del = document.createElement('button');
-        del.className = 'del';
-        del.textContent = 'Өшіру';
-        del.onclick = () => {
-          currentNames.splice(i,1);
-          renderCurrentNames();
-        };
-        el.appendChild(del);
-        cont.appendChild(el);
-      });
-      currentClassNameEl().textContent = currentClass ? ('Сынып: ' + currentClass) : 'Сынып: —';
-    }
-
-    /* Сақтау сыныпқа */
-    function saveClass(){
-      const cls = classNameInput().value.trim();
-      if(!cls) return alert('Сынып атауын енгізіңіз');
-      if(currentNames.length === 0) return alert('Аттар жоқ — алдымен оқушыларды қосыңыз');
-      // сақтаймыз: /lists/{cls} = { names: [...] , created: timestamp }
-      db.ref('lists/' + cls).set({
-        names: currentNames,
-        created: Date.now()
-      }).then(()=>{
-        currentClass = cls;
-        // автоматты түрде saved lists аймағын жаңарту
-        loadSavedLists();
-        renderCurrentNames();
-        alert('Сақталды: ' + cls);
-      }).catch(err=>{ alert('Қате: ' + err.message) });
-    }
-
-    /* Тазалау ағымдағы */
-    function clearCurrent(){
-      if(!confirm('Ағымдағы енгізілген тізімді тазалау?')) return;
-      currentNames = [];
-      currentClass = '';
-      classNameInput().value = '';
-      renderCurrentNames();
-    }
-
-    /* saved lists жүктеу және көрсету — автоматты түрде шығады */
-    function loadSavedLists(){
-      savedListsDiv().innerHTML = '';
-      db.ref('lists').once('value').then(snap=>{
-        const val = snap.val() || {};
-        const keys = Object.keys(val);
-        if(keys.length === 0){
-          savedListsDiv().innerHTML = '<div class="muted small">Сақталған тізімдер жоқ</div>';
-          return;
-        }
-        // әр сохраненный список
-        keys.forEach(k=>{
-          const node = val[k];
-          const div = document.createElement('div');
-          div.className = 'saved-list-item';
-          const left = document.createElement('div');
-          left.innerHTML = `<strong>${k}</strong><div class="small muted">(${(node.names||[]).length} оқушы)</div>`;
-          const right = document.createElement('div');
-          right.style.display = 'flex';
-          right.style.gap = '8px';
-          const loadBtn = document.createElement('button');
-          loadBtn.textContent = 'Жүктеу';
-          loadBtn.onclick = ()=> loadList(k);
-          const delBtn = document.createElement('button');
-          delBtn.textContent = 'Жою';
-          delBtn.style.background='#ef4444'; delBtn.style.color='white'; delBtn.style.border='none'; delBtn.style.padding='6px 8px'; delBtn.style.borderRadius='6px';
-          delBtn.onclick = ()=> {
-            if(!confirm('Сіз тізімді жойғыңыз келеді ме?')) return;
-            db.ref('lists/' + k).remove().then(()=>{ loadSavedLists(); if(currentClass===k){ currentClass=''; currentNames=[]; renderCurrentNames(); }});
-          };
-          right.appendChild(loadBtn);
-          right.appendChild(delBtn);
-          div.appendChild(left);
-          div.appendChild(right);
-          savedListsDiv().appendChild(div);
+    function loadStudents() {
+      const studentList = document.getElementById("studentList");
+      onValue(ref(db, "students"), (snapshot) => {
+        studentList.innerHTML = "";
+        snapshot.forEach((child) => {
+          const data = child.val();
+          const div = document.createElement("div");
+          div.className = "student-item";
+          div.innerText = data.name;
+          studentList.appendChild(div);
         });
       });
     }
 
-    /* бір сақталған тізімді жүктеу (көрсету оң жақта) */
-    function loadList(name){
-      db.ref('lists/' + name).once('value').then(snap=>{
-        const data = snap.val();
-        const arr = (data && data.names) || [];
-        currentNames = arr.slice(); // көшіріп аламыз
-        currentClass = name;
-        classNameInput().value = name;
-        renderCurrentNames();
-        // автоматты түрде тізім көрінісін көрсет
-        showOnly('list');
-      });
+    function loadClasses() {
+      const classSelect = document.getElementById("classSelect");
+      const qrGrid = document.getElementById("qrGrid");
+      classSelect.innerHTML = `<option>9А</option><option>10Ә</option>`;
+
+      classSelect.onchange = () => {
+        qrGrid.innerHTML = "";
+        onValue(ref(db, "students"), (snapshot) => {
+          snapshot.forEach((child) => {
+            const data = child.val();
+            const div = document.createElement("div");
+            div.className = "qr-item";
+            div.innerText = data.name;
+            qrGrid.appendChild(div);
+          });
+        });
+      };
     }
 
+    window.goHome = function() {
+      document.getElementById("content").innerHTML = `
+        <h2>Қош келдіңіз!</h2>
+        <p>Сол жақтағы мәзірден таңдаңыз.</p>
+      `;
+    }
   </script>
 </body>
 </html>
