@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МКТ негіздері - 10 сынып</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .slide {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .slide.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .formula {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .quiz-option {
+            transition: all 0.3s ease;
+        }
+        .quiz-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .correct {
+            background-color: #10b981 !important;
+            color: white !important;
+        }
+        .incorrect {
+            background-color: #ef4444 !important;
+            color: white !important;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="max-w-6xl mx-auto p-4">
+        <!-- Progress Bar -->
+        <div class="bg-white rounded-lg shadow-lg mb-4 p-4">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-gray-600">Бет</span>
+                <span class="text-sm font-medium text-gray-600" id="slideCounter">1 / 15</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full progress-bar" id="progressBar" style="width: 6.67%"></div>
+            </div>
+        </div>
+
+        <!-- Slides Container -->
+        <div class="bg-white rounded-lg shadow-lg p-8 min-h-96" id="slidesContainer">
+            <!-- Slides will be inserted here -->
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mt-6">
+            <button id="prevBtn" class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                ← Артқа
+            </button>
+            <div class="flex space-x-2">
+                <button id="homeBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Басты бет
+                </button>
+                <button id="resetQuiz" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors hidden">
+                    Викторинаны қайталау
+                </button>
+            </div>
+            <button id="nextBtn" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Алға →
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Slides data
+        const slidesData = [
+            // Slide 1: Title
+            {
+                title: "",
+                content: `
+                    <div class="text-center">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex-shrink-0">
+                                <img src="https://www.kaznpu.kz/docs/logotip2023.jpg" alt="КазНПУ логотипі" class="h-20 w-auto" onerror="this.style.display='none';">
+                            </div>
+                            <div class="flex-1 text-center">
+                                <h1 class="text-2xl font-bold text-blue-800 mb-2">Абай атындағы Қазақ Ұлттық Педагогикалық Университет</h1>
+                                <h2 class="text-xl font-semibold text-gray-700">Оқушылардың ойлау қабілетін жетілдіруге берілетін тапсырмалар жасау (кез-келген сынып бойынша таңдалған тарауға)</h2>
+                            </div>
+                            <div class="flex-shrink-0 w-20"></div>
+                        </div>
+                        <div class="text-left mb-4">
+                            <p class="text-lg text-gray-700"><strong>Аскеров Алмас ФОК-221</strong></p>
+                        </div>
+                        <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                            <h2 class="text-2xl font-semibold text-gray-800 mb-4">10 сынып</h2>
+                            <p class="text-lg text-gray-700 mb-2"><strong>Авторлар:</strong> Н. А. Закирова, Р. Р. Аширов</p>
+                            <p class="text-lg text-gray-700 mb-2"><strong>Бөлім:</strong> 2-бөлім: Жылу физикасы</p>
+                            <p class="text-lg text-gray-700 mb-4"><strong>Тарау:</strong> 6-тарау: МКТ негіздері</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-purple-400 to-pink-400 text-white p-4 rounded-lg">
+                            <p class="text-lg">Заттың молекулалық құрылысы мен жылулық қасиеттерін зерттейміз</p>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 2: Learning Objectives
+            {
+                title: "Оқу мақсаттары",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">SMART форматындағы оқу мақсаттары</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                            <h3 class="font-semibold text-green-800 mb-2">🎯 Мақсат 1</h3>
+                            <p class="text-gray-700">МКТ-тің 3 негізгі постулатын дәл анықтап, әрқайсысына мысал келтіру</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                            <h3 class="font-semibold text-blue-800 mb-2">🎯 Мақсат 2</h3>
+                            <p class="text-gray-700">Идеал газ теңдеуін қолданып, 5 есепті дұрыс шығару</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="font-semibold text-purple-800 mb-2">🎯 Мақсат 3</h3>
+                            <p class="text-gray-700">Температура мен молекулалардың кинетикалық энергиясының байланысын түсіндіру</p>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+                            <h3 class="font-semibold text-orange-800 mb-2">🎯 Мақсат 4</h3>
+                            <p class="text-gray-700">Газдардың қысымы мен көлемінің өзгеруін болжау және түсіндіру</p>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 md:col-span-2">
+                            <h3 class="font-semibold text-red-800 mb-2">🎯 Мақсат 5</h3>
+                            <p class="text-gray-700">Практикалық тәжірибе арқылы МКТ заңдылықтарын дәлелдеу және қорытынды жасау</p>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 3: Basic MKT Concepts
+            {
+                title: "МКТ негізгі ұғымдары",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Молекулалық кинетикалық теорияның негіздері</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-blue-800 mb-2">🔬 МКТ дегеніміз не?</h3>
+                                <p class="text-gray-700">Заттың молекулалық құрылысы мен жылулық қасиеттерін зерттейтін физика саласы</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-green-800 mb-2">⚛️ Негізгі ұғымдар</h3>
+                                <ul class="text-gray-700 space-y-1">
+                                    <li>• Молекула - заттың ең кіші бөлшегі</li>
+                                    <li>• Броун қозғалысы - молекулалардың кездейсоқ қозғалысы</li>
+                                    <li>• Диффузия - молекулалардың араласуы</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="formula">
+                                <div class="mb-2">Идеал газ теңдеуі:</div>
+                                <div class="text-2xl">PV = nRT</div>
+                                <div class="text-sm mt-2">P-қысым, V-көлем, n-зат мөлшері, R-газ тұрақтысы, T-температура</div>
+                            </div>
+                            <div class="formula">
+                                <div class="mb-2">Орташа кинетикалық энергия:</div>
+                                <div class="text-2xl">E = <sup>3</sup>⁄<sub>2</sub>kT</div>
+                                <div class="text-sm mt-2">k-Больцман тұрақтысы, T-абсолют температура</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 4: MKT Postulates
+            {
+                title: "МКТ қағидалары",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">МКТ-тің негізгі қағидалары</h2>
+                    <div class="space-y-4">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg">
+                            <h3 class="font-bold text-lg mb-2">1-қағида: Молекулалық құрылым</h3>
+                            <p class="mb-2">Барлық заттар молекулалар мен атомдардан тұрады</p>
+                            <p class="text-blue-100"><strong>Мысал:</strong> Судың молекулалық формуласы H₂O</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-green-500 to-teal-600 text-white p-4 rounded-lg">
+                            <h3 class="font-bold text-lg mb-2">2-қағида: Үздіксіз қозғалыс</h3>
+                            <p class="mb-2">Молекулалар үздіксіз кездейсоқ қозғалыста болады</p>
+                            <p class="text-green-100"><strong>Мысал:</strong> Судағы тозаңның Броун қозғалысы</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-orange-500 to-red-600 text-white p-4 rounded-lg">
+                            <h3 class="font-bold text-lg mb-2">3-қағида: Молекулалар арасындағы әрекеттесу</h3>
+                            <p class="mb-2">Молекулалар арасында тартылыс және тебілу күштері әрекет етеді</p>
+                            <p class="text-orange-100"><strong>Мысал:</strong> Газдың сығылуы мен кеңеюі</p>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 5: Gas Molecular Motion
+            {
+                title: "Газдардың молекулярлық қозғалысы",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Газ молекулаларының қозғалыс сипаттамалары</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-blue-800 mb-3">📊 Жылдамдық түрлері</h3>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span>Орташа жылдамдық:</span>
+                                        <span class="font-mono">v̄ = √(<sup>8RT</sup>⁄<sub>πM</sub>)</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>RMS жылдамдық:</span>
+                                        <span class="font-mono">v_rms = √(<sup>3RT</sup>⁄<sub>M</sub>)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-green-800 mb-2">🌡️ Температураға тәуелділік</h3>
+                                <p class="text-gray-700">Температура жоғарылаған сайын молекулалардың жылдамдығы артады</p>
+                            </div>
+                        </div>
+                        <div class="bg-purple-50 p-6 rounded-lg">
+                            <h3 class="font-semibold text-purple-800 mb-4">📈 Сандық мысал</h3>
+                            <div class="space-y-3">
+                                <div class="bg-white p-3 rounded border-l-4 border-purple-500">
+                                    <p class="font-semibold">Азот газы (N₂) үшін T = 300K:</p>
+                                    <p class="text-sm text-gray-600 mt-1">M = 28 г/моль = 0.028 кг/моль</p>
+                                    <p class="text-sm text-gray-600">R = 8.314 Дж/(моль·К)</p>
+                                </div>
+                                <div class="bg-white p-3 rounded">
+                                    <p class="font-semibold text-purple-700">v_rms = √(3×8.314×300/0.028)</p>
+                                    <p class="font-semibold text-purple-700">v_rms ≈ 517 м/с</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 6: Temperature and Internal Energy
+            {
+                title: "Температура, ішкі энергия және жылу",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Температура мен ішкі энергияның байланысы</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="formula">
+                                <div class="mb-2">Ішкі энергия формулası:</div>
+                                <div class="text-2xl">U = <sup>i</sup>⁄<sub>2</sub>nRT</div>
+                                <div class="text-sm mt-2">i - еркіндік дәрежесі, n - зат мөлшері</div>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
+                                <h3 class="font-semibold text-yellow-800 mb-2">🔥 Температура дегеніміз не?</h3>
+                                <p class="text-gray-700">Молекулалардың орташа кинетикалық энергиясының өлшемі</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <h3 class="font-semibold text-blue-800 mb-4">📊 Есептеу мысалы</h3>
+                            <div class="space-y-3">
+                                <div class="bg-white p-3 rounded">
+                                    <p class="font-semibold">1 моль идеал газ үшін (T = 300K):</p>
+                                    <p class="text-sm text-gray-600">Бір атомды газ: i = 3</p>
+                                </div>
+                                <div class="bg-white p-3 rounded">
+                                    <p class="text-blue-700">U = <sup>3</sup>⁄<sub>2</sub> × 1 × 8.314 × 300</p>
+                                    <p class="font-semibold text-blue-700">U = 3741 Дж</p>
+                                </div>
+                                <div class="bg-green-100 p-2 rounded text-sm">
+                                    <p class="text-green-800">Бұл энергия молекулалардың жылулық қозғалысына жұмсалады</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 7: Example Problems 1
+            {
+                title: "Есеп мысалдары - 1",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Жеңіл деңгейдегі есеп</h2>
+                    <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-500 mb-6">
+                        <h3 class="font-bold text-green-800 mb-4">📝 Есеп: Газ қысымын табу</h3>
+                        <p class="text-gray-700 mb-4">
+                            <strong>Шарт:</strong> 2 л көлемдегі ыдыста 0.5 моль азот газы 27°C температурада тұр. 
+                            Газдың қысымын табыңыз.
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 mb-3">📋 Берілгені:</h4>
+                            <ul class="space-y-1 text-gray-700">
+                                <li>V = 2 л = 0.002 м³</li>
+                                <li>n = 0.5 моль</li>
+                                <li>t = 27°C</li>
+                                <li>T = 27 + 273 = 300 K</li>
+                                <li>R = 8.314 Дж/(моль·К)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 mb-3">🔍 Шешімі:</h4>
+                            <div class="space-y-2 text-gray-700">
+                                <p><strong>1-қадам:</strong> PV = nRT формуласын қолданамыз</p>
+                                <p><strong>2-қадам:</strong> P = nRT/V</p>
+                                <p><strong>3-қадам:</strong> P = (0.5×8.314×300)/0.002</p>
+                                <p class="font-bold text-purple-700">P = 623,550 Па ≈ 624 кПа</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg mt-4">
+                        <p class="text-yellow-800"><strong>💡 Қорытынды:</strong> Газдың қысымы 624 кПа құрайды</p>
+                    </div>
+                `
+            },
+            // Slide 8: Example Problems 2
+            {
+                title: "Есеп мысалдары - 2",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Орташа деңгейдегі есеп</h2>
+                    <div class="bg-orange-50 p-6 rounded-lg border-l-4 border-orange-500 mb-6">
+                        <h3 class="font-bold text-orange-800 mb-4">📝 Есеп: Газдың ішкі энергиясының өзгеруі</h3>
+                        <p class="text-gray-700 mb-4">
+                            <strong>Шарт:</strong> 2 моль гелий газының температурасы 300K-ден 450K-ге дейін көтерілді. 
+                            Газдың ішкі энергиясының өзгеруін табыңыз.
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 mb-3">📋 Берілгені:</h4>
+                            <ul class="space-y-1 text-gray-700">
+                                <li>n = 2 моль</li>
+                                <li>T₁ = 300 K</li>
+                                <li>T₂ = 450 K</li>
+                                <li>Гелий - бір атомды газ (i = 3)</li>
+                                <li>R = 8.314 Дж/(моль·К)</li>
+                            </ul>
+                            <p class="mt-3 text-blue-700"><strong>Табу керек:</strong> ΔU = ?</p>
+                        </div>
+                        
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 mb-3">🔍 Шешімі:</h4>
+                            <div class="space-y-2 text-gray-700">
+                                <p><strong>1-қадам:</strong> ΔU = U₂ - U₁</p>
+                                <p><strong>2-қадам:</strong> U = <sup>i</sup>⁄<sub>2</sub>nRT</p>
+                                <p><strong>3-қадам:</strong> ΔU = <sup>i</sup>⁄<sub>2</sub>nR(T₂-T₁)</p>
+                                <p><strong>4-қадам:</strong> ΔU = <sup>3</sup>⁄<sub>2</sub>×2×8.314×(450-300)</p>
+                                <p><strong>5-қадам:</strong> ΔU = 3×8.314×150</p>
+                                <p class="font-bold text-purple-700">ΔU = 3,741 Дж</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mt-4">
+                        <p class="text-green-800"><strong>💡 Қорытынды:</strong> Газдың ішкі энергиясы 3,741 Дж-ға артты</p>
+                    </div>
+                `
+            },
+            // Slide 9: Statistics
+            {
+                title: "Салыстырмалы статистика",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">МКТ-ге қатысты деректер мен статистика</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="stats-card p-6 rounded-lg text-white">
+                            <h3 class="font-bold text-xl mb-4">🌡️ Температура мен жылдамдық</h3>
+                            <div class="space-y-3">
+                                <div class="bg-white bg-opacity-20 p-3 rounded">
+                                    <p class="font-semibold">273K (0°C):</p>
+                                    <p>N₂: v_rms = 493 м/с</p>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 rounded">
+                                    <p class="font-semibold">300K (27°C):</p>
+                                    <p>N₂: v_rms = 517 м/с</p>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 rounded">
+                                    <p class="font-semibold">1000K (727°C):</p>
+                                    <p>N₂: v_rms = 944 м/с</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-green-400 to-blue-500 p-6 rounded-lg text-white">
+                            <h3 class="font-bold text-xl mb-4">⚛️ Молекулалар туралы фактілер</h3>
+                            <div class="space-y-3">
+                                <div class="bg-white bg-opacity-20 p-3 rounded">
+                                    <p class="font-semibold">Авогадро саны:</p>
+                                    <p>6.022 × 10²³ молекула/моль</p>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 rounded">
+                                    <p class="font-semibold">Больцман тұрақтысы:</p>
+                                    <p>1.38 × 10⁻²³ Дж/К</p>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 rounded">
+                                    <p class="font-semibold">Газ тұрақтысы:</p>
+                                    <p>8.314 Дж/(моль·К)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-500">
+                        <h3 class="font-bold text-yellow-800 mb-3">📊 Қызықты деректер</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-700">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-yellow-600">10²³</div>
+                                <p class="text-sm">1 см³ ауада молекула саны</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-yellow-600">500 м/с</div>
+                                <p class="text-sm">Ауа молекулаларының орташа жылдамдығы</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-yellow-600">10⁻¹⁰ м</div>
+                                <p class="text-sm">Молекулалар арасындағы орташа қашықтық</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 10: 3D Animation and Experiment
+            {
+                title: "3D Визуализация және Тәжірибе",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Молекулалардың қозғалысын 3D көрсету</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-gradient-to-br from-blue-400 to-purple-600 p-6 rounded-lg text-white">
+                            <h3 class="font-bold text-xl mb-4">🎬 3D Анимация</h3>
+                            <div class="bg-white bg-opacity-20 p-4 rounded-lg mb-4">
+                                <div id="moleculeAnimation" class="h-64 bg-black rounded-lg relative overflow-hidden">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="text-white text-center">
+                                            <div class="text-4xl mb-2">⚛️</div>
+                                            <p class="text-sm">Молекулалардың қозғалысы</p>
+                                            <button onclick="startAnimation()" class="mt-2 px-4 py-2 bg-blue-500 rounded hover:bg-blue-600 transition-colors">
+                                                Анимацияны бастау
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <canvas id="moleculeCanvas" class="absolute inset-0 w-full h-full hidden"></canvas>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span>Температура:</span>
+                                    <span id="tempDisplay">300K</span>
+                                </div>
+                                <input type="range" id="tempSlider" min="200" max="800" value="300" class="w-full">
+                                <div class="flex justify-between">
+                                    <span>Орташа жылдамдық:</span>
+                                    <span id="speedDisplay">517 м/с</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                                <h3 class="font-bold text-green-800 mb-3">🧪 Интерактивті тәжірибе</h3>
+                                <p class="text-gray-700 mb-4">Температураны өзгертіп, молекулалардың жылдамдығын бақылаңыз</p>
+                                <div class="bg-white p-3 rounded">
+                                    <h4 class="font-semibold mb-2">Бақылау сұрақтары:</h4>
+                                    <ol class="text-sm text-gray-700 space-y-1">
+                                        <li>1. Температура артқанда не байқадыңыз?</li>
+                                        <li>2. Молекулалардың соқтығысу жиілігі қалай өзгерді?</li>
+                                        <li>3. Қысым өзгеруінің себебі неде?</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
+                                <h3 class="font-bold text-yellow-800 mb-3">📊 Нәтижелер</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="bg-white p-2 rounded flex justify-between">
+                                        <span>Соқтығысу саны:</span>
+                                        <span id="collisionCount">0</span>
+                                    </div>
+                                    <div class="bg-white p-2 rounded flex justify-between">
+                                        <span>Орташа энергия:</span>
+                                        <span id="avgEnergy">6.21×10⁻²¹ Дж</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                <h3 class="font-bold text-blue-800 mb-3">🎯 Тапсырма</h3>
+                                <p class="text-gray-700 text-sm">
+                                    Температураны 200K-ден 800K-ге дейін өзгертіп, молекулалардың 
+                                    жылдамдығының өзгеруін кестеге толтырыңыз және график салыңыз.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 11: Thinking Tasks 1
+            {
+                title: "Ойлануға арналған тапсырмалар - 1",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Аналитикалық ойлау тапсырмалары</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+                            <h3 class="font-bold text-blue-800 mb-4">🤔 Тапсырма 1: "Не болады егер...?"</h3>
+                            <p class="text-gray-700 mb-4">
+                                <strong>Жағдай:</strong> Егер Жердегі ауырлық күші 2 есе артса, газдардың қасиеттері қалай өзгерер еді?
+                            </p>
+                            <div class="bg-white p-4 rounded-lg">
+                                <h4 class="font-semibold text-gray-800 mb-2">Талдау бағыттары:</h4>
+                                <ul class="text-gray-700 space-y-1">
+                                    <li>• Атмосфералық қысымның өзгеруі</li>
+                                    <li>• Газдардың тығыздығына әсері</li>
+                                    <li>• Молекулалардың қозғалысына әсері</li>
+                                    <li>• Диффузия жылдамдығының өзгеруі</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+                            <h3 class="font-bold text-green-800 mb-4">🔬 Тапсырма 2: Салыстырмалы талдау</h3>
+                            <p class="text-gray-700 mb-4">
+                                <strong>Мәселе:</strong> Неліктен сұйық азот (-196°C) ауада тез буланады, ал мұз (0°C) баяу ериді?
+                            </p>
+                            <div class="bg-white p-4 rounded-lg">
+                                <h4 class="font-semibold text-gray-800 mb-2">Бағалау критерийлері:</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p class="font-semibold text-green-700">Өте жақсы (9-10 балл):</p>
+                                        <p class="text-gray-600">Температура айырмасы, молекулалардың энергиясы, фазалық ауысулар туралы толық түсініктеме</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-blue-700">Жақсы (7-8 балл):</p>
+                                        <p class="text-gray-600">Негізгі ұғымдарды түсіндіреді, кейбір дәлелдемелер келтіреді</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-yellow-700">Орташа (5-6 балл):</p>
+                                        <p class="text-gray-600">Температура айырмасын атайды, бірақ молекулалық деңгейде түсіндірмейді</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-red-700">Төмен (1-4 балл):</p>
+                                        <p class="text-gray-600">Жауап толық емес немесе қате түсініктемелер бар</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 11: Thinking Tasks 2
+            {
+                title: "Ойлануға арналған тапсырмалар - 2",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Синтез және бағалау тапсырмалары</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="font-bold text-purple-800 mb-4">🧠 Тапсырма 3: Гипотеза құру</h3>
+                            <p class="text-gray-700 mb-4">
+                                <strong>Мәселе:</strong> Ғарыш кемесінде газдардың қасиеттері Жердегіден қалай ерекшеленеді? 
+                                Өз гипотезаңызды құрып, дәлелдеңіз.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-semibold text-purple-700 mb-2">Қарастыратын факторлар:</h4>
+                                    <ul class="text-gray-700 space-y-1 text-sm">
+                                        <li>• Ауырлық күшінің жоқтығы</li>
+                                        <li>• Қысымның өзгеруі</li>
+                                        <li>• Конвекцияның болмауы</li>
+                                        <li>• Температураның таралуы</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-semibold text-purple-700 mb-2">Бағалау шкаласы:</h4>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <span>Гипотеза дұрыстығы:</span>
+                                            <span class="text-purple-600">0-4 балл</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Дәлелдемелер:</span>
+                                            <span class="text-purple-600">0-3 балл</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Қорытынды:</span>
+                                            <span class="text-purple-600">0-3 балл</span>
+                                        </div>
+                                        <div class="flex justify-between font-semibold">
+                                            <span>Жалпы:</span>
+                                            <span class="text-purple-600">0-10 балл</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-orange-50 p-6 rounded-lg border-l-4 border-orange-500">
+                            <h3 class="font-bold text-orange-800 mb-4">⚖️ Тапсырма 4: Критикалық бағалау</h3>
+                            <p class="text-gray-700 mb-4">
+                                <strong>Дау-дамай:</strong> "Идеал газ моделі шынайы газдарды толық сипаттайды" - бұл пікірді бағалаңыз.
+                            </p>
+                            <div class="bg-white p-4 rounded-lg">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h4 class="font-semibold text-green-700 mb-2">👍 Артықшылықтары:</h4>
+                                        <p class="text-gray-600 text-sm">Идеал газ моделінің қолданылу аясы мен дәлдігін талдаңыз</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-red-700 mb-2">👎 Кемшіліктері:</h4>
+                                        <p class="text-gray-600 text-sm">Шынайы газдардан айырмашылықтары мен шектеулерін көрсетіңіз</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 12: Practical Work
+            {
+                title: "Практикалық тәжірибе",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Лабораториялық жұмыс: "Газ қысымы мен температураның байланысы"</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                <h3 class="font-bold text-blue-800 mb-3">🎯 Мақсаты</h3>
+                                <p class="text-gray-700">Газ қысымының температураға тәуелділігін тәжірибе арқылы дәлелдеу</p>
+                            </div>
+                            
+                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                                <h3 class="font-bold text-green-800 mb-3">🔧 Құрал-жабдықтар</h3>
+                                <ul class="text-gray-700 space-y-1">
+                                    <li>• Шыны түтік (капилляр)</li>
+                                    <li>• Сынап немесе су</li>
+                                    <li>• Термометр</li>
+                                    <li>• Сызғыш</li>
+                                    <li>• Қыздыру құрылғысы</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                                <h3 class="font-bold text-red-800 mb-3">⚠️ Қауіпсіздік</h3>
+                                <ul class="text-gray-700 space-y-1 text-sm">
+                                    <li>• Шыны ыдыстарды сақтықпен ұстаңыз</li>
+                                    <li>• Қыздыру кезінде қолғап киіңіз</li>
+                                    <li>• Сынапты тікелей қолмен ұстамаңыз</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                                <h3 class="font-bold text-purple-800 mb-3">📋 Орындау тәртібі</h3>
+                                <ol class="text-gray-700 space-y-2 text-sm">
+                                    <li><strong>1.</strong> Түтікті сұйықпен толтырыңыз</li>
+                                    <li><strong>2.</strong> Бастапқы температура мен қысымды өлшеңіз</li>
+                                    <li><strong>3.</strong> Температураны 10°C-қа арттырыңыз</li>
+                                    <li><strong>4.</strong> Жаңа қысым мәнін жазыңыз</li>
+                                    <li><strong>5.</strong> 3-4 қадамдарды 5 рет қайталаңыз</li>
+                                    <li><strong>6.</strong> Деректерді кестеге толтырыңыз</li>
+                                </ol>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
+                                <h3 class="font-bold text-yellow-800 mb-3">❓ Бақылау сұрақтары</h3>
+                                <ol class="text-gray-700 space-y-1 text-sm">
+                                    <li>1. Температура артқан сайын қысым қалай өзгерді?</li>
+                                    <li>2. P/T қатынасы тұрақты ма?</li>
+                                    <li>3. Бұл нәтиже қай заңды дәлелдейді?</li>
+                                    <li>4. Тәжірибедегі қателіктердің себептері?</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg mt-4">
+                        <h3 class="font-bold text-gray-800 mb-2">📊 Күтілетін нәтиже</h3>
+                        <p class="text-gray-700">P₁/T₁ = P₂/T₂ = const (Гей-Люссак заңы)</p>
+                    </div>
+                `
+            },
+            // Slide 13: Quiz
+            {
+                title: "Интерактивті викторина",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">МКТ бойынша викторина</h2>
+                    <div id="quizContainer">
+                        <div id="quizContent">
+                            <div class="space-y-6">
+                                <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+                                    <h3 class="font-bold text-blue-800 mb-4">1. МКТ-тің неше негізгі қағидасы бар?</h3>
+                                    <div class="space-y-2">
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(0, 0)">А. 2</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(0, 1)">Б. 3</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(0, 2)">В. 4</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(0, 3)">Г. 5</button>
+                                    </div>
+                                    <div class="mt-4 hidden" id="feedback-0">
+                                        <div class="p-3 rounded-lg" id="feedback-content-0"></div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+                                    <h3 class="font-bold text-green-800 mb-4">2. Идеал газ теңдеуі қандай?</h3>
+                                    <div class="space-y-2">
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(1, 0)">А. PV = nRT</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(1, 1)">Б. PV = RT</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(1, 2)">В. P = nRT</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(1, 3)">Г. V = nRT</button>
+                                    </div>
+                                    <div class="mt-4 hidden" id="feedback-1">
+                                        <div class="p-3 rounded-lg" id="feedback-content-1"></div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
+                                    <h3 class="font-bold text-purple-800 mb-4">3. Температура артқан сайын газ молекулаларының жылдамдығы:</h3>
+                                    <div class="space-y-2">
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(2, 0)">А. Кемиді</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(2, 1)">Б. Артады</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(2, 2)">В. Өзгермейді</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(2, 3)">Г. Алдымен артады, содан кемиді</button>
+                                    </div>
+                                    <div class="mt-4 hidden" id="feedback-2">
+                                        <div class="p-3 rounded-lg" id="feedback-content-2"></div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-orange-50 p-6 rounded-lg border-l-4 border-orange-500">
+                                    <h3 class="font-bold text-orange-800 mb-4">4. Больцман тұрақтысының мәні:</h3>
+                                    <div class="space-y-2">
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(3, 0)">А. 1.38 × 10⁻²³ Дж/К</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(3, 1)">Б. 8.314 Дж/(моль·К)</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(3, 2)">В. 6.022 × 10²³</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(3, 3)">Г. 9.8 м/с²</button>
+                                    </div>
+                                    <div class="mt-4 hidden" id="feedback-3">
+                                        <div class="p-3 rounded-lg" id="feedback-content-3"></div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-red-50 p-6 rounded-lg border-l-4 border-red-500">
+                                    <h3 class="font-bold text-red-800 mb-4">5. Бір атомды идеал газдың ішкі энергиясы:</h3>
+                                    <div class="space-y-2">
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(4, 0)">А. U = nRT</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(4, 1)">Б. U = (3/2)nRT</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(4, 2)">В. U = (5/2)nRT</button>
+                                        <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" onclick="selectAnswer(4, 3)">Г. U = 2nRT</button>
+                                    </div>
+                                    <div class="mt-4 hidden" id="feedback-4">
+                                        <div class="p-3 rounded-lg" id="feedback-content-4"></div>
+                                    </div>
+                                </div>
+
+                                <div class="text-center mt-8">
+                                    <button id="checkQuizBtn" class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold disabled:opacity-50" onclick="checkQuiz()" disabled>
+                                        Тексеру
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="quizResult" class="hidden mt-6 p-6 rounded-lg text-center">
+                            <h3 class="text-2xl font-bold mb-4">Викторина аяқталды!</h3>
+                            <div class="text-6xl mb-4" id="resultEmoji">🎉</div>
+                            <div class="text-3xl font-bold mb-2" id="finalScore">0/5</div>
+                            <div class="text-lg text-gray-600" id="resultMessage"></div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 14: Quiz Analysis
+            {
+                title: "Викторина талдауы",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Викторина жауаптарының талдауы</h2>
+                    
+                    <div class="space-y-6" id="quizAnalysis">
+                        <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+                            <h3 class="font-bold text-blue-800 mb-4">📊 Жалпы статистика</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-blue-600" id="correctCount">0</div>
+                                    <p class="text-gray-600">Дұрыс жауап</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-red-600" id="incorrectCount">0</div>
+                                    <p class="text-gray-600">Қате жауап</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-green-600" id="accuracyPercent">0%</div>
+                                    <p class="text-gray-600">Дәлдік</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+                            <h3 class="font-bold text-green-800 mb-4">💡 Ұсыныстар</h3>
+                            <div id="recommendations" class="space-y-2 text-gray-700">
+                                <!-- Recommendations will be inserted based on quiz results -->
+                            </div>
+                        </div>
+                        
+                        <div class="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="font-bold text-purple-800 mb-4">📚 Қосымша оқу материалдары</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-semibold text-purple-700 mb-2">Негізгі тақырыптар:</h4>
+                                    <ul class="text-gray-700 space-y-1 text-sm">
+                                        <li>• МКТ постулаттары</li>
+                                        <li>• Идеал газ теңдеуі</li>
+                                        <li>• Температура мен энергия</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-purple-700 mb-2">Практикалық дағдылар:</h4>
+                                    <ul class="text-gray-700 space-y-1 text-sm">
+                                        <li>• Есеп шығару</li>
+                                        <li>• Формулаларды қолдану</li>
+                                        <li>• Графиктерді талдау</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 15: Conclusion
+            {
+                title: "Қорытынды",
+                content: `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Сабақтың қорытындысы</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-lg">
+                            <h3 class="font-bold text-xl mb-4">🎯 Негізгі тұжырымдар</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <ul class="space-y-2">
+                                    <li>✅ МКТ-тің 3 негізгі постулаты</li>
+                                    <li>✅ Идеал газ теңдеуі: PV = nRT</li>
+                                    <li>✅ Температура мен кинетикалық энергия байланысы</li>
+                                </ul>
+                                <ul class="space-y-2">
+                                    <li>✅ Газ молекулаларының қозғалыс сипаттамалары</li>
+                                    <li>✅ Ішкі энергия формуласы</li>
+                                    <li>✅ Практикалық есеп шығару дағдылары</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+                                <h3 class="font-bold text-green-800 mb-4">📚 Ұсынылатын әдебиеттер</h3>
+                                <div class="space-y-3 text-gray-700">
+                                    <div class="bg-white p-3 rounded">
+                                        <p class="font-semibold">1. Н.А. Закирова, Р.Р. Аширов</p>
+                                        <p class="text-sm">"Физика" 10 сынып, 2-бөлім</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded">
+                                        <p class="font-semibold">2. Б.А. Кронгарт</p>
+                                        <p class="text-sm">"Физика" оқулығы, жылу физикасы</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded">
+                                        <p class="font-semibold">3. Интернет ресурстар</p>
+                                        <p class="text-sm">bilimland.kz, physics.kz</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+                                <h3 class="font-bold text-blue-800 mb-4">🎓 Оқушыларға ұсыныстар</h3>
+                                <div class="space-y-3 text-gray-700">
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-blue-600 font-bold">1.</span>
+                                        <p>Формулаларды жаттап қана қоймай, физикалық мағынасын түсініңіз</p>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-blue-600 font-bold">2.</span>
+                                        <p>Күнделікті өмірдегі мысалдармен байланыстырыңыз</p>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-blue-600 font-bold">3.</span>
+                                        <p>Есептерді қадамдап шығаруды үйреніңіз</p>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-blue-600 font-bold">4.</span>
+                                        <p>Тәжірибелер жасап, теорияны практикамен дәлелдеңіз</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-500 text-center">
+                            <h3 class="font-bold text-yellow-800 mb-2">🌟 Сәттілік тілейміз!</h3>
+                            <p class="text-gray-700">МКТ негіздерін меңгеру - жылу физикасын түсінудің кілті!</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // Quiz data
+        const quizData = [
+            {
+                question: "МКТ-тің неше негізгі постулаты бар?",
+                options: ["2", "3", "4", "5"],
+                correct: 1,
+                explanation: "МКТ-тің 3 негізгі постулаты бар: молекулалық құрылым, үздіксіз қозғалыс, молекулалар арасындағы әрекеттесу."
+            },
+            {
+                question: "Идеал газ теңдеуі қандай?",
+                options: ["PV = nRT", "PV = RT", "P = nRT", "V = nRT"],
+                correct: 0,
+                explanation: "Идеал газ теңдеуі PV = nRT, мұндағы P-қысым, V-көлем, n-зат мөлшері, R-газ тұрақтысы, T-температура."
+            },
+            {
+                question: "Температура артқан сайын газ молекулаларының жылдамдығы:",
+                options: ["Кемиді", "Артады", "Өзгермейді", "Алдымен артады, содан кемиді"],
+                correct: 1,
+                explanation: "Температура артқан сайын молекулалардың орташа кинетикалық энергиясы артады, сондықтан жылдамдығы да артады."
+            },
+            {
+                question: "Больцман тұрақтысының мәні:",
+                options: ["1.38 × 10⁻²³ Дж/К", "8.314 Дж/(моль·К)", "6.022 × 10²³", "9.8 м/с²"],
+                correct: 0,
+                explanation: "Больцман тұрақтысы k = 1.38 × 10⁻²³ Дж/К, ол температура мен энергияны байланыстырады."
+            },
+            {
+                question: "Бір атомды идеал газдың ішкі энергиясы:",
+                options: ["U = nRT", "U = (3/2)nRT", "U = (5/2)nRT", "U = 2nRT"],
+                correct: 1,
+                explanation: "Бір атомды идеал газдың ішкі энергиясы U = (3/2)nRT, себебі еркіндік дәрежесі f = 3."
+            }
+        ];
+
+        // Current slide index
+        let currentSlide = 0;
+        let quizAnswers = [];
+        let quizCompleted = false;
+
+        // Initialize presentation
+        function init() {
+            renderSlide(currentSlide);
+            updateNavigation();
+            updateProgress();
+        }
+
+        // Render slide
+        function renderSlide(index) {
+            const container = document.getElementById('slidesContainer');
+            const slide = slidesData[index];
+            
+            container.innerHTML = `
+                <div class="slide active">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">${slide.title}</h1>
+                    ${slide.content}
+                </div>
+            `;
+
+            // If this is the quiz slide, initialize quiz
+            if (index === 12) {
+                initializeQuiz();
+            }
+
+            // If this is the analysis slide, show analysis
+            if (index === 13) {
+                showQuizAnalysis();
+            }
+        }
+
+        // Initialize quiz
+        function initializeQuiz() {
+            const quizContent = document.getElementById('quizContent');
+            quizAnswers = [];
+            
+            let quizHTML = '';
+            quizData.forEach((q, index) => {
+                quizHTML += `
+                    <div class="mb-8 p-6 bg-gray-50 rounded-lg" id="question-${index}">
+                        <h3 class="text-lg font-semibold mb-4">${index + 1}. ${q.question}</h3>
+                        <div class="space-y-2">
+                            ${q.options.map((option, optIndex) => `
+                                <button class="quiz-option w-full p-3 text-left bg-white border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors" 
+                                        onclick="selectAnswer(${index}, ${optIndex})">
+                                    ${String.fromCharCode(65 + optIndex)}. ${option}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div class="mt-4 hidden" id="feedback-${index}">
+                            <div class="p-3 rounded-lg" id="feedback-content-${index}"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            quizHTML += `
+                <div class="text-center mt-8">
+                    <button id="checkQuizBtn" class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold disabled:opacity-50" 
+                            onclick="checkQuiz()" disabled>
+                        Тексеру
+                    </button>
+                </div>
+            `;
+            
+            quizContent.innerHTML = quizHTML;
+        }
+
+        // Select quiz answer
+        function selectAnswer(questionIndex, optionIndex) {
+            // Remove previous selection
+            const questionDiv = document.getElementById(`question-${questionIndex}`);
+            const options = questionDiv.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.classList.remove('bg-blue-200', 'border-blue-500');
+            });
+            
+            // Add selection to clicked option
+            options[optionIndex].classList.add('bg-blue-200', 'border-blue-500');
+            
+            // Store answer
+            quizAnswers[questionIndex] = optionIndex;
+            
+            // Enable check button if all questions answered
+            if (quizAnswers.length === quizData.length && quizAnswers.every(a => a !== undefined)) {
+                document.getElementById('checkQuizBtn').disabled = false;
+            }
+        }
+
+        // Check quiz answers
+        function checkQuiz() {
+            let correctCount = 0;
+            
+            quizData.forEach((q, index) => {
+                const userAnswer = quizAnswers[index];
+                const isCorrect = userAnswer === q.correct;
+                
+                if (isCorrect) correctCount++;
+                
+                // Show feedback
+                const feedbackDiv = document.getElementById(`feedback-${index}`);
+                const feedbackContent = document.getElementById(`feedback-content-${index}`);
+                
+                feedbackDiv.classList.remove('hidden');
+                
+                if (isCorrect) {
+                    feedbackContent.className = 'p-3 rounded-lg bg-green-100 border border-green-300';
+                    feedbackContent.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <span class="text-green-600 text-xl">✅</span>
+                            <span class="text-green-800 font-semibold">Дұрыс!</span>
+                        </div>
+                        <p class="text-green-700 mt-1">${q.explanation}</p>
+                    `;
+                } else {
+                    feedbackContent.className = 'p-3 rounded-lg bg-red-100 border border-red-300';
+                    feedbackContent.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <span class="text-red-600 text-xl">❌</span>
+                            <span class="text-red-800 font-semibold">Қате!</span>
+                        </div>
+                        <p class="text-red-700 mt-1">Дұрыс жауабы: ${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}</p>
+                        <p class="text-red-700 mt-1">${q.explanation}</p>
+                    `;
+                }
+                
+                // Highlight correct/incorrect options
+                const questionDiv = document.getElementById(`question-${index}`);
+                const options = questionDiv.querySelectorAll('.quiz-option');
+                options.forEach((opt, optIndex) => {
+                    if (optIndex === q.correct) {
+                        opt.classList.add('correct');
+                    } else if (optIndex === userAnswer && userAnswer !== q.correct) {
+                        opt.classList.add('incorrect');
+                    }
+                    opt.disabled = true;
+                });
+            });
+            
+            // Show result
+            const resultDiv = document.getElementById('quizResult');
+            const finalScore = document.getElementById('finalScore');
+            const resultMessage = document.getElementById('resultMessage');
+            const resultEmoji = document.getElementById('resultEmoji');
+            
+            finalScore.textContent = `${correctCount}/5`;
+            
+            if (correctCount === 5) {
+                resultEmoji.textContent = '🏆';
+                resultMessage.textContent = 'Керемет! Барлық сұрақтарға дұрыс жауап бердіңіз!';
+                resultDiv.className = 'mt-6 p-6 rounded-lg text-center bg-green-100 border border-green-300';
+            } else if (correctCount >= 3) {
+                resultEmoji.textContent = '👍';
+                resultMessage.textContent = 'Жақсы нәтиже! Бірақ кейбір тақырыптарды қайталау керек.';
+                resultDiv.className = 'mt-6 p-6 rounded-lg text-center bg-yellow-100 border border-yellow-300';
+            } else {
+                resultEmoji.textContent = '📚';
+                resultMessage.textContent = 'МКТ тақырыбын қайталап, қосымша дайындалыңыз.';
+                resultDiv.className = 'mt-6 p-6 rounded-lg text-center bg-red-100 border border-red-300';
+            }
+            
+            resultDiv.classList.remove('hidden');
+            document.getElementById('checkQuizBtn').style.display = 'none';
+            document.getElementById('resetQuiz').classList.remove('hidden');
+            
+            quizCompleted = true;
+            
+            // Store results for analysis
+            window.quizResults = {
+                correct: correctCount,
+                total: quizData.length,
+                answers: quizAnswers
+            };
+        }
+
+        // Show quiz analysis
+        function showQuizAnalysis() {
+            if (!window.quizResults) {
+                document.getElementById('quizAnalysis').innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-gray-600">Алдымен викторинаны аяқтаңыз</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const results = window.quizResults;
+            const accuracy = Math.round((results.correct / results.total) * 100);
+            
+            document.getElementById('correctCount').textContent = results.correct;
+            document.getElementById('incorrectCount').textContent = results.total - results.correct;
+            document.getElementById('accuracyPercent').textContent = accuracy + '%';
+            
+            // Generate recommendations
+            const recommendations = document.getElementById('recommendations');
+            let recHTML = '';
+            
+            if (accuracy >= 80) {
+                recHTML = `
+                    <p>🎉 Өте жақсы нәтиже! МКТ негіздерін жақсы меңгергенсіз.</p>
+                    <p>📈 Келесі тақырыптарға көшуге дайынсыз.</p>
+                `;
+            } else if (accuracy >= 60) {
+                recHTML = `
+                    <p>👍 Жақсы нәтиже, бірақ кейбір тақырыптарды қайталаңыз:</p>
+                    <p>📚 Идеал газ теңдеуі мен формулаларды қайталаңыз.</p>
+                    <p>🔬 Практикалық есептер шығарыңыз.</p>
+                `;
+            } else {
+                recHTML = `
+                    <p>📖 МКТ негіздерін толық қайталау қажет:</p>
+                    <p>🎯 Постулаттарды жаттаңыз және түсініңіз.</p>
+                    <p>📐 Формулаларды үйреніп, есептер шығарыңыз.</p>
+                    <p>👨‍🏫 Мұғаліммен қосымша кеңесіңіз.</p>
+                `;
+            }
+            
+            recommendations.innerHTML = recHTML;
+        }
+
+        // Navigation functions
+        function nextSlide() {
+            if (currentSlide < slidesData.length - 1) {
+                currentSlide++;
+                renderSlide(currentSlide);
+                updateNavigation();
+                updateProgress();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                renderSlide(currentSlide);
+                updateNavigation();
+                updateProgress();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            renderSlide(currentSlide);
+            updateNavigation();
+            updateProgress();
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slidesData.length - 1;
+        }
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / slidesData.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${slidesData.length}`;
+        }
+
+        // Event listeners
+        document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        document.getElementById('prevBtn').addEventListener('click', prevSlide);
+        document.getElementById('homeBtn').addEventListener('click', () => goToSlide(0));
+        document.getElementById('resetQuiz').addEventListener('click', () => {
+            quizCompleted = false;
+            window.quizResults = null;
+            document.getElementById('resetQuiz').classList.add('hidden');
+            goToSlide(12);
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'Home') goToSlide(0);
+        });
+
+        // 3D Animation functions
+        let animationRunning = false;
+        let molecules = [];
+        let canvas, ctx;
+        let collisions = 0;
+
+        function startAnimation() {
+            if (animationRunning) return;
+            
+            canvas = document.getElementById('moleculeCanvas');
+            ctx = canvas.getContext('2d');
+            canvas.classList.remove('hidden');
+            document.querySelector('#moleculeAnimation .text-white').style.display = 'none';
+            
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            // Initialize molecules
+            molecules = [];
+            for (let i = 0; i < 20; i++) {
+                molecules.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    radius: 3 + Math.random() * 2,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+                });
+            }
+            
+            animationRunning = true;
+            collisions = 0;
+            animate();
+        }
+
+        function animate() {
+            if (!animationRunning) return;
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const temp = parseInt(document.getElementById('tempSlider').value);
+            const speedMultiplier = temp / 300;
+            
+            // Update molecules
+            molecules.forEach(molecule => {
+                molecule.x += molecule.vx * speedMultiplier;
+                molecule.y += molecule.vy * speedMultiplier;
+                
+                // Bounce off walls
+                if (molecule.x <= molecule.radius || molecule.x >= canvas.width - molecule.radius) {
+                    molecule.vx *= -1;
+                    collisions++;
+                }
+                if (molecule.y <= molecule.radius || molecule.y >= canvas.height - molecule.radius) {
+                    molecule.vy *= -1;
+                    collisions++;
+                }
+                
+                // Keep in bounds
+                molecule.x = Math.max(molecule.radius, Math.min(canvas.width - molecule.radius, molecule.x));
+                molecule.y = Math.max(molecule.radius, Math.min(canvas.height - molecule.radius, molecule.y));
+                
+                // Draw molecule
+                ctx.beginPath();
+                ctx.arc(molecule.x, molecule.y, molecule.radius, 0, Math.PI * 2);
+                ctx.fillStyle = molecule.color;
+                ctx.fill();
+                
+                // Add glow effect
+                ctx.shadowColor = molecule.color;
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+            
+            // Update displays
+            document.getElementById('collisionCount').textContent = collisions;
+            const avgEnergy = (1.38e-23 * temp * 1.5).toExponential(2);
+            document.getElementById('avgEnergy').textContent = avgEnergy + ' Дж';
+            
+            requestAnimationFrame(animate);
+        }
+
+        // Temperature slider handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const tempSlider = document.getElementById('tempSlider');
+            const tempDisplay = document.getElementById('tempDisplay');
+            const speedDisplay = document.getElementById('speedDisplay');
+            
+            if (tempSlider) {
+                tempSlider.addEventListener('input', function() {
+                    const temp = parseInt(this.value);
+                    tempDisplay.textContent = temp + 'K';
+                    
+                    // Calculate RMS speed for N2 at this temperature
+                    const M = 0.028; // kg/mol for N2
+                    const R = 8.314;
+                    const speed = Math.sqrt(3 * R * temp / M);
+                    speedDisplay.textContent = Math.round(speed) + ' м/с';
+                });
+            }
+        });
+
+        // Make functions global for onclick handlers
+        window.selectAnswer = selectAnswer;
+        window.checkQuiz = checkQuiz;
+        window.startAnimation = startAnimation;
+
+        // Initialize presentation
+        init();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9848da7b2237ece9',t:'MTc1ODc4NTgxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
