@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сессияға дайындық қосымшасы</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .input-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .input-column label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-column textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-column textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #333;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .qa-list {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .qa-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+        }
+        
+        .qa-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .question {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .answer {
+            color: #666;
+            font-style: italic;
+        }
+        
+        .save-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .save-section input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .saved-sets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .set-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e1e5e9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .set-card:hover {
+            border-color: #4facfe;
+            transform: translateY(-2px);
+        }
+        
+        .set-card h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .set-card p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .study-mode {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: scale(1.02);
+        }
+        
+        .card-content {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .quiz-option {
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .quiz-option:hover {
+            border-color: #4facfe;
+        }
+        
+        .quiz-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .quiz-option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .progress-bar {
+            background: #e1e5e9;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .results {
+            text-align: center;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+        
+        .study-notes {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .note-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+        }
+        
+        .note-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .note-content {
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="position: absolute; top: 20px; left: 20px; font-size: 12px; color: #666; z-index: 10; line-height: 1.4;">
+            Автор: Аскеров Алмас<br>
+            © Аскеров Алмас. Барлық құқықтар қорғалған.
+        </div>
+        
+        <div class="header">
+            <h1>📚 Сессияға дайындық қосымшасы</h1>
+        </div>
+        
+        <div class="main-content">
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="showSection('create')">Сұрақ жасау</button>
+                <button class="nav-btn" onclick="showSection('study')">Мәліметтерді оқу</button>
+                <button class="nav-btn" onclick="showSection('flashcards')">Карточкалар</button>
+                <button class="nav-btn" onclick="showSection('quiz')">Викторина</button>
+                <button class="nav-btn" onclick="showSection('test')">Тест</button>
+            </div>
+            
+            <!-- Сұрақ жасау бөлімі -->
+            <div id="create" class="section active">
+                <h2>Сұрақ-жауап жасау</h2>
+                
+                <!-- Жеке сұрақ қосу -->
+                <div class="input-group">
+                    <div class="input-column">
+                        <label for="question">Сұрақ:</label>
+                        <textarea id="question" placeholder="Сұрағыңызды жазыңыз..."></textarea>
+                    </div>
+                    <div class="input-column">
+                        <label for="answer">Жауап:</label>
+                        <textarea id="answer" placeholder="Жауабын жазыңыз..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="addQA()">Тіркеу</button>
+                    <button class="btn btn-warning" onclick="clearInputs()">Тазалау</button>
+                </div>
+                
+
+
+
+
+                <!-- Еркін формат енгізу -->
+                <div style="margin: 30px 0; padding: 20px; background: #e8f5e8; border-radius: 10px;">
+                    <h3>Еркін формат енгізу</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Сұрақ пен жауапты бір мәтінде енгізіңіз. "Жауап:" сөзі арқылы бөлінеді.</p>
+                    <div style="margin-bottom: 15px;">
+                        <label for="freeFormat" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Сұрақ-жауаптар:</label>
+                        <textarea id="freeFormat" placeholder="1. Педагогикалық технология ұғымына жалпы түсінік&#10;Жауап: Педагогикалық технология – оқу мен тәрбиенің тиімділігін арттыруға бағытталған...&#10;&#10;2. Келесі сұрақ&#10;Жауап: Келесі жауап..." style="width: 100%; height: 200px; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 14px; resize: vertical;"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="addFreeFormatQA()">Еркін форматты тіркеу</button>
+                        <button class="btn btn-warning" onclick="clearFreeFormat()">Тазалау</button>
+                    </div>
+                </div>
+                
+                <div class="qa-list" id="qaList"></div>
+                
+                <div class="save-section">
+                    <h3>Сақтау</h3>
+                    <input type="text" id="setName" placeholder="Топтама атауын жазыңыз...">
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="saveSet()">Сақтау</button>
+                        <button class="btn btn-primary" onclick="downloadAsWord()">📄 Word жүктеу</button>
+                    </div>
+                </div>
+                
+                <div class="saved-sets" id="savedSets"></div>
+            </div>
+            
+            <!-- Мәліметтерді оқу бөлімі -->
+            <div id="study" class="section">
+                <h2>Мәліметтерді оқу</h2>
+                <div class="study-notes" id="studyNotes">
+                    <p>Алдымен сұрақ-жауап топтамасын таңдаңыз немесе жасаңыз.</p>
+                </div>
+            </div>
+            
+            <!-- Карточкалар бөлімі -->
+            <div id="flashcards" class="section">
+                <h2>Карточкалар режимі</h2>
+                <div class="study-mode">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="flashcardProgress"></div>
+                    </div>
+                    <div class="card" id="flashcard" onclick="flipCard()">
+                        <div class="card-content" id="flashcardContent">
+                            Топтама таңдаңыз
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="prevCard()">⬅ Алдыңғы</button>
+                        <button class="btn btn-primary" onclick="flipCard()">Аудару</button>
+                        <button class="btn btn-primary" onclick="nextCard()">Келесі ➡</button>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-warning" onclick="shuffleCards()">Араластыру</button>
+                        <button class="btn btn-success" onclick="resetCards()">Қайта бастау</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Викторина бөлімі -->
+            <div id="quiz" class="section">
+                <h2>Викторина режимі</h2>
+                <div class="study-mode">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="quizProgress"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content" id="quizQuestion">
+                            Топтама таңдаңыз
+                        </div>
+                    </div>
+                    <div class="quiz-options" id="quizOptions"></div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="nextQuiz()">Келесі сұрақ</button>
+                        <button class="btn btn-success" onclick="finishQuiz()">Аяқтау</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Тест бөлімі -->
+            <div id="test" class="section">
+                <h2>Тест режимі</h2>
+                <div class="study-mode">
+                    <div id="testQuestions"></div>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="submitTest()">Тестті тапсыру</button>
+                        <button class="btn btn-warning" onclick="resetTest()">Қайта бастау</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Нәтижелер -->
+            <div class="results" id="results" style="display: none;">
+                <div class="score" id="scoreDisplay">0%</div>
+                <p id="scoreText">Нәтиже</p>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="reviewMistakes()">Қателерді қарау</button>
+                    <button class="btn btn-success" onclick="hideResults()">Жабу</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQAs = [];
+        let savedSets = JSON.parse(localStorage.getItem('studySets')) || {};
+        let currentSet = null;
+        
+        // Карточкалар үшін айнымалылар
+        let currentCardIndex = 0;
+        let isFlipped = false;
+        let shuffledCards = [];
+        
+        // Викторина үшін айнымалылар
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let quizAnswers = [];
+        let wrongAnswers = [];
+        
+        // Тест үшін айнымалылар
+        let testAnswers = {};
+        
+        function showSection(sectionId) {
+            // Барлық бөлімдерді жасыру
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Барлық батырмалардан active класын алып тастау
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Таңдалған бөлімді көрсету
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Нәтижелерді жасыру
+            document.getElementById('results').style.display = 'none';
+            
+            // Бөлім ауысқанда мәліметтерді жаңарту
+            if (sectionId === 'study') {
+                updateStudyNotes();
+            } else if (sectionId === 'flashcards') {
+                initFlashcards();
+            } else if (sectionId === 'quiz') {
+                initQuiz();
+            } else if (sectionId === 'test') {
+                initTest();
+            }
+            
+            updateSavedSets();
+        }
+        
+        function addQA() {
+            const question = document.getElementById('question').value.trim();
+            const answer = document.getElementById('answer').value.trim();
+            
+            if (!question || !answer) {
+                alert('Сұрақ пен жауапты толтырыңыз!');
+                return;
+            }
+            
+            currentQAs.push({ question, answer });
+            updateQAList();
+            clearInputs();
+        }
+        
+        function clearInputs() {
+            document.getElementById('question').value = '';
+            document.getElementById('answer').value = '';
+        }
+        
+
+        
+        function addFreeFormatQA() {
+            const freeText = document.getElementById('freeFormat').value.trim();
+            
+            if (!freeText) {
+                alert('Мәтінді енгізіңіз!');
+                return;
+            }
+            
+            // Мәтінді "Жауап:" арқылы бөлу
+            const sections = freeText.split(/(?=\d+\.)/);
+            let addedCount = 0;
+            
+            sections.forEach(section => {
+                section = section.trim();
+                if (!section) return;
+                
+                // "Жауап:" сөзін іздеу
+                const answerIndex = section.search(/жауап\s*:/i);
+                
+                if (answerIndex !== -1) {
+                    // Сұрақ бөлігі
+                    let question = section.substring(0, answerIndex).trim();
+                    // Жауап бөлігі
+                    let answer = section.substring(answerIndex).replace(/жауап\s*:\s*/i, '').trim();
+                    
+                    // Сұрақтан нөмірді алып тастау
+                    question = question.replace(/^\d+\.\s*/, '');
+                    
+                    if (question && answer) {
+                        currentQAs.push({ question, answer });
+                        addedCount++;
+                    }
+                }
+            });
+            
+            if (addedCount > 0) {
+                updateQAList();
+                clearFreeFormat();
+                alert(`${addedCount} сұрақ-жауап тіркелді!`);
+            } else {
+                alert('Дұрыс формат табылмады! "Жауап:" сөзін қолданыңыз.');
+            }
+        }
+        
+        function clearFreeFormat() {
+            document.getElementById('freeFormat').value = '';
+        }
+        
+        function updateQAList() {
+            const qaList = document.getElementById('qaList');
+            qaList.innerHTML = '';
+            
+            currentQAs.forEach((qa, index) => {
+                const qaItem = document.createElement('div');
+                qaItem.className = 'qa-item';
+                qaItem.innerHTML = `
+                    <div class="question">Сұрақ ${index + 1}: ${qa.question}</div>
+                    <div class="answer">Жауап: ${qa.answer}</div>
+                    <button class="btn" style="background: #dc3545; color: white; margin-top: 10px; padding: 5px 10px; font-size: 12px;" onclick="removeQA(${index})">Өшіру</button>
+                `;
+                qaList.appendChild(qaItem);
+            });
+        }
+        
+        function removeQA(index) {
+            currentQAs.splice(index, 1);
+            updateQAList();
+        }
+        
+        function saveSet() {
+            const setName = document.getElementById('setName').value.trim();
+            
+            if (!setName) {
+                alert('Топтама атауын жазыңыз!');
+                return;
+            }
+            
+            if (currentQAs.length === 0) {
+                alert('Сұрақ-жауап қосыңыз!');
+                return;
+            }
+            
+            savedSets[setName] = [...currentQAs];
+            localStorage.setItem('studySets', JSON.stringify(savedSets));
+            
+            document.getElementById('setName').value = '';
+            currentQAs = [];
+            updateQAList();
+            updateSavedSets();
+            
+            alert('Топтама сақталды!');
+        }
+        
+        function updateSavedSets() {
+            const savedSetsDiv = document.getElementById('savedSets');
+            savedSetsDiv.innerHTML = '';
+            
+            Object.keys(savedSets).forEach(setName => {
+                const setCard = document.createElement('div');
+                setCard.className = 'set-card';
+                setCard.innerHTML = `
+                    <h3>${setName}</h3>
+                    <p>${savedSets[setName].length} сұрақ</p>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-primary" style="margin-right: 10px; padding: 5px 10px; font-size: 12px;" onclick="loadSet('${setName}')">Жүктеу</button>
+                        <button class="btn" style="background: #dc3545; color: white; padding: 5px 10px; font-size: 12px;" onclick="deleteSet('${setName}')">Өшіру</button>
+                    </div>
+                `;
+                savedSetsDiv.appendChild(setCard);
+            });
+        }
+        
+        function loadSet(setName) {
+            currentSet = setName;
+            currentQAs = [...savedSets[setName]];
+            updateQAList();
+            alert(`"${setName}" топтамасы жүктелді!`);
+        }
+        
+        function deleteSet(setName) {
+            if (confirm(`"${setName}" топтамасын өшіруді растайсыз ба?`)) {
+                delete savedSets[setName];
+                localStorage.setItem('studySets', JSON.stringify(savedSets));
+                updateSavedSets();
+            }
+        }
+        
+        function updateStudyNotes() {
+            const studyNotes = document.getElementById('studyNotes');
+            
+            if (!currentSet || currentQAs.length === 0) {
+                studyNotes.innerHTML = '<p>Алдымен сұрақ-жауап топтамасын таңдаңыз немесе жасаңыз.</p>';
+                return;
+            }
+            
+            studyNotes.innerHTML = `<h3>📖 ${currentSet} - Конспект</h3>`;
+            
+            currentQAs.forEach((qa, index) => {
+                const noteItem = document.createElement('div');
+                noteItem.className = 'note-item';
+                noteItem.innerHTML = `
+                    <div class="note-title">${index + 1}. ${qa.question}</div>
+                    <div class="note-content">${qa.answer}</div>
+                `;
+                studyNotes.appendChild(noteItem);
+            });
+        }
+        
+        // Карточкалар функциялары
+        function initFlashcards() {
+            if (currentQAs.length === 0) {
+                document.getElementById('flashcardContent').textContent = 'Топтама таңдаңыз';
+                return;
+            }
+            
+            shuffledCards = [...currentQAs];
+            currentCardIndex = 0;
+            isFlipped = false;
+            showCurrentCard();
+            updateFlashcardProgress();
+        }
+        
+        function showCurrentCard() {
+            if (shuffledCards.length === 0) return;
+            
+            const card = shuffledCards[currentCardIndex];
+            const content = isFlipped ? card.answer : card.question;
+            document.getElementById('flashcardContent').textContent = content;
+        }
+        
+        function flipCard() {
+            if (shuffledCards.length === 0) return;
+            isFlipped = !isFlipped;
+            showCurrentCard();
+        }
+        
+        function nextCard() {
+            if (shuffledCards.length === 0) return;
+            currentCardIndex = (currentCardIndex + 1) % shuffledCards.length;
+            isFlipped = false;
+            showCurrentCard();
+            updateFlashcardProgress();
+        }
+        
+        function prevCard() {
+            if (shuffledCards.length === 0) return;
+            currentCardIndex = currentCardIndex === 0 ? shuffledCards.length - 1 : currentCardIndex - 1;
+            isFlipped = false;
+            showCurrentCard();
+            updateFlashcardProgress();
+        }
+        
+        function shuffleCards() {
+            if (shuffledCards.length === 0) return;
+            for (let i = shuffledCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledCards[i], shuffledCards[j]] = [shuffledCards[j], shuffledCards[i]];
+            }
+            currentCardIndex = 0;
+            isFlipped = false;
+            showCurrentCard();
+            updateFlashcardProgress();
+        }
+        
+        function resetCards() {
+            initFlashcards();
+        }
+        
+        function updateFlashcardProgress() {
+            if (shuffledCards.length === 0) return;
+            const progress = ((currentCardIndex + 1) / shuffledCards.length) * 100;
+            document.getElementById('flashcardProgress').style.width = progress + '%';
+        }
+        
+        // Викторина функциялары
+        function initQuiz() {
+            if (currentQAs.length === 0) {
+                document.getElementById('quizQuestion').textContent = 'Топтама таңдаңыз';
+                document.getElementById('quizOptions').innerHTML = '';
+                return;
+            }
+            
+            currentQuizIndex = 0;
+            quizScore = 0;
+            quizAnswers = [];
+            wrongAnswers = [];
+            showQuizQuestion();
+        }
+        
+        function showQuizQuestion() {
+            if (currentQuizIndex >= currentQAs.length) {
+                finishQuiz();
+                return;
+            }
+            
+            const currentQA = currentQAs[currentQuizIndex];
+            document.getElementById('quizQuestion').textContent = currentQA.question;
+            
+            // Жауап нұсқаларын жасау
+            const options = [currentQA.answer];
+            
+            // Қате жауаптарды қосу
+            const otherAnswers = currentQAs.filter((_, index) => index !== currentQuizIndex)
+                .map(qa => qa.answer)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            
+            options.push(...otherAnswers);
+            options.sort(() => Math.random() - 0.5);
+            
+            const optionsDiv = document.getElementById('quizOptions');
+            optionsDiv.innerHTML = '';
+            
+            options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'quiz-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectQuizOption(option, currentQA.answer, optionDiv);
+                optionsDiv.appendChild(optionDiv);
+            });
+            
+            updateQuizProgress();
+        }
+        
+        function selectQuizOption(selected, correct, element) {
+            // Барлық опцияларды блоктау
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.textContent === correct) {
+                    opt.classList.add('correct');
+                } else if (opt === element && selected !== correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            if (selected === correct) {
+                quizScore++;
+            } else {
+                wrongAnswers.push({
+                    question: currentQAs[currentQuizIndex].question,
+                    correct: correct,
+                    selected: selected
+                });
+            }
+            
+            quizAnswers.push({
+                question: currentQAs[currentQuizIndex].question,
+                selected: selected,
+                correct: correct,
+                isCorrect: selected === correct
+            });
+        }
+        
+        function nextQuiz() {
+            currentQuizIndex++;
+            showQuizQuestion();
+        }
+        
+        function finishQuiz() {
+            showResults(quizScore, currentQAs.length, 'викторина');
+        }
+        
+        function updateQuizProgress() {
+            const progress = (currentQuizIndex / currentQAs.length) * 100;
+            document.getElementById('quizProgress').style.width = progress + '%';
+        }
+        
+        // Тест функциялары
+        function initTest() {
+            if (currentQAs.length === 0) {
+                document.getElementById('testQuestions').innerHTML = '<p>Топтама таңдаңыз</p>';
+                return;
+            }
+            
+            testAnswers = {};
+            const testDiv = document.getElementById('testQuestions');
+            testDiv.innerHTML = '';
+            
+            currentQAs.forEach((qa, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'note-item';
+                questionDiv.innerHTML = `
+                    <div class="note-title">${index + 1}. ${qa.question}</div>
+                    <textarea id="testAnswer${index}" placeholder="Жауабыңызды жазыңыз..." style="width: 100%; height: 80px; margin-top: 10px; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px;"></textarea>
+                `;
+                testDiv.appendChild(questionDiv);
+            });
+        }
+        
+        function submitTest() {
+            if (currentQAs.length === 0) return;
+            
+            let correctCount = 0;
+            wrongAnswers = [];
+            
+            currentQAs.forEach((qa, index) => {
+                const userAnswer = document.getElementById(`testAnswer${index}`).value.trim().toLowerCase();
+                const correctAnswer = qa.answer.toLowerCase();
+                
+                if (userAnswer.includes(correctAnswer) || correctAnswer.includes(userAnswer)) {
+                    correctCount++;
+                } else {
+                    wrongAnswers.push({
+                        question: qa.question,
+                        correct: qa.answer,
+                        selected: document.getElementById(`testAnswer${index}`).value.trim()
+                    });
+                }
+            });
+            
+            showResults(correctCount, currentQAs.length, 'тест');
+        }
+        
+        function resetTest() {
+            initTest();
+        }
+        
+        // Нәтижелер функциялары
+        function showResults(correct, total, mode) {
+            const percentage = Math.round((correct / total) * 100);
+            
+            document.getElementById('scoreDisplay').textContent = percentage + '%';
+            document.getElementById('scoreText').textContent = 
+                `${mode} нәтижесі: ${correct}/${total} дұрыс жауап`;
+            
+            document.getElementById('results').style.display = 'block';
+            
+            // Нәтижеге қарай түс өзгерту
+            const scoreElement = document.getElementById('scoreDisplay');
+            if (percentage >= 80) {
+                scoreElement.style.color = '#28a745';
+            } else if (percentage >= 60) {
+                scoreElement.style.color = '#ffc107';
+            } else {
+                scoreElement.style.color = '#dc3545';
+            }
+        }
+        
+        function reviewMistakes() {
+            if (wrongAnswers.length === 0) {
+                alert('Қателер жоқ! Өте жақсы нәтиже!');
+                return;
+            }
+            
+            let mistakesText = 'Қате жауаптар:\n\n';
+            wrongAnswers.forEach((mistake, index) => {
+                mistakesText += `${index + 1}. ${mistake.question}\n`;
+                mistakesText += `Дұрыс жауап: ${mistake.correct}\n`;
+                mistakesText += `Сіздің жауабыңыз: ${mistake.selected}\n\n`;
+            });
+            
+            alert(mistakesText);
+        }
+        
+        function hideResults() {
+            document.getElementById('results').style.display = 'none';
+        }
+        
+
+        
+        // Word жүктеу функциясы
+        function downloadAsWord() {
+            if (currentQAs.length === 0) {
+                alert('Алдымен сұрақ-жауап қосыңыз!');
+                return;
+            }
+            
+            const setName = document.getElementById('setName').value.trim() || 'Сұрақ-жауаптар';
+            
+            // Word документі үшін толық HTML құрылымы
+            const wordContent = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+    <meta charset='utf-8'>
+    <title>${setName}</title>
+    <!--[if gte mso 9]>
+    <xml>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>90</w:Zoom>
+            <w:DoNotPromptForConvert/>
+            <w:DoNotShowInsertionsAndDeletions/>
+        </w:WordDocument>
+    </xml>
+    <![endif]-->
+    <style>
+        @page {
+            margin: 2.5cm;
+        }
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #000;
+            page-break-after: avoid;
+        }
+        .qa-item {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        .question {
+            font-weight: bold;
+            font-size: 12pt;
+            margin-bottom: 8px;
+            color: #000;
+        }
+        .answer {
+            font-size: 12pt;
+            margin-left: 20px;
+            margin-bottom: 15px;
+            text-align: justify;
+            color: #000;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10pt;
+            color: #666;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+    <h1>${setName}</h1>
+    
+    ${currentQAs.map((qa, index) => `
+    <div class="qa-item">
+        <div class="question">${index + 1}. ${qa.question}</div>
+        <div class="answer"><strong>Жауап:</strong> ${qa.answer}</div>
+    </div>
+    `).join('')}
+    
+    <div class="footer">
+        <p>Жасалған күні: ${new Date().toLocaleDateString('kk-KZ', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })}</p>
+        <p>Барлығы: ${currentQAs.length} сұрақ-жауап</p>
+    </div>
+</body>
+</html>`;
+            
+            // Word үшін дұрыс MIME типі
+            const blob = new Blob(['\ufeff', wordContent], {
+                type: 'application/msword'
+            });
+            
+            // Файлды жүктеу
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${setName}.doc`;
+            link.style.display = 'none';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Жадыны тазалау
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100);
+            
+            alert(`"${setName}.doc" файлы сәтті жүктелді! Microsoft Word немесе LibreOffice арқылы ашуға болады.`);
+        }
+        
+        // Бастапқы жүктеу
+        window.onload = function() {
+            updateSavedSets();
+        };
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98558264201fecf1',t:'MTc1ODkxODUyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
