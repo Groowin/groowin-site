@@ -35,6 +35,23 @@
             font-size: 24px;
         }
 
+        .mobile-info {
+            background: #e8f5e8;
+            border: 2px solid #25D366;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .mobile-info.show {
+            display: block;
+        }
+
+        .mobile-info.hide {
+            display: none;
+        }
+
         .content {
             padding: 30px;
         }
@@ -186,6 +203,12 @@
         </div>
         
         <div class="content">
+            <div class="mobile-info" id="mobileInfo">
+                📱 <strong>Мобильді режим анықталды!</strong><br>
+                WhatsApp автоматты түрде ашылып, хабарлама дайындалады.<br>
+                Жіберу үшін тек "Жіберу" батырмасын басыңыз.
+            </div>
+            
             <div class="input-group">
                 <label for="phoneNumber">📞 Телефон нөмірі:</label>
                 <input type="tel" id="phoneNumber" placeholder="+7 777 123 45 67" value="+7 777 123 45 67">
@@ -291,9 +314,23 @@
             // Хабарламаны көрсету
             addMessage(chunk);
             
-            // WhatsApp сілтемесін ашу (жаңа табта)
-            const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^\d]/g, '')}?text=${encodeURIComponent(chunk)}`;
-            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+            // Мобильді құрылғыны анықтау
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Мобильді үшін - бірден WhatsApp ашу
+                const whatsappUrl = `whatsapp://send?phone=${phoneNumber.replace(/[^\d]/g, '')}&text=${encodeURIComponent(chunk)}`;
+                window.location.href = whatsappUrl;
+                
+                // 3 секундтан кейін қайта оралу
+                setTimeout(() => {
+                    window.history.back();
+                }, 3000);
+            } else {
+                // Компьютер үшін - жаңа табта ашу
+                const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^\d]/g, '')}?text=${encodeURIComponent(chunk)}`;
+                window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+            }
             
             currentWordIndex++;
             updateProgress();
@@ -341,6 +378,23 @@
             }
         }
 
+        // Мобильді құрылғыны анықтау және ақпарат көрсету
+        function checkMobileDevice() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const mobileInfo = document.getElementById('mobileInfo');
+            
+            if (isMobile) {
+                mobileInfo.classList.add('show');
+                mobileInfo.classList.remove('hide');
+            } else {
+                mobileInfo.classList.add('hide');
+                mobileInfo.classList.remove('show');
+            }
+        }
+
+        // Бет жүктелгенде мобильді анықтау
+        window.addEventListener('load', checkMobileDevice);
+
         // Бастапқы мәтінді бөлу
         document.getElementById('messageText').addEventListener('input', function() {
             const text = this.value.trim();
@@ -350,5 +404,5 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9887b94ee56ceceb',t:'MTc1OTQ0NTA2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9887c1d2f7e6eceb',t:'MTc1OTQ0NTQxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
