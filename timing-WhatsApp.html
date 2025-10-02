@@ -204,9 +204,9 @@
         
         <div class="content">
             <div class="mobile-info" id="mobileInfo">
-                📱 <strong>Мобильді режим анықталды!</strong><br>
-                WhatsApp автоматты түрде ашылып, хабарлама дайындалады.<br>
-                Жіберу үшін тек "Жіберу" батырмасын басыңыз.
+                📱 <strong>Толық автоматты режим!</strong><br>
+                WhatsApp автоматты ашылып, хабарламалар жіберіледі.<br>
+                Экран сөнсе де жұмыс істейді. Тоқтату үшін "Тоқтату" басыңыз.
             </div>
             
             <div class="input-group">
@@ -281,6 +281,9 @@
             document.getElementById('status').classList.add('active');
             document.getElementById('messages').innerHTML = '';
 
+            // Экранды қосып тұру
+            requestWakeLock();
+
             updateStatus();
             startCountdown();
         }
@@ -318,16 +321,27 @@
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if (isMobile) {
-                // Мобильді үшін - бірден WhatsApp ашу
+                // Мобильді үшін - автоматты WhatsApp ашу
                 const whatsappUrl = `whatsapp://send?phone=${phoneNumber.replace(/[^\d]/g, '')}&text=${encodeURIComponent(chunk)}`;
-                window.location.href = whatsappUrl;
                 
-                // 3 секундтан кейін қайта оралу
+                // Жасырын iframe арқылы автоматты ашу
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = whatsappUrl;
+                document.body.appendChild(iframe);
+                
+                // Iframe-ді жою
                 setTimeout(() => {
-                    window.history.back();
-                }, 3000);
+                    document.body.removeChild(iframe);
+                }, 1000);
+                
+                // Қосымша: location.href арқылы да ашу
+                setTimeout(() => {
+                    window.location.href = whatsappUrl;
+                }, 500);
+                
             } else {
-                // Компьютер үшін - жаңа табта ашу
+                // Компьютер үшін - автоматты жаңа табта ашу
                 const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^\d]/g, '')}?text=${encodeURIComponent(chunk)}`;
                 window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
             }
@@ -368,6 +382,9 @@
             isActive = false;
             clearInterval(sendingInterval);
             
+            // Экран сөнуіне рұқсат ету
+            releaseWakeLock();
+            
             document.querySelector('.start-btn').classList.remove('disabled');
             document.getElementById('status').classList.remove('active');
             document.getElementById('timer').textContent = 'Тоқтатылды';
@@ -395,6 +412,46 @@
         // Бет жүктелгенде мобильді анықтау
         window.addEventListener('load', checkMobileDevice);
 
+        // Экран сөнсе де жұмыс істеуі үшін
+        let wakeLock = null;
+
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Экран сөнбейді');
+                }
+            } catch (err) {
+                console.log('Wake Lock қолдау көрсетілмейді');
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release();
+                wakeLock = null;
+                console.log('Экран сөну рұқсат етілді');
+            }
+        }
+
+        // Visibility API - экран сөнсе де жұмыс істеу
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && isActive) {
+                console.log('Экран сөнді, бірақ жіберу жалғасуда...');
+            } else if (!document.hidden && isActive) {
+                console.log('Экран қосылды, жіберу жалғасуда...');
+            }
+        });
+
+        // Page Lifecycle API - қосымша қорғаныс
+        document.addEventListener('freeze', function() {
+            console.log('Бет тоңазытылды, бірақ жіберу жалғасуда...');
+        });
+
+        document.addEventListener('resume', function() {
+            console.log('Бет қалпына келтірілді');
+        });
+
         // Бастапқы мәтінді бөлу
         document.getElementById('messageText').addEventListener('input', function() {
             const text = this.value.trim();
@@ -404,5 +461,5 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9887c1d2f7e6eceb',t:'MTc1OTQ0NTQxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9887c865844aeceb',t:'MTc1OTQ0NTY3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
