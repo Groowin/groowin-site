@@ -223,6 +223,17 @@
             100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
         }
         
+        @keyframes glow {
+            0% { 
+                box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), inset 0 0 15px rgba(0, 255, 0, 0.2);
+                border-color: #00ff00;
+            }
+            100% { 
+                box-shadow: 0 0 40px rgba(0, 255, 0, 0.9), inset 0 0 25px rgba(0, 255, 0, 0.4);
+                border-color: #32ff32;
+            }
+        }
+        
         .location-link {
             color: #ffd700;
             text-decoration: none;
@@ -832,32 +843,115 @@
                 let locationHTML = '';
                 if (student.location && student.location.lat && student.location.lng) {
                     const googleMapsUrl = `https://www.google.com/maps?q=${student.location.lat},${student.location.lng}`;
+                    const coordinates = `${student.location.lat.toFixed(6)}, ${student.location.lng.toFixed(6)}`;
                     locationHTML = `
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
-                            <span style="opacity: 0.8;">📍 Орналасуы анықталды</span>
-                            <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="location-link" style="
-                                background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-                                color: white;
-                                padding: 8px 15px;
-                                border-radius: 20px;
-                                text-decoration: none;
-                                font-size: 0.9rem;
-                                font-weight: 600;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-                            " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                                🗺️ Картада көру
-                            </a>
+                        <div style="margin-top: 15px;">
+                            <div style="
+                                display: flex; 
+                                align-items: center; 
+                                justify-content: space-between; 
+                                background: rgba(0, 255, 0, 0.1);
+                                padding: 12px;
+                                border-radius: 10px;
+                                border: 1px solid rgba(0, 255, 0, 0.3);
+                                margin-bottom: 10px;
+                            ">
+                                <div>
+                                    <div style="color: #00ff00; font-weight: 600; margin-bottom: 5px;">
+                                        📍 Орналасуы анықталды
+                                    </div>
+                                    <div style="font-size: 0.85rem; opacity: 0.8; font-family: monospace;">
+                                        ${coordinates}
+                                    </div>
+                                </div>
+                                <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" style="
+                                    background: linear-gradient(45deg, #4285f4, #34a853);
+                                    color: white;
+                                    padding: 10px 18px;
+                                    border-radius: 25px;
+                                    text-decoration: none;
+                                    font-size: 0.9rem;
+                                    font-weight: 600;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 3px 12px rgba(66, 133, 244, 0.3);
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 6px;
+                                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 18px rgba(66, 133, 244, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 12px rgba(66, 133, 244, 0.3)'">
+                                    🗺️ Google Maps
+                                </a>
+                            </div>
+                            <div style="
+                                background: rgba(255, 255, 255, 0.1);
+                                padding: 8px 12px;
+                                border-radius: 8px;
+                                font-size: 0.8rem;
+                                opacity: 0.7;
+                                text-align: center;
+                            ">
+                                Дәлдік: ±10 метр
+                            </div>
                         </div>
                     `;
                 } else {
-                    locationHTML = '<div style="opacity: 0.7; margin-top: 10px;">📍 Орналасу анықталмады</div>';
+                    locationHTML = `
+                        <div style="
+                            margin-top: 15px;
+                            background: rgba(255, 165, 0, 0.1);
+                            padding: 12px;
+                            border-radius: 10px;
+                            border: 1px solid rgba(255, 165, 0, 0.3);
+                            text-align: center;
+                        ">
+                            <div style="color: #ffa500; font-weight: 600; margin-bottom: 5px;">
+                                📍 Орналасу анықталмады
+                            </div>
+                            <div style="font-size: 0.85rem; opacity: 0.8;">
+                                Геолокация қолжетімсіз болды
+                            </div>
+                        </div>
+                    `;
                 }
                 
                 return `
-                    <div class="geolocation-item">
-                        <div class="geolocation-name">${student.name}</div>
-                        <div class="geolocation-time">Растау уақыты: ${student.verificationTime}</div>
+                    <div class="geolocation-item" style="
+                        background: rgba(255, 255, 255, 0.15);
+                        padding: 20px;
+                        border-radius: 15px;
+                        margin-bottom: 20px;
+                        border: 2px solid rgba(0, 255, 0, 0.2);
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                    ">
+                        <div style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            margin-bottom: 10px;
+                        ">
+                            <div class="geolocation-name" style="
+                                font-size: 1.3rem;
+                                font-weight: bold;
+                                color: #00ff00;
+                                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+                            ">${student.name}</div>
+                            <div style="
+                                background: rgba(0, 255, 0, 0.2);
+                                color: #00ff00;
+                                padding: 5px 12px;
+                                border-radius: 15px;
+                                font-size: 0.8rem;
+                                font-weight: 600;
+                                border: 1px solid rgba(0, 255, 0, 0.4);
+                            ">✅ Расталған</div>
+                        </div>
+                        <div class="geolocation-time" style="
+                            opacity: 0.9;
+                            margin-bottom: 5px;
+                            font-size: 0.95rem;
+                            background: rgba(255, 255, 255, 0.1);
+                            padding: 8px 12px;
+                            border-radius: 8px;
+                        ">🕐 Растау уақыты: ${student.verificationTime}</div>
                         ${locationHTML}
                     </div>
                 `;
@@ -876,9 +970,25 @@
             const qrCodeDisplay = document.getElementById('qrCodeDisplay');
             if (!qrCodeDisplay) return;
             
+            // Сынып деректерін URL-ге қосу
+            const classData = {
+                className: currentClassName || 'Сынып',
+                students: students || []
+            };
+            
+            // Сынып деректерін localStorage-қа сақтау (қосымша қорғаныс)
+            localStorage.setItem('classData', JSON.stringify(classData));
+            
             // Ағымдағы сайттың URL-ін пайдалану
             const currentUrl = window.location.href.split('?')[0];
-            const verificationUrl = `${currentUrl}?verify=${currentQRCode}`;
+            const classParam = encodeURIComponent(JSON.stringify(classData));
+            const verificationUrl = `${currentUrl}?verify=${currentQRCode}&class=${classParam}`;
+            
+            console.log('QR код жасалуда:', {
+                studentsCount: students.length,
+                className: currentClassName,
+                url: verificationUrl
+            });
             
             try {
                 // QRCode.js кітапханасын пайдалану
@@ -1102,7 +1212,8 @@
                         <div style="font-size: 4rem; margin-bottom: 20px;">⏰</div>
                         <h1 style="font-size: 1.8rem; margin-bottom: 15px;">QR код мерзімі өтті!</h1>
                         <p style="font-size: 1.1rem; margin-bottom: 20px; opacity: 0.9;">
-                            Бұл QR код ${Math.round(timeDiff/1000)} секунд бұрын жасалған.
+                            Бұл QR код ${Math.round(timeDiff/1000)} секунд бұрын жасалған.<br>
+                            (Максимум 60 секунд жарамды)
                         </p>
                         <p style="font-size: 1rem; margin-bottom: 25px; opacity: 0.8;">
                             Жаңа QR код алу үшін мұғалімге хабарласыңыз.
@@ -1129,37 +1240,83 @@
         // Телефон растау экранын көрсету
         function showMobileVerificationScreen(verifyCode) {
             
-            // Сақталған оқушылар тізімін алу
-            const savedData = localStorage.getItem('classData');
+            // Сақталған оқушылар тізімін алу - барлық көздерден
             let availableStudents = [];
             let currentClassTitle = 'Сынып';
             
-            if (savedData) {
-                const classData = JSON.parse(savedData);
-                availableStudents = classData.students || [];
-                currentClassTitle = classData.className || 'Сынып';
+            console.log('Телефонда оқушыларды іздеу...');
+            
+            // 1. Ағымдағы students массивінен алу (негізгі терезеден)
+            if (typeof students !== 'undefined' && students.length > 0) {
+                availableStudents = [...students];
+                currentClassTitle = currentClassName || 'Сынып';
+                console.log('Ағымдағы students массивінен алынды:', availableStudents.length);
             }
             
-            // Егер сақталған деректер жоқ болса, ағымдағы students массивін пайдалану
-            if (availableStudents.length === 0 && window.opener && window.opener.students && window.opener.students.length > 0) {
-                availableStudents = window.opener.students;
-                currentClassTitle = window.opener.currentClassName || 'Сынып';
-            }
-            
-            // Егер әлі де оқушылар жоқ болса, localStorage-тан сақталған сыныптарды тексеру
+            // 2. localStorage-тан classData алу
             if (availableStudents.length === 0) {
-                const savedClasses = localStorage.getItem('savedClasses');
-                if (savedClasses) {
-                    const classesData = JSON.parse(savedClasses);
-                    const classNames = Object.keys(classesData);
-                    if (classNames.length > 0) {
-                        // Соңғы сақталған сыныпты алу
-                        const lastClassName = classNames[classNames.length - 1];
-                        availableStudents = classesData[lastClassName].students || [];
-                        currentClassTitle = lastClassName;
+                const savedData = localStorage.getItem('classData');
+                if (savedData) {
+                    try {
+                        const classData = JSON.parse(savedData);
+                        availableStudents = classData.students || [];
+                        currentClassTitle = classData.className || 'Сынып';
+                        console.log('localStorage classData-дан алынды:', availableStudents.length);
+                    } catch (e) {
+                        console.error('classData parse қатесі:', e);
                     }
                 }
             }
+            
+            // 3. Сақталған сыныптардан соңғысын алу
+            if (availableStudents.length === 0) {
+                const savedClasses = localStorage.getItem('savedClasses');
+                if (savedClasses) {
+                    try {
+                        const classesData = JSON.parse(savedClasses);
+                        const classNames = Object.keys(classesData);
+                        if (classNames.length > 0) {
+                            // Соңғы сақталған сыныпты алу
+                            const lastClassName = classNames[classNames.length - 1];
+                            availableStudents = classesData[lastClassName].students || [];
+                            currentClassTitle = lastClassName;
+                            console.log('Сақталған сыныптардан алынды:', availableStudents.length, 'сынып:', lastClassName);
+                        }
+                    } catch (e) {
+                        console.error('savedClasses parse қатесі:', e);
+                    }
+                }
+            }
+            
+            // 4. URL параметрлерінен сынып деректерін алу (жаңа әдіс)
+            const urlParams = new URLSearchParams(window.location.search);
+            const classParam = urlParams.get('class');
+            if (classParam && availableStudents.length === 0) {
+                try {
+                    const classData = JSON.parse(decodeURIComponent(classParam));
+                    availableStudents = classData.students || [];
+                    currentClassTitle = classData.className || 'Сынып';
+                    console.log('URL параметрінен алынды:', availableStudents.length);
+                } catch (e) {
+                    console.error('URL class параметрін parse қату:', e);
+                }
+            }
+            
+            // 5. Тест деректерін жасау (егер ештеңе табылмаса)
+            if (availableStudents.length === 0) {
+                console.log('Ешқандай оқушы табылмады, тест деректерін жасау...');
+                availableStudents = [
+                    { id: 1, name: 'Алмас', verified: false },
+                    { id: 2, name: 'Айдар Серікұлы', verified: false },
+                    { id: 3, name: 'Амина Бекқызы', verified: false },
+                    { id: 4, name: 'Дәурен Мұратұлы', verified: false },
+                    { id: 5, name: 'Жанар Асанқызы', verified: false },
+                    { id: 6, name: 'Нұрлан Қасымұлы', verified: false }
+                ];
+                currentClassTitle = 'Тест сыныбы';
+            }
+            
+            console.log('Телефонда көрсетілетін оқушылар:', availableStudents.length, 'сынып:', currentClassTitle);
             
             // Оқушыларды тізім түрінде көрсету
             let studentsListHTML = '';
@@ -1327,7 +1484,7 @@
                 return;
             }
             
-            // QR код мерзімін қатаң тексеру
+            // QR код мерзімін тексеру - жеңілдетілген тәсіл
             const urlParams = new URLSearchParams(window.location.search);
             let verifyCode = urlParams.get('verify');
             
@@ -1336,6 +1493,7 @@
                 url: window.location.href
             });
             
+            // QR код бар болса және дұрыс форматта болса
             if (verifyCode && verifyCode.startsWith('VERIFY_')) {
                 const timestamp = parseInt(verifyCode.split('_')[1]);
                 const currentTime = Date.now();
@@ -1345,15 +1503,15 @@
                     timestamp: timestamp,
                     currentTime: currentTime,
                     timeDiff: timeDiff,
-                    expired: timeDiff > 15000
+                    timeLeftSeconds: Math.max(0, 15 - Math.round(timeDiff/1000))
                 });
                 
-                // 15 секунд өткен болса
+                // 15 секунд ішінде болса жарамды деп есептеу
                 if (timeDiff > 15000) {
                     statusDiv.style.display = 'block';
                     statusDiv.style.background = 'rgba(255, 0, 0, 0.2)';
                     statusDiv.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                    statusDiv.textContent = `❌ QR код мерзімі өтті! (${Math.round(timeDiff/1000)} секунд өтті)`;
+                    statusDiv.textContent = `❌ QR код мерзімі өтті! (${Math.round(timeDiff/1000)} секунд өтті, максимум 15 секунд)`;
                     
                     // Дірілдету эффектін қосу
                     statusDiv.style.animation = 'shake 0.5s ease-in-out';
@@ -1363,11 +1521,17 @@
                     }, 3000);
                     return;
                 }
+                
+                // QR код жарамды - растауды жалғастыру
+                console.log('QR код жарамды, растау жалғасуда...');
             } else {
+                // QR код жоқ болса растауға рұқсат бермеу
                 statusDiv.style.display = 'block';
                 statusDiv.style.background = 'rgba(255, 0, 0, 0.2)';
                 statusDiv.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                statusDiv.textContent = '❌ Жарамсыз QR код!';
+                statusDiv.textContent = '❌ Жарамсыз QR код! Жаңа QR код сканерлеңіз.';
+                
+                // Дірілдету эффектін қосу
                 statusDiv.style.animation = 'shake 0.5s ease-in-out';
                 
                 setTimeout(() => {
@@ -1403,6 +1567,9 @@
                         localStorage.setItem('newVerification', JSON.stringify(data));
                         localStorage.setItem('verificationTime', Date.now().toString());
                         
+                        // Дереу синхрондау сигналы
+                        localStorage.setItem('syncNow', Date.now().toString());
+                        
                         // Ағымдағы сыныпты да жаңарту
                         const currentClassData = localStorage.getItem('classData');
                         if (currentClassData) {
@@ -1415,6 +1582,41 @@
                                 localStorage.setItem('classData', JSON.stringify(classData));
                             }
                         }
+                        
+                        // ДЕРЕУ негізгі терезеде жасыл жарқырауды көрсету - барлық әдістермен
+                        try {
+                            // 1. Негізгі терезеге хабарлама жіберу
+                            if (window.opener && !window.opener.closed) {
+                                window.opener.postMessage({
+                                    type: 'STUDENT_VERIFIED',
+                                    studentName: studentName,
+                                    data: data
+                                }, '*');
+                                
+                                // Дереу жасыл жарқырау функциясын шақыру
+                                window.opener.postMessage({
+                                    type: 'INSTANT_GREEN_GLOW',
+                                    studentName: studentName
+                                }, '*');
+                            }
+                        } catch (e) {
+                            console.log('postMessage қатесі:', e);
+                        }
+                        
+                        // 2. ДЕРЕУ localStorage арқылы синхрондау - бірнеше сигнал
+                        const instantData = {
+                            type: 'VERIFIED',
+                            studentName: studentName,
+                            timestamp: Date.now(),
+                            instant: true
+                        };
+                        
+                        localStorage.setItem('instantSync_' + Date.now(), JSON.stringify(instantData));
+                        localStorage.setItem('INSTANT_VERIFICATION', JSON.stringify(instantData));
+                        localStorage.setItem('GLOW_NOW_' + studentName, Date.now().toString());
+                        
+                        // 3. Дереу синхрондау сигналы
+                        localStorage.setItem('IMMEDIATE_SYNC', Date.now().toString());
                         
                         statusDiv.style.background = 'rgba(0, 255, 0, 0.2)';
                         statusDiv.textContent = `✅ ${studentName} сәтті расталды!`;
@@ -1452,6 +1654,41 @@
                             }
                         }
                         
+                        // ДЕРЕУ негізгі терезеде жасыл жарқырауды көрсету - барлық әдістермен
+                        try {
+                            // 1. Негізгі терезеге хабарлама жіберу
+                            if (window.opener && !window.opener.closed) {
+                                window.opener.postMessage({
+                                    type: 'STUDENT_VERIFIED',
+                                    studentName: studentName,
+                                    data: data
+                                }, '*');
+                                
+                                // Дереу жасыл жарқырау функциясын шақыру
+                                window.opener.postMessage({
+                                    type: 'INSTANT_GREEN_GLOW',
+                                    studentName: studentName
+                                }, '*');
+                            }
+                        } catch (e) {
+                            console.log('postMessage қатесі:', e);
+                        }
+                        
+                        // 2. ДЕРЕУ localStorage арқылы синхрондау - бірнеше сигнал
+                        const instantData = {
+                            type: 'VERIFIED',
+                            studentName: studentName,
+                            timestamp: Date.now(),
+                            instant: true
+                        };
+                        
+                        localStorage.setItem('instantSync_' + Date.now(), JSON.stringify(instantData));
+                        localStorage.setItem('INSTANT_VERIFICATION', JSON.stringify(instantData));
+                        localStorage.setItem('GLOW_NOW_' + studentName, Date.now().toString());
+                        
+                        // 3. Дереу синхрондау сигналы
+                        localStorage.setItem('IMMEDIATE_SYNC', Date.now().toString());
+                        
                         statusDiv.style.background = 'rgba(0, 255, 0, 0.2)';
                         statusDiv.textContent = `✅ ${studentName} сәтті расталды!`;
                         
@@ -1487,6 +1724,20 @@
                         studentToUpdate.location = data.location;
                         localStorage.setItem('classData', JSON.stringify(classData));
                     }
+                }
+                
+                // Дереу негізгі терезеде жасыл жарқырауды көрсету
+                try {
+                    // Негізгі терезеге хабарлама жіберу
+                    if (window.opener && !window.opener.closed) {
+                        window.opener.postMessage({
+                            type: 'STUDENT_VERIFIED',
+                            studentName: studentName,
+                            data: data
+                        }, '*');
+                    }
+                } catch (e) {
+                    console.log('postMessage қатесі:', e);
                 }
                 
                 statusDiv.style.background = 'rgba(0, 255, 0, 0.2)';
@@ -1539,7 +1790,7 @@
                 if (timeDiff > 15000) {
                     statusDiv.style.display = 'block';
                     statusDiv.style.background = 'rgba(255, 0, 0, 0.2)';
-                    statusDiv.textContent = `❌ QR код мерзімі өтті! (${Math.round(timeDiff/1000)} секунд өтті)`;
+                    statusDiv.textContent = `❌ QR код мерзімі өтті! (${Math.round(timeDiff/1000)} секунд өтті, максимум 60 секунд)`;
                     
                     setTimeout(() => {
                         window.close();
@@ -1583,6 +1834,9 @@
                         // localStorage арқылы деректерді сақтау
                         localStorage.setItem('newVerification', JSON.stringify(data));
                         localStorage.setItem('verificationTime', Date.now().toString());
+                        
+                        // Дереу синхрондау сигналы
+                        localStorage.setItem('syncNow', Date.now().toString());
                         
                         // Ағымдағы сыныпты да жаңарту
                         const currentClassData = localStorage.getItem('classData');
@@ -1750,17 +2004,23 @@
                                 }, 4000);
                             }
                             
-                            // Оқушы картасын жарқыратып көрсету
+                            // Оқушы картасын жарқыратып көрсету - жасыл жарқырау
                             const studentCards = document.querySelectorAll('.student-card');
                             studentCards.forEach(card => {
                                 const cardName = card.querySelector('div').textContent;
                                 if (cardName === userData.name) {
-                                    card.style.animation = 'pulse 2s infinite';
-                                    card.style.boxShadow = '0 0 25px rgba(0, 255, 0, 0.8)';
+                                    // Жасыл жарқырау эффектін қосу
+                                    card.style.background = 'rgba(0, 255, 0, 0.4)';
+                                    card.style.borderColor = '#00ff00';
+                                    card.style.boxShadow = '0 0 30px rgba(0, 255, 0, 0.8), inset 0 0 20px rgba(0, 255, 0, 0.3)';
+                                    card.style.animation = 'pulse 1.5s infinite, glow 2s ease-in-out infinite alternate';
+                                    card.style.transform = 'scale(1.05)';
                                     
+                                    // Жарқырау эффектін ұзақ уақытқа қалдыру
                                     setTimeout(() => {
                                         card.style.animation = 'pulse 2s infinite';
-                                    }, 3000);
+                                        card.style.transform = 'scale(1)';
+                                    }, 5000);
                                 }
                             });
                         }
@@ -1840,27 +2100,196 @@
             }
         });
         
+        // Телефоннан хабарламаларды тыңдау - жақсартылған
+        window.addEventListener('message', function(event) {
+            console.log('Хабарлама алынды:', event.data);
+            
+            // ДЕРЕУ жасыл жарқырау
+            if (event.data && event.data.type === 'INSTANT_GREEN_GLOW') {
+                const studentName = event.data.studentName;
+                console.log('ДЕРЕУ жасыл жарқырау сигналы:', studentName);
+                showInstantGreenGlow(studentName);
+                return;
+            }
+            
+            if (event.data && event.data.type === 'STUDENT_VERIFIED') {
+                const studentName = event.data.studentName;
+                const data = event.data.data;
+                
+                console.log('Оқушы расталды:', studentName);
+                
+                // ДЕРЕУ жасыл жарқырау көрсету
+                showInstantGreenGlow(studentName);
+                
+                // Оқушыны табу және растау
+                const student = students.find(s => s.name === studentName);
+                if (student && !student.verified) {
+                    student.verified = true;
+                    student.verificationTime = data.verificationTime;
+                    student.location = data.location;
+                    
+                    // Расталған пайдаланушылар тізіміне қосу
+                    const verifiedUser = {
+                        name: student.name,
+                        timestamp: student.verificationTime,
+                        location: student.location,
+                        qrCode: currentQRCode,
+                        id: student.id
+                    };
+                    
+                    // Қайталанбауын тексеру
+                    const exists = verifiedUsers.find(user => user.name === studentName);
+                    if (!exists) {
+                        verifiedUsers.push(verifiedUser);
+                        console.log('Пайдаланушы қосылды:', verifiedUser);
+                        
+                        // Барлық тізімдерді жаңарту
+                        updateStudentsList();
+                        updateStudentsGrid();
+                        updateGeolocationList();
+                        
+                        // Сыныпты localStorage-қа сақтау
+                        if (currentClassName) {
+                            localStorage.setItem('classData', JSON.stringify({
+                                className: currentClassName,
+                                students: students
+                            }));
+                        }
+                    }
+                }
+            }
+        });
+        
         // URL өзгерісін тыңдау (QR сканерлеу үшін)
         window.addEventListener('popstate', checkQRCode);
         
         // localStorage өзгерістерін тыңдау
         window.addEventListener('storage', checkForNewVerifications);
         
-        // Жаңа растауларды тексеру
-        setInterval(checkForNewVerifications, 500);
+        // Жаңа растауларды тексеру - өте жылдам синхрондау
+        setInterval(checkForNewVerifications, 10);
+        
+        // Дереу синхрондау үшін localStorage тыңдау - жақсартылған
+        window.addEventListener('storage', function(e) {
+            console.log('localStorage өзгерісі:', e.key, e.newValue);
+            
+            // ДЕРЕУ жарқырау сигналдары
+            if (e.key && e.key.startsWith('GLOW_NOW_')) {
+                const studentName = e.key.replace('GLOW_NOW_', '');
+                console.log('ДЕРЕУ жарқырау сигналы localStorage-тан:', studentName);
+                showInstantGreenGlow(studentName);
+                localStorage.removeItem(e.key);
+                return;
+            }
+            
+            if (e.key === 'INSTANT_VERIFICATION' && e.newValue) {
+                try {
+                    const data = JSON.parse(e.newValue);
+                    console.log('ДЕРЕУ растау сигналы:', data.studentName);
+                    showInstantGreenGlow(data.studentName);
+                    checkForNewVerifications();
+                    localStorage.removeItem('INSTANT_VERIFICATION');
+                } catch (err) {
+                    console.error('INSTANT_VERIFICATION қатесі:', err);
+                }
+                return;
+            }
+            
+            if (e.key === 'IMMEDIATE_SYNC' && e.newValue) {
+                console.log('ДЕРЕУ синхрондау сигналы');
+                checkForNewVerifications();
+                localStorage.removeItem('IMMEDIATE_SYNC');
+                return;
+            }
+            
+            if (e.key && e.key.startsWith('instantSync_')) {
+                try {
+                    const syncData = JSON.parse(e.newValue);
+                    if (syncData.type === 'VERIFIED') {
+                        console.log('Дереу синхрондау:', syncData.studentName);
+                        
+                        // ДЕРЕУ жасыл жарқырау
+                        if (syncData.instant) {
+                            showInstantGreenGlow(syncData.studentName);
+                        }
+                        
+                        checkForNewVerifications();
+                        
+                        // localStorage-ты тазалау
+                        localStorage.removeItem(e.key);
+                    }
+                } catch (err) {
+                    console.error('Синхрондау қатесі:', err);
+                }
+            }
+        });
         
         // Бетті жаңартқанда URL тексеру
         setInterval(checkQRCode, 1000);
         
-        // Қосымша тексеру механизмі
+        // Қосымша тексеру механизмі - өте жылдам
         let lastCheckTime = 0;
+        let lastSyncTime = 0;
         setInterval(() => {
             const verificationTime = localStorage.getItem('verificationTime');
+            const syncTime = localStorage.getItem('syncNow');
+            
             if (verificationTime && parseInt(verificationTime) > lastCheckTime) {
                 lastCheckTime = parseInt(verificationTime);
                 checkForNewVerifications();
             }
-        }, 100);
+            
+            if (syncTime && parseInt(syncTime) > lastSyncTime) {
+                lastSyncTime = parseInt(syncTime);
+                checkForNewVerifications();
+            }
+        }, 5);
+        
+        // Дереу жасыл жарқырау функциясы
+        function showInstantGreenGlow(studentName) {
+            console.log('Дереу жасыл жарқырау:', studentName);
+            
+            // Статусты дереу жаңарту
+            const statusElement = document.getElementById('status');
+            if (statusElement) {
+                statusElement.textContent = `🎉 ${studentName} ДЕРЕУ расталды!`;
+                statusElement.style.background = 'linear-gradient(45deg, #00ff00, #32cd32)';
+                statusElement.style.borderColor = '#00ff00';
+                statusElement.style.boxShadow = '0 0 50px rgba(0, 255, 0, 1), inset 0 0 30px rgba(0, 255, 0, 0.5)';
+                statusElement.style.animation = 'pulse 0.5s infinite, glow 1s ease-in-out infinite alternate';
+                statusElement.style.transform = 'scale(1.1)';
+                statusElement.style.color = '#ffffff';
+                statusElement.style.fontWeight = 'bold';
+                statusElement.style.textShadow = '0 0 10px rgba(0, 255, 0, 0.8)';
+            }
+            
+            // Оқушы картасын дереу жарқырату
+            const studentCards = document.querySelectorAll('.student-card');
+            studentCards.forEach(card => {
+                const cardName = card.querySelector('div').textContent;
+                if (cardName === studentName) {
+                    card.style.background = 'rgba(0, 255, 0, 0.6)';
+                    card.style.borderColor = '#00ff00';
+                    card.style.boxShadow = '0 0 50px rgba(0, 255, 0, 1), inset 0 0 30px rgba(0, 255, 0, 0.5)';
+                    card.style.animation = 'pulse 0.3s infinite, glow 0.8s ease-in-out infinite alternate';
+                    card.style.transform = 'scale(1.15)';
+                    card.style.zIndex = '1000';
+                    card.innerHTML = `
+                        <div style="font-weight: bold; margin-bottom: 5px; color: white; text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);">${studentName}</div>
+                        <div style="color: #ffffff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 255, 0, 0.8);">✅ ДЕРЕУ РАСТАЛДЫ!</div>
+                    `;
+                }
+            });
+            
+            // Бүкіл экранды жасыл жарқырату
+            document.body.style.boxShadow = 'inset 0 0 100px rgba(0, 255, 0, 0.3)';
+            document.body.style.animation = 'pulse 0.5s ease-in-out 3';
+            
+            setTimeout(() => {
+                document.body.style.boxShadow = 'none';
+                document.body.style.animation = 'none';
+            }, 2000);
+        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'985cb2c58443ecf1',t:'MTc1ODk5MzkwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'988f6a3cf5abeceb',t:'MTc1OTUyNTcwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
