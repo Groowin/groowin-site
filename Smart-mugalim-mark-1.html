@@ -1,1 +1,656 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Mugalim - Ақылды Мұғалім</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        .qr-container {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .student-name {
+            transition: all 0.3s ease;
+        }
+        .student-confirmed {
+            background-color: #10b981 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen overflow-hidden">
+    <div class="flex h-full">
+        <!-- Сол жақ панель -->
+        <div class="w-64 bg-gray-900 text-white flex flex-col sidebar-transition">
+            <div class="p-4 border-b border-gray-700">
+                <h1 class="text-xl font-bold">Smart Mugalim</h1>
+                <p class="text-sm text-gray-400">Ақылды Мұғалім Жүйесі</p>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-2">
+                <button id="homeBtn" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-800 transition-colors">
+                    <span class="text-2xl">🏠</span>
+                    <span>Басты бет</span>
+                </button>
+                <button id="smartMugalimBtn" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-800 transition-colors">
+                    <span class="text-2xl">👨🏻‍🎓</span>
+                    <span>Smart Mugalim</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Оң жақ жұмыс аймағы -->
+        <div class="flex-1 flex flex-col">
+            <!-- Жоғарғы батырмалар -->
+            <div id="topButtons" class="hidden bg-white border-b border-gray-200 p-4">
+                <div class="flex space-x-4">
+                    <button id="listBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Тізім
+                    </button>
+                    <button id="qrBtn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        QR
+                    </button>
+                    <button id="geoBtn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                        Геолокация
+                    </button>
+                </div>
+            </div>
+
+            <!-- Жұмыс аймағы -->
+            <div class="flex-1 p-6 overflow-auto">
+                <!-- Басты бет -->
+                <div id="mainContent" class="text-center">
+                    <div class="max-w-2xl mx-auto">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Smart Mugalim жүйесіне қош келдіңіз!</h2>
+                        <p class="text-lg text-gray-600 mb-8">Мұғалімдер үшін арнайы жасалған ақылды жүйе</p>
+                        <div class="bg-white rounded-lg shadow-lg p-8">
+                            <h3 class="text-xl font-semibold mb-4">Мүмкіндіктер:</h3>
+                            <ul class="text-left space-y-2 text-gray-700">
+                                <li>📝 Оқушылар тізімін басқару</li>
+                                <li>📱 QR код арқылы қатысуды тексеру</li>
+                                <li>📍 Геолокация арқылы бақылау</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Тізім беті -->
+                <div id="listContent" class="hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Оқушылар тізімі</h2>
+                        
+                        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Жаңа сынып құру</h3>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Сынып атауы:</label>
+                                <input type="text" id="classNameInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Мысалы: 10А сыныбы">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Оқушылар тізімі (әр жолға бір есім):</label>
+                                <textarea id="studentsInput" rows="10" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Айдар Әлімов&#10;Асем Бекова&#10;Дәурен Сәтов&#10;..."></textarea>
+                            </div>
+                            <div class="flex space-x-4">
+                                <button id="saveClassBtn" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    Сақтау
+                                </button>
+                                <select id="loadClassSelect" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Сақталған сыныпты таңдау</option>
+                                </select>
+                                <button id="loadClassBtn" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    Жүктеу
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="currentClassDisplay" class="hidden bg-white rounded-lg shadow-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Ағымдағы сынып: <span id="currentClassName"></span></h3>
+                            <div id="studentsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR беті -->
+                <div id="qrContent" class="hidden">
+                    <div class="max-w-6xl mx-auto">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">QR Қатысу Тексеру</h2>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- QR код бөлімі -->
+                            <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                                <h3 class="text-lg font-semibold mb-4">Ағымдағы QR код</h3>
+                                <div id="qrCodeContainer" class="qr-container mb-4">
+                                    <canvas id="qrCanvas" class="mx-auto border-2 border-gray-200 rounded-lg"></canvas>
+                                </div>
+                                <div class="text-2xl font-bold text-blue-600 mb-2">
+                                    Қалған уақыт: <span id="timer">15</span> сек
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    QR код 15 секунд сайын жаңарады
+                                </div>
+                            </div>
+
+                            <!-- Оқушылар тізімі -->
+                            <div class="bg-white rounded-lg shadow-lg p-6">
+                                <h3 class="text-lg font-semibold mb-4">Оқушылар тізімі</h3>
+                                <div id="qrStudentsList" class="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+                                    <div class="text-center text-gray-500 col-span-2 py-8">
+                                        Алдымен тізім бетінен сыныпты жүктеңіз
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Геолокация беті -->
+                <div id="geoContent" class="hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Геолокация бақылау</h2>
+                        
+                        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Ағымдағы орналасу</h3>
+                            <div id="locationInfo" class="text-center py-8">
+                                <div class="text-4xl mb-4">📍</div>
+                                <p class="text-gray-600">Геолокацияны алу үшін рұқсат беріңіз</p>
+                                <button id="getLocationBtn" class="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    Орналасуды алу
+                                </button>
+                            </div>
+                            <div id="locationDisplay" class="hidden">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <h4 class="font-semibold text-gray-700 mb-2">Координаттар</h4>
+                                        <p class="text-sm text-gray-600">Ендік: <span id="latitude">-</span></p>
+                                        <p class="text-sm text-gray-600">Бойлық: <span id="longitude">-</span></p>
+                                    </div>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <h4 class="font-semibold text-gray-700 mb-2">Дәлдік</h4>
+                                        <p class="text-sm text-gray-600">Дәлдік: <span id="accuracy">-</span> м</p>
+                                        <p class="text-sm text-gray-600">Уақыт: <span id="timestamp">-</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Тіркелген оқушылар</h3>
+                            <div id="geoStudentsList" class="space-y-2">
+                                <div class="text-center text-gray-500 py-8">
+                                    QR арқылы тіркелген оқушылар осында көрсетіледі
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR сканер сайты (жасырын iframe) -->
+    <div id="qrScannerSite" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+        <div class="flex items-center justify-center h-full">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <div id="scannerContent">
+                    <h2 class="text-2xl font-bold text-center mb-6">QR Сканер</h2>
+                    <div class="text-center">
+                        <div id="validQR" class="hidden">
+                            <div class="text-green-600 text-6xl mb-4">✅</div>
+                            <p class="text-lg mb-6">QR код дұрыс!</p>
+                            <button id="confirmBtn" class="w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-lg font-semibold">
+                                Растаймын
+                            </button>
+                        </div>
+                        <div id="invalidQR" class="hidden">
+                            <div class="text-red-600 text-6xl mb-4">❌</div>
+                            <p class="text-lg mb-6">QR код дұрыс емес! Қайта көріңіз</p>
+                            <button id="retryBtn" class="w-full py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-lg font-semibold">
+                                Қайта көру
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Глобальные переменные
+        let currentStudents = [];
+        let currentQRCode = '';
+        let qrTimer = null;
+        let timeLeft = 15;
+        let confirmedStudents = new Set();
+
+        // Сақталған сыныптар
+        let savedClasses = JSON.parse(localStorage.getItem('savedClasses') || '{}');
+
+        // DOM элементтері
+        const homeBtn = document.getElementById('homeBtn');
+        const smartMugalimBtn = document.getElementById('smartMugalimBtn');
+        const topButtons = document.getElementById('topButtons');
+        const listBtn = document.getElementById('listBtn');
+        const qrBtn = document.getElementById('qrBtn');
+        const geoBtn = document.getElementById('geoBtn');
+        
+        const mainContent = document.getElementById('mainContent');
+        const listContent = document.getElementById('listContent');
+        const qrContent = document.getElementById('qrContent');
+        const geoContent = document.getElementById('geoContent');
+
+        // Басты бет батырмасы
+        homeBtn.addEventListener('click', () => {
+            topButtons.classList.add('hidden');
+            hideAllContent();
+            mainContent.classList.remove('hidden');
+            stopQRGeneration();
+            setActiveSidebarButton(homeBtn);
+        });
+
+        // Smart Mugalim батырмасын басу
+        smartMugalimBtn.addEventListener('click', () => {
+            topButtons.classList.remove('hidden');
+            showListContent();
+            setActiveSidebarButton(smartMugalimBtn);
+        });
+
+        // Жоғарғы батырмалар
+        listBtn.addEventListener('click', showListContent);
+        qrBtn.addEventListener('click', showQRContent);
+        geoBtn.addEventListener('click', showGeoContent);
+
+        function showListContent() {
+            hideAllContent();
+            listContent.classList.remove('hidden');
+            updateClassSelect();
+            setActiveButton(listBtn);
+        }
+
+        function showQRContent() {
+            hideAllContent();
+            qrContent.classList.remove('hidden');
+            setActiveButton(qrBtn);
+            updateQRStudentsList();
+            startQRGeneration();
+        }
+
+        function showGeoContent() {
+            hideAllContent();
+            geoContent.classList.remove('hidden');
+            setActiveButton(geoBtn);
+            stopQRGeneration();
+        }
+
+        function hideAllContent() {
+            mainContent.classList.add('hidden');
+            listContent.classList.add('hidden');
+            qrContent.classList.add('hidden');
+            geoContent.classList.add('hidden');
+        }
+
+        function setActiveButton(activeBtn) {
+            [listBtn, qrBtn, geoBtn].forEach(btn => {
+                btn.classList.remove('bg-blue-800', 'bg-green-800', 'bg-purple-800');
+                if (btn === listBtn) btn.classList.add('bg-blue-600');
+                if (btn === qrBtn) btn.classList.add('bg-green-600');
+                if (btn === geoBtn) btn.classList.add('bg-purple-600');
+            });
+            
+            if (activeBtn === listBtn) activeBtn.classList.add('bg-blue-800');
+            if (activeBtn === qrBtn) activeBtn.classList.add('bg-green-800');
+            if (activeBtn === geoBtn) activeBtn.classList.add('bg-purple-800');
+        }
+
+        function setActiveSidebarButton(activeBtn) {
+            [homeBtn, smartMugalimBtn].forEach(btn => {
+                btn.classList.remove('bg-gray-800');
+            });
+            activeBtn.classList.add('bg-gray-800');
+        }
+
+        // Сынып сақтау
+        document.getElementById('saveClassBtn').addEventListener('click', () => {
+            const className = document.getElementById('classNameInput').value.trim();
+            const studentsText = document.getElementById('studentsInput').value.trim();
+            
+            if (!className || !studentsText) {
+                alert('Сынып атауы мен оқушылар тізімін толтырыңыз!');
+                return;
+            }
+
+            const students = studentsText.split('\n').filter(name => name.trim()).map(name => name.trim());
+            
+            savedClasses[className] = students;
+            localStorage.setItem('savedClasses', JSON.stringify(savedClasses));
+            
+            currentStudents = students;
+            confirmedStudents.clear();
+            
+            updateClassSelect();
+            displayCurrentClass(className, students);
+            
+            alert('Сынып сәтті сақталды!');
+        });
+
+        // Сынып жүктеу
+        document.getElementById('loadClassBtn').addEventListener('click', () => {
+            const selectedClass = document.getElementById('loadClassSelect').value;
+            if (!selectedClass) {
+                alert('Сыныпты таңдаңыз!');
+                return;
+            }
+
+            const students = savedClasses[selectedClass];
+            currentStudents = students;
+            confirmedStudents.clear();
+            
+            document.getElementById('classNameInput').value = selectedClass;
+            document.getElementById('studentsInput').value = students.join('\n');
+            
+            displayCurrentClass(selectedClass, students);
+        });
+
+        function updateClassSelect() {
+            const select = document.getElementById('loadClassSelect');
+            select.innerHTML = '<option value="">Сақталған сыныпты таңдау</option>';
+            
+            Object.keys(savedClasses).forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                select.appendChild(option);
+            });
+        }
+
+        function displayCurrentClass(className, students) {
+            document.getElementById('currentClassName').textContent = className;
+            const studentsList = document.getElementById('studentsList');
+            
+            studentsList.innerHTML = '';
+            students.forEach(student => {
+                const div = document.createElement('div');
+                div.className = 'p-2 bg-gray-100 rounded text-center student-name';
+                div.textContent = student;
+                studentsList.appendChild(div);
+            });
+            
+            document.getElementById('currentClassDisplay').classList.remove('hidden');
+        }
+
+        // QR код генерациясы
+        function generateQRCode() {
+            currentQRCode = 'qr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            const canvas = document.getElementById('qrCanvas');
+            
+            // QR код URL-ін құру
+            const qrUrl = `${window.location.origin}${window.location.pathname}?qr=${currentQRCode}`;
+            
+            // Canvas өлшемін орнату
+            canvas.width = 200;
+            canvas.height = 200;
+            
+            QRCode.toCanvas(canvas, qrUrl, {
+                width: 200,
+                height: 200,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, (error) => {
+                if (error) {
+                    console.error('QR код қатесі:', error);
+                    // Қате болса, мәтінмен көрсету
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#f3f4f6';
+                    ctx.fillRect(0, 0, 200, 200);
+                    ctx.fillStyle = '#374151';
+                    ctx.font = '14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('QR код жүктелуде...', 100, 100);
+                } else {
+                    console.log('QR код сәтті жасалды:', currentQRCode);
+                }
+            });
+        }
+
+        function startQRGeneration() {
+            generateQRCode();
+            timeLeft = 15;
+            updateTimer();
+            
+            qrTimer = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                
+                if (timeLeft <= 0) {
+                    generateQRCode();
+                    timeLeft = 15;
+                }
+            }, 1000);
+        }
+
+        function stopQRGeneration() {
+            if (qrTimer) {
+                clearInterval(qrTimer);
+                qrTimer = null;
+            }
+        }
+
+        function updateTimer() {
+            document.getElementById('timer').textContent = timeLeft;
+        }
+
+        function updateQRStudentsList() {
+            const container = document.getElementById('qrStudentsList');
+            
+            if (currentStudents.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 col-span-2 py-8">Алдымен тізім бетінен сыныпты жүктеңіз</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            currentStudents.forEach(student => {
+                const div = document.createElement('div');
+                div.className = 'p-2 bg-gray-100 rounded text-center text-sm student-name';
+                div.textContent = student;
+                div.id = `qr-student-${student}`;
+                
+                if (confirmedStudents.has(student)) {
+                    div.classList.add('student-confirmed');
+                }
+                
+                container.appendChild(div);
+            });
+        }
+
+        // QR сканер симуляциясы (URL параметрлері арқылы)
+        function checkQRFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const qrCode = urlParams.get('qr');
+            
+            if (qrCode) {
+                // URL-ді тазалау
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+                // QR кодты тексеру
+                if (qrCode === currentQRCode) {
+                    showQRScanner(true);
+                } else {
+                    showQRScanner(false);
+                }
+            }
+        }
+
+        function showQRScanner(isValid) {
+            const scanner = document.getElementById('qrScannerSite');
+            const validQR = document.getElementById('validQR');
+            const invalidQR = document.getElementById('invalidQR');
+            
+            scanner.classList.remove('hidden');
+            
+            if (isValid) {
+                validQR.classList.remove('hidden');
+                invalidQR.classList.add('hidden');
+            } else {
+                validQR.classList.add('hidden');
+                invalidQR.classList.remove('hidden');
+            }
+        }
+
+        // Растау батырмасы
+        document.getElementById('confirmBtn').addEventListener('click', () => {
+            // Бұл жерде оқушының есімін алу керек (қарапайым симуляция үшін)
+            const studentName = prompt('Сіздің есіміңіз:');
+            
+            if (studentName && currentStudents.includes(studentName)) {
+                confirmedStudents.add(studentName);
+                updateQRStudentsList();
+                
+                // Тізім бетіндегі студентті де жаңарту
+                const listStudent = document.querySelector(`#studentsList .student-name:contains('${studentName}')`);
+                if (listStudent) {
+                    listStudent.classList.add('student-confirmed');
+                }
+
+                // Геолокацияны алу
+                getStudentLocation(studentName);
+                
+                // Автоматты түрде геолокация бетіне ауысу
+                setTimeout(() => {
+                    showGeoContent();
+                }, 1000);
+            }
+            
+            document.getElementById('qrScannerSite').classList.add('hidden');
+        });
+
+        // Қайта көру батырмасы
+        document.getElementById('retryBtn').addEventListener('click', () => {
+            document.getElementById('qrScannerSite').classList.add('hidden');
+        });
+
+        // Геолокация функциялары
+        let studentLocations = {};
+
+        function getStudentLocation(studentName) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const location = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            timestamp: new Date().toLocaleString('kk-KZ')
+                        };
+                        
+                        studentLocations[studentName] = location;
+                        updateGeoStudentsList();
+                    },
+                    (error) => {
+                        console.error('Геолокация қатесі:', error);
+                        studentLocations[studentName] = {
+                            error: 'Геолокацияны алу мүмкін болмады',
+                            timestamp: new Date().toLocaleString('kk-KZ')
+                        };
+                        updateGeoStudentsList();
+                    }
+                );
+            }
+        }
+
+        function updateGeoStudentsList() {
+            const container = document.getElementById('geoStudentsList');
+            
+            if (Object.keys(studentLocations).length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-8">QR арқылы тіркелген оқушылар осында көрсетіледі</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            Object.entries(studentLocations).forEach(([studentName, location]) => {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-50 p-4 rounded-lg border-l-4 border-green-500';
+                
+                if (location.error) {
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-semibold text-gray-800">${studentName}</h4>
+                                <p class="text-sm text-red-600">${location.error}</p>
+                                <p class="text-xs text-gray-500">${location.timestamp}</p>
+                            </div>
+                            <div class="text-red-500">❌</div>
+                        </div>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-semibold text-gray-800">${studentName}</h4>
+                                <p class="text-sm text-gray-600">📍 ${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}</p>
+                                <p class="text-xs text-gray-500">Дәлдік: ${Math.round(location.accuracy)}м | ${location.timestamp}</p>
+                            </div>
+                            <div class="text-green-500">✅</div>
+                        </div>
+                    `;
+                }
+                
+                container.appendChild(div);
+            });
+        }
+
+        // Геолокация батырмасы
+        document.getElementById('getLocationBtn').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                document.getElementById('locationInfo').innerHTML = '<div class="text-center py-8"><div class="text-4xl mb-4">⏳</div><p class="text-gray-600">Геолокация алынуда...</p></div>';
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        document.getElementById('latitude').textContent = position.coords.latitude.toFixed(6);
+                        document.getElementById('longitude').textContent = position.coords.longitude.toFixed(6);
+                        document.getElementById('accuracy').textContent = Math.round(position.coords.accuracy);
+                        document.getElementById('timestamp').textContent = new Date().toLocaleString('kk-KZ');
+                        
+                        document.getElementById('locationInfo').classList.add('hidden');
+                        document.getElementById('locationDisplay').classList.remove('hidden');
+                    },
+                    (error) => {
+                        document.getElementById('locationInfo').innerHTML = `
+                            <div class="text-center py-8">
+                                <div class="text-4xl mb-4">❌</div>
+                                <p class="text-red-600">Геолокацияны алу мүмкін болмады</p>
+                                <p class="text-sm text-gray-500">${error.message}</p>
+                                <button id="retryLocationBtn" class="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    Қайта көру
+                                </button>
+                            </div>
+                        `;
+                        
+                        document.getElementById('retryLocationBtn').addEventListener('click', () => {
+                            document.getElementById('getLocationBtn').click();
+                        });
+                    }
+                );
+            } else {
+                alert('Сіздің браузеріңіз геолокацияны қолдамайды');
+            }
+        });
+
+        // Бетті жүктегенде URL тексеру
+        window.addEventListener('load', checkQRFromURL);
+        
+        // Бастапқы күй
+        updateClassSelect();
+        setActiveSidebarButton(homeBtn);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984590ae365dece9',t:'MTc1ODc1MTMzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
 
