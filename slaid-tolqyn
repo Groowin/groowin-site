@@ -1,0 +1,1864 @@
+<!doctype html>
+<html lang="kk">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Серпімді механикалық толқындар</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100%;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        .presentation-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 3%;
+            box-sizing: border-box;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-content {
+            background: white;
+            border-radius: 20px;
+            padding: 4%;
+            width: 90%;
+            max-width: 1000px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-height: 85%;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin: 0 0 0.5em 0;
+            text-align: center;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin: 0 0 0.8em 0;
+            text-align: center;
+        }
+
+        h3 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin: 1.2em 0 0.6em 0;
+        }
+
+        p {
+            color: #333;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin: 0.8em 0;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 3%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: #667eea;
+            color: white;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .wave-animation {
+            width: 100%;
+            height: 150px;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .wave-line {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 2px solid #667eea;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            font-size: 1.1em;
+        }
+
+        .comparison-table td {
+            background: #f8f9ff;
+        }
+
+        .formula-box {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-size: 1.3em;
+            text-align: center;
+        }
+
+        .quiz-option {
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .quiz-option.correct {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .quiz-option.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .quiz-feedback {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .quiz-feedback.correct {
+            background: #4caf50;
+            color: white;
+        }
+
+        .quiz-feedback.incorrect {
+            background: #f44336;
+            color: white;
+        }
+
+        .score-display {
+            font-size: 2em;
+            color: #667eea;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .particle {
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            position: absolute;
+            animation: oscillate 2s ease-in-out infinite;
+        }
+
+        @keyframes oscillate {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .standing-wave {
+            width: 100%;
+            height: 150px;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .example-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+            margin: 20px 0;
+        }
+
+        .characteristics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .characteristic-card {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .characteristic-card h4 {
+            color: #667eea;
+            margin: 0 0 10px 0;
+        }
+
+        .next-question-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 20px auto;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .next-question-btn.show {
+            display: block;
+        }
+
+        .next-question-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .lab-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .lab-cell {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lab-cell:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            border-color: #764ba2;
+        }
+
+        .lab-cell.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .lab-cell.active h4,
+        .lab-cell.active p {
+            color: white;
+        }
+
+        .lab-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .lab-cell h4 {
+            color: #667eea;
+            margin: 10px 0 5px 0;
+            font-size: 1.2em;
+        }
+
+        .lab-cell p {
+            color: #666;
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        .simulation-area {
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .simulation-info {
+            text-align: center;
+            color: #667eea;
+        }
+
+        .simulation-info h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        .controls-panel {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .controls-panel h4 {
+            color: #667eea;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 80px;
+        }
+
+        .control-group input[type="range"] {
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .control-group span {
+            font-weight: bold;
+            color: #764ba2;
+            min-width: 50px;
+        }
+
+        .control-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .wave-canvas {
+            width: 100%;
+            height: 250px;
+            border-radius: 10px;
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+            max-width: 250px;
+            font-size: 0.9em;
+        }
+
+        .info-panel h5 {
+            color: #667eea;
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .info-panel p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .particles-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            margin: 20px 0;
+        }
+
+        .wave-particle {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #667eea;
+            border-radius: 50%;
+            transition: all 0.1s ease;
+        }
+
+        .compression-zone {
+            position: absolute;
+            background: rgba(102, 126, 234, 0.3);
+            height: 100%;
+            border-radius: 5px;
+            animation: compressionMove 2s linear infinite;
+        }
+
+        @keyframes compressionMove {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(100%); }
+        }
+
+        .ripple-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: radial-gradient(circle, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            animation: rippleExpand 3s linear infinite;
+        }
+
+        @keyframes rippleExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 400px;
+                height: 400px;
+                opacity: 0;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="presentation-container">
+   <div class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">20</span>
+   </div>
+   <div class="slide active" data-slide="1">
+    <div class="slide-content">
+     <h1 id="presentationTitle">Серпімді механикалық толқындар</h1>
+     <h2>Бойлық және көлденең толқындардың теңдеуі</h2>
+     <div class="image-placeholder">
+      🌊
+     </div>
+     <p style="text-align: center; font-size: 1.3em; color: #667eea; font-weight: bold;" id="authorName">Физика курсы</p>
+     <p style="text-align: center; font-size: 1.2em; margin-top: 30px;" id="introText">Толқындар әлемін зерттеуге саяхат</p>
+    </div>
+   </div>
+   <div class="slide" data-slide="2">
+    <div class="slide-content">
+     <h2>Толқын дегеніміз не?</h2>
+     <div class="image-placeholder">
+      🎸
+     </div>
+     <p><strong>Толқын</strong> – бұл ортада таралатын тербеліс процесі.</p>
+     <div class="example-box">
+      <h3 style="margin-top: 0; color: white;">Күнделікті мысалдар:</h3>
+      <p style="color: white;">🎸 Гитара ішегінің тербелісі</p>
+      <p style="color: white;">💧 Суға тас тастағанда пайда болатын толқындар</p>
+      <p style="color: white;">🔊 Дыбыс толқындары</p>
+      <p style="color: white;">🌍 Жер сілкінісі кезіндегі сейсмикалық толқындар</p>
+     </div>
+     <p style="text-align: center; font-style: italic; color: #764ba2;">Толқындар энергияны бір жерден екінші жерге тасымалдайды!</p>
+    </div>
+   </div>
+   <div class="slide" data-slide="3">
+    <div class="slide-content">
+     <h2>Серпімді механикалық толқын</h2>
+     <p><strong>Серпімді толқын</strong> – серпімді ортада таралатын механикалық толқын.</p>
+     <div class="wave-animation" id="waveAnimation1"></div>
+     <h3>Серпімділік дегеніміз не?</h3>
+     <p>Серпімділік – заттың деформациядан кейін бастапқы күйіне қайта оралу қабілеті.</p>
+     <div class="characteristics-grid">
+      <div class="characteristic-card">
+       <h4>Серпімді орта</h4>
+       <p>Газдар, сұйықтар, қатты денелер</p>
+      </div>
+      <div class="characteristic-card">
+       <h4>Энергия тасымалы</h4>
+       <p>Бөлшектер орнынан қозғалмайды</p>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="4">
+    <div class="slide-content">
+     <h2>Толқынның негізгі сипаттамалары</h2>
+     <div class="characteristics-grid">
+      <div class="characteristic-card">
+       <h4>Амплитуда (A)</h4>
+       <p>Тербелістің ең үлкен ауытқуы</p>
+       <p style="color: #667eea; font-weight: bold;">Өлшем бірлігі: метр (м)</p>
+      </div>
+      <div class="characteristic-card">
+       <h4>Жиілік (f)</h4>
+       <p>Бір секундтағы тербеліс саны</p>
+       <p style="color: #667eea; font-weight: bold;">Өлшем бірлігі: герц (Гц)</p>
+      </div>
+      <div class="characteristic-card">
+       <h4>Толқын ұзындығы (λ)</h4>
+       <p>Екі көрші шың арасындағы қашықтық</p>
+       <p style="color: #667eea; font-weight: bold;">Өлшем бірлігі: метр (м)</p>
+      </div>
+      <div class="characteristic-card">
+       <h4>Жылдамдық (v)</h4>
+       <p>Толқынның таралу жылдамдығы</p>
+       <p style="color: #667eea; font-weight: bold;">Өлшем бірлігі: м/с</p>
+      </div>
+     </div>
+     <div class="formula-box">
+      v = λ × f
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="5">
+    <div class="slide-content">
+     <h2>Толқын параметрлерінің байланысы</h2>
+     <div class="wave-animation" id="waveAnimation2"></div>
+     <div class="formula-box">
+      <p style="margin: 10px 0;">Толқын жылдамдығы: <strong>v = λ × f</strong></p>
+      <p style="margin: 10px 0;">Период: <strong>T = 1/f</strong></p>
+      <p style="margin: 10px 0;">Бұрыштық жиілік: <strong>ω = 2πf</strong></p>
+      <p style="margin: 10px 0;">Толқындық сан: <strong>k = 2π/λ</strong></p>
+     </div>
+     <div class="example-box">
+      <h3 style="margin-top: 0; color: white;">Мысал:</h3>
+      <p style="color: white;">Егер толқын ұзындығы λ = 2 м және жиілік f = 5 Гц болса:</p>
+      <p style="color: white; font-size: 1.2em;"><strong>v = 2 м × 5 Гц = 10 м/с</strong></p>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="6">
+    <div class="slide-content">
+     <h2>Толқындардың түрлері</h2>
+     <p style="text-align: center; font-size: 1.2em; color: #764ba2;">Бөлшектердің қозғалыс бағытына байланысты:</p>
+     <div class="characteristics-grid">
+      <div class="characteristic-card" style="border-left-color: #4caf50;">
+       <h4 style="color: #4caf50;">Бойлық толқындар</h4>
+       <p>Бөлшектер толқын таралу бағытымен параллель қозғалады</p>
+       <div style="font-size: 2em; text-align: center; margin: 15px 0;">
+        ↔️
+       </div>
+      </div>
+      <div class="characteristic-card" style="border-left-color: #ff9800;">
+       <h4 style="color: #ff9800;">Көлденең толқындар</h4>
+       <p>Бөлшектер толқын таралу бағытына перпендикуляр қозғалады</p>
+       <div style="font-size: 2em; text-align: center; margin: 15px 0;">
+        ↕️
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="7">
+    <div class="slide-content">
+     <h2>Бойлық толқындар</h2>
+     <div class="image-placeholder">
+      🔊
+     </div>
+     <p><strong>Бойлық толқын</strong> – бөлшектердің тербелісі толқын таралу бағытымен сәйкес келетін толқын.</p>
+     <h3>Негізгі қасиеттері:</h3>
+     <p>✓ Сығылу және созылу аймақтары пайда болады</p>
+     <p>✓ Газдарда, сұйықтарда және қатты денелерде таралады</p>
+     <p>✓ Дыбыс толқындары – бойлық толқынның мысалы</p>
+     <div class="example-box">
+      <h3 style="margin-top: 0; color: white;">Мысалдар:</h3>
+      <p style="color: white;">🔊 Дыбыс толқындары ауада</p>
+      <p style="color: white;">🌊 Сейсмикалық P-толқындары</p>
+      <p style="color: white;">🔧 Серіппеде таралатын толқындар</p>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="8">
+    <div class="slide-content">
+     <h2>Көлденең толқындар</h2>
+     <div class="wave-animation" id="waveAnimation3"></div>
+     <p><strong>Көлденең толқын</strong> – бөлшектердің тербелісі толқын таралу бағытына перпендикуляр болатын толқын.</p>
+     <h3>Негізгі қасиеттері:</h3>
+     <p>✓ Тек қатты денелерде және сұйық бетінде таралады</p>
+     <p>✓ Шыңдар мен ойыстар пайда болады</p>
+     <p>✓ Поляризация қасиеті бар</p>
+     <div class="example-box">
+      <h3 style="margin-top: 0; color: white;">Мысалдар:</h3>
+      <p style="color: white;">🎸 Гитара ішегіндегі толқындар</p>
+      <p style="color: white;">🌊 Су бетіндегі толқындар</p>
+      <p style="color: white;">🌍 Сейсмикалық S-толқындары</p>
+      <p style="color: white;">💡 Жарық толқындары (электромагниттік)</p>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="9">
+    <div class="slide-content">
+     <h2>Бойлық және көлденең толқындарды салыстыру</h2>
+     <table class="comparison-table">
+      <thead>
+       <tr>
+        <th>Сипаттама</th>
+        <th>Бойлық толқын</th>
+        <th>Көлденең толқын</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td><strong>Қозғалыс бағыты</strong></td>
+        <td>Параллель (↔️)</td>
+        <td>Перпендикуляр (↕️)</td>
+       </tr>
+       <tr>
+        <td><strong>Таралу ортасы</strong></td>
+        <td>Газ, сұйық, қатты дене</td>
+        <td>Қатты дене, сұйық беті</td>
+       </tr>
+       <tr>
+        <td><strong>Мысалдар</strong></td>
+        <td>Дыбыс, P-толқындары</td>
+        <td>Ішек, су беті, S-толқындары</td>
+       </tr>
+       <tr>
+        <td><strong>Құрылымы</strong></td>
+        <td>Сығылу және созылу</td>
+        <td>Шыңдар мен ойыстар</td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </div>
+   <div class="slide" data-slide="10">
+    <div class="slide-content">
+     <h2>Тұрғын толқын</h2>
+     <div class="standing-wave" id="standingWave"></div>
+     <p><strong>Тұрғын толқын</strong> – қарама-қарсы бағытта таралатын екі толқынның интерференциясы нәтижесінде пайда болатын толқын.</p>
+     <h3>Негізгі ерекшеліктері:</h3>
+     <p>✓ Толқын таралмайды, тек тербеледі</p>
+     <p>✓ Түйіндер (амплитуда = 0) және қарындар (максималды амплитуда) пайда болады</p>
+     <p>✓ Барлық нүктелер бір фазада тербеледі</p>
+    </div>
+   </div>
+   <div class="slide" data-slide="11">
+    <div class="slide-content">
+     <h2>Тұрғын толқынның пайда болуы</h2>
+     <div class="image-placeholder">
+      🎻
+     </div>
+     <h3>Интерференция</h3>
+     <p>Екі немесе одан да көп толқынның қосылуы – <strong>интерференция</strong> деп аталады.</p>
+     <div class="example-box">
+      <h3 style="margin-top: 0; color: white;">Тұрғын толқын қайда пайда болады?</h3>
+      <p style="color: white;">🎸 Музыкалық аспаптардың ішектерінде</p>
+      <p style="color: white;">🎺 Үрлемелі аспаптардың түтіктерінде</p>
+      <p style="color: white;">📻 Резонаторларда</p>
+      <p style="color: white;">🔬 Акустикалық резонанс құбырларында</p>
+     </div>
+     <p style="text-align: center; font-style: italic; color: #764ba2; margin-top: 20px;">Тұрғын толқын – музыкалық дыбыстардың негізі!</p>
+    </div>
+   </div>
+   <div class="slide" data-slide="12">
+    <div class="slide-content">
+     <h2>Толқын теңдеуі</h2>
+     <p>Кез келген гармоникалық толқынды математикалық теңдеумен сипаттауға болады:</p>
+     <div class="formula-box">
+      y(x,t) = A sin(ωt - kx + φ₀)
+     </div>
+     <h3>Теңдеудегі шамалар:</h3>
+     <div class="characteristics-grid">
+      <div class="characteristic-card">
+       <h4>y(x,t)</h4>
+       <p>x нүктесінің t уақыттағы ауытқуы</p>
+      </div>
+      <div class="characteristic-card">
+       <h4>A</h4>
+       <p>Амплитуда (максималды ауытқу)</p>
+      </div>
+      <div class="characteristic-card">
+       <h4>ω</h4>
+       <p>Бұрыштық жиілік (ω = 2πf)</p>
+      </div>
+      <div class="characteristic-card">
+       <h4>k</h4>
+       <p>Толқындық сан (k = 2π/λ)</p>
+      </div>
+      <div class="characteristic-card">
+       <h4>φ₀</h4>
+       <p>Бастапқы фаза</p>
+      </div>
+      <div class="characteristic-card">
+       <h4>(ωt - kx)</h4>
+       <p>Толқынның фазасы</p>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="13">
+    <div class="slide-content">
+     <h2>Толқын теңдеуінің түрлері</h2>
+     <h3>Оң бағытта таралатын толқын:</h3>
+     <div class="formula-box">
+      y(x,t) = A sin(ωt - kx)
+     </div>
+     <h3>Теріс бағытта таралатын толқын:</h3>
+     <div class="formula-box">
+      y(x,t) = A sin(ωt + kx)
+     </div>
+     <h3>Косинус арқылы жазылған түрі:</h3>
+     <div class="formula-box">
+      y(x,t) = A cos(ωt - kx + φ₀)
+     </div>
+     <p style="text-align: center; color: #764ba2; font-style: italic; margin-top: 20px;">Синус және косинус функциялары фазасы бойынша π/2 радианға ерекшеленеді</p>
+    </div>
+   </div>
+   <div class="slide" data-slide="14">
+    <div class="slide-content">
+     <h2>Мысал есеп</h2>
+     <div class="example-box">
+      <h3 style="margin-top: 0; color: white;">Есеп шарты:</h3>
+      <p style="color: white;">Толқын теңдеуі: y = 0.05 sin(20πt - 4πx) метрмен берілген.</p>
+      <p style="color: white;">Табу керек: амплитуда, жиілік, толқын ұзындығы, жылдамдық.</p>
+     </div>
+     <h3>Шешімі:</h3>
+     <p><strong>1. Амплитуда:</strong> A = 0.05 м = 5 см</p>
+     <p><strong>2. Бұрыштық жиілік:</strong> ω = 20π рад/с</p>
+     <p style="margin-left: 30px;">Жиілік: f = ω/(2π) = 20π/(2π) = 10 Гц</p>
+     <p><strong>3. Толқындық сан:</strong> k = 4π рад/м</p>
+     <p style="margin-left: 30px;">Толқын ұзындығы: λ = 2π/k = 2π/(4π) = 0.5 м</p>
+     <p><strong>4. Жылдамдық:</strong> v = λf = 0.5 м × 10 Гц = 5 м/с</p>
+     <div class="formula-box" style="background: #4caf50; color: white; margin-top: 20px;">
+      Жауап: A = 5 см, f = 10 Гц, λ = 0.5 м, v = 5 м/с
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="15">
+    <div class="slide-content">
+     <h2>Табиғаттағы толқындар</h2>
+     <div class="image-placeholder">
+      🌍
+     </div>
+     <h3>Дыбыс толқындары</h3>
+     <p>🔊 Ауадағы дыбыс жылдамдығы: ~340 м/с</p>
+     <p>🌊 Судағы дыбыс жылдамдығы: ~1500 м/с</p>
+     <p>🪨 Болатта дыбыс жылдамдығы: ~5000 м/с</p>
+     <div class="example-box">
+      <h3 style="margin-top: 0; color: white;">Қызықты фактілер:</h3>
+      <p style="color: white;">🦇 Жарқанаттар ультрадыбысты пайдаланады (20 кГц-тен жоғары)</p>
+      <p style="color: white;">🐘 Пілдер инфрадыбысты пайдаланады (20 Гц-тен төмен)</p>
+      <p style="color: white;">🎵 Адам құлағы 20 Гц - 20 кГц аралығын естиді</p>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="16">
+    <div class="slide-content">
+     <h2>Сейсмикалық толқындар</h2>
+     <div class="image-placeholder">
+      🌋
+     </div>
+     <h3>Жер сілкінісі кезіндегі толқындар:</h3>
+     <div class="characteristics-grid">
+      <div class="characteristic-card" style="border-left-color: #4caf50;">
+       <h4 style="color: #4caf50;">P-толқындары</h4>
+       <p>Бойлық толқындар</p>
+       <p>Ең жылдам (~6-8 км/с)</p>
+       <p>Барлық ортада таралады</p>
+      </div>
+      <div class="characteristic-card" style="border-left-color: #ff9800;">
+       <h4 style="color: #ff9800;">S-толқындары</h4>
+       <p>Көлденең толқындар</p>
+       <p>Баяу (~3-5 км/с)</p>
+       <p>Тек қатты денеде таралады</p>
+      </div>
+     </div>
+     <p style="text-align: center; color: #764ba2; font-style: italic; margin-top: 20px;">Сейсмологтар бұл толқындарды зерттеп, Жердің ішкі құрылымын анықтайды!</p>
+    </div>
+   </div>
+   <div class="slide" data-slide="17">
+    <div class="slide-content">
+     <h2>Музыкалық аспаптар</h2>
+     <div class="image-placeholder">
+      🎼
+     </div>
+     <h3>Толқындар музыкада:</h3>
+     <p>🎸 <strong>Ішекті аспаптар:</strong> Гитара, скрипка – көлденең тұрғын толқындар</p>
+     <p>🎺 <strong>Үрлемелі аспаптар:</strong> Труба, флейта – бойлық тұрғын толқындар</p>
+     <p>🥁 <strong>Соққылы аспаптар:</strong> Барабан – екі өлшемді толқындар</p>
+     <div class="example-box">
+      <h3 style="margin-top: 0; color: white;">Музыкалық ноталар:</h3>
+      <p style="color: white;">🎵 Ля ноты (A4): 440 Гц</p>
+      <p style="color: white;">🎵 До ноты (C4): 261.6 Гц</p>
+      <p style="color: white;">🎵 Жоғары октава = 2 есе жоғары жиілік</p>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="18">
+    <div class="slide-content">
+     <h2>Интерактивті тест</h2>
+     <p style="text-align: center; font-size: 1.2em; color: #667eea;">Білімді тексеру уақыты! 7 сұраққа жауап беріңіз.</p>
+     <div class="score-display">
+      Ұпай: <span id="score">0</span> / 7
+     </div>
+     <div id="quizContainer"></div>
+     <div class="quiz-feedback" id="feedback"></div><button class="next-question-btn" id="nextBtn">Келесі сұрақ</button>
+    </div>
+   </div>
+   <div class="slide" data-slide="19">
+    <div class="slide-content">
+     <h2>Тест нәтижесі</h2>
+     <div class="image-placeholder" id="resultEmoji">
+      🎉
+     </div>
+     <div class="score-display" style="font-size: 3em;"><span id="finalScore">0</span> / 7
+     </div>
+     <div id="resultMessage" style="text-align: center; font-size: 1.3em; margin: 30px 0;"></div>
+     <div class="example-box">
+      <h3 style="margin-top: 0; color: white;">Бағалау:</h3>
+      <p style="color: white;">7 ұпай – Өте жақсы! Керемет білім! 🌟</p>
+      <p style="color: white;">5-6 ұпай – Жақсы! Жалғастырыңыз! 👍</p>
+      <p style="color: white;">3-4 ұпай – Қанағаттанарлық. Қайталаңыз! 📚</p>
+      <p style="color: white;">0-2 ұпай – Материалды қайта оқыңыз! 💪</p>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="20">
+    <div class="slide-content">
+     <h2>Интерактивті лабораториялық симулятор</h2>
+     <p style="text-align: center; color: #667eea; font-size: 1.2em; margin-bottom: 30px;">Төмендегі ұяшықтарды басып, толқындарды зерттеңіз!</p>
+     <div class="lab-grid">
+      <div class="lab-cell" data-type="longitudinal">
+       <div class="lab-icon">
+        🔊
+       </div>
+       <h4>Бойлық толқын</h4>
+       <p>Дыбыс толқыны</p>
+      </div>
+      <div class="lab-cell" data-type="transverse">
+       <div class="lab-icon">
+        🎸
+       </div>
+       <h4>Көлденең толқын</h4>
+       <p>Ішек тербелісі</p>
+      </div>
+      <div class="lab-cell" data-type="standing">
+       <div class="lab-icon">
+        🎻
+       </div>
+       <h4>Тұрғын толқын</h4>
+       <p>Резонанс</p>
+      </div>
+      <div class="lab-cell" data-type="water">
+       <div class="lab-icon">
+        🌊
+       </div>
+       <h4>Су толқыны</h4>
+       <p>Беттік толқын</p>
+      </div>
+      <div class="lab-cell" data-type="seismic">
+       <div class="lab-icon">
+        🌍
+       </div>
+       <h4>Сейсмикалық</h4>
+       <p>Жер сілкінісі</p>
+      </div>
+      <div class="lab-cell" data-type="interference">
+       <div class="lab-icon">
+        ⚡
+       </div>
+       <h4>Интерференция</h4>
+       <p>Толқын қосылуы</p>
+      </div>
+     </div>
+     <div class="simulation-area" id="simulationArea">
+      <div class="simulation-info" id="simulationInfo">
+       <h3>Зерттеу үшін жоғарыдағы ұяшықтардың біреуін таңдаңыз</h3>
+       <p>Әр түрлі толқын түрлерін интерактивті түрде көре аласыз!</p>
+      </div>
+     </div>
+     <div class="controls-panel" id="controlsPanel" style="display: none;">
+      <h4>Басқару панелі:</h4>
+      <div class="control-group"><label for="amplitudeSlider">Амплитуда:</label> <input type="range" id="amplitudeSlider" min="10" max="50" value="30"> <span id="amplitudeValue">30</span>
+      </div>
+      <div class="control-group"><label for="frequencySlider">Жиілік:</label> <input type="range" id="frequencySlider" min="0.5" max="3" step="0.1" value="1"> <span id="frequencyValue">1.0</span> Гц
+      </div><button id="playPauseBtn" class="control-btn">⏸️ Тоқтату</button> <button id="resetBtn" class="control-btn">🔄 Қайта бастау</button>
+     </div>
+    </div>
+   </div>
+   <div class="slide" data-slide="21">
+    <div class="slide-content">
+     <h2>Қорытынды</h2>
+     <div class="image-placeholder">
+      ✨
+     </div>
+     <h3>Біз не үйрендік?</h3>
+     <p>✓ Серпімді механикалық толқындардың табиғаты</p>
+     <p>✓ Бойлық және көлденең толқындардың айырмашылығы</p>
+     <p>✓ Тұрғын толқындардың пайда болуы</p>
+     <p>✓ Толқын теңдеуі және оның параметрлері</p>
+     <p>✓ Табиғаттағы және техникадағы қолданысы</p>
+     <p>✓ Интерактивті лабораториялық тәжірибе</p>
+     <div class="example-box" style="margin-top: 30px;">
+      <h3 style="margin-top: 0; color: white;">Есте сақтаңыз:</h3>
+      <p style="color: white; font-size: 1.2em;">Толқындар – бұл энергияның таралу тәсілі!</p>
+      <p style="color: white; font-size: 1.2em;">v = λ × f – негізгі формула!</p>
+     </div>
+     <p style="text-align: center; font-size: 1.3em; color: #667eea; font-weight: bold; margin-top: 30px;">Назарларыңызға рахмет! 🙏</p>
+    </div>
+   </div>
+   <div class="navigation"><button class="nav-btn" id="prevBtn">← Артқа</button> <button class="nav-btn" id="nextBtn2">Алға →</button>
+   </div>
+  </div>
+  <script>
+        const defaultConfig = {
+            presentation_title: "Серпімді механикалық толқындар",
+            author_name: "Физика курсы",
+            intro_text: "Толқындар әлемін зерттеуге саяхат"
+        };
+
+        let currentSlide = 1;
+        const totalSlides = 21;
+        let quizScore = 0;
+        let currentQuestion = 0;
+        let answeredQuestions = new Set();
+
+        const quizQuestions = [
+            {
+                question: "Толқын дегеніміз не?",
+                options: [
+                    "Ортада таралатын тербеліс процесі",
+                    "Бөлшектердің қозғалысы",
+                    "Энергияның түрленуі",
+                    "Заттың деформациясы"
+                ],
+                correct: 0
+            },
+            {
+                question: "Бойлық толқында бөлшектер қалай қозғалады?",
+                options: [
+                    "Перпендикуляр бағытта",
+                    "Толқын таралу бағытымен параллель",
+                    "Айналмалы қозғалыста",
+                    "Қозғалмайды"
+                ],
+                correct: 1
+            },
+            {
+                question: "Дыбыс толқыны қандай толқын түріне жатады?",
+                options: [
+                    "Көлденең толқын",
+                    "Тұрғын толқын",
+                    "Бойлық толқын",
+                    "Электромагниттік толқын"
+                ],
+                correct: 2
+            },
+            {
+                question: "Толқын жылдамдығының формуласы қандай?",
+                options: [
+                    "v = A × f",
+                    "v = λ / f",
+                    "v = λ × f",
+                    "v = f / λ"
+                ],
+                correct: 2
+            },
+            {
+                question: "Тұрғын толқын қалай пайда болады?",
+                options: [
+                    "Бір толқынның таралуынан",
+                    "Екі қарама-қарсы толқынның интерференциясынан",
+                    "Толқынның шағылуынан",
+                    "Толқынның сынуынан"
+                ],
+                correct: 1
+            },
+            {
+                question: "Көлденең толқын қай ортада таралмайды?",
+                options: [
+                    "Қатты денеде",
+                    "Су бетінде",
+                    "Газда",
+                    "Ішекте"
+                ],
+                correct: 2
+            },
+            {
+                question: "Толқын теңдеуінде A әрпі нені білдіреді?",
+                options: [
+                    "Жылдамдық",
+                    "Амплитуда",
+                    "Жиілік",
+                    "Толқын ұзындығы"
+                ],
+                correct: 1
+            }
+        ];
+
+        function updateSlideCounter() {
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            if (n > totalSlides) n = totalSlides;
+            if (n < 1) n = 1;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[n - 1].classList.add('active');
+            
+            currentSlide = n;
+            updateSlideCounter();
+
+            if (currentSlide === 18) {
+                loadQuiz();
+            } else if (currentSlide === 19) {
+                showFinalResults();
+            } else if (currentSlide === 20) {
+                initializeLab();
+            }
+
+            if (currentSlide === 3 || currentSlide === 5) {
+                setTimeout(createWaveAnimation, 100);
+            }
+            if (currentSlide === 8) {
+                setTimeout(createTransverseWave, 100);
+            }
+            if (currentSlide === 10) {
+                setTimeout(createStandingWave, 100);
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide === 18 && currentQuestion < quizQuestions.length && !answeredQuestions.has(currentQuestion)) {
+                return;
+            }
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function createWaveAnimation() {
+            const containers = [
+                document.getElementById('waveAnimation1'),
+                document.getElementById('waveAnimation2')
+            ];
+            
+            containers.forEach(container => {
+                if (!container) return;
+                container.innerHTML = '';
+                
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '100%');
+                svg.setAttribute('height', '150');
+                svg.setAttribute('viewBox', '0 0 800 150');
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                let d = 'M 0 75';
+                for (let x = 0; x <= 800; x += 10) {
+                    const y = 75 + 30 * Math.sin((x / 800) * Math.PI * 4);
+                    d += ` L ${x} ${y}`;
+                }
+                
+                path.setAttribute('d', d);
+                path.setAttribute('stroke', '#667eea');
+                path.setAttribute('stroke-width', '3');
+                path.setAttribute('fill', 'none');
+                
+                const animate = document.createElementNS('http://www.w3.org/2000/svg', 'animateTransform');
+                animate.setAttribute('attributeName', 'transform');
+                animate.setAttribute('type', 'translate');
+                animate.setAttribute('from', '0 0');
+                animate.setAttribute('to', '-200 0');
+                animate.setAttribute('dur', '2s');
+                animate.setAttribute('repeatCount', 'indefinite');
+                
+                path.appendChild(animate);
+                svg.appendChild(path);
+                container.appendChild(svg);
+            });
+        }
+
+        function createTransverseWave() {
+            const container = document.getElementById('waveAnimation3');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '150');
+            svg.setAttribute('viewBox', '0 0 800 150');
+            
+            for (let i = 0; i < 10; i++) {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', i * 80 + 40);
+                circle.setAttribute('cy', '75');
+                circle.setAttribute('r', '8');
+                circle.setAttribute('fill', '#667eea');
+                
+                const animate = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                animate.setAttribute('attributeName', 'cy');
+                animate.setAttribute('values', '75;45;75;105;75');
+                animate.setAttribute('dur', '2s');
+                animate.setAttribute('begin', (i * 0.2) + 's');
+                animate.setAttribute('repeatCount', 'indefinite');
+                
+                circle.appendChild(animate);
+                svg.appendChild(circle);
+            }
+            
+            container.appendChild(svg);
+        }
+
+        function createStandingWave() {
+            const container = document.getElementById('standingWave');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '150');
+            svg.setAttribute('viewBox', '0 0 800 150');
+            
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            
+            function updatePath(t) {
+                let d = 'M 0 75';
+                for (let x = 0; x <= 800; x += 5) {
+                    const amplitude = 30 * Math.sin((x / 800) * Math.PI * 3);
+                    const y = 75 + amplitude * Math.sin(t);
+                    d += ` L ${x} ${y}`;
+                }
+                path.setAttribute('d', d);
+            }
+            
+            path.setAttribute('stroke', '#667eea');
+            path.setAttribute('stroke-width', '3');
+            path.setAttribute('fill', 'none');
+            
+            svg.appendChild(path);
+            container.appendChild(svg);
+            
+            let t = 0;
+            setInterval(() => {
+                t += 0.1;
+                updatePath(t);
+            }, 50);
+        }
+
+        function loadQuiz() {
+            if (currentQuestion >= quizQuestions.length) {
+                return;
+            }
+
+            const container = document.getElementById('quizContainer');
+            const question = quizQuestions[currentQuestion];
+            
+            let html = `<h3 style="color: #667eea; margin-bottom: 20px;">Сұрақ ${currentQuestion + 1}: ${question.question}</h3>`;
+            
+            question.options.forEach((option, index) => {
+                html += `<div class="quiz-option" data-index="${index}">${option}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            const options = container.querySelectorAll('.quiz-option');
+            options.forEach(option => {
+                option.addEventListener('click', () => checkAnswer(option, question.correct));
+            });
+        }
+
+        function checkAnswer(selectedOption, correctIndex) {
+            if (answeredQuestions.has(currentQuestion)) {
+                return;
+            }
+
+            answeredQuestions.add(currentQuestion);
+            
+            const container = document.getElementById('quizContainer');
+            const options = container.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            const selectedIndex = parseInt(selectedOption.dataset.index);
+            
+            if (selectedIndex === correctIndex) {
+                selectedOption.classList.add('correct');
+                feedback.textContent = '✓ Дұрыс!';
+                feedback.className = 'quiz-feedback show correct';
+                quizScore++;
+            } else {
+                selectedOption.classList.add('incorrect');
+                options[correctIndex].classList.add('correct');
+                feedback.textContent = '✗ Қате! Дұрыс жауап көрсетілді.';
+                feedback.className = 'quiz-feedback show incorrect';
+            }
+            
+            document.getElementById('score').textContent = quizScore;
+            
+            if (currentQuestion < quizQuestions.length - 1) {
+                nextBtn.classList.add('show');
+            } else {
+                nextBtn.textContent = 'Нәтижені көру';
+                nextBtn.classList.add('show');
+            }
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentQuestion >= quizQuestions.length - 1) {
+                showSlide(19);
+                return;
+            }
+            
+            currentQuestion++;
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('nextBtn').classList.remove('show');
+            document.getElementById('nextBtn').textContent = 'Келесі сұрақ';
+            
+            if (currentQuestion < quizQuestions.length) {
+                loadQuiz();
+            }
+        });
+
+        function showFinalResults() {
+            document.getElementById('finalScore').textContent = quizScore;
+            const resultMessage = document.getElementById('resultMessage');
+            const resultEmoji = document.getElementById('resultEmoji');
+            
+            if (quizScore === 7) {
+                resultMessage.innerHTML = '<p style="color: #4caf50; font-weight: bold;">Өте жақсы! Сіз барлық сұрақтарға дұрыс жауап бердіңіз! 🌟</p>';
+                resultEmoji.textContent = '🏆';
+            } else if (quizScore >= 5) {
+                resultMessage.innerHTML = '<p style="color: #667eea; font-weight: bold;">Жақсы нәтиже! Жалғастырыңыз! 👍</p>';
+                resultEmoji.textContent = '🎉';
+            } else if (quizScore >= 3) {
+                resultMessage.innerHTML = '<p style="color: #ff9800; font-weight: bold;">Қанағаттанарлық. Материалды қайталаңыз! 📚</p>';
+                resultEmoji.textContent = '📖';
+            } else {
+                resultMessage.innerHTML = '<p style="color: #f44336; font-weight: bold;">Материалды қайта оқып шығыңыз! 💪</p>';
+                resultEmoji.textContent = '📝';
+            }
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', prevSlide);
+        document.getElementById('nextBtn2').addEventListener('click', nextSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'ArrowRight') nextSlide();
+        });
+
+        async function onConfigChange(config) {
+            const titleElement = document.getElementById('presentationTitle');
+            const authorElement = document.getElementById('authorName');
+            const introElement = document.getElementById('introText');
+            
+            if (titleElement) {
+                titleElement.textContent = config.presentation_title || defaultConfig.presentation_title;
+            }
+            if (authorElement) {
+                authorElement.textContent = config.author_name || defaultConfig.author_name;
+            }
+            if (introElement) {
+                introElement.textContent = config.intro_text || defaultConfig.intro_text;
+            }
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig: defaultConfig,
+                onConfigChange: onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ["presentation_title", config.presentation_title || defaultConfig.presentation_title],
+                    ["author_name", config.author_name || defaultConfig.author_name],
+                    ["intro_text", config.intro_text || defaultConfig.intro_text]
+                ])
+            });
+        }
+
+        updateSlideCounter();
+        createWaveAnimation();
+
+        // Лабораториялық симулятор
+        let currentSimulation = null;
+        let animationId = null;
+        let isPlaying = true;
+        let amplitude = 30;
+        let frequency = 1;
+
+        function initializeLab() {
+            const labCells = document.querySelectorAll('.lab-cell');
+            labCells.forEach(cell => {
+                cell.addEventListener('click', () => {
+                    const type = cell.dataset.type;
+                    selectSimulation(type, cell);
+                });
+            });
+
+            // Басқару панелі
+            const amplitudeSlider = document.getElementById('amplitudeSlider');
+            const frequencySlider = document.getElementById('frequencySlider');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            if (amplitudeSlider) {
+                amplitudeSlider.addEventListener('input', (e) => {
+                    amplitude = parseInt(e.target.value);
+                    document.getElementById('amplitudeValue').textContent = amplitude;
+                });
+            }
+
+            if (frequencySlider) {
+                frequencySlider.addEventListener('input', (e) => {
+                    frequency = parseFloat(e.target.value);
+                    document.getElementById('frequencyValue').textContent = frequency.toFixed(1);
+                });
+            }
+
+            if (playPauseBtn) {
+                playPauseBtn.addEventListener('click', togglePlayPause);
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', resetSimulation);
+            }
+        }
+
+        function selectSimulation(type, cellElement) {
+            // Барлық ұяшықтардан active класын алып тастау
+            document.querySelectorAll('.lab-cell').forEach(cell => {
+                cell.classList.remove('active');
+            });
+            
+            // Таңдалған ұяшықты белсенді ету
+            cellElement.classList.add('active');
+            
+            currentSimulation = type;
+            document.getElementById('controlsPanel').style.display = 'block';
+            
+            startSimulation(type);
+        }
+
+        function startSimulation(type) {
+            const simulationArea = document.getElementById('simulationArea');
+            
+            // Анимацияны тоқтату
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+
+            switch(type) {
+                case 'longitudinal':
+                    createLongitudinalSimulation(simulationArea);
+                    break;
+                case 'transverse':
+                    createTransverseSimulation(simulationArea);
+                    break;
+                case 'standing':
+                    createStandingWaveSimulation(simulationArea);
+                    break;
+                case 'water':
+                    createWaterWaveSimulation(simulationArea);
+                    break;
+                case 'seismic':
+                    createSeismicSimulation(simulationArea);
+                    break;
+                case 'interference':
+                    createInterferenceSimulation(simulationArea);
+                    break;
+            }
+        }
+
+        function createLongitudinalSimulation(container) {
+            container.innerHTML = `
+                <div class="info-panel">
+                    <h5>🔊 Бойлық толқын</h5>
+                    <p><strong>Түрі:</strong> Дыбыс толқыны</p>
+                    <p><strong>Бағыт:</strong> Параллель</p>
+                    <p><strong>Орта:</strong> Ауа</p>
+                    <p><strong>Жылдамдық:</strong> ~340 м/с</p>
+                </div>
+                <div class="particles-container" id="longitudinalContainer"></div>
+            `;
+
+            const particlesContainer = document.getElementById('longitudinalContainer');
+            const particles = [];
+            
+            // Бөлшектерді жасау
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'wave-particle';
+                particle.style.left = (i * 20) + 'px';
+                particle.style.top = '90px';
+                particlesContainer.appendChild(particle);
+                particles.push({
+                    element: particle,
+                    originalX: i * 20,
+                    index: i
+                });
+            }
+
+            let time = 0;
+            function animateLongitudinal() {
+                if (!isPlaying) {
+                    animationId = requestAnimationFrame(animateLongitudinal);
+                    return;
+                }
+
+                particles.forEach(particle => {
+                    const displacement = amplitude * 0.3 * Math.sin(frequency * time - particle.index * 0.3);
+                    particle.element.style.left = (particle.originalX + displacement) + 'px';
+                });
+
+                time += 0.05;
+                animationId = requestAnimationFrame(animateLongitudinal);
+            }
+            animateLongitudinal();
+        }
+
+        function createTransverseSimulation(container) {
+            container.innerHTML = `
+                <div class="info-panel">
+                    <h5>🎸 Көлденең толқын</h5>
+                    <p><strong>Түрі:</strong> Ішек тербелісі</p>
+                    <p><strong>Бағыт:</strong> Перпендикуляр</p>
+                    <p><strong>Орта:</strong> Қатты дене</p>
+                    <p><strong>Жылдамдық:</strong> Ортаға байланысты</p>
+                </div>
+                <canvas class="wave-canvas" id="transverseCanvas"></canvas>
+            `;
+
+            const canvas = document.getElementById('transverseCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            let time = 0;
+            function animateTransverse() {
+                if (!isPlaying) {
+                    animationId = requestAnimationFrame(animateTransverse);
+                    return;
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Толқын сызу
+                ctx.beginPath();
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 4;
+                
+                for (let x = 0; x < canvas.width; x += 2) {
+                    const y = canvas.height / 2 + amplitude * Math.sin(frequency * time - x * 0.02);
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+
+                // Бөлшектерді көрсету
+                ctx.fillStyle = '#764ba2';
+                for (let x = 0; x < canvas.width; x += 40) {
+                    const y = canvas.height / 2 + amplitude * Math.sin(frequency * time - x * 0.02);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                time += 0.05;
+                animationId = requestAnimationFrame(animateTransverse);
+            }
+            animateTransverse();
+        }
+
+        function createStandingWaveSimulation(container) {
+            container.innerHTML = `
+                <div class="info-panel">
+                    <h5>🎻 Тұрғын толқын</h5>
+                    <p><strong>Түрі:</strong> Резонанс</p>
+                    <p><strong>Ерекшелік:</strong> Түйіндер мен қарындар</p>
+                    <p><strong>Қолдану:</strong> Музыкалық аспаптар</p>
+                </div>
+                <canvas class="wave-canvas" id="standingCanvas"></canvas>
+            `;
+
+            const canvas = document.getElementById('standingCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            let time = 0;
+            function animateStanding() {
+                if (!isPlaying) {
+                    animationId = requestAnimationFrame(animateStanding);
+                    return;
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Тұрғын толқын
+                ctx.beginPath();
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 4;
+                
+                for (let x = 0; x < canvas.width; x += 2) {
+                    const standingAmplitude = amplitude * Math.sin(x * 0.02);
+                    const y = canvas.height / 2 + standingAmplitude * Math.sin(frequency * time);
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+
+                // Түйіндерді көрсету
+                ctx.fillStyle = '#f44336';
+                for (let x = 0; x < canvas.width; x += 157) {
+                    ctx.beginPath();
+                    ctx.arc(x, canvas.height / 2, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                time += 0.05;
+                animationId = requestAnimationFrame(animateStanding);
+            }
+            animateStanding();
+        }
+
+        function createWaterWaveSimulation(container) {
+            container.innerHTML = `
+                <div class="info-panel">
+                    <h5>🌊 Су толқыны</h5>
+                    <p><strong>Түрі:</strong> Беттік толқын</p>
+                    <p><strong>Орта:</strong> Сұйық беті</p>
+                    <p><strong>Ерекшелік:</strong> Дөңгелек толқындар</p>
+                </div>
+                <div class="ripple-container" id="rippleContainer"></div>
+            `;
+
+            const container2 = document.getElementById('rippleContainer');
+            
+            function createRipple() {
+                if (!isPlaying) {
+                    setTimeout(createRipple, 1000 / frequency);
+                    return;
+                }
+
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                ripple.style.left = '50%';
+                ripple.style.top = '50%';
+                ripple.style.transform = 'translate(-50%, -50%)';
+                ripple.style.animationDuration = (3 / frequency) + 's';
+                
+                container2.appendChild(ripple);
+                
+                setTimeout(() => {
+                    if (container2.contains(ripple)) {
+                        container2.removeChild(ripple);
+                    }
+                }, 3000 / frequency);
+                
+                setTimeout(createRipple, 1000 / frequency);
+            }
+            createRipple();
+        }
+
+        function createSeismicSimulation(container) {
+            container.innerHTML = `
+                <div class="info-panel">
+                    <h5>🌍 Сейсмикалық толқын</h5>
+                    <p><strong>P-толқын:</strong> Бойлық (~6-8 км/с)</p>
+                    <p><strong>S-толқын:</strong> Көлденең (~3-5 км/с)</p>
+                    <p><strong>Орта:</strong> Жер қыртысы</p>
+                </div>
+                <canvas class="wave-canvas" id="seismicCanvas"></canvas>
+            `;
+
+            const canvas = document.getElementById('seismicCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            let time = 0;
+            function animateSeismic() {
+                if (!isPlaying) {
+                    animationId = requestAnimationFrame(animateSeismic);
+                    return;
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // P-толқын (жылдам)
+                ctx.beginPath();
+                ctx.strokeStyle = '#4caf50';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([]);
+                
+                for (let x = 0; x < canvas.width; x += 2) {
+                    const y = canvas.height / 3 + amplitude * 0.5 * Math.sin(frequency * time * 2 - x * 0.03);
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+
+                // S-толқын (баяу)
+                ctx.beginPath();
+                ctx.strokeStyle = '#ff9800';
+                ctx.lineWidth = 3;
+                
+                for (let x = 0; x < canvas.width; x += 2) {
+                    const y = canvas.height * 2/3 + amplitude * 0.7 * Math.sin(frequency * time - x * 0.02);
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+
+                // Белгілер
+                ctx.fillStyle = '#4caf50';
+                ctx.font = '14px Arial';
+                ctx.fillText('P-толқын (жылдам)', 10, canvas.height / 3 - 10);
+                
+                ctx.fillStyle = '#ff9800';
+                ctx.fillText('S-толқын (баяу)', 10, canvas.height * 2/3 - 10);
+
+                time += 0.05;
+                animationId = requestAnimationFrame(animateSeismic);
+            }
+            animateSeismic();
+        }
+
+        function createInterferenceSimulation(container) {
+            container.innerHTML = `
+                <div class="info-panel">
+                    <h5>⚡ Интерференция</h5>
+                    <p><strong>Түрі:</strong> Екі толқынның қосылуы</p>
+                    <p><strong>Нәтиже:</strong> Күшейту және әлсірету</p>
+                    <p><strong>Қолдану:</strong> Тұрғын толқын</p>
+                </div>
+                <canvas class="wave-canvas" id="interferenceCanvas"></canvas>
+            `;
+
+            const canvas = document.getElementById('interferenceCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            let time = 0;
+            function animateInterference() {
+                if (!isPlaying) {
+                    animationId = requestAnimationFrame(animateInterference);
+                    return;
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Бірінші толқын
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(102, 126, 234, 0.7)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                
+                for (let x = 0; x < canvas.width; x += 2) {
+                    const y = canvas.height / 2 + amplitude * 0.5 * Math.sin(frequency * time - x * 0.02);
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+
+                // Екінші толқын
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(118, 75, 162, 0.7)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                
+                for (let x = 0; x < canvas.width; x += 2) {
+                    const y = canvas.height / 2 + amplitude * 0.5 * Math.sin(frequency * time + x * 0.02);
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+
+                // Нәтижелік толқын
+                ctx.beginPath();
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([]);
+                
+                for (let x = 0; x < canvas.width; x += 2) {
+                    const wave1 = amplitude * 0.5 * Math.sin(frequency * time - x * 0.02);
+                    const wave2 = amplitude * 0.5 * Math.sin(frequency * time + x * 0.02);
+                    const y = canvas.height / 2 + wave1 + wave2;
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+
+                time += 0.05;
+                animationId = requestAnimationFrame(animateInterference);
+            }
+            animateInterference();
+        }
+
+        function togglePlayPause() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playPauseBtn');
+            btn.textContent = isPlaying ? '⏸️ Тоқтату' : '▶️ Жалғастыру';
+        }
+
+        function resetSimulation() {
+            if (currentSimulation) {
+                startSimulation(currentSimulation);
+            }
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'997c16deb49feced',t:'MTc2MjAwNzQxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
