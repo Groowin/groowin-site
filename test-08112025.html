@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математикадан Қорытынды Тест</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax CDN for rendering LaTeX math formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <style>
+        /* Custom font and basic styling */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc;
+        }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        /* Custom style for option labels */
+        .option-label {
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #e5e7eb;
+            color: #4b5563;
+            font-weight: 600;
+            margin-right: 0.75rem;
+        }
+        /* Animation for timer below 60 seconds */
+        @keyframes pulse-red {
+            0%, 100% { background-color: #ef4444; } /* red-500 */
+            50% { background-color: #fca5a5; } /* red-300 */
+        }
+        .animate-pulse-custom {
+            animation: pulse-red 1s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 sm:p-8">
+
+    <!-- Main Container -->
+    <div id="quiz-container" class="w-full max-w-4xl bg-white shadow-2xl rounded-xl p-6 sm:p-10">
+        
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-indigo-700 mb-2">
+            Математикадан Қорытынды Тест
+        </h1>
+        <p class="text-center text-gray-500 mb-8 sm:mb-6">
+            Барлығы 22 сұрақ. Әр сұрақтың дұрыс жауабын таңдаңыз.
+        </p>
+
+        <!-- Time Setup Section (NEW: User inputs time before starting) -->
+        <div id="time-setup" class="mb-8 p-6 bg-indigo-50 border border-indigo-200 rounded-xl shadow-md text-center">
+            <h2 class="text-xl font-bold text-indigo-700 mb-4">Тест уақытын белгілеңіз (минутпен)</h2>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <input type="number" id="time-input" value="15" min="5" max="180" class="w-full sm:w-40 p-3 border-2 border-indigo-300 rounded-lg text-2xl text-center font-semibold focus:outline-none focus:border-indigo-500" aria-label="Тест уақыты минутпен">
+                <button id="start-quiz-button" onclick="startQuiz()" class="w-full sm:w-auto whitespace-nowrap bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition duration-300 shadow-md shadow-green-300">
+                    Тестті Бастау
+                </button>
+            </div>
+            <p class="text-sm text-gray-500 mt-2">Минималды уақыт: 5 минут. Максималды уақыт: 180 минут.</p>
+        </div>
+        <!-- End Time Setup Section -->
+
+        <!-- Timer Display (Initially Hidden) -->
+        <div id="timer-container" class="mb-6 p-3 bg-red-100 border border-red-400 rounded-lg shadow-md text-center hidden">
+            <p class="text-lg font-bold text-red-700">
+                Қалған уақыт: <span id="time-left" class="text-2xl font-extrabold ml-2">15:00</span>
+            </p>
+        </div>
+
+        <div id="questions-list" class="hidden">
+            <!-- Questions will be rendered here -->
+        </div>
+
+        <div class="mt-10 flex flex-col sm:flex-row gap-4">
+            <button id="submit-button" onclick="submitQuiz()" class="w-full sm:w-1/2 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition duration-300 shadow-md shadow-indigo-300 hidden">
+                Жауаптарды Тексеру
+            </button>
+            <button id="restart-button" onclick="restartQuiz()" class="w-full sm:w-1/2 bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-400 transition duration-300 shadow-md hidden">
+                Тестті Қайта Бастау
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="mt-10 p-6 bg-gray-100 border-l-4 border-indigo-500 rounded-lg shadow-inner hidden">
+            <h2 id="results-title" class="text-2xl font-bold text-gray-800 mb-4">Нәтижелер:</h2>
+            <p class="text-xl text-gray-700 mb-2">Дұрыс жауаптар саны: <span id="score" class="font-extrabold text-indigo-600">0</span> / 22</p>
+            <p id="percentage" class="text-xl font-bold text-gray-700"></p>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data in Kazakh (Unchanged)
+        const quizData = [
+            {
+                q: "Арифметикалық прогрессияның $a_1 = 3$ және айырмасы $d = 5$ болса, оның $a_4$ мүшесін табыңыз.",
+                options: ["18", "13", "15", "17"],
+                correct: "18"
+            },
+            {
+                q: "Арифметикалық прогрессияның $a_5 = 11$ және $a_{10} = 26$ болса, оның $a_1$ мүшесін табыңыз.",
+                options: ["2", "3", "-1", "5"],
+                correct: "-1"
+            },
+            {
+                q: "Геометриялық прогрессияның $b_1 = 4$ және еселігі $q = 3$ болса, оның $b_3$ мүшесін табыңыз.",
+                options: ["12", "24", "36", "48"],
+                correct: "36"
+            },
+            {
+                q: "Геометриялық прогрессияның алғашқы $n$ мүшесінің қосындысы $S_n = 2^{n+1}-2$ формуласымен берілген. $b_3$ мүшесін табыңыз.",
+                options: ["4", "8", "6", "10"],
+                correct: "8"
+            },
+            {
+                q: "Теңдеулер жүйесін шешіңіз: $\\begin{cases} x+y=5 \\ x-y=1 \\end{cases}$",
+                options: ["(3; 2)", "(2; 3)", "(4; 1)", "(1; 4)"],
+                correct: "(3; 2)"
+            },
+            {
+                q: "Теңдеулер жүйесін шешіңіз: $\\begin{cases} 2x-y=7 \\ x+3y=0 \\end{cases}$",
+                options: ["(3; -1)", "(-1; 3)", "(2; -3)", "(3; -2)"],
+                correct: "(3; -1)"
+            },
+            {
+                q: "$3x - 6 < 0$ теңсіздігін шешіңіз.",
+                options: ["$x > 2$", "$x < 2$", "$x > -2$", "$x < -2$"],
+                correct: "$x < 2$"
+            },
+            {
+                q: "$5(x-1) \\ge 2x + 4$ теңсіздігін шешіңіз.",
+                options: ["$x \\le 3$", "$x \\ge 3$", "$x \\le 1/3$", "$x \\ge 1/3$"],
+                correct: "$x \\ge 3$"
+            },
+            {
+                q: "$x^3 = 64$ теңдеуінің түбірін табыңыз.",
+                options: ["4", "8", "-4", "16"],
+                correct: "4"
+            },
+            {
+                q: "$2^{x+1} = 16$ теңдеуінің түбірін табыңыз.",
+                options: ["3", "4", "5", "2"],
+                correct: "3"
+            },
+            {
+                q: "$2^x < 8$ теңсіздігін шешіңіз.",
+                options: ["$x > 3$", "$x < 3$", "$x > 4$", "$x < 4$"],
+                correct: "$x < 3$"
+            },
+            {
+                q: "$0.5^x \\ge 4$ теңсіздігін шешіңіз.",
+                options: ["$x \\le -2$", "$x \\ge -2$", "$x \\le 2$", "$x \\ge 2$"],
+                correct: "$x \\le -2$"
+            },
+            {
+                q: "$\\vec{a} = (3; -1)$ және $\\vec{b} = (2; 5)$ векторларының қосындысын табыңыз.",
+                options: ["(5; 4)", "(1; -6)", "(5; -6)", "(-1; 6)"],
+                correct: "(5; 4)"
+            },
+            {
+                q: "$\\vec{a} = (4; 2)$ векторының ұзындығын (модулін) табыңыз.",
+                options: ["6", "$\\sqrt{6}$", "$2\\sqrt{5}$", "20"],
+                correct: "$2\\sqrt{5}$"
+            },
+            {
+                q: "$y = 2x - 3$ түзуі $x = 2$ болғанда $y$-тің қандай мәнін қабылдайды?",
+                options: ["1", "2", "-1", "-2"],
+                correct: "1"
+            },
+            {
+                q: "$y = kx + b$ түзуі $(1; 5)$ және $(-1; 1)$ нүктелері арқылы өтетін болса, $k$ және $b$-ны табыңыз.",
+                options: ["$k=2, b=3$", "$k=3, b=2$", "$k=1, b=4$", "$k=4, b=1$"],
+                correct: "$k=2, b=3$"
+            },
+            {
+                q: "$x^2 + 5x + 6 = 0$ квадрат теңдеуінің дискриминантын ($D$) табыңыз.",
+                options: ["1", "-1", "49", "25"],
+                correct: "1"
+            },
+            {
+                q: "$2x^2 - 3x + c = 0$ теңдеуінің бір ғана түбірі болуы үшін $c$-ның мәні қандай болуы керек?",
+                options: ["$c = 9/8$", "$c = 9$", "$c = 4$", "$c = 8$"],
+                correct: "$c = 9/8$"
+            },
+            {
+                q: "Өрнекті ықшамдаңыз: $(2x + 1)^2$",
+                options: ["$4x^2+4x+1$", "$4x^2+1$", "$2x^2+4x+1$", "$4x^2+2x+1$"],
+                correct: "$4x^2+4x+1$"
+            },
+            {
+                q: "Көбейткіштерге жіктеңіз: $9a^2 - 4b^2$",
+                options: ["$(3a-2b)^2$", "$(3a-2b)(3a+2b)$", "$(9a-4b)(9a+4b)$", "$(3a+2b)^2$"],
+                correct: "$(3a-2b)(3a+2b)$"
+            },
+            {
+                q: "Арифметикалық прогрессияның $n$-ші мүшесінің формуласын көрсетіңіз.",
+                options: ["$a_n = a_1 + d(n-1)$", "$a_n = a_1 \\cdot q^{n-1}$", "$S_n = \\frac{a_1+a_n}{2} \\cdot n$", "$S_n = \\frac{b_1(q^n-1)}{q-1}$"],
+                correct: "$a_n = a_1 + d(n-1)$"
+            },
+            {
+                q: "Қысқаша көбейту формуласы $(a-b)^2$-на тең өрнекті көрсетіңіз.",
+                options: ["$a^2-b^2$", "$a^2+2ab+b^2$", "$a^2-2ab+b^2$", "$a^3-3a^2b+3ab^2-b^3$"],
+                correct: "$a^2-2ab+b^2$"
+            }
+        ];
+
+        const questionsList = document.getElementById('questions-list');
+        const submitButton = document.getElementById('submit-button');
+        const restartButton = document.getElementById('restart-button');
+        const resultsDiv = document.getElementById('results');
+        const scoreSpan = document.getElementById('score');
+        const percentageP = document.getElementById('percentage');
+        const resultsTitle = document.getElementById('results-title');
+        
+        // NEW ELEMENTS
+        const timeSetupDiv = document.getElementById('time-setup');
+        const timeInput = document.getElementById('time-input');
+
+
+        // --- TIMER VARIABLES AND FUNCTIONS ---
+        let TIME_LIMIT_SECONDS = 900; // Default value (15 minutes)
+        let timeLeft = TIME_LIMIT_SECONDS;
+        let timerInterval = null;
+        const timerDisplay = document.getElementById('time-left');
+        const timerContainer = document.getElementById('timer-container');
+
+        // Helper function to format seconds into MM:SS
+        function formatTime(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // Function to update the timer display and change styles
+        function updateTimerDisplay() {
+            timerDisplay.textContent = formatTime(timeLeft);
+            
+            // Critical warning styles (last 60 seconds)
+            if (timeLeft <= 60) {
+                // Remove initial state classes
+                timerContainer.classList.remove('bg-red-100', 'border-red-400');
+                
+                // Add critical warning and custom pulse animation
+                timerContainer.classList.add('bg-red-500', 'text-white', 'animate-pulse-custom');
+                timerContainer.querySelector('p').classList.remove('text-red-700');
+                timerContainer.querySelector('p').classList.add('text-white');
+            } else {
+                // Normal state classes
+                timerContainer.classList.remove('bg-red-500', 'text-white', 'animate-pulse-custom');
+                timerContainer.classList.add('bg-red-100', 'border-red-400');
+                timerContainer.querySelector('p').classList.add('text-red-700');
+                timerContainer.querySelector('p').classList.remove('text-white');
+            }
+        }
+
+        // Function to start the countdown
+        function startTimer() {
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+
+            timeLeft = TIME_LIMIT_SECONDS;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    // Automatically submit when time runs out
+                    submitQuiz(true);
+                }
+            }, 1000);
+        }
+
+        // --- END TIMER FUNCTIONS ---
+
+        // Function to shuffle array (Fisher-Yates)
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to render the quiz structure (called only once on load)
+        function renderQuizStructure() {
+            questionsList.innerHTML = '';
+            quizData.forEach((data, index) => {
+                const qNum = index + 1;
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-card bg-white p-6 mb-8 border border-gray-200 rounded-xl shadow-lg';
+                questionDiv.id = `q-${qNum}`;
+
+                // Question Title
+                questionDiv.innerHTML = `
+                    <p class="text-lg font-semibold mb-4 text-gray-800">
+                        ${qNum}. ${data.q}
+                    </p>
+                    <div class="options-container space-y-3" id="options-${qNum}">
+                        <!-- Options will be here -->
+                    </div>
+                `;
+                
+                const optionsContainer = questionDiv.querySelector(`#options-${qNum}`);
+                const optionLabels = ['А', 'Б', 'В', 'Г'];
+                
+                // Shuffle options for rendering
+                const shuffledOptions = shuffle([...data.options]);
+
+                shuffledOptions.forEach((optionText, optIndex) => {
+                    const optionId = `q${qNum}-opt${optIndex}`;
+                    const isCorrectOption = optionText === data.correct;
+
+                    const optionElement = document.createElement('label');
+                    optionElement.htmlFor = optionId;
+                    optionElement.className = 'flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-indigo-50 transition duration-150';
+
+                    optionElement.innerHTML = `
+                        <input type="radio" id="${optionId}" name="question${qNum}" value="${optionText}" class="hidden" data-correct="${isCorrectOption}">
+                        <span class="option-label">${optionLabels[optIndex]}</span>
+                        <span class="text-base text-gray-700 option-text">${optionText}</span>
+                    `;
+
+                    // Add click event listener to handle custom styling
+                    optionElement.addEventListener('click', function() {
+                        // Remove selection style from siblings
+                        optionsContainer.querySelectorAll('label').forEach(label => {
+                            label.classList.remove('bg-indigo-200', 'border-indigo-500');
+                        });
+                        // Add selection style to current element
+                        optionElement.classList.add('bg-indigo-200', 'border-indigo-500');
+                    });
+
+                    optionsContainer.appendChild(optionElement);
+                });
+
+                questionsList.appendChild(questionDiv);
+            });
+            
+            // Re-render MathJax content
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+        
+        // NEW FUNCTION: Handles time input validation and starting the quiz
+        function startQuiz() {
+            const minutes = parseInt(timeInput.value, 10);
+            
+            // Basic validation
+            if (isNaN(minutes) || minutes < 5 || minutes > 180) {
+                // Instead of alert(), we change the input style and show temporary error hint
+                timeInput.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                setTimeout(() => {
+                    timeInput.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+                }, 2000);
+                return;
+            }
+
+            TIME_LIMIT_SECONDS = minutes * 60;
+            
+            // Hide setup, show quiz elements
+            timeSetupDiv.classList.add('hidden');
+            timerContainer.classList.remove('hidden');
+            questionsList.classList.remove('hidden');
+            submitButton.classList.remove('hidden');
+
+            // Start the timer
+            startTimer();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // Function to submit the quiz (now accepts optional isTimedOut argument)
+        function submitQuiz(isTimedOut = false) {
+            // STOP THE TIMER
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Update results title if submission was due to time out
+            if (isTimedOut) {
+                resultsTitle.textContent = 'НӘТИЖЕ (Уақыт Аяқталды):';
+            } else {
+                resultsTitle.textContent = 'Нәтижелер:';
+            }
+
+            let score = 0;
+            const totalQuestions = quizData.length;
+            
+            quizData.forEach((data, index) => {
+                const qNum = index + 1;
+                const questionCard = document.getElementById(`q-${qNum}`);
+                const optionsContainer = document.getElementById(`options-${qNum}`);
+                const selectedOption = document.querySelector(`input[name="question${qNum}"]:checked`);
+                
+                // Disable all radio buttons
+                document.querySelectorAll(`input[name="question${qNum}"]`).forEach(input => input.disabled = true);
+                
+                let isCorrect = false;
+
+                // Check the result
+                if (selectedOption) {
+                    if (selectedOption.value === data.correct) {
+                        score++;
+                        isCorrect = true;
+                    }
+                }
+
+                // Show results for each question
+                optionsContainer.querySelectorAll('label').forEach(label => {
+                    const input = label.querySelector('input');
+                    label.classList.remove('bg-indigo-200', 'border-indigo-500', 'hover:bg-indigo-50');
+
+                    if (input.value === data.correct) {
+                        // Mark correct answer in green
+                        label.classList.add('bg-green-100', 'border-green-600', 'font-bold');
+                        label.querySelector('.option-label').classList.add('bg-green-600', 'text-white');
+                    } else if (input === selectedOption && !isCorrect) {
+                        // Mark incorrect selected answer in red
+                        label.classList.add('bg-red-100', 'border-red-600', 'font-bold');
+                        label.querySelector('.option-label').classList.add('bg-red-600', 'text-white');
+                    } else {
+                        // Style unselected incorrect options normally
+                        label.classList.add('bg-gray-50');
+                    }
+                });
+
+                // Style the question card based on overall correctness
+                questionCard.classList.remove('border-gray-200');
+                questionCard.classList.add(isCorrect ? 'border-green-500' : 'border-red-500', 'shadow-xl');
+            });
+
+            // Display overall results
+            const percentage = ((score / totalQuestions) * 100).toFixed(1);
+            scoreSpan.textContent = score;
+            percentageP.textContent = `Пайыздық көрсеткіш: ${percentage}%`;
+            
+            // Adjust text color based on percentage
+            percentageP.classList.remove('text-green-600', 'text-yellow-600', 'text-red-600');
+            if (percentage >= 80) {
+                percentageP.classList.add('text-green-600');
+            } else if (percentage >= 50) {
+                percentageP.classList.add('text-yellow-600');
+            } else {
+                percentageP.classList.add('text-red-600');
+            }
+
+            resultsDiv.classList.remove('hidden');
+            submitButton.classList.add('hidden');
+            restartButton.classList.remove('hidden');
+
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Function to restart the quiz (returns to the time setup screen)
+        function restartQuiz() {
+            // Reset all selections and disables
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.checked = false;
+                input.disabled = false;
+                // Remove selection/result styles from labels
+                input.closest('label').classList.remove('bg-indigo-200', 'border-indigo-500', 'bg-green-100', 'border-green-600', 'font-bold', 'bg-red-100', 'border-red-600', 'bg-gray-50');
+                // Reset option labels
+                input.closest('label').querySelector('.option-label').classList.remove('bg-green-600', 'text-white', 'bg-red-600');
+                input.closest('label').querySelector('.option-label').classList.add('bg-gray-200', 'text-gray-600');
+            });
+
+            // Reset question card borders
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('border-green-500', 'border-red-500', 'shadow-xl');
+                card.classList.add('border-gray-200');
+            });
+            
+            // Hide quiz elements and show setup screen
+            timeSetupDiv.classList.remove('hidden');
+            timerContainer.classList.add('hidden');
+            questionsList.classList.add('hidden');
+            submitButton.classList.add('hidden');
+            restartButton.classList.add('hidden');
+            resultsDiv.classList.add('hidden');
+            
+            // Reset time input and scroll to top
+            timeInput.value = '15'; 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize quiz structure on load, show setup screen
+        window.onload = renderQuizStructure;
+    </script>
+</body>
+</html>
