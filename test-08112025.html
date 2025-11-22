@@ -60,7 +60,7 @@
             Математикадан Қорытынды Тест
         </h1>
         <p class="text-center text-gray-500 mb-8 sm:mb-6">
-            Барлығы 22 сұрақ. Әр сұрақтың дұрыс жауабын таңдаңыз.
+            Барлығы 28 сұрақ. Әр сұрақтың дұрыс жауабын таңдаңыз.
         </p>
 
         <!-- Time Setup Section: User inputs time before starting -->
@@ -99,135 +99,168 @@
         <!-- Results Section -->
         <div id="results" class="mt-10 p-6 bg-gray-100 border-l-4 border-indigo-500 rounded-lg shadow-inner hidden">
             <h2 id="results-title" class="text-2xl font-bold text-gray-800 mb-4">Нәтижелер:</h2>
-            <p class="text-xl text-gray-700 mb-2">Дұрыс жауаптар саны: <span id="score" class="font-extrabold text-indigo-600">0</span> / 22</p>
+            <p class="text-xl text-gray-700 mb-2">Дұрыс жауаптар саны: <span id="score" class="font-extrabold text-indigo-600">0</span> / 28</p>
             <p id="percentage" class="text-xl font-bold text-gray-700"></p>
         </div>
     </div>
 
     <script>
-        // Quiz Data in Kazakh
+        // Quiz Data in Kazakh (28 Questions) - UPDATED VALUES AND QUESTIONS
         const quizData = [
             // 1-2. Арифметикалық прогрессия (A & B)
             {
-                q: "Арифметикалық прогрессияның $a_1 = 7$ және айырмасы $d = 3$ болса, оның $a_5$ мүшесін табыңыз. (А деңгейі)",
-                options: ["16", "19", "22", "13"],
-                correct: "19"
+                q: "1. Арифметикалық прогрессияның $a_1 = 5$ және айырмасы $d = 4$ болса, оның $a_6$ мүшесін табыңыз. (А деңгейі)",
+                options: ["21", "25", "29", "33"],
+                correct: "25"
             },
             {
-                q: "Арифметикалық прогрессияның $a_3 = 10$ және $a_7 = 22$ болса, оның айырмасын ($d$) табыңыз. (Б деңгейі)",
-                options: ["2", "3", "4", "5"],
-                correct: "3"
+                q: "2. Арифметикалық прогрессияның $a_4 = 15$ және $a_8 = 31$ болса, оның айырмасын ($d$) табыңыз. (Б деңгейі)",
+                options: ["3", "4", "5", "6"],
+                correct: "4"
             },
             // 3-4. Геометриялық прогрессия (A & B)
             {
-                q: "Геометриялық прогрессияның $b_1 = 5$ және еселігі $q = 2$ болса, оның $b_4$ мүшесін табыңыз. (А деңгейі)",
-                options: ["20", "40", "10", "15"],
-                correct: "40"
+                q: "3. Геометриялық прогрессияның $b_1 = 3$ және еселігі $q = 3$ болса, оның $b_3$ мүшесін табыңыз. (А деңгейі)",
+                options: ["9", "18", "27", "81"],
+                correct: "27"
             },
             {
-                q: "Геометриялық прогрессияның алғашқы $4$ мүшесінің қосындысын табыңыз, егер $b_1 = 3$ және $q = 2$ болса. (Б деңгейі)",
-                options: ["36", "45", "48", "51"],
-                correct: "45"
+                q: "4. Геометриялық прогрессияның алғашқы $3$ мүшесінің қосындысын табыңыз, егер $b_1 = 2$ және $q = 3$ болса. (Б деңгейі)",
+                options: ["18", "20", "26", "30"],
+                correct: "26"
             },
             // 5-6. Жүйе (Система) (A & B)
             {
-                q: "Теңдеулер жүйесін шешіңіз: $\\begin{cases} x+y=8 \\ 2x-y=1 \\end{cases}$ (А деңгейі)",
-                options: ["(3; 5)", "(4; 4)", "(2; 6)", "(5; 3)"],
-                correct: "(3; 5)"
+                q: "5. Теңдеулер жүйесін шешіңіз: $\\begin{cases} x+y=7 \\ 3x-y=5 \\end{cases}$ (А деңгейі)",
+                options: ["(2; 5)", "(3; 4)", "(4; 3)", "(5; 2)"],
+                correct: "(3; 4)"
             },
             {
-                q: "Теңдеулер жүйесін шешіңіз: $\\begin{cases} x-y=1 \\ xy=6 \\end{cases}$ (Б деңгейі)",
-                options: ["(3; 2)", "(2; 3)", "(-2; -3)", "Шешімі жоқ"],
-                correct: "(3; 2)"
+                q: "6. Теңдеулер жүйесін шешіңіз: $\\begin{cases} x+y=5 \\ xy=6 \\end{cases}$ (Б деңгейі)",
+                options: ["(2; 3) және (3; 2)", "(6; 1) және (1; 6)", "(2; 3)", "Шешімі жоқ"],
+                correct: "(2; 3) және (3; 2)"
             },
             // 7-8. Теңсіздік қарапайым (A & B)
             {
-                q: "$4x - 12 > 0$ теңсіздігін шешіңіз. (А деңгейі)",
-                options: ["$x > 3$", "$x < 3$", "$x > -3$", "$x < -3$"],
-                correct: "$x > 3$"
+                q: "7. $3x + 9 \\le 0$ теңсіздігін шешіңіз. (А деңгейі)",
+                options: ["$x \le -3$", "$x < 3$", "$x \ge 3$", "$x \le 3$"],
+                correct: "$x \le -3$"
             },
             {
-                q: "$-2 \\le 3x + 1 < 10$ қосарланған теңсіздігін шешіңіз. (Б деңгейі)",
-                options: ["$[-1; 3)$", "$(-1; 3]$", "$[-1; 3]$", "$(-1; 3)$"],
-                correct: "$[-1; 3)$"
+                q: "8. $0 < 2x - 4 \\le 6$ қосарланған теңсіздігін шешіңіз. (Б деңгейі)",
+                options: ["$(2; 5]$", "$[2; 5)$", "$(2; 5)$", "$[2; 5]$"],
+                correct: "$(2; 5]$"
             },
             // 9-10. Дәрежелік шығаратын теңдеу (A & B)
             {
-                q: "$x^4 = 81$ теңдеуінің оң түбірін табыңыз. (А деңгейі)",
-                options: ["9", "3", "$\\sqrt{3}$", "27"],
-                correct: "3"
+                q: "9. $x^3 = -64$ теңдеуінің түбірін табыңыз. (А деңгейі)",
+                options: ["4", "-4", "8", "-8"],
+                correct: "-4"
             },
             {
-                q: "$4^x = 32$ теңдеуінің түбірін табыңыз. (Б деңгейі)",
-                options: ["$x = 2$", "$x = 3/2$", "$x = 5/2$", "$x = 4$"],
-                correct: "$x = 5/2$"
+                q: "10. $9^x = 27$ теңдеуінің түбірін табыңыз. (Б деңгейі)",
+                options: ["$x = 2$", "$x = 3/2$", "$x = 1/2$", "$x = 3$"],
+                correct: "$x = 3/2$"
             },
             // 11-12. Дәрежемен шығаратын теңсіздік (A & B)
             {
-                q: "$3^{x-1} < 9$ теңсіздігін шешіңіз. (А деңгейі)",
-                options: ["$x < 3$", "$x > 3$", "$x < 2$", "$x > 2$"],
-                correct: "$x < 3$"
+                q: "11. $2^{x+3} \\ge 16$ теңсіздігін шешіңіз. (А деңгейі)",
+                options: ["$x \ge 1$", "$x > 1$", "$x \le 1$", "$x < 1$"],
+                correct: "$x \ge 1$"
             },
             {
-                q: "$(\\frac{1}{4})^{2x} \\ge 16$ теңсіздігін шешіңіз. (Б деңгейі)",
-                options: ["$x \\le -1$", "$x \\ge -1$", "$x \\le 2$", "$x \\ge 2$"],
-                correct: "$x \\le -1$"
+                q: "12. $(0.5)^{x^2} < (0.5)^4$ теңсіздігін шешіңіз. (Б деңгейі)",
+                options: ["$(-2; 2)$", "$(-4; 4)$", "$(- \\infty; -2) \\cup (2; \\infty)$", "$(- \\infty; -4) \\cup (4; \\infty)$"],
+                correct: "$(- \\infty; -2) \\cup (2; \\infty)$"
             },
             // 13-14. Вектор (A & B)
             {
-                q: "$\\vec{a} = (-2; 4)$ және $\\vec{b} = (5; -1)$ векторларының айырмасын $\\vec{a} - \\vec{b}$ табыңыз. (А деңгейі)",
-                options: ["(3; 3)", "(7; 5)", "(-7; 5)", "(-3; 5)"],
-                correct: "(-7; 5)"
+                q: "13. $\\vec{a} = (3; -5)$ және $\\vec{b} = (-1; 2)$ векторларының қосындысын $\\vec{a} + \\vec{b}$ табыңыз. (А деңгейі)",
+                options: ["(4; -7)", "(2; -3)", "(4; 7)", "(2; 3)"],
+                correct: "(2; -3)"
             },
             {
-                q: "$A(1; 3)$ және $B(4; -1)$ нүктелері берілген. $\\vec{AB}$ векторының ұзындығын (модулін) табыңыз. (Б деңгейі)",
-                options: ["$\\sqrt{13}$", "5", "$\\sqrt{7}$", "7"],
+                q: "14. $C(2; 5)$ және $D(-1; 1)$ нүктелері берілген. $\\vec{CD}$ векторының ұзындығын (модулін) табыңыз. (Б деңгейі)",
+                options: ["3", "4", "5", "$\\sqrt{18}$"],
                 correct: "5"
             },
             // 15-16. График түзу сызықтың (A & B)
             {
-                q: "$y = 3x - 5$ түзуі $y$-өсін қай нүктеде қиып өтеді? (А деңгейі)",
-                options: ["(0; 5)", "(0; -5)", "(5; 0)", "(-5; 0)"],
-                correct: "(0; -5)"
+                q: "15. $y = 5 - 2x$ түзуі $x$-өсін қай нүктеде қиып өтеді? (А деңгейі)",
+                options: ["(0; 5)", "(5; 0)", "(2.5; 0)", "(-2.5; 0)"],
+                correct: "(2.5; 0)"
             },
             {
-                q: "$y = x + 2$ және $y = -2x + 8$ түзулерінің қиылысу нүктесін табыңыз. (Б деңгейі)",
-                options: ["(3; 5)", "(2; 4)", "(1; 3)", "(4; 6)"],
-                correct: "(2; 4)"
+                q: "16. $y = 2x - 3$ және $y = x + 1$ түзулерінің қиылысу нүктесін табыңыз. (Б деңгейі)",
+                options: ["(4; 5)", "(5; 4)", "(3; 3)", "(1; 2)"],
+                correct: "(4; 5)"
             },
             // 17-18. Дискриминант (A & B)
             {
-                q: "$3x^2 - 4x + 1 = 0$ квадрат теңдеуінің дискриминантын ($D$) табыңыз. (А деңгейі)",
-                options: ["4", "16", "28", "12"],
-                correct: "4"
+                q: "17. $2x^2 + 5x - 3 = 0$ квадрат теңдеуінің дискриминантын ($D$) табыңыз. (А деңгейі)",
+                options: ["25", "36", "49", "1"],
+                correct: "49"
             },
             {
-                q: "$x^2 - 6x + m = 0$ теңдеуінің бір ғана түбірі болуы үшін $m$ мәні қандай болуы керек? (Б деңгейі)",
-                options: ["9", "-9", "3", "0"],
-                correct: "9"
+                q: "18. $x^2 + 8x + k = 0$ теңдеуінің бір ғана түбірі болуы үшін $k$ мәні қандай болуы керек? (Б деңгейі)",
+                options: ["4", "8", "12", "16"],
+                correct: "16"
             },
-            // 19. Геометрия (Арнайы сұрақ)
+            // 19. Геометрия (ЖАҢА: Котангенс анықтамасы)
             {
-                q: "Тікбұрышты үшбұрышта бұрышқа қарама-қарсы жатқан катеттің іргелес жатқан катетке қатынасы не деп аталады?",
+                q: "19. Тікбұрышты үшбұрышта бұрышқа іргелес жатқан катеттің оған қарама-қарсы жатқан катетке қатынасы не деп аталады?",
                 options: ["Синус", "Косинус", "Тангенс", "Котангенс"],
-                correct: "Тангенс"
+                correct: "Котангенс"
             },
             // 20-21. Қысқаша көбейту формуласы (A & B)
             {
-                q: "Өрнекті ықшамдаңыз: $(5x - 2)^2$. (А деңгейі)",
-                options: ["$25x^2 - 4$", "$25x^2 - 20x + 4$", "$5x^2 - 20x + 4$", "$25x^2 + 4$"],
-                correct: "$25x^2 - 20x + 4$"
+                q: "20. Өрнекті ықшамдаңыз: $(3a + 4b)^2$. (А деңгейі)",
+                options: ["$9a^2 + 16b^2$", "$9a^2 + 12ab + 16b^2$", "$3a^2 + 4b^2$", "$9a^2 + 24ab + 16b^2$"],
+                correct: "$9a^2 + 24ab + 16b^2$"
             },
             {
-                q: "Көбейткіштерге жіктеңіз: $x^3 + 8y^3$. (Б деңгейі)",
-                options: ["$(x+2y)(x^2-2xy+4y^2)$", "$(x+2y)^3$", "$(x+8y)(x^2-xy+y^2)$", "$(x+2y)(x^2+2xy+4y^2)$"],
-                correct: "$(x+2y)(x^2-2xy+4y^2)$"
+                q: "21. Көбейткіштерге жіктеңіз: $27 - a^3$. (Б деңгейі)",
+                options: ["$(3-a)(9+6a+a^2)$", "$(3-a)(9+3a+a^2)$", "$(3-a)^3$", "$(9-a)(3+3a+a^2)$"],
+                correct: "$(3-a)(9+3a+a^2)$"
             },
-            // 22. Формула (Арнайы сұрақ)
+            // 22. Формула (ЖАҢА: Геометриялық n-ші мүше)
             {
-                q: "Арифметикалық прогрессияның алғашқы $n$ мүшесінің қосындысының формуласын көрсетіңіз.",
-                options: ["$a_n = a_1 + d(n-1)$", "$S_n = \\frac{a_1+a_n}{2} \\cdot n$", "$S_n = \\frac{b_1(q^n-1)}{q-1}$", "$a_n = a_1 + dn$"],
-                correct: "$S_n = \\frac{a_1+a_n}{2} \\cdot n$"
+                q: "22. Геометриялық прогрессияның $n$-ші мүшесінің формуласын көрсетіңіз.",
+                options: ["$S_n = \\frac{a_1+a_n}{2} \\cdot n$", "$b_n = b_1 + (n-1)d$", "$b_n = b_1 \\cdot q^{n-1}$", "$S_n = \\frac{b_1(q^n-1)}{q-1}$"],
+                correct: "$b_n = b_1 \\cdot q^{n-1}$"
+            },
+            // 23-24. Тікбұрышты үшбұрыш ауданы (ЖАҢА МӘНДЕР)
+            {
+                q: "23. Катеттері 5 см және 12 см болатын тікбұрышты үшбұрыштың ауданын ($S$) табыңыз. (А деңгейі)",
+                options: ["30 см$^2$", "60 см$^2$", "17 см$^2$", "13 см$^2$"],
+                correct: "30 см$^2$"
+            },
+            {
+                q: "24. Тікбұрышты үшбұрыштың бір катеті 8 см, ал ауданы 24 см$^2$ болса, екінші катетін табыңыз. (Б деңгейі)",
+                options: ["3 см", "4 см", "6 см", "8 см"],
+                correct: "6 см"
+            },
+            // 25-26. Градус/Радиан (ШИРЕК АЛЫНЫП ТАСТАЛДЫ)
+            {
+                q: "25. $225^\circ$ бұрышы радианмен жазылуы қандай?",
+                options: ["$5\\pi/4$", "$3\\pi/4$", "$7\\pi/4$", "$4\\pi/3$"],
+                correct: "$5\\pi/4$"
+            },
+            {
+                q: "26. $-30^\circ$ бұрышы радианмен жазылуы қандай?",
+                options: ["$-\\pi/6$", "$-\\pi/3$", "$-\\pi/4$", "$-5\\pi/6$"],
+                correct: "$-\\pi/6$"
+            },
+            // 27-28. Тригонометриялық мәндер
+            {
+                q: "27. $\\cos 45^\circ$ мәні нешеге тең?",
+                options: ["1", "$\\sqrt{3}/2$", "$1/2$", "$\\sqrt{2}/2$"],
+                correct: "$\\sqrt{2}/2$"
+            },
+            {
+                q: "28. $\\tan 270^\circ$ мәні нешеге тең?",
+                options: ["1", "$0$", "Анықталмаған", "$-1$"],
+                correct: "Анықталмаған"
             }
         ];
 
@@ -239,7 +272,7 @@
         const percentageP = document.getElementById('percentage');
         const resultsTitle = document.getElementById('results-title');
         
-        // NEW ELEMENTS
+        // Time setup elements
         const timeSetupDiv = document.getElementById('time-setup');
         const timeInput = document.getElementById('time-input');
 
@@ -325,7 +358,7 @@
                 // Question Title
                 questionDiv.innerHTML = `
                     <p class="text-lg font-semibold mb-4 text-gray-800">
-                        ${qNum}. ${data.q}
+                        ${data.q}
                     </p>
                     <div class="options-container space-y-3" id="options-${qNum}">
                         <!-- Options will be here -->
@@ -340,7 +373,6 @@
 
                 shuffledOptions.forEach((optionText, optIndex) => {
                     const optionId = `q${qNum}-opt${optIndex}`;
-                    // NOTE: data-correct is not strictly needed but kept for completeness
                     const isCorrectOption = optionText === data.correct; 
 
                     const optionElement = document.createElement('label');
@@ -349,7 +381,7 @@
 
                     optionElement.innerHTML = `
                         <input type="radio" id="${optionId}" name="question${qNum}" value="${optionText}" class="hidden" data-correct="${isCorrectOption}">
-                        <span class="option-label">${optionLabels[optIndex]}</span>
+                        <span class="option-label bg-gray-200 text-gray-600">${optionLabels[optIndex]}</span>
                         <span class="text-base text-gray-700 option-text">${optionText}</span>
                     `;
 
@@ -358,8 +390,10 @@
                         // Remove selection style from siblings
                         optionsContainer.querySelectorAll('label').forEach(label => {
                             label.classList.remove('bg-indigo-200', 'border-indigo-500');
+                            label.classList.add('border-gray-300');
                         });
                         // Add selection style to current element
+                        optionElement.classList.remove('border-gray-300');
                         optionElement.classList.add('bg-indigo-200', 'border-indigo-500');
                     });
 
@@ -446,25 +480,27 @@
                 // Show results for each question
                 optionsContainer.querySelectorAll('label').forEach(label => {
                     const input = label.querySelector('input');
-                    label.classList.remove('bg-indigo-200', 'border-indigo-500', 'hover:bg-indigo-50');
+                    label.classList.remove('bg-indigo-200', 'border-indigo-500', 'hover:bg-indigo-50', 'border-gray-300');
 
                     // Normalize comparison for display purposes too
                     const optionValue = input.value.trim().replace(/[\$\\]/g, '');
                     const correctAnswer = data.correct.trim().replace(/[\$\\]/g, '');
+                    
+                    const optionLabelSpan = label.querySelector('.option-label');
+                    optionLabelSpan.classList.remove('bg-gray-200', 'text-gray-600');
 
                     if (optionValue === correctAnswer) {
                         // Mark correct answer in green
                         label.classList.add('bg-green-100', 'border-green-600', 'font-bold');
-                        label.querySelector('.option-label').classList.remove('bg-gray-200', 'text-gray-600');
-                        label.querySelector('.option-label').classList.add('bg-green-600', 'text-white');
+                        optionLabelSpan.classList.add('bg-green-600', 'text-white');
                     } else if (input === selectedOption && !isCorrect) {
                         // Mark incorrect selected answer in red
                         label.classList.add('bg-red-100', 'border-red-600', 'font-bold');
-                        label.querySelector('.option-label').classList.remove('bg-gray-200', 'text-gray-600');
-                        label.querySelector('.option-label').classList.add('bg-red-600', 'text-white');
+                        optionLabelSpan.classList.add('bg-red-600', 'text-white');
                     } else {
-                        // Style unselected incorrect options normally
-                        label.classList.add('bg-gray-50');
+                        // Style unselected options normally
+                        label.classList.add('bg-gray-50', 'border-gray-200');
+                        optionLabelSpan.classList.add('bg-gray-300', 'text-gray-700');
                     }
                 });
 
@@ -504,12 +540,12 @@
                 input.disabled = false;
                 // Reset option labels to default style
                 const label = input.closest('label');
-                label.classList.remove('bg-indigo-200', 'border-indigo-500', 'bg-green-100', 'border-green-600', 'font-bold', 'bg-red-100', 'border-red-600', 'bg-gray-50');
+                label.classList.remove('bg-indigo-200', 'border-indigo-500', 'bg-green-100', 'border-green-600', 'font-bold', 'bg-red-100', 'border-red-600', 'bg-gray-50', 'border-gray-200');
                 label.classList.add('border-gray-300', 'hover:bg-indigo-50');
 
                 // Reset option circle style
                 const optionLabelSpan = label.querySelector('.option-label');
-                optionLabelSpan.classList.remove('bg-green-600', 'text-white', 'bg-red-600');
+                optionLabelSpan.classList.remove('bg-green-600', 'text-white', 'bg-red-600', 'bg-gray-300', 'text-gray-700');
                 optionLabelSpan.classList.add('bg-gray-200', 'text-gray-600');
             });
 
