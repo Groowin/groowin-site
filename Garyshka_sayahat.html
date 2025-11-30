@@ -429,7 +429,7 @@
     <p id="welcome-text">Бүкіл әлемдік тартылыс заңы туралы білімдеріңді тексер!</p>
    </div>
    <div class="score-board">
-    ⭐ Ұпай: <span id="total-score">0</span> / 59
+    ⭐ Ұпай: <span id="total-score">0</span> / 59 | ⏱️ Уақыт: <span id="timer">12:00</span>
    </div>
    <div id="game-content"></div>
   </div>
@@ -442,6 +442,9 @@
     let currentTour = 0;
     let totalScore = 0;
     let tourScores = [];
+    let timeRemaining = 720; // 12 minutes in seconds
+    let timerInterval = null;
+    let gameStarted = false;
 
     const tours = [
       {
@@ -555,7 +558,7 @@
             description: "Қашықтық артқан сайын жылдамдық азаяды"
           },
           {
-            question: "Жер бетінен биіктік артқан сайын g үдеуі қалай өзгереді?",
+            question: "Жер бет���нен биіктік артқан сайын g үдеуі қалай өзгереді?",
             graphs: ["increases", "decreases", "stays"],
             correct: 1,
             description: "Биіктік артқан сайын g азаяды"
@@ -599,12 +602,12 @@
               {
                 text: "F = G(m₁+m₂)/r²",
                 isWrong: true,
-                explanation: "Дұрыс формула: F = G(m₁×m₂)/r²"
+                explanation: "Дұр��с формула: F = G(m₁×m₂)/r²"
               },
               {
-                text: "Тартылыс тек ауыр денелер арасында болады",
+                text: "Тартылыс тек ��уыр денелер арасында болады",
                 isWrong: true,
-                explanation: "Тартылыс барлық денелер арасында болады"
+                explanation: "Тартылыс ��арлық денелер арасында болады"
               },
               {
                 text: "Қашықтық 2 есе артса, күш 2 есе кемиді",
@@ -1072,7 +1075,38 @@
       }
     }
 
+    function renderStartScreen() {
+      const content = document.getElementById('game-content');
+      content.innerHTML = `
+        <div class="tour-container">
+          <div class="final-screen">
+            <div class="trophy">🚀</div>
+            <div class="final-title">Ойынды бастауға дайынсыз ба?</div>
+            <p style="font-size: 1.3em; color: #666; margin: 3% 0;">
+              Сізде 5 турдан өту үшін <strong>12 минут</strong> уақыт бар!
+            </p>
+            <p style="font-size: 1.1em; color: #999; margin: 2% 0;">
+              Максимум: 59 ұпай
+            </p>
+            <button class="btn" onclick="startGame()" style="margin-top: 3%; font-size: 1.3em; padding: 4% 8%;">
+              🎮 Бастау
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function startGame() {
+      gameStarted = true;
+      startTimer();
+      renderTour(0);
+    }
+
     function showFinalScreen() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+      
       const content = document.getElementById('game-content');
       
       let rank = '';
@@ -1100,7 +1134,75 @@
             <div class="final-score">${totalScore} / 59</div>
             <div class="rank-badge">${rank}</div>
             <p style="font-size: 1.2em; color: #666; margin: 3% 0;">
-              Бүкіл әлемдік тартылыс заңы бойынша барлық турларды аяқтадыңыз! 🎉
+              Барлық турларды аяқтадыңыз! 🎉
+            </p>
+            <button class="btn" onclick="location.reload()" style="margin-top: 3%;">
+              Қайтадан бастау
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    window.startGame = startGame;
+
+    function startTimer() {
+      if (timerInterval) return;
+      
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeRemaining / 60);
+      const seconds = timeRemaining % 60;
+      const timerElement = document.getElementById('timer');
+      if (timerElement) {
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeRemaining <= 60) {
+          timerElement.style.color = '#ff4444';
+          timerElement.style.fontWeight = 'bold';
+        }
+      }
+    }
+
+    function endGame() {
+      const content = document.getElementById('game-content');
+      
+      let rank = '';
+      let trophy = '🎖️';
+      
+      if (totalScore >= 55) {
+        rank = 'Гравитация Шебері';
+        trophy = '🏆';
+      } else if (totalScore >= 45) {
+        rank = 'Ғарыш Зерттеушісі';
+        trophy = '🌟';
+      } else if (totalScore >= 30) {
+        rank = 'Орбиталық Білімгер';
+        trophy = '⭐';
+      } else {
+        rank = 'Тағы дайындалу керек';
+        trophy = '📚';
+      }
+
+      content.innerHTML = `
+        <div class="tour-container">
+          <div class="final-screen">
+            <div class="trophy">${trophy}</div>
+            <div class="final-title">Уақыт бітті!</div>
+            <div class="final-score">${totalScore} / 59</div>
+            <div class="rank-badge">${rank}</div>
+            <p style="font-size: 1.2em; color: #666; margin: 3% 0;">
+              Сіз ${currentTour + 1} турды аяқтадыңыз және ${totalScore} ұпай жинадыңыз! 🎉
             </p>
             <button class="btn" onclick="location.reload()" style="margin-top: 3%;">
               Қайтадан бастау
@@ -1115,8 +1217,8 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       await initSDKs();
-      renderTour(0);
+      renderStartScreen();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a6d1dcf41b6ecf1',t:'MTc2NDUzNDc3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a6d2c6f758eecf1',t:'MTc2NDUzNTM3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
