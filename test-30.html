@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика: Арнайы Тест</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            scroll-behavior: smooth;
+        }
+        .question-card {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+        }
+        .option-label {
+            display: block;
+            padding: 1rem;
+            margin: 0.6rem 0;
+            border-radius: 0.75rem;
+            border: 2px solid #e5e7eb;
+            background-color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        input[type="radio"]:checked + .option-label {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+        .option-correct {
+            border-color: #10b981 !important;
+            background-color: #d1fae5 !important;
+            color: #065f46 !important;
+        }
+        .option-wrong {
+            border-color: #ef4444 !important;
+            background-color: #fee2e2 !important;
+            color: #991b1b !important;
+        }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body class="pb-10">
+
+<div id="app">
+    <!-- Start Screen -->
+    <div id="start-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 text-center border border-gray-100">
+            <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+            </div>
+            <h1 class="text-3xl font-black text-gray-900 mb-2">Физика Тесті</h1>
+            <p class="text-gray-500 mb-8 uppercase tracking-widest text-sm font-bold">20 сұрақ: Теория + Есеп</p>
+            
+            <div class="mb-8 text-left">
+                <label class="block text-xs font-black text-gray-400 mb-2 ml-1 uppercase">Уақытты таңдаңыз (минут):</label>
+                <input type="number" id="user-timer" value="30" min="5" max="120" 
+                    class="w-full p-4 text-center text-3xl font-black text-blue-600 border-2 border-blue-50 border-gray-100 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition">
+            </div>
+
+            <button onclick="startQuiz()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-700 transition shadow-lg active:scale-95 transform">
+                Бастау
+            </button>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden">
+        <div class="sticky-header p-4">
+            <div class="max-w-2xl mx-auto flex justify-between items-center">
+                <div>
+                    <h2 id="status-text" class="font-black text-gray-800 text-lg">Тест орындалуда</h2>
+                </div>
+                <div id="timer-display" class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full font-mono font-bold text-xl border border-blue-100 italic">--:--</div>
+            </div>
+        </div>
+
+        <div class="max-w-2xl mx-auto p-4 mt-4" id="questions-list"></div>
+
+        <div id="actions-area" class="max-w-2xl mx-auto px-4 mt-6">
+            <button id="finish-btn" onclick="finishQuiz()" class="w-full bg-green-600 text-white py-5 rounded-3xl font-black text-xl hover:bg-green-700 shadow-xl transition transform active:scale-95">
+                ТЕСТТІ АЯҚТАУ
+            </button>
+        </div>
+
+        <!-- Final Score Card -->
+        <div id="score-overlay" class="hidden max-w-2xl mx-auto px-4 mt-6 text-center">
+            <div class="bg-white rounded-3xl p-8 shadow-2xl border-4 border-blue-100">
+                <h2 class="text-xl font-bold text-gray-400 uppercase tracking-tighter">Сенің нәтижең:</h2>
+                <div id="final-score" class="text-7xl font-black text-blue-600 my-4">0 / 20</div>
+                <p id="final-pct" class="text-2xl font-bold text-gray-700"></p>
+                <div class="mt-6 p-4 bg-gray-50 rounded-2xl text-sm text-gray-500">
+                    Төмен қарай жылжытып, қателерді талдаңыз. Дұрыс жауаптар жасылмен белгіленді.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const rawQuizData = [
+        { q: "Дененің импульсі дегеніміз не?", a: ["Дене массасының жылдамдығына көбейтіндісі", "Денеге әсер ететін күштің уақытқа көбейтіндісі", "Дене массасының үдеуге көбейтіндісі", "Дене энергиясының өзгеру жылдамдығы"], c: 0 },
+        { q: "Массасы 2 кг дене 5 м/с жылдамдықпен қозғалады. Оның импульсін тап.", a: ["5 кг·м/с", "10 кг·м/с", "2.5 кг·м/с", "20 кг·м/с"], c: 1 },
+        { q: "Күш импульсінің ХБЖ-дегі өлшем бірлігі қандай?", a: ["Н·м", "Н/с", "Н·с", "кг·м/с²"], c: 2 },
+        { q: "Тұрақты 10 Н күш денеге 4 секунд әсер етсе, күш импульсі неге тең?", a: ["40 Н·с", "2.5 Н·с", "14 Н·с", "6 Н·с"], c: 0 },
+        { q: "Кинетикалық энергиясы 50 Дж, массасы 4 кг дененің жылдамдығы қандай?", a: ["25 м/с", "12.5 м/с", "5 м/с", "10 м/с"], c: 2 },
+        { q: "Потенциалдық энергияның формуласы қандай?", a: ["mv²/2", "mgh", "kx²/2", "F·s"], c: 1 },
+        { q: "Серіппелі маятниктің тербеліс периоды неге тәуелді?", a: ["Маятниктің ұзындығына", "Дене массасына және қатаңдыққа", "Еркін түсу үдеуіне", "Тербеліс амплитудасына"], c: 1 },
+        { q: "Математикалық маятниктің ұзындығын 4 есе арттырса, оның периоды қалай өзгереді?", a: ["2 есе артады", "4 есе артады", "2 есе кемиді", "Өзгермейді"], c: 0 },
+        { q: "Кулон заңы бойынша екі зарядтың арақашықтығын 2 есе арттырса, өзара әрекеттесу күші қалай өзгереді?", a: ["2 есе артады", "2 есе кемиді", "4 есе кемиді", "4 есе артады"], c: 2 },
+        { q: "Электр өрісінің кернеулігі дегеніміз не?", a: ["Өрістің энергетикалық сипаттамасы", "Өрістің күштік сипаттамасы", "Зарядтың шамасы", "Өріс жасаған жұмыс"], c: 1 },
+        { q: "Дененің толық механикалық энергиясы дегеніміз - ...", a: ["Тек кинетикалық энергия", "Кинетикалық және потенциалдық энергиялардың қосындысы", "Ішкі энергия мен жұмыс қосындысы", "Күш пен орын ауыстыру көбейтіндісі"], c: 1 },
+        { q: "Ауырлық күшінің жұмысы дененің жүрген жолына тәуелді ме?", a: ["Иә, әрқашан тәуелді", "Жоқ, тек траекторияның пішініне тәуелді", "Жоқ, тек биіктіктер айырымына тәуелді", "Тек дененің жылдамдығына тәуелді"], c: 2 },
+        { q: "Қуаты 200 Вт қозғалтқыш 10 секундта қандай жұмыс атқарады?", a: ["20 Дж", "2000 Дж", "200 Дж", "0.05 Дж"], c: 1 },
+        { q: "ПӘК (пайдалы әсер коэффициенті) 1-ден (немесе 100%-дан) жоғары болуы мүмкін бе?", a: ["Иә, егер үйкеліс аз болса", "Жоқ, ешқашан", "Тек идеал жағдайда болуы мүмкін", "Тек электр қозғалтқыштарында"], c: 1 },
+        { q: "Серпімділік күшінің формуласы (Гук заңы):", a: ["F = mg", "F = -kx", "F = ma", "F = μN"], c: 1 },
+        { q: "Үйкеліс күші неге пропорционал?", a: ["Дененің бет ауданына", "Реакция күшіне (қысым күшіне)", "Дененің тығыздығына", "Дененің көлеміне"], c: 1 },
+        { q: "Электр өрісінің потенциалы (φ) - бұл ...", a: ["Күштік сипаттама", "Скалярлық энергетикалық сипаттама", "Векторлық шама", "Зарядтардың қатынасы"], c: 1 },
+        { q: "Жұмыс атқарылу үшін міндетті түрде не болуы керек?", a: ["Тек күш болуы керек", "Тек орын ауыстыру болуы керек", "Күш және орын ауыстыру болуы керек", "Дене тыныштықта болуы керек"], c: 2 },
+        { q: "Импульстің сақталу заңы қай кезде орындалады?", a: ["Кез келген жүйеде", "Тек тұйық жүйеде", "Тек үйкеліс бар кезде", "Денелер қозғалмаған кезде"], c: 1 },
+        { q: "Қатаңдығы 400 Н/м серіппені 5 см-ге (0.05 м) созғандағы потенциалдық энергиясы?", a: ["1 Дж", "0.5 Дж", "20 Дж", "10 Дж"], c: 1 }
+    ];
+
+    let quizWithShuffledOptions = [];
+    let timeLeft = 0;
+    let timerInterval;
+
+    function shuffleOptions() {
+        quizWithShuffledOptions = rawQuizData.map(item => {
+            const correctText = item.a[item.c];
+            const shuffledA = [...item.a].sort(() => Math.random() - 0.5);
+            return {
+                q: item.q,
+                a: shuffledA,
+                c: shuffledA.indexOf(correctText)
+            };
+        });
+    }
+
+    function startQuiz() {
+        const mins = document.getElementById('user-timer').value;
+        if(mins < 1) return;
+        timeLeft = mins * 60;
+        
+        shuffleOptions();
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        render();
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            document.getElementById('timer-display').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            if(timeLeft <= 0) finishQuiz();
+        }, 1000);
+    }
+
+    function render() {
+        const list = document.getElementById('questions-list');
+        list.innerHTML = '';
+        quizWithShuffledOptions.forEach((item, idx) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.id = `card-${idx}`;
+            card.innerHTML = `
+                <div class="text-xs font-black text-blue-400 mb-2 uppercase tracking-widest">Сұрақ #${idx + 1}</div>
+                <p class="text-lg font-bold text-gray-800 mb-4">${item.q}</p>
+                <div class="space-y-1">
+                    ${item.a.map((opt, i) => `
+                        <input type="radio" name="q${idx}" id="q${idx}o${i}" value="${i}" class="hidden">
+                        <label for="q${idx}o${i}" id="lbl-${idx}-${i}" class="option-label">${opt}</label>
+                    `).join('')}
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        let score = 0;
+
+        quizWithShuffledOptions.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+            const val = selected ? parseInt(selected.value) : null;
+            
+            // Mark Correct
+            document.getElementById(`lbl-${idx}-${item.c}`).classList.add('option-correct');
+            
+            if (val === item.c) {
+                score++;
+            } else if (val !== null) {
+                document.getElementById(`lbl-${idx}-${val}`).classList.add('option-wrong');
+            } else {
+                document.getElementById(`card-${idx}`).style.borderColor = '#e2e8f0';
+            }
+
+            // Disable
+            document.querySelectorAll(`input[name="q${idx}"]`).forEach(inp => inp.disabled = true);
+        });
+
+        document.getElementById('status-text').innerText = "Тест аяқталды";
+        document.getElementById('finish-btn').classList.add('hidden');
+        document.getElementById('score-overlay').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${score} / 20`;
+        const pct = Math.round((score/20)*100);
+        document.getElementById('final-pct').innerText = `${pct}% нәтиже`;
+        
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>
