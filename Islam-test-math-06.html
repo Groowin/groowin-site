@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математика: 20 Кешенді Есеп</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .question-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        .option-label {
+            display: block;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 0.75rem;
+            border: 2px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        input[type="radio"]:checked + .option-label {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+            color: #065f46;
+            font-weight: 600;
+        }
+        .option-correct {
+            border-color: #10b981 !important;
+            background-color: #d1fae5 !important;
+        }
+        .option-wrong {
+            border-color: #ef4444 !important;
+            background-color: #fee2e2 !important;
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+<div id="app" class="max-w-3xl mx-auto px-4">
+    <!-- Start Screen -->
+    <div id="start-screen" class="min-h-screen flex items-center justify-center">
+        <div class="w-full bg-white rounded-2xl shadow-2xl p-10 text-center border border-gray-100">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-6">Математика: 20 Есеп</h1>
+            <div class="grid grid-cols-2 gap-4 text-left text-sm text-gray-600 mb-8 bg-gray-50 p-6 rounded-xl">
+                <ul class="space-y-1">
+                    <li>• Прогрессиялар</li>
+                    <li>• Геометрия (Үшбұрыштар)</li>
+                    <li>• Теңдеулер (Квадраттық, Жүйе)</li>
+                    <li>• Логарифмдер</li>
+                </ul>
+                <ul class="space-y-1">
+                    <li>• Иррационал өрнектер</li>
+                    <li>• Модуль және Бөлшектер</li>
+                    <li>• Қысқаша көбейту</li>
+                    <li>• Оң/Теріс сандар</li>
+                </ul>
+            </div>
+            
+            <button onclick="startQuiz()" class="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold text-xl hover:bg-emerald-700 transition-all transform hover:scale-[1.02] shadow-lg">
+                Тестті Бастау
+            </button>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden py-10">
+        <div class="sticky top-4 bg-white/90 backdrop-blur-md p-5 rounded-2xl shadow-md mb-8 flex justify-between items-center z-50 border border-gray-200">
+            <div>
+                <span class="text-gray-400 text-xs font-bold uppercase">Прогресс:</span>
+                <div class="text-xl font-black text-emerald-600">20 Сұрақ</div>
+            </div>
+            <div class="text-right">
+                <span class="text-gray-400 text-xs font-bold uppercase">Уақыт:</span>
+                <div id="timer-display" class="font-mono font-bold text-2xl text-gray-800">00:00</div>
+            </div>
+        </div>
+
+        <div id="questions-list"></div>
+
+        <button id="finish-btn" onclick="finishQuiz()" class="w-full bg-gray-900 text-white py-5 rounded-2xl font-black text-xl mt-10 shadow-xl hover:bg-black transition-all">
+            Нәтижені Көру
+        </button>
+
+        <div id="score-overlay" class="hidden mt-12">
+            <div class="bg-emerald-600 text-white rounded-3xl p-10 text-center shadow-2xl border-4 border-white">
+                <h2 class="text-xl font-bold opacity-80 uppercase tracking-widest">Сіздің Нәтижеңіз</h2>
+                <div id="final-score" class="text-7xl font-black my-4">0 / 20</div>
+                <div id="final-pct" class="text-2xl font-bold opacity-90 mb-8">0%</div>
+                <button onclick="location.reload()" class="bg-white text-emerald-700 px-10 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors">Қайта тапсыру</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const rawQuizData = [
+        // Прогрессиялар
+        { q: "Арифметикалық прогрессияда a₁ = 5, d = 3 болса, оныншы мүшесін (a₁₀) табыңыз.", a: ["32", "35", "29", "30"], c: 0 },
+        { q: "Геометриялық прогрессияда b₁ = 2, q = 3 болса, алғашқы 4 мүшесінің қосындысын табыңыз.", a: ["40", "80", "60", "26"], c: 1 },
+        
+        // Үшбұрыштар
+        { q: "Теңқабырғалы үшбұрыштың қабырғасы 6 см болса, оның ауданын табыңыз.", a: ["9√3 см²", "18 см²", "36√3 см²", "12√3 см²"], c: 0 },
+        { q: "Тікбұрышты үшбұрыштың катеттері 3 см және 4 см. Гипотенузасын табыңыз.", a: ["5 см", "6 см", "7 см", "25 см"], c: 0 },
+        { q: "Теңбүйірлі үшбұрыштың табанындағы бұрышы 50°. Төбесіндегі бұрышы неге тең?", a: ["80°", "100°", "50°", "130°"], c: 0 },
+        
+        // Теңдеулер
+        { q: "3x - 12 = 0 сызықтық теңдеуінің түбірін табыңыз.", a: ["4", "-4", "3", "0"], c: 0 },
+        { q: "x² - 5x + 6 = 0 квадраттық теңдеуінің түбірлерін табыңыз.", a: ["2; 3", "-2; -3", "1; 6", "5; 6"], c: 0 },
+        { q: "Теңдеулер жүйесін шешіңіз: x + y = 10, x - y = 2. x пен y мәндері қандай?", a: ["x=6, y=4", "x=5, y=5", "x=7, y=3", "x=8, y=2"], c: 0 },
+        
+        // Иррационал және Логарифм
+        { q: "√(2x - 5) = 3 теңдеуін шешіңіз.", a: ["7", "4", "14", "2"], c: 0 },
+        { q: "log₂ 32 мәні неге тең?", a: ["5", "16", "4", "6"], c: 0 },
+        { q: "log₃(x + 1) = 2 теңдеуінің шешімі:", a: ["8", "9", "7", "10"], c: 0 },
+        
+        // Қысқаша көбейту формулалары
+        { q: "(x + 3)² өрнегін көпмүше түрінде жазыңыз.", a: ["x² + 6x + 9", "x² + 9", "x² + 3x + 9", "2x + 6"], c: 0 },
+        { q: "(a - b)(a + b) неге тең?", a: ["a² - b²", "a² + b²", "a² - 2ab + b²", "(a-b)²"], c: 0 },
+        
+        // Бөлшектер және Салдар
+        { q: "2/3 + 1/4 қосындысын есептеңіз.", a: ["11/12", "3/7", "3/12", "1/2"], c: 0 },
+        { q: "2 бүтін 1/2 аралас санын жай бөлшекке айналдырыңыз.", a: ["5/2", "3/2", "4/2", "2/5"], c: 0 },
+        
+        // Оң/Теріс сандар және Модуль
+        { q: "-15 + (-7) - (-10) есептеңіз.", a: ["-12", "-32", "-2", "12"], c: 0 },
+        { q: "|-25| + |10| - |-5| мәнін табыңыз.", a: ["30", "40", "20", "35"], c: 0 },
+        { q: "|x - 4| = 6 теңдеуінің түбірлерін табыңыз.", a: ["10; -2", "10; 2", "-10; 2", "6; -6"], c: 0 },
+        
+        // Қосымша есептер
+        { q: "Үшбұрыштың қабырғалары 5 см, 12 см, 13 см. Бұл үшбұрыштың түрі қандай?", a: ["Тікбұрышты", "Теңбүйірлі", "Теңқабырғалы", "Доғал бұрышты"], c: 0 },
+        { q: "x² - 9 = 0 теңдеуінің түбірлерін табыңыз.", a: ["3; -3", "3", "9; -9", "0; 9"], c: 0 }
+    ];
+
+    let quizData = [];
+    let startTime;
+    let timerInterval;
+
+    function shuffle() {
+        quizData = rawQuizData.map(item => {
+            const correctText = item.a[item.c];
+            const shuffledA = [...item.a].sort(() => Math.random() - 0.5);
+            return {
+                q: item.q,
+                a: shuffledA,
+                c: shuffledA.indexOf(correctText)
+            };
+        });
+    }
+
+    function startQuiz() {
+        shuffle();
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        render();
+        
+        startTime = Date.now();
+        timerInterval = setInterval(() => {
+            const diff = Math.floor((Date.now() - startTime) / 1000);
+            const m = Math.floor(diff / 60);
+            const s = diff % 60;
+            document.getElementById('timer-display').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    function render() {
+        const list = document.getElementById('questions-list');
+        list.innerHTML = '';
+        quizData.forEach((item, idx) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <div class="flex items-center mb-4">
+                    <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold mr-3">№ ${idx + 1}</span>
+                </div>
+                <p class="text-lg font-bold text-gray-800 mb-6">${item.q}</p>
+                <div class="grid grid-cols-1 gap-3">
+                    ${item.a.map((opt, i) => `
+                        <input type="radio" name="q${idx}" id="q${idx}o${i}" value="${i}" class="hidden">
+                        <label for="q${idx}o${i}" id="lbl-${idx}-${i}" class="option-label">
+                            <span class="font-medium">${opt}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        let score = 0;
+
+        quizData.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+            const val = selected ? parseInt(selected.value) : null;
+            
+            document.getElementById(`lbl-${idx}-${item.c}`).classList.add('option-correct');
+            
+            if (val === item.c) {
+                score++;
+            } else if (val !== null) {
+                document.getElementById(`lbl-${idx}-${val}`).classList.add('option-wrong');
+            }
+            
+            // Disable all inputs
+            document.querySelectorAll(`input[name="q${idx}"]`).forEach(inp => inp.disabled = true);
+        });
+
+        document.getElementById('finish-btn').classList.add('hidden');
+        document.getElementById('score-overlay').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${score} / 20`;
+        const pct = Math.round((score/20)*100);
+        document.getElementById('final-pct').innerText = `${pct}% нәтиже`;
+        
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>
