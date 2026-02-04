@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика: Қысым және Күштер</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            background-color: #f9fafb;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .question-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #f3f4f6;
+        }
+        .option-label {
+            display: block;
+            padding: 0.875rem;
+            margin: 0.4rem 0;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        input[type="radio"]:checked + .option-label {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+            color: #3730a3;
+            font-weight: 600;
+        }
+        .option-correct {
+            border-color: #10b981 !important;
+            background-color: #ecfdf5 !important;
+            color: #065f46 !important;
+        }
+        .option-wrong {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            color: #991b1b !important;
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+<div id="app" class="max-w-2xl mx-auto px-4">
+    <!-- Start Screen -->
+    <div id="start-screen" class="min-h-screen flex items-center justify-center">
+        <div class="w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+            <h1 class="text-2xl font-extrabold text-gray-900 mb-4">Физика: Қысым және Күштер</h1>
+            <p class="text-gray-500 mb-6 text-sm">Тақырыптар: Күштер, Тығыздық, Паскаль заңы, Архимед күші, Гидростатика, Сорғылар.</p>
+            
+            <div class="mb-6">
+                <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">Уақыт (минут):</label>
+                <input type="number" id="user-timer" value="45" 
+                    class="w-24 p-2 text-center text-xl font-bold border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+
+            <button onclick="startQuiz()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-md">
+                Бастау
+            </button>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden py-6">
+        <div class="sticky top-0 bg-white/80 backdrop-blur-md p-4 rounded-xl shadow-sm mb-6 flex justify-between items-center z-50">
+            <span class="font-bold text-indigo-600">30 сұрақ</span>
+            <div id="timer-display" class="font-mono font-bold text-lg">--:--</div>
+        </div>
+
+        <div id="questions-list"></div>
+
+        <button id="finish-btn" onclick="finishQuiz()" class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold text-lg mt-6 shadow-lg">
+            Тестті аяқтау
+        </button>
+
+        <div id="score-overlay" class="hidden mt-8">
+            <div class="bg-indigo-600 text-white rounded-2xl p-8 text-center shadow-2xl">
+                <h2 class="text-lg font-medium opacity-80 uppercase tracking-widest">Нәтиже</h2>
+                <div id="final-score" class="text-6xl font-black my-2">0 / 30</div>
+                <div id="final-pct" class="text-xl font-bold opacity-90">0%</div>
+                <button onclick="location.reload()" class="mt-6 bg-white text-indigo-600 px-6 py-2 rounded-lg font-bold">Қайталау</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const rawQuizData = [
+        // Күштер, Масса, Салмақ
+        { q: "Ауырлық күшінің формуласы қандай?", a: ["F = kx", "F = mg", "F = μN", "F = P/S"], c: 1 },
+        { q: "Массасы 5 кг дененің Жер бетіндегі ауырлық күші неге тең? (g ≈ 10 Н/кг)", a: ["0.5 Н", "5 Н", "50 Н", "500 Н"], c: 2 },
+        { q: "Серпімділік күшінің формуласы (Гук заңы):", a: ["F = mg", "F = -kx", "F = μN", "F = Gmm/r²"], c: 1 },
+        { q: "Үйкеліс күшінің формуласы:", a: ["F = μN", "F = mg", "F = kx", "F = P/S"], c: 0 },
+        { q: "Дененің инерттілігінің өлшемі болатын физикалық шама:", a: ["Күш", "Салмақ", "Масса", "Тығыздық"], c: 2 },
+        { q: "Дене қай кезде салмақсыздық күйінде болады?", a: ["Тек қана вакуумде", "Тірекпен бірге еркін құлағанда", "Тыныштық күйінде", "Бірқалыпты қозғалғанда"], c: 1 },
+
+        // Тығыздық және Агрегаттық күйлер
+        { q: "Заттың тығыздығының формуласы:", a: ["ρ = m·V", "ρ = V/m", "ρ = m/V", "ρ = F/S"], c: 2 },
+        { q: "Көлемі 0.5 м³ дененің массасы 400 кг. Заттың тығыздығы қандай?", a: ["800 кг/м³", "200 кг/м³", "0.00125 кг/м³", "400.5 кг/м³"], c: 0 },
+        { q: "Заттың қай күйінде молекулалар бір-біріне өте жақын орналасқан және белгілі бір пішіні болады?", a: ["Газ", "Сұйық", "Қатты дене", "Плазма"], c: 2 },
+
+        // Қысым (Қатты дене, Газ, Сұйық)
+        { q: "Қысымның формуласы:", a: ["P = F/S", "P = F·S", "P = m/V", "P = mg"], c: 0 },
+        { q: "Қысымның өлшем бірлігі:", a: ["Ньютон", "Паскаль", "Джоуль", "Ватт"], c: 1 },
+        { q: "Паскаль заңы нені түсіндіреді?", a: ["Сұйықтар мен газдар қысымды барлық бағытқа өзгеріссіз жеткізеді", "Дененің жүзу шарттарын", "Ауырлық күшінің әсерін", "Үйкеліс күшінің пайда болуын"], c: 0 },
+        { q: "Гидростатикалық қысымның формуласы:", a: ["P = F/S", "P = ρgh", "P = mg", "P = mV"], c: 1 },
+        { q: "Сұйық бағанының биіктігі 2 есе артса, гидростатикалық қысым қалай өзгереді?", a: ["2 есе кемиді", "4 есе артады", "2 есе артады", "Өзгермейді"], c: 2 },
+        { q: "Теңіз деңгейіндегі қалыпты атмосфералық қысым шамамен неге тең?", a: ["101325 Па", "760 Па", "100 Па", "1000 кПа"], c: 0 },
+
+        // Қатынас ыдыстар, Монометр, Сорғылар
+        { q: "Біртекті сұйықтығы бар қатынас ыдыстарда сұйық деңгейлері қалай орналасады?", a: ["Әртүрлі деңгейде", "Бірдей деңгейде", "Ыдыстың пішініне байланысты", "Тар ыдыста жоғары"], c: 1 },
+        { q: "Газдардың немесе сұйықтардың қысымын өлшейтін құрал:", a: ["Динамометр", "Термометр", "Манометр", "Спидометр"], c: 2 },
+        { q: "Поршеньді сұйық сорғыларының жұмыс істеуі неге негізделген?", a: ["Архимед заңына", "Атмосфералық қысымның әсеріне", "Гук заңына", "Бүкіләлемдік тартылыс заңына"], c: 1 },
+
+        // Архимед заңы және жүзу шарттары
+        { q: "Архимед күшінің (кері итеруші күш) формуласы:", a: ["F = mg", "F = ρ_сұйық·g·V_дене", "F = kx", "F = P/S"], c: 1 },
+        { q: "Дененің тығыздығы сұйықтың тығыздығынан үлкен болса (ρ_д > ρ_с), дене қалай әрекет етеді?", a: ["Бетінде жүзеді", "Сұйық ішінде тепе-теңдікте болады", "Батады", "Жоғары көтеріледі"], c: 2 },
+        { q: "Архимед күші неге тәуелді?", a: ["Дененің массасына", "Сұйықтың тығыздығы мен дененің батқан көлеміне", "Дененің пішініне", "Дененің бату тереңдігіне (толық батқан болса)"], c: 1 },
+        { q: "Дене сұйық бетінде жүзіп жүрсе, Архимед күші мен Ауырлық күшінің қатынасы қандай?", a: ["F_А > F_ау", "F_А < F_ау", "F_А = F_ау", "F_А = 0"], c: 2 },
+        { q: "Көлемі 0.01 м³ дене суға толық батырылған. Оған әсер ететін Архимед күші? (ρ_су = 1000 кг/м³, g = 10)", a: ["10 Н", "100 Н", "1000 Н", "1 Н"], c: 1 },
+
+        // Есептер мен теориялық қорытынды
+        { q: "Бетке түсетін күшті 2 есе арттырып, ауданын 2 есе азайтсақ, қысым қалай өзгереді?", a: ["Өзгермейді", "2 есе артады", "4 есе артады", "4 есе кемиді"], c: 2 },
+        { q: "Торричелли тәжірибесінде атмосфералық қысымды өлшеу үшін не қолданылды?", a: ["Су", "Спирт", "Сынап", "Май"], c: 2 },
+        { q: "Гидравликалық пресстің кіші поршенінің ауданы 10 см², үлкені 100 см². Күштен қандай ұтыс аламыз?", a: ["10 есе", "100 есе", "2 есе", "5 есе"], c: 0 },
+        { q: "Сұйық ішіндегі дененің салмағы ауадағы салмағынан неге аз болады?", a: ["Үйкеліс әсерінен", "Архимед күші жоғары қарай итеретіндіктен", "Массасы азайғандықтан", "Атмосфералық қысым әсерінен"], c: 1 },
+        { q: "Атмосфералық қысым биіктікке байланысты қалай өзгереді?", a: ["Биіктеген сайын артады", "Биіктеген сайын кемиді", "Өзгермейді", "Алдымен артып, сосын кемиді"], c: 1 },
+        { q: "Сұйықтар мен газдардағы қысымды есептегенде Паскаль заңы қай кезде орындалмайды?", a: ["Салмақсыздық жағдайында", "Төмен температурада", "Қозғалыссыз сұйықта", "Ол әрқашан орындалады"], c: 3 },
+        { q: "Дененің салмағы 20 Н, ал оған әсер ететін Архимед күші 25 Н болса, дене:", a: ["Батады", "Қалқып шығады", "Ортасында тұрып қалады", "Салмақсыз болады"], c: 1 }
+    ];
+
+    let quizData = [];
+    let timeLeft = 0;
+    let timerInterval;
+
+    function shuffle() {
+        quizData = rawQuizData.map(item => {
+            const correctText = item.a[item.c];
+            const shuffledA = [...item.a].sort(() => Math.random() - 0.5);
+            return {
+                q: item.q,
+                a: shuffledA,
+                c: shuffledA.indexOf(correctText)
+            };
+        });
+    }
+
+    function startQuiz() {
+        const mins = document.getElementById('user-timer').value;
+        if(mins < 1) return;
+        timeLeft = mins * 60;
+        
+        shuffle();
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        render();
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            document.getElementById('timer-display').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            if(timeLeft <= 0) finishQuiz();
+        }, 1000);
+    }
+
+    function render() {
+        const list = document.getElementById('questions-list');
+        list.innerHTML = '';
+        quizData.forEach((item, idx) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <p class="text-sm font-bold text-indigo-500 mb-2">Сұрақ ${idx + 1}</p>
+                <p class="font-bold text-gray-800 mb-4">${item.q}</p>
+                <div>
+                    ${item.a.map((opt, i) => `
+                        <input type="radio" name="q${idx}" id="q${idx}o${i}" value="${i}" class="hidden">
+                        <label for="q${idx}o${i}" id="lbl-${idx}-${i}" class="option-label text-sm">
+                            ${opt}
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        let score = 0;
+
+        quizData.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+            const val = selected ? parseInt(selected.value) : null;
+            
+            document.getElementById(`lbl-${idx}-${item.c}`).classList.add('option-correct');
+            
+            if (val === item.c) {
+                score++;
+            } else if (val !== null) {
+                document.getElementById(`lbl-${idx}-${val}`).classList.add('option-wrong');
+            }
+            
+            document.querySelectorAll(`input[name="q${idx}"]`).forEach(inp => inp.disabled = true);
+        });
+
+        document.getElementById('finish-btn').classList.add('hidden');
+        document.getElementById('score-overlay').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${score} / 30`;
+        const pct = Math.round((score/30)*100);
+        document.getElementById('final-pct').innerText = `${pct}% нәтиже`;
+        
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>
