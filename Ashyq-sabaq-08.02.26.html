@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Топқа бөліну жүйесі</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            transition: all 0.5s ease;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .input-field:focus {
+            border-color: #764ba2;
+        }
+
+        .btn {
+            background: #764ba2;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 100%;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background: #5a368a;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Success Animation */
+        .checkmark-wrapper {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #4bb543;
+            stroke-miterlimit: 10;
+            box-shadow: inset 0px 0px 0px #4bb543;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+            margin: 0 auto 20px;
+        }
+
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #4bb543;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+        @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+        @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 40px #fff; } }
+
+        .hidden { display: none; }
+        .error-msg { color: #e53e3e; font-size: 0.9rem; margin-top: -10px; margin-bottom: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+        <div id="loginForm">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Қош келдіңіз!</h1>
+            <p class="text-gray-500 mb-4">Жүйеге кіру үшін есіміңізді жазыңыз</p>
+            
+            <input type="text" id="nameInput" class="input-field" placeholder="Есіміңіз..." autocomplete="off">
+            <p id="errorMsg" class="error-msg">Кешіріңіз, бұл есім тізімде жоқ!</p>
+            <button onclick="checkName()" class="btn">Кіру</button>
+        </div>
+
+        <div id="successScreen" class="checkmark-wrapper">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            <h2 class="text-xl font-bold text-gray-800">Топқа бөліну сәтті аяқталды!</h2>
+        </div>
+    </div>
+
+    <script>
+        const allowedNames = [
+            "Темірлан", "Абдулхамит", "Айлин", "Санжар", "Абдулазиз", 
+            "Е.Мағжан", "Ж.Алтынай", "Диана", "Ақнұр", "Ернұр", 
+            "Ернар", "Інжу", "Абдуһакар", "Даниал", "Аяулым", 
+            "Амина", "Әділет", "Мансұр", "О.Алтынай", "Ажар", 
+            "Диас", "С.Мағжан", "Аружан", "Жансая"
+        ];
+
+        function checkName() {
+            const input = document.getElementById('nameInput').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const loginForm = document.getElementById('loginForm');
+            const successScreen = document.getElementById('successScreen');
+
+            // Тізіммен салыстыру (үлкен-кіші әріпке қарамайды)
+            const isAllowed = allowedNames.some(name => name.toLowerCase() === input.toLowerCase());
+
+            if (isAllowed) {
+                errorMsg.style.display = 'none';
+                loginForm.classList.add('hidden');
+                successScreen.style.display = 'flex';
+                
+                // Тітіркендіргіш емес дыбыс немесе вибро эффект қосуға болады
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate(100);
+                }
+            } else {
+                errorMsg.style.display = 'block';
+                // Сәл дірілдеу эффектісі қате енгізгенде
+                const card = document.getElementById('mainCard');
+                card.style.transform = 'translateX(10px)';
+                setTimeout(() => card.style.transform = 'translateX(-10px)', 100);
+                setTimeout(() => card.style.transform = 'translateX(0)', 200);
+            }
+        }
+
+        // Enter пернесін басуды бақылау
+        document.getElementById('nameInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkName();
+            }
+        });
+    </script>
+</body>
+</html>
