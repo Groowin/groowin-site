@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математика: В деңгейі (20 есеп)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+        .question-card {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .option-label {
+            display: block;
+            padding: 1rem;
+            margin: 0.6rem 0;
+            border-radius: 0.75rem;
+            border: 2px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        input[type="radio"]:checked + .option-label {
+            border-color: #6366f1;
+            background-color: #f5f3ff;
+            color: #4338ca;
+            font-weight: 600;
+        }
+        .option-correct {
+            border-color: #10b981 !important;
+            background-color: #ecfdf5 !important;
+            color: #064e3b !important;
+        }
+        .option-wrong {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            color: #7f1d1d !important;
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+<div id="app" class="max-w-3xl mx-auto px-4">
+    <!-- Start Screen -->
+    <div id="start-screen" class="min-h-screen flex items-center justify-center">
+        <div class="w-full bg-white rounded-3xl shadow-xl p-10 text-center border border-slate-200">
+            <h1 class="text-3xl font-black text-slate-900 mb-4">Математика: В деңгейі</h1>
+            <p class="text-slate-500 mb-8">Логикалық ойлауды және кешенді есептеуді талап ететін 20 тапсырма</p>
+            
+            <div class="grid grid-cols-2 gap-3 text-left text-sm text-slate-600 mb-8 bg-slate-50 p-6 rounded-2xl">
+                <ul class="space-y-1">
+                    <li>• Прогрессиялар</li>
+                    <li>• Геометрия (Үшбұрыш, Квадрат)</li>
+                    <li>• Параллельпипед</li>
+                </ul>
+                <ul class="space-y-1">
+                    <li>• Теңдеулер мен жүйелер</li>
+                    <li>• Логарифм және Иррационал</li>
+                    <li>• Модуль және Бөлшектер</li>
+                </ul>
+            </div>
+
+            <button onclick="startQuiz()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-xl hover:bg-indigo-700 transition shadow-lg">
+                Тестті бастау
+            </button>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden py-8">
+        <div class="sticky top-4 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-sm mb-8 flex justify-between items-center z-50 border border-slate-200">
+            <span class="font-black text-indigo-600 tracking-tight">В-ДЕҢГЕЙІ: 20 СҰРАҚ</span>
+            <div id="timer-display" class="font-mono font-bold text-xl text-slate-700">00:00</div>
+        </div>
+
+        <div id="questions-list"></div>
+
+        <button id="finish-btn" onclick="finishQuiz()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold text-xl mt-8 shadow-xl hover:bg-black transition-all">
+            Нәтижені есептеу
+        </button>
+
+        <div id="score-overlay" class="hidden mt-12">
+            <div class="bg-indigo-600 text-white rounded-3xl p-10 text-center shadow-2xl">
+                <h2 class="text-xl font-medium opacity-80 uppercase tracking-widest">Қорытынды</h2>
+                <div id="final-score" class="text-7xl font-black my-4">0 / 20</div>
+                <div id="final-pct" class="text-2xl font-bold opacity-90 mb-8">0%</div>
+                <button onclick="location.reload()" class="bg-white text-indigo-700 px-10 py-3 rounded-xl font-bold hover:bg-slate-100 transition">Қайта тапсыру</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const rawQuizData = [
+        // Прогрессиялар
+        { q: "Арифметикалық прогрессияның үшінші мүшесі 10-ға, ал жетінші мүшесі 22-ге тең. Прогрессияның алғашқы он мүшесінің қосындысын табыңыз.", a: ["175", "185", "165", "190"], c: 1 },
+        { q: "Шексіз кемімелі геометриялық прогрессияның қосындысы 12-ге, ал бірінші мүшесі 3-ке тең. Прогрессияның еселігін (q) табыңыз.", a: ["1/4", "3/4", "1/2", "2/3"], c: 1 },
+        
+        // Геометрия (Үшбұрыштар)
+        { q: "Теңбүйірлі үшбұрыштың периметрі 32 см, ал табаны бүйір қабырғасынан 2 см-ге артық. Үшбұрыштың табанын табыңыз.", a: ["10 см", "12 см", "11 см", "14 см"], c: 1 },
+        { q: "Тікбұрышты үшбұрыштың гипотенузасы 13 см, ал бір катеті 5 см. Осы үшбұрыштың ауданын табыңыз.", a: ["30 см²", "60 см²", "65 см²", "32.5 см²"], c: 0 },
+        { q: "Теңқабырғалы үшбұрышқа іштей сызылған шеңбердің радиусы √3 см. Үшбұрыштың қабырғасын табыңыз.", a: ["6 см", "3 см", "9 см", "4√3 см"], c: 0 },
+        { q: "Әр түрлі қабырғалы үшбұрыштың қабырғалары 7 см, 8 см және 9 см. Герон формуласын қолданып, оның ауданын табыңыз.", a: ["12√5 см²", "6√15 см²", "10√3 см²", "14√2 см²"], c: 0 },
+        
+        // Геометрия (Төртбұрыштар және Параллельпипед)
+        { q: "Квадраттың диагоналі 8√2 см. Осы квадраттың ауданын табыңыз.", a: ["64 см²", "32 см²", "128 см²", "16 см²"], c: 0 },
+        { q: "Тікбұрышты параллельпипедтің өлшемдері 3 см, 4 см және 12 см. Оның диагоналін табыңыз.", a: ["13 см", "15 см", "17 см", "19 см"], c: 0 },
+        { q: "Тікбұрышты параллельпипедтің табанының қабырғалары 6 см және 8 см, ал биіктігі 10 см. Толық бетінің ауданын табыңыз.", a: ["376 см²", "188 см²", "480 см²", "280 см²"], c: 0 },
+
+        // Теңдеулер мен жүйелер
+        { q: "Квадраттық теңдеудің түбірлерінің қосындысы -5, ал көбейтіндісі 6 болса, теңдеуді құрыңыз.", a: ["x² + 5x + 6 = 0", "x² - 5x + 6 = 0", "x² + 5x - 6 = 0", "x² - 5x - 6 = 0"], c: 0 },
+        { q: "Теңдеулер жүйесін шешіңіз: x² - y² = 16 және x + y = 8. (x·y) көбейтіндісі неге тең?", a: ["15", "10", "5", "7.5"], c: 1 },
+        { q: "3x - 5 = 7x + 11 сызықтық теңдеуінің шешімі:", a: ["-4", "4", "-1.5", "1.5"], c: 0 },
+        
+        // Иррационал және Логарифм
+        { q: "√(x² - 5) = 2 теңдеуінің барлық түбірлерін табыңыз.", a: ["3; -3", "3", "9", "√7"], c: 0 },
+        { q: "log₂(x² - 1) = log₂(3) теңдеуінің оң түбірін табыңыз.", a: ["2", "4", "√2", "1"], c: 0 },
+        { q: "log₃(x) + log₃(x - 8) = 2 теңдеуін шешіңіз.", a: ["9", "-1", "9; -1", "3"], c: 0 },
+
+        // Қысқаша көбейту және Бөлшектер
+        { q: "Егер a + b = 5 және ab = 6 болса, a² + b² мәнін табыңыз.", a: ["13", "19", "25", "37"], c: 0 },
+        { q: "(2 1/3 + 3 1/2) : 1/6 өрнегінің мәнін табыңыз.", a: ["35", "30", "25", "15"], c: 0 },
+
+        // Модуль және Сандар
+        { q: "|2x - 10| = x + 2 теңдеуінің түбірлерінің қосындысын табыңыз.", a: ["16", "12", "8", "14"], c: 1 },
+        { q: "-5.2 мен 3.8 сандарының арасында неше бүтін сан орналасқан?", a: ["9", "8", "10", "7"], c: 0 },
+        { q: "Квадраттың қабырғасын 20%-ға арттырса, оның ауданы неше пайызға артады?", a: ["44%", "20%", "40%", "21%"], c: 0 }
+    ];
+
+    let quizData = [];
+    let startTime;
+    let timerInterval;
+
+    function shuffle() {
+        quizData = rawQuizData.map(item => {
+            const correctText = item.a[item.c];
+            const shuffledA = [...item.a].sort(() => Math.random() - 0.5);
+            return {
+                q: item.q,
+                a: shuffledA,
+                c: shuffledA.indexOf(correctText)
+            };
+        });
+    }
+
+    function startQuiz() {
+        shuffle();
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        render();
+        
+        startTime = Date.now();
+        timerInterval = setInterval(() => {
+            const diff = Math.floor((Date.now() - startTime) / 1000);
+            const m = Math.floor(diff / 60);
+            const s = diff % 60;
+            document.getElementById('timer-display').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    function render() {
+        const list = document.getElementById('questions-list');
+        list.innerHTML = '';
+        quizData.forEach((item, idx) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <div class="flex items-center mb-4">
+                    <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-black mr-3 uppercase tracking-tighter">Сұрақ №${idx + 1}</span>
+                </div>
+                <p class="text-lg font-bold text-slate-800 mb-6 leading-relaxed">${item.q}</p>
+                <div class="space-y-3">
+                    ${item.a.map((opt, i) => `
+                        <input type="radio" name="q${idx}" id="q${idx}o${i}" value="${i}" class="hidden">
+                        <label for="q${idx}o${i}" id="lbl-${idx}-${i}" class="option-label">
+                            ${opt}
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        let score = 0;
+
+        quizData.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+            const val = selected ? parseInt(selected.value) : null;
+            
+            document.getElementById(`lbl-${idx}-${item.c}`).classList.add('option-correct');
+            
+            if (val === item.c) {
+                score++;
+            } else if (val !== null) {
+                document.getElementById(`lbl-${idx}-${val}`).classList.add('option-wrong');
+            }
+            
+            document.querySelectorAll(`input[name="q${idx}"]`).forEach(inp => inp.disabled = true);
+        });
+
+        document.getElementById('finish-btn').classList.add('hidden');
+        document.getElementById('score-overlay').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${score} / 20`;
+        const pct = Math.round((score/20)*100);
+        document.getElementById('final-pct').innerText = `${pct}% нәтиже`;
+        
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>
