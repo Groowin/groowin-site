@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ядролық Реакциялар: Жасанды Радиоактивтілік</title>
+    <style>
+        :root {
+            --bg-color: #050814;
+            --accent: #ff0055;
+            --accent-glow: rgba(255, 0, 85, 0.5);
+            --panel-bg: rgba(10, 15, 30, 0.85);
+            --p-color: #ff3333; /* Протон */
+            --n-color: #8899aa; /* Нейтрон */
+            --alpha-color: #ffaa00; /* Альфа бөлшек эмиттері */
+            --beta-color: #00ffff; /* Позитрон/Электрон */
+        }
+        body { margin: 0; background: var(--bg-color); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        
+        /* Жасыру батырмасы */
+        #toggle-ui-btn {
+            position: absolute; top: 20px; right: 20px; z-index: 100;
+            background: rgba(0,0,0,0.6); border: 1px solid var(--accent);
+            color: var(--accent); padding: 10px 20px; border-radius: 8px;
+            cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        #toggle-ui-btn:hover { background: var(--accent); color: white; }
+
+        /* Камера көрінісі */
+        #video-preview {
+            position: absolute; bottom: 20px; right: 20px; width: 150px; height: 110px;
+            border-radius: 12px; border: 1px solid var(--accent); transform: scaleX(-1);
+            object-fit: cover; z-index: 5; opacity: 0.7; box-shadow: 0 0 15px rgba(255,0,85,0.3);
+        }
+
+        #camera-hint {
+            position: absolute; bottom: 140px; right: 20px; color: var(--accent);
+            font-size: 0.85rem; text-align: right; text-shadow: 0 0 5px black;
+        }
+
+        /* Интерфейс */
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; padding: 30px; box-sizing: border-box; transition: opacity 0.5s; }
+        
+        .header { text-align: center; pointer-events: auto; }
+        .header h1 { margin: 0; color: white; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px var(--accent); }
+        .header p { color: #aaa; margin-top: 5px; font-size: 1.1rem; }
+
+        .panels-container { display: flex; justify-content: space-between; align-items: flex-end; flex: 1; margin-bottom: 20px; }
+        
+        .panel { 
+            pointer-events: auto; background: var(--panel-bg); 
+            backdrop-filter: blur(10px); border: 1px solid rgba(255, 0, 85, 0.3); 
+            border-radius: 15px; padding: 25px; box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            width: 320px; max-height: 70vh; display: flex; flex-direction: column;
+        }
+
+        /* Менделеев Кестесі Тор */
+        .periodic-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+            overflow-y: auto; padding-right: 5px; margin-top: 10px;
+        }
+        .periodic-grid::-webkit-scrollbar { width: 5px; }
+        .periodic-grid::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 5px; }
+
+        .elem-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid #444; color: white;
+            padding: 8px 5px; text-align: center; border-radius: 6px; cursor: pointer;
+            transition: 0.2s; font-size: 0.9rem;
+        }
+        .elem-btn:hover { background: rgba(255, 0, 85, 0.2); }
+        .elem-btn.active { border-color: var(--accent); background: rgba(255, 0, 85, 0.15); box-shadow: 0 0 10px var(--accent-glow); }
+        .elem-sym { font-weight: bold; font-size: 1.2rem; display: block; }
+        .elem-z { font-size: 0.7rem; color: #aaa; }
+        
+        /* Ақпараттық панель */
+        #reaction-formula { font-size: 1.5rem; font-weight: bold; color: var(--accent); text-align: center; margin-bottom: 15px; letter-spacing: 1px; }
+        .desc-text { line-height: 1.5; color: #ddd; font-size: 0.95rem; margin-bottom: 20px; min-height: 80px; }
+        
+        /* Атқылау батырмасы */
+        .fire-btn {
+            background: transparent; border: 2px solid var(--accent); color: var(--accent);
+            padding: 15px 0; width: 100%; font-size: 1.2rem; font-weight: bold; text-transform: uppercase;
+            border-radius: 8px; cursor: pointer; transition: 0.3s; letter-spacing: 2px;
+        }
+        .fire-btn:hover:not(:disabled) { background: var(--accent); color: white; box-shadow: 0 0 20px var(--accent); }
+        .fire-btn:disabled { border-color: #555; color: #555; cursor: not-allowed; }
+
+        /* Статус көрсеткіші */
+        #status-indicator { text-align: center; font-weight: bold; padding: 10px; border-radius: 5px; background: rgba(0,0,0,0.5); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .status-stable { color: #00ff88; text-shadow: 0 0 10px #00ff88; }
+        .status-unstable { color: #ff3300; text-shadow: 0 0 10px #ff3300; animation: pulse 1s infinite; }
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .legend { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; font-size: 0.9rem; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 30px; border: 1px solid #333; z-index: 10; pointer-events: auto;}
+        .legend-item { display: flex; align-items: center; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+    </style>
+</head>
+<body>
+
+<button id="toggle-ui-btn">👁️ ИНТЕРФЕЙСТІ ЖАСЫРУ</button>
+
+<div id="ui-layer">
+    <div class="header">
+        <h1>Ядролық Лаборатория</h1>
+        <p>Жасанды радиоактивтілік және ядролық реакциялар</p>
+    </div>
+
+    <div class="panels-container">
+        <!-- Сол жақ: Кесте -->
+        <div class="panel">
+            <h3 style="margin-top:0; border-bottom: 1px solid #444; padding-bottom: 10px;">Элементті таңдаңыз</h3>
+            <div id="experiments-list" class="periodic-grid">
+                <!-- Түймелер JS арқылы қосылады -->
+            </div>
+        </div>
+
+        <!-- Оң жақ: Реакция барысы -->
+        <div class="panel">
+            <div id="status-indicator" class="status-stable">ТҰРАҚТЫ ИЗОТОП</div>
+            <div id="reaction-formula">...</div>
+            <div class="desc-text" id="reaction-desc">Элемент таңдаңыз...</div>
+            <button class="fire-btn" id="fire-btn">АТҚЫЛАУ (FIRE)</button>
+        </div>
+    </div>
+</div>
+
+<video id="video-preview" autoplay playsinline></video>
+<div id="camera-hint">Қолмен айналдырыңыз<br>Ату үшін: <b>Шымшыңыз 🤏</b></div>
+
+<div class="legend" id="legend-box">
+    <div class="legend-item"><div class="dot" style="background: var(--p-color)"></div> Протон (+)</div>
+    <div class="legend-item"><div class="dot" style="background: var(--n-color)"></div> Нейтрон (0)</div>
+    <div class="legend-item"><div class="dot" style="background: var(--alpha-color); box-shadow: 0 0 10px var(--alpha-color)"></div> Альфа / Позитрон</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+// --- UI ЖАСЫРУ ЛОГИКАСЫ ---
+let uiVisible = true;
+document.getElementById('toggle-ui-btn').onclick = () => {
+    uiVisible = !uiVisible;
+    document.getElementById('ui-layer').style.opacity = uiVisible ? '1' : '0';
+    document.getElementById('ui-layer').style.pointerEvents = uiVisible ? 'none' : 'none'; 
+    document.querySelector('.panels-container').style.pointerEvents = uiVisible ? 'auto' : 'none';
+    document.getElementById('legend-box').style.opacity = uiVisible ? '1' : '0';
+    document.getElementById('toggle-ui-btn').innerText = uiVisible ? '👁️ ИНТЕРФЕЙСТІ ЖАСЫРУ' : '👁️ КӨРСЕТУ';
+};
+
+// --- ДЕРЕКТЕР: АЛҒАШҚЫ 20 ЭЛЕМЕНТ ---
+const elementsData = [
+    {s:'H', n:'Сутегі', z:1, a:1}, {s:'He', n:'Гелий', z:2, a:4},
+    {s:'Li', n:'Литий', z:3, a:7}, {s:'Be', n:'Бериллий', z:4, a:9},
+    {s:'B', n:'Бор', z:5, a:11}, {s:'C', n:'Көміртегі', z:6, a:12},
+    {s:'N', n:'Азот', z:7, a:14}, {s:'O', n:'Оттегі', z:8, a:16},
+    {s:'F', n:'Фтор', z:9, a:19}, {s:'Ne', n:'Неон', z:10, a:20},
+    {s:'Na', n:'Натрий', z:11, a:23}, {s:'Mg', n:'Магний', z:12, a:24},
+    {s:'Al', n:'Алюминий', z:13, a:27}, {s:'Si', n:'Кремний', z:14, a:28},
+    {s:'P', n:'Фосфор', z:15, a:31}, {s:'S', n:'Күкірт', z:16, a:32},
+    {s:'Cl', n:'Хлор', z:17, a:35}, {s:'Ar', n:'Аргон', z:18, a:40},
+    {s:'K', n:'Калий', z:19, a:39}, {s:'Ca', n:'Кальций', z:20, a:40}
+];
+
+// Динамикалық реакция генераторы
+function generateExperiment(el) {
+    const p = el.z;
+    const n = el.a - el.z;
+    
+    // 1-кезең: Альфа қосылып, 1 нейтрон ұшып шығады
+    const stage1_p = p + 2;
+    const stage1_n = (n + 2) - 1; 
+    const stage1_a = stage1_p + stage1_n;
+    
+    // 2-кезең: Радиоактивті ыдырау (Позитрон e+ бөлінеді)
+    const stage2_p = stage1_p - 1;
+    const stage2_n = stage1_n + 1;
+    const stage2_a = stage2_p + stage2_n;
+
+    return {
+        id: el.z,
+        start: { p: p, n: n, formula: `^{${el.a}}_{${el.z}}${el.s}` },
+        projectile: { type: "alpha" },
+        stage1: { 
+            formula: `^{${el.a}}${el.s} + α ➔ ^{${stage1_a}}X + ¹n`, 
+            desc: "Альфа бөлшек жұтылып, ядродан нейтрон ұшып шықты. Бізде жаңа жасанды РАДИОАКТИВТІ изотоп пайда болды!",
+            status: "РАДИОАКТИВТІ (ТҰРАҚСЫЗ)",
+            result: { p: stage1_p, n: stage1_n }
+        },
+        stage2: {
+            delay: 4000,
+            emission: "positron",
+            formula: `^{${stage1_a}}X ➔ ^{${stage2_a}}Y + e⁺`,
+            desc: "Жаңа изотоп позитрон (e⁺) бөліп шығарып, тұрақты жағдайға жетті. Трансмутация аяқталды.",
+            status: "ТҰРАҚТЫ (СІҢІРІЛДІ)",
+            result: { p: stage2_p, n: stage2_n }
+        }
+    };
+}
+
+let currentExp = null;
+let isAnimating = false;
+
+// --- THREE.JS БАПТАУЛАРЫ ---
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+
+const mainLight = new THREE.PointLight(0xffffff, 1.5, 20);
+mainLight.position.set(5, 5, 5);
+scene.add(mainLight);
+scene.add(new THREE.AmbientLight(0x404040, 2));
+
+const coreLight = new THREE.PointLight(0xff0055, 0, 15);
+scene.add(coreLight);
+
+let nucleusGroup = new THREE.Group();
+scene.add(nucleusGroup);
+let nucleons = []; 
+
+let projectileGroup = new THREE.Group();
+scene.add(projectileGroup);
+
+let nucleusJitter = 0;
+
+function createNucleonMesh(isProton) {
+    const color = isProton ? 0xff3333 : 0x8899aa;
+    const mat = new THREE.MeshStandardMaterial({ 
+        color: color, roughness: 0.3, metalness: 0.2, emissive: color, emissiveIntensity: 0.3
+    });
+    return new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), mat);
+}
+
+function buildNucleus(pCount, nCount) {
+    while(nucleusGroup.children.length > 0) nucleusGroup.remove(nucleusGroup.children[0]);
+    nucleons = [];
+    const total = pCount + nCount;
+    for(let i=0; i < total; i++) {
+        const isProton = i < pCount;
+        const mesh = createNucleonMesh(isProton);
+        const phi = Math.acos(-1 + (2 * i) / total);
+        const theta = Math.sqrt(total * Math.PI) * phi;
+        const r = total < 5 ? 0.6 : Math.pow(total, 0.33) * 0.45; 
+        mesh.position.set(Math.cos(theta) * Math.sin(phi) * r, Math.sin(theta) * Math.sin(phi) * r, Math.cos(phi) * r);
+        nucleusGroup.add(mesh);
+        nucleons.push({ mesh: mesh, targetPos: mesh.position.clone() });
+    }
+}
+
+function createProjectile(type) {
+    while(projectileGroup.children.length > 0) projectileGroup.remove(projectileGroup.children[0]);
+    if (type === 'alpha') {
+        const p1 = createNucleonMesh(true); p1.position.set(0.5, 0.5, 0);
+        const p2 = createNucleonMesh(true); p2.position.set(-0.5, -0.5, 0);
+        const n1 = createNucleonMesh(false); n1.position.set(0.5, -0.5, 0);
+        const n2 = createNucleonMesh(false); n2.position.set(-0.5, 0.5, 0);
+        projectileGroup.add(p1, p2, n1, n2);
+    } else if (type === 'neutron' || type === 'proton') {
+        projectileGroup.add(createNucleonMesh(type === 'proton'));
+    } else if (type === 'positron') {
+        const mat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+        const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), mat);
+        mesh.add(new THREE.PointLight(0x00ffff, 2, 5));
+        projectileGroup.add(mesh);
+    }
+}
+
+// --- ИНТЕРФЕЙСТІ ЖАҢАРТУ ---
+function loadElement(index) {
+    if (isAnimating) return;
+    const elData = elementsData[index];
+    currentExp = generateExperiment(elData);
+    
+    document.querySelectorAll('.elem-btn').forEach((b, i) => b.classList.toggle('active', i === index));
+
+    document.getElementById('reaction-formula').innerText = `${currentExp.start.formula} + ⁴₂He(α) ➔ ?`;
+    document.getElementById('reaction-desc').innerText = `${elData.n} ядросын альфа-бөлшекпен атқылауға дайынбыз.`;
+    
+    const statusEl = document.getElementById('status-indicator');
+    statusEl.innerText = "ТҰРАҚТЫ ИЗОТОП"; statusEl.className = "status-stable";
+    document.getElementById('fire-btn').disabled = false;
+    
+    buildNucleus(currentExp.start.p, currentExp.start.n);
+    coreLight.intensity = 0; nucleusJitter = 0.01;
+    projectileGroup.position.set(20, 0, 0); 
+}
+
+const listEl = document.getElementById('experiments-list');
+elementsData.forEach((el, index) => {
+    const btn = document.createElement('div');
+    btn.className = 'elem-btn';
+    btn.innerHTML = `<span class="elem-z">${el.z}</span><span class="elem-sym">${el.s}</span>`;
+    btn.onclick = () => loadElement(index);
+    listEl.appendChild(btn);
+});
+
+// --- АНИМАЦИЯ ---
+document.getElementById('fire-btn').onclick = () => {
+    if (isAnimating || !currentExp) return;
+    isAnimating = true; document.getElementById('fire-btn').disabled = true;
+    runReactionSequence();
+};
+
+async function runReactionSequence() {
+    createProjectile('alpha'); projectileGroup.position.set(15, 0, 0);
+    await animateMovement(projectileGroup.position, new THREE.Vector3(0,0,0), 1000);
+    
+    projectileGroup.children.forEach(c => c.visible = false); flashLight();
+    buildNucleus(currentExp.stage1.result.p, currentExp.stage1.result.n);
+    
+    createProjectile('neutron'); projectileGroup.position.set(0, 0, 0);
+    animateMovement(projectileGroup.position, new THREE.Vector3(-15, 5, -5), 1500); 
+    
+    document.getElementById('reaction-formula').innerText = currentExp.stage1.formula;
+    document.getElementById('reaction-desc').innerText = currentExp.stage1.desc;
+    const statusEl = document.getElementById('status-indicator');
+    statusEl.innerText = currentExp.stage1.status; statusEl.className = "status-unstable";
+    
+    nucleusJitter = 0.15; coreLight.intensity = 3; coreLight.color.setHex(0xff0000);
+    await sleep(currentExp.stage2.delay);
+    flashLight();
+    
+    createProjectile(currentExp.stage2.emission); projectileGroup.position.set(0, 0, 0);
+    animateMovement(projectileGroup.position, new THREE.Vector3(10, 10, 5), 2000);
+    buildNucleus(currentExp.stage2.result.p, currentExp.stage2.result.n);
+    
+    document.getElementById('reaction-formula').innerText = currentExp.stage2.formula;
+    document.getElementById('reaction-desc').innerText = currentExp.stage2.desc;
+    statusEl.innerText = currentExp.stage2.status; statusEl.className = "status-stable";
+    
+    nucleusJitter = 0.01; coreLight.intensity = 0; isAnimating = false;
+    document.getElementById('fire-btn').innerText = "ҚАЙТАЛАУ"; document.getElementById('fire-btn').disabled = false;
+}
+
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+function animateMovement(vector, target, duration) {
+    return new Promise(resolve => {
+        const start = vector.clone(); const startTime = Date.now();
+        function update() {
+            const elapsed = Date.now() - startTime; const progress = Math.min(elapsed / duration, 1);
+            const ease = progress < .5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+            vector.lerpVectors(start, target, ease);
+            if (progress < 1) requestAnimationFrame(update); else resolve();
+        } update();
+    });
+}
+function flashLight() { mainLight.intensity = 15; setTimeout(() => { mainLight.intensity = 1.5; }, 150); }
+
+// --- HAND TRACKING (КАМЕРА) ---
+const videoElement = document.getElementById('video-preview');
+const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 });
+
+let pinchCooldown = false;
+hands.onResults((results) => {
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const hand = results.multiHandLandmarks[0];
+        
+        // 1. Айналдыру (Сұқ саусақ негізімен)
+        nucleusGroup.rotation.y = (hand[9].x - 0.5) * 6;
+        nucleusGroup.rotation.x = (hand[9].y - 0.5) * 6;
+
+        // 2. Шымшу арқылы Ату (Бас бармақ пен Сұқ саусақ арасы)
+        const pinchDist = Math.sqrt(Math.pow(hand[8].x - hand[4].x, 2) + Math.pow(hand[8].y - hand[4].y, 2));
+        
+        if (pinchDist < 0.05 && !isAnimating && !pinchCooldown && currentExp) {
+            document.getElementById('fire-btn').click();
+            pinchCooldown = true; // Қайта-қайта басылып кетпеуі үшін
+            setTimeout(() => pinchCooldown = false, 2000);
+        }
+    }
+});
+new Camera(videoElement, { onFrame: async () => { await hands.send({image: videoElement}); }, width: 320, height: 240 }).start();
+
+
+camera.position.z = 10;
+loadElement(12); // Алюминий (Al) әдепкі бойынша таңдалады
+
+function animate() {
+    requestAnimationFrame(animate);
+    const time = Date.now() * 0.005;
+    nucleusGroup.rotation.y += 0.001; nucleusGroup.rotation.z += 0.001;
+    
+    nucleons.forEach((n) => {
+        const jX = (Math.random() - 0.5) * nucleusJitter, jY = (Math.random() - 0.5) * nucleusJitter, jZ = (Math.random() - 0.5) * nucleusJitter;
+        const scale = 1 + Math.sin(time + n.targetPos.x) * 0.02;
+        n.mesh.position.set(n.targetPos.x * scale + jX, n.targetPos.y * scale + jY, n.targetPos.z * scale + jZ);
+    });
+    if(projectileGroup.children.length > 0) { projectileGroup.rotation.x += 0.05; projectileGroup.rotation.y += 0.05; }
+    if(coreLight.intensity > 0) coreLight.intensity = 2 + Math.sin(time * 2) * 1.5;
+
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+</script>
+</body>
+</html>
