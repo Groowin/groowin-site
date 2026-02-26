@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Атомдық Лаборатория: Толық Модель</title>
+    <style>
+        :root {
+            --bg-color: #010409;
+            --accent: #00f2ff;
+            --panel-bg: rgba(5, 15, 25, 0.92);
+            --p-color: #ff5555; /* Протон - Ашығырақ қызыл */
+            --n-color: #b0c4de; /* Нейтрон - Ашық көкшіл сұр */
+            --e-color: #00ffff; /* Электрон - Неон */
+        }
+        body { margin: 0; background: var(--bg-color); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        
+        /* Басқару батырмалары */
+        .toggle-btn {
+            position: absolute; top: 20px; z-index: 100;
+            background: var(--panel-bg); border: 1px solid var(--accent);
+            color: var(--accent); padding: 10px 15px; cursor: pointer;
+            border-radius: 5px; font-weight: bold; transition: 0.3s;
+        }
+        .toggle-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 15px var(--accent); }
+        #toggle-left { left: 20px; }
+        #toggle-right { right: 20px; }
+
+        /* Интерфейс қабаттары */
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; justify-content: space-between; padding: 75px 20px 20px 20px; box-sizing: border-box; }
+        .panel { 
+            pointer-events: auto; background: var(--panel-bg); 
+            backdrop-filter: blur(15px); border: 1px solid rgba(0, 242, 255, 0.2); 
+            border-radius: 15px; padding: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            transition: all 0.4s ease;
+            max-height: 80vh; overflow-y: auto;
+        }
+        .panel.hidden { opacity: 0; visibility: hidden; transform: translateY(15px); }
+        
+        /* Кесте */
+        .left-panel { width: 300px; }
+        .periodic-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; }
+        .elem-btn { background: #1a202c; border: 1px solid #2d3748; color: white; padding: 10px 5px; cursor: pointer; text-align: center; border-radius: 8px; transition: 0.2s; }
+        .elem-btn:hover { background: var(--accent); color: black; }
+        .elem-btn.active { border-color: var(--accent); background: rgba(0, 242, 255, 0.1); box-shadow: 0 0 12px var(--accent); }
+
+        /* Фактілер */
+        .right-panel { width: 300px; }
+        .fact-card h2 { color: var(--accent); margin: 0 0 15px 0; font-size: 1.6rem; border-bottom: 2px solid var(--accent); }
+        .fact-item { margin-bottom: 12px; line-height: 1.4; font-size: 0.95rem; }
+        .fact-label { font-weight: bold; color: #718096; display: block; margin-bottom: 3px; text-transform: uppercase; font-size: 0.75rem; }
+
+        /* Камера мен Көмек */
+        #video-preview { position: absolute; bottom: 20px; left: 20px; width: 130px; height: 95px; border-radius: 12px; border: 1px solid var(--accent); transform: scaleX(-1); object-fit: cover; z-index: 5; opacity: 0.6; }
+
+        /* Легенда */
+        .legend { position: absolute; bottom: 130px; left: 20px; font-size: 0.8rem; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; }
+        .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+    </style>
+</head>
+<body>
+
+<button class="toggle-btn" id="toggle-left">☰ КЕСТЕ</button>
+<button class="toggle-btn" id="toggle-right">ℹ️ ФАКТІЛЕР</button>
+
+<video id="video-preview" autoplay playsinline></video>
+
+<div class="legend">
+    <div class="legend-item"><div class="dot" style="background: var(--p-color)"></div> Протон (+)</div>
+    <div class="legend-item"><div class="dot" style="background: var(--n-color)"></div> Нейтрон (0)</div>
+    <div class="legend-item"><div class="dot" style="background: var(--e-color)"></div> Электрон (-)</div>
+</div>
+
+<div id="ui-layer">
+    <div class="panel left-panel" id="panel-left">
+        <h3>Элементті таңдау</h3>
+        <div class="periodic-grid" id="element-grid"></div>
+    </div>
+
+    <div class="panel right-panel" id="panel-right">
+        <div class="fact-card" id="fact-content">
+            <!-- Деректер осында шығады -->
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+const elementData = [
+    { s: 'H', n: 'Сутегі', p: 1, n0: 0, year: 1766, fact: 'Ең қарапайым атом: 1 протон және 1 электрон.' },
+    { s: 'He', n: 'Гелий', p: 2, n0: 2, year: 1868, fact: 'Инертті газ. Күндегі термоядролық реакцияның өнімі.' },
+    { s: 'Li', n: 'Литий', p: 3, n0: 4, year: 1817, fact: 'Сілтілік металл. Электрондар 2 деңгейде орналасқан (2, 1).' },
+    { s: 'Be', n: 'Бериллий', p: 4, n0: 5, year: 1798, fact: 'Рентген сәулелерін жақсы өткізетін металл.' },
+    { s: 'B', n: 'Бор', p: 5, n0: 6, year: 1808, fact: 'Жартылай өткізгіш. Жоғары температураға төзімді.' },
+    { s: 'C', n: 'Көміртегі', p: 6, n0: 6, year: 'Көне', fact: 'Органикалық әлемнің негізі. 6 электрон 2 қабатта (2, 4).' },
+    { s: 'N', n: 'Азот', p: 7, n0: 7, year: 1772, fact: 'Сұйық азот техникада салқындатқыш ретінде қолданылады.' },
+    { s: 'O', n: 'Оттегі', p: 8, n0: 8, year: 1774, fact: 'Жер атмосферасының 21%-ын құрайтын өмірлік газ.' },
+    { s: 'F', n: 'Фтор', p: 9, n0: 10, year: 1886, fact: 'Ең күшті тотықтырғыш. Тіс эмалін нығайтуға қатысады.' },
+    { s: 'Ne', n: 'Неон', p: 10, n0: 10, year: 1898, fact: 'Электр разряды кезінде ашық қызғылт түспен жарқырайды.' }
+];
+
+// 1. THREE.JS Негізі
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+
+const coreLight = new THREE.PointLight(0x00f2ff, 2.5, 12);
+scene.add(coreLight);
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+
+let atomGroup = new THREE.Group(); // Бүкіл атом (ядро + электрондар)
+scene.add(atomGroup);
+
+let nucleonGroup = new THREE.Group(); // Тек ядро
+atomGroup.add(nucleonGroup);
+
+let electronGroup = new THREE.Group(); // Тек электрондар
+atomGroup.add(electronGroup);
+
+let nucleons = [];
+let electrons = [];
+
+// Ядроны құру функциясы
+function buildAtom(pCount, nCount) {
+    // Тазалау
+    while(nucleonGroup.children.length > 0) nucleonGroup.remove(nucleonGroup.children[0]);
+    while(electronGroup.children.length > 0) electronGroup.remove(electronGroup.children[0]);
+    nucleons = [];
+    electrons = [];
+
+    // --- ЯДРО ҚҰРАСТЫРУ ---
+    const totalNucleons = pCount + nCount;
+    for(let i=0; i < totalNucleons; i++) {
+        const isProton = i < pCount;
+        const color = isProton ? 0xff5555 : 0xb0c4de; // Түстерді ашық етіп өзгерттім
+        
+        const mat = new THREE.MeshStandardMaterial({ 
+            color: color, 
+            roughness: 0.3,
+            metalness: 0.3,
+            emissive: color,
+            emissiveIntensity: 0.4 // Жарқырауын көбейттім, қою болмауы үшін
+        });
+        
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.4, 32, 32), mat);
+        
+        // Fibonacci Sphere орналасуы
+        const phi = Math.acos(-1 + (2 * i) / totalNucleons);
+        const theta = Math.sqrt(totalNucleons * Math.PI) * phi;
+        const r = totalNucleons === 1 ? 0 : 0.55;
+        
+        sphere.position.set(
+            Math.cos(theta) * Math.sin(phi) * r,
+            Math.sin(theta) * Math.sin(phi) * r,
+            Math.cos(phi) * r
+        );
+        
+        nucleonGroup.add(sphere);
+        nucleons.push({ mesh: sphere, targetPos: sphere.position.clone(), phase: Math.random() * Math.PI * 2 });
+    }
+
+    // --- ЭЛЕКТРОНДАРДЫ ҚҰРАСТЫРУ (Бори моделі бойынша жеңілдетілген) ---
+    // 1-ші қабат (max 2), 2-ші қабат (қалғаны)
+    for(let i=0; i < pCount; i++) {
+        const orbitRadius = i < 2 ? 2.5 : 4.5;
+        const speed = 0.02 + (Math.random() * 0.03);
+        
+        const eMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+        const electron = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), eMat);
+        
+        // Электронның жарқылы (Glow)
+        const eLight = new THREE.PointLight(0x00ffff, 1, 2);
+        electron.add(eLight);
+
+        electronGroup.add(electron);
+        electrons.push({ 
+            mesh: electron, 
+            radius: orbitRadius, 
+            angle: Math.random() * Math.PI * 2, 
+            speed: speed,
+            offsetY: (Math.random() - 0.5) * 1.5 // Орбиталардың әртүрлі жазықтықта болуы
+        });
+    }
+
+    // Орбита сызықтары
+    [2.5, 4.5].forEach(r => {
+        if(pCount > (r === 2.5 ? 0 : 2)) {
+            const circleGeo = new THREE.RingGeometry(r, r + 0.02, 64);
+            const circleMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.1 });
+            const orbitRing = new THREE.Mesh(circleGeo, circleMat);
+            orbitRing.rotation.x = Math.PI / 2;
+            electronGroup.add(orbitRing);
+        }
+    });
+}
+
+// 2. Интерфейс функциялары
+const grid = document.getElementById('element-grid');
+elementData.forEach((el, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'elem-btn' + (i === 0 ? ' active' : '');
+    btn.innerHTML = `<strong>${el.s}</strong><br><small>${el.p}</small>`;
+    btn.onclick = () => {
+        document.querySelectorAll('.elem-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateInfo(el);
+        buildAtom(el.p, el.n0);
+    };
+    grid.appendChild(btn);
+});
+
+function updateInfo(el) {
+    document.getElementById('fact-content').innerHTML = `
+        <h2>${el.n} (${el.s})</h2>
+        <div class="fact-item"><span class="fact-label">Ашылуы:</span> ${el.year}</div>
+        <div class="fact-item"><span class="fact-label">Қызықты дерек:</span> ${el.fact}</div>
+        <div class="fact-item"><span class="fact-label">Құрылымы:</span> ${el.p} Протон, ${el.n0} Нейтрон, ${el.p} Электрон</div>
+    `;
+}
+
+document.getElementById('toggle-left').onclick = () => document.getElementById('panel-left').classList.toggle('hidden');
+document.getElementById('toggle-right').onclick = () => document.getElementById('panel-right').classList.toggle('hidden');
+
+// 3. Hand Tracking
+const videoElement = document.getElementById('video-preview');
+const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 });
+
+let currentExpansion = 1;
+function onResults(results) {
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const hand = results.multiHandLandmarks[0];
+        atomGroup.rotation.y = (hand[9].x - 0.5) * 4;
+        atomGroup.rotation.x = (hand[9].y - 0.5) * 4;
+
+        const d = Math.sqrt(Math.pow(hand[8].x - hand[0].x, 2) + Math.pow(hand[8].y - hand[0].y, 2));
+        // Ядроның ажырауын азайттым (15-ті 5-ке ауыстырдым)
+        currentExpansion = THREE.MathUtils.lerp(currentExpansion, Math.max(0.5, d * 5), 0.1);
+    }
+}
+
+hands.onResults(onResults);
+new Camera(videoElement, { onFrame: async () => { await hands.send({image: videoElement}); }, width: 480, height: 360 }).start();
+
+camera.position.z = 8;
+updateInfo(elementData[0]);
+buildAtom(1, 0);
+
+function animate() {
+    requestAnimationFrame(animate);
+    const time = Date.now() * 0.002;
+    
+    // Ядро анимациясы
+    nucleons.forEach((n) => {
+        const jitter = 0.02 * Math.sin(time + n.phase);
+        // Кедергіні (шекараны) алып тастадым, қол ашылғанда нуклондар тікелей қашықтайды
+        const pos = n.targetPos.clone().multiplyScalar(currentExpansion);
+        n.mesh.position.set(pos.x + jitter, pos.y + jitter, pos.z + jitter);
+    });
+
+    // Электрондар анимациясы
+    electrons.forEach((e, i) => {
+        // Электрон жылдамдығы қолдың ашылуына байланысты (энергия деңгейі)
+        e.angle += e.speed * (1 / currentExpansion); 
+        e.mesh.position.x = Math.cos(e.angle) * e.radius;
+        e.mesh.position.z = Math.sin(e.angle) * e.radius;
+        e.mesh.position.y = e.offsetY;
+    });
+
+    nucleonGroup.rotation.y += 0.005;
+    coreLight.intensity = 1.5 + Math.sin(time * 2) * 0.5;
+    
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>
