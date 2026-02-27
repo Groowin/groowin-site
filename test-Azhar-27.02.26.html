@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика Тест: Механика және Қысым</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+        body { background-color: #f0f4f8; font-family: 'Montserrat', sans-serif; color: #1e293b; }
+        .card { background: white; border-radius: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .option-box { border: 2px solid #e2e8f0; border-radius: 1rem; padding: 1.2rem; cursor: pointer; transition: 0.3s; position: relative; }
+        .option-box:hover { border-color: #3b82f6; background-color: #f8faff; }
+        input[type="radio"]:checked + .option-box { border-color: #3b82f6; background-color: #eff6ff; font-weight: 600; }
+        .correct { border-color: #10b981 !important; background-color: #ecfdf5 !important; }
+        .wrong { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        .tag { padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .tag-a { background: #dcfce7; color: #166534; }
+        .tag-b { background: #fef9c3; color: #854d0e; }
+        .submitted .option-box { pointer-events: none; }
+    </style>
+</head>
+<body class="p-4 md:p-12">
+
+<div id="app" class="max-w-3xl mx-auto">
+    <!-- START SCREEN -->
+    <div id="start-screen" class="card p-10 text-center border-b-8 border-blue-600">
+        <h1 class="text-4xl font-extrabold mb-4">Физикадан тест</h1>
+        <p class="text-slate-500 mb-8 font-medium">Тақырыптар: Күштер, Қысым, Жұмыс және Энергия</p>
+        
+        <div class="bg-blue-50 p-6 rounded-2xl mb-8 inline-block w-full">
+            <label class="block text-blue-900 font-bold mb-3">⏱️ Уақытты белгілеңіз (минут):</label>
+            <input type="number" id="time-input" value="45" min="5" max="120" class="w-24 p-3 rounded-xl border-2 border-blue-200 text-center text-2xl font-black outline-none focus:border-blue-500">
+        </div>
+
+        <button onclick="startQuiz()" class="bg-blue-600 text-white px-12 py-5 rounded-2xl font-bold text-xl hover:bg-blue-700 shadow-xl transition transform active:scale-95 w-full">
+            Бастау
+        </button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="hidden">
+        <div class="sticky top-4 z-50 bg-white shadow-xl rounded-2xl p-5 mb-10 flex justify-between items-center border border-slate-100">
+            <div>
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Уақыт</span>
+                <div id="timer-display" class="text-3xl font-mono font-black text-blue-600">45:00</div>
+            </div>
+            <div class="text-right">
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Прогресс</span>
+                <div id="progress-text" class="text-xl font-bold">0 / 30</div>
+            </div>
+        </div>
+
+        <div id="questions-container"></div>
+
+        <button id="finish-btn" onclick="finishQuiz()" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black text-2xl mt-8 shadow-2xl hover:bg-black transition transform active:scale-95 mb-20">
+            Нәтижені көру
+        </button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden card p-10 text-center border-t-8 border-green-500">
+        <h2 class="text-3xl font-black mb-2">Нәтижеңіз</h2>
+        <div id="final-score" class="text-8xl font-black text-blue-600 mb-6">0 / 30</div>
+        
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="p-4 bg-green-50 rounded-xl"><p class="text-xs font-bold text-green-600 uppercase">А деңгейі</p><span id="score-a" class="text-2xl font-black">0/15</span></div>
+            <div class="p-4 bg-yellow-50 rounded-xl"><p class="text-xs font-bold text-yellow-600 uppercase">В деңгейі</p><span id="score-b" class="text-2xl font-black">0/15</span></div>
+        </div>
+
+        <button onclick="location.reload()" class="bg-blue-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 shadow-lg">Қайталау</button>
+        <p class="mt-10 text-sm text-slate-400 italic">Дұрыс жауаптар төменде белгіленді</p>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // ДЕҢГЕЙ А (15 сұрақ)
+        { l: 'a', q: "Денеге әсер ететін ауырлық күшінің формуласы қандай?", a: ["F = mg", "F = ma", "F = kx", "F = μN"], c: 0 },
+        { l: 'a', q: "Серпімділік күшінің формуласы (Гук заңы):", a: ["F = -kx", "F = mg", "F = ma", "P = F/S"], c: 0 },
+        { l: 'a', q: "Дененің тығыздығын қалай есептейміз?", a: ["ρ = m/V", "ρ = m*V", "ρ = V/m", "ρ = F/S"], c: 0 },
+        { l: 'a', q: "Қысымның өлшем бірлігі қандай?", a: ["Паскаль (Па)", "Ньютон (Н)", "Джоуль (Дж)", "Ватт (Вт)"], c: 0 },
+        { l: 'a', q: "Сұйықтар мен газдарға түсірілген қысым барлық бағытта бірдей беріледі. Бұл қай заң?", a: ["Паскаль заңы", "Архимед заңы", "Ньютон заңы", "Гук заңы"], c: 0 },
+        { l: 'a', q: "Гидростатикалық қысымның формуласы:", a: ["p = ρgh", "p = F/S", "p = mg", "p = m/V"], c: 0 },
+        { l: 'a', q: "Архимед күші қай бағытқа бағытталған?", a: ["Тік жоғары", "Тік төмен", "Жан-жаққа", "Қозғалысқа қарсы"], c: 0 },
+        { l: 'a', q: "Механикалық жұмыстың формуласы:", a: ["A = F*S", "A = F/S", "A = P*t", "A = m*g"], c: 0 },
+        { l: 'a', q: "Қуаттың өлшем бірлігі:", a: ["Ватт (Вт)", "Джоуль (Дж)", "Паскаль (Па)", "Ньютон (Н)"], c: 0 },
+        { l: 'a', q: "Кинетикалық энергия формуласы:", a: ["E = mv²/2", "E = mgh", "E = kx²/2", "E = F*S"], c: 0 },
+        { l: 'a', q: "Потенциалдық энергия (биіктіктегі дене үшін):", a: ["E = mgh", "E = mv²/2", "E = kx²/2", "E = P/t"], c: 0 },
+        { l: 'a', q: "Дененің салмағы деген не?", a: ["Тірекке не аспаға түсіретін күші", "Жердің тарту күші", "Дененің массасы", "Дененің көлемі"], c: 0 },
+        { l: 'a', q: "Атмосфералық қысымды өлшейтін құрал:", a: ["Барометр", "Манометр", "Динамометр", "Термометр"], c: 0 },
+        { l: 'a', q: "Үйкеліс күші қай кезде пайда болады?", a: ["Денелер жанасқанда", "Дене тыныштықта болғанда", "Дене биіктікте болғанда", "Вакуумда"], c: 0 },
+        { l: 'a', q: "Денелердің жүзу шарты: егер Архимед күші ауырлық күшінен үлкен болса (F_а > F_ау):", a: ["Дене қалқиды (бетке шығады)", "Дене батады", "Дене ішінде жүзіп жүреді", "Дене жоғалып кетеді"], c: 0 },
+
+        // ДЕҢГЕЙ B (15 сұрақ)
+        { l: 'b', q: "Массасы 500 г допқа әсер ететін ауырлық күшін табыңыз. (g=10)", a: ["5 Н", "50 Н", "0.5 Н", "500 Н"], c: 0 },
+        { l: 'b', q: "Серіппе 2 см-ге ұзарғанда 10 Н күш пайда болса, оның қатаңдығы (k) қанша?", a: ["500 Н/м", "5 Н/м", "20 Н/м", "0.2 Н/м"], c: 0 },
+        { l: 'b', q: "Көлемі 0.2 м³ дененің массасы 1600 кг болса, оның тығыздығы қандай?", a: ["8000 кг/м³", "320 кг/м³", "1600 кг/м³", "800 кг/м³"], c: 0 },
+        { l: 'b', q: "Ауданы 0.5 м² тірекке 200 Н күш әсер етсе, түсетін қысым қанша?", a: ["400 Па", "100 Па", "0.0025 Па", "1000 Па"], c: 0 },
+        { l: 'b', q: "Судың 10 м тереңдіктегі гидростатикалық қысымын табыңыз. (ρ=1000, g=10)", a: ["100 000 Па", "1 000 Па", "10 000 Па", "50 000 Па"], c: 0 },
+        { l: 'b', q: "Массасы 2 кг дене 4 м/с жылдамдықпен қозғалса, оның кинетикалық энергиясы қанша?", a: ["16 Дж", "8 Дж", "32 Дж", "4 Дж"], c: 0 },
+        { l: 'b', q: "Денені 5 м биіктікке көтергенде оның потенциалдық энергиясы 100 Дж болды. Массасы қанша? (g=10)", a: ["2 кг", "5 кг", "10 кг", "20 кг"], c: 0 },
+        { l: 'b', q: "Күш 20 Н, орын ауыстыру 10 м. Егер бағыттары бірдей болса, жұмыс қанша?", a: ["200 Дж", "2 Дж", "30 Дж", "0.5 Дж"], c: 0 },
+        { l: 'b', q: "10 секундта 500 Дж жұмыс істейтін қозғалтқыштың қуаты қандай?", a: ["50 Вт", "5000 Вт", "0.02 Вт", "510 Вт"], c: 0 },
+        { l: 'b', q: "Көлемі 0.01 м³ дене суға толық батырылған. Оған әсер ететін Архимед күші? (ρ_су=1000, g=10)", a: ["100 Н", "10 Н", "1000 Н", "1 Н"], c: 0 },
+        { l: 'b', q: "Қатынас ыдыстарда бірдей сұйықтық болса, деңгейлері қандай болады?", a: ["Бірдей деңгейде", "Еніне байланысты", "Пішініне байланысты", "Әртүрлі"], c: 0 },
+        { l: 'b', q: "Лифт үдеумен жоғары көтерілгенде адамның салмағы қалай өзгереді?", a: ["Артады (асқын салмақ)", "Кемиді", "Өзгермейді", "Нөлге тең болады"], c: 0 },
+        { l: 'b', q: "Беттің ауданын 2 есе азайтып, күшті 2 есе арттырса, қысым қалай өзгереді?", a: ["4 есе артады", "Өзгермейді", "2 есе кемиді", "2 есе артады"], c: 0 },
+        { l: 'b', q: "Еркін құлаған дененің 10 м биіктіктегі жылдамдығы 0 болса, жерге түскенде энергия қалай өзгереді?", a: ["Потенциалдық энергия кинетикалыққа айналады", "Энергия жоғалады", "Энергия артады", "Тек потенциалдық болып қалады"], c: 0 },
+        { l: 'b', q: "Массасы 60 кг баланың жерге түсіретін қысымы, егер оның екі бәтеңкесінің табанының ауданы 300 см² болса? (g=10, 1м²=10000см²)", a: ["20 000 Па", "2 000 Па", "6 000 Па", "200 Па"], c: 0 }
+    ];
+
+    let timer;
+    let timeRemaining;
+
+    function startQuiz() {
+        const inputMinutes = document.getElementById('time-input').value;
+        timeRemaining = inputMinutes * 60;
+        
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        
+        renderQuestions();
+        startTimer();
+    }
+
+    function startTimer() {
+        timer = setInterval(() => {
+            timeRemaining--;
+            const mins = Math.floor(timeRemaining / 60);
+            const secs = timeRemaining % 60;
+            document.getElementById('timer-display').innerText = 
+                `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            
+            if (timeRemaining <= 0) {
+                clearInterval(timer);
+                finishQuiz();
+            }
+        }, 1000);
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('questions-container');
+        questions.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = `card p-8 mb-6 border-l-8 ${item.l === 'a' ? 'border-green-400' : 'border-yellow-400'}`;
+            div.id = `q-block-${idx}`;
+            div.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <span class="tag tag-${item.l}">${item.l} деңгейі</span>
+                    <span class="text-slate-300 font-bold">#${idx + 1}</span>
+                </div>
+                <p class="text-xl font-bold mb-6">${item.q}</p>
+                <div class="grid gap-4">
+                    ${item.a.map((opt, i) => `
+                        <label class="block">
+                            <input type="radio" name="q${idx}" value="${i}" class="hidden peer" onchange="updateProgress()">
+                            <div class="option-box peer-checked:border-blue-500">
+                                ${opt}
+                                <span class="feedback-icon hidden absolute right-4 top-1/2 -translate-y-1/2"></span>
+                            </div>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function updateProgress() {
+        const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+        document.getElementById('progress-text').innerText = `${answered} / 30`;
+    }
+
+    function finishQuiz() {
+        clearInterval(timer);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        let total = 0;
+        let scoreA = 0;
+        let scoreB = 0;
+
+        document.getElementById('quiz-screen').classList.add('submitted');
+
+        questions.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+            const options = document.getElementsByName(`q${idx}`);
+            
+            // Show correct answer
+            options[item.c].nextElementSibling.classList.add('correct');
+            options[item.c].nextElementSibling.querySelector('.feedback-icon').innerHTML = "✅";
+            options[item.c].nextElementSibling.querySelector('.feedback-icon').classList.remove('hidden');
+
+            if (selected) {
+                const val = parseInt(selected.value);
+                if (val === item.c) {
+                    total++;
+                    if (item.l === 'a') scoreA++; else scoreB++;
+                } else {
+                    selected.nextElementSibling.classList.add('wrong');
+                    selected.nextElementSibling.querySelector('.feedback-icon').innerHTML = "❌";
+                    selected.nextElementSibling.querySelector('.feedback-icon').classList.remove('hidden');
+                }
+            }
+        });
+
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${total} / 30`;
+        document.getElementById('score-a').innerText = `${scoreA} / 15`;
+        document.getElementById('score-b').innerText = `${scoreB} / 15`;
+        document.getElementById('finish-btn').classList.add('hidden');
+    }
+</script>
+</body>
+</html>
