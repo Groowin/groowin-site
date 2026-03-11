@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика: Жұмыс және Энергия (В деңгейі)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
+        body { background-color: #0f172a; font-family: 'Space Grotesk', sans-serif; color: #f1f5f9; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; }
+        .option-box { border: 2px solid #334155; border-radius: 0.75rem; padding: 1rem; cursor: pointer; transition: all 0.2s ease; }
+        .option-box:hover { border-color: #38bdf8; background: #334155; }
+        input[type="radio"]:checked + .option-box { border-color: #38bdf8; background: #0ea5e9; color: white; }
+        .correct { border-color: #10b981 !important; background: #064e3b !important; }
+        .wrong { border-color: #f43f5e !important; background: #4c0519 !important; }
+        .submitted .option-box { pointer-events: none; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+<div id="app" class="max-w-3xl mx-auto">
+    <!-- START SCREEN -->
+    <div id="start-screen" class="card p-8 text-center border-t-4 border-sky-500">
+        <h1 class="text-3xl font-bold mb-4">Физика: В деңгейі (Есептер)</h1>
+        <p class="text-slate-400 mb-8">Жұмыс, Қуат, Энергия және ПӘК</p>
+        
+        <div class="mb-8">
+            <label class="block text-sm font-bold text-slate-500 mb-2 uppercase tracking-widest">Уақыт (минут)</label>
+            <input type="number" id="time-input" value="40" class="bg-slate-800 border-2 border-slate-700 p-3 rounded-lg text-2xl font-bold text-center w-24 outline-none focus:border-sky-500">
+        </div>
+
+        <button onclick="startQuiz()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 px-10 rounded-xl transition shadow-lg shadow-sky-500/20 w-full">
+            Тестті бастау
+        </button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="hidden">
+        <div class="flex justify-between items-center mb-6 sticky top-0 bg-slate-900/80 backdrop-blur p-4 rounded-xl border border-slate-700 z-50">
+            <div>
+                <span class="text-xs text-slate-500 uppercase font-bold">Қалған уақыт</span>
+                <div id="timer" class="text-2xl font-mono font-bold text-sky-400">40:00</div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs text-slate-500 uppercase font-bold">Сұрақ</span>
+                <div id="progress" class="text-2xl font-bold">0 / 20</div>
+            </div>
+        </div>
+
+        <div id="questions"></div>
+
+        <button id="submit-btn" onclick="finishQuiz()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-5 rounded-xl text-xl mt-8 mb-20 transition">
+            Аяқтау және тексеру
+        </button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden card p-10 text-center">
+        <h2 class="text-2xl font-bold mb-2">Нәтижеңіз:</h2>
+        <div id="score" class="text-7xl font-bold text-sky-400 mb-6">0 / 20</div>
+        <p id="feedback" class="text-slate-400 mb-8 italic"></p>
+        <button onclick="location.reload()" class="bg-slate-700 hover:bg-slate-600 px-8 py-3 rounded-lg font-bold">Қайта тапсыру</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Массасы 4 кг дене 5 м биіктіктен еркін құлайды. Жерге соғылар сәттегі кинетикалық энергиясы қандай? (g=10)", a: ["200 Дж", "20 Дж", "400 Дж", "100 Дж"], c: 0 },
+        { q: "Қуаты 2 кВт қозғалтқыш 10 с ішінде қандай жұмыс атқарады?", a: ["20 000 Дж", "200 Дж", "2000 Дж", "200 000 Дж"], c: 0 },
+        { q: "Жылдамдығы 10 м/с, кинетикалық энергиясы 500 Дж дененің массасы қанша?", a: ["10 кг", "5 кг", "50 кг", "2 кг"], c: 0 },
+        { q: "Массасы 500 кг жүкті 10 м биіктікке 20 секундта көтеретін кранның қуаты қандай? (g=10)", a: ["2500 Вт", "5000 Вт", "1000 Вт", "250 Вт"], c: 0 },
+        { q: "ПӘК-і 80% қозғалтқыш 1000 Дж жұмыс істесе, оның пайдалы жұмысы қанша?", a: ["800 Дж", "1250 Дж", "200 Дж", "1000 Дж"], c: 0 },
+        { q: "Серіппені 4 см-ге созғанда 8 Дж потенциалдық энергия жиналса, серіппенің қатаңдығы қандай?", a: ["10 000 Н/м", "400 Н/м", "200 Н/м", "2500 Н/м"], c: 0 },
+        { q: "Массасы 2 кг дененің жылдамдығы 2 м/с-тан 6 м/с-қа дейін артты. Атқарылған жұмыс қанша?", a: ["32 Дж", "16 Дж", "40 Дж", "64 Дж"], c: 0 },
+        { q: "Жүкті 10 м биіктікке көтергенде оның энергиясы 200 Дж-ға артса, жүктің салмағы қандай?", a: ["20 Н", "200 Н", "2 Н", "20 кг"], c: 0 },
+        { q: "Күштің бағыты мен орын ауыстыру арасындағы бұрыш 90 градус болса, атқарылған жұмыс неге тең?", a: ["0", "Максимал", "F*S", "Теріс"], c: 0 },
+        { q: "ПӘК-і 60% көлбеу жазықтықпен 300 Дж толық жұмыс жасалса, пайдалы жұмыс қанша?", a: ["180 Дж", "500 Дж", "120 Дж", "240 Дж"], c: 0 },
+        { q: "Массасы 100 г доп 20 м/с жылдамдықпен тік жоғары лақтырылды. Максимал биіктіктегі энергиясы?", a: ["20 Дж", "2000 Дж", "200 Дж", "40 Дж"], c: 0 },
+        { q: "Қуаты 150 Вт адам 1 минутта қанша жұмыс атқарады?", a: ["9000 Дж", "150 Дж", "1500 Дж", "900 Дж"], c: 0 },
+        { q: "Жылдамдығын 3 есе арттырғанда дененің кинетикалық энергиясы қалай өзгереді?", a: ["9 есе артады", "3 есе артады", "6 есе артады", "өзгермейді"], c: 0 },
+        { q: "Массасы 2 т автокөлік 72 км/сағ жылдамдықпен қозғалса, оның кинетикалық энергиясы?", a: ["400 кДж", "144 кДж", "40 кДж", "288 кДж"], c: 0 },
+        { q: "ПӘК-і 25% қозғалтқыш 200 Дж пайдалы жұмыс істеу үшін қанша энергия жұмсайды?", a: ["800 Дж", "50 Дж", "400 Дж", "600 Дж"], c: 0 },
+        { q: "Биіктігі 2 м су бөгетінен әр секунд сайын 100 кг су ағады. Су ағынының қуаты қандай? (g=10)", a: ["2000 Вт", "200 Вт", "1000 Вт", "20 000 Вт"], c: 0 },
+        { q: "Дененің импульсі 10 кг·м/с, жылдамдығы 5 м/с болса, кинетикалық энергиясы қандай?", a: ["25 Дж", "50 Дж", "10 Дж", "100 Дж"], c: 0 },
+        { q: "Егер жүкті көтергенде ПӘК 100% болса, бұл нені білдіреді?", a: ["Үйкеліс пен шығындар жоқ", "Күштен ұтыс жоқ", "Жұмыс атқарылмады", "Энергия сақталмады"], c: 0 },
+        { q: "Массасы 10 кг дене 20 м биіктіктен 15 м биіктікке түсті. Потенциалдық энергияның өзгерісі?", a: ["500 Дж", "1500 Дж", "2000 Дж", "50 Дж"], c: 0 },
+        { q: "Қуаты 40 кВт кран жүкті 0,5 м/с тұрақты жылдамдықпен көтерсе, жүктің массасы қандай?", a: ["8000 кг", "2000 кг", "4000 кг", "800 кг"], c: 0 }
+    ];
+
+    let timerInterval;
+    let timeLeft;
+
+    function startQuiz() {
+        const input = document.getElementById('time-input').value;
+        timeLeft = input * 60;
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        
+        const qContainer = document.getElementById('questions');
+        questions.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = "card p-6 mb-6";
+            div.innerHTML = `
+                <p class="text-lg font-bold mb-4">${idx + 1}. ${item.q}</p>
+                <div class="grid gap-3">
+                    ${item.a.map((opt, i) => `
+                        <label>
+                            <input type="radio" name="q${idx}" value="${i}" class="hidden peer" onchange="updateProgress()">
+                            <div class="option-box peer-checked:border-sky-400">
+                                ${opt}
+                                <span class="feedback hidden float-right"></span>
+                            </div>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            qContainer.appendChild(div);
+        });
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            document.getElementById('timer').innerText = `${m}:${String(s).padStart(2, '0')}`;
+            if (timeLeft <= 0) finishQuiz();
+        }, 1000);
+    }
+
+    function updateProgress() {
+        const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+        document.getElementById('progress').innerText = `${answered} / 20`;
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        
+        let score = 0;
+        document.getElementById('quiz-screen').classList.add('submitted');
+        
+        questions.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+            const options = document.getElementsByName(`q${idx}`);
+            
+            options[item.c].nextElementSibling.classList.add('correct');
+            
+            if (selected) {
+                if (parseInt(selected.value) === item.c) {
+                    score++;
+                } else {
+                    selected.nextElementSibling.classList.add('wrong');
+                }
+            }
+        });
+
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('score').innerText = `${score} / 20`;
+        
+        let feedback = "Көбірек дайындалу керек.";
+        if (score > 15) feedback = "Керемет нәтиже! Сіз В деңгейін еркін меңгергенсіз.";
+        else if (score > 10) feedback = "Жақсы, бірақ есептеулерге мұқият болыңыз.";
+        document.getElementById('feedback').innerText = feedback;
+    }
+</script>
+</body>
+</html>
