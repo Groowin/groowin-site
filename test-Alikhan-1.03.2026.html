@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика пәнінен жиынтық бақылау - Электронды нұсқа</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .test-content { display: none; } /* Басталғанға дейін жасырын тұрады */
+        .feedback { display: none; } /* Тексерілгенге дейін жасырын */
+        
+        /* Радио және чекбокстардың стилі */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-label:hover { background-color: #f9fafb; }
+        .option-label input { margin-right: 0.75rem; width: 1.25rem; height: 1.25rem; }
+        
+        /* Дұрыс/Бұрыс стильдері (JS арқылы қосылады) */
+        .correct-answer { background-color: #dcfce7 !important; border-color: #22c55e !important; color: #166534; }
+        .wrong-answer { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b; }
+        .correct-text { color: #16a34a; font-weight: 600; margin-top: 0.5rem; }
+    </style>
+</head>
+<body class="text-gray-800 pb-20">
+
+    <div class="max-w-4xl mx-auto mt-10 bg-white rounded-xl shadow-lg overflow-hidden">
+        
+        <!-- Бас бөлігі (Header) -->
+        <div class="bg-blue-600 text-white p-6 text-center">
+            <h1 class="text-2xl font-bold">III тоқсан бойынша физика пәнінен жиынтық бақылау тапсырмалары</h1>
+            <h2 class="text-lg mt-2">I нұсқа</h2>
+        </div>
+
+        <div class="p-8">
+            <!-- Оқушы мәліметі -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Күні:</label>
+                    <input type="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50 border p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Сынып:</label>
+                    <input type="text" placeholder="Мысалы: 9 'А'" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50 border p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Оқушының аты-жөні:</label>
+                    <input type="text" placeholder="Аты-жөніңізді жазыңыз" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50 border p-2">
+                </div>
+            </div>
+
+            <!-- Таймер және Бастау батырмасы -->
+            <div id="setup-section" class="bg-blue-50 p-6 rounded-lg text-center border border-blue-200">
+                <h3 class="text-lg font-semibold text-blue-800 mb-4">Тестті бастау үшін уақытты орнатыңыз</h3>
+                <div class="flex items-center justify-center gap-4">
+                    <input type="number" id="time-input" value="40" min="1" max="120" class="w-20 p-2 border border-gray-300 rounded-md text-center text-lg font-bold">
+                    <span class="text-gray-600 font-medium">минут</span>
+                    <button onclick="startTest()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-lg shadow transition transform hover:scale-105">
+                        Бастау
+                    </button>
+                </div>
+            </div>
+
+            <!-- Таймер көрсеткіші -->
+            <div id="timer-display" class="hidden sticky top-0 bg-white border-b border-gray-200 p-4 shadow-sm z-10 flex justify-between items-center mb-8">
+                <span class="font-bold text-gray-700">Қалған уақыт:</span>
+                <span id="time-left" class="text-2xl font-mono font-bold text-red-600 bg-red-50 px-4 py-1 rounded-md border border-red-200">00:00</span>
+            </div>
+
+            <!-- Сұрақтар блогы (Бастапқыда жасырын) -->
+            <div id="test-questions" class="test-content space-y-10">
+                
+                <!-- 1-сұрақ -->
+                <div class="question-block" id="q1-block">
+                    <p class="font-semibold text-lg mb-3">1. Дененің массасы мен оның жылдамдығы көбейтіндісіне тең шама ... деп аталады, ол ... <span class="text-sm text-gray-500 font-normal">[1 балл]</span></p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <label class="option-label" id="lbl-q1-a"><input type="radio" name="q1" value="A"> A) Дене импульсі — скалярлық</label>
+                        <label class="option-label" id="lbl-q1-b"><input type="radio" name="q1" value="B"> B) Күш импульсі — векторлық</label>
+                        <label class="option-label" id="lbl-q1-c"><input type="radio" name="q1" value="C"> C) Дене импульсі — векторлық</label>
+                        <label class="option-label" id="lbl-q1-d"><input type="radio" name="q1" value="D"> D) Күш импульсі — скалярлық</label>
+                    </div>
+                    <div class="feedback mt-3 p-3 bg-green-50 border border-green-200 rounded-md" id="fb-q1">
+                        <p class="correct-text">Дұрыс жауап: C (Дене импульсі — векторлық шама: p = m*v)</p>
+                    </div>
+                </div>
+
+                <!-- 2-сұрақ -->
+                <div class="question-block" id="q2-block">
+                    <p class="font-semibold text-lg mb-3">2. Қай графикте дене жылдамдығы мен кинетикалық энергия арасындағы байланыс дұрыс көрсетілген? <span class="text-sm text-gray-500 font-normal">[1 балл]</span></p>
+                    <div class="my-4 flex justify-center bg-white border rounded-lg p-4">
+                        <!-- График SVG -->
+                        <svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Остер -->
+                            <line x1="30" y1="170" x2="280" y2="170" stroke="black" stroke-width="2"/>
+                            <line x1="30" y1="170" x2="30" y2="20" stroke="black" stroke-width="2"/>
+                            <text x="15" y="30" font-family="Arial" font-size="14" font-style="italic">W</text>
+                            <text x="280" y="185" font-family="Arial" font-size="14" font-style="italic">v</text>
+                            
+                            <!-- 1-сызық -->
+                            <path d="M 30 170 Q 150 170 250 150" fill="none" stroke="blue" stroke-width="1.5"/>
+                            <text x="255" y="155" font-family="Arial" font-size="12">1</text>
+                            <!-- 2-сызық -->
+                            <line x1="30" y1="170" x2="250" y2="50" stroke="green" stroke-width="1.5"/>
+                            <text x="255" y="55" font-family="Arial" font-size="12">2</text>
+                            <!-- 3-сызық (Парабола тармағы - дұрыс жауап E_k = mv^2/2) -->
+                            <path d="M 30 170 Q 180 170 200 40" fill="none" stroke="red" stroke-width="2"/>
+                            <text x="205" y="45" font-family="Arial" font-size="12">4</text>
+                            <!-- 5-сызық -->
+                            <path d="M 30 170 Q 50 50 150 40" fill="none" stroke="orange" stroke-width="1.5"/>
+                            <text x="155" y="45" font-family="Arial" font-size="12">3</text>
+                             <!-- 6-сызық -->
+                             <path d="M 30 100 Q 100 80 150 50" fill="none" stroke="purple" stroke-width="1.5"/>
+                             <text x="35" y="90" font-family="Arial" font-size="12">5</text>
+                        </svg>
+                    </div>
+                    <div class="flex flex-wrap gap-4">
+                        <label class="option-label" id="lbl-q2-a"><input type="radio" name="q2" value="A"> A. 1</label>
+                        <label class="option-label" id="lbl-q2-b"><input type="radio" name="q2" value="B"> B. 2</label>
+                        <label class="option-label" id="lbl-q2-c"><input type="radio" name="q2" value="C"> C. 3</label>
+                        <label class="option-label" id="lbl-q2-d"><input type="radio" name="q2" value="D"> Д. 4</label>
+                        <label class="option-label" id="lbl-q2-e"><input type="radio" name="q2" value="E"> E. 5</label>
+                    </div>
+                    <div class="feedback mt-3 p-3 bg-green-50 border border-green-200 rounded-md" id="fb-q2">
+                        <p class="correct-text">Дұрыс жауап: Д. 4 (Кинетикалық энергия жылдамдықтың квадратына тәуелді E_k = mv²/2, сондықтан график парабола болады).</p>
+                    </div>
+                </div>
+
+                <!-- 3-сұрақ -->
+                <div class="question-block" id="q3-block">
+                    <p class="font-semibold text-lg mb-3">3. Суретте толқынға мысалдар көрсетілген. Көлденең толқынға сәйкес келетіндерді көрсет? (Бірнеше жауап болуы мүмкін) <span class="text-sm text-gray-500 font-normal">[2 балл]</span></p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 my-4">
+                        <!-- Сурет 1: Жіп -->
+                        <div class="border rounded-lg p-2 text-center bg-white">
+                            <svg viewBox="0 0 100 60" class="w-full h-20 mb-2">
+                                <path d="M 10 30 Q 30 10 50 30 T 90 30" fill="none" stroke="#4b5563" stroke-width="3"/>
+                                <circle cx="10" cy="30" r="4" fill="#1f2937"/>
+                                <rect x="90" y="20" width="5" height="20" fill="#1f2937"/>
+                            </svg>
+                            <label class="option-label justify-center" id="lbl-q3-1"><input type="checkbox" id="q3-1"> 1. Жіптегі толқын</label>
+                        </div>
+                        <!-- Сурет 2: Серіппе (Бойлық) -->
+                        <div class="border rounded-lg p-2 text-center bg-white">
+                            <svg viewBox="0 0 100 60" class="w-full h-20 mb-2">
+                                <path d="M 10 30 C 15 10, 15 50, 20 30 C 22 10, 22 50, 24 30 C 30 10, 30 50, 40 30 C 45 10, 45 50, 50 30 C 52 10, 52 50, 54 30 C 60 10, 60 50, 70 30 C 80 10, 80 50, 90 30" fill="none" stroke="#4b5563" stroke-width="2"/>
+                            </svg>
+                            <label class="option-label justify-center" id="lbl-q3-2"><input type="checkbox" id="q3-2"> 2. Серіппе</label>
+                        </div>
+                        <!-- Сурет 3: Маятниктер (Бойлық) -->
+                        <div class="border rounded-lg p-2 text-center bg-white">
+                            <svg viewBox="0 0 100 60" class="w-full h-20 mb-2">
+                                <line x1="10" y1="10" x2="90" y2="10" stroke="#1f2937" stroke-width="3"/>
+                                <line x1="20" y1="10" x2="20" y2="40" stroke="black"/><circle cx="20" cy="40" r="3"/>
+                                <line x1="30" y1="10" x2="33" y2="40" stroke="black"/><circle cx="33" cy="40" r="3"/>
+                                <line x1="40" y1="10" x2="43" y2="40" stroke="black"/><circle cx="43" cy="40" r="3"/>
+                                <line x1="50" y1="10" x2="55" y2="40" stroke="black"/><circle cx="55" cy="40" r="3"/>
+                                <line x1="60" y1="10" x2="60" y2="40" stroke="black"/><circle cx="60" cy="40" r="3"/>
+                                <line x1="70" y1="10" x2="65" y2="40" stroke="black"/><circle cx="65" cy="40" r="3"/>
+                                <line x1="80" y1="10" x2="77" y2="40" stroke="black"/><circle cx="77" cy="40" r="3"/>
+                            </svg>
+                            <label class="option-label justify-center" id="lbl-q3-3"><input type="checkbox" id="q3-3"> 3. Маятниктер</label>
+                        </div>
+                        <!-- Сурет 4: Су беті -->
+                        <div class="border rounded-lg p-2 text-center bg-white">
+                            <svg viewBox="0 0 100 60" class="w-full h-20 mb-2">
+                                <circle cx="50" cy="30" r="5" fill="none" stroke="#3b82f6" stroke-width="1"/>
+                                <circle cx="50" cy="30" r="10" fill="none" stroke="#3b82f6" stroke-width="1"/>
+                                <circle cx="50" cy="30" r="15" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+                                <circle cx="50" cy="30" r="20" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+                                <circle cx="50" cy="30" r="28" fill="none" stroke="#3b82f6" stroke-width="2"/>
+                            </svg>
+                            <label class="option-label justify-center" id="lbl-q3-4"><input type="checkbox" id="q3-4"> 4. Су беті</label>
+                        </div>
+                    </div>
+                    <div class="feedback mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md" id="fb-q3">
+                        <p class="correct-text">Дұрыс жауап: 1 және 4. (Бөлшектер толқынның таралу бағытына перпендикуляр бағытта тербелетін толқындар көлденең деп аталады).</p>
+                    </div>
+                </div>
+
+                <!-- 4-сұрақ -->
+                <div class="question-block" id="q4-block">
+                    <p class="font-semibold text-lg mb-3">4. Соққы түрлерін анықта және тұжырымдарын жазыңыз. <span class="text-sm text-gray-500 font-normal">[2 балл]</span></p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                        <div class="border p-4 rounded-lg bg-white">
+                            <svg viewBox="0 0 200 80" class="w-full h-24">
+                                <!-- 1-сурет (Серпімсіз) -->
+                                <line x1="10" y1="60" x2="190" y2="60" stroke="black" stroke-width="2"/>
+                                <!-- Before -->
+                                <circle cx="40" cy="50" r="10" fill="#6b7280"/>
+                                <circle cx="90" cy="45" r="15" fill="#4b5563"/>
+                                <line x1="40" y1="35" x2="60" y2="35" stroke="black" stroke-width="1.5" marker-end="url(#arrow)"/>
+                                <line x1="90" y1="25" x2="70" y2="25" stroke="black" stroke-width="1.5" marker-end="url(#arrow)"/>
+                                <!-- After -->
+                                <circle cx="150" cy="50" r="10" fill="#6b7280"/>
+                                <circle cx="163" cy="45" r="15" fill="#4b5563"/>
+                                <line x1="156" y1="25" x2="180" y2="25" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
+                                
+                                <defs>
+                                  <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="black" />
+                                  </marker>
+                                </defs>
+                            </svg>
+                            <label class="block font-medium mt-2">1-суреттегі соққы түрі:</label>
+                            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="Соққы түрін жазыңыз...">
+                            <label class="block font-medium mt-2">Тұжырымдамасы:</label>
+                            <textarea class="w-full mt-1 p-2 border rounded text-sm" rows="2" placeholder="Сипаттама жазыңыз..."></textarea>
+                        </div>
+                        <div class="border p-4 rounded-lg bg-white">
+                            <svg viewBox="0 0 200 80" class="w-full h-24">
+                                <!-- 2-сурет (Серпімді) -->
+                                <line x1="10" y1="60" x2="190" y2="60" stroke="black" stroke-width="2"/>
+                                <!-- Before -->
+                                <circle cx="40" cy="50" r="10" fill="#6b7280"/>
+                                <circle cx="90" cy="45" r="15" fill="#4b5563"/>
+                                <line x1="40" y1="35" x2="60" y2="35" stroke="black" stroke-width="1.5" marker-end="url(#arrow)"/>
+                                <line x1="90" y1="25" x2="70" y2="25" stroke="black" stroke-width="1.5" marker-end="url(#arrow)"/>
+                                <!-- After -->
+                                <circle cx="140" cy="50" r="10" fill="#6b7280"/>
+                                <circle cx="180" cy="45" r="15" fill="#4b5563"/>
+                                <line x1="140" y1="35" x2="120" y2="35" stroke="black" stroke-width="1.5" marker-end="url(#arrow)"/>
+                                <line x1="180" y1="25" x2="195" y2="25" stroke="black" stroke-width="1.5" marker-end="url(#arrow)"/>
+                            </svg>
+                            <label class="block font-medium mt-2">2-суреттегі соққы түрі:</label>
+                            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="Соққы түрін жазыңыз...">
+                            <label class="block font-medium mt-2">Тұжырымдамасы:</label>
+                            <textarea class="w-full mt-1 p-2 border rounded text-sm" rows="2" placeholder="Сипаттама жазыңыз..."></textarea>
+                        </div>
+                    </div>
+                    <div class="feedback mt-3 p-4 bg-blue-50 border border-blue-200 rounded-md" id="fb-q4">
+                        <p class="font-bold text-blue-800">Күтілетін жауап:</p>
+                        <ul class="list-disc pl-5 mt-2 text-sm">
+                            <li><strong>1-сурет: Абсолют серпімсіз соққы.</strong> Тұжырым: Соқтығысқаннан кейін денелер бірігіп, бір дене ретінде ортақ жылдамдықпен қозғалады. Механикалық энергия сақталмайды (ішкі энергияға айналады).</li>
+                            <li><strong>2-сурет: Абсолют серпімді соққы.</strong> Тұжырым: Соқтығысқаннан кейін денелердің пішіні мен өлшемдері толық қалпына келеді және олар ажырап, бөлек қозғалады. Импульс те, кинетикалық энергия да сақталады.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 5-сұрақ -->
+                <div class="question-block" id="q5-block">
+                    <p class="font-semibold text-lg mb-3">5. Механикалық резонанс дегеніміз: <span class="text-sm text-gray-500 font-normal">[1 балл]</span></p>
+                    <div class="grid grid-cols-1 gap-2">
+                        <label class="option-label" id="lbl-q5-a"><input type="radio" name="q5" value="A"> A. Дененің бір бөлігі одан қандай да бір жылдамдықпен бөлініп шыққан кездегі қозғалысы</label>
+                        <label class="option-label" id="lbl-q5-b"><input type="radio" name="q5" value="B"> B. Дененің тепе теңдік күйінің ең үлкен ығысуы</label>
+                        <label class="option-label" id="lbl-q5-c"><input type="radio" name="q5" value="C"> C. Еріксіз тербелістің жиілігі мен тербелмелі жүйенің меншікті жиілігі дәл келген кездегі тербелістер амплитудасының кенет артуы</label>
+                        <label class="option-label" id="lbl-q5-d"><input type="radio" name="q5" value="D"> Д. Тербелуші дененің сыртқы периодты күштің әсерінсіз тербелуі</label>
+                    </div>
+                    <div class="feedback mt-3 p-3 bg-green-50 border border-green-200 rounded-md" id="fb-q5">
+                        <p class="correct-text">Дұрыс жауап: C</p>
+                    </div>
+                </div>
+
+                <!-- 6-сұрақ -->
+                <div class="question-block" id="q6-block">
+                    <p class="font-semibold text-lg mb-3">6. Электромагниттік толқын - .... Ол .... туындайды. <span class="text-sm text-gray-500 font-normal">[2 балл]</span></p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse bg-white">
+                            <tbody>
+                                <tr>
+                                    <td class="border p-2 w-10"><input type="radio" name="q6" value="A"></td>
+                                    <td class="border p-2 font-bold text-center w-10">A</td>
+                                    <td class="border p-2">Бойлық толқын</td>
+                                    <td class="border p-2">Зарядталған бөлшектің бірқалыпсыз қозғалысынан</td>
+                                </tr>
+                                <tr>
+                                    <td class="border p-2"><input type="radio" name="q6" value="B"></td>
+                                    <td class="border p-2 font-bold text-center">B</td>
+                                    <td class="border p-2">Көлденең толқын</td>
+                                    <td class="border p-2">Зарядталған бөлшектің бірқалыпты қозғалысынан</td>
+                                </tr>
+                                <tr>
+                                    <td class="border p-2"><input type="radio" name="q6" value="C"></td>
+                                    <td class="border p-2 font-bold text-center">C</td>
+                                    <td class="border p-2">Бойлық толқын</td>
+                                    <td class="border p-2">Зарядталған бөлшектің ретсіз қозғалысынан</td>
+                                </tr>
+                                <tr>
+                                    <td class="border p-2"><input type="radio" name="q6" value="D"></td>
+                                    <td class="border p-2 font-bold text-center">Д</td>
+                                    <td class="border p-2">Көлденең толқын</td>
+                                    <td class="border p-2">Зарядталған бөлшектің үдемелі қозғалысынан</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="feedback mt-3 p-3 bg-green-50 border border-green-200 rounded-md" id="fb-q6">
+                        <p class="correct-text">Дұрыс жауап: Д (Көлденең толқын, үдемелі қозғалыс)</p>
+                    </div>
+                </div>
+
+                <!-- 7-сұрақ -->
+                <div class="question-block" id="q7-block">
+                    <p class="font-semibold text-lg mb-3">7. Дыбыс толқындары барлық ортада тарала алады. Бірақ белгілі бір ортада белгілі бір жылдамдықпен таралады. Неге? Төмендегі кестеден әр ортаға сәйкес жылдамдықтарды сәйкестендір. <span class="text-sm text-gray-500 font-normal">[2 балл]</span></p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="flex items-center gap-2 border p-3 rounded bg-white">
+                            <span class="font-bold w-6">A</span> <span class="w-16">Су</span>
+                            <select id="sel-water" class="border p-1 rounded flex-1 bg-gray-50">
+                                <option value="">Таңдаңыз...</option>
+                                <option value="330">330 м/с</option>
+                                <option value="1480">1480 м/с</option>
+                                <option value="5850">5850 м/с</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2 border p-3 rounded bg-white">
+                            <span class="font-bold w-6">B</span> <span class="w-16">Ауа</span>
+                            <select id="sel-air" class="border p-1 rounded flex-1 bg-gray-50">
+                                <option value="">Таңдаңыз...</option>
+                                <option value="330">330 м/с</option>
+                                <option value="1480">1480 м/с</option>
+                                <option value="5850">5850 м/с</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2 border p-3 rounded bg-white">
+                            <span class="font-bold w-6">C</span> <span class="w-16">Темір</span>
+                            <select id="sel-iron" class="border p-1 rounded flex-1 bg-gray-50">
+                                <option value="">Таңдаңыз...</option>
+                                <option value="330">330 м/с</option>
+                                <option value="1480">1480 м/с</option>
+                                <option value="5850">5850 м/с</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="text-sm font-medium">Неге әртүрлі? (Түсіндірмеңізді жазыңыз):</p>
+                    <textarea class="w-full mt-1 p-2 border rounded" rows="2" placeholder="Себебі..."></textarea>
+                    
+                    <div class="feedback mt-3 p-4 bg-blue-50 border border-blue-200 rounded-md" id="fb-q7">
+                        <p class="correct-text">Дұрыс сәйкестендіру:</p>
+                        <ul class="list-disc pl-5 font-semibold">
+                            <li>Ауа (Газ) — 330 м/с</li>
+                            <li>Су (Сұйықтық) — 1480 м/с</li>
+                            <li>Темір (Қатты дене) — 5850 м/с</li>
+                        </ul>
+                        <p class="mt-2 text-sm"><strong>Түсіндірме:</strong> Дыбыстың таралу жылдамдығы ортаның тығыздығына және бөлшектердің орналасуына байланысты. Қатты денелерде бөлшектер тығыз орналасқандықтан, тербеліс (дыбыс) тезірек беріледі.</p>
+                    </div>
+                </div>
+
+                <!-- 8-сұрақ -->
+                <div class="question-block" id="q8-block">
+                    <p class="font-semibold text-lg mb-3">8. Электромагниттік толқындар шкаласын толықтыр. <span class="text-sm text-gray-500 font-normal">[3 балл]</span></p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-center border-collapse bg-white border border-gray-300">
+                            <tr>
+                                <td class="border border-gray-300 p-2 text-sm bg-gray-50">Радиотолқын</td>
+                                <td class="border border-gray-300 p-2 text-sm bg-gray-50">Микротолқын</td>
+                                <td class="border border-gray-300 p-2"><input type="text" class="w-full text-center border-b border-gray-400 focus:outline-none focus:border-blue-500" placeholder="..."></td>
+                                <td class="border border-gray-300 p-2 text-sm bg-gray-50">Көрінетін жарық</td>
+                                <td class="border border-gray-300 p-2"><input type="text" class="w-full text-center border-b border-gray-400 focus:outline-none focus:border-blue-500" placeholder="..."></td>
+                                <td class="border border-gray-300 p-2"><input type="text" class="w-full text-center border-b border-gray-400 focus:outline-none focus:border-blue-500" placeholder="..."></td>
+                                <td class="border border-gray-300 p-2 text-sm bg-gray-50">&gamma; - сәулесі</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="feedback mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md" id="fb-q8">
+                        <p class="correct-text">Дұрыс жауап (солдан оңға қарай жиілігі артуы бойынша):</p>
+                        <p>Радиотолқын &rarr; Микротолқын &rarr; <strong>Инфрақызыл сәулелену</strong> &rarr; Көрінетін жарық &rarr; <strong>Ультракүлгін сәулелену</strong> &rarr; <strong>Рентген сәулеленуі</strong> &rarr; &gamma;-сәулесі</p>
+                    </div>
+                </div>
+
+                <!-- 9-сұрақ -->
+                <div class="question-block" id="q9-block">
+                    <p class="font-semibold text-lg mb-3">9. 4 м/с жылдамдықпен таралған толқын қайықты 10 с-та 20 рет тербелтеді. Көрші толқын жалдарының аралығы қандай? <span class="text-sm text-gray-500 font-normal">[3 балл]</span></p>
+                    <textarea class="w-full p-3 border rounded-lg shadow-sm" rows="4" placeholder="Берілгенін, формуласын және шешуін осында жазыңыз..."></textarea>
+                    <div class="feedback mt-3 p-4 bg-blue-50 border border-blue-200 rounded-md" id="fb-q9">
+                        <p class="font-bold text-blue-800">Шешуі:</p>
+                        <p class="mt-1"><strong>Берілгені:</strong> v = 4 м/с; t = 10 с; N = 20; <strong>Табу керек:</strong> &lambda; (толқын ұзындығы, яғни жалдар аралығы)</p>
+                        <p class="mt-1"><strong>Формула:</strong> 1) Период T = t / N;  2) Толқын ұзындығы &lambda; = v * T</p>
+                        <p class="mt-1"><strong>Есептеу:</strong> T = 10 / 20 = 0.5 с. &lambda; = 4 * 0.5 = <strong>2 метр.</strong></p>
+                    </div>
+                </div>
+
+                <!-- 10-сұрақ -->
+                <div class="question-block" id="q10-block">
+                    <p class="font-semibold text-lg mb-3">10. Теміржол станциясындағы тыныш тұрған вагон массасы 3т. Ал қозғалыстағы локомотив массасы 6т және жылдамдығы 54 км/сағ.</p>
+                    <div class="flex justify-center mb-4">
+                        <svg viewBox="0 0 400 120" class="w-full max-w-md bg-white border rounded-lg p-2">
+                            <!-- Вагон -->
+                            <rect x="20" y="40" width="80" height="50" fill="#cbd5e1" stroke="black" stroke-width="2"/>
+                            <rect x="30" y="50" width="20" height="20" fill="white" stroke="black"/>
+                            <rect x="70" y="50" width="20" height="20" fill="white" stroke="black"/>
+                            <circle cx="40" cy="95" r="10" fill="#475569"/><circle cx="80" cy="95" r="10" fill="#475569"/>
+                            <text x="50" y="115" font-family="Arial" font-size="14">a (3т)</text>
+                            
+                            <!-- Локомотив -->
+                            <rect x="150" y="40" width="60" height="50" fill="#94a3b8" stroke="black" stroke-width="2"/>
+                            <rect x="210" y="50" width="40" height="40" fill="#94a3b8" stroke="black" stroke-width="2"/>
+                            <rect x="220" y="25" width="20" height="25" fill="#94a3b8" stroke="black" stroke-width="2"/>
+                            <circle cx="170" cy="95" r="10" fill="#475569"/><circle cx="200" cy="95" r="10" fill="#475569"/><circle cx="230" cy="95" r="10" fill="#475569"/>
+                            <text x="180" y="115" font-family="Arial" font-size="14">б (6т, 54 км/сағ)</text>
+                            
+                            <!-- Бағыт -->
+                            <line x1="260" y1="65" x2="310" y2="65" stroke="black" stroke-width="3" marker-end="url(#arrow2)"/>
+                            <text x="270" y="55" font-family="Arial" font-size="16" font-weight="bold">v</text>
+                            
+                            <!-- Рельс -->
+                            <line x1="10" y1="105" x2="380" y2="105" stroke="black" stroke-width="2"/>
+                            
+                            <defs>
+                                <marker id="arrow2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="black" />
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <p class="font-medium">а) Қозғалып келе жатқан локомотив пен вагонның импульсін анықта. <span class="text-gray-500">[2]</span></p>
+                            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="p(вагон) = ..., p(локомотив) = ...">
+                        </div>
+                        <div>
+                            <p class="font-medium">б) Вагон тіркелгеннен кейінгі составтың жылдамдығын анықта. <span class="text-gray-500">[2]</span></p>
+                            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="v(ортақ) = ...">
+                        </div>
+                        <div>
+                            <p class="font-medium">с) Егер вагонды тіркегеннен кейінгі импульсі 100000 кг*м/с болса, соқтығысу уақыты 0,5с болса, вагонның соқтығысқан кездегі күш импульсін (күшті) анықта. <span class="text-gray-500">[2]</span></p>
+                            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="F = ...">
+                        </div>
+                    </div>
+
+                    <div class="feedback mt-3 p-4 bg-blue-50 border border-blue-200 rounded-md" id="fb-q10">
+                        <p class="font-bold text-blue-800">Шешуі:</p>
+                        <p>Алдымен ХБЖ-ға келтіреміз: v2 = 54 км/сағ = 15 м/с. m1 = 3000 кг, m2 = 6000 кг.</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li><strong>а)</strong> Вагон тыныш тұр, оның импульсі p1 = 0. Локомотив импульсі p2 = m2 * v2 = 6000 * 15 = <strong>90 000 кг*м/с</strong>.</li>
+                            <li><strong>б)</strong> Импульстің сақталу заңы (серпімсіз соққы): m2v2 = (m1+m2)v. Осыдан v = 90000 / (3000+6000) = 90000 / 9000 = <strong>10 м/с</strong>.</li>
+                            <li><strong>с)</strong> Ньютонның 2-заңы импульстік түрде: F * &Delta;t = &Delta;p. F = &Delta;p / &Delta;t = 100000 / 0.5 = <strong>200 000 Н (немесе 200 кН)</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 11-сұрақ -->
+                <div class="question-block" id="q11-block">
+                    <p class="font-semibold text-lg mb-3">11. Суретте ермексаздан жасалған екі шар қарама-қарсы бағытта келе жатқандығы бейнеленген. Соққы серпімсіз. <span class="text-sm text-gray-500 font-normal">[6 балл жалпы]</span></p>
+                    <div class="flex justify-center mb-4">
+                        <svg viewBox="0 0 300 120" class="w-full max-w-sm bg-white border rounded-lg p-2">
+                            <!-- Кіші шар -->
+                            <circle cx="80" cy="70" r="20" fill="#9ca3af" stroke="black" stroke-width="2"/>
+                            <text x="70" y="75" font-family="Arial" font-weight="bold">2 кг</text>
+                            <line x1="80" y1="40" x2="120" y2="40" stroke="black" stroke-width="2" marker-end="url(#arrow3)"/>
+                            <text x="85" y="30" font-family="Arial">10 м/с</text>
+                            
+                            <!-- Үлкен шар -->
+                            <circle cx="220" cy="70" r="30" fill="#9ca3af" stroke="black" stroke-width="2"/>
+                            <text x="205" y="75" font-family="Arial" font-weight="bold">10 кг</text>
+                            <line x1="220" y1="30" x2="160" y2="30" stroke="black" stroke-width="2" marker-end="url(#arrow3)"/>
+                            <text x="175" y="20" font-family="Arial">15 м/с</text>
+                            
+                            <defs>
+                                <marker id="arrow3" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="black" />
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <p class="font-medium">(a) Соқтығысқаннан кейінгі шарлардың жылдамдығын және бағытын анықтаңыз. <span class="text-gray-500">[3]</span></p>
+                            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="Шешуі...">
+                        </div>
+                        <div>
+                            <p class="font-medium">(b) Шарлардың соқтығысқанға дейінгі кинетикалық энергиясының өзгерісін соқтығысқаннан кейінгі энергия өзгерісімен салыстырыңыз. <span class="text-gray-500">[2]</span></p>
+                            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="E_k(бастапқы) = ..., E_k(соңғы) = ...">
+                        </div>
+                        <div>
+                            <p class="font-medium">(c) Алған нәтижеңізге қорытынды жасаңыз. <span class="text-gray-500">[1]</span></p>
+                            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="Қорытынды...">
+                        </div>
+                    </div>
+
+                    <div class="feedback mt-3 p-4 bg-blue-50 border border-blue-200 rounded-md" id="fb-q11">
+                        <p class="font-bold text-blue-800">Күтілетін жауап:</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1 text-sm">
+                            <li><strong>(a)</strong> m1v1 - m2v2 = (m1+m2)v' &rarr; 2*10 - 10*15 = 12*v' &rarr; 20 - 150 = 12v' &rarr; -130 = 12v' &rarr; v' &approx; <strong>-10.8 м/с</strong>. (Бағыты: үлкен шардың бастапқы қозғалыс бағытымен, яғни солға қарай).</li>
+                            <li><strong>(b)</strong> Бастапқы Ek = (m1v1&sup2;)/2 + (m2v2&sup2;)/2 = (2*100)/2 + (10*225)/2 = 100 + 1125 = <strong>1225 Дж</strong>. Соңғы Ek = ((m1+m2)v'&sup2;)/2 = (12 * (-10.83)&sup2;)/2 &approx; <strong>704 Дж</strong>.</li>
+                            <li><strong>(c)</strong> Қорытынды: Серпімсіз соққы кезінде кинетикалық энергия сақталмайды. Энергияның бір бөлігі (1225 - 704 = 521 Дж) денелердің деформациясына және ішкі энергияға (жылуға) айналып кетті.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 12-сұрақ -->
+                <div class="question-block" id="q12-block">
+                    <p class="font-semibold text-lg mb-3">12. Суретте әткеншекте тербеліп отырған қыз бала бейнеленген. Потенциалдық және кинетикалық энергиялары максимум болатын нүктелерді анықтаңыз. <span class="text-sm text-gray-500 font-normal">[1 балл]</span></p>
+                    <div class="flex justify-center mb-4">
+                        <!-- Әткеншек SVG -->
+                        <svg viewBox="0 0 300 150" class="w-full max-w-sm bg-white border rounded-lg p-2">
+                            <!-- Тіреуіш -->
+                            <line x1="150" y1="20" x2="100" y2="130" stroke="black" stroke-width="4"/>
+                            <line x1="150" y1="20" x2="200" y2="130" stroke="black" stroke-width="4"/>
+                            <line x1="50" y1="20" x2="250" y2="20" stroke="black" stroke-width="6"/>
+                            <!-- Траектория -->
+                            <path d="M 60 80 Q 150 160 240 80" fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="5,5"/>
+                            <!-- Нүктелер -->
+                            <circle cx="60" cy="80" r="5" fill="red"/><text x="50" y="100" font-weight="bold">1</text>
+                            <circle cx="150" cy="120" r="5" fill="red"/><text x="145" y="140" font-weight="bold">2</text>
+                            <circle cx="240" cy="80" r="5" fill="red"/><text x="245" y="100" font-weight="bold">3</text>
+                            <!-- Әткеншек сызығы (ортада) -->
+                            <line x1="150" y1="20" x2="150" y2="120" stroke="blue" stroke-width="2"/>
+                            <!-- Жер -->
+                            <line x1="20" y1="130" x2="280" y2="130" stroke="green" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="font-medium text-gray-700">Потенциалдық энергиясы максимум:</label>
+                            <select id="sel-pe" class="mt-1 w-full p-2 border rounded bg-gray-50">
+                                <option value="">Таңдаңыз...</option>
+                                <option value="1">1 нүктеде ғана</option>
+                                <option value="2">2 нүктеде</option>
+                                <option value="3">3 нүктеде ғана</option>
+                                <option value="13">1 және 3 нүктелерде</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-medium text-gray-700">Кинетикалық энергиясы максимум:</label>
+                            <select id="sel-ke" class="mt-1 w-full p-2 border rounded bg-gray-50">
+                                <option value="">Таңдаңыз...</option>
+                                <option value="1">1 нүктеде ғана</option>
+                                <option value="2">2 нүктеде (тепе-теңдік орны)</option>
+                                <option value="3">3 нүктеде ғана</option>
+                                <option value="13">1 және 3 нүктелерде</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="feedback mt-3 p-3 bg-green-50 border border-green-200 rounded-md" id="fb-q12">
+                        <p class="correct-text">Дұрыс жауап: Потенциалдық энергия — 1 және 3 нүктелерде (ең жоғарғы нүкте, жылдамдық нөл). Кинетикалық энергия — 2 нүктеде (тепе-теңдік орны, жылдамдық ең үлкен).</p>
+                    </div>
+                </div>
+
+                <!-- Аяқтау батырмасы -->
+                <div class="text-center mt-10 pb-10">
+                    <button onclick="finishTest()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-10 rounded-lg shadow-lg text-lg transition transform hover:-translate-y-1">
+                        Тестті аяқтау және Тексеру
+                    </button>
+                </div>
+
+            </div>
+            
+            <!-- Нәтиже хабарламасы -->
+            <div id="result-message" class="hidden mt-8 p-6 bg-blue-100 border border-blue-300 rounded-xl text-center">
+                <h3 class="text-2xl font-bold text-blue-900 mb-2">Тест аяқталды!</h3>
+                <p class="text-lg text-blue-800">Жауаптарыңыз тіркелді. Төменге түсіп, қай сұрақтан қателескеніңізді және дұрыс шешу жолдарын (жасыл/көк блоктың ішінде) көре аласыз.</p>
+                <button onclick="window.scrollTo(0,0)" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">Жоғарыға қайту</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let timerInterval;
+        let timeRemaining;
+        let isFinished = false;
+
+        function startTest() {
+            const timeInput = document.getElementById('time-input').value;
+            timeRemaining = parseInt(timeInput) * 60; // Секундқа айналдыру
+
+            if (isNaN(timeRemaining) || timeRemaining <= 0) {
+                alert("Уақытты дұрыс енгізіңіз!");
+                return;
+            }
+
+            // UI өзгерістері
+            document.getElementById('setup-section').style.display = 'none';
+            document.getElementById('timer-display').classList.remove('hidden');
+            document.getElementById('test-questions').style.display = 'block';
+
+            // Таймерді қосу
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Уақыт аяқталды!");
+                    finishTest();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('time-left').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Соңғы 1 минут қалғанда түсін өзгерту
+            if (timeRemaining < 60) {
+                document.getElementById('time-left').classList.add('animate-pulse');
+            }
+        }
+
+        function finishTest() {
+            if (isFinished) return;
+            isFinished = true;
+            
+            clearInterval(timerInterval);
+            document.getElementById('timer-display').innerHTML = '<span class="text-xl font-bold text-red-600">Тест аяқталды</span>';
+            
+            // 1. Барлық input-тарды бұғаттау
+            const allInputs = document.querySelectorAll('input, textarea, select');
+            allInputs.forEach(input => input.disabled = true);
+
+            // 2. Дұрыс жауаптарды тексеру және бояу
+            
+            // Q1: Дұрыс - C
+            checkRadio('q1', 'C', 'lbl-q1-c');
+            // Q2: Дұрыс - D
+            checkRadio('q2', 'D', 'lbl-q2-d');
+            // Q5: Дұрыс - C
+            checkRadio('q5', 'C', 'lbl-q5-c');
+            // Q6: Дұрыс - D
+            checkRadio('q6', 'D', null); // Table ішінде
+
+            // Q3: Чекбокстар (1 және 4)
+            if(document.getElementById('q3-1').checked && document.getElementById('q3-4').checked && 
+               !document.getElementById('q3-2').checked && !document.getElementById('q3-3').checked) {
+                document.getElementById('lbl-q3-1').classList.add('correct-answer');
+                document.getElementById('lbl-q3-4').classList.add('correct-answer');
+            } else {
+                document.getElementById('lbl-q3-1').classList.add('correct-answer');
+                document.getElementById('lbl-q3-4').classList.add('correct-answer');
+                if(document.getElementById('q3-2').checked) document.getElementById('lbl-q3-2').classList.add('wrong-answer');
+                if(document.getElementById('q3-3').checked) document.getElementById('lbl-q3-3').classList.add('wrong-answer');
+            }
+
+            // Q7: Dropdowns (Water-1480, Air-330, Iron-5850)
+            checkSelect('sel-water', '1480');
+            checkSelect('sel-air', '330');
+            checkSelect('sel-iron', '5850');
+
+            // Q12: Dropdowns (PE-13, KE-2)
+            checkSelect('sel-pe', '13');
+            checkSelect('sel-ke', '2');
+
+            // 3. Барлық feedback (дұрыс жауап/шешуі) блоктарын ашу
+            const feedbacks = document.querySelectorAll('.feedback');
+            feedbacks.forEach(fb => fb.style.display = 'block');
+
+            // 4. Хабарлама көрсету
+            document.getElementById('result-message').classList.remove('hidden');
+            document.querySelector('.bg-red-600').style.display = 'none'; // Аяқтау батырмасын жасыру
+        }
+
+        function checkRadio(name, correctValue, correctLabelId) {
+            const options = document.getElementsByName(name);
+            let selectedValue = null;
+            let selectedLabel = null;
+            
+            options.forEach(opt => {
+                if(opt.checked) {
+                    selectedValue = opt.value;
+                    selectedLabel = opt.parentElement;
+                }
+            });
+
+            if(correctLabelId) {
+                document.getElementById(correctLabelId).classList.add('correct-answer');
+            }
+
+            if (selectedValue && selectedValue !== correctValue && selectedLabel) {
+                selectedLabel.classList.add('wrong-answer');
+            }
+        }
+
+        function checkSelect(id, correctValue) {
+            const el = document.getElementById(id);
+            if(el.value === correctValue) {
+                el.style.backgroundColor = '#dcfce7'; // green
+                el.style.borderColor = '#22c55e';
+            } else {
+                el.style.backgroundColor = '#fee2e2'; // red
+                el.style.borderColor = '#ef4444';
+            }
+        }
+    </script>
+</body>
+</html>
