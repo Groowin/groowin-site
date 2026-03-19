@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математика: ҰБТ форматындағы 35 сұрақ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax үшін баптаулар (Формулаларды әдемі шығару үшін) -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            startup: {
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady().then(() => {
+                        // Формулалар жүктелген соң бетті көрсету
+                    });
+                }
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
+        .tab-btn { transition: all 0.3s ease; }
+        .tab-btn.active { border-bottom: 4px solid #3b82f6; color: #2563eb; font-weight: 700; background: #eff6ff; }
+        .option-box { border: 2px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem; cursor: pointer; transition: 0.2s; background: white; }
+        .option-box:hover { border-color: #93c5fd; background-color: #fbfbfe; }
+        input[type="radio"]:checked + .option-box, input[type="checkbox"]:checked + .option-box { 
+            border-color: #3b82f6; background-color: #eff6ff; font-weight: 600; 
+        }
+        .correct-exact { border-color: #10b981 !important; background-color: #d1fae5 !important; }
+        .correct-missed { border-color: #f59e0b !important; background-color: #fef3c7 !important; }
+        .wrong-selected { border-color: #ef4444 !important; background-color: #fee2e2 !important; }
+        .submitted { pointer-events: none; }
+        .mjx-chtml { margin: 0 !important; } /* Fix MathJax spacing */
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+<div class="max-w-5xl mx-auto">
+    <!-- START SCREEN -->
+    <div id="start-screen" class="bg-white rounded-2xl shadow-sm p-10 text-center border-t-8 border-blue-500">
+        <h1 class="text-3xl md:text-5xl font-bold mb-4 text-gray-800">Математика (ҰБТ форматы)</h1>
+        <p class="text-gray-500 mb-8 text-lg">Барлығы 35 сұрақ (45 балл)</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-10 text-left">
+            <div class="p-5 bg-blue-50 rounded-xl border border-blue-100">
+                <div class="font-bold text-blue-800 text-lg mb-1">1-бөлім: Бір дұрыс жауап</div>
+                <div class="text-sm text-blue-600">20 сұрақ (әрқайсысы 1 балл)</div>
+            </div>
+            <div class="p-5 bg-purple-50 rounded-xl border border-purple-100">
+                <div class="font-bold text-purple-800 text-lg mb-1">2-бөлім: Мәтіндік есептер</div>
+                <div class="text-sm text-purple-600">5 сұрақ (әрқайсысы 1 балл)</div>
+            </div>
+            <div class="p-5 bg-green-50 rounded-xl border border-green-100">
+                <div class="font-bold text-green-800 text-lg mb-1">3-бөлім: Көп дұрыс жауап</div>
+                <div class="text-sm text-green-600">10 сұрақ (әрқайсысы 2 баллға дейін)</div>
+            </div>
+        </div>
+
+        <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-12 rounded-xl text-xl shadow-lg transition transform active:scale-95">
+            Тестті бастау
+        </button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="hidden bg-white shadow-sm rounded-2xl overflow-hidden">
+        <!-- TABS -->
+        <div class="flex flex-col md:flex-row border-b border-gray-200 bg-gray-50 sticky top-0 z-50">
+            <button onclick="switchTab(1)" id="tab-1" class="tab-btn active flex-1 py-4 text-center text-gray-600 text-lg font-medium border-l border-r">
+                Бір дұрыс жауап (1-20)
+            </button>
+            <button onclick="switchTab(2)" id="tab-2" class="tab-btn flex-1 py-4 text-center text-gray-600 text-lg font-medium border-r">
+                Контекст (21-25)
+            </button>
+            <button onclick="switchTab(3)" id="tab-3" class="tab-btn flex-1 py-4 text-center text-gray-600 text-lg font-medium">
+                Көп жауап (26-35)
+            </button>
+        </div>
+
+        <div class="p-6 md:p-10">
+            <!-- SECTION 1 -->
+            <div id="sec-1" class="space-y-8"></div>
+
+            <!-- SECTION 2 -->
+            <div id="sec-2" class="space-y-8 hidden">
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-r-xl mb-8">
+                    <h3 class="text-xl font-bold text-purple-900 mb-2">Мәтін: «Шахмат клубы»</h3>
+                    <p class="text-purple-800 text-lg leading-relaxed">
+                        Мектептегі шахмат клубында 6 ұл және 4 қыз бала бар. Олар алдағы қалалық жарысқа қатысу үшін іріктеу өткізіп, 4 адамнан тұратын команда құруы керек. Төмендегі сұрақтарға осы мәліметтер негізінде жауап беріңіз.
+                    </p>
+                </div>
+                <div id="context-questions" class="space-y-8"></div>
+            </div>
+
+            <!-- SECTION 3 -->
+            <div id="sec-3" class="space-y-8 hidden">
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl mb-6">
+                    <p class="text-green-800 font-medium">
+                        Нұсқау: Бұл бөлімде берілген 8 нұсқаның ішінен 1, 2 немесе 3 дұрыс жауапты таңдауыңыз қажет. Барлық дұрыс жауап табылса – 2 балл, 1 қате кетсе – 1 балл беріледі.
+                    </p>
+                </div>
+                <div id="multi-questions" class="space-y-8"></div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <button id="finish-btn" onclick="finishQuiz()" class="bg-gray-900 hover:bg-black text-white font-bold py-4 px-10 rounded-xl text-xl shadow-xl transition transform active:scale-95">
+                    Тестті аяқтау және тексеру
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden bg-white rounded-2xl shadow-sm p-10 mt-6 border-t-8 border-indigo-500 text-center">
+        <h2 class="text-3xl font-bold mb-2">Нәтижеңіз</h2>
+        <p class="text-gray-500 mb-6">Жинаған ұпайыңыз:</p>
+        <div class="text-7xl font-black text-indigo-600 mb-8"><span id="final-score">0</span> <span class="text-3xl text-gray-400">/ 45</span></div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 text-left max-w-2xl mx-auto">
+            <div class="bg-gray-50 p-4 rounded-lg border">
+                <div class="text-sm text-gray-500">Бір дұрыс жауап (1-20)</div>
+                <div class="text-2xl font-bold text-gray-800" id="res-sec1">0 / 20</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border">
+                <div class="text-sm text-gray-500">Контекст (21-25)</div>
+                <div class="text-2xl font-bold text-gray-800" id="res-sec2">0 / 5</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border">
+                <div class="text-sm text-gray-500">Көп жауап (26-35)</div>
+                <div class="text-2xl font-bold text-gray-800" id="res-sec3">0 / 20</div>
+            </div>
+        </div>
+
+        <button onclick="location.reload()" class="bg-indigo-100 text-indigo-700 px-8 py-3 rounded-lg font-bold hover:bg-indigo-200 transition">
+            Қайта тапсыру
+        </button>
+    </div>
+</div>
+
+<script>
+    // 1. БІР ДҰРЫС ЖАУАП (1-20)
+    const part1 = [
+        { q: "Амалдарды орындаңыз: $121:11 + 144:12 + 225:15$", a: ["36", "38", "40", "42", "44"], c: 1 },
+        { q: "$|2024 - x| = 2$ теңдеуінің түбірлерін табыңыз.", a: ["2020; 2024", "2024; 2026", "2022; 2026", "-2022; -2026", "2020; 2022"], c: 2 },
+        { q: "Теңдеулер жүйесін шешіңіз: $\\begin{cases} x^2 + y = 5 \\\\ x - y = 1 \\end{cases}$", a: ["$(-3; -4), (2; 1)$", "$(3; 4), (-2; -1)$", "$(-2; 1), (3; 2)$", "$(-3; 2), (2; 1)$", "$(1; 0), (-3; -4)$"], c: 0 },
+        { q: "400 грамм ерітіндіде тұз бен судың массалары сәйкесінше $3:5$ қатынасындай. Ерітіндіде қанша грамм су бар екенін табыңыз.", a: ["150 г", "250 г", "200 г", "300 г", "100 г"], c: 1 },
+        { q: "Шексіз кемімелі геометриялық прогрессияның еселігі $\\frac{1}{3}$, барлық мүшелерінің қосындысы 24-ке тең болса, бірінші мүшесін табыңыз.", a: ["12", "18", "8", "16", "20"], c: 3 },
+        { q: "$\\log_2(x-3) < 3$ теңсіздігін шешіңіз.", a: ["$(-\\infty; 11)$", "$(3; 11)$", "$(3; 8)$", "$(0; 11)$", "$[3; 11)$"], c: 1 },
+        { q: "Ортақ көбейткішті жақша сыртына шығарыңыз: $15x^3y - 25x^2y^2$", a: ["$5x^2y(3x - 5y)$", "$5xy(3x^2 - 5y)$", "$15x^2y(x - 2y)$", "$5x^2y^2(3x - 5)$", "$-5x^2y(5y - 3x^2)$"], c: 0 },
+        { q: "Теңдеулер жүйесін шешіңіз: $\\begin{cases} \\frac{x}{2} + \\frac{y}{3} = 3 \\\\ \\frac{x}{4} - \\frac{y}{2} = -1 \\end{cases}$", a: ["$(2; 6)$", "$(3.5; 3.75)$", "$(4; 3)$", "$(3; 4.5)$", "$(1; 2.5)$"], c: 1 },
+        { q: "$f(x) = -2x^2 + 4x + 1$ функциясының мәндер жиынын табыңыз.", a: ["$(-\\infty; 3]$", "$[3; +\\infty)$", "$(-\\infty; 1]$", "$[-1; 3]$", "$(-\\infty; -1]$"], c: 0 },
+        { q: "Екі дөңгелектің аудандарының қатынасы $9:16$ қатынасындай болса, сәйкесінше олардың радиустарының қатынасы неге тең?", a: ["$3:8$", "$9:16$", "$3:4$", "$81:256$", "$\\sqrt{3}:2$"], c: 2 },
+        { q: "Өрнекті ықшамдаңыз: $\\frac{3a}{4b} - \\frac{2b}{3a}$", a: ["$\\frac{a-b}{12ab}$", "$\\frac{9a^2 - 8b^2}{12ab}$", "$\\frac{3a-2b}{12ab}$", "$\\frac{9a^2 + 8b^2}{12ab}$", "$\\frac{1}{12ab}$"], c: 1 },
+        { q: "Конустың табанының радиусы $3$ см, биіктігі $4$ см. Конустың көлемін табыңыз.", svg: `<svg viewBox="0 0 200 120" class="h-32 my-3 mx-auto"><ellipse cx="100" cy="90" rx="60" ry="20" fill="#e5e7eb" stroke="#4b5563" stroke-width="2"/><path d="M 40 90 L 100 10 L 160 90" fill="none" stroke="#4b5563" stroke-width="2"/><line x1="100" y1="10" x2="100" y2="90" stroke="#3b82f6" stroke-dasharray="4"/><line x1="100" y1="90" x2="160" y2="90" stroke="#ef4444" stroke-dasharray="4"/><text x="105" y="55" fill="#3b82f6" font-weight="bold">h=4</text><text x="125" y="105" fill="#ef4444" font-weight="bold">R=3</text></svg>`, a: ["$36\\pi$ см³", "$12\\pi$ см³", "$24\\pi$ см³", "$16\\pi$ см³", "$48\\pi$ см³"], c: 1 },
+        { q: "$b_1 = 16$, $q = -\\frac{1}{2}$ болатын геометриялық прогрессияның алтыншы мүшесін ($b_6$) табыңыз.", a: ["$0.5$", "$-1$", "$-0.5$", "$0.25$", "$-0.25$"], c: 2 },
+        { q: "Теңсіздіктер жүйесінің шешімін табыңыз: $\\begin{cases} \\frac{2}{x} < 1 \\\\ x^2 - 16 \\le 0 \\end{cases}$", a: ["$(-4; 0)$", "$[-4; 0) \\cup (2; 4]$", "$(2; 4]$", "$[-4; 2)$", "$(0; 4]$"], c: 1 },
+        { q: "$x^2 - 7x + 10 \\le 0$ теңсіздігін шешіңіз.", a: ["$[-5; -2]$", "$[2; 5]$", "$(2; 5)$", "$(-\\infty; 2] \\cup [5; +\\infty)$", "$[-2; 5]$"], c: 1 },
+        { q: "50 л теңіз суында $10\\%$ тұз бар. Құрамындағы тұздың үлесі $4\\%$ болу үшін оған қанша таза су қосу керек?", a: ["50 л", "60 л", "75 л", "80 л", "125 л"], c: 2 },
+        { q: "Өрнекті ықшамдаңыз: $\\sqrt{11 - 6\\sqrt{2}} + \\sqrt{2}$", a: ["$3$", "$3 + 2\\sqrt{2}$", "$\\sqrt{11}$", "$3 - \\sqrt{2}$", "$5$"], c: 0 },
+        { q: "Теңдеуді шешіңіз: $\\frac{x-1}{2} + \\frac{2x+1}{3} = \\frac{5x-1}{6}$", a: ["$-1$", "$1$", "$2$", "$0$", "$\\frac{1}{2}$"], c: 3 },
+        { q: "$\\sin 2x = \\frac{\\sqrt{3}}{2}$ теңдеуінің $[0; \\frac{\\pi}{2}]$ аралығындағы түбірлерін табыңыз.", a: ["$\\frac{\\pi}{6}; \\frac{\\pi}{3}$", "$\\frac{\\pi}{3}; \\frac{2\\pi}{3}$", "$\\frac{\\pi}{12}; \\frac{5\\pi}{12}$", "$\\frac{\\pi}{6}$", "$\\frac{\\pi}{4}$"], c: 0 },
+        { q: "$\\vec{a}(3; 4)$ векторы мен абсцисса осінің оң бағыты арасындағы бұрыштың косинусын табыңыз.", a: ["$0.8$", "$0.75$", "$0.6$", "$0.5$", "$1$"], c: 2 }
+    ];
+
+    // 2. КОНТЕКСТ (21-25)
+    const ctxQuestions = [
+        { q: "Клубтағы барлық 10 оқушының ішінен кез келген 4 оқушыны қанша тәсілмен таңдауға болады?", a: ["120", "210", "240", "5040", "360"], c: 1 },
+        { q: "Командада дәл 2 ұл және 2 қыз болатындай етіп 4 адамды қанша тәсілмен таңдауға болады?", a: ["60", "90", "120", "45", "180"], c: 1 },
+        { q: "Клубтағы 10 оқушының ішінен команда капитаны мен оның көмекшісін (яғни 2 лауазымды адамды) қанша тәсілмен сайлауға болады?", a: ["45", "90", "100", "20", "180"], c: 1 },
+        { q: "Егер клубтағы барлық 10 оқушы өзара бір-бірден шахмат партиясын ойнап шықса, барлығы неше ойын ойналады?", a: ["90", "100", "45", "36", "55"], c: 2 },
+        { q: "Кездейсоқ таңдалған 2 оқушының біреуі ұл, ал екіншісі қыз болу ықтималдығы қандай?", a: ["$\\frac{8}{15}$", "$\\frac{1}{2}$", "$\\frac{24}{100}$", "$\\frac{4}{9}$", "$\\frac{3}{5}$"], c: 0 }
+    ];
+
+    // 3. КӨП ЖАУАПТЫ (26-35)
+    const part3 = [
+        { q: "$\\frac{1}{\\cos^2 x} - 1$ өрнегін ықшамдағанда шығатын мән(дер)ді көрсетіңіз.", a: ["$\\sin^2 x$", "$\\cos^2 x$", "$\\text{tg}^2 x$", "$\\text{ctg}^2 x$", "$\\frac{\\sin^2 x}{\\cos^2 x}$", "$\\sec^2 x$", "$\\frac{1}{\\sin^2 x}$", "$1$"], c: [2, 4] },
+        { q: "$\\begin{cases} 2x + y = 5 \\\\ x - y = 1 \\end{cases}$ теңдеулер жүйесінің түбірі $(x; y)$ болса, дұрыс тұжырым(дар)ды көрсетіңіз.", a: ["$x = 2$", "$y = -1$", "$x = 3$", "$y = 1$", "$x+y=5$", "$x+y=3$", "$x\\cdot y=4$", "$(1; 3)$"], c: [0, 3, 5] },
+        { q: "5 бірдей сорғы бассейнді 6 сағатта толтырады. Осындай 3 сорғы бассейнді неше сағатта толтыратындығын және сол уақыттың сан мәні жататын аралықты көрсетіңіз.", a: ["$10$ сағат", "$9$ сағат", "$(8; 12)$", "$[11; 15]$", "$(5; 9)$", "$[10; 12]$", "$15$ сағат", "$(9; 11)$"], c: [0, 2, 5, 7] }, // Added 7 as correct interval too
+        { q: "Ромбтың диагональдары $12$ және $16$ см. Ромбтың ауданы мен периметрін табыңыз.", a: ["$A = 96\\text{ см}^2$", "$A = 192\\text{ см}^2$", "$A = 48\\text{ см}^2$", "$P = 20\\text{ см}$", "$P = 40\\text{ см}$", "$P = 56\\text{ см}$", "$A = 100\\text{ см}^2$", "$P = 32\\text{ см}$"], c: [0, 4] },
+        { q: "Егер $\\text{tg } x = 2$ болса, $\\frac{2\\sin x - \\cos x}{\\sin x + 2\\cos x}$ өрнегінің мәнін және ол жататын аралық(тар)ды көрсетіңіз.", a: ["$0.75$", "$1.5$", "$\\frac{3}{4}$", "$(0.5; 1)$", "$[0; 0.5]$", "$(-1; 0)$", "$[0.7; 0.8]$", "$0.5$"], c: [0, 2, 3, 6] },
+        { q: "$y = (\\frac{1}{2})^x$ функциясы үшін дұрыс тұжырым(дар)ды көрсетіңіз.", a: ["Функция өспелі", "Функция кемімелі", "Анықталу облысы: $(0; +\\infty)$", "Мәндер жиыны: $(0; +\\infty)$", "Графигі $(0; 1)$ нүктесі арқылы өтеді", "Графигі $(1; 0)$ нүктесі арқылы өтеді", "Жұп функция", "Периодты функция"], c: [1, 3, 4] },
+        { q: "Тізбек $x_n = n^2 - 2n + 3$ формуласымен берілген. Егер $x_5 = A$ болса, $A$ санының жай бөлгіш(тер)ін көрсетіңіз.", a: ["$2$", "$3$", "$5$", "$7$", "$11$", "$13$", "$17$", "$19$"], c: [0, 1] },
+        { q: "$2^{x+1} + 2^x = 24$ теңдеуінің түбірін және сол түбірдің бөлгіш(тер)ін көрсетіңіз.", a: ["$x = 2$", "$x = 3$", "$x = 4$", "Бөлгіші: $1$", "Бөлгіші: $2$", "Бөлгіші: $3$", "Бөлгіші: $4$", "Бөлгіші: $6$"], c: [1, 3, 5] },
+        { q: "Тікбұрышты үшбұрыштың катеттері $AC=15$ және $BC=20$. Тік бұрышынан гипотенузаға түсірілген $CD$ биіктігін және $AB$ гипотенузасын табыңыз.", svg: `<svg viewBox="0 0 200 120" class="h-32 my-3 mx-auto"><polygon points="20,100 180,100 77.6,23.2" fill="#e5e7eb" stroke="#374151" stroke-width="2"/><line x1="77.6" y1="23.2" x2="77.6" y2="100" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4"/><text x="35" y="55" fill="#1f2937" font-weight="bold">15</text><text x="135" y="55" fill="#1f2937" font-weight="bold">20</text><text x="85" y="65" fill="#f59e0b" font-weight="bold">h</text><text x="10" y="115">A</text><text x="180" y="115">B</text><text x="75" y="15">C</text><text x="75" y="115">D</text></svg>`, a: ["$AB = 25$", "$AB = 35$", "$CD = 10$", "$CD = 12$", "$CD = 15$", "$AB = 20$", "$CD = 9.6$", "$AB = 30$"], c: [0, 3] },
+        { q: "Материялық нүкте $x(t) = t^3 - 3t^2 + 2$ (м) заңдылығымен қозғалады. Нүктенің жылдамдығы $9$ м/с болатын уақыт мезетіндегі ($t>0$) координатасын ($x$) және уақытты ($t$) табыңыз.", a: ["$t = 2$ с", "$t = 3$ с", "$t = 4$ с", "$x = 0$ м", "$x = 2$ м", "$x = -2$ м", "$x = 4$ м", "$x = 6$ м"], c: [1, 4] }
+    ];
+
+    // RENDER FUNCTIONS
+    function renderSingleChoice(qs, containerId, prefix) {
+        const container = document.getElementById(containerId);
+        qs.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = "p-6 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition question-block";
+            div.id = `block-${prefix}-${idx}`;
+            
+            let html = `
+                <div class="flex items-start mb-4">
+                    <div class="bg-blue-100 text-blue-700 font-bold rounded-lg w-10 h-10 flex items-center justify-center shrink-0 mr-4">${idx + 1}</div>
+                    <div class="text-lg text-gray-800 font-medium pt-1">${item.q}</div>
+                </div>
+            `;
+            if(item.svg) html += item.svg;
+
+            html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-3 ml-14">`;
+            item.a.forEach((opt, i) => {
+                html += `
+                    <label class="block relative">
+                        <input type="radio" name="${prefix}-${idx}" value="${i}" class="hidden peer">
+                        <div class="option-box peer-checked:ring-2 peer-checked:ring-blue-500">${opt}</div>
+                    </label>
+                `;
+            });
+            html += `</div>`;
+            div.innerHTML = html;
+            container.appendChild(div);
+        });
+    }
+
+    function renderMultiChoice(qs, containerId, prefix) {
+        const container = document.getElementById(containerId);
+        qs.forEach((item, idx) => {
+            const div = document.createElement('div');
+            const globalIdx = 26 + idx;
+            div.className = "p-6 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition question-block";
+            div.id = `block-${prefix}-${idx}`;
+            
+            let html = `
+                <div class="flex items-start mb-4">
+                    <div class="bg-green-100 text-green-700 font-bold rounded-lg w-10 h-10 flex items-center justify-center shrink-0 mr-4">${globalIdx}</div>
+                    <div class="text-lg text-gray-800 font-medium pt-1">${item.q}</div>
+                </div>
+            `;
+            if(item.svg) html += item.svg;
+
+            html += `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 ml-14">`;
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            item.a.forEach((opt, i) => {
+                html += `
+                    <label class="block relative">
+                        <input type="checkbox" name="${prefix}-${idx}" value="${i}" class="hidden peer">
+                        <div class="option-box peer-checked:ring-2 peer-checked:ring-green-500 flex items-start">
+                            <span class="font-bold text-gray-400 mr-2">${letters[i]})</span>
+                            <span>${opt}</span>
+                        </div>
+                    </label>
+                `;
+            });
+            html += `</div>`;
+            div.innerHTML = html;
+            container.appendChild(div);
+        });
+    }
+
+    function startQuiz() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        
+        renderSingleChoice(part1, 'sec-1', 'q1');
+        renderSingleChoice(ctxQuestions, 'context-questions', 'q2');
+        renderMultiChoice(part3, 'multi-questions', 'q3');
+        
+        // Trigger MathJax typeset for newly added DOM
+        if(window.MathJax) {
+            MathJax.typesetPromise().catch((err) => console.log(err.message));
+        }
+    }
+
+    function switchTab(tabNum) {
+        [1, 2, 3].forEach(n => {
+            document.getElementById(`tab-${n}`).classList.remove('active');
+            document.getElementById(`sec-${n}`).classList.add('hidden');
+        });
+        document.getElementById(`tab-${tabNum}`).classList.add('active');
+        document.getElementById(`sec-${tabNum}`).classList.remove('hidden');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function finishQuiz() {
+        document.getElementById('quiz-screen').classList.add('submitted');
+        
+        let score1 = 0, score2 = 0, score3 = 0;
+
+        // Check Part 1
+        part1.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q1-${idx}"]:checked`);
+            const options = document.getElementsByName(`q1-${idx}`);
+            options[item.c].nextElementSibling.classList.add('correct-exact');
+            
+            if (selected) {
+                if (parseInt(selected.value) === item.c) score1++;
+                else selected.nextElementSibling.classList.add('wrong-selected');
+            }
+        });
+
+        // Check Context (Part 2)
+        ctxQuestions.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q2-${idx}"]:checked`);
+            const options = document.getElementsByName(`q2-${idx}`);
+            options[item.c].nextElementSibling.classList.add('correct-exact');
+            
+            if (selected) {
+                if (parseInt(selected.value) === item.c) score2++;
+                else selected.nextElementSibling.classList.add('wrong-selected');
+            }
+        });
+
+        // Check Multi Choice (Part 3)
+        part3.forEach((item, idx) => {
+            const checkboxes = document.querySelectorAll(`input[name="q3-${idx}"]`);
+            const correctSet = new Set(item.c);
+            let selectedSet = new Set();
+            
+            checkboxes.forEach(cb => {
+                const val = parseInt(cb.value);
+                if (cb.checked) selectedSet.add(val);
+                
+                // Highlight logic
+                if (correctSet.has(val)) {
+                    cb.nextElementSibling.classList.add(cb.checked ? 'correct-exact' : 'correct-missed');
+                } else if (cb.checked) {
+                    cb.nextElementSibling.classList.add('wrong-selected');
+                }
+            });
+
+            // Calculate points: 0 errors = 2 pts, 1 error = 1 pt, >1 error = 0 pts
+            let errors = 0;
+            correctSet.forEach(v => { if(!selectedSet.has(v)) errors++; }); // missed
+            selectedSet.forEach(v => { if(!correctSet.has(v)) errors++; }); // extra wrong
+
+            if(selectedSet.size > 0) { // Only score if they attempted it
+                if (errors === 0) score3 += 2;
+                else if (errors === 1) score3 += 1;
+            }
+        });
+
+        const totalScore = score1 + score2 + score3;
+        
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('finish-btn').classList.add('hidden');
+        
+        // Show all tabs so user can scroll through
+        [1, 2, 3].forEach(n => document.getElementById(`sec-${n}`).classList.remove('hidden'));
+        
+        document.getElementById('final-score').innerText = totalScore;
+        document.getElementById('res-sec1').innerText = `${score1} / 20`;
+        document.getElementById('res-sec2').innerText = `${score2} / 5`;
+        document.getElementById('res-sec3').innerText = `${score3} / 20`;
+        
+        window.scrollTo({top: document.getElementById('result-screen').offsetTop - 20, behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>
