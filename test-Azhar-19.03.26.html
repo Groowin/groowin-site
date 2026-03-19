@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика: 7-сынып - Жұмыс, Қуат, Энергия</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; }
+        .option-label { display: block; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
+        .option-label:hover { border-color: #3b82f6; background-color: #eff6ff; }
+        input[type="radio"]:checked + .option-label { border-color: #3b82f6; background-color: #dbeafe; font-weight: 600; }
+        .correct { border-color: #10b981 !important; background-color: #d1fae5 !important; }
+        .wrong { border-color: #ef4444 !important; background-color: #fee2e2 !important; }
+        .missed { border-color: #f59e0b !important; border-style: dashed !important; }
+    </style>
+</head>
+<body class="py-10 px-4">
+
+<div class="max-w-4xl mx-auto">
+    <div id="start-screen" class="text-center py-12 card p-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Физика: Жұмыс және Энергия</h1>
+        <p class="text-xl text-gray-600 mb-8">7-сынып деңгейі (В деңгейлі есептер)</p>
+        <div class="bg-blue-50 p-6 rounded-xl text-left mb-8 border-l-4 border-blue-500">
+            <h3 class="font-bold text-blue-800 mb-2">Тақырыптар:</h3>
+            <ul class="list-disc list-inside text-blue-700 space-y-1">
+                <li>Механикалық жұмыс пен Қуат</li>
+                <li>Кинетикалық және Потенциалдық энергия</li>
+                <li>Энергияның сақталу заңы</li>
+                <li>Пайдалы әсер коэффициенті (ПӘК)</li>
+            </ul>
+        </div>
+        <button onclick="startTest()" class="bg-blue-600 text-white px-10 py-4 rounded-full font-bold text-xl hover:bg-blue-700 shadow-lg transition transform active:scale-95">
+            Тестті бастау
+        </button>
+    </div>
+
+    <div id="test-container" class="hidden space-y-8">
+        <!-- Questions will be injected here -->
+    </div>
+
+    <div id="controls" class="hidden mt-10 text-center">
+        <button onclick="checkAnswers()" id="submit-btn" class="bg-green-600 text-white px-12 py-4 rounded-full font-bold text-xl hover:bg-green-700 shadow-lg transition">
+            Нәтижені тексеру
+        </button>
+    </div>
+
+    <div id="results" class="hidden mt-10 card p-8 text-center border-t-8 border-green-500">
+        <h2 class="text-3xl font-bold mb-4">Тест аяқталды!</h2>
+        <div class="text-6xl font-black text-blue-600 mb-4"><span id="score">0</span> / 30</div>
+        <p id="feedback" class="text-lg text-gray-600 mb-6"></p>
+        <button onclick="location.reload()" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg font-bold">Қайталау</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "Массасы 500 г допты 2 метр биіктікке көтергенде атқарылатын жұмысты табыңыз ($g = 10 \\text{ Н/кг}$).",
+            a: ["1000 Дж", "10 Дж", "100 Дж", "1 Дж", "250 Дж"],
+            c: 1
+        },
+        {
+            q: "Қуаты 1,5 кВт электр двигателі 10 минутта қандай жұмыс атқарады?",
+            a: ["15000 Дж", "150 Дж", "900 кДж", "90 кДж", "15 кДж"],
+            c: 2
+        },
+        {
+            q: "Массасы 2 т жүкті 10 м биіктікке 20 секундта көтеретін кранның қуатын анықтаңыз.",
+            a: ["10 кВт", "1000 Вт", "20 кВт", "1 кВт", "40 кВт"],
+            c: 0
+        },
+        {
+            q: "Жылдамдығын 2 есе арттырғанда дененің кинетикалық энергиясы қалай өзгереді?",
+            a: ["2 есе артады", "2 есе кемиді", "4 есе артады", "өзгермейді", "4 есе кемиді"],
+            c: 2
+        },
+        {
+            q: "Серіппені 4 см-ге созғанда 8 Дж потенциалдық энергия жиналса, серіппенің қатаңдығы қандай?",
+            a: ["200 Н/м", "1000 Н/м", "5000 Н/м", "10000 Н/м", "4000 Н/м"],
+            c: 3
+        },
+        {
+            q: "ПӘК-і 80% көлбеу жазықтық арқылы 400 Дж пайдалы жұмыс істеу үшін қандай толық жұмыс атқарылуы керек?",
+            a: ["320 Дж", "500 Дж", "480 Дж", "600 Дж", "400 Дж"],
+            c: 1
+        },
+        {
+            q: "Сызбада көрсетілгендей, массасы 4 кг блок 5 м/с жылдамдықпен қозғалады. Оның кинетикалық энергиясы неге тең?",
+            svg: '<svg width="200" height="100" viewBox="0 0 200 100" class="mx-auto my-4"><rect x="60" y="40" width="80" height="40" fill="#cbd5e1" stroke="#475569" stroke-width="2"/><circle cx="80" cy="85" r="5"/><circle cx="120" cy="85" r="5"/><line x1="140" y1="60" x2="180" y2="60" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ef4444" /></marker></defs><text x="75" y="65" font-size="12">4 кг</text><text x="145" y="55" font-size="12" fill="#ef4444">v = 5 м/с</text></svg>',
+            a: ["10 Дж", "20 Дж", "50 Дж", "100 Дж", "25 Дж"],
+            c: 2
+        },
+        {
+            q: "Дене 20 м биіктіктен еркін құлайды. Жерге түсер сәттегі жылдамдығын табыңыз ($g = 10 \\text{ м/с}^2$).",
+            a: ["10 м/с", "20 м/с", "15 м/с", "40 м/с", "25 м/с"],
+            c: 1
+        },
+        {
+            q: "Массасы 100 г тас 5 м биіктікте тұр. Оның потенциалдық энергиясы неге тең?",
+            a: ["500 Дж", "50 Дж", "5 Дж", "0.5 Дж", "5000 Дж"],
+            c: 2
+        },
+        {
+            q: "Автомобиль 72 км/сағ жылдамдықпен қозғалып келеді. Тарту күші 2000 Н болса, қозғалтқыштың қуаты қандай?",
+            a: ["144 кВт", "40 кВт", "20 кВт", "72 кВт", "14.4 кВт"],
+            c: 1
+        },
+        {
+            q: "Жұмыстың өлшем бірлігін Халықаралық жүйеде (SI) негізгі бірліктермен өрнектеңіз.",
+            a: ["кг·м/с", "кг·м²/с²", "кг·м/с²", "Н·м/с", "Вт·с"],
+            c: 1
+        },
+        {
+            q: "Көлемі 2 м³ суды 10 м биіктікке көтергенде атқарылатын жұмыс қандай? ($\\rho = 1000 \\text{ кг/м}^3$)",
+            a: ["20 кДж", "200 кДж", "20 Дж", "2 кДж", "200 Дж"],
+            c: 1
+        },
+        {
+            q: "Массасы 400 г құс 15 м/с жылдамдықпен ұшып барады. Оның кинетикалық энергиясы?",
+            a: ["90 Дж", "45 Дж", "60 Дж", "30 Дж", "15 Дж"],
+            c: 1
+        },
+        {
+            q: "Дененің биіктігін 3 есе арттырса, оның потенциалдық энергиясы қалай өзгереді?",
+            a: ["Өзгермейді", "3 есе кемиді", "3 есе артады", "9 есе артады", "6 есе артады"],
+            c: 2
+        },
+        {
+            q: "Қуаты 5 кВт сорғы 1 минутта массасы қандай суды 10 м биіктікке көтере алады?",
+            a: ["300 кг", "3000 кг", "500 кг", "5000 кг", "600 кг"],
+            c: 1
+        },
+        {
+            q: "ПӘК-і 75% иіндік (рычаг) көмегімен 150 Дж пайдалы жұмыс істелді. Жұмсалған (толық) жұмысты табыңыз.",
+            a: ["112.5 Дж", "200 Дж", "225 Дж", "300 Дж", "150 Дж"],
+            c: 1
+        },
+        {
+            q: "Массасы 10 кг дененің кинетикалық энергиясы 125 Дж болса, оның жылдамдығы қандай?",
+            a: ["5 м/с", "2.5 м/с", "10 м/с", "50 м/с", "12.5 м/с"],
+            c: 0
+        },
+        {
+            q: "Егер күш бағыты мен орын ауыстыру бағыты арасындағы бұрыш 90° болса, атқарылатын жұмыс неге тең?",
+            a: ["Максимал", "Минимал", "Нөлге", "F·s", "-F·s"],
+            c: 2
+        },
+        {
+            q: "Массасы 5 кг дене 10 м биіктіктен 2 м биіктікке түсті. Потенциалдық энергиясы қаншаға өзгерді?",
+            a: ["500 Дж-ға артты", "400 Дж-ға кеміді", "100 Дж-ға кеміді", "400 Дж-ға артты", "500 Дж-ға кеміді"],
+            c: 1
+        },
+        {
+            q: "Көтергіш кран 4000 Н жүкті 5 м биіктікке көтерді. Егер кранның ПӘК-і 50% болса, двигатель қандай жұмыс атқарды?",
+            a: ["10 кДж", "20 кДж", "40 кДж", "80 кДж", "100 кДж"],
+            c: 2
+        },
+        {
+            q: "Қуаты 0,4 кВт электр бұрғысы 30 секундта қандай жұмыс атқарады?",
+            a: ["12 Дж", "120 Дж", "1200 Дж", "12000 Дж", "1.2 кДж"],
+            c: 3
+        },
+        {
+            q: "Дене 5 м/с жылдамдықпен қозғалғанда кинетикалық энергиясы 50 Дж болса, оның массасы қандай?",
+            a: ["2 кг", "4 кг", "10 кг", "5 кг", "8 кг"],
+            c: 1
+        },
+        {
+            q: "Сызбадағы блоктар жүйесінің ПӘК-і 60%. Егер жүктің салмағы 120 Н болса, оны 2 м биіктікке көтеру үшін жұмсалған жұмыс қандай?",
+            svg: '<svg width="100" height="100" viewBox="0 0 100 100" class="mx-auto my-4"><circle cx="50" cy="30" r="15" fill="none" stroke="black" stroke-width="2"/><line x1="35" y1="30" x2="35" y2="70" stroke="black"/><rect x="25" y="70" width="20" height="20" fill="#94a3b8"/><line x1="65" y1="30" x2="65" y2="90" stroke="red" stroke-width="2"/><text x="15" y="85" font-size="10">P</text><text x="70" y="80" font-size="10" fill="red">F</text></svg>',
+            a: ["240 Дж", "400 Дж", "144 Дж", "200 Дж", "72 Дж"],
+            c: 1
+        },
+        {
+            q: "Биіктігі 3 м, ұзындығы 6 м көлбеу жазықтық күштен қандай ұтыс береді (үйкеліс ескерілмейді)?",
+            a: ["6 есе", "3 есе", "2 есе", "18 есе", "ұтыс бермейді"],
+            c: 2
+        },
+        {
+            q: "100 кДж энергияны 20 секундта жұмсайтын құрылғының қуаты?",
+            a: ["2000 Вт", "5000 Вт", "200 Вт", "500 Вт", "50 кВт"],
+            c: 1
+        },
+        {
+            q: "Қатаңдығы 200 Н/м серіппені 10 см-ге созғандағы потенциалдық энергиясы?",
+            a: ["20 Дж", "10 Дж", "2 Дж", "1 Дж", "0.5 Дж"],
+            c: 3
+        },
+        {
+            q: "Массасы 2 кг дене 10 м/с жылдамдықпен тік жоғары лақтырылды. Максимал биіктіктегі потенциалдық энергиясы неге тең?",
+            a: ["100 Дж", "200 Дж", "50 Дж", "400 Дж", "20 Дж"],
+            c: 0
+        },
+        {
+            q: "Механикалық жұмыс қай жағдайда теріс болады?",
+            a: ["Күш пен қозғалыс бағыты бірдей болса", "Дене тыныштықта болса", "Үйкеліс күші әсер еткенде", "Ауырлық күші әсер еткенде", "Бұрыш 0° болса"],
+            c: 2
+        },
+        {
+            q: "Жер бетінен 5 м биіктіктегі массасы 2 кг дененің толық механикалық энергиясы 150 Дж болса, оның кинетикалық энергиясы неге тең?",
+            a: ["100 Дж", "150 Дж", "50 Дж", "250 Дж", "0 Дж"],
+            c: 2
+        },
+        {
+            q: "Адам 500 Н күш жұмсап, арбаны 10 м қашықтыққа 5 секундта итерді. Адамның қуаты қандай?",
+            a: ["2500 Вт", "1000 Вт", "5000 Вт", "100 Вт", "250 Вт"],
+            c: 1
+        }
+    ];
+
+    function startTest() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('test-container').classList.remove('hidden');
+        document.getElementById('controls').classList.remove('hidden');
+        
+        const container = document.getElementById('test-container');
+        questions.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "card p-6 border-l-4 border-gray-300";
+            qDiv.id = `q-block-${index}`;
+            
+            let html = `
+                <div class="flex items-start mb-4">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3 shrink-0">${index + 1}</span>
+                    <h3 class="text-lg font-semibold text-gray-800">${item.q}</h3>
+                </div>
+            `;
+            
+            if (item.svg) {
+                html += item.svg;
+            }
+            
+            html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">`;
+            item.a.forEach((option, optIndex) => {
+                html += `
+                    <div class="relative">
+                        <input type="radio" name="question-${index}" id="q${index}o${optIndex}" value="${optIndex}" class="hidden">
+                        <label for="q${index}o${optIndex}" class="option-label" id="label-${index}-${optIndex}">
+                            ${option}
+                        </label>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            
+            qDiv.innerHTML = html;
+            container.appendChild(qDiv);
+        });
+        
+        // Refresh MathJax
+        if (window.MathJax) {
+            MathJax.typeset();
+        }
+    }
+
+    function checkAnswers() {
+        let score = 0;
+        questions.forEach((item, index) => {
+            const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            const qBlock = document.getElementById(`q-block-${index}`);
+            
+            // Mark correct answer
+            const correctLabel = document.getElementById(`label-${index}-${item.c}`);
+            correctLabel.classList.add('correct');
+
+            if (selected) {
+                const selectedVal = parseInt(selected.value);
+                if (selectedVal === item.c) {
+                    score++;
+                } else {
+                    const selectedLabel = document.getElementById(`label-${index}-${selectedVal}`);
+                    selectedLabel.classList.add('wrong');
+                }
+            } else {
+                qBlock.classList.replace('border-gray-300', 'border-yellow-400');
+            }
+        });
+
+        // Show Results
+        document.getElementById('score').innerText = score;
+        document.getElementById('results').classList.remove('hidden');
+        document.getElementById('submit-btn').classList.add('hidden');
+        
+        let feedback = "";
+        if (score === 30) feedback = "Керемет! Сіз барлық есепті дұрыс шығардыңыз.";
+        else if (score >= 25) feedback = "Өте жақсы нәтиже! Тақырыпты жақсы меңгергенсіз.";
+        else if (score >= 15) feedback = "Жақсы, бірақ кейбір формулаларды қайталау керек.";
+        else feedback = "Тақырыпты қайтадан оқып шығуды ұсынамыз.";
+        
+        document.getElementById('feedback').innerText = feedback;
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        
+        // Disable all inputs
+        document.querySelectorAll('input[type="radio"]').forEach(input => input.disabled = true);
+    }
+</script>
+
+</body>
+</html>
