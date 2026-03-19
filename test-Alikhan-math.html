@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгебра және Геометрия Кешенді Тест</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+        body { font-family: 'Nunito', sans-serif; background-color: #f1f5f9; color: #1e293b; }
+        .tab-btn.active { border-bottom-width: 4px; border-color: #6366f1; color: #4f46e5; font-weight: 800; }
+        .card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .option-box { border: 2px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; cursor: pointer; transition: 0.2s; }
+        .option-box:hover { border-color: #818cf8; background-color: #eef2ff; }
+        input[type="radio"]:checked + .option-box { border-color: #4f46e5; background-color: #e0e7ff; font-weight: 700; }
+        .correct { border-color: #10b981 !important; background-color: #d1fae5 !important; }
+        .wrong { border-color: #ef4444 !important; background-color: #fee2e2 !important; }
+        .level-a { background: #dcfce7; color: #166534; }
+        .level-b { background: #fef3c7; color: #92400e; }
+        .level-c { background: #fee2e2; color: #991b1b; }
+        .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; }
+        .submitted .option-box { pointer-events: none; }
+        .math { font-family: "Times New Roman", Times, serif; font-size: 1.1em; font-style: italic; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+<div id="app" class="max-w-4xl mx-auto">
+    
+    <!-- START SCREEN -->
+    <div id="start-screen" class="card p-10 text-center border-t-8 border-indigo-500">
+        <h1 class="text-4xl font-extrabold mb-4 text-slate-800">Математика және Геометрия</h1>
+        <p class="text-slate-500 mb-6 text-lg">Барлығы 40 сұрақ (20 Алгебра + 20 Геометрия)</p>
+        
+        <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto mb-10">
+            <div class="p-4 bg-green-50 rounded-xl"><div class="font-bold text-green-700">А деңгейі</div><div class="text-sm">Оңай (20)</div></div>
+            <div class="p-4 bg-yellow-50 rounded-xl"><div class="font-bold text-yellow-700">В деңгейі</div><div class="text-sm">Орташа (14)</div></div>
+            <div class="p-4 bg-red-50 rounded-xl"><div class="font-bold text-red-700">С деңгейі</div><div class="text-sm">Күрделі (6)</div></div>
+        </div>
+
+        <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-12 rounded-full text-xl shadow-lg transition transform active:scale-95">
+            Тестті бастау
+        </button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="hidden">
+        <!-- TABS -->
+        <div class="flex border-b-2 border-slate-200 mb-6 sticky top-0 bg-slate-100 z-50 pt-2 px-2">
+            <button onclick="switchTab('algebra')" id="tab-algebra" class="tab-btn active flex-1 py-4 text-center font-bold text-slate-500 transition text-lg">
+                Алгебра (Тригонометрия)
+            </button>
+            <button onclick="switchTab('geometry')" id="tab-geometry" class="tab-btn flex-1 py-4 text-center font-bold text-slate-500 transition text-lg">
+                Геометрия
+            </button>
+        </div>
+
+        <div class="mb-6 flex justify-between px-2">
+            <div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Прогресс: <span id="progress-text" class="text-indigo-600">0 / 40</span></div>
+        </div>
+
+        <!-- ALGEBRA SECTION -->
+        <div id="sec-algebra" class="space-y-6"></div>
+
+        <!-- GEOMETRY SECTION -->
+        <div id="sec-geometry" class="space-y-6 hidden"></div>
+
+        <button id="finish-btn" onclick="finishQuiz()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-extrabold py-5 rounded-xl text-xl mt-10 shadow-xl transition transform active:scale-95 mb-20 hidden">
+            Барлық жауаптарды тексеру
+        </button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden card p-10 text-center border-t-8 border-emerald-500">
+        <h2 class="text-3xl font-extrabold mb-4">Нәтиже</h2>
+        <div id="total-score" class="text-8xl font-black text-indigo-600 mb-8">0 / 40</div>
+        
+        <div class="grid grid-cols-2 gap-6 mb-10 max-w-md mx-auto">
+            <div class="p-5 bg-indigo-50 rounded-2xl border border-indigo-100">
+                <p class="text-sm font-bold text-indigo-400 uppercase mb-1">Алгебра</p>
+                <span id="score-alg" class="text-3xl font-black text-indigo-700">0 / 20</span>
+            </div>
+            <div class="p-5 bg-pink-50 rounded-2xl border border-pink-100">
+                <p class="text-sm font-bold text-pink-400 uppercase mb-1">Геометрия</p>
+                <span id="score-geo" class="text-3xl font-black text-pink-700">0 / 20</span>
+            </div>
+        </div>
+
+        <button onclick="location.reload()" class="bg-indigo-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-indigo-700 shadow-lg">Қайта тапсыру</button>
+        <p class="mt-8 text-slate-400 text-sm">Дұрыс жауаптарды көру үшін төменге сырғытыңыз</p>
+    </div>
+
+</div>
+
+<script>
+    const algebraQuestions = [
+        // LEVEL A
+        { l: 'A', q: "60° бұрышын радиан арқылы өрнектеңіз:", a: ["<span class='math'>π/3</span>", "<span class='math'>π/6</span>", "<span class='math'>π/2</span>", "<span class='math'>2π/3</span>"], c: 0 },
+        { l: 'A', q: "<span class='math'>π/4</span> радиан неше градусқа тең?", a: ["30°", "45°", "60°", "90°"], c: 1 },
+        { l: 'A', q: "Тригонометриялық мәнді табыңыз: <span class='math'>sin(30°)</span>", a: ["1", "<span class='math'>√3/2</span>", "1/2", "<span class='math'>√2/2</span>"], c: 2 },
+        { l: 'A', q: "Тригонометриялық мәнді табыңыз: <span class='math'>cos(60°)</span>", a: ["1/2", "<span class='math'>√3/2</span>", "1", "0"], c: 0 },
+        { l: 'A', q: "Келтіру формуласы бойынша <span class='math'>sin(180° - α)</span> неге тең?", a: ["<span class='math'>-sin(α)</span>", "<span class='math'>cos(α)</span>", "<span class='math'>sin(α)</span>", "<span class='math'>-cos(α)</span>"], c: 2 },
+        { l: 'A', q: "Келтіру формуласы бойынша <span class='math'>cos(90° + α)</span> неге тең?", a: ["<span class='math'>sin(α)</span>", "<span class='math'>-sin(α)</span>", "<span class='math'>cos(α)</span>", "<span class='math'>-cos(α)</span>"], c: 1 },
+        { l: 'A', q: "Екі еселенген бұрыш формуласы: <span class='math'>sin(2α)</span> неге тең?", a: ["<span class='math'>2sin(α)</span>", "<span class='math'>sin(α)cos(α)</span>", "<span class='math'>2sin(α)cos(α)</span>", "<span class='math'>cos²(α) - sin²(α)</span>"], c: 2 },
+        { l: 'A', q: "Аргументтерді қосу формуласы: <span class='math'>cos(α + β)</span> неге тең?", a: ["<span class='math'>cos(α)cos(β) - sin(α)sin(β)</span>", "<span class='math'>cos(α)cos(β) + sin(α)sin(β)</span>", "<span class='math'>sin(α)cos(β) + cos(α)sin(β)</span>", "<span class='math'>sin(α)sin(β) - cos(α)cos(β)</span>"], c: 0 },
+        { l: 'A', q: "<span class='math'>sin x = 1/2</span> теңдеуінің <span class='math'>[0; π/2]</span> аралығындағы шешімі:", a: ["<span class='math'>π/3</span>", "<span class='math'>π/6</span>", "<span class='math'>π/4</span>", "<span class='math'>π/2</span>"], c: 1 },
+        { l: 'A', q: "150° бұрышын радианға айналдырыңыз:", a: ["<span class='math'>2π/3</span>", "<span class='math'>5π/6</span>", "<span class='math'>3π/4</span>", "<span class='math'>7π/6</span>"], c: 1 },
+        // LEVEL B
+        { l: 'B', q: "Келтіру формуласын қолданып есептеңіз: <span class='math'>sin(120°)</span>", a: ["1/2", "<span class='math'>-√3/2</span>", "<span class='math'>√3/2</span>", "<span class='math'>-1/2</span>"], c: 2 },
+        { l: 'B', q: "<span class='math'>cos(210°)</span> мәнін табыңыз:", a: ["<span class='math'>-√3/2</span>", "<span class='math'>-1/2</span>", "<span class='math'>√3/2</span>", "1/2"], c: 0 },
+        { l: 'B', q: "Егер <span class='math'>sin(α) = 0.6</span> (І ширек) болса, <span class='math'>sin(2α)</span> мәнін табыңыз:", a: ["0.36", "0.96", "1.2", "0.48"], c: 1 },
+        { l: 'B', q: "Қосу формуласын қолданып <span class='math'>sin(75°)</span> табыңыз (<span class='math'>75° = 45° + 30°</span>):", a: ["<span class='math'>(√6 + √2)/4</span>", "<span class='math'>(√6 - √2)/4</span>", "<span class='math'>√3/2</span>", "<span class='math'>1</span>"], c: 0 },
+        { l: 'B', q: "<span class='math'>cos x = -√2/2</span> теңдеуінің <span class='math'>[0; π]</span> аралығындағы түбірі:", a: ["<span class='math'>π/4</span>", "<span class='math'>3π/4</span>", "<span class='math'>5π/4</span>", "<span class='math'>2π/3</span>"], c: 1 },
+        { l: 'B', q: "<span class='math'>tg(315°)</span> мәнін табыңыз:", a: ["1", "<span class='math'>-√3</span>", "-1", "0"], c: 2 },
+        { l: 'B', q: "Бөлшекті қысқартыңыз: <span class='math'>sin(2α) / (2cos(α))</span>", a: ["<span class='math'>sin(α)</span>", "<span class='math'>cos(α)</span>", "<span class='math'>tg(α)</span>", "1"], c: 0 },
+        // LEVEL C
+        { l: 'C', q: "Қосу немесе айырым формуласы арқылы <span class='math'>cos(15°)</span> мәнін табыңыз:", a: ["<span class='math'>(√6 + √2)/4</span>", "<span class='math'>(√6 - √2)/4</span>", "<span class='math'>(√3 + 1)/2</span>", "<span class='math'>√2/4</span>"], c: 0 },
+        { l: 'C', q: "<span class='math'>sin(2x) = √3/2</span> теңдеуінің <span class='math'>[0; π/2]</span> аралығындағы барлық түбірлерін табыңыз:", a: ["Тек <span class='math'>π/6</span>", "Тек <span class='math'>π/3</span>", "<span class='math'>π/6</span> және <span class='math'>π/3</span>", "<span class='math'>π/12</span> және <span class='math'>5π/12</span>"], c: 2 },
+        { l: 'C', q: "Егер <span class='math'>tg(α) = 3</span> болса, <span class='math'>cos(2α)</span> мәнін табыңыз:", a: ["0.8", "-0.8", "-0.6", "0.6"], c: 1 }
+    ];
+
+    const geometryQuestions = [
+        // LEVEL A
+        { l: 'A', q: "Тіктөртбұрыштың қабырғалары 5 см және 8 см. Оның ауданын табыңыз:", a: ["13 см²", "26 см²", "40 см²", "80 см²"], c: 2 },
+        { l: 'A', q: "Пифагор теоремасы: Тікбұрышты үшбұрыштың катеттері 3 және 4. Гипотенузасы қандай?", a: ["5", "6", "7", "25"], c: 0 },
+        { l: 'A', q: "Үшбұрыштың табаны 10, ал оған түсірілген биіктік 5. Үшбұрыштың ауданы:", a: ["50", "25", "15", "10"], c: 1 },
+        { l: 'A', q: "Параллелограммның қабырғалары 6 және 9. Оның периметрі неге тең?", a: ["15", "54", "30", "24"], c: 2 },
+        { l: 'A', svg: `<svg class="w-full h-32 my-2" viewBox="0 0 200 100"><polygon points="100,10 160,50 100,90 40,50" fill="#eef2ff" stroke="#4f46e5" stroke-width="2"/><line x1="40" y1="50" x2="160" y2="50" stroke="#818cf8" stroke-dasharray="4"/><line x1="100" y1="10" x2="100" y2="90" stroke="#818cf8" stroke-dasharray="4"/><text x="110" y="30" font-size="12" fill="#4f46e5">d1=6</text><text x="60" y="45" font-size="12" fill="#4f46e5">d2=8</text></svg>`, q: "Суреттегі ромбтың диагональдары 6 және 8. Ауданын табыңыз:", a: ["48", "24", "14", "20"], c: 1 },
+        { l: 'A', q: "Трапецияның табандары 4 және 10. Орта сызығының ұзындығын табыңыз:", a: ["14", "6", "7", "20"], c: 2 },
+        { l: 'A', q: "Екі ұқсас үшбұрыштың ұқсастық коэффициенті k = 2. Олардың аудандарының қатынасы қандай болады?", a: ["2", "4", "8", "16"], c: 1 },
+        { l: 'A', q: "Пифагор теоремасының формуласын көрсетіңіз:", a: ["<span class='math'>c = a + b</span>", "<span class='math'>c² = a² + b²</span>", "<span class='math'>c² = a² - b²</span>", "<span class='math'>S = (a+b)/2</span>"], c: 1 },
+        { l: 'A', q: "Ромбтың бір қабырғасы 7 см. Оның периметрі қанша?", a: ["14 см", "49 см", "28 см", "21 см"], c: 2 },
+        { l: 'A', q: "Синустар теоремасының дұрыс жазылуы:", a: ["<span class='math'>a/sinA = b/sinB</span>", "<span class='math'>a·sinA = b·sinB</span>", "<span class='math'>c² = a² + b² - 2ab·cosC</span>", "<span class='math'>S = 1/2 ab·sinC</span>"], c: 0 },
+        // LEVEL B
+        { l: 'B', q: "Герон формуласын қолданып, қабырғалары 13, 14, 15 болатын үшбұрыштың ауданын табыңыз:", a: ["84", "42", "168", "196"], c: 0 },
+        { l: 'B', svg: `<svg class="w-full h-32 my-2" viewBox="0 0 200 100"><polygon points="30,80 150,80 80,20" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="85" y="95" font-size="14" fill="#92400e">a = 5</text><text x="40" y="45" font-size="14" fill="#92400e">b = 3</text><text x="50" y="75" font-size="12" fill="#92400e">60°</text><path d="M 45 80 A 15 15 0 0 0 55 68" fill="none" stroke="#d97706"/></svg>`, q: "Суреттегі үшбұрыш үшін Косинустар теоремасын қолданып үшінші қабырғаны (c) табыңыз:", a: ["4", "<span class='math'>√19</span>", "7", "<span class='math'>√34</span>"], c: 1 },
+        { l: 'B', q: "Трапецияның табандары 5 және 9, ал биіктігі 4. Трапецияның ауданын табыңыз:", a: ["56", "18", "28", "36"], c: 2 },
+        { l: 'B', q: "<span class='math'>ΔABC ∼ ΔDEF</span>. Сәйкес қабырғалары <span class='math'>AB = 4, DE = 12</span>. Егер <span class='math'>ΔABC</span> ауданы 10 болса, <span class='math'>ΔDEF</span> ауданын табыңыз:", a: ["30", "40", "90", "120"], c: 2 },
+        { l: 'B', q: "Тіктөртбұрыштың қабырғалары 6 және 8. Оның диагоналінің ұзындығын табыңыз:", a: ["10", "14", "12", "100"], c: 0 },
+        { l: 'B', q: "Синустар теоремасына есеп: <span class='math'>ΔABC</span> ішінде <span class='math'>∠A = 30°</span>, <span class='math'>∠B = 45°</span>, <span class='math'>a = 10</span>. <span class='math'>b</span> қабырғасын табыңыз:", a: ["<span class='math'>10√2</span>", "<span class='math'>5√2</span>", "20", "<span class='math'>10√3</span>"], c: 0 },
+        { l: 'B', q: "Ромбтың периметрі 40, бір диагоналі 12. Екінші диагоналін табыңыз:", a: ["8", "16", "20", "14"], c: 1 },
+        // LEVEL C
+        { l: 'C', svg: `<svg class="w-full h-40 my-2" viewBox="0 0 200 120"><polygon points="60,20 140,20 180,100 20,100" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/><circle cx="100" cy="60" r="40" fill="none" stroke="#991b1b" stroke-width="2" stroke-dasharray="4"/><text x="95" y="15" font-size="12" fill="#991b1b">4</text><text x="95" y="115" font-size="12" fill="#991b1b">16</text></svg>`, q: "Суреттегідей теңбүйірлі трапецияға шеңбер іштей сызылған. Трапецияның табандары 4 см және 16 см. Трапецияның ауданын табыңыз: (Нұсқау: іштей сызылғандықтан бүйір қабырғаларының қосындысы табандарының қосындысына тең)", a: ["100 см²", "80 см²", "64 см²", "120 см²"], c: 1 },
+        { l: 'C', q: "Параллелограммның қабырғалары 4 және 6, ал сүйір бұрышы 60°. Оның үлкен диагоналін табыңыз:", a: ["<span class='math'>2√19</span>", "<span class='math'>√28</span>", "10", "<span class='math'>4√3</span>"], c: 0 },
+        { l: 'C', svg: `<svg class="w-full h-40 my-2" viewBox="0 0 200 120"><circle cx="100" cy="60" r="50" fill="none" stroke="#0ea5e9" stroke-width="2"/><polygon points="50,60 150,60 110,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/><text x="125" y="30" font-size="12" fill="#0369a1">7</text><text x="70" y="30" font-size="12" fill="#0369a1">24</text><text x="100" y="75" font-size="12" fill="#0369a1">25</text><circle cx="100" cy="60" r="3" fill="#0284c7"/></svg>`, q: "Сырттай сызылған шеңбер: Қабырғалары 7, 24 және 25 болатын үшбұрышқа сырттай сызылған шеңбердің радиусын (R) табыңыз:", a: ["7", "12", "12.5", "12.25"], c: 2 }
+    ];
+
+    function renderQuestions(qs, containerId, prefix) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        
+        qs.forEach((item, idx) => {
+            const levelClass = item.l === 'A' ? 'level-a' : (item.l === 'B' ? 'level-b' : 'level-c');
+            
+            const qDiv = document.createElement('div');
+            qDiv.className = `card p-6 border-l-4 ${item.l === 'A' ? 'border-green-400' : (item.l === 'B' ? 'border-yellow-400' : 'border-red-400')}`;
+            qDiv.id = `q-${prefix}-${idx}`;
+            
+            qDiv.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <span class="tag ${levelClass}">${item.l} деңгейі</span>
+                    <span class="text-sm font-bold text-slate-300">#${idx + 1}</span>
+                </div>
+                ${item.svg ? item.svg : ''}
+                <p class="text-lg font-bold text-slate-800 mb-5 leading-relaxed">${item.q}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    ${item.a.map((opt, i) => `
+                        <label class="block">
+                            <input type="radio" name="${prefix}-${idx}" value="${i}" class="hidden peer" onchange="updateProgress()">
+                            <div class="option-box peer-checked:border-indigo-500">
+                                ${opt}
+                                <span class="feedback-icon hidden absolute right-3 top-1/2 transform -translate-y-1/2"></span>
+                            </div>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(qDiv);
+        });
+    }
+
+    function switchTab(tab) {
+        document.getElementById('tab-algebra').classList.remove('active');
+        document.getElementById('tab-geometry').classList.remove('active');
+        document.getElementById('sec-algebra').classList.add('hidden');
+        document.getElementById('sec-geometry').classList.add('hidden');
+
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        document.getElementById(`sec-${tab}`).classList.remove('hidden');
+
+        // Check if all answered to show finish button
+        checkFinishBtn();
+    }
+
+    function startQuiz() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        
+        renderQuestions(algebraQuestions, 'sec-algebra', 'alg');
+        renderQuestions(geometryQuestions, 'sec-geometry', 'geo');
+        
+        // Default open Algebra
+        switchTab('algebra');
+    }
+
+    function updateProgress() {
+        const totalChecked = document.querySelectorAll('input[type="radio"]:checked').length;
+        document.getElementById('progress-text').innerText = `${totalChecked} / 40`;
+        checkFinishBtn();
+    }
+
+    function checkFinishBtn() {
+        const totalChecked = document.querySelectorAll('input[type="radio"]:checked').length;
+        if (totalChecked >= 1) { // Show button as soon as they start answering
+             document.getElementById('finish-btn').classList.remove('hidden');
+        }
+    }
+
+    function calculateSection(qs, prefix) {
+        let score = 0;
+        qs.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="${prefix}-${idx}"]:checked`);
+            const options = document.getElementsByName(`${prefix}-${idx}`);
+            
+            // Mark correct
+            const correctBox = options[item.c].nextElementSibling;
+            correctBox.classList.add('correct');
+            
+            if (selected) {
+                if (parseInt(selected.value) === item.c) {
+                    score++;
+                } else {
+                    selected.nextElementSibling.classList.add('wrong');
+                }
+            }
+        });
+        return score;
+    }
+
+    function finishQuiz() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        document.getElementById('quiz-screen').classList.add('submitted');
+        
+        const algScore = calculateSection(algebraQuestions, 'alg');
+        const geoScore = calculateSection(geometryQuestions, 'geo');
+        const total = algScore + geoScore;
+
+        document.getElementById('finish-btn').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        
+        document.getElementById('total-score').innerText = `${total} / 40`;
+        document.getElementById('score-alg').innerText = `${algScore} / 20`;
+        document.getElementById('score-geo').innerText = `${geoScore} / 20`;
+        
+        // Show both sections so user can scroll down and see mistakes
+        document.getElementById('sec-algebra').classList.remove('hidden');
+        document.getElementById('sec-geometry').classList.remove('hidden');
+        document.getElementById('tab-algebra').classList.remove('active');
+        document.getElementById('tab-geometry').classList.remove('active');
+    }
+</script>
+</body>
+</html>
