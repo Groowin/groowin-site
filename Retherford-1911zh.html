@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Резерфорд Тәжірибесі</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #FFD700;
+    --gold-dark: #B8860B;
+    --alpha: #00E5FF;
+    --scatter: #FF4081;
+    --bounce: #FF9100;
+    --pass: #69F0AE;
+    --bg: #020408;
+    --panel: rgba(0,20,40,0.85);
+    --border: rgba(0,229,255,0.2);
+    --text: #B0BEC5;
+    --text-bright: #E0F7FA;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); font-family:'Exo 2', sans-serif; }
+
+  /* Starfield */
+  #stars { position:fixed; inset:0; z-index:0; }
+
+  /* Grid overlay */
+  #grid {
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  #ui { position:fixed; inset:0; z-index:10; display:flex; flex-direction:column; }
+
+  /* HEADER */
+  header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px;
+    background:linear-gradient(180deg, rgba(0,10,20,0.95) 0%, rgba(0,10,20,0.0) 100%);
+    border-bottom:1px solid var(--border);
+  }
+  .logo {
+    font-family:'Orbitron', monospace;
+    font-size:13px; font-weight:700; letter-spacing:.2em;
+    color:var(--alpha); text-transform:uppercase;
+  }
+  .logo span { color:var(--gold); }
+  .subtitle {
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px; color:var(--text); letter-spacing:.1em;
+  }
+  .year-badge {
+    font-family:'Orbitron', monospace; font-size:11px;
+    color:var(--gold); border:1px solid var(--gold-dark);
+    padding:4px 12px; border-radius:2px;
+    background:rgba(255,215,0,0.05);
+  }
+
+  /* MAIN */
+  main { flex:1; display:flex; overflow:hidden; }
+
+  /* CANVAS AREA */
+  #canvas-wrap {
+    flex:1; position:relative; overflow:hidden;
+  }
+  #canvas-wrap canvas { position:absolute; inset:0; width:100%!important; height:100%!important; }
+
+  /* Scan line effect */
+  #scanline {
+    position:absolute; inset:0; pointer-events:none; z-index:5;
+    background:repeating-linear-gradient(
+      0deg,
+      transparent, transparent 2px,
+      rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+    );
+  }
+
+  /* Crosshair */
+  #crosshair {
+    position:absolute; pointer-events:none; z-index:6;
+    left:50%; top:50%; transform:translate(-50%,-50%);
+    width:80px; height:80px;
+  }
+  #crosshair::before, #crosshair::after {
+    content:''; position:absolute; background:rgba(0,229,255,0.15);
+  }
+  #crosshair::before { left:50%; top:0; width:1px; height:100%; }
+  #crosshair::after  { top:50%; left:0; height:1px; width:100%; }
+
+  /* Atom label */
+  #atom-label {
+    position:absolute; z-index:7;
+    left:50%; top:50%;
+    transform:translate(-50%, -70px);
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px; color:rgba(255,215,0,0.5);
+    letter-spacing:.15em; text-align:center;
+  }
+
+  /* SIDE PANEL */
+  #panel {
+    width:300px; min-width:300px;
+    background:var(--panel);
+    border-left:1px solid var(--border);
+    display:flex; flex-direction:column;
+    padding:20px 16px;
+    gap:14px;
+    backdrop-filter:blur(12px);
+    overflow-y:auto;
+  }
+
+  .section-title {
+    font-family:'Orbitron', monospace;
+    font-size:9px; font-weight:700; letter-spacing:.25em;
+    color:var(--alpha); text-transform:uppercase;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:2px;
+  }
+
+  /* Stats grid */
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .stat-card {
+    background:rgba(0,0,0,0.3);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:10px 10px 8px;
+    position:relative; overflow:hidden;
+  }
+  .stat-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  }
+  .stat-card.total::before  { background:var(--alpha); }
+  .stat-card.pass::before   { background:var(--pass); }
+  .stat-card.scat::before   { background:var(--scatter); }
+  .stat-card.boun::before   { background:var(--bounce); }
+  .stat-label {
+    font-family:'Share Tech Mono', monospace;
+    font-size:9px; color:var(--text); letter-spacing:.08em;
+    display:block; margin-bottom:4px;
+  }
+  .stat-value {
+    font-family:'Orbitron', monospace;
+    font-size:22px; font-weight:700;
+    display:block;
+  }
+  .stat-card.total .stat-value { color:var(--alpha); }
+  .stat-card.pass  .stat-value { color:var(--pass); }
+  .stat-card.scat  .stat-value { color:var(--scatter); }
+  .stat-card.boun  .stat-value { color:var(--bounce); }
+
+  /* Percentage bar */
+  .pct-section { }
+  .pct-row { display:flex; justify-content:space-between; margin-bottom:6px; }
+  .pct-label { font-family:'Share Tech Mono'; font-size:10px; color:var(--text); }
+  .pct-val { font-family:'Orbitron'; font-size:10px; color:var(--alpha); }
+  .pct-track {
+    height:4px; background:rgba(255,255,255,0.06);
+    border-radius:2px; overflow:hidden; margin-bottom:8px;
+  }
+  .pct-fill { height:100%; border-radius:2px; transition:width .4s cubic-bezier(.4,0,.2,1); }
+
+  /* Controls */
+  .ctrl-row { display:flex; flex-direction:column; gap:6px; margin-bottom:4px; }
+  .ctrl-label { display:flex; justify-content:space-between; }
+  .ctrl-name { font-family:'Share Tech Mono'; font-size:10px; color:var(--text); }
+  .ctrl-num { font-family:'Orbitron'; font-size:10px; color:var(--alpha); }
+  input[type=range] {
+    -webkit-appearance:none; width:100%; height:3px;
+    background:rgba(0,229,255,0.15); border-radius:2px; outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance:none; width:14px; height:14px;
+    border-radius:50%; background:var(--alpha);
+    cursor:pointer; border:2px solid var(--bg);
+    box-shadow:0 0 8px var(--alpha);
+  }
+
+  /* Buttons */
+  .btn-group { display:flex; flex-direction:column; gap:8px; }
+  .btn {
+    font-family:'Orbitron', monospace; font-size:10px; font-weight:700;
+    letter-spacing:.15em; text-transform:uppercase;
+    padding:11px 16px; border-radius:3px; cursor:pointer;
+    border:1px solid; transition:all .2s; position:relative; overflow:hidden;
+  }
+  .btn::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transform:translateX(-100%); transition:transform .4s;
+  }
+  .btn:hover::after { transform:translateX(100%); }
+  .btn-primary {
+    background:rgba(0,229,255,0.1); border-color:var(--alpha);
+    color:var(--alpha);
+  }
+  .btn-primary:hover { background:rgba(0,229,255,0.2); box-shadow:0 0 20px rgba(0,229,255,0.3); }
+  .btn-secondary {
+    background:rgba(255,64,129,0.08); border-color:var(--scatter);
+    color:var(--scatter);
+  }
+  .btn-secondary:hover { background:rgba(255,64,129,0.15); box-shadow:0 0 20px rgba(255,64,129,0.2); }
+  .btn-ghost {
+    background:transparent; border-color:rgba(255,255,255,0.1);
+    color:var(--text);
+  }
+  .btn-ghost:hover { border-color:rgba(255,255,255,0.25); color:var(--text-bright); }
+
+  /* Legend */
+  .legend { display:flex; flex-direction:column; gap:6px; }
+  .leg { display:flex; align-items:center; gap:10px; }
+  .leg-line { width:24px; height:2px; border-radius:1px; }
+  .leg-text { font-family:'Share Tech Mono'; font-size:10px; color:var(--text); }
+
+  /* Conclusion */
+  #conclusion {
+    background:rgba(0,229,255,0.05);
+    border:1px solid rgba(0,229,255,0.25);
+    border-radius:4px; padding:12px;
+    display:none;
+    animation:fadeIn .6s ease;
+  }
+  #conclusion .con-title {
+    font-family:'Orbitron'; font-size:9px; color:var(--alpha);
+    letter-spacing:.15em; margin-bottom:8px; display:block;
+  }
+  #conclusion p {
+    font-size:11px; color:var(--text-bright); line-height:1.7;
+  }
+  #conclusion strong { color:var(--gold); }
+
+  /* Auto-shoot mode */
+  .auto-indicator {
+    display:flex; align-items:center; gap:8px;
+    font-family:'Share Tech Mono'; font-size:10px; color:var(--text);
+  }
+  .pulse-dot {
+    width:7px; height:7px; border-radius:50%;
+    background:var(--scatter); display:none;
+    animation:pulse 1s infinite;
+  }
+  .pulse-dot.active { display:block; }
+
+  /* FOOTER */
+  footer {
+    padding:8px 28px;
+    background:linear-gradient(0deg, rgba(0,10,20,0.95) 0%, rgba(0,10,20,0) 100%);
+    border-top:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .foot-stat { font-family:'Share Tech Mono'; font-size:10px; color:var(--text); }
+  .foot-stat span { color:var(--alpha); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  @keyframes pulse {
+    0%,100%{ box-shadow:0 0 0 0 rgba(255,64,129,0.4) }
+    50%{ box-shadow:0 0 0 5px rgba(255,64,129,0) }
+  }
+  @keyframes rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  @keyframes counterRotate { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div id="grid"></div>
+
+<div id="ui">
+  <header>
+    <div>
+      <div class="logo">РЕЗЕРФОРД <span>// ТӘЖІРИБЕСІ</span></div>
+      <div class="subtitle">Атом ядросының ашылуы · Физика 9 сынып</div>
+    </div>
+    <div class="year-badge">1909 — 1911</div>
+  </header>
+
+  <main>
+    <div id="canvas-wrap">
+      <canvas id="sim"></canvas>
+      <div id="scanline"></div>
+      <div id="crosshair"></div>
+      <div id="atom-label">AU — АЛТЫН АТОМЫ</div>
+    </div>
+
+    <div id="panel">
+      <div>
+        <div class="section-title">Нәтижелер</div>
+        <div class="stats-grid">
+          <div class="stat-card total">
+            <span class="stat-label">ЖІБЕРІЛГЕН</span>
+            <span class="stat-value" id="s-total">0</span>
+          </div>
+          <div class="stat-card pass">
+            <span class="stat-label">ӨТТІ</span>
+            <span class="stat-value" id="s-pass">0</span>
+          </div>
+          <div class="stat-card scat">
+            <span class="stat-label">ШАШЫРАДЫ</span>
+            <span class="stat-value" id="s-scat">0</span>
+          </div>
+          <div class="stat-card boun">
+            <span class="stat-label">ҚАЙТТЫ</span>
+            <span class="stat-value" id="s-boun">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pct-section">
+        <div class="section-title">Шашырау статистикасы</div>
+        <div class="pct-row">
+          <span class="pct-label">Өтіп кетті</span>
+          <span class="pct-val" id="pct-pass">0%</span>
+        </div>
+        <div class="pct-track"><div class="pct-fill" id="bar-pass" style="width:0%;background:var(--pass)"></div></div>
+        <div class="pct-row">
+          <span class="pct-label">Шашырады (10–90°)</span>
+          <span class="pct-val" id="pct-scat">0%</span>
+        </div>
+        <div class="pct-track"><div class="pct-fill" id="bar-scat" style="width:0%;background:var(--scatter)"></div></div>
+        <div class="pct-row">
+          <span class="pct-label">Артқа қайтты</span>
+          <span class="pct-val" id="pct-boun">0%</span>
+        </div>
+        <div class="pct-track"><div class="pct-fill" id="bar-boun" style="width:0%;background:var(--bounce)"></div></div>
+      </div>
+
+      <div>
+        <div class="section-title">Параметрлер</div>
+        <div class="ctrl-row">
+          <div class="ctrl-label">
+            <span class="ctrl-name">Ядро мөлшері</span>
+            <span class="ctrl-num" id="lbl-nsize">8</span>
+          </div>
+          <input type="range" id="nsize" min="3" max="22" value="8">
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-label">
+            <span class="ctrl-name">Бөлшек жылдамдығы</span>
+            <span class="ctrl-num" id="lbl-speed">3</span>
+          </div>
+          <input type="range" id="speed" min="1" max="6" value="3">
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-label">
+            <span class="ctrl-name">Із ұзындығы</span>
+            <span class="ctrl-num" id="lbl-trail">60</span>
+          </div>
+          <input type="range" id="trail" min="10" max="120" value="60">
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="shoot(1)">▶ 1 БӨЛШЕК ЖІБЕРУ</button>
+        <button class="btn btn-secondary" onclick="shoot(50)">⚡ 50 БӨЛШЕК (ЗАЛП)</button>
+        <button class="btn btn-ghost" id="auto-btn" onclick="toggleAuto()">⟳ ҮЗДІКСІЗ РЕЖИМ</button>
+        <button class="btn btn-ghost" onclick="resetSim()">✕ ТАЗАЛАУ</button>
+      </div>
+
+      <div class="auto-indicator">
+        <div class="pulse-dot" id="pulse"></div>
+        <span id="auto-label">Режим: қолмен</span>
+      </div>
+
+      <div>
+        <div class="section-title">Белгілер</div>
+        <div class="legend">
+          <div class="leg"><div class="leg-line" style="background:var(--pass)"></div><span class="leg-text">Өтіп кетті — шашырамады</span></div>
+          <div class="leg"><div class="leg-line" style="background:var(--scatter)"></div><span class="leg-text">Шашырады (10–90°)</span></div>
+          <div class="leg"><div class="leg-line" style="background:var(--bounce)"></div><span class="leg-text">Артқа қайтты (90°+)</span></div>
+          <div class="leg"><div class="leg-line" style="background:var(--gold)"></div><span class="leg-text">Алтын атомының ядросы</span></div>
+        </div>
+      </div>
+
+      <div id="conclusion">
+        <span class="con-title">⚛ РЕЗЕРФОРД ҚОРЫТЫНДЫСЫ</span>
+        <p>
+          Бөлшектердің <strong>басым бөлігі өтіп кетеді</strong> — атомның ішінде үлкен бос кеңістік бар.<br><br>
+          Тек аз ғана бөлшек шашырайды немесе қайтады — демек орталықта <strong>өте кішкентай, өте тығыз ядро</strong> бар!<br><br>
+          Бұл жаңалық <strong>Томсон моделін</strong> жоққа шығарды.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="foot-stat">Жылдамдық: <span id="f-speed">3</span> бірлік</div>
+    <div class="foot-stat">Ядро r = <span id="f-nsize">8</span> px</div>
+    <div class="foot-stat">Белсенді бөлшектер: <span id="f-active">0</span></div>
+    <div class="foot-stat">Ernest Rutherford · 1911</div>
+  </footer>
+</div>
+
+<script>
+// ── STARFIELD ──────────────────────────────────────────────────
+const sc = document.getElementById('stars');
+const sctx = sc.getContext('2d');
+let stars = [];
+function initStars(){
+  sc.width = window.innerWidth; sc.height = window.innerHeight;
+  stars = [];
+  for(let i=0;i<200;i++){
+    stars.push({
+      x:Math.random()*sc.width, y:Math.random()*sc.height,
+      r:Math.random()*1.2, a:Math.random(), da:0.003+Math.random()*0.005
+    });
+  }
+}
+function drawStars(){
+  sctx.clearRect(0,0,sc.width,sc.height);
+  for(let s of stars){
+    s.a += s.da;
+    if(s.a>1||s.a<0) s.da*=-1;
+    sctx.beginPath();
+    sctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    sctx.fillStyle=`rgba(176,224,255,${s.a*0.6})`;
+    sctx.fill();
+  }
+  requestAnimationFrame(drawStars);
+}
+initStars(); drawStars();
+
+// ── SIMULATION ─────────────────────────────────────────────────
+const canvas = document.getElementById('sim');
+const ctx = canvas.getContext('2d');
+let W, H, CX, CY;
+
+function resize(){
+  const wrap = document.getElementById('canvas-wrap');
+  W = canvas.width = wrap.clientWidth;
+  H = canvas.height = wrap.clientHeight;
+  CX = W/2; CY = H/2;
+}
+resize();
+window.addEventListener('resize', ()=>{ resize(); initStars(); });
+
+let particles = [];
+let stats = {total:0,pass:0,scat:0,boun:0};
+let autoMode = false;
+let autoInterval = null;
+let animId = null;
+
+const getNR  = ()=> parseInt(document.getElementById('nsize').value);
+const getSpd = ()=> parseInt(document.getElementById('speed').value);
+const getTrl = ()=> parseInt(document.getElementById('trail').value);
+
+document.getElementById('nsize').oninput = function(){
+  document.getElementById('lbl-nsize').textContent = this.value;
+  document.getElementById('f-nsize').textContent = this.value;
+};
+document.getElementById('speed').oninput = function(){
+  document.getElementById('lbl-speed').textContent = this.value;
+  document.getElementById('f-speed').textContent = this.value;
+};
+document.getElementById('trail').oninput = function(){
+  document.getElementById('lbl-trail').textContent = this.value;
+};
+
+function spawnParticle(){
+  const nr = getNR();
+  const spd = getSpd() * 1.5;
+  const startY = 30 + Math.random() * (H - 60);
+  const dist = Math.abs(startY - CY);
+  let color, type, deflectDy;
+
+  if(dist < nr + 3){
+    color = '#FF9100'; type = 'boun';
+    deflectDy = (startY < CY ? -1 : 1) * (spd * 1.1 + Math.random()*spd*0.5);
+  } else if(dist < nr * 5){
+    color = '#FF4081'; type = 'scat';
+    const frac = Math.pow((nr*5 - dist)/(nr*5), 1.5);
+    deflectDy = (startY < CY ? -1 : 1) * frac * spd * 1.8;
+  } else {
+    color = '#69F0AE'; type = 'pass';
+    deflectDy = (Math.random()-0.5) * 0.15;
+  }
+
+  stats.total++; stats[type]++;
+  updateStats();
+
+  particles.push({
+    x: 0, y: startY,
+    dx: spd, dy: 0,
+    color, type,
+    deflectDy,
+    deflected: false,
+    trail: [],
+    alpha: 1,
+    done: false
+  });
+
+  if(!animId) animLoop();
+}
+
+function shoot(n){
+  let i = 0;
+  const delay = n === 1 ? 0 : Math.max(20, 80 - n);
+  function fire(){
+    spawnParticle(); i++;
+    if(i < n) setTimeout(fire, delay);
+  }
+  fire();
+}
+
+function toggleAuto(){
+  autoMode = !autoMode;
+  const btn = document.getElementById('auto-btn');
+  const pulse = document.getElementById('pulse');
+  const lbl = document.getElementById('auto-label');
+  if(autoMode){
+    btn.style.borderColor='var(--scatter)';
+    btn.style.color='var(--scatter)';
+    pulse.classList.add('active');
+    lbl.textContent = 'Режим: үздіксіз';
+    autoInterval = setInterval(()=> spawnParticle(), 120);
+  } else {
+    btn.style.borderColor='';btn.style.color='';
+    pulse.classList.remove('active');
+    lbl.textContent = 'Режим: қолмен';
+    clearInterval(autoInterval);
+  }
+}
+
+function resetSim(){
+  particles = [];
+  stats = {total:0,pass:0,scat:0,boun:0};
+  if(autoMode) toggleAuto();
+  if(animId){ cancelAnimationFrame(animId); animId=null; }
+  updateStats();
+  document.getElementById('conclusion').style.display='none';
+  drawBase();
+}
+
+function updateStats(){
+  const {total,pass,scat,boun} = stats;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-pass').textContent  = pass;
+  document.getElementById('s-scat').textContent  = scat;
+  document.getElementById('s-boun').textContent  = boun;
+  const pP = total>0 ? Math.round(pass/total*100) : 0;
+  const pS = total>0 ? Math.round(scat/total*100) : 0;
+  const pB = total>0 ? Math.round(boun/total*100) : 0;
+  document.getElementById('pct-pass').textContent = pP+'%';
+  document.getElementById('pct-scat').textContent = pS+'%';
+  document.getElementById('pct-boun').textContent = pB+'%';
+  document.getElementById('bar-pass').style.width = pP+'%';
+  document.getElementById('bar-scat').style.width = pS+'%';
+  document.getElementById('bar-boun').style.width = pB+'%';
+  if(total >= 40) document.getElementById('conclusion').style.display='block';
+}
+
+function drawBase(){
+  ctx.clearRect(0,0,W,H);
+  const nr = getNR();
+
+  // Electron orbits decoration
+  ctx.save();
+  ctx.translate(CX,CY);
+  const orbitRadii = [nr*4, nr*7, nr*11];
+  for(let or of orbitRadii){
+    ctx.beginPath();
+    ctx.ellipse(0,0,or,or*0.4,0,0,Math.PI*2);
+    ctx.strokeStyle='rgba(0,229,255,0.06)';
+    ctx.lineWidth=1;
+    ctx.setLineDash([3,6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  // Electrons
+  const t = Date.now()*0.001;
+  const eDefs = [{r:nr*4,ry:nr*1.6,speed:1.2},{r:nr*7,ry:nr*2.8,speed:-0.7},{r:nr*11,ry:nr*4.4,speed:0.5}];
+  for(let ed of eDefs){
+    const ex = Math.cos(t*ed.speed)*ed.r;
+    const ey = Math.sin(t*ed.speed)*ed.ry;
+    ctx.beginPath();
+    ctx.arc(ex,ey,2.5,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,229,255,0.7)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(ex,ey,5,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,229,255,0.15)';
+    ctx.fill();
+  }
+
+  // Nucleus glow
+  const grad = ctx.createRadialGradient(0,0,0,0,0,nr*1.8);
+  grad.addColorStop(0,'rgba(255,215,0,0.25)');
+  grad.addColorStop(1,'rgba(255,215,0,0)');
+  ctx.beginPath();
+  ctx.arc(0,0,nr*1.8,0,Math.PI*2);
+  ctx.fillStyle=grad;
+  ctx.fill();
+
+  // Nucleus core
+  const nucGrad = ctx.createRadialGradient(-nr*0.3,-nr*0.3,0,0,0,nr);
+  nucGrad.addColorStop(0,'#FFF9C4');
+  nucGrad.addColorStop(0.4,'#FFD700');
+  nucGrad.addColorStop(1,'#B8860B');
+  ctx.beginPath();
+  ctx.arc(0,0,nr,0,Math.PI*2);
+  ctx.fillStyle=nucGrad;
+  ctx.fill();
+  // Nucleus inner shimmer
+  ctx.beginPath();
+  ctx.arc(-nr*0.25,-nr*0.25,nr*0.35,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.25)';
+  ctx.fill();
+
+  ctx.restore();
+
+  // Source label
+  ctx.save();
+  ctx.font='bold 9px "Share Tech Mono"';
+  ctx.fillStyle='rgba(0,229,255,0.35)';
+  ctx.letterSpacing='2px';
+  ctx.fillText('α-БӨЛШЕК КӨЗІ', 12, CY - 14);
+  ctx.fillText('▶', 12, CY + 4);
+  ctx.restore();
+
+  // Detector arc on right
+  ctx.save();
+  ctx.translate(CX,CY);
+  const detR = Math.min(W,H)*0.46;
+  ctx.beginPath();
+  ctx.arc(0,0,detR,-Math.PI*0.7,Math.PI*0.7);
+  ctx.strokeStyle='rgba(0,229,255,0.12)';
+  ctx.lineWidth=6;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(0,0,detR,-Math.PI*0.7,Math.PI*0.7);
+  ctx.strokeStyle='rgba(0,229,255,0.25)';
+  ctx.lineWidth=1;
+  ctx.stroke();
+  // Detector label
+  ctx.font='8px "Share Tech Mono"';
+  ctx.fillStyle='rgba(0,229,255,0.4)';
+  ctx.fillText('ДЕТЕКТОР', detR-50, -8);
+  ctx.restore();
+}
+
+function animLoop(){
+  const nr = getNR();
+  const trl = getTrl();
+  drawBase();
+
+  // Draw trails + particles
+  for(let p of particles){
+    // Deflection logic
+    if(!p.deflected){
+      const dx = p.x - CX, dy = p.y - CY;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      if(p.type==='boun' && dist < nr*1.5){
+        p.dx = -Math.abs(p.dx)*0.85;
+        p.dy = p.deflectDy;
+        p.deflected = true;
+      } else if(p.type==='scat' && p.x > CX-nr*3 && p.x < CX+nr*2){
+        p.dy += p.deflectDy * 0.08;
+        if(p.x > CX) p.deflected = true;
+      }
+    }
+    p.x += p.dx; p.y += p.dy;
+    p.trail.push({x:p.x, y:p.y});
+    if(p.trail.length > trl) p.trail.shift();
+
+    // Draw trail
+    if(p.trail.length > 1){
+      for(let i=1;i<p.trail.length;i++){
+        const a = i/p.trail.length;
+        ctx.beginPath();
+        ctx.moveTo(p.trail[i-1].x, p.trail[i-1].y);
+        ctx.lineTo(p.trail[i].x, p.trail[i].y);
+        ctx.strokeStyle = p.color + Math.floor(a*120).toString(16).padStart(2,'0');
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+    }
+    // Draw particle
+    // Glow
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,8,0,Math.PI*2);
+    ctx.fillStyle=p.color+'22';
+    ctx.fill();
+    // Core
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,3.5,0,Math.PI*2);
+    ctx.fillStyle=p.color;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,1.5,0,Math.PI*2);
+    ctx.fillStyle='#fff';
+    ctx.fill();
+  }
+
+  // Remove out-of-bounds
+  particles = particles.filter(p => p.x>-20 && p.x<W+20 && p.y>-20 && p.y<H+20);
+  document.getElementById('f-active').textContent = particles.length;
+
+  if(particles.length > 0 || autoMode){
+    animId = requestAnimationFrame(animLoop);
+  } else {
+    animId = null;
+    drawBase();
+  }
+}
+
+drawBase();
+// Redraw base with electron animation
+setInterval(()=>{ if(!animId) drawBase(); }, 33);
+</script>
+</body>
+</html>
