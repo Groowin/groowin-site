@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Франк–Герц Тәжірибесі • Виртуалды Зертхана</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;800&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   CSS VARIABLES — AMBER OSCILLOSCOPE
+════════════════════════════════════════ */
+:root {
+  --bg-deep:    #020402;
+  --bg-panel:   #060b06;
+  --bg-card:    #0a110a;
+  --bg-inset:   #040804;
+  --border:     #1a2e1a;
+  --border-hi:  #2a4a2a;
+
+  --amber:      #ffb300;
+  --amber-dim:  #c47d00;
+  --amber-glow: rgba(255,179,0,0.15);
+  --amber-soft: rgba(255,179,0,0.06);
+
+  --green-p:    #39ff14;   /* phosphor green for tube */
+  --green-dim:  #1a7a00;
+  --cyan-p:     #00e5ff;
+  --pink-p:     #ff4081;
+  --violet-p:   #e040fb;
+
+  --text-main:  #f0c060;
+  --text-dim:   #7a5a20;
+  --text-label: #c49030;
+
+  --tube-bg:    #010a01;
+  --cathode:    #ff6d00;
+  --anode:      #42a5f5;
+  --grid-col:   #ffee58;
+  --electron:   #b9f6ca;
+  --hg-cold:    #546e7a;
+  --hg-hot:     #e040fb;
+
+  --shadow-amber: 0 0 20px rgba(255,179,0,0.25);
+  --shadow-green: 0 0 16px rgba(57,255,20,0.3);
+}
+
+/* ════════════ RESET & BASE ════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Exo 2', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,179,0,0.04) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,179,0,0.015) 3px, rgba(255,179,0,0.015) 4px);
+}
+
+/* ════════════ HEADER ════════════ */
+.site-header {
+  position: relative;
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+}
+.header-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 5px;
+  color: var(--amber-dim);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  border: 1px solid #2a2000;
+  padding: 3px 18px;
+  border-radius: 1px;
+}
+.site-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(20px, 3.5vw, 42px);
+  font-weight: 400;
+  color: var(--amber);
+  text-shadow: 0 0 40px var(--amber), 0 0 80px rgba(255,179,0,0.3);
+  letter-spacing: 3px;
+  text-align: center;
+  line-height: 1.2;
+}
+.site-sub {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* ════════════ LAYOUT ════════════ */
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 14px;
+  padding: 14px;
+  max-width: 1380px;
+  margin: 0 auto;
+}
+@media (max-width: 960px) {
+  .workspace { grid-template-columns: 1fr; }
+}
+
+/* ════════════ CARD ════════════ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--amber) 40%, var(--amber-dim) 100%);
+  opacity: 0.7;
+}
+.card-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--amber-dim);
+  padding: 12px 18px 0;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title .led {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 8px var(--amber);
+  animation: led-blink 2s infinite;
+  flex-shrink: 0;
+}
+.led-green { background: var(--green-p) !important; box-shadow: 0 0 8px var(--green-p) !important; }
+.led-cyan  { background: var(--cyan-p) !important;  box-shadow: 0 0 8px var(--cyan-p) !important;  }
+.led-pink  { background: var(--pink-p) !important;  box-shadow: 0 0 8px var(--pink-p) !important;  }
+@keyframes led-blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ════════════ VACUUM TUBE CANVAS ════════════ */
+#tubeCanvas {
+  display: block;
+  width: 100%;
+  background: var(--tube-bg);
+  cursor: crosshair;
+}
+
+/* ════════════ READOUT STRIP ════════════ */
+.readout-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+}
+.readout-cell {
+  background: var(--bg-inset);
+  padding: 10px 14px;
+  text-align: center;
+}
+.readout-val {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 22px;
+  color: var(--amber);
+  text-shadow: 0 0 12px var(--amber);
+  display: block;
+  line-height: 1;
+}
+.readout-val.green { color: var(--green-p); text-shadow: 0 0 12px var(--green-p); }
+.readout-val.cyan  { color: var(--cyan-p);  text-shadow: 0 0 12px var(--cyan-p);  }
+.readout-val.pink  { color: var(--pink-p);  text-shadow: 0 0 12px var(--pink-p);  }
+.readout-key {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-family: 'Share Tech Mono', monospace;
+  margin-top: 4px;
+  display: block;
+}
+
+/* ════════════ CHART ════════════ */
+.chart-wrap {
+  padding: 14px 16px 16px;
+  position: relative;
+}
+#fhChart { display: block; width: 100% !important; height: 240px !important; }
+
+/* ════════════ CONTROLS ════════════ */
+.ctrl-section { padding: 14px 18px 18px; }
+
+.voltage-display {
+  text-align: center;
+  margin-bottom: 16px;
+  padding: 14px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-hi);
+  border-radius: 2px;
+}
+.voltage-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 48px;
+  color: var(--amber);
+  text-shadow: 0 0 30px var(--amber), 0 0 60px rgba(255,179,0,0.2);
+  line-height: 1;
+}
+.voltage-unit {
+  font-size: 16px;
+  color: var(--amber-dim);
+  margin-left: 4px;
+  vertical-align: super;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* Slider */
+.sl-wrap { margin-bottom: 16px; }
+.sl-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: 'Share Tech Mono', monospace;
+  margin-bottom: 10px;
+}
+input[type=range] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 4px;
+  background: linear-gradient(90deg, var(--amber) var(--pct, 0%), var(--border) var(--pct, 0%));
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--bg-deep);
+  border: 2px solid var(--amber);
+  box-shadow: 0 0 12px var(--amber);
+  cursor: pointer;
+  transition: transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+/* Speed slider */
+.sl-wrap-sm input[type=range] {
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan-p) var(--spct, 50%), var(--border) var(--spct, 50%));
+}
+.sl-wrap-sm input[type=range]::-webkit-slider-thumb { border-color: var(--cyan-p); box-shadow: 0 0 8px var(--cyan-p); }
+
+/* Buttons */
+.btn-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.btn {
+  flex: 1;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 11px 6px;
+  border: 1px solid;
+  border-radius: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.btn:hover::after { opacity: .07; }
+.btn-run {
+  background: rgba(255,179,0,.08);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+.btn-run.active {
+  background: rgba(255,179,0,.18);
+  box-shadow: 0 0 18px rgba(255,179,0,.3);
+}
+.btn-clear {
+  background: rgba(0,229,255,.05);
+  border-color: var(--cyan-p);
+  color: var(--cyan-p);
+}
+.btn-clear:hover { box-shadow: 0 0 14px rgba(0,229,255,.25); }
+.btn-auto {
+  background: rgba(57,255,20,.05);
+  border-color: var(--green-p);
+  color: var(--green-p);
+}
+.btn-auto.active { background: rgba(57,255,20,.15); box-shadow: 0 0 16px rgba(57,255,20,.25); }
+
+/* Status bar */
+.status-bar {
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 8px 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.status-bar .s-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+}
+.status-bar.event .s-dot { background: var(--pink-p); box-shadow: 0 0 8px var(--pink-p); animation: led-blink .4s 3; }
+.status-bar.event { color: var(--pink-p); }
+
+/* ════════════ TABS ════════════ */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 18px;
+  gap: 0;
+}
+.tab-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all .2s;
+  margin-bottom: -1px;
+}
+.tab-btn:hover { color: var(--amber-dim); }
+.tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); }
+
+.tab-pane { display: none; padding: 16px 18px 20px; }
+.tab-pane.active { display: block; }
+
+/* ════════════ THEORY ════════════ */
+.theory-text {
+  font-size: 13.5px;
+  color: #b08030;
+  line-height: 1.75;
+  margin-bottom: 12px;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 300;
+}
+.theory-text b { color: var(--amber); font-weight: 600; }
+.formula-block {
+  background: var(--bg-inset);
+  border: 1px solid var(--border-hi);
+  border-left: 3px solid var(--amber);
+  border-radius: 2px;
+  padding: 12px 18px;
+  margin: 12px 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 15px;
+  color: var(--amber);
+  text-shadow: 0 0 10px rgba(255,179,0,.4);
+  letter-spacing: 1px;
+}
+.formula-block small {
+  display: block;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+.highlight-box {
+  background: rgba(255,64,129,.06);
+  border: 1px solid rgba(255,64,129,.25);
+  border-radius: 2px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #e080a0;
+  line-height: 1.6;
+}
+.highlight-box b { color: var(--pink-p); }
+
+/* Lab task */
+.lab-task {
+  background: rgba(57,255,20,.05);
+  border: 1px solid rgba(57,255,20,.2);
+  border-left: 3px solid var(--green-p);
+  border-radius: 2px;
+  padding: 14px 16px;
+  margin-top: 12px;
+}
+.lab-task h4 {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--green-p);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.lab-task ol {
+  padding-left: 18px;
+  font-size: 13px;
+  color: #70c070;
+  line-height: 1.8;
+  font-weight: 300;
+}
+.lab-task li b { color: var(--green-p); }
+
+/* ════════════ QUIZ ════════════ */
+.quiz-wrap { }
+.quiz-counter {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.quiz-dots { display: flex; gap: 5px; }
+.qdot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border-hi);
+  transition: all .3s;
+}
+.qdot.curr { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+.qdot.ok   { background: var(--green-p); box-shadow: 0 0 5px var(--green-p); }
+.qdot.bad  { background: var(--pink-p);  box-shadow: 0 0 5px var(--pink-p);  }
+
+.quiz-q {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e8c060;
+  line-height: 1.65;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: rgba(255,179,0,.05);
+  border-left: 3px solid var(--amber-dim);
+  border-radius: 2px;
+}
+.quiz-opts { display: flex; flex-direction: column; gap: 7px; }
+.q-opt {
+  background: var(--bg-inset);
+  border: 1px solid var(--border-hi);
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #b09040;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 400;
+  transition: all .2s;
+  line-height: 1.4;
+}
+.q-opt:hover:not(:disabled) {
+  border-color: var(--amber-dim);
+  color: var(--amber);
+  background: rgba(255,179,0,.05);
+}
+.q-opt.ok  { border-color: var(--green-p); background: rgba(57,255,20,.07);  color: var(--green-p); }
+.q-opt.bad { border-color: var(--pink-p);  background: rgba(255,64,129,.07); color: var(--pink-p);  }
+.q-opt:disabled { cursor: default; }
+
+.quiz-fb {
+  margin-top: 10px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  line-height: 1.65;
+  border-radius: 2px;
+  display: none;
+}
+.quiz-fb.show { display: block; }
+.quiz-fb.ok  { background: rgba(57,255,20,.06);  border: 1px solid rgba(57,255,20,.2);  color: #80d080; }
+.quiz-fb.bad { background: rgba(255,64,129,.06); border: 1px solid rgba(255,64,129,.2); color: #e08090; }
+
+.quiz-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+}
+.quiz-score-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+.q-next-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  padding: 8px 18px;
+  background: rgba(255,179,0,.08);
+  border: 1px solid var(--amber-dim);
+  color: var(--amber);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .2s;
+  text-transform: uppercase;
+}
+.q-next-btn:hover:not(:disabled) { background: rgba(255,179,0,.16); box-shadow: 0 0 14px rgba(255,179,0,.2); }
+.q-next-btn:disabled { opacity: .3; cursor: default; }
+
+.quiz-final {
+  text-align: center;
+  padding: 20px 0 10px;
+}
+.qf-big {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 52px;
+  color: var(--amber);
+  text-shadow: 0 0 30px var(--amber);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.qf-msg { font-size: 14px; color: var(--text-dim); margin-bottom: 18px; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-badge">☢ 11-сынып физикасы · квант физикасы зертханасы</div>
+  <div class="site-title">ФРАНК – ГЕРЦ ТӘЖІРИБЕСІ</div>
+  <div class="site-sub">Frank &amp; Hertz · 1914 · Нобель сыйлығы · Атомдық энергия деңгейлерін дәлелдеу</div>
+</header>
+
+<div class="workspace">
+
+  <!-- ══════ LEFT COLUMN ══════ -->
+  <div style="display:flex;flex-direction:column;gap:14px;">
+
+    <!-- TUBE VISUALIZATION -->
+    <div class="card">
+      <div class="card-title"><div class="led led-green"></div>ВАКУУМДЫҚ ТҮТІК — ЭЛЕКТРОНДАР ҚОЗҒАЛЫСЫ</div>
+      <canvas id="tubeCanvas" width="700" height="220"></canvas>
+      <div class="readout-strip">
+        <div class="readout-cell">
+          <span class="readout-val" id="rv-u">0.00</span>
+          <span class="readout-key">Кернеу U (В)</span>
+        </div>
+        <div class="readout-cell">
+          <span class="readout-val green" id="rv-i">0.000</span>
+          <span class="readout-key">Ток I (мкА)</span>
+        </div>
+        <div class="readout-cell">
+          <span class="readout-val cyan" id="rv-e">0.0</span>
+          <span class="readout-key">Электрон Ek (эВ)</span>
+        </div>
+        <div class="readout-cell">
+          <span class="readout-val pink" id="rv-col">0</span>
+          <span class="readout-key">Соқтығысу саны</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="card chart-wrap">
+      <div class="card-title" style="margin-bottom:10px"><div class="led" style="background:var(--amber);box-shadow:0 0 8px var(--amber)"></div>ВОЛЬТ-АМПЕРЛІК СИПАТТАМА (ВАС) — НАҚТЫ УАҚЫТ</div>
+      <canvas id="fhChart"></canvas>
+    </div>
+
+    <!-- THEORY / TASK TABS -->
+    <div class="card">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('theory',this)">Теория</button>
+        <button class="tab-btn" onclick="switchTab('task',this)">Зертханалық тапсырма</button>
+        <button class="tab-btn" onclick="switchTab('quiz',this)">Тест</button>
+      </div>
+
+      <!-- THEORY -->
+      <div class="tab-pane active" id="tab-theory">
+        <p class="theory-text">
+          <b>Мақсаты:</b> Сынап буы толтырылған вакуумдық түтікте электрондардың атомдармен <b>бейсерпімді соқтығысуын</b> бақылап, атомдық энергия деңгейлерінің <b>квантталуын</b> тәжірибе жүзінде дәлелдеу.
+        </p>
+        <div class="formula-block">
+          ΔE = e · ΔU = 4.9 эВ
+          <small>// сынап атомының бірінші қозу энергиясы</small>
+        </div>
+        <p class="theory-text">
+          <b>Нильс Бор постулаттарымен байланысы:</b> Бор теориясы бойынша атом тек белгілі дискретті энергетикалық деңгейлерде болады. Электрон атоммен соқтығысқанда дәл <b>4.9 эВ</b> энергияны бере алады — бұдан аз немесе көп емес. Бұл квантталудың тікелей тәжірибелік дәлелі.
+        </p>
+        <div class="formula-block">
+          I = I₀ · f(U, ΔU = 4.9 В)
+          <small>// ток периодты түрде максимумдар мен минимумдар жасайды</small>
+        </div>
+        <div class="highlight-box">
+          <b>Тарихи маңыздылық:</b> Джеймс Франк пен Густав Герц 1914 жылы жүргізген бұл тәжірибе Бор атом моделін тәжірибежүзінде растаған бірінші эксперимент. Ғалымдар 1925 жылы <b>Нобель сыйлығын</b> алды.
+        </div>
+      </div>
+
+      <!-- TASK -->
+      <div class="tab-pane" id="tab-task">
+        <div class="lab-task">
+          <h4>⚗ Зертханалық тапсырма нұсқаулығы</h4>
+          <ol>
+            <li>«<b>Автоматты сканерлеу</b>» түймесін басып, кернеу 0-ден 20 В-қа автоматты түрде артсын.</li>
+            <li>ВАС графигінде <b>«ара тістері»</b> тәрізді өрнек пайда болғанша күтіңіз.</li>
+            <li>Графиктегі <b>көршілес екі максимумның</b> кернеу мәндерін U₁ және U₂ анықтаңыз.</li>
+            <li>Формуламен есептеңіз: <b>ΔU = U₂ − U₁</b></li>
+            <li>Атомның қозу энергиясы: <b>E = e · ΔU</b> (эВ-та ΔU-ға тең)</li>
+            <li>Алынған мәнді теориялық <b>4.9 эВ</b> мәнімен салыстырып, <b>салыстырмалы қате</b> есептеңіз.</li>
+          </ol>
+        </div>
+        <div class="formula-block" style="margin-top:14px">
+          δ = |E_тәж − 4.9| / 4.9 × 100%
+          <small>// салыстырмалы қате формуласы</small>
+        </div>
+        <p class="theory-text" style="margin-top:12px">
+          <b>Ескерту:</b> Нақты тәжірибеде бірінші максимум 4.9 В-тан жоғары болуы мүмкін, себебі катод пен тор арасында <b>контактілік потенциалдар айырмасы</b> бар.
+        </p>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="tab-pane" id="tab-quiz">
+        <div class="quiz-wrap" id="quizWrap"></div>
+      </div>
+    </div>
+
+  </div><!-- /left -->
+
+  <!-- ══════ RIGHT COLUMN — CONTROLS ══════ -->
+  <div style="display:flex;flex-direction:column;gap:14px;">
+
+    <!-- VOLTAGE CONTROL -->
+    <div class="card ctrl-section">
+      <div class="card-title" style="padding-left:0;margin-bottom:14px"><div class="led"></div>БАСҚАРУ ТАҚТАСЫ</div>
+
+      <div class="voltage-display">
+        <span class="voltage-num" id="voltNum">0.0</span><span class="voltage-unit">В</span>
+      </div>
+
+      <div class="sl-wrap">
+        <div class="sl-label"><span>Кернеу U</span><span>0 – 20 В</span></div>
+        <input type="range" id="voltSlider" min="0" max="20" step="0.1" value="0" oninput="onVoltChange(this)">
+      </div>
+
+      <div class="sl-wrap sl-wrap-sm">
+        <div class="sl-label"><span>Электрон жылдамдығы</span><span id="speedLbl">×1</span></div>
+        <input type="range" id="speedSlider" min="1" max="5" step="1" value="2" oninput="onSpeedChange(this)">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-run" id="btnRun" onclick="toggleRun()">▶ БАСТАУ</button>
+        <button class="btn btn-clear" onclick="clearChart()">↺ ТАЗАЛАУ</button>
+      </div>
+      <button class="btn btn-auto" id="btnAuto" onclick="toggleAuto()" style="width:100%">⇢ АВТОСКАНЕР</button>
+
+      <div class="status-bar" id="statusBar">
+        <div class="s-dot"></div>
+        <span id="statusTxt">Жүйе дайын. Кернеуді арттырып бастаңыз.</span>
+      </div>
+    </div>
+
+    <!-- EXCITATION INDICATOR -->
+    <div class="card" style="padding:14px 18px 18px;">
+      <div class="card-title" style="padding:0 0 12px"><div class="led led-pink"></div>ҚОЗУ ИНДИКАТОРЫ</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:var(--bg-inset);border:1px solid var(--border);padding:10px;text-align:center;border-radius:2px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:2px;margin-bottom:6px;">СОҚТЫҒЫСУ</div>
+          <div id="collLevel" style="font-family:'Share Tech Mono',monospace;font-size:26px;color:var(--pink-p);text-shadow:0 0 12px var(--pink-p);">—</div>
+        </div>
+        <div style="background:var(--bg-inset);border:1px solid var(--border);padding:10px;text-align:center;border-radius:2px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:2px;margin-bottom:6px;">МАКСИМУМ</div>
+          <div id="maxLevel" style="font-family:'Share Tech Mono',monospace;font-size:26px;color:var(--amber);text-shadow:0 0 12px var(--amber);">—</div>
+        </div>
+      </div>
+
+      <!-- Peak markers -->
+      <div style="margin-top:12px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:8px;">АНЫҚТАЛҒАН МАКСИМУМДАР</div>
+        <div id="peakList" style="display:flex;flex-wrap:wrap;gap:5px;min-height:28px;"></div>
+      </div>
+    </div>
+
+    <!-- LEGEND -->
+    <div class="card" style="padding:14px 18px 18px;">
+      <div class="card-title" style="padding:0 0 12px"><div class="led led-cyan"></div>БЕЛГІЛЕР</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-family:'Share Tech Mono',monospace;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:14px;height:14px;border-radius:50%;background:var(--cathode);box-shadow:0 0 8px var(--cathode);flex-shrink:0;"></div>
+          <span style="color:#b08030;">Катод (K) — электрон шығаратын элемент</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:14px;height:14px;border-radius:50%;background:var(--grid-col);box-shadow:0 0 8px var(--grid-col);flex-shrink:0;"></div>
+          <span style="color:#b08030;">Тор-сетка (G) — үдеткіш электрод</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:14px;height:14px;border-radius:50%;background:var(--anode);box-shadow:0 0 8px var(--anode);flex-shrink:0;"></div>
+          <span style="color:#b08030;">Анод (A) — токты жинайтын элемент</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:14px;height:14px;border-radius:50%;background:var(--electron);box-shadow:0 0 6px var(--electron);flex-shrink:0;"></div>
+          <span style="color:#b08030;">Электрондар (e⁻)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:14px;height:14px;border-radius:50%;background:var(--hg-cold);flex-shrink:0;"></div>
+          <span style="color:#b08030;">Hg атомы (қозбаған)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:14px;height:14px;border-radius:50%;background:var(--hg-hot);box-shadow:0 0 10px var(--hg-hot);flex-shrink:0;"></div>
+          <span style="color:#b08030;">Hg атомы (қозған, жарқыраған)</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /right -->
+</div><!-- /workspace -->
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+// ══════════════════════════════════
+//  CONSTANTS
+// ══════════════════════════════════
+const EXCITATION = 4.9;   // eV / V
+const HG_ROWS = 3, HG_COLS = 8;
+const NUM_ELECTRONS = 14;
+const TUBE_COLORS = {
+  cathode: '#ff6d00', anode: '#42a5f5', grid: '#ffee58',
+  electron: '#b9f6ca', hgCold: '#546e7a', hgHot: '#e040fb',
+  tubeBg: '#010a01', tubeFrame: '#1a2e1a'
+};
+
+// ══════════════════════════════════
+//  STATE
+// ══════════════════════════════════
+let voltage = 0;
+let running = false;
+let autoMode = false;
+let autoDir = 1;
+let animId = null;
+let lastTs = null;
+let collisionCount = 0;
+let chartPoints = [];   // {x, y}
+let detectedPeaks = [];
+let prevI = -1;
+let prevPrevI = -1;
+let statusTimeout = null;
+
+// Electrons
+let electrons = [];
+// Hg atoms
+let hgAtoms = [];
+// speed multiplier
+let speedMult = 2;
+
+// ══════════════════════════════════
+//  CANVAS SETUP
+// ══════════════════════════════════
+const tube = document.getElementById('tubeCanvas');
+const tctx = tube.getContext('2d');
+const TW = tube.width, TH = tube.height;
+
+// Positions
+const CATHODE_X = 80;
+const GRID_X = TW - 80;
+const ANODE_X = TW - 36;
+const TUBE_TOP = 30, TUBE_BOT = TH - 30;
+const TUBE_MID = (TUBE_TOP + TUBE_BOT) / 2;
+
+// Build Hg atom grid
+function buildHgAtoms() {
+  hgAtoms = [];
+  const spanX = GRID_X - CATHODE_X - 60;
+  const spanY = TUBE_BOT - TUBE_TOP - 40;
+  for (let r = 0; r < HG_ROWS; r++) {
+    for (let c = 0; c < HG_COLS; c++) {
+      hgAtoms.push({
+        x: CATHODE_X + 50 + (c + 0.5) * (spanX / HG_COLS),
+        y: TUBE_TOP + 20 + (r + 0.5) * (spanY / HG_ROWS),
+        glow: 0,    // 0..1
+        r: 9
+      });
+    }
+  }
+}
+
+// Build electrons
+function buildElectrons() {
+  electrons = [];
+  for (let i = 0; i < NUM_ELECTRONS; i++) {
+    electrons.push(newElectron(true));
+  }
+}
+
+function newElectron(random) {
+  return {
+    x: random ? CATHODE_X + Math.random() * (GRID_X - CATHODE_X - 40) : CATHODE_X + 5,
+    y: TUBE_TOP + 20 + Math.random() * (TUBE_BOT - TUBE_TOP - 40),
+    vy: (Math.random() - 0.5) * 0.8,
+    collided: false,
+    alpha: 0.6 + Math.random() * 0.4
+  };
+}
+
+buildHgAtoms();
+buildElectrons();
+
+// ══════════════════════════════════
+//  PHYSICS
+// ══════════════════════════════════
+function currentFromVoltage(U) {
+  if (U <= 0) return 0;
+  // Sawtooth-like: rises, drops at multiples of 4.9
+  const base = 0.35 * Math.sqrt(U);
+  // peaks and dips
+  const phase = (U % EXCITATION) / EXCITATION;  // 0..1
+  // Smooth sawtooth
+  const saw = phase < 0.75
+    ? Math.sin(phase * Math.PI * 1.3)
+    : Math.sin(phase * Math.PI * 1.3) * Math.max(0, 1 - (phase - 0.75) * 12);
+  const amplitude = 0.18 * Math.sqrt(U / EXCITATION);
+  return Math.max(0, base + amplitude * saw);
+}
+
+function numCollisions(U) {
+  return Math.floor(U / EXCITATION);
+}
+
+// ══════════════════════════════════
+//  DRAW TUBE
+// ══════════════════════════════════
+function drawTube() {
+  tctx.clearRect(0, 0, TW, TH);
+
+  // Background
+  tctx.fillStyle = '#010a01';
+  tctx.fillRect(0, 0, TW, TH);
+
+  // Grid lines inside tube
+  tctx.strokeStyle = 'rgba(26,46,26,0.5)';
+  tctx.lineWidth = 1;
+  for (let x = CATHODE_X; x < GRID_X; x += 40) {
+    tctx.beginPath(); tctx.moveTo(x, TUBE_TOP); tctx.lineTo(x, TUBE_BOT); tctx.stroke();
+  }
+
+  // Tube body
+  const tGrad = tctx.createLinearGradient(0, TUBE_TOP, 0, TUBE_BOT);
+  tGrad.addColorStop(0, 'rgba(26,46,26,0.6)');
+  tGrad.addColorStop(0.5, 'rgba(10,17,10,0.2)');
+  tGrad.addColorStop(1, 'rgba(26,46,26,0.6)');
+  tctx.fillStyle = tGrad;
+  tctx.strokeStyle = '#2a4a2a';
+  tctx.lineWidth = 1.5;
+  roundRect(tctx, CATHODE_X - 20, TUBE_TOP, ANODE_X - CATHODE_X + 46, TUBE_BOT - TUBE_TOP, 8);
+  tctx.fill(); tctx.stroke();
+
+  // Electric field arrows (when voltage > 0)
+  if (voltage > 0.5) {
+    const alpha = Math.min(0.4, voltage / 20 * 0.5);
+    tctx.globalAlpha = alpha;
+    tctx.strokeStyle = '#3a5a3a';
+    tctx.lineWidth = 0.8;
+    for (let y = TUBE_TOP + 25; y < TUBE_BOT - 15; y += 22) {
+      drawArrow(tctx, CATHODE_X + 15, y, GRID_X - 25, y);
+    }
+    tctx.globalAlpha = 1;
+  }
+
+  // Hg atoms
+  for (const a of hgAtoms) {
+    tctx.save();
+    if (a.glow > 0.01) {
+      tctx.shadowBlur = 20 * a.glow;
+      tctx.shadowColor = '#e040fb';
+      const c = lerpColor('#546e7a', '#e040fb', a.glow);
+      tctx.fillStyle = c;
+    } else {
+      tctx.fillStyle = '#3a5060';
+    }
+    tctx.globalAlpha = 0.85;
+    tctx.beginPath();
+    tctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+    tctx.fill();
+    if (a.glow > 0.5) {
+      tctx.globalAlpha = a.glow * 0.3;
+      tctx.fillStyle = '#e040fb';
+      tctx.beginPath();
+      tctx.arc(a.x, a.y, a.r * 2.2, 0, Math.PI * 2);
+      tctx.fill();
+    }
+    // Label
+    tctx.globalAlpha = 0.6;
+    tctx.fillStyle = '#c0d0d0';
+    tctx.font = '6px Share Tech Mono';
+    tctx.textAlign = 'center';
+    tctx.fillText('Hg', a.x, a.y + 2);
+    tctx.restore();
+  }
+
+  // Electrons
+  const vx = speedMult * (0.8 + voltage / 20 * 2.5);
+  for (const e of electrons) {
+    tctx.save();
+    tctx.globalAlpha = e.alpha * (running ? 1 : 0.4);
+    tctx.shadowBlur = 8;
+    tctx.shadowColor = '#b9f6ca';
+    tctx.fillStyle = e.collided ? '#ff4081' : '#b9f6ca';
+    tctx.beginPath();
+    tctx.arc(e.x, e.y, 3.5, 0, Math.PI * 2);
+    tctx.fill();
+    tctx.restore();
+  }
+
+  // ── CATHODE ──
+  drawElectrode(CATHODE_X, TUBE_MID, 'K', TUBE_COLORS.cathode, 22, 80);
+
+  // ── GRID ──
+  tctx.save();
+  tctx.strokeStyle = TUBE_COLORS.grid;
+  tctx.lineWidth = 1.5;
+  tctx.shadowBlur = 8;
+  tctx.shadowColor = TUBE_COLORS.grid;
+  tctx.globalAlpha = 0.8;
+  for (let y = TUBE_TOP + 6; y < TUBE_BOT - 4; y += 10) {
+    tctx.beginPath();
+    tctx.moveTo(GRID_X - 3, y);
+    tctx.lineTo(GRID_X + 3, y);
+    tctx.stroke();
+  }
+  tctx.globalAlpha = 1;
+  tctx.fillStyle = TUBE_COLORS.grid;
+  tctx.font = 'bold 11px Share Tech Mono';
+  tctx.textAlign = 'center';
+  tctx.shadowBlur = 6;
+  tctx.fillText('G', GRID_X, TUBE_TOP - 8);
+  tctx.restore();
+
+  // ── ANODE ──
+  drawElectrode(ANODE_X, TUBE_MID, 'A', TUBE_COLORS.anode, 18, 60);
+
+  // Voltage labels
+  tctx.save();
+  tctx.font = '9px Share Tech Mono';
+  tctx.textAlign = 'center';
+  tctx.fillStyle = '#ffb300cc';
+  tctx.fillText(`U = ${voltage.toFixed(1)} В`, (CATHODE_X + GRID_X) / 2, TUBE_BOT + 14);
+  tctx.restore();
+}
+
+function drawElectrode(x, y, label, color, halfH, height) {
+  tctx.save();
+  tctx.shadowBlur = 12;
+  tctx.shadowColor = color;
+  tctx.strokeStyle = color;
+  tctx.lineWidth = 3;
+  tctx.beginPath();
+  tctx.moveTo(x, TUBE_TOP + 10);
+  tctx.lineTo(x, TUBE_BOT - 10);
+  tctx.stroke();
+  tctx.fillStyle = color;
+  tctx.font = 'bold 12px Share Tech Mono';
+  tctx.textAlign = 'center';
+  tctx.fillText(label, x, TUBE_TOP - 8);
+  tctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+function drawArrow(ctx, x1, y1, x2, y2) {
+  ctx.beginPath();
+  ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+  ctx.stroke();
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 6 * Math.cos(ang - 0.4), y2 - 6 * Math.sin(ang - 0.4));
+  ctx.lineTo(x2 - 6 * Math.cos(ang + 0.4), y2 - 6 * Math.sin(ang + 0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+function lerpColor(a, b, t) {
+  const ah = parseInt(a.slice(1), 16);
+  const bh = parseInt(b.slice(1), 16);
+  const ar = ah >> 16, ag = (ah >> 8) & 0xff, ab = ah & 0xff;
+  const br = bh >> 16, bg = (bh >> 8) & 0xff, bb = bh & 0xff;
+  const rr = Math.round(ar + (br - ar) * t);
+  const rg = Math.round(ag + (bg - ag) * t);
+  const rb = Math.round(ab + (bb - ab) * t);
+  return `rgb(${rr},${rg},${rb})`;
+}
+
+// ══════════════════════════════════
+//  CHART SETUP
+// ══════════════════════════════════
+const fhCtx = document.getElementById('fhChart').getContext('2d');
+const fhChart = new Chart(fhCtx, {
+  type: 'line',
+  data: {
+    datasets: [{
+      label: 'I (мкА)',
+      data: [],
+      borderColor: '#ffb300',
+      backgroundColor: 'rgba(255,179,0,0.06)',
+      borderWidth: 2.5,
+      pointRadius: 0,
+      tension: 0.3,
+      fill: true
+    }, {
+      label: 'Максимумдар',
+      data: [],
+      borderColor: 'transparent',
+      backgroundColor: 'rgba(57,255,20,0.0)',
+      pointBackgroundColor: '#39ff14',
+      pointBorderColor: '#39ff14',
+      pointRadius: 7,
+      pointHoverRadius: 9,
+      showLine: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: false,
+    plugins: {
+      legend: {
+        labels: {
+          color: '#7a5a20',
+          font: { family: 'Share Tech Mono', size: 10 },
+          boxWidth: 18
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => ` ${ctx.parsed.y.toFixed(3)} мкА`
+        },
+        backgroundColor: '#0a1010',
+        borderColor: '#ffb300',
+        borderWidth: 1,
+        titleColor: '#ffb300',
+        bodyColor: '#b08030',
+        titleFont: { family: 'Share Tech Mono' },
+        bodyFont: { family: 'Share Tech Mono' }
+      }
+    },
+    scales: {
+      x: {
+        type: 'linear',
+        title: { display: true, text: 'Кернеу U (В)', color: '#7a5a20', font: { family: 'Share Tech Mono', size: 11 } },
+        ticks: { color: '#7a5a20', font: { family: 'Share Tech Mono', size: 9 }, maxTicksLimit: 10 },
+        grid: { color: 'rgba(26,46,26,0.8)' },
+        min: 0, max: 20
+      },
+      y: {
+        title: { display: true, text: 'Ток күші I (мкА)', color: '#7a5a20', font: { family: 'Share Tech Mono', size: 11 } },
+        ticks: { color: '#7a5a20', font: { family: 'Share Tech Mono', size: 9 } },
+        grid: { color: 'rgba(26,46,26,0.8)' },
+        min: 0
+      }
+    }
+  }
+});
+
+// ══════════════════════════════════
+//  ANIMATION LOOP
+// ══════════════════════════════════
+function loop(ts) {
+  if (!lastTs) lastTs = ts;
+  const dt = Math.min((ts - lastTs) / 1000, 0.05);
+  lastTs = ts;
+
+  if (autoMode && running) {
+    voltage += autoDir * 1.8 * dt;
+    if (voltage >= 20) { voltage = 20; autoDir = -1; }
+    if (voltage <= 0)  { voltage = 0;  autoDir = 1;  }
+    syncVoltageUI();
+  }
+
+  const I = currentFromVoltage(voltage);
+  const nc = numCollisions(voltage);
+
+  // Update electrons
+  if (running) {
+    const vx = speedMult * (0.6 + voltage / 20 * 2.8);
+    for (const e of electrons) {
+      e.x += vx * dt * 60;
+      e.y += e.vy * dt * 60;
+      // Clamp y
+      if (e.y < TUBE_TOP + 12) { e.y = TUBE_TOP + 12; e.vy *= -1; }
+      if (e.y > TUBE_BOT - 12) { e.y = TUBE_BOT - 12; e.vy *= -1; }
+      // Reached anode → reset to cathode
+      if (e.x > GRID_X - 5) {
+        Object.assign(e, newElectron(false));
+        e.collided = false;
+      }
+    }
+    // Check collision with Hg
+    for (const e of electrons) {
+      if (e.collided) continue;
+      for (const a of hgAtoms) {
+        const dx = e.x - a.x, dy = e.y - a.y;
+        if (Math.sqrt(dx*dx + dy*dy) < a.r + 5 && voltage >= EXCITATION * 0.9) {
+          // collision probability based on how many collisions possible
+          const needed = Math.floor(e.x / ((GRID_X - CATHODE_X) / (nc + 0.5)));
+          if (nc >= 1 && Math.random() < 0.08) {
+            a.glow = 1.0;
+            e.collided = true;
+            e.vy = (Math.random() - 0.5) * 2;
+          }
+        }
+      }
+    }
+  }
+
+  // Decay glow
+  for (const a of hgAtoms) {
+    if (a.glow > 0) a.glow = Math.max(0, a.glow - dt * 2.5);
+  }
+
+  // Update chart
+  if (running && voltage > 0) {
+    const last = chartPoints[chartPoints.length - 1];
+    if (!last || Math.abs(last.x - voltage) > 0.12) {
+      chartPoints.push({ x: parseFloat(voltage.toFixed(2)), y: parseFloat(I.toFixed(4)) });
+      chartPoints.sort((a, b) => a.x - b.x);
+      fhChart.data.datasets[0].data = chartPoints.map(p => ({ x: p.x, y: p.y }));
+
+      // Peak detection
+      if (chartPoints.length > 4) detectPeaks();
+
+      fhChart.update('none');
+    }
+  }
+
+  // Readouts
+  document.getElementById('rv-u').textContent = voltage.toFixed(2);
+  document.getElementById('rv-i').textContent = I.toFixed(3);
+  document.getElementById('rv-e').textContent = (voltage > 0 ? Math.min(voltage, EXCITATION) : 0).toFixed(1);
+  document.getElementById('rv-col').textContent = nc;
+  document.getElementById('collLevel').textContent = nc > 0 ? nc + 'x' : '—';
+  document.getElementById('maxLevel').textContent = I > 0 ? I.toFixed(3) : '—';
+
+  drawTube();
+  animId = requestAnimationFrame(loop);
+}
+
+function detectPeaks() {
+  const data = chartPoints;
+  const newPeaks = [];
+  for (let i = 2; i < data.length - 2; i++) {
+    if (data[i].y > data[i-1].y && data[i].y > data[i-2].y &&
+        data[i].y > data[i+1].y && data[i].y > data[i+2].y &&
+        data[i].y > 0.05) {
+      // Check if not too close to existing
+      const close = newPeaks.some(p => Math.abs(p - data[i].x) < 2.5);
+      if (!close) newPeaks.push(data[i].x);
+    }
+  }
+  if (newPeaks.length !== detectedPeaks.length) {
+    detectedPeaks = newPeaks;
+    fhChart.data.datasets[1].data = detectedPeaks.map(u => ({
+      x: u,
+      y: currentFromVoltage(u)
+    }));
+    renderPeakList();
+  }
+}
+
+function renderPeakList() {
+  const el = document.getElementById('peakList');
+  el.innerHTML = detectedPeaks.map((u, i) =>
+    `<span style="font-family:'Share Tech Mono',monospace;font-size:11px;
+      background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3);
+      color:#39ff14;padding:3px 8px;border-radius:2px;
+      text-shadow:0 0 6px #39ff14;">U${i+1}=${u.toFixed(1)}В</span>`
+  ).join('');
+  if (detectedPeaks.length >= 2) {
+    const du = detectedPeaks[detectedPeaks.length-1] - detectedPeaks[detectedPeaks.length-2];
+    el.innerHTML += `<span style="font-family:'Share Tech Mono',monospace;font-size:11px;
+      background:rgba(255,179,0,.1);border:1px solid rgba(255,179,0,.4);
+      color:#ffb300;padding:3px 8px;border-radius:2px;display:block;margin-top:5px;
+      text-shadow:0 0 6px #ffb300;">ΔU = ${du.toFixed(1)} В ≈ ${(du).toFixed(1)} эВ</span>`;
+  }
+}
+
+// ══════════════════════════════════
+//  CONTROLS
+// ══════════════════════════════════
+function toggleRun() {
+  running = !running;
+  const btn = document.getElementById('btnRun');
+  if (running) {
+    btn.textContent = '⏸ ТОҚТАТУ';
+    btn.classList.add('active');
+    lastTs = null;
+    if (!animId) animId = requestAnimationFrame(loop);
+  } else {
+    btn.textContent = '▶ БАСТАУ';
+    btn.classList.remove('active');
+  }
+}
+
+function toggleAuto() {
+  autoMode = !autoMode;
+  const btn = document.getElementById('btnAuto');
+  if (autoMode) {
+    btn.textContent = '⏹ ТОҚТАТУ';
+    btn.classList.add('active');
+    voltage = 0;
+    autoDir = 1;
+    if (!running) toggleRun();
+  } else {
+    btn.textContent = '⇢ АВТОСКАНЕР';
+    btn.classList.remove('active');
+  }
+}
+
+function clearChart() {
+  chartPoints = [];
+  detectedPeaks = [];
+  fhChart.data.datasets[0].data = [];
+  fhChart.data.datasets[1].data = [];
+  fhChart.update();
+  document.getElementById('peakList').innerHTML = '';
+}
+
+function onVoltChange(el) {
+  voltage = parseFloat(el.value);
+  syncVoltageUI();
+  const I = currentFromVoltage(voltage);
+  if (!running) drawTube();
+  // Check for dip event
+  if (prevPrevI > 0 && prevI < prevPrevI && I > prevI) {
+    setStatus('⚡ Соқтығысу болды! Hg атомы қозды — ток минимумда.', true);
+  }
+  prevPrevI = prevI; prevI = I;
+}
+
+function syncVoltageUI() {
+  const el = document.getElementById('voltSlider');
+  el.value = voltage.toFixed(1);
+  document.getElementById('voltNum').textContent = voltage.toFixed(1);
+  const pct = (voltage / 20 * 100).toFixed(1);
+  el.style.setProperty('--pct', pct + '%');
+}
+
+function onSpeedChange(el) {
+  speedMult = parseInt(el.value);
+  document.getElementById('speedLbl').textContent = '×' + speedMult;
+  const pct = ((speedMult - 1) / 4 * 100).toFixed(1);
+  el.style.setProperty('--spct', pct + '%');
+}
+
+function setStatus(msg, isEvent) {
+  const bar = document.getElementById('statusBar');
+  const txt = document.getElementById('statusTxt');
+  txt.textContent = msg;
+  if (isEvent) {
+    bar.className = 'status-bar event';
+    clearTimeout(statusTimeout);
+    statusTimeout = setTimeout(() => { bar.className = 'status-bar'; txt.textContent = 'Жүйе жұмыс жасауда...'; }, 2500);
+  }
+}
+
+// ══════════════════════════════════
+//  TABS
+// ══════════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════
+//  QUIZ DATA
+// ══════════════════════════════════
+const quizData = [
+  {
+    q: 'Франк-Герц тәжірибесінде сынап атомының бірінші қозу энергиясы қандай?',
+    opts: ['3.4 эВ', '4.9 эВ', '6.7 эВ', '13.6 эВ'],
+    ans: 1,
+    fb: 'Дұрыс! Hg атомының бірінші қозу потенциалы 4.9 В, яғни қозу энергиясы E = e·U = 4.9 эВ. Бұл мән графиктегі максимумдар арасындағы қашықтыққа тең.'
+  },
+  {
+    q: 'Электрондардың Hg атомдарымен соқтығысуы қандай соқтығысу түріне жатады?',
+    opts: ['Серпімді соқтығысу', 'Бейсерпімді соқтығысу', 'Бейтарап соқтығысу', 'Ядролық реакция'],
+    ans: 1,
+    fb: 'Дұрыс! Электрон Hg атомына 4.9 эВ энергия береді → атом қозады → электрон кинетикалық энергиясын жоғалтады. Бұл — бейсерпімді (неупругое) соқтығысу.'
+  },
+  {
+    q: 'Нильс Бор постулатына сәйкес атом неліктен тек белгілі энергияларды сіңіреді?',
+    opts: [
+      'Атом массасы өте үлкен болғандықтан',
+      'Электрон тек дискретті орбиталарда болады',
+      'Ядро электрондарды итереді',
+      'Температураға байланысты'
+    ],
+    ans: 1,
+    fb: 'Дұрыс! Бор бойынша электрон тек рұқсат етілген дискретті орбиталарда (стационар күйлерде) қозғала алады. Сондықтан атом тек орбиталар арасындағы айырмаға сәйкес энергия кванттарын ғана сіңіреді.'
+  },
+  {
+    q: 'ВАС графигінде «ара тістері» өрнегі неліктен пайда болады?',
+    opts: [
+      'Аспаптың ақаулығынан',
+      'Электрондар 4.9 В-тың еселі мәндерінде энергиясын атомдарға береді де, ток төмендейді',
+      'Кернеу тұрақсыз болғандықтан',
+      'Сынап буының температурасы өзгергендіктен'
+    ],
+    ans: 1,
+    fb: 'Дұрыс! U = 4.9n В (n = 1, 2, 3...) болғанда электрондар Hg атомдарымен бейсерпімді соқтығысып барлық кинетикалық энергиясын береді → анодқа жетпейді → ток күрт төмендейді → максимумнан кейін минимум пайда болады.'
+  }
+];
+
+// ══════════════════════════════════
+//  QUIZ LOGIC
+// ══════════════════════════════════
+let qi = 0, qScore = 0, qDone = false, qAnswered = false;
+const qResults = [];
+
+function renderQuiz() {
+  const wrap = document.getElementById('quizWrap');
+  if (qi >= quizData.length) {
+    const pct = Math.round(qScore / quizData.length * 100);
+    wrap.innerHTML = `
+      <div class="quiz-final">
+        <div class="qf-big">${qScore}/${quizData.length}</div>
+        <div class="qf-msg">${pct>=75?'Тамаша нәтиже! Франк-Герц тәжірибесін толық меңгердіңіз!':pct>=50?'Жақсы! Теорияны тереңдетіңіз.':'Теорияны тағы бір рет оқып шығыңыз.'}</div>
+        <button class="q-next-btn" onclick="restartQuiz()">↺ ҚАЙТАЛАУ</button>
+      </div>`;
+    return;
+  }
+  const q = quizData[qi];
+  const dots = quizData.map((_, i) => {
+    let cls = 'qdot';
+    if (i < qi) cls += qResults[i] ? ' ok' : ' bad';
+    else if (i === qi) cls += ' curr';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <div class="quiz-counter">
+      СҰРАҚ ${qi+1}/${quizData.length}
+      <div class="quiz-dots">${dots}</div>
+    </div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">
+      ${q.opts.map((o,i) => `<button class="q-opt" onclick="pickQ(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+    </div>
+    <div class="quiz-fb" id="qfb"></div>
+    <div class="quiz-foot">
+      <div class="quiz-score-label">ҰПАЙ: ${qScore}/${quizData.length}</div>
+      <button class="q-next-btn" id="qnext" onclick="nextQ()" disabled>КЕЛЕСІ ›</button>
+    </div>`;
+  qAnswered = false;
+}
+
+function pickQ(i) {
+  if (qAnswered) return;
+  qAnswered = true;
+  const q = quizData[qi];
+  const opts = document.querySelectorAll('.q-opt');
+  opts.forEach(o => o.disabled = true);
+  const correct = i === q.ans;
+  opts[i].classList.add(correct ? 'ok' : 'bad');
+  if (!correct) opts[q.ans].classList.add('ok');
+  if (correct) qScore++;
+  qResults[qi] = correct;
+  const fb = document.getElementById('qfb');
+  fb.className = 'quiz-fb show ' + (correct ? 'ok' : 'bad');
+  fb.textContent = (correct ? '✅ ' : '❌ ') + q.fb;
+  document.getElementById('qnext').disabled = false;
+}
+
+function nextQ() { qi++; renderQuiz(); }
+function restartQuiz() { qi = 0; qScore = 0; qResults.length = 0; renderQuiz(); }
+
+// ══════════════════════════════════
+//  INIT
+// ══════════════════════════════════
+renderQuiz();
+drawTube();
+// Start animation loop (no running state, just renders)
+animId = requestAnimationFrame(loop);
+syncVoltageUI();
+onSpeedChange(document.getElementById('speedSlider'));
+</script>
+</body>
+</html>
