@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Радиоактивті Ыдырау — Ядролық Лотерея</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #040810;
+  --bg2:      #070d18;
+  --panel:    #0a1020;
+  --border:   #0f2040;
+  --neon-g:   #00ff88;
+  --neon-r:   #ff3355;
+  --neon-b:   #00cfff;
+  --neon-y:   #ffe44d;
+  --neon-v:   #bf40ff;
+  --text:     #c8e0ff;
+  --text2:    #4a6a9a;
+  --alive:    #00ff88;
+  --dead:     #ff3355;
+  --theory:   #00cfff;
+  --glow-g:   rgba(0,255,136,0.18);
+  --glow-r:   rgba(255,51,85,0.18);
+  --glow-b:   rgba(0,207,255,0.18);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Rajdhani',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* scan-line overlay */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events:none;
+  z-index:999;
+}
+
+/* ── HEADER ── */
+header{
+  position:relative;
+  padding:36px 24px 24px;
+  text-align:center;
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+}
+header::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--neon-b),transparent);
+}
+.hbadge{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:4px;
+  color:var(--neon-b);
+  border:1px solid rgba(0,207,255,0.3);
+  padding:4px 16px;
+  border-radius:2px;
+  margin-bottom:14px;
+  background:rgba(0,207,255,0.04);
+  text-transform:uppercase;
+}
+h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(22px,4vw,48px);
+  font-weight:900;
+  letter-spacing:2px;
+  color:#fff;
+  text-shadow:0 0 30px var(--neon-b),0 0 60px rgba(0,207,255,0.3);
+  line-height:1.1;
+}
+h1 span{color:var(--neon-g);text-shadow:0 0 20px var(--neon-g);}
+.hsub{
+  margin-top:8px;
+  font-size:14px;
+  color:var(--text2);
+  letter-spacing:1px;
+}
+
+/* ── LAYOUT ── */
+.main-grid{
+  display:grid;
+  grid-template-columns:1fr 380px;
+  grid-template-rows:auto auto;
+  gap:16px;
+  padding:16px;
+  max-width:1400px;
+  margin:0 auto;
+}
+@media(max-width:900px){
+  .main-grid{grid-template-columns:1fr}
+}
+
+/* ── PANEL BASE ── */
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:4px;
+  position:relative;
+  overflow:hidden;
+}
+.panel::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--neon-b),var(--neon-v));
+}
+.panel-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:11px;
+  letter-spacing:3px;
+  color:var(--neon-b);
+  padding:14px 20px 0;
+  text-transform:uppercase;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.panel-title .dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--neon-b);
+  box-shadow:0 0 8px var(--neon-b);
+  animation:blink 1.4s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+/* ── ATOMS CANVAS ── */
+#atomCanvas{
+  display:block;
+  width:100%;
+  cursor:default;
+}
+.atoms-panel{grid-column:1;grid-row:1;}
+
+/* ── STATS ROW ── */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  padding:10px 16px 14px;
+}
+.stat-box{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:10px 12px;
+  text-align:center;
+}
+.stat-box .sv{
+  font-family:'Orbitron',monospace;
+  font-size:20px;
+  font-weight:700;
+  display:block;
+  line-height:1;
+}
+.stat-box .sk{
+  font-size:10px;
+  color:var(--text2);
+  letter-spacing:1px;
+  text-transform:uppercase;
+  margin-top:4px;
+  display:block;
+}
+.sv-g{color:var(--neon-g);text-shadow:0 0 12px var(--neon-g);}
+.sv-r{color:var(--neon-r);text-shadow:0 0 12px var(--neon-r);}
+.sv-b{color:var(--neon-b);text-shadow:0 0 12px var(--neon-b);}
+.sv-y{color:var(--neon-y);text-shadow:0 0 12px var(--neon-y);}
+
+/* ── RIGHT COLUMN ── */
+.right-col{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  grid-column:2;
+  grid-row:1/3;
+}
+@media(max-width:900px){.right-col{grid-column:1;grid-row:auto}}
+
+/* ── CONTROLS ── */
+.ctrl-panel{padding-bottom:16px;}
+.ctrl-row{
+  display:flex;
+  gap:10px;
+  padding:14px 16px 8px;
+}
+.btn{
+  flex:1;
+  font-family:'Orbitron',sans-serif;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:2px;
+  padding:12px 8px;
+  border:1px solid;
+  border-radius:3px;
+  cursor:pointer;
+  text-transform:uppercase;
+  transition:all 0.2s;
+  position:relative;
+  overflow:hidden;
+}
+.btn-start{
+  background:rgba(0,255,136,0.08);
+  border-color:var(--neon-g);
+  color:var(--neon-g);
+}
+.btn-start:hover,.btn-start.running{
+  background:rgba(0,255,136,0.18);
+  box-shadow:0 0 20px rgba(0,255,136,0.3);
+}
+.btn-reset{
+  background:rgba(0,207,255,0.06);
+  border-color:var(--neon-b);
+  color:var(--neon-b);
+}
+.btn-reset:hover{
+  background:rgba(0,207,255,0.14);
+  box-shadow:0 0 20px rgba(0,207,255,0.3);
+}
+
+.slider-group{padding:8px 16px 0;}
+.sl-label{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+  color:var(--text2);
+  margin-bottom:8px;
+  margin-top:12px;
+}
+.sl-label .sl-val{
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  font-weight:600;
+  color:var(--neon-y);
+}
+input[type=range]{
+  width:100%;
+  -webkit-appearance:none;
+  height:3px;
+  background:var(--border);
+  border-radius:2px;
+  outline:none;
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px;height:16px;
+  border-radius:50%;
+  background:var(--neon-y);
+  box-shadow:0 0 10px var(--neon-y);
+  cursor:pointer;
+  transition:transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.4)}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap{
+  padding:12px 16px 4px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.prog-label{
+  display:flex;justify-content:space-between;
+  font-size:11px;color:var(--text2);letter-spacing:1px;
+}
+.prog-bar{
+  height:6px;
+  background:var(--border);
+  border-radius:3px;
+  overflow:hidden;
+  position:relative;
+}
+.prog-fill{
+  height:100%;
+  border-radius:3px;
+  transition:width 0.3s;
+  background:linear-gradient(90deg,var(--neon-g),var(--neon-y));
+  box-shadow:0 0 8px var(--neon-g);
+}
+
+/* ── CHART ── */
+.chart-panel{padding:14px 16px 16px;}
+#decayChart{display:block;width:100%!important;height:220px!important;}
+
+/* ── THEORY ── */
+.theory-panel{padding:16px 20px 20px;}
+.theory-panel p{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px;}
+.formula-box{
+  background:var(--bg2);
+  border:1px solid rgba(0,207,255,0.2);
+  border-radius:4px;
+  padding:14px 18px;
+  margin:12px 0;
+  text-align:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:18px;
+  color:var(--neon-b);
+  letter-spacing:2px;
+  text-shadow:0 0 14px var(--neon-b);
+}
+.formula-sub{
+  font-size:11px;
+  color:var(--text2);
+  text-align:center;
+  letter-spacing:1px;
+  margin-top:-6px;
+  margin-bottom:10px;
+}
+.theory-vars{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:10px;
+}
+.tv{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:7px 10px;
+  font-size:12px;
+}
+.tv .tsym{
+  font-family:'JetBrains Mono',monospace;
+  color:var(--neon-y);
+  font-weight:600;
+}
+.tv .tdesc{color:var(--text2);margin-top:2px;font-size:11px;}
+
+/* ── BOTTOM ROW ── */
+.bottom-row{
+  grid-column:1;
+  grid-row:2;
+}
+@media(max-width:900px){.bottom-row{grid-column:1;grid-row:auto}}
+
+/* ── QUIZ ── */
+.quiz-panel{padding:16px 20px 20px;}
+.quiz-q{
+  font-size:15px;
+  font-weight:600;
+  line-height:1.6;
+  margin-bottom:16px;
+  color:#fff;
+  padding:12px 16px;
+  background:var(--bg2);
+  border-left:3px solid var(--neon-v);
+  border-radius:2px;
+}
+.quiz-progress{
+  display:flex;
+  gap:6px;
+  margin-bottom:16px;
+}
+.qp-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--border);
+  transition:background 0.3s;
+}
+.qp-dot.done-right{background:var(--neon-g);box-shadow:0 0 6px var(--neon-g);}
+.qp-dot.done-wrong{background:var(--neon-r);box-shadow:0 0 6px var(--neon-r);}
+.qp-dot.current{background:var(--neon-v);box-shadow:0 0 6px var(--neon-v);}
+
+.quiz-opts{display:flex;flex-direction:column;gap:8px;}
+.q-opt{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:11px 16px;
+  cursor:pointer;
+  font-size:14px;
+  font-family:'Rajdhani',sans-serif;
+  color:var(--text);
+  text-align:left;
+  transition:all 0.2s;
+}
+.q-opt:hover:not(:disabled){
+  border-color:var(--neon-v);
+  background:rgba(191,64,255,0.06);
+  color:#fff;
+}
+.q-opt.correct{
+  border-color:var(--neon-g);
+  background:rgba(0,255,136,0.08);
+  color:var(--neon-g);
+}
+.q-opt.wrong{
+  border-color:var(--neon-r);
+  background:rgba(255,51,85,0.08);
+  color:var(--neon-r);
+}
+.q-opt:disabled{cursor:default}
+.quiz-fb{
+  margin-top:12px;
+  padding:10px 14px;
+  border-radius:3px;
+  font-size:13px;
+  line-height:1.6;
+  display:none;
+}
+.quiz-fb.show{display:block}
+.quiz-fb.right{
+  background:rgba(0,255,136,0.07);
+  border:1px solid rgba(0,255,136,0.3);
+  color:#80ffc0;
+}
+.quiz-fb.wrong{
+  background:rgba(255,51,85,0.07);
+  border:1px solid rgba(255,51,85,0.3);
+  color:#ff8080;
+}
+.quiz-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:16px;
+}
+.quiz-score-disp{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  color:var(--text2);
+}
+.q-next{
+  font-family:'Orbitron',sans-serif;
+  font-size:10px;
+  letter-spacing:2px;
+  padding:9px 20px;
+  background:rgba(191,64,255,0.1);
+  border:1px solid var(--neon-v);
+  color:var(--neon-v);
+  border-radius:3px;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.q-next:hover{
+  background:rgba(191,64,255,0.2);
+  box-shadow:0 0 14px rgba(191,64,255,0.3);
+}
+.q-next:disabled{opacity:0.3;cursor:default}
+
+/* ── TIME DISPLAY ── */
+.time-display{
+  font-family:'Orbitron',monospace;
+  font-size:13px;
+  color:var(--neon-b);
+  padding:6px 16px 12px;
+  letter-spacing:1px;
+}
+
+/* ── FINAL RESULT ── */
+.quiz-final{
+  text-align:center;
+  padding:20px 0;
+}
+.qf-icon{font-size:48px;margin-bottom:12px}
+.qf-score{
+  font-family:'Orbitron',sans-serif;
+  font-size:36px;
+  font-weight:900;
+  color:var(--neon-g);
+  text-shadow:0 0 20px var(--neon-g);
+  margin-bottom:8px;
+}
+.qf-msg{color:var(--text2);font-size:15px;margin-bottom:20px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbadge">☢ 9-сынып физикасы • ядролық физика зертханасы</div>
+  <h1>Радиоактивті Ыдырау<br><span>Ядролық Лотерея</span></h1>
+  <p class="hsub">Жартылай ыдырау периоды заңын визуалды тәжірибемен зерттеңіз</p>
+</header>
+
+<div class="main-grid">
+
+  <!-- ═══ ATOMS PANEL ═══ -->
+  <div class="panel atoms-panel">
+    <div class="panel-title"><div class="dot"></div>АТОМДАР ӘЛЕМІ — ВИЗУАЛДЫ ПАНЕЛЬ</div>
+    <canvas id="atomCanvas"></canvas>
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="sv sv-g" id="sAlive">—</span>
+        <span class="sk">Тіршілік етуде</span>
+      </div>
+      <div class="stat-box">
+        <span class="sv sv-r" id="sDead">—</span>
+        <span class="sk">Ыдыраған</span>
+      </div>
+      <div class="stat-box">
+        <span class="sv sv-b" id="sPct">—</span>
+        <span class="sk">Тірі, %</span>
+      </div>
+      <div class="stat-box">
+        <span class="sv sv-y" id="sHalf">—</span>
+        <span class="sk">Өткен T½</span>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="prog-label">
+        <span>ТІРШІЛІК ДЕҢГЕЙІ</span>
+        <span id="progPct">100%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:100%"></div></div>
+    </div>
+    <div class="time-display">⏱ Уақыт: <span id="timeDisp">0.00</span> с</div>
+  </div>
+
+  <!-- ═══ RIGHT COLUMN ═══ -->
+  <div class="right-col">
+
+    <!-- CONTROLS -->
+    <div class="panel ctrl-panel">
+      <div class="panel-title"><div class="dot" style="background:var(--neon-g);box-shadow:0 0 8px var(--neon-g)"></div>БАСҚАРУ ТАҚТАСЫ</div>
+      <div class="ctrl-row">
+        <button class="btn btn-start" id="btnStart" onclick="toggleSim()">▶ БАСТАУ</button>
+        <button class="btn btn-reset" onclick="resetSim()">↺ ҚАЙТА</button>
+      </div>
+      <div class="slider-group">
+        <div class="sl-label">
+          <span>Жартылай ыдырау периоды T½</span>
+          <span class="sl-val" id="halfLifeVal">5.0 с</span>
+        </div>
+        <input type="range" id="halfLifeSlider" min="1" max="20" step="0.5" value="5" oninput="updateSliders()">
+
+        <div class="sl-label">
+          <span>Бастапқы ядролар саны N₀</span>
+          <span class="sl-val" id="n0Val">600</span>
+        </div>
+        <input type="range" id="n0Slider" min="200" max="1000" step="50" value="600" oninput="updateSliders()">
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="panel chart-panel">
+      <div class="panel-title"><div class="dot" style="background:var(--neon-y);box-shadow:0 0 8px var(--neon-y)"></div>НАҚТЫ УАҚЫТ ГРАФИГІ</div>
+      <canvas id="decayChart"></canvas>
+    </div>
+
+    <!-- THEORY -->
+    <div class="panel theory-panel">
+      <div class="panel-title" style="padding:0 0 12px"><div class="dot" style="background:var(--neon-b);box-shadow:0 0 8px var(--neon-b)"></div>ТЕОРИЯЛЫҚ НЕГІЗ</div>
+      <p><b style="color:#fff">Жартылай ыдырау периоды</b> — радиоактивті ядролардың жартысы ыдырауға кететін уақыт.</p>
+      <div class="formula-box">N(t) = N₀ · 2<sup>−t/T½</sup></div>
+      <div class="formula-sub">Негізгі ыдырау заңы</div>
+      <p>Әр кадрда ядро ыдырау ықтималдығы:</p>
+      <div class="formula-box" style="font-size:14px">P = 1 − 2<sup>−Δt/T½</sup></div>
+      <div class="theory-vars">
+        <div class="tv"><div class="tsym">N(t)</div><div class="tdesc">t уақытта тірі ядролар</div></div>
+        <div class="tv"><div class="tsym">N₀</div><div class="tdesc">Бастапқы ядролар саны</div></div>
+        <div class="tv"><div class="tsym">T½</div><div class="tdesc">Жартылай ыдырау периоды</div></div>
+        <div class="tv"><div class="tsym">t</div><div class="tdesc">Өткен уақыт</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ QUIZ (BOTTOM) ═══ -->
+  <div class="panel quiz-panel bottom-row">
+    <div class="panel-title" style="margin-bottom:16px"><div class="dot" style="background:var(--neon-v);box-shadow:0 0 8px var(--neon-v)"></div>БІЛІМДІ ТЕКСЕРУ — ИНТЕРАКТИВТІ ТЕСТ</div>
+    <div id="quizBody"></div>
+  </div>
+
+</div><!-- /main-grid -->
+
+<script>
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+const CANVAS_W = 700, CANVAS_H = 320;
+let atoms = [];
+let running = false;
+let lastTime = null;
+let simTime = 0;
+let animId = null;
+let halfLife = 5;
+let n0 = 600;
+let chartLabels = [], chartData = [], theorData = [];
+
+// ── CANVAS SETUP ──
+const atomCanvas = document.getElementById('atomCanvas');
+const actx = atomCanvas.getContext('2d');
+atomCanvas.width = CANVAS_W;
+atomCanvas.height = CANVAS_H;
+
+// ── CHART SETUP ──
+const chartCtx = document.getElementById('decayChart').getContext('2d');
+const decayChart = new Chart(chartCtx, {
+  type: 'line',
+  data: {
+    labels: chartLabels,
+    datasets: [
+      {
+        label: 'Тәжірибелік (N)',
+        data: chartData,
+        borderColor: '#00ff88',
+        backgroundColor: 'rgba(0,255,136,0.07)',
+        borderWidth: 2.5,
+        pointRadius: 2,
+        pointBackgroundColor: '#00ff88',
+        tension: 0.3,
+        fill: true
+      },
+      {
+        label: 'Теориялық N₀·2^(−t/T½)',
+        data: theorData,
+        borderColor: '#00cfff',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        tension: 0.3,
+        fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: false,
+    plugins: {
+      legend: {
+        labels: {
+          color: '#4a6a9a',
+          font: { family: 'JetBrains Mono', size: 10 },
+          boxWidth: 20
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#4a6a9a', font: { family: 'JetBrains Mono', size: 9 }, maxTicksLimit: 8 },
+        grid: { color: 'rgba(15,32,64,0.8)' },
+        title: { display: true, text: 'Уақыт (с)', color: '#4a6a9a', font: { size: 11 } }
+      },
+      y: {
+        ticks: { color: '#4a6a9a', font: { family: 'JetBrains Mono', size: 9 } },
+        grid: { color: 'rgba(15,32,64,0.8)' },
+        title: { display: true, text: 'Тірі ядролар N', color: '#4a6a9a', font: { size: 11 } },
+        min: 0
+      }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+//  INIT ATOMS
+// ══════════════════════════════════════════
+function initAtoms() {
+  atoms = [];
+  const cols = Math.ceil(Math.sqrt(n0 * CANVAS_W / CANVAS_H));
+  const rows = Math.ceil(n0 / cols);
+  const padX = (CANVAS_W - cols * (CANVAS_W / cols)) / 2;
+
+  const cellW = CANVAS_W / cols;
+  const cellH = CANVAS_H / rows;
+  const r = Math.min(cellW, cellH) * 0.32;
+
+  for (let i = 0; i < n0; i++) {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    atoms.push({
+      x: (col + 0.5) * cellW,
+      y: (row + 0.5) * cellH,
+      r: Math.max(2, r),
+      alive: true,
+      flash: 0
+    });
+  }
+}
+
+// ══════════════════════════════════════════
+//  DRAW
+// ══════════════════════════════════════════
+function drawAtoms() {
+  actx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+  // bg
+  actx.fillStyle = '#050c18';
+  actx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+  // grid
+  actx.strokeStyle = 'rgba(15,32,64,0.5)';
+  actx.lineWidth = 0.5;
+  for (let x = 0; x < CANVAS_W; x += 40) {
+    actx.beginPath(); actx.moveTo(x,0); actx.lineTo(x,CANVAS_H); actx.stroke();
+  }
+  for (let y = 0; y < CANVAS_H; y += 40) {
+    actx.beginPath(); actx.moveTo(0,y); actx.lineTo(CANVAS_W,y); actx.stroke();
+  }
+
+  for (const a of atoms) {
+    actx.save();
+    if (a.alive) {
+      actx.shadowBlur = a.r * 2;
+      actx.shadowColor = '#00ff88';
+      actx.fillStyle = '#00ff88';
+    } else {
+      if (a.flash > 0) {
+        // flash animation
+        const alpha = a.flash;
+        actx.shadowBlur = a.r * 4;
+        actx.shadowColor = `rgba(255,200,0,${alpha})`;
+        actx.fillStyle = `rgba(255,${Math.floor(100 + 155*alpha)},0,${0.5 + 0.5*alpha})`;
+      } else {
+        actx.shadowBlur = a.r;
+        actx.shadowColor = 'rgba(255,51,85,0.4)';
+        actx.fillStyle = '#1a0510';
+        actx.strokeStyle = 'rgba(255,51,85,0.35)';
+        actx.lineWidth = 0.5;
+        actx.beginPath();
+        actx.arc(a.x, a.y, a.r, 0, Math.PI*2);
+        actx.fill(); actx.stroke();
+        actx.restore();
+        continue;
+      }
+    }
+    actx.beginPath();
+    actx.arc(a.x, a.y, a.r, 0, Math.PI*2);
+    actx.fill();
+    actx.restore();
+  }
+}
+
+// ══════════════════════════════════════════
+//  SIMULATION LOOP
+// ══════════════════════════════════════════
+function simLoop(ts) {
+  if (!running) return;
+  if (!lastTime) lastTime = ts;
+  const dt = (ts - lastTime) / 1000; // seconds
+  lastTime = ts;
+  simTime += dt;
+
+  // Decay each atom
+  const p = 1 - Math.pow(2, -dt / halfLife);
+  let alive = 0;
+  for (const a of atoms) {
+    if (a.alive) {
+      if (Math.random() < p) {
+        a.alive = false;
+        a.flash = 1.0;
+      } else {
+        alive++;
+      }
+    }
+    if (a.flash > 0) a.flash = Math.max(0, a.flash - dt * 4);
+  }
+
+  drawAtoms();
+  updateStats();
+
+  // Chart update every ~0.5s
+  if (chartLabels.length === 0 || simTime - parseFloat(chartLabels[chartLabels.length-1]) >= 0.5) {
+    const t = parseFloat(simTime.toFixed(2));
+    chartLabels.push(t.toFixed(1));
+    chartData.push(alive);
+    theorData.push(n0 * Math.pow(2, -t / halfLife));
+    decayChart.update();
+  }
+
+  if (alive === 0) { stopSim(); }
+  else animId = requestAnimationFrame(simLoop);
+}
+
+// ══════════════════════════════════════════
+//  UPDATE STATS
+// ══════════════════════════════════════════
+function updateStats() {
+  const alive = atoms.filter(a => a.alive).length;
+  const dead = atoms.length - alive;
+  const pct = atoms.length > 0 ? (alive / atoms.length * 100).toFixed(1) : 0;
+  const halves = (simTime / halfLife).toFixed(2);
+  document.getElementById('sAlive').textContent = alive;
+  document.getElementById('sDead').textContent = dead;
+  document.getElementById('sPct').textContent = pct + '%';
+  document.getElementById('sHalf').textContent = halves;
+  document.getElementById('timeDisp').textContent = simTime.toFixed(2);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progPct').textContent = pct + '%';
+}
+
+// ══════════════════════════════════════════
+//  CONTROLS
+// ══════════════════════════════════════════
+function toggleSim() {
+  if (running) stopSim();
+  else startSim();
+}
+
+function startSim() {
+  running = true;
+  lastTime = null;
+  document.getElementById('btnStart').textContent = '⏸ ТОҚТАТУ';
+  document.getElementById('btnStart').classList.add('running');
+  animId = requestAnimationFrame(simLoop);
+}
+
+function stopSim() {
+  running = false;
+  if (animId) cancelAnimationFrame(animId);
+  document.getElementById('btnStart').textContent = '▶ БАСТАУ';
+  document.getElementById('btnStart').classList.remove('running');
+}
+
+function resetSim() {
+  stopSim();
+  simTime = 0;
+  lastTime = null;
+  halfLife = parseFloat(document.getElementById('halfLifeSlider').value);
+  n0 = parseInt(document.getElementById('n0Slider').value);
+  chartLabels.length = 0; chartData.length = 0; theorData.length = 0;
+  decayChart.update();
+  initAtoms();
+  drawAtoms();
+  updateStats();
+}
+
+function updateSliders() {
+  halfLife = parseFloat(document.getElementById('halfLifeSlider').value);
+  n0 = parseInt(document.getElementById('n0Slider').value);
+  document.getElementById('halfLifeVal').textContent = halfLife.toFixed(1) + ' с';
+  document.getElementById('n0Val').textContent = n0;
+  if (!running) resetSim();
+}
+
+// ══════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════
+const questions = [
+  {
+    q: "Егер жартылай ыдырау периоды T½ = 10 мин болса, 20 минуттан кейін бастапқы N₀ ядролардың қанша пайызы тірі қалады?",
+    opts: ["50%", "25%", "12.5%", "75%"],
+    ans: 1,
+    fb: "Дұрыс! 20 мин = 2 × T½. Формула: N = N₀ × 2⁻² = N₀/4 = 25%. Яғни әр периодта ядролардың жартысы ыдырайды."
+  },
+  {
+    q: "Радиоактивті ыдырау — кездейсоқ процесс. Бұл нені білдіреді?",
+    opts: [
+      "Барлық ядролар бір уақытта ыдырайды",
+      "Жеке ядроның қашан ыдырайтынын болжау мүмкін емес",
+      "Ыдырау тек температурада байланысты",
+      "Ыдырау процесін тоқтатуға болады"
+    ],
+    ans: 1,
+    fb: "Дұрыс! Кванттық механикаға сәйкес, жеке ядроның ыдырау уақытын дәл болжау мүмкін емес — тек ықтималдықты есептей аламыз."
+  },
+  {
+    q: "N = N₀ · 2^(−t/T½) формуласынан: егер t = T½ болса, нәтиже қандай?",
+    opts: [
+      "N = N₀",
+      "N = N₀/4",
+      "N = N₀/2",
+      "N = 2N₀"
+    ],
+    ans: 2,
+    fb: "Дұрыс! t = T½ болса: N = N₀ · 2⁻¹ = N₀/2. Яғни ядролардың дәл жартысы ыдырайды — сондықтан «жартылай ыдырау» деп аталады."
+  },
+  {
+    q: "Жарты ыдырау периодын 2 есе арттырсаңыз (T½ × 2), бір мезгілдегі ыдырау жылдамдығы қалай өзгереді?",
+    opts: [
+      "2 есе жылдамдайды",
+      "2 есе баяулайды",
+      "Өзгермейді",
+      "4 есе баяулайды"
+    ],
+    ans: 1,
+    fb: "Дұрыс! T½ артқан сайын ыдырау ықтималдығы P = 1 − 2^(−Δt/T½) кішірейеді → ыдырау баяулайды. T½ 2 есе артса, жылдамдық шамамен 2 есе кемиді."
+  }
+];
+
+let qIdx = 0, qScore = 0, qAnswered = false;
+
+function renderQuiz() {
+  const body = document.getElementById('quizBody');
+  if (qIdx >= questions.length) {
+    const pct = Math.round(qScore / questions.length * 100);
+    body.innerHTML = `
+      <div class="quiz-final">
+        <div class="qf-icon">${pct >= 75 ? '🏆' : pct >= 50 ? '⚡' : '📚'}</div>
+        <div class="qf-score">${qScore} / ${questions.length}</div>
+        <div class="qf-msg">${pct >= 75 ? 'Керемет нәтиже! Ядролық физиканы меңгердіңіз!' :
+          pct >= 50 ? 'Жақсы! Теорияны тереңдетіп оқыңыз.' : 'Теорияны қайталап, тест тапсырыңыз.'}</div>
+        <button class="q-next" onclick="restartQuiz()">↺ ҚАЙТАЛАУ</button>
+      </div>`;
+    return;
+  }
+
+  const q = questions[qIdx];
+  // progress dots
+  let dots = '';
+  for (let i = 0; i < questions.length; i++) {
+    let cls = 'qp-dot';
+    if (i < qIdx) cls += ' done-right'; // simplified
+    else if (i === qIdx) cls += ' current';
+    dots += `<div class="${cls}"></div>`;
+  }
+
+  body.innerHTML = `
+    <div class="quiz-progress">${dots}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">
+      ${q.opts.map((o,i) => `<button class="q-opt" onclick="answerQ(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+    </div>
+    <div class="quiz-fb" id="qfb"></div>
+    <div class="quiz-footer">
+      <div class="quiz-score-disp">Ұпай: ${qScore} / ${questions.length}</div>
+      <button class="q-next" id="qnext" onclick="nextQ()" disabled>Келесі ›</button>
+    </div>`;
+  qAnswered = false;
+}
+
+function answerQ(i) {
+  if (qAnswered) return;
+  qAnswered = true;
+  const q = questions[qIdx];
+  const opts = document.querySelectorAll('.q-opt');
+  opts.forEach(o => o.disabled = true);
+  opts[i].classList.add(i === q.ans ? 'correct' : 'wrong');
+  if (i !== q.ans) opts[q.ans].classList.add('correct');
+  const fb = document.getElementById('qfb');
+  if (i === q.ans) {
+    qScore++;
+    fb.className = 'quiz-fb right show';
+    fb.innerHTML = '✅ ' + q.fb;
+  } else {
+    fb.className = 'quiz-fb wrong show';
+    fb.innerHTML = '❌ Дұрыс емес. ' + q.fb;
+  }
+  document.getElementById('qnext').disabled = false;
+}
+
+function nextQ() { qIdx++; renderQuiz(); }
+function restartQuiz() { qIdx = 0; qScore = 0; renderQuiz(); }
+
+// ══════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════
+updateSliders();
+renderQuiz();
+</script>
+</body>
+</html>
