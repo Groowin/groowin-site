@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Қара Дене Сәулеленуі • Жұлдыздар Түсі</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   COSMIC OBSERVATORY — DESIGN SYSTEM
+═══════════════════════════════════════════ */
+:root {
+  --void:       #000208;
+  --deep:       #03060f;
+  --panel:      #060c1a;
+  --surface:    #0a1428;
+  --border:     #0f1e3a;
+  --border-hi:  #162850;
+
+  --star-r:  #ff4422;
+  --star-o:  #ff8833;
+  --star-y:  #ffdd88;
+  --star-w:  #f8f4ff;
+  --star-b:  #aad4ff;
+  --star-ob: #6699ff;
+
+  --accent:    #4488ff;
+  --accent2:   #22ddaa;
+  --accent3:   #ffaa33;
+  --violet:    #8855ff;
+
+  --text:      #d0e8ff;
+  --text2:     #4a6a9a;
+  --text3:     #2a3a5a;
+
+  --glow-b: rgba(68,136,255,0.2);
+  --glow-w: rgba(248,244,255,0.15);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Exo 2', sans-serif;
+  background: var(--void);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ─── STARFIELD CANVAS (background) ─── */
+#bgCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ─── NEBULA glow ─── */
+body::before {
+  content: '';
+  position: fixed;
+  top: -20%; left: -10%;
+  width: 70%; height: 70%;
+  background: radial-gradient(ellipse, rgba(30,10,80,0.35) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -10%; right: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse, rgba(10,30,80,0.3) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══ WRAPPER ═══ */
+.site-wrap { position: relative; z-index: 1; }
+
+/* ═══ HEADER ═══ */
+.site-header {
+  text-align: center;
+  padding: 48px 24px 32px;
+  position: relative;
+}
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--violet), transparent);
+  opacity: 0.5;
+}
+.h-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 6px;
+  color: var(--text2);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.h-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(22px, 4.5vw, 52px);
+  font-weight: 700;
+  line-height: 1.15;
+  background: linear-gradient(135deg, #d0e8ff 0%, #88bbff 40%, #aa88ff 70%, #ffaa66 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(100,150,255,0.4));
+}
+.h-sub {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text2);
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
+/* ═══ MAIN GRID ═══ */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+  padding: 20px 16px;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+@media (max-width: 1000px) {
+  .main-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══ CARD ═══ */
+.card {
+  background: linear-gradient(145deg, rgba(6,12,26,0.95) 0%, rgba(3,6,15,0.98) 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent) 30%, var(--violet) 70%, transparent 100%);
+  opacity: 0.6;
+}
+.card-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--text2);
+  text-transform: uppercase;
+  padding: 14px 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title .pip {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* ═══ STAR DISPLAY ═══ */
+.star-arena {
+  position: relative;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#starCanvas {
+  display: block;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.star-vitals {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 11px 11px;
+  overflow: hidden;
+}
+.vital-cell {
+  background: rgba(6,12,26,0.98);
+  padding: 12px 10px;
+  text-align: center;
+}
+.vital-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  display: block;
+  line-height: 1;
+}
+.vital-key {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text2);
+  text-transform: uppercase;
+  margin-top: 5px;
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ═══ CHART CARD ═══ */
+.chart-wrap { padding: 14px 18px 18px; }
+#planckChart { width: 100% !important; height: 260px !important; display: block; }
+
+/* rainbow strip */
+.rainbow-strip {
+  height: 12px;
+  margin: 6px 0 2px;
+  border-radius: 3px;
+  background: linear-gradient(to right,
+    #380060 0%,    /* gamma */
+    #6600cc 8%,
+    #4400ff 14%,   /* UV edge */
+    #4400ff 15%, #0044ff 20%, #00aaff 25%,
+    #00ffaa 35%, #44ff00 42%, #aaff00 48%,
+    #ffff00 54%, #ffcc00 58%, #ff8800 64%,
+    #ff2200 72%,   /* red edge visible */
+    #880000 78%, #440000 85%,  /* IR */
+    #1a0000 100%
+  );
+  position: relative;
+  overflow: visible;
+}
+.vis-label {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+  top: -14px;
+}
+
+/* ═══ CONTROLS ═══ */
+.ctrl-wrap { padding: 16px 20px 20px; }
+
+/* Temperature knob area */
+.temp-display {
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+.temp-big {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 52px;
+  font-weight: 600;
+  line-height: 1;
+  transition: color 0.5s, text-shadow 0.5s;
+}
+.temp-unit {
+  font-size: 18px;
+  vertical-align: super;
+  font-family: 'JetBrains Mono', monospace;
+  opacity: 0.6;
+}
+.star-class-badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  padding: 4px 16px;
+  border-radius: 20px;
+  border: 1px solid;
+  transition: all 0.5s;
+}
+
+/* Slider */
+.sl-group { margin-bottom: 16px; }
+.sl-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text2);
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 10px;
+}
+input[type=range] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--void);
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 14px var(--accent), 0 0 28px rgba(68,136,255,0.3);
+  cursor: pointer;
+  transition: transform .2s, border-color .3s, box-shadow .3s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+/* Presets */
+.preset-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.preset-btn {
+  flex: 1;
+  min-width: 60px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 8px 4px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-hi);
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .2s;
+  color: var(--text2);
+  text-transform: uppercase;
+}
+.preset-btn:hover {
+  background: rgba(68,136,255,0.1);
+  border-color: var(--accent);
+  color: var(--text);
+}
+.preset-btn .pname { display: block; color: inherit; margin-bottom: 2px; }
+.preset-btn .ptemp { font-size: 8px; color: var(--text2); }
+
+/* Laws display */
+.laws-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+.law-row {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.law-name {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+}
+.law-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent2);
+  text-shadow: 0 0 10px var(--accent2);
+}
+
+/* ═══ TABS ═══ */
+.tab-nav {
+  display: flex;
+  padding: 0 20px;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-top: 16px;
+}
+.tab-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .2s;
+  margin-bottom: -1px;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.on { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tab-pane { display: none; padding: 18px 20px 22px; }
+.tab-pane.on { display: block; }
+
+/* Theory */
+.theory-p {
+  font-size: 13.5px;
+  color: #8aadda;
+  line-height: 1.8;
+  margin-bottom: 12px;
+  font-weight: 300;
+}
+.theory-p b { color: var(--text); font-weight: 600; }
+.formula-card {
+  background: rgba(68,136,255,0.05);
+  border: 1px solid rgba(68,136,255,0.2);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+.formula-card small {
+  display: block;
+  font-size: 9px;
+  color: var(--text2);
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+.star-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 12px;
+}
+.star-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text2);
+  text-transform: uppercase;
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.star-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(15,30,58,0.5);
+  color: #8aadda;
+}
+.star-table tr:hover td { background: rgba(68,136,255,0.04); }
+.sc-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* Quiz */
+.q-counter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text2);
+  text-transform: uppercase;
+}
+.q-pips { display: flex; gap: 5px; }
+.q-pip {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border-hi);
+  transition: all .3s;
+}
+.q-pip.cur { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.q-pip.ok  { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+.q-pip.bad { background: #ff4455; box-shadow: 0 0 6px #ff4455; }
+
+.q-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  background: rgba(68,136,255,0.04);
+  border-left: 3px solid var(--violet);
+  border-radius: 6px;
+}
+.q-opts { display: flex; flex-direction: column; gap: 8px; }
+.q-opt {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-hi);
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 13px;
+  font-family: 'Exo 2', sans-serif;
+  color: #8aadda;
+  cursor: pointer;
+  text-align: left;
+  transition: all .2s;
+  line-height: 1.4;
+}
+.q-opt:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: rgba(68,136,255,0.06);
+  color: var(--text);
+}
+.q-opt.ok  { border-color: var(--accent2); background: rgba(34,221,170,0.07); color: var(--accent2); }
+.q-opt.bad { border-color: #ff4455; background: rgba(255,68,85,0.07); color: #ff8899; }
+.q-opt:disabled { cursor: default; }
+
+.q-fb {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.65;
+  display: none;
+  font-weight: 300;
+}
+.q-fb.show { display: block; }
+.q-fb.ok  { background: rgba(34,221,170,0.06); border: 1px solid rgba(34,221,170,0.2); color: #80eedd; }
+.q-fb.bad { background: rgba(255,68,85,0.06);  border: 1px solid rgba(255,68,85,0.2);  color: #ffaaaa; }
+
+.q-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+.q-score-txt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text2);
+}
+.q-next {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  padding: 9px 20px;
+  background: rgba(68,136,255,0.08);
+  border: 1px solid rgba(68,136,255,0.4);
+  color: var(--accent);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .2s;
+  text-transform: uppercase;
+}
+.q-next:hover:not(:disabled) { background: rgba(68,136,255,0.18); box-shadow: 0 0 16px rgba(68,136,255,0.2); }
+.q-next:disabled { opacity: .3; cursor: default; }
+
+.q-final {
+  text-align: center;
+  padding: 24px 0 12px;
+}
+.qf-icon { font-size: 56px; margin-bottom: 12px; }
+.qf-score {
+  font-family: 'Cinzel', serif;
+  font-size: 44px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 20px rgba(34,221,170,0.4));
+}
+.qf-msg { font-size: 14px; color: var(--text2); margin-bottom: 20px; font-weight: 300; }
+
+/* ═══ PLANET CLASSES (right panel) ═══ */
+.class-panel { padding: 16px 18px 20px; }
+.spectral-classes {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 12px;
+}
+.sc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.sc-row:hover { border-color: var(--border-hi); background: rgba(255,255,255,0.04); }
+.sc-row.active { border-color: var(--accent); background: rgba(68,136,255,0.06); }
+.sc-swatch { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+.sc-letter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  width: 18px;
+  flex-shrink: 0;
+}
+.sc-info { flex: 1; }
+.sc-info .sc-name { font-size: 12px; color: var(--text); font-weight: 500; }
+.sc-info .sc-range { font-size: 10px; color: var(--text2); font-family: 'JetBrains Mono', monospace; }
+.sc-examples { font-size: 10px; color: var(--text2); font-style: italic; }
+
+/* mobile */
+@media (max-width: 600px) {
+  .star-vitals { grid-template-columns: repeat(2,1fr); }
+  .preset-row .preset-btn { min-width: 46px; }
+}
+</style>
+</head>
+<body>
+
+<!-- STARFIELD BG -->
+<canvas id="bgCanvas"></canvas>
+
+<div class="site-wrap">
+
+<!-- ═══ HEADER ═══ -->
+<header class="site-header">
+  <div class="h-eyebrow">☆ 11-сынып физикасы · астрофизика зертханасы · кванттық оптика</div>
+  <div class="h-title">Қара Дене Сәулеленуі<br>және Жұлдыздар Түсі</div>
+  <div class="h-sub">Планк заңы · Вина заңы · Стефан-Больцман заңы</div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main-grid">
+
+  <!-- LEFT: Star + Chart -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+
+    <!-- Star visualization -->
+    <div class="card">
+      <div class="card-title"><div class="pip" style="background:var(--accent2);box-shadow:0 0 8px var(--accent2)"></div>ЖҰЛДЫЗ МОДЕЛІ — НАҚТЫ УАҚЫТ СИМУЛЯЦИЯСЫ</div>
+      <div class="star-arena">
+        <canvas id="starCanvas" width="560" height="280"></canvas>
+      </div>
+      <div class="star-vitals">
+        <div class="vital-cell">
+          <span class="vital-val" id="vt" style="color:#4488ff">—</span>
+          <span class="vital-key">Температура (К)</span>
+        </div>
+        <div class="vital-cell">
+          <span class="vital-val" id="vl" style="color:#22ddaa">—</span>
+          <span class="vital-key">λ_max (нм)</span>
+        </div>
+        <div class="vital-cell">
+          <span class="vital-val" id="vp" style="color:#ffaa33">—</span>
+          <span class="vital-key">Қуат (W/m²)</span>
+        </div>
+        <div class="vital-cell">
+          <span class="vital-val" id="vc">—</span>
+          <span class="vital-key">Спектр класы</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Planck Chart -->
+    <div class="card chart-wrap">
+      <div class="card-title" style="margin-bottom:12px"><div class="pip"></div>ПЛАНК ҚИСЫҒЫ — I(λ) ИНТЕНСИВТІЛІК СПЕКТРІ</div>
+      <canvas id="planckChart"></canvas>
+      <div style="position:relative;margin-top:4px;">
+        <div class="rainbow-strip" id="rainbowStrip">
+          <span class="vis-label" style="left:22%">УК</span>
+          <span class="vis-label" style="left:32%">380нм</span>
+          <span class="vis-label" style="left:60%">700нм</span>
+          <span class="vis-label" style="left:70%">ИК</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text2);letter-spacing:1px;margin-top:3px;padding:0 2px;">
+          <span>100 нм</span><span>400</span><span>700</span><span>1000</span><span>1500 нм</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theory / Quiz tabs -->
+    <div class="card">
+      <div class="tab-nav">
+        <button class="tab-btn on" onclick="switchTab('theory',this)">Теория</button>
+        <button class="tab-btn" onclick="switchTab('class',this)">Спектрлік класстар</button>
+        <button class="tab-btn" onclick="switchTab('quiz',this)">Тест</button>
+      </div>
+
+      <!-- THEORY -->
+      <div class="tab-pane on" id="tab-theory">
+        <p class="theory-p">
+          <b>«Қара дене»</b> — физикадағы идеал объект: ол өзіне түскен барлық сәулелерді толықтай жұтады және тек температурасына байланысты сәулелене алады. Нақты жұлдыздар осы модельге өте жақын.
+        </p>
+        <div class="formula-card">
+          I(λ,T) = (2hc²/λ⁵) · 1/(e^(hc/λkT) − 1)
+          <small>// Планк сәулелену формуласы (1900)</small>
+        </div>
+        <p class="theory-p">
+          <b>Ультракүлгін апат:</b> Классикалық физика Рэлей-Джинс формуласымен қысқа толқындарда шексіз интенсивтілік болжады — бұл тәжірибеге қайшы келді. Макс Планк 1900 жылы <b>энергия квантталады</b> деген гипотеза ұсынды: E = hν.
+        </p>
+        <div class="formula-card" style="border-left-color:var(--accent2);color:var(--accent2);background:rgba(34,221,170,0.05);border-color:rgba(34,221,170,0.2)">
+          λ_max = b / T, мұнда b = 2.898×10⁻³ м·К
+          <small>// Вина ығысу заңы</small>
+        </div>
+        <div class="formula-card" style="border-left-color:var(--accent3);color:var(--accent3);background:rgba(255,170,51,0.05);border-color:rgba(255,170,51,0.2)">
+          P = σ · T⁴, мұнда σ = 5.67×10⁻⁸ Вт/(м²·К⁴)
+          <small>// Стефан-Больцман заңы</small>
+        </div>
+        <p class="theory-p">
+          <b>Жұлдыздар түсі:</b> Температура артқан сайын λ_max қысқарады, жарық спектрінің көк жақ шетіне жылжиды. Сондықтан ыстық жұлдыздар (<b>10 000+ К</b>) — көкшіл, ал салқын жұлдыздар (<b>3000 К</b>) — қызылдау болып көрінеді.
+        </p>
+      </div>
+
+      <!-- SPECTRAL CLASSES -->
+      <div class="tab-pane" id="tab-class">
+        <p class="theory-p">Жұлдыздар спектрлік класс бойынша жіктеледі. Жады сөзі: <b style="color:var(--accent3)">«О Бе А Фа Геа Кар Міс»</b></p>
+        <table class="star-table">
+          <thead>
+            <tr><th>Класс</th><th>Температура</th><th>Түс</th><th>Мысалдар</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="sc-dot" style="background:#aad4ff;box-shadow:0 0 6px #aad4ff"></span>O</td><td>> 30 000 К</td><td>Көгілдір-ақ</td><td>Альнитак, Мінтака</td></tr>
+            <tr><td><span class="sc-dot" style="background:#c8e0ff;box-shadow:0 0 5px #c8e0ff"></span>B</td><td>10–30 000 К</td><td>Көк-ақ</td><td>Ригель, Спика</td></tr>
+            <tr><td><span class="sc-dot" style="background:#f0f4ff;box-shadow:0 0 5px #f0f4ff"></span>A</td><td>7 500–10 000 К</td><td>Ақ</td><td>Сириус, Вега</td></tr>
+            <tr><td><span class="sc-dot" style="background:#fff8e0;box-shadow:0 0 5px #fff8e0"></span>F</td><td>6 000–7 500 К</td><td>Сарғыш-ақ</td><td>Полярная жұлдызы</td></tr>
+            <tr><td><span class="sc-dot" style="background:#ffee88;box-shadow:0 0 5px #ffee88"></span>G</td><td>5 200–6 000 К</td><td>Сары</td><td>Күн, Альфа Центавр А</td></tr>
+            <tr><td><span class="sc-dot" style="background:#ffcc66;box-shadow:0 0 5px #ffcc66"></span>K</td><td>3 700–5 200 К</td><td>Апельсин</td><td>Арктур, Альдебаран</td></tr>
+            <tr><td><span class="sc-dot" style="background:#ff6633;box-shadow:0 0 5px #ff6633"></span>M</td><td>2 400–3 700 К</td><td>Қызыл</td><td>Бетельгейзе, Антарес</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="tab-pane" id="tab-quiz">
+        <div id="quizContainer"></div>
+      </div>
+    </div>
+
+  </div><!-- /left -->
+
+  <!-- RIGHT: Controls + classes -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+
+    <!-- Temperature control -->
+    <div class="card ctrl-wrap">
+      <div class="card-title" style="padding:0 0 14px"><div class="pip" style="background:var(--accent3);box-shadow:0 0 8px var(--accent3)"></div>ТЕМПЕРАТУРА РЕТТЕГІШІ</div>
+
+      <div class="temp-display">
+        <span class="temp-big" id="tempBig">5 778</span><span class="temp-unit"> К</span>
+        <br>
+        <span class="star-class-badge" id="classBadge">G — Күн тәрізді</span>
+      </div>
+
+      <div class="sl-group">
+        <div class="sl-header">
+          <span>Мин 3 000 К</span><span>Макс 15 000 К</span>
+        </div>
+        <input type="range" id="tempSlider" min="3000" max="15000" step="100" value="5778" oninput="onTempChange(this.value)">
+      </div>
+
+      <div class="preset-row">
+        <button class="preset-btn" onclick="setTemp(3500)">
+          <span class="pname" style="color:#ff6633">● M</span>
+          <span class="ptemp">3 500 К</span>
+        </button>
+        <button class="preset-btn" onclick="setTemp(5778)">
+          <span class="pname" style="color:#ffee88">● G</span>
+          <span class="ptemp">5 778 К</span>
+        </button>
+        <button class="preset-btn" onclick="setTemp(9500)">
+          <span class="pname" style="color:#e8f0ff">● A</span>
+          <span class="ptemp">9 500 К</span>
+        </button>
+        <button class="preset-btn" onclick="setTemp(13000)">
+          <span class="pname" style="color:#aad4ff">● B</span>
+          <span class="ptemp">13 000 К</span>
+        </button>
+      </div>
+
+      <div class="laws-grid">
+        <div class="law-row">
+          <span class="law-name">λ_max (Вина)</span>
+          <span class="law-val" id="lw">—</span>
+        </div>
+        <div class="law-row">
+          <span class="law-name">Қуат (Stefan-Boltzmann)</span>
+          <span class="law-val" id="lsb" style="color:var(--accent3)">—</span>
+        </div>
+        <div class="law-row">
+          <span class="law-name">Планк h·ν_max</span>
+          <span class="law-val" id="lhv" style="color:var(--violet)">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Star color info -->
+    <div class="card class-panel">
+      <div class="card-title" style="padding:0 0 4px"><div class="pip" style="background:var(--violet);box-shadow:0 0 8px var(--violet)"></div>ЖҰЛДЫЗ КЛАССИФИКАЦИЯСЫ</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px;font-weight:300;">Жылдам ауыстыру үшін басыңыз:</p>
+      <div class="spectral-classes" id="scList"></div>
+    </div>
+
+  </div><!-- /right -->
+</div><!-- /main-grid -->
+</div><!-- /site-wrap -->
+
+<script>
+// ══════════════════════════════════════════════
+//  PHYSICS CONSTANTS
+// ══════════════════════════════════════════════
+const h  = 6.626e-34;
+const c  = 3e8;
+const k  = 1.381e-23;
+const σ  = 5.67e-8;
+const b  = 2.898e-3;  // Wien
+
+let currentTemp = 5778;
+let starAnimId = null;
+let bgAnimId   = null;
+let phase = 0;  // for star pulse
+
+// ══════════════════════════════════════════════
+//  STARFIELD BACKGROUND
+// ══════════════════════════════════════════════
+const bgCanvas = document.getElementById('bgCanvas');
+const bgCtx = bgCanvas.getContext('2d');
+let bgStars = [];
+
+function initBg() {
+  bgCanvas.width  = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+  bgStars = [];
+  const N = Math.min(400, Math.floor(window.innerWidth * window.innerHeight / 4000));
+  for (let i = 0; i < N; i++) {
+    bgStars.push({
+      x: Math.random() * bgCanvas.width,
+      y: Math.random() * bgCanvas.height,
+      r: Math.random() * 1.4 + 0.2,
+      a: Math.random() * 0.7 + 0.15,
+      da: (Math.random() - 0.5) * 0.008,
+      col: Math.random() < 0.08 ? '#aad4ff' : Math.random() < 0.08 ? '#ffcc88' : '#ffffff'
+    });
+  }
+}
+
+function drawBg(ts) {
+  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+  for (const s of bgStars) {
+    s.a += s.da;
+    if (s.a > 0.85 || s.a < 0.1) s.da *= -1;
+    bgCtx.globalAlpha = s.a;
+    bgCtx.fillStyle = s.col;
+    bgCtx.beginPath();
+    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    bgCtx.fill();
+  }
+  bgCtx.globalAlpha = 1;
+  bgAnimId = requestAnimationFrame(drawBg);
+}
+
+window.addEventListener('resize', initBg);
+initBg();
+drawBg(0);
+
+// ══════════════════════════════════════════════
+//  TEMPERATURE → RGB
+// ══════════════════════════════════════════════
+function tempToRGB(T) {
+  // Based on Tanner Helland's algorithm
+  let r, g, b2;
+  T = T / 100;
+  if (T <= 66) {
+    r = 255;
+    g = T <= 0 ? 0 : Math.min(255, 99.4708025861 * Math.log(T) - 161.1195681661);
+    b2 = T <= 19 ? 0 : Math.min(255, 138.5177312231 * Math.log(T - 10) - 305.0447927307);
+  } else {
+    r = Math.min(255, Math.max(0, 329.698727446 * Math.pow(T - 60, -0.1332047592)));
+    g = Math.min(255, Math.max(0, 288.1221695283 * Math.pow(T - 60, -0.0755148492)));
+    b2 = 255;
+  }
+  return { r: Math.round(r), g: Math.round(g), b: Math.round(b2) };
+}
+
+function rgbStr(col, alpha=1) {
+  return `rgba(${col.r},${col.g},${col.b},${alpha})`;
+}
+
+// ══════════════════════════════════════════════
+//  STAR CLASS
+// ══════════════════════════════════════════════
+function getStarClass(T) {
+  if (T >= 30000) return { cls:'O', name:'О — Ең ыстық', color:'#aad4ff' };
+  if (T >= 10000) return { cls:'B', name:'B — Көк-ақ',   color:'#c8e0ff' };
+  if (T >= 7500)  return { cls:'A', name:'A — Ақ',       color:'#f0f4ff' };
+  if (T >= 6000)  return { cls:'F', name:'F — Сарғыш-ақ',color:'#fff8e0' };
+  if (T >= 5200)  return { cls:'G', name:'G — Күн тәрізді',color:'#ffee88' };
+  if (T >= 3700)  return { cls:'K', name:'K — Апельсин', color:'#ffcc66' };
+  return              { cls:'M', name:'M — Қызыл',       color:'#ff6633' };
+}
+
+// ══════════════════════════════════════════════
+//  STAR CANVAS ANIMATION
+// ══════════════════════════════════════════════
+const starCanvas = document.getElementById('starCanvas');
+const sctx = starCanvas.getContext('2d');
+const SW = starCanvas.width, SH = starCanvas.height;
+const CX = SW / 2, CY = SH / 2;
+
+function drawStar(ts) {
+  phase = (ts || 0) / 1800;
+  sctx.clearRect(0, 0, SW, SH);
+
+  const T = currentTemp;
+  const col = tempToRGB(T);
+  const sc  = getStarClass(T);
+
+  // Star radius based on power (normalized)
+  const baseR  = 50 + (T / 15000) * 20;
+  const glowR  = baseR * (2.2 + 0.25 * Math.sin(phase));
+  const pulseR = baseR * (1 + 0.025 * Math.sin(phase * 2.3));
+
+  // Outer nebula / corona
+  const nebGrad = sctx.createRadialGradient(CX, CY, baseR * 0.8, CX, CY, SW * 0.45);
+  nebGrad.addColorStop(0, rgbStr(col, 0.06));
+  nebGrad.addColorStop(1, 'rgba(0,0,0,0)');
+  sctx.fillStyle = nebGrad;
+  sctx.beginPath();
+  sctx.arc(CX, CY, SW * 0.45, 0, Math.PI * 2);
+  sctx.fill();
+
+  // Corona glow layers
+  for (let i = 4; i >= 1; i--) {
+    const gr = sctx.createRadialGradient(CX, CY, pulseR * 0.6, CX, CY, glowR * i * 0.55);
+    gr.addColorStop(0, rgbStr(col, 0.12 / i));
+    gr.addColorStop(1, 'rgba(0,0,0,0)');
+    sctx.fillStyle = gr;
+    sctx.beginPath();
+    sctx.arc(CX, CY, glowR * i * 0.55, 0, Math.PI * 2);
+    sctx.fill();
+  }
+
+  // Solar flares (sin-based spikes)
+  sctx.save();
+  sctx.translate(CX, CY);
+  const numFlares = 8;
+  for (let i = 0; i < numFlares; i++) {
+    const ang = (i / numFlares) * Math.PI * 2 + phase * 0.4;
+    const fl = baseR * (1.3 + 0.25 * Math.sin(phase * 1.7 + i * 1.3));
+    const fGrad = sctx.createLinearGradient(
+      Math.cos(ang) * baseR, Math.sin(ang) * baseR,
+      Math.cos(ang) * fl * 1.4, Math.sin(ang) * fl * 1.4
+    );
+    fGrad.addColorStop(0, rgbStr(col, 0.6));
+    fGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    sctx.strokeStyle = fGrad;
+    sctx.lineWidth = 2;
+    sctx.beginPath();
+    sctx.moveTo(Math.cos(ang) * baseR * 0.9, Math.sin(ang) * baseR * 0.9);
+    sctx.lineTo(Math.cos(ang) * fl, Math.sin(ang) * fl);
+    sctx.stroke();
+  }
+  sctx.restore();
+
+  // Main star body
+  const starGrad = sctx.createRadialGradient(CX - pulseR * 0.25, CY - pulseR * 0.25, 0, CX, CY, pulseR);
+  starGrad.addColorStop(0, `rgba(255,255,255,0.95)`);
+  starGrad.addColorStop(0.2, rgbStr(col, 0.99));
+  starGrad.addColorStop(0.75, rgbStr(col, 0.97));
+  starGrad.addColorStop(1, rgbStr(col, 0.85));
+  sctx.fillStyle = starGrad;
+  sctx.shadowBlur = 0;
+  sctx.beginPath();
+  sctx.arc(CX, CY, pulseR, 0, Math.PI * 2);
+  sctx.fill();
+
+  // Granulation texture
+  for (let i = 0; i < 18; i++) {
+    const ang2 = Math.random() * Math.PI * 2;
+    const rr   = Math.random() * pulseR * 0.8;
+    const gr2  = sctx.createRadialGradient(
+      CX + Math.cos(ang2) * rr, CY + Math.sin(ang2) * rr, 0,
+      CX + Math.cos(ang2) * rr, CY + Math.sin(ang2) * rr, pulseR * 0.15
+    );
+    gr2.addColorStop(0, rgbStr({r:col.r,g:col.g,b:col.b}, 0.08));
+    gr2.addColorStop(1, 'rgba(0,0,0,0)');
+    sctx.fillStyle = gr2;
+    sctx.beginPath();
+    sctx.arc(CX + Math.cos(ang2)*rr, CY + Math.sin(ang2)*rr, pulseR*0.15, 0, Math.PI*2);
+    sctx.fill();
+  }
+
+  // Temperature label inside star
+  sctx.fillStyle = `rgba(255,255,255,${Math.max(0, 0.7 - T/30000)})`;
+  sctx.font = 'bold 13px JetBrains Mono';
+  sctx.textAlign = 'center';
+  sctx.textBaseline = 'middle';
+  sctx.fillText(T.toLocaleString() + ' К', CX, CY);
+
+  // λ_max arrow
+  const λ = (b / T * 1e9).toFixed(0);
+  sctx.fillStyle = rgbStr(col, 0.7);
+  sctx.font = '10px JetBrains Mono';
+  sctx.fillText('λmax = ' + λ + ' нм', CX, CY + 18);
+
+  sctx.textBaseline = 'alphabetic';
+
+  starAnimId = requestAnimationFrame(drawStar);
+}
+
+// ══════════════════════════════════════════════
+//  PLANCK FUNCTION
+// ══════════════════════════════════════════════
+function planckIntensity(λ_m, T) {
+  const exponent = (h * c) / (λ_m * k * T);
+  if (exponent > 700) return 0;
+  return (2 * h * c * c) / (Math.pow(λ_m, 5) * (Math.exp(exponent) - 1));
+}
+
+function buildPlanckData(T) {
+  const lambdas = [];
+  const values  = [];
+  for (let nm = 100; nm <= 1500; nm += 10) {
+    const λ = nm * 1e-9;
+    lambdas.push(nm);
+    values.push(planckIntensity(λ, T));
+  }
+  // normalize for display
+  const mx = Math.max(...values);
+  return { lambdas, values: values.map(v => v / mx) };
+}
+
+// ══════════════════════════════════════════════
+//  CHART SETUP
+// ══════════════════════════════════════════════
+const chartCtx = document.getElementById('planckChart').getContext('2d');
+const planckChart = new Chart(chartCtx, {
+  type: 'line',
+  data: {
+    labels: [],
+    datasets: [{
+      label: 'I(λ) — Планк қисығы',
+      data: [],
+      borderWidth: 2.5,
+      pointRadius: 0,
+      tension: 0.4,
+      fill: true,
+    }, {
+      label: 'λ_max (Вина)',
+      data: [],
+      borderColor: 'rgba(255,255,255,0.5)',
+      borderWidth: 1,
+      borderDash: [5, 4],
+      pointRadius: 0,
+      fill: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 300 },
+    plugins: {
+      legend: {
+        labels: {
+          color: '#4a6a9a',
+          font: { family: 'JetBrains Mono', size: 10 },
+          boxWidth: 20
+        }
+      },
+      tooltip: {
+        backgroundColor: '#060c1a',
+        borderColor: '#162850',
+        borderWidth: 1,
+        titleColor: '#4488ff',
+        bodyColor: '#8aadda',
+        titleFont: { family: 'JetBrains Mono', size: 11 },
+        bodyFont: { family: 'JetBrains Mono', size: 10 },
+        callbacks: {
+          title: (items) => `λ = ${items[0].label} нм`,
+          label: (item) => ` I = ${(item.parsed.y * 100).toFixed(1)}%`
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Толқын ұзындығы λ (нм)', color: '#4a6a9a', font: { family: 'JetBrains Mono', size: 10 } },
+        ticks: { color: '#4a6a9a', font: { family: 'JetBrains Mono', size: 9 }, maxTicksLimit: 10 },
+        grid: { color: 'rgba(15,30,58,0.8)' }
+      },
+      y: {
+        title: { display: true, text: 'Салыстырмалы интенсивтілік', color: '#4a6a9a', font: { family: 'JetBrains Mono', size: 10 } },
+        ticks: { color: '#4a6a9a', font: { family: 'JetBrains Mono', size: 9 } },
+        grid: { color: 'rgba(15,30,58,0.8)' },
+        min: 0, max: 1.05
+      }
+    }
+  }
+});
+
+// ══════════════════════════════════════════════
+//  UPDATE ALL
+// ══════════════════════════════════════════════
+function updateAll(T) {
+  currentTemp = T;
+  const col = tempToRGB(T);
+  const sc  = getStarClass(T);
+  const λmax = b / T * 1e9;       // nm
+  const P    = σ * Math.pow(T, 4);
+  const Emax = h * c / (λmax * 1e-9);
+
+  // Readouts
+  document.getElementById('vt').textContent = T.toLocaleString();
+  document.getElementById('vt').style.color = rgbStr(col);
+  document.getElementById('vl').textContent = λmax.toFixed(0) + ' нм';
+  document.getElementById('vp').textContent = P.toExponential(2) + ' Вт/м²';
+  document.getElementById('vc').textContent = sc.cls;
+  document.getElementById('vc').style.color = sc.color;
+  document.getElementById('vc').style.textShadow = `0 0 10px ${sc.color}`;
+
+  // Laws display
+  document.getElementById('lw').textContent  = λmax.toFixed(0) + ' нм';
+  document.getElementById('lsb').textContent = P.toExponential(2) + ' Вт/м²';
+  document.getElementById('lhv').textContent = (Emax / 1.6e-19).toFixed(2) + ' эВ';
+
+  // Temp display
+  document.getElementById('tempBig').textContent = T.toLocaleString();
+  document.getElementById('tempBig').style.color = rgbStr(col);
+  document.getElementById('tempBig').style.textShadow = `0 0 30px ${rgbStr(col, 0.5)}, 0 0 60px ${rgbStr(col, 0.2)}`;
+  document.getElementById('classBadge').textContent = sc.name;
+  document.getElementById('classBadge').style.borderColor = sc.color;
+  document.getElementById('classBadge').style.color = sc.color;
+  document.getElementById('classBadge').style.boxShadow = `0 0 12px ${sc.color}40`;
+
+  // Slider gradient
+  const sl = document.getElementById('tempSlider');
+  const pct = ((T - 3000) / 12000 * 100).toFixed(1);
+  sl.style.background = `linear-gradient(to right, ${rgbStr(col)} ${pct}%, #0f1e3a ${pct}%)`;
+  sl.style.setProperty('--pct', pct + '%');
+
+  // Spectral class list active
+  document.querySelectorAll('.sc-row').forEach(r => {
+    r.classList.toggle('active', r.dataset.cls === sc.cls);
+  });
+
+  // Planck chart
+  const { lambdas, values } = buildPlanckData(T);
+  planckChart.data.labels = lambdas;
+  planckChart.data.datasets[0].data = values;
+  planckChart.data.datasets[0].borderColor = rgbStr(col);
+  planckChart.data.datasets[0].backgroundColor = (ctx) => {
+    const chart = ctx.chart;
+    const { chartArea } = chart;
+    if (!chartArea) return rgbStr(col, 0.1);
+    const gradient = chart.ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+    gradient.addColorStop(0, rgbStr(col, 0.35));
+    gradient.addColorStop(1, rgbStr(col, 0.02));
+    return gradient;
+  };
+
+  // λmax vertical line
+  const λIdx = lambdas.findIndex(l => l >= Math.round(λmax / 10) * 10);
+  const lineData = lambdas.map((_, i) => i === λIdx ? 1.05 : null);
+  planckChart.data.datasets[1].data = lineData;
+
+  planckChart.update();
+}
+
+// Sliders & presets
+function onTempChange(val) {
+  updateAll(parseInt(val));
+}
+function setTemp(t) {
+  document.getElementById('tempSlider').value = t;
+  updateAll(t);
+}
+
+// ══════════════════════════════════════════════
+//  SPECTRAL CLASS LIST
+// ══════════════════════════════════════════════
+const scData = [
+  { cls:'O', name:'О класс',  T:35000, col:'#aad4ff', range:'> 30 000 К' },
+  { cls:'B', name:'B класс',  T:15000, col:'#c8e0ff', range:'10–30 000 К' },
+  { cls:'A', name:'A класс',  T:9000,  col:'#f0f4ff', range:'7 500–10 000 К' },
+  { cls:'F', name:'F класс',  T:6500,  col:'#fff8e0', range:'6 000–7 500 К' },
+  { cls:'G', name:'G класс',  T:5778,  col:'#ffee88', range:'5 200–6 000 К' },
+  { cls:'K', name:'K класс',  T:4500,  col:'#ffcc66', range:'3 700–5 200 К' },
+  { cls:'M', name:'M класс',  T:3500,  col:'#ff6633', range:'2 400–3 700 К' },
+];
+
+const scList = document.getElementById('scList');
+scData.forEach(s => {
+  const row = document.createElement('div');
+  row.className = 'sc-row'; row.dataset.cls = s.cls;
+  row.innerHTML = `
+    <div class="sc-swatch" style="background:${s.col};box-shadow:0 0 8px ${s.col}66"></div>
+    <div class="sc-letter" style="color:${s.col}">${s.cls}</div>
+    <div class="sc-info">
+      <div class="sc-name">${s.name}</div>
+      <div class="sc-range">${s.range}</div>
+    </div>`;
+  row.onclick = () => setTemp(Math.min(s.T, 15000));
+  scList.appendChild(row);
+});
+
+// ══════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('tab-' + id).classList.add('on');
+  btn.classList.add('on');
+}
+
+// ══════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════
+const quizData = [
+  {
+    q: 'Температураны 2 есе арттырсаңыз, сәулелену максимумы (λ_max) қай жаққа ығысады?',
+    opts: ['Ұзын толқындарға (қызыл жаққа)', 'Қысқа толқындарға (көк жаққа)', 'Ығыспайды', 'Кездейсоқ ығысады'],
+    ans: 1,
+    fb: 'Дұрыс! Вина заңы бойынша: λ_max = b/T. T артса → λ_max кемиді. Яғни максимум қысқа толқынға, көк жаққа ығысады. Сондықтан ыстық жұлдыздар — көкшіл!'
+  },
+  {
+    q: 'Температурасы ең жоғары жұлдыздардың түсі қандай болады?',
+    opts: ['Қызыл (T ~ 3 000 К)', 'Сарғыш (T ~ 6 000 К)', 'Ақ (T ~ 9 000 К)', 'Көгілдір-ақ (T > 30 000 К)'],
+    ans: 3,
+    fb: 'Дұрыс! O спектрлік класты жұлдыздар (T > 30 000 К) — ең ыстық. Олардың λ_max ультракүлгін диапазонда болғандықтан, көзге көгілдір-ақ болып көрінеді. Бетельгейзе қызыл — салқын (~ 3 400 К).'
+  },
+  {
+    q: 'Классикалық физика «ультракүлгін апатта» қандай болжам жасады?',
+    opts: [
+      'Қысқа толқындарда интенсивтілік нөлге дейін кемиді',
+      'Барлық толқындарда интенсивтілік тең болады',
+      'Қысқа толқындарда интенсивтілік шексіздікке ұмтылады',
+      'Тек ұзын толқындарда ғана сәулелену болады'
+    ],
+    ans: 2,
+    fb: 'Дұрыс! Рэлей-Джинс формуласы I ~ 1/λ⁴ беретін, яғни λ→0 болғанда I→∞. Бұл «ультракүлгін апат» деп аталады. Планк E=hν квантталуын ұсынып, бұл мәселені шешті.'
+  },
+  {
+    q: 'Стефан-Больцман заңына сәйкес, T 2 есе артса, жалпы сәулелену қуаты қалай өзгереді?',
+    opts: ['2 есе артады', '4 есе артады', '8 есе артады', '16 есе артады'],
+    ans: 3,
+    fb: 'Дұрыс! P = σT⁴. Егер T 2 есе артса: P_жаңа = σ(2T)⁴ = 16σT⁴. Яғни қуат 2⁴ = 16 есе артады! Бұл — жұлдыздардың ядролық реакциясының қаншалықты қуатты екенін түсіндіреді.'
+  },
+  {
+    q: 'Күн жұлдызының спектрлік класы — G, ал температурасы шамамен 5 778 К. Оның λ_max-ы қай диапазонда?',
+    opts: ['Инфрақызыл (ИК)', 'Ультракүлгін (УК)', 'Көрінетін жарық (жасыл-сары)', 'Рентген сәулелері'],
+    ans: 2,
+    fb: 'Дұрыс! Вина заңымен: λ_max = 2.898×10⁻³/5778 ≈ 501 нм. Бұл — жасыл-сары диапазон. Эволюция нәтижесінде адам көзі дәл осы диапазонға ең сезімтал болып қалыптасқан!'
+  }
+];
+
+let qi = 0, qScore = 0, qAns = false, qRes = [];
+
+function renderQuiz() {
+  const wrap = document.getElementById('quizContainer');
+  if (qi >= quizData.length) {
+    const pct = Math.round(qScore / quizData.length * 100);
+    wrap.innerHTML = `
+      <div class="q-final">
+        <div class="qf-icon">${pct >= 80 ? '🌟' : pct >= 60 ? '⭐' : '🔭'}</div>
+        <div class="qf-score">${qScore} / ${quizData.length}</div>
+        <div class="qf-msg">${pct >= 80 ? 'Тамаша! Астрофизика негіздерін толық меңгердіңіз!' : pct >= 60 ? 'Жақсы нәтиже! Теорияны тереңдетіңіз.' : 'Теорияны қайталаңыз. Сіз жетістікке жетесіз!'}</div>
+        <button class="q-next" onclick="qi=0;qScore=0;qRes=[];renderQuiz()">↺ ҚАЙТАЛАУ</button>
+      </div>`;
+    return;
+  }
+  const q = quizData[qi];
+  const dots = quizData.map((_, i) => {
+    let c = 'q-pip';
+    if (i < qi) c += qRes[i] ? ' ok' : ' bad';
+    else if (i === qi) c += ' cur';
+    return `<div class="${c}"></div>`;
+  }).join('');
+  wrap.innerHTML = `
+    <div class="q-counter">СҰРАҚ ${qi+1}/${quizData.length}<div class="q-pips">${dots}</div></div>
+    <div class="q-text">${q.q}</div>
+    <div class="q-opts">
+      ${q.opts.map((o,i)=>`<button class="q-opt" onclick="pickQ(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+    </div>
+    <div class="q-fb" id="qfb"></div>
+    <div class="q-foot">
+      <div class="q-score-txt">ҰПАЙ: ${qScore}/${quizData.length}</div>
+      <button class="q-next" id="qnxt" onclick="qi++;renderQuiz()" disabled>КЕЛЕСІ ›</button>
+    </div>`;
+  qAns = false;
+}
+
+function pickQ(i) {
+  if (qAns) return;
+  qAns = true;
+  const q = quizData[qi];
+  const opts = document.querySelectorAll('.q-opt');
+  opts.forEach(o => o.disabled = true);
+  const ok = i === q.ans;
+  opts[i].classList.add(ok ? 'ok' : 'bad');
+  if (!ok) opts[q.ans].classList.add('ok');
+  if (ok) qScore++;
+  qRes[qi] = ok;
+  const fb = document.getElementById('qfb');
+  fb.className = 'q-fb show ' + (ok ? 'ok' : 'bad');
+  fb.textContent = (ok ? '✅ ' : '❌ ') + q.fb;
+  document.getElementById('qnxt').disabled = false;
+}
+
+// ══════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════
+renderQuiz();
+updateAll(5778);
+drawStar(0);
+</script>
+</body>
+</html>
