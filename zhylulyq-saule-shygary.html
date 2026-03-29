@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="kk" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Жылулық Сәуле Шығару — Планк Гипотезасы</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp;family=Nunito:wght@400;600;800&amp;display=swap" rel="stylesheet">
+  <style>
+html, body { height: 100%; margin: 0; }
+* { box-sizing: border-box; }
+body { font-family: 'Nunito', sans-serif; background: #0a0e1a; color: #e0e6f0; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+.nav-btn { transition: all 0.25s; }
+.nav-btn.active { background: linear-gradient(135deg, #f97316, #ef4444); color: #fff; }
+.nav-btn:not(.active):hover { background: rgba(255,255,255,0.08); }
+.glow-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; backdrop-filter: blur(12px); }
+.glow-accent { box-shadow: 0 0 30px rgba(249,115,22,0.15); }
+input[type=range] { -webkit-appearance: none; background: transparent; width: 100%; }
+input[type=range]::-webkit-slider-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #991b1b, #dc2626, #f97316, #facc15, #a5f3fc, #818cf8); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid #f97316; margin-top: -8px; cursor: pointer; }
+input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #991b1b, #dc2626, #f97316, #facc15, #a5f3fc, #818cf8); }
+input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid #f97316; cursor: pointer; }
+canvas { display: block; }
+.quiz-opt { transition: all 0.2s; cursor: pointer; border: 2px solid rgba(255,255,255,0.1); }
+.quiz-opt:hover { border-color: #f97316; background: rgba(249,115,22,0.1); }
+.quiz-opt.correct { border-color: #22c55e; background: rgba(34,197,94,0.15); }
+.quiz-opt.wrong { border-color: #ef4444; background: rgba(239,68,68,0.15); }
+@keyframes floatPhoton { 0% { transform: translateY(0) scale(1); opacity: 0.8; } 50% { transform: translateY(-10px) scale(1.1); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 0.8; } }
+.photon-anim { animation: floatPhoton 1.5s ease-in-out infinite; }
+.fade-in { animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto">
+  <div id="app" class="w-full min-h-full flex flex-col" style="background: linear-gradient(160deg, #0a0e1a 0%, #111827 50%, #0f172a 100%);"><!-- Header -->
+   <header class="w-full px-4 py-4 flex items-center justify-between border-b border-white/5" style="background: rgba(0,0,0,0.3);">
+    <div class="flex items-center gap-3">
+     <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #f97316, #ef4444);"><i data-lucide="atom" class="w-5 h-5 text-white"></i>
+     </div>
+     <div>
+      <h1 id="mainTitle" class="text-lg font-extrabold leading-tight" style="background: linear-gradient(90deg, #f97316, #facc15); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Жылулық сәуле шығару</h1>
+      <p class="text-xs text-gray-500">Планк гипотезасы · 11-сынып</p>
+     </div>
+    </div>
+   </header><!-- Navigation -->
+   <nav class="w-full px-4 py-3 flex gap-2 overflow-x-auto border-b border-white/5" style="background: rgba(0,0,0,0.15);"><button class="nav-btn active px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap" data-tab="theory" onclick="switchTab('theory')"> <span class="flex items-center gap-1.5"><i data-lucide="book-open" class="w-4 h-4"></i> Теория</span> </button> <button class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap" data-tab="sim" onclick="switchTab('sim')"> <span class="flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4"></i> Модельдеу</span> </button> <button class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap" data-tab="calc" onclick="switchTab('calc')"> <span class="flex items-center gap-1.5"><i data-lucide="calculator" class="w-4 h-4"></i> Калькулятор</span> </button> <button class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap" data-tab="quiz" onclick="switchTab('quiz')"> <span class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4"></i> Тест</span> </button>
+   </nav><!-- Tab Content -->
+   <main class="flex-1 w-full"><!-- THEORY TAB -->
+    <section id="tab-theory" class="tab-content p-4 max-w-4xl mx-auto fade-in">
+     <div class="glow-card p-6 mb-4 glow-accent">
+      <h2 class="text-xl font-extrabold mb-3 text-orange-400">🔥 Жылулық сәуле шығару дегеніміз не?</h2>
+      <p class="text-gray-300 leading-relaxed mb-3">Кез келген дене, оның температурасы абсолют нөлден жоғары болса, электромагниттік толқындар шығарады. Бұл құбылыс <strong class="text-orange-300">жылулық сәуле шығару</strong> деп аталады.</p>
+      <p class="text-gray-300 leading-relaxed">Температура жоғарылаған сайын шығарылатын энергия артады және спектрдің максимумы қысқа толқын ұзындықтарына қарай жылжиды (Вин заңы).</p>
+     </div>
+     <div class="glow-card p-6 mb-4">
+      <h2 class="text-xl font-extrabold mb-3 text-yellow-400">⚡ Стефан-Больцман заңы</h2>
+      <p class="text-gray-300 leading-relaxed mb-3">Абсолют қара дененің бірлік бетінен шығаратын жалпы энергиясы:</p>
+      <div class="mono text-center text-2xl py-4 px-6 rounded-xl mb-3" style="background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3);"><span class="text-orange-300">R = σT⁴</span>
+      </div>
+      <p class="text-gray-400 text-sm">мұндағы σ = 5.67 × 10⁻⁸ Вт/(м²·К⁴) — Стефан-Больцман тұрақтысы</p>
+     </div>
+     <div class="glow-card p-6 mb-4" style="border-color: rgba(239,68,68,0.3);">
+      <h2 class="text-xl font-extrabold mb-3 text-red-400">💥 Ультракүлгін апат</h2>
+      <p class="text-gray-300 leading-relaxed mb-3">XIX ғасырдың соңында классикалық физика (Рэлей-Джинс заңы) қысқа толқын ұзындықтарында энергия тығыздығы <strong class="text-red-300">шексіздікке кетеді</strong> деп болжады. Бұл тәжірибемен мүлде сәйкес келмеді.</p>
+      <p class="text-gray-300 leading-relaxed">Бұл мәселе <strong class="text-red-300">«ультракүлгін апат»</strong> деп аталды және классикалық физиканың шегін көрсетті.</p>
+     </div>
+     <div class="glow-card p-6 glow-accent" style="border-color: rgba(250,204,21,0.3);">
+      <h2 class="text-xl font-extrabold mb-3 text-yellow-300">🌟 Планктің батыл қадамы (1900 ж.)</h2>
+      <p class="text-gray-300 leading-relaxed mb-3">Макс Планк мәселені шешу үшін революциялық болжам жасады: <strong class="text-yellow-200">энергия үздіксіз емес, порциялармен (кванттармен) шығарылады және жұтылады!</strong></p>
+      <div class="mono text-center text-3xl py-5 px-6 rounded-xl my-4" style="background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(250,204,21,0.15)); border: 1px solid rgba(250,204,21,0.4);"><span class="text-yellow-300">E = hν</span>
+      </div>
+      <p class="text-gray-300 leading-relaxed mb-2">мұндағы:</p>
+      <ul class="text-gray-400 space-y-1 ml-4 text-sm">
+       <li>• <span class="mono text-yellow-400">h</span> = 6.626 × 10⁻³⁴ Дж·с — Планк тұрақтысы</li>
+       <li>• <span class="mono text-yellow-400">ν</span> (ню) — электромагниттік толқынның жиілігі (Гц)</li>
+       <li>• <span class="mono text-yellow-400">E</span> — бір кванттың (фотонның) энергиясы (Дж)</li>
+      </ul>
+     </div>
+    </section><!-- SIMULATION TAB -->
+    <section id="tab-sim" class="tab-content p-4 max-w-5xl mx-auto hidden fade-in"><!-- Temperature Control -->
+     <div class="glow-card p-5 mb-4">
+      <div class="flex items-center justify-between mb-3">
+       <h2 class="text-lg font-extrabold text-orange-400">🌡️ Температура</h2>
+       <div class="mono text-2xl font-bold" id="tempDisplay" style="background: linear-gradient(90deg, #f97316, #facc15); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        3000 К
+       </div>
+      </div><input type="range" id="tempSlider" min="300" max="10000" value="3000" step="50" oninput="updateSimulation()">
+      <div class="flex justify-between text-xs text-gray-500 mt-1">
+       <span>300 К</span><span>10 000 К</span>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4"><!-- Black Body -->
+      <div class="glow-card p-5">
+       <h3 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">Абсолют қара дене</h3>
+       <div class="flex items-center justify-center" style="height: 180px;">
+        <div id="blackBody" style="width:120px;height:120px;border-radius:50%;transition:all 0.4s;box-shadow:0 0 40px rgba(100,20,0,0.5);"></div>
+       </div>
+       <div class="text-center mt-3">
+        <p class="text-sm text-gray-400">Стефан-Больцман:</p>
+        <p class="mono text-lg font-bold text-orange-300" id="sbPower">—</p>
+       </div>
+      </div><!-- Photon Visualization -->
+      <div class="glow-card p-5">
+       <h3 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">Кванттар (фотондар)</h3>
+       <div id="photonContainer" class="relative flex items-end justify-center gap-4" style="height:180px;"></div>
+       <div class="text-center mt-3">
+        <p class="text-sm text-gray-400">E = hν формуласы бойынша:</p>
+        <p class="mono text-sm text-orange-300" id="photonInfo">—</p>
+       </div>
+      </div>
+     </div><!-- Planck Curve Graph -->
+     <div class="glow-card p-5">
+      <div class="flex items-center justify-between mb-3">
+       <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Спектрлік тығыздық графигі</h3>
+       <div class="flex gap-3 text-xs"><span class="flex items-center gap-1"><span class="inline-block w-3 h-1 rounded" style="background:#f97316;"></span> Планк</span> <span class="flex items-center gap-1"><span class="inline-block w-3 h-1 rounded" style="background:#ef4444;"></span> Рэлей-Джинс</span>
+       </div>
+      </div>
+      <canvas id="spectrumCanvas" width="800" height="350" style="width:100%;height:auto;border-radius:12px;background:rgba(0,0,0,0.3);"></canvas>
+      <p class="text-center text-xs text-gray-500 mt-2">Толқын ұзындығы λ (мкм) → | ↑ Спектрлік тығыздық</p>
+     </div>
+    </section><!-- CALCULATOR TAB -->
+    <section id="tab-calc" class="tab-content p-4 max-w-2xl mx-auto hidden fade-in">
+     <div class="glow-card p-6 glow-accent">
+      <h2 class="text-xl font-extrabold mb-5 text-orange-400">🔢 Фотон энергиясының калькуляторы</h2>
+      <div class="mono text-center text-2xl py-3 mb-5 rounded-xl" style="background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3);">
+       E = hν
+      </div><label class="block text-sm text-gray-400 mb-2">Жиілікті енгізіңіз (ν), Гц:</label> <input type="number" id="freqInput" value="5e14" step="1e12" class="w-full p-3 rounded-xl text-white mono text-lg mb-4" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);" oninput="calcEnergy()"> <label class="block text-sm text-gray-400 mb-2">Немесе толқын ұзындығын енгізіңіз (λ), нм:</label> <input type="number" id="wavInput" value="600" step="10" class="w-full p-3 rounded-xl text-white mono text-lg mb-5" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);" oninput="calcFromWavelength()">
+      <div class="rounded-xl p-5" style="background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(250,204,21,0.1)); border: 1px solid rgba(250,204,21,0.2);">
+       <div class="grid grid-cols-1 gap-3">
+        <div class="flex justify-between items-center"><span class="text-gray-400">Жиілік (ν):</span> <span class="mono text-yellow-300 font-bold" id="calcFreq">5.00 × 10¹⁴ Гц</span>
+        </div>
+        <div class="flex justify-between items-center"><span class="text-gray-400">Толқын ұзындығы (λ):</span> <span class="mono text-yellow-300 font-bold" id="calcWav">600 нм</span>
+        </div>
+        <hr class="border-white/10">
+        <div class="flex justify-between items-center"><span class="text-gray-400 font-bold">Энергия (E):</span> <span class="mono text-orange-300 text-xl font-bold" id="calcE">3.31 × 10⁻¹⁹ Дж</span>
+        </div>
+        <div class="flex justify-between items-center"><span class="text-gray-400">Энергия (эВ):</span> <span class="mono text-orange-300 font-bold" id="calcEeV">2.07 эВ</span>
+        </div>
+        <div class="flex justify-between items-center"><span class="text-gray-400">Жарық түсі:</span> <span class="flex items-center gap-2"><span id="colorSwatch" class="inline-block w-5 h-5 rounded-full" style="background:orange;"></span> <span id="colorName" class="text-gray-300">Қызғылт сары</span></span>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- QUIZ TAB -->
+    <section id="tab-quiz" class="tab-content p-4 max-w-2xl mx-auto hidden fade-in">
+     <div class="glow-card p-6 glow-accent">
+      <div class="flex items-center justify-between mb-5">
+       <h2 class="text-xl font-extrabold text-orange-400">📝 Мини-тест</h2><span class="mono text-sm px-3 py-1 rounded-full" style="background:rgba(249,115,22,0.15); color:#f97316;" id="quizScore">0 / 5</span>
+      </div>
+      <div id="quizContainer"></div><button id="quizResetBtn" class="hidden w-full mt-4 py-3 rounded-xl font-bold text-white" style="background: linear-gradient(135deg, #f97316, #ef4444);" onclick="resetQuiz()">🔄 Қайта бастау</button>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script>
+// ===== CONFIG & SDK =====
+const defaultConfig = {
+  main_title: 'Жылулық сәуле шығару',
+  background_color: '#0a0e1a',
+  surface_color: '#111827',
+  text_color: '#e0e6f0',
+  primary_action: '#f97316',
+  secondary_action: '#facc15',
+  font_family: 'Nunito',
+  font_size: 16
+};
+
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => {
+    const t = config.main_title || defaultConfig.main_title;
+    document.getElementById('mainTitle').textContent = t;
+    const ff = config.font_family || defaultConfig.font_family;
+    document.body.style.fontFamily = `${ff}, sans-serif`;
+    const fs = config.font_size || defaultConfig.font_size;
+    document.body.style.fontSize = fs + 'px';
+    // colors
+    const bg = config.background_color || defaultConfig.background_color;
+    const surface = config.surface_color || defaultConfig.surface_color;
+    const txt = config.text_color || defaultConfig.text_color;
+    const pri = config.primary_action || defaultConfig.primary_action;
+    const sec = config.secondary_action || defaultConfig.secondary_action;
+    document.getElementById('app').style.background = `linear-gradient(160deg, ${bg} 0%, ${surface} 50%, ${bg} 100%)`;
+    document.body.style.color = txt;
+    document.querySelectorAll('.text-orange-400, .text-orange-300').forEach(el => el.style.color = pri);
+    document.querySelectorAll('.text-yellow-400, .text-yellow-300, .text-yellow-200').forEach(el => el.style.color = sec);
+  },
+  mapToCapabilities: (config) => ({
+    recolorables: [
+      { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+      { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+      { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+      { get: () => config.primary_action || defaultConfig.primary_action, set: v => { config.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); } },
+      { get: () => config.secondary_action || defaultConfig.secondary_action, set: v => { config.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); } }
+    ],
+    borderables: [],
+    fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+    fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+  }),
+  mapToEditPanelValues: (config) => new Map([
+    ['main_title', config.main_title || defaultConfig.main_title]
+  ])
+});
+
+// ===== TABS =====
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(s => s.classList.add('hidden'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const sec = document.getElementById('tab-' + id);
+  sec.classList.remove('hidden');
+  sec.classList.remove('fade-in');
+  void sec.offsetWidth;
+  sec.classList.add('fade-in');
+  document.querySelector(`.nav-btn[data-tab="${id}"]`).classList.add('active');
+  if (id === 'sim') updateSimulation();
+}
+
+// ===== PHYSICS CONSTANTS =====
+const h = 6.626e-34;
+const c = 3e8;
+const kB = 1.381e-23;
+const sigma = 5.67e-8;
+
+// ===== COLOR FROM TEMPERATURE =====
+function tempToColor(T) {
+  // simplified blackbody color approximation
+  let r, g, b;
+  const t = T / 100;
+  if (t <= 66) { r = 255; g = Math.max(0, Math.min(255, 99.47 * Math.log(t) - 161.12)); } else { r = Math.max(0, Math.min(255, 329.7 * Math.pow(t - 60, -0.1332))); g = Math.max(0, Math.min(255, 288.12 * Math.pow(t - 60, -0.0755))); }
+  if (t >= 66) b = 255; else if (t <= 19) b = 0; else b = Math.max(0, Math.min(255, 138.52 * Math.log(t - 10) - 305.04));
+  if (T < 1000) { const f = T / 1000; r *= f; g *= f; b *= f; }
+  return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+}
+
+// ===== PLANCK FUNCTION =====
+function planck(lambda_m, T) {
+  const a = 2 * h * c * c / Math.pow(lambda_m, 5);
+  const b = Math.exp(h * c / (lambda_m * kB * T)) - 1;
+  return a / b;
+}
+function rayleighJeans(lambda_m, T) {
+  return 2 * c * kB * T / Math.pow(lambda_m, 4);
+}
+
+// ===== SIMULATION UPDATE =====
+function updateSimulation() {
+  const T = parseInt(document.getElementById('tempSlider').value);
+  document.getElementById('tempDisplay').textContent = T.toLocaleString() + ' К';
+
+  // Black body color & glow
+  const col = tempToColor(T);
+  const bb = document.getElementById('blackBody');
+  bb.style.background = `radial-gradient(circle, ${col}, ${tempToColor(T * 0.7)})`;
+  const glowIntensity = Math.min(80, 10 + (T / 10000) * 70);
+  bb.style.boxShadow = `0 0 ${glowIntensity}px ${glowIntensity / 2}px ${col}`;
+
+  // Stefan-Boltzmann
+  const R = sigma * Math.pow(T, 4);
+  document.getElementById('sbPower').textContent = R.toExponential(2) + ' Вт/м²';
+
+  // Peak wavelength (Wien)
+  const lambdaMax = 2.898e-3 / T; // meters
+
+  // Photon visualization
+  updatePhotons(T, lambdaMax);
+
+  // Draw spectrum
+  drawSpectrum(T);
+}
+
+function updatePhotons(T, lambdaMax) {
+  const container = document.getElementById('photonContainer');
+  container.innerHTML = '';
+
+  const photons = [
+    { name: 'Қызыл', lambda: 700e-9, color: '#ef4444' },
+    { name: 'Жасыл', lambda: 550e-9, color: '#22c55e' },
+    { name: 'Көк', lambda: 450e-9, color: '#3b82f6' },
+    { name: 'Күлгін', lambda: 380e-9, color: '#8b5cf6' }
+  ];
+
+  let infoText = '';
+  photons.forEach((p, i) => {
+    const freq = c / p.lambda;
+    const energy = h * freq;
+    const size = Math.max(16, 60 - (freq / 1e15) * 40);
+    const col = `
+      <div class="flex flex-col items-center photon-anim" style="animation-delay:${i * 0.2}s;">
+        <div style="width:${size}px;height:${size}px;border-radius:50%;background:${p.color};box-shadow:0 0 ${size/2}px ${p.color};margin-bottom:8px;"></div>
+        <span class="text-xs font-bold" style="color:${p.color}">${p.name}</span>
+        <span class="mono text-xs text-gray-500">${energy.toExponential(1)} Дж</span>
+      </div>`;
+    container.innerHTML += col;
+  });
+  const peakFreq = c / lambdaMax;
+  const peakE = h * peakFreq;
+  document.getElementById('photonInfo').textContent = `Пик: λ=${(lambdaMax*1e6).toFixed(2)} мкм, ν=${peakFreq.toExponential(2)} Гц, E=${peakE.toExponential(2)} Дж`;
+}
+
+// ===== DRAW SPECTRUM =====
+function drawSpectrum(T) {
+  const canvas = document.getElementById('spectrumCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Axis range: 0.1 to 10 micrometers
+  const lambdaMin = 0.1e-6, lambdaMax = 10e-6;
+  const steps = 400;
+  const dl = (lambdaMax - lambdaMin) / steps;
+
+  // Find max Planck value for scaling
+  let maxP = 0;
+  for (let i = 0; i <= steps; i++) {
+    const lam = lambdaMin + i * dl;
+    const val = planck(lam, T);
+    if (val > maxP) maxP = val;
+  }
+  maxP *= 1.15;
+
+  const pad = { l: 50, r: 20, t: 20, b: 35 };
+  const gW = W - pad.l - pad.r, gH = H - pad.t - pad.b;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.t + (gH / 5) * i;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+  }
+  for (let i = 0; i <= 10; i++) {
+    const x = pad.l + (gW / 10) * i;
+    ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, H - pad.b); ctx.stroke();
+  }
+
+  // X labels
+  ctx.fillStyle = '#6b7280'; ctx.font = '11px JetBrains Mono';
+  ctx.textAlign = 'center';
+  for (let i = 0; i <= 10; i++) {
+    const lam_um = 0.1 + (9.9 / 10) * i;
+    const x = pad.l + (gW / 10) * i;
+    ctx.fillText(lam_um.toFixed(1), x, H - pad.b + 14);
+  }
+  ctx.fillText('λ (мкм)', pad.l + gW / 2, H - 3);
+
+  function toX(lam) { return pad.l + ((lam - lambdaMin) / (lambdaMax - lambdaMin)) * gW; }
+  function toY(val) { return pad.t + gH - (val / maxP) * gH; }
+
+  // Draw visible spectrum background
+  const visMin = 380e-9, visMax = 750e-9;
+  if (visMax > lambdaMin && visMin < lambdaMax) {
+    const x1 = toX(Math.max(visMin, lambdaMin));
+    const x2 = toX(Math.min(visMax, lambdaMax));
+    const grad = ctx.createLinearGradient(x1, 0, x2, 0);
+    grad.addColorStop(0, 'rgba(128,0,255,0.08)');
+    grad.addColorStop(0.2, 'rgba(0,0,255,0.08)');
+    grad.addColorStop(0.4, 'rgba(0,255,0,0.08)');
+    grad.addColorStop(0.6, 'rgba(255,255,0,0.08)');
+    grad.addColorStop(0.8, 'rgba(255,128,0,0.08)');
+    grad.addColorStop(1, 'rgba(255,0,0,0.08)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(x1, pad.t, x2 - x1, gH);
+  }
+
+  // Rayleigh-Jeans curve (limit to visible range to show divergence)
+  ctx.beginPath();
+  ctx.strokeStyle = '#ef4444';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 4]);
+  let started = false;
+  for (let i = 0; i <= steps; i++) {
+    const lam = lambdaMin + i * dl;
+    let rj = rayleighJeans(lam, T);
+    if (rj > maxP * 3) rj = maxP * 3;
+    const x = toX(lam), y = Math.max(pad.t - 5, toY(rj));
+    if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Planck curve
+  ctx.beginPath();
+  ctx.strokeStyle = '#f97316';
+  ctx.lineWidth = 2.5;
+  for (let i = 0; i <= steps; i++) {
+    const lam = lambdaMin + i * dl;
+    const val = planck(lam, T);
+    const x = toX(lam), y = toY(val);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Fill under Planck
+  ctx.lineTo(toX(lambdaMax), toY(0));
+  ctx.lineTo(toX(lambdaMin), toY(0));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(249,115,22,0.08)';
+  ctx.fill();
+
+  // Wien peak line
+  const peakLam = 2.898e-3 / T;
+  if (peakLam > lambdaMin && peakLam < lambdaMax) {
+    const px = toX(peakLam);
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(px, pad.t); ctx.lineTo(px, H - pad.b); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#facc15'; ctx.font = 'bold 11px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText(`λmax=${(peakLam * 1e6).toFixed(2)} мкм`, px, pad.t - 5);
+  }
+
+  // Labels
+  ctx.font = 'bold 12px Nunito';
+  ctx.fillStyle = '#f97316'; ctx.textAlign = 'left';
+  ctx.fillText('Планк', pad.l + 8, pad.t + 18);
+  ctx.fillStyle = '#ef4444';
+  ctx.fillText('Рэлей-Джинс', pad.l + 8, pad.t + 34);
+  ctx.fillStyle = '#ef444488'; ctx.font = '10px Nunito';
+  ctx.fillText('(«Ультракүлгін апат» ↗)', pad.l + 8, pad.t + 48);
+}
+
+// ===== CALCULATOR =====
+function calcEnergy() {
+  const freq = parseFloat(document.getElementById('freqInput').value);
+  if (!freq || freq <= 0) return;
+  const lam = c / freq;
+  document.getElementById('wavInput').value = Math.round(lam * 1e9);
+  updateCalcDisplay(freq);
+}
+function calcFromWavelength() {
+  const lam_nm = parseFloat(document.getElementById('wavInput').value);
+  if (!lam_nm || lam_nm <= 0) return;
+  const freq = c / (lam_nm * 1e-9);
+  document.getElementById('freqInput').value = freq.toExponential(3);
+  updateCalcDisplay(freq);
+}
+function updateCalcDisplay(freq) {
+  const E = h * freq;
+  const eV = E / 1.602e-19;
+  const lam_nm = (c / freq) * 1e9;
+
+  document.getElementById('calcFreq').textContent = freq.toExponential(2) + ' Гц';
+  document.getElementById('calcWav').textContent = Math.round(lam_nm) + ' нм';
+  document.getElementById('calcE').textContent = E.toExponential(2) + ' Дж';
+  document.getElementById('calcEeV').textContent = eV.toFixed(3) + ' эВ';
+
+  // Color
+  let color = '#888', name = 'Көрінбейді';
+  if (lam_nm >= 620 && lam_nm <= 750) { color = '#ef4444'; name = 'Қызыл'; }
+  else if (lam_nm >= 590 && lam_nm < 620) { color = '#f97316'; name = 'Қызғылт сары'; }
+  else if (lam_nm >= 570 && lam_nm < 590) { color = '#eab308'; name = 'Сары'; }
+  else if (lam_nm >= 495 && lam_nm < 570) { color = '#22c55e'; name = 'Жасыл'; }
+  else if (lam_nm >= 450 && lam_nm < 495) { color = '#3b82f6'; name = 'Көк'; }
+  else if (lam_nm >= 380 && lam_nm < 450) { color = '#8b5cf6'; name = 'Күлгін'; }
+  else if (lam_nm < 380) { name = 'Ультракүлгін'; }
+  else if (lam_nm > 750) { name = 'Инфрақызыл'; }
+
+  document.getElementById('colorSwatch').style.background = color;
+  document.getElementById('colorName').textContent = name;
+}
+
+// ===== QUIZ =====
+const quizData = [
+  { q: 'Жылулық сәуле шығару қандай температурада басталады?', opts: ['0 °C', 'Абсолют нөлден жоғары кез келген T', '100 °C', '1000 К'], correct: 1 },
+  { q: 'Планк формуласында E = hν, мұндағы h дегеніміз не?', opts: ['Больцман тұрақтысы', 'Жарық жылдамдығы', 'Планк тұрақтысы', 'Стефан-Больцман тұрақтысы'], correct: 2 },
+  { q: '«Ультракүлгін апат» дегеніміз не?', opts: ['Ультракүлгін сәуленің адамға зияны', 'Классикалық теорияның қысқа толқындарда шексіздік беруі', 'Күннің ультракүлгін жарығының күшеюі', 'Планктың қатесі'], correct: 1 },
+  { q: 'Температура артқанда спектрдің максимумы қайда жылжиды?', opts: ['Ұзын толқындарға', 'Қысқа толқындарға', 'Өзгермейді', 'Толқын ұзындығына байланысты емес'], correct: 1 },
+  { q: 'Стефан-Больцман заңы бойынша R ~ T^n, мұндағы n нешеге тең?', opts: ['2', '3', '4', '5'], correct: 2 }
+];
+
+let quizState = { answers: Array(quizData.length).fill(-1), score: 0, done: false };
+
+function renderQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  quizData.forEach((q, qi) => {
+    const answered = quizState.answers[qi] >= 0;
+    let html = `<div class="mb-5"><p class="font-bold mb-3 text-gray-200"><span class="text-orange-400">${qi + 1}.</span> ${q.q}</p><div class="grid gap-2">`;
+    q.opts.forEach((opt, oi) => {
+      let cls = 'quiz-opt rounded-xl p-3 text-sm';
+      if (answered) {
+        if (oi === q.correct) cls += ' correct';
+        else if (oi === quizState.answers[qi] && oi !== q.correct) cls += ' wrong';
+        cls += ' pointer-events-none opacity-80';
+      }
+      html += `<div class="${cls}" onclick="answerQuiz(${qi},${oi})">${opt}</div>`;
+    });
+    html += '</div></div>';
+    container.innerHTML += html;
+  });
+  document.getElementById('quizScore').textContent = quizState.score + ' / ' + quizData.length;
+  const allAnswered = quizState.answers.every(a => a >= 0);
+  document.getElementById('quizResetBtn').classList.toggle('hidden', !allAnswered);
+}
+
+function answerQuiz(qi, oi) {
+  if (quizState.answers[qi] >= 0) return;
+  quizState.answers[qi] = oi;
+  if (oi === quizData[qi].correct) quizState.score++;
+  renderQuiz();
+}
+
+function resetQuiz() {
+  quizState = { answers: Array(quizData.length).fill(-1), score: 0, done: false };
+  renderQuiz();
+}
+
+// ===== INIT =====
+lucide.createIcons();
+updateSimulation();
+calcEnergy();
+renderQuiz();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e3da6d3b0cbecf7',t:'MTc3NDc3NDQ4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
