@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Жылулық сәуле шығару • Планк гипотезасы</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #060810;
+    --bg-panel: #0d1117;
+    --bg-card: #111827;
+    --bg-card2: #161f2e;
+    --border: #1e2d45;
+    --border-glow: #1e3a5f;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-amber: #f59e0b;
+    --accent-violet: #8b5cf6;
+    --accent-green: #10b981;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-dim: #475569;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+    --glow-red: #ff4500;
+    --glow-orange: #ff8c00;
+    --glow-yellow: #ffd700;
+    --glow-white: #fffaf0;
+    --glow-blue: #aac8ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Star background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 90%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 50%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 75%, rgba(255,255,255,0.3) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 40px 0 30px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(59,130,246,0.05) 0%, transparent 100%);
+  }
+
+  .header-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border: 1px solid rgba(6,182,212,0.3);
+    border-radius: 20px;
+    margin-bottom: 16px;
+    background: rgba(6,182,212,0.05);
+  }
+
+  h1 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(24px, 4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 12px 20px;
+    background: rgba(6,8,16,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .tab-btn:hover { color: var(--text-secondary); border-color: var(--border-glow); }
+
+  .tab-btn.active {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+    box-shadow: 0 0 20px rgba(59,130,246,0.3);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .section {
+    display: none;
+    animation: fadeIn 0.4s ease;
+    padding: 40px 0;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(59,130,246,0.4), transparent);
+  }
+
+  .card-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent-cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-cyan);
+  }
+
+  /* ── GRID LAYOUTS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .gap-24 { gap: 24px; }
+
+  @media (max-width: 900px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── SIMULATION SECTION ── */
+  .sim-layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  @media (max-width: 1000px) { .sim-layout { grid-template-columns: 1fr; } }
+
+  /* Blackbody object */
+  .object-scene {
+    background: #000;
+    border-radius: 12px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .space-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, #0a0a1a 0%, #000 100%);
+  }
+
+  #glowRing {
+    position: absolute;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    filter: blur(30px);
+    opacity: 0.4;
+  }
+
+  #bodyObject {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+
+  .temp-display {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    z-index: 3;
+    text-shadow: 0 0 20px currentColor;
+  }
+
+  .color-label {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.5);
+    z-index: 3;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Slider */
+  .slider-wrap { margin-top: 20px; }
+
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--glow-red), var(--glow-orange), var(--glow-yellow), var(--glow-white), var(--glow-blue));
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 0 12px rgba(255,255,255,0.8), 0 0 4px rgba(0,0,0,0.4);
+    cursor: pointer;
+    border: 2px solid var(--bg-deep);
+    transition: transform 0.15s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .stat-box {
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+  }
+
+  .stat-lbl {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 3px;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+  }
+
+  /* Canvas */
+  #spectrumCanvas {
+    width: 100%;
+    height: 320px;
+    display: block;
+    border-radius: 8px;
+  }
+
+  /* Photon viz */
+  #photonCanvas {
+    width: 100%;
+    height: 180px;
+    display: block;
+    border-radius: 8px;
+    background: #000;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 28px;
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  /* Toggle */
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .toggle {
+    width: 44px; height: 24px;
+    background: var(--border);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: none;
+    flex-shrink: 0;
+  }
+
+  .toggle.on { background: var(--accent-amber); }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+
+  .toggle.on::after { transform: translateX(20px); }
+
+  /* ── THEORY SECTION ── */
+  .theory-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .theory-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139,92,246,0.5), transparent);
+  }
+
+  .theory-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+  }
+
+  .theory-card p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+    font-family: var(--sans);
+    font-weight: 400;
+  }
+
+  .formula-box {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-glow);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--accent-cyan);
+    position: relative;
+  }
+
+  .formula-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    font-size: 10px;
+    background: var(--bg-deep);
+    padding: 0 8px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .highlight-box {
+    background: rgba(245,158,11,0.08);
+    border-left: 3px solid var(--accent-amber);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .highlight-box p {
+    color: #fcd34d !important;
+    margin: 0;
+  }
+
+  .physics-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 13px;
+    margin-top: 16px;
+  }
+
+  .physics-table th {
+    background: var(--bg-deep);
+    color: var(--accent-cyan);
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+  }
+
+  .physics-table td {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .physics-table tr:nth-child(even) td { background: var(--bg-deep); }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .comp-box {
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid;
+  }
+
+  .comp-box.classical {
+    background: rgba(239,68,68,0.07);
+    border-color: rgba(239,68,68,0.3);
+  }
+
+  .comp-box.quantum {
+    background: rgba(16,185,129,0.07);
+    border-color: rgba(16,185,129,0.3);
+  }
+
+  .comp-box h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .comp-box.classical h3 { color: #f87171; }
+  .comp-box.quantum h3 { color: #34d399; }
+
+  .comp-box p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 700px) { .comparison-grid { grid-template-columns: 1fr; } }
+
+  /* ── CALCULATOR ── */
+  .calc-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) { .calc-layout { grid-template-columns: 1fr; } }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+
+  .input-group label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .input-group input {
+    width: 100%;
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-group input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+  }
+
+  .calc-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(59,130,246,0.2);
+  }
+
+  .calc-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(59,130,246,0.35);
+  }
+
+  .result-display {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-glow);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .result-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .result-value {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 20px rgba(6,182,212,0.5);
+  }
+
+  .result-unit {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .photon-color-swatch {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    margin: 10px auto;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px currentColor;
+  }
+
+  .const-info {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--bg-deep);
+    border-radius: 8px;
+    line-height: 1.8;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-wrap { max-width: 760px; margin: 0 auto; }
+
+  .question-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+
+  .question-card.correct { border-color: var(--accent-green); background: rgba(16,185,129,0.05); }
+  .question-card.wrong { border-color: #ef4444; background: rgba(239,68,68,0.05); }
+
+  .q-number {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .q-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option-btn {
+    padding: 12px 18px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: var(--sans);
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent-blue);
+    color: var(--text-primary);
+    background: rgba(59,130,246,0.08);
+  }
+
+  .option-btn.selected-correct {
+    background: rgba(16,185,129,0.15);
+    border-color: var(--accent-green);
+    color: #6ee7b7;
+  }
+
+  .option-btn.selected-wrong {
+    background: rgba(239,68,68,0.12);
+    border-color: #ef4444;
+    color: #fca5a5;
+  }
+
+  .option-btn.show-correct {
+    background: rgba(16,185,129,0.08);
+    border-color: rgba(16,185,129,0.4);
+    color: #6ee7b7;
+  }
+
+  .option-btn:disabled { cursor: not-allowed; }
+
+  .feedback {
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: none;
+  }
+
+  .feedback.show { display: block; }
+  .feedback.correct { background: rgba(16,185,129,0.1); color: #6ee7b7; }
+  .feedback.wrong { background: rgba(239,68,68,0.1); color: #fca5a5; }
+
+  .quiz-footer {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    text-align: center;
+  }
+
+  .score-display {
+    font-family: var(--mono);
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 30px rgba(6,182,212,0.4);
+    margin: 10px 0;
+  }
+
+  .score-msg {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+
+  .restart-btn {
+    padding: 12px 32px;
+    background: transparent;
+    border: 1px solid var(--accent-blue);
+    border-radius: 8px;
+    color: var(--accent-blue);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .restart-btn:hover {
+    background: var(--accent-blue);
+    color: white;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header h2 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .section-header p {
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+
+  /* Spectrum visible bar */
+  .spectrum-bar {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg,
+      #380080 0%, #6600cc 5%,
+      #0000ff 10%, #0077ff 20%,
+      #00aaff 30%, #00ff88 40%,
+      #aaff00 50%, #ffff00 60%,
+      #ffaa00 70%, #ff5500 80%,
+      #ff0000 90%, #880000 100%
+    );
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  #wienMarker {
+    position: absolute;
+    top: -4px;
+    width: 4px;
+    height: 20px;
+    background: white;
+    border-radius: 2px;
+    box-shadow: 0 0 8px white;
+    transform: translateX(-50%);
+    transition: left 0.1s;
+  }
+
+  .spectrum-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* Radiation particles animation */
+  @keyframes radiate {
+    0% { transform: scale(0); opacity: 0.8; }
+    100% { transform: scale(3); opacity: 0; }
+  }
+
+  .rad-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    animation: radiate 2s infinite;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">11-сынып • Физика</div>
+  <h1>Жылулық Сәуле Шығару<br>Планк Гипотезасы</h1>
+  <p class="subtitle">Абсолют қара дене • Кванттар • Ультракүлгін апат</p>
+</header>
+
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="showTab('sim')">⚗ Симуляция</button>
+  <button class="tab-btn" onclick="showTab('theory')">📖 Теория</button>
+  <button class="tab-btn" onclick="showTab('calc')">🔬 Калькулятор</button>
+  <button class="tab-btn" onclick="showTab('quiz')">✏ Тест</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════ SIMULATION ═══ -->
+<section id="sim" class="section active">
+  <div class="container">
+    <div class="section-header">
+      <h2>Интерактивті Симуляция</h2>
+      <p>Температураны өзгертіп, сәуле шығарудың қалай өзгеретінін бақыла</p>
+    </div>
+
+    <div class="sim-layout">
+      <!-- Left panel -->
+      <div>
+        <div class="card">
+          <div class="card-title">Абсолют қара дене</div>
+
+          <div class="object-scene">
+            <div class="space-bg"></div>
+            <div id="glowRing" style="width:180px;height:180px;"></div>
+            <div id="bodyObject"></div>
+            <div id="radRing1" class="rad-ring" style="width:110px;height:110px;top:50%;left:50%;margin:-55px 0 0 -55px;animation-delay:0s;"></div>
+            <div id="radRing2" class="rad-ring" style="width:110px;height:110px;top:50%;left:50%;margin:-55px 0 0 -55px;animation-delay:0.66s;"></div>
+            <div id="radRing3" class="rad-ring" style="width:110px;height:110px;top:50%;left:50%;margin:-55px 0 0 -55px;animation-delay:1.33s;"></div>
+            <div class="color-label" id="colorLabel">СӘУЛЕ ШЫҒАРУ ЖОҚ</div>
+            <div class="temp-display" id="tempDisplay" style="color:#666">300 К</div>
+          </div>
+
+          <div class="slider-wrap">
+            <div class="slider-label">
+              <span>300 К (Бөлме)</span>
+              <span>10 000 К (Жас жұлдыз)</span>
+            </div>
+            <input type="range" id="tempSlider" min="300" max="10000" value="3000" step="50"
+              oninput="updateSimulation(this.value)">
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-val" id="statWien">966 нм</div>
+              <div class="stat-lbl">λ_макс (Вин)</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="statPower">—</div>
+              <div class="stat-lbl">Қуат (σT⁴)</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="statRegion">ИК аймағы</div>
+              <div class="stat-lbl">Спектр аймағы</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="statPeakE">—</div>
+              <div class="stat-lbl">E_max фотон</div>
+            </div>
+          </div>
+
+          <div class="toggle-wrap">
+            <button class="toggle" id="classicalToggle" onclick="toggleClassical()"></button>
+            <span>Рэлей–Джинс заңын көрсет</span>
+          </div>
+        </div>
+
+        <!-- Photon visualization -->
+        <div class="card" style="margin-top:20px">
+          <div class="card-title">Фотондарды визуализациялау</div>
+          <canvas id="photonCanvas"></canvas>
+          <p style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:10px;line-height:1.6;">
+            Шар өлшемі — толқын ұзындығы (λ). Жарық қызғылт фотон = төмен энергия, кішкентай күлгін = жоғары энергия (E=hν)
+          </p>
+        </div>
+      </div>
+
+      <!-- Right panel: spectrum graph -->
+      <div>
+        <div class="card" style="height:100%">
+          <div class="card-title">Планк қисығы — спектрлік интенсивтілік</div>
+
+          <div class="spectrum-bar">
+            <div id="wienMarker"></div>
+          </div>
+          <div class="spectrum-labels">
+            <span>100 нм (УК)</span>
+            <span>400 нм</span>
+            <span>700 нм</span>
+            <span>1000 нм</span>
+            <span>2500 нм (ИК)</span>
+          </div>
+
+          <canvas id="spectrumCanvas" style="margin-top:10px;"></canvas>
+
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--accent-cyan);box-shadow:0 0 6px var(--accent-cyan)"></div>
+              Планк заңы (кванттық)
+            </div>
+            <div class="legend-item" id="rjLegend" style="display:none">
+              <div class="legend-dot" style="background:#ef4444;box-shadow:0 0 6px #ef4444"></div>
+              Рэлей–Джинс (классикалық)
+            </div>
+          </div>
+
+          <div style="margin-top:16px;padding:14px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border)">
+            <p style="font-family:var(--mono);font-size:11px;color:var(--text-dim);line-height:1.7">
+              <span style="color:var(--accent-amber)">▲ Вин ыдырау заңы:</span> λ<sub>max</sub> · T = 2.898×10⁻³ м·К<br>
+              <span style="color:var(--accent-green)">▲ Стефан–Больцман:</span> j = σT⁴, σ = 5.67×10⁻⁸ Вт/(м²·К⁴)<br>
+              <span style="color:var(--accent-violet)">▲ Планк кванты:</span> E = hν, h = 6.626×10⁻³⁴ Дж·с
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ THEORY ═══ -->
+<section id="theory" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Теориялық Негіздер</h2>
+      <p>Жылулық сәуле шығару физикасы</p>
+    </div>
+
+    <div class="theory-card">
+      <h2>🌡 Жылулық сәуле шығару дегеніміз не?</h2>
+      <p>Кез келген дене температурасы абсолюттік нөлден жоғары болса, ол электромагниттік сәуле шығарады. Бұл сәуле шығару дененің температурасына байланысты болады және <strong>жылулық сәуле шығару</strong> деп аталады.</p>
+      <p>Мысалы, бөлмелік температурадағы адам денесі инфрақызыл сәуле шығарады (көзге көрінбейді). Ал 1000°C-тан жоғары қыздырылған металл қызыл жарық шығарады. Күн (~5778 К) ағ-сары жарық береді.</p>
+      <div class="highlight-box">
+        <p>💡 Маңызды: Жылулық сәуле шығару заттың табиғатына емес, тек оның <strong>температурасына</strong> ғана байланысты!</p>
+      </div>
+    </div>
+
+    <div class="theory-card">
+      <h2>⚫ Абсолют қара дене</h2>
+      <p><strong>Абсолют қара дене (АҚД)</strong> — өзіне түскен барлық электромагниттік сәулені (кез келген толқын ұзындығындағы) толығымен сіңіріп, ешнәрсені шағылыстырмайтын идеал дене. Ол сонымен бірге ең жақсы сәуле шығарушы болып табылады.</p>
+      <p>Физикада АҚД модельдері ретінде кішкентай тесігі бар қуыс пеш (қара жәшік) пайдаланылады. Жұлдыздар да АҚД-ға жақын.</p>
+      <div class="formula-box" data-label="Стефан–Больцман заңы">
+        j = σ · T⁴ &nbsp;&nbsp;|&nbsp;&nbsp; σ = 5.67 × 10⁻⁸ Вт/(м²·К⁴)
+      </div>
+      <p>Мұнда <em>j</em> — 1 м² беттен 1 секундта шығарылатын толық энергия (Вт/м²). Температура 2 есе артса, қуат <strong>16 есе</strong> артатынын байқаңыз!</p>
+
+      <div class="formula-box" data-label="Вин ыдырау заңы">
+        λ<sub>max</sub> · T = b &nbsp;&nbsp;|&nbsp;&nbsp; b = 2.898 × 10⁻³ м·К
+      </div>
+      <p>Вин заңы максималды интенсивтіліктің толқын ұзындығы температурамен кері пропорционал екенін айтады. Температура жоғарылаған сайын максимум жоғары жиіліктерге (қысқа толқындарға) ығысады.</p>
+    </div>
+
+    <div class="theory-card">
+      <h2>💥 Ультракүлгін апат — классикалық физиканың сәтсіздігі</h2>
+      <p>XIX ғасырдың соңында британдық физиктер <strong>Рэлей мен Джинс</strong> классикалық физика негізінде АҚД спектрінің формуласын шығарды:</p>
+      <div class="formula-box" data-label="Рэлей–Джинс заңы (классикалық)">
+        B(λ,T) = 2ckT / λ⁴
+      </div>
+      <p>Бұл формула ұзын толқындарда (ИК аймақ) тәжірибемен сәйкес келді. Бірақ <strong>қысқа толқындарда (УК аймақта) дене шексіз энергия сәулелендіруі тиіс</strong> деп шықты — бұл абсурд!</p>
+
+      <div class="comparison-grid">
+        <div class="comp-box classical">
+          <h3>❌ Классикалық физика</h3>
+          <p>Рэлей–Джинс заңы бойынша қысқа толқындарда (УК) интенсивтілік шексіздікке ұмтылады. Бұл «<strong>ультракүлгін апат</strong>» деп аталды. Іс жүзінде мұндай ешнәрсе байқалмайды.</p>
+        </div>
+        <div class="comp-box quantum">
+          <h3>✅ Планктің шешімі (1900)</h3>
+          <p>Макс Планк энергияның үзіліссіз емес, <strong>дискретті порциялармен (кванттармен)</strong> сәулеленетінін болжады. Бұл батыл гипотеза классикалық физикадан толық ауытқу болды.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="theory-card">
+      <h2>⚛ Планк гипотезасы — кванттар дүниесіне кіріс</h2>
+      <p>1900 жылы 14 желтоқсанда <strong>Макс Планк</strong> тарихи баяндама жасады: электромагниттік сәуле шығару энергиясы үзіліссіз ағын емес, жеке <em>энергия порцияларынан</em> — <strong>кванттардан</strong> тұрады.</p>
+
+      <div class="formula-box" data-label="Планктің кванттық формуласы">
+        E = h · ν &nbsp;&nbsp;|&nbsp;&nbsp; h = 6.626 × 10⁻³⁴ Дж·с
+      </div>
+
+      <p>Мұнда <em>E</em> — бір фотонның энергиясы, <em>ν (ню)</em> — жарықтың жиілігі, <em>h</em> — <strong>Планк тұрақтысы</strong>. Бұл физика тарихындағы ең маңызды тұрақтылардың бірі.</p>
+
+      <p>Планк заңы (толық формула):</p>
+      <div class="formula-box" data-label="Планктің сәулелену формуласы">
+        B(λ,T) = (2hc²/λ⁵) × 1/(e^(hc/λkT) − 1)
+      </div>
+
+      <div class="highlight-box">
+        <p>🔬 Маңызды қорытынды: Жоғары жиілікті (УК) сәуле үшін E=hν өте үлкен болғандықтан, оны «сатып алу» үшін жеткілікті жылулық энергия жоқ. Сондықтан УК сәулеленуі өте аз болады және апат болмайды!</p>
+      </div>
+
+      <table class="physics-table">
+        <thead>
+          <tr><th>Константа</th><th>Белгілеу</th><th>Мәні</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Планк тұрақтысы</td><td>h</td><td>6.626 × 10⁻³⁴ Дж·с</td></tr>
+          <tr><td>Жарық жылдамдығы</td><td>c</td><td>2.998 × 10⁸ м/с</td></tr>
+          <tr><td>Больцман тұрақтысы</td><td>k</td><td>1.381 × 10⁻²³ Дж/К</td></tr>
+          <tr><td>Стефан–Больцман</td><td>σ</td><td>5.670 × 10⁻⁸ Вт/(м²·К⁴)</td></tr>
+          <tr><td>Вин константасы</td><td>b</td><td>2.898 × 10⁻³ м·К</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ CALCULATOR ═══ -->
+<section id="calc" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Фотон Энергиясы Калькуляторы</h2>
+      <p>E = h·ν формуласы бойынша есептеу</p>
+    </div>
+
+    <div class="calc-layout">
+      <div class="card">
+        <div class="card-title">Параметрлерді енгіз</div>
+
+        <div class="input-group">
+          <label>Жиілік ν (Гц) — немесе төменде λ енгіз</label>
+          <input type="number" id="freqInput" placeholder="мыс: 6.0e14" step="any"
+            oninput="calcFromFreq()">
+        </div>
+
+        <div style="text-align:center;color:var(--text-dim);font-family:var(--mono);font-size:12px;margin:-8px 0 12px">— немесе —</div>
+
+        <div class="input-group">
+          <label>Толқын ұзындығы λ (нанометр)</label>
+          <input type="number" id="waveInput" placeholder="мыс: 500" min="1" max="10000"
+            oninput="calcFromWave()">
+        </div>
+
+        <button class="calc-btn" onclick="calcFromWave(); calcFromFreq();">
+          Есептеу
+        </button>
+
+        <div class="const-info">
+          h = 6.626×10⁻³⁴ Дж·с<br>
+          c = 2.998×10⁸ м/с<br>
+          1 эВ = 1.602×10⁻¹⁹ Дж<br>
+          ν = c/λ &nbsp;|&nbsp; E = hν = hc/λ
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">Нәтиже</div>
+          <div class="result-display">
+            <div id="photonSwatch" class="photon-color-swatch" style="background:#333"></div>
+            <div class="result-label">Фотон энергиясы</div>
+            <div class="result-value" id="resultJ">—</div>
+            <div class="result-unit">Джоуль (Дж)</div>
+            <div class="result-value" id="resultEV" style="font-size:20px;color:var(--accent-violet)">—</div>
+            <div class="result-unit">электрон-вольт (эВ)</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:20px">
+          <div class="card-title">Толқын ұзындығы → Аймақ</div>
+          <div id="spectrumRegion" style="font-family:var(--mono);font-size:13px;color:var(--text-secondary);padding:10px 0;line-height:1.9;">
+            Толқын ұзындығын немесе жиілікті енгіз...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick reference table -->
+    <div class="card" style="margin-top:24px">
+      <div class="card-title">Жарық спектрі — жылдам анықтама</div>
+      <table class="physics-table">
+        <thead>
+          <tr><th>Сәуле түрі</th><th>λ (нм)</th><th>ν (ТГц)</th><th>E (эВ)</th><th>Мысал</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="color:#ff00ff">Ультракүлгін</td><td>10–380</td><td>789–30 000</td><td>3.3–124</td><td>Күн УК, Дезинфекция</td></tr>
+          <tr><td style="color:#7b2fff">Күлгін</td><td>380–450</td><td>666–789</td><td>2.76–3.26</td><td>Лазер, LED</td></tr>
+          <tr><td style="color:#1e90ff">Көк</td><td>450–495</td><td>606–666</td><td>2.50–2.76</td><td>Аспан түсі</td></tr>
+          <tr><td style="color:#00cc44">Жасыл</td><td>495–570</td><td>526–606</td><td>2.18–2.50</td><td>Өсімдіктер</td></tr>
+          <tr><td style="color:#ffdd00">Сары</td><td>570–590</td><td>508–526</td><td>2.10–2.18</td><td>Натрий шамы</td></tr>
+          <tr><td style="color:#ff8800">Қызғылт сары</td><td>590–625</td><td>480–508</td><td>1.98–2.10</td><td>Күн батысы</td></tr>
+          <tr><td style="color:#ff3300">Қызыл</td><td>625–750</td><td>400–480</td><td>1.65–1.98</td><td>Лазер указка</td></tr>
+          <tr><td style="color:#880000">Инфрақызыл</td><td>750–10⁶</td><td>0.3–400</td><td>0.001–1.65</td><td>Жылу, пульт</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ QUIZ ═══ -->
+<section id="quiz" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Білімді Тексеру</h2>
+      <p>5 сұрақтан тұратын мини-тест</p>
+    </div>
+
+    <div class="quiz-wrap">
+      <div id="quizContainer"></div>
+      <div class="quiz-footer" id="quizFooter" style="display:none">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase">Нәтижеңіз</div>
+        <div class="score-display" id="scoreDisplay">0/5</div>
+        <div class="score-msg" id="scoreMsg"></div>
+        <button class="restart-btn" onclick="initQuiz()">Қайта бастау</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ══════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════
+const h = 6.626e-34;   // Planck constant
+const c = 2.998e8;     // speed of light
+const k = 1.381e-23;   // Boltzmann constant
+const sigma = 5.67e-8; // Stefan-Boltzmann
+const b = 2.898e-3;    // Wien displacement
+
+let showClassical = false;
+let currentTemp = 3000;
+let animFrame;
+
+// ══════════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'sim') setTimeout(drawSpectrum, 50);
+}
+
+// ══════════════════════════════════════════════
+// TEMPERATURE → COLOR
+// ══════════════════════════════════════════════
+function tempToColor(T) {
+  if (T < 800) return { r:20, g:0, b:0 };
+  if (T < 1200) {
+    const t = (T-800)/400;
+    return { r: Math.round(20 + t*200), g: Math.round(t*10), b: 0 };
+  }
+  if (T < 2000) {
+    const t = (T-1200)/800;
+    return { r:220+Math.round(t*35), g:Math.round(10+t*80), b: Math.round(t*10) };
+  }
+  if (T < 3000) {
+    const t = (T-2000)/1000;
+    return { r:255, g:Math.round(90+t*110), b: Math.round(10+t*30) };
+  }
+  if (T < 5000) {
+    const t = (T-3000)/2000;
+    return { r:255, g:Math.round(200+t*55), b: Math.round(40+t*180) };
+  }
+  if (T < 7000) {
+    const t = (T-5000)/2000;
+    return { r:Math.round(255-t*30), g:Math.round(255-t*20), b:255 };
+  }
+  const t = (T-7000)/3000;
+  return { r:Math.round(225-t*30), g:Math.round(235-t*30), b:255 };
+}
+
+function rgbStr(col, a=1) {
+  return `rgba(${col.r},${col.g},${col.b},${a})`;
+}
+
+function tempToGlowColor(T) {
+  const col = tempToColor(T);
+  return rgbStr(col);
+}
+
+function tempToLabel(T) {
+  if (T < 600)   return 'ИК СӘУЛЕ (КӨРІНБЕЙДІ)';
+  if (T < 1100)  return 'ҚАП-ҚАРА ҚЫЗЫЛ';
+  if (T < 1800)  return 'ҚЫЗЫЛ ЖАРЫҚ';
+  if (T < 2800)  return 'ҚЫЗҒЫЛТ-САРЫ';
+  if (T < 4000)  return 'САРҒЫШ-АҚ';
+  if (T < 6000)  return 'АҚ ЖАРЫҚ';
+  if (T < 8000)  return 'АҚ-КӨК';
+  return 'КӨК-АҚШЫЛ';
+}
+
+// ══════════════════════════════════════════════
+// PLANCK SPECTRAL RADIANCE
+// ══════════════════════════════════════════════
+function planck(lambda, T) {
+  // B(lambda,T) in W/(sr·m²·m)
+  const exponent = (h*c)/(lambda*k*T);
+  if (exponent > 700) return 0;
+  return (2*h*c*c) / (Math.pow(lambda,5) * (Math.exp(exponent)-1));
+}
+
+function rayleighJeans(lambda, T) {
+  return (2*c*k*T) / Math.pow(lambda,4);
+}
+
+// ══════════════════════════════════════════════
+// UPDATE SIMULATION
+// ══════════════════════════════════════════════
+function updateSimulation(T) {
+  T = parseFloat(T);
+  currentTemp = T;
+
+  const col = tempToColor(T);
+  const glowStr = rgbStr(col);
+  const bodyEl = document.getElementById('bodyObject');
+  const glowEl = document.getElementById('glowRing');
+  const tempDisplay = document.getElementById('tempDisplay');
+  const colorLabel = document.getElementById('colorLabel');
+
+  // Body gradient
+  const lighter = `rgba(${Math.min(255,col.r+80)},${Math.min(255,col.g+60)},${Math.min(255,col.b+40)},1)`;
+  bodyEl.style.background = `radial-gradient(circle at 35% 35%, ${lighter}, ${glowStr}, #000)`;
+  bodyEl.style.boxShadow = `0 0 30px ${glowStr}, 0 0 60px ${rgbStr(col,0.4)}, 0 0 100px ${rgbStr(col,0.15)}`;
+
+  // Glow ring
+  glowEl.style.background = `radial-gradient(circle, ${rgbStr(col,0.5)} 0%, transparent 70%)`;
+
+  // Radiating rings
+  ['radRing1','radRing2','radRing3'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.borderColor = glowStr;
+    const speed = Math.max(0.4, 2 - (T/10000)*1.5);
+    el.style.animationDuration = speed + 's';
+  });
+
+  // Temperature display
+  tempDisplay.textContent = T.toLocaleString() + ' К';
+  tempDisplay.style.color = glowStr;
+  colorLabel.textContent = tempToLabel(T);
+
+  // Stats
+  const wienNm = (b/T*1e9).toFixed(0);
+  document.getElementById('statWien').textContent = wienNm + ' нм';
+
+  const power = sigma * Math.pow(T,4);
+  let powerStr;
+  if (power > 1e12) powerStr = (power/1e12).toFixed(2) + ' ТВт/м²';
+  else if (power > 1e9) powerStr = (power/1e9).toFixed(2) + ' ГВт/м²';
+  else if (power > 1e6) powerStr = (power/1e6).toFixed(2) + ' МВт/м²';
+  else if (power > 1e3) powerStr = (power/1e3).toFixed(2) + ' кВт/м²';
+  else powerStr = power.toFixed(1) + ' Вт/м²';
+  document.getElementById('statPower').textContent = powerStr;
+
+  const wienM = b/T;
+  let region;
+  if (wienM < 100e-9) region = 'Рентген';
+  else if (wienM < 380e-9) region = 'Ультракүлгін';
+  else if (wienM < 750e-9) region = 'Көрінетін жарық';
+  else if (wienM < 1e-3) region = 'Инфрақызыл';
+  else region = 'Микродалғалар';
+  document.getElementById('statRegion').textContent = region;
+
+  const peakFreq = c/wienM;
+  const peakE = h*peakFreq;
+  const peakEV = peakE/1.602e-19;
+  document.getElementById('statPeakE').textContent = peakEV.toFixed(3) + ' эВ';
+
+  drawSpectrum();
+  drawPhotons();
+  updateWienMarker(parseFloat(wienNm));
+}
+
+// ══════════════════════════════════════════════
+// WIEN MARKER
+// ══════════════════════════════════════════════
+function updateWienMarker(wienNm) {
+  const minNm = 100, maxNm = 2500;
+  const pct = Math.min(100, Math.max(0, (wienNm - minNm)/(maxNm - minNm)*100));
+  document.getElementById('wienMarker').style.left = pct + '%';
+}
+
+// ══════════════════════════════════════════════
+// SPECTRUM CANVAS
+// ══════════════════════════════════════════════
+function drawSpectrum() {
+  const canvas = document.getElementById('spectrumCanvas');
+  const parent = canvas.parentElement;
+  canvas.width = parent.clientWidth - 56;
+  canvas.height = 300;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const padL=60, padR=20, padT=20, padB=40;
+  const plotW = W-padL-padR, plotH = H-padT-padB;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Background
+  ctx.fillStyle = '#000';
+  ctx.fillRect(padL, padT, plotW, plotH);
+
+  // Wavelength range: 100nm to 2500nm
+  const lambdaMin = 100e-9, lambdaMax = 2500e-9;
+  const N = 500;
+
+  // Compute Planck values
+  const temps = [currentTemp];
+  // Also show ghost curves for other temps
+  const ghostTemps = [1000, 3000, 6000].filter(t => Math.abs(t - currentTemp) > 300);
+
+  // Find max for scaling
+  let maxB = 0;
+  for (let i=0; i<N; i++) {
+    const lam = lambdaMin + (lambdaMax-lambdaMin)*i/N;
+    const bv = planck(lam, currentTemp);
+    if (bv > maxB) maxB = bv;
+    // Also check ghost
+    ghostTemps.forEach(gt => {
+      const bvg = planck(lam, gt);
+      if (bvg > maxB*0.05 && bvg > maxB) maxB = bvg;
+    });
+  }
+  if (maxB === 0) maxB = 1;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(30,45,69,0.8)';
+  ctx.lineWidth = 1;
+  for (let i=0; i<=5; i++) {
+    const y = padT + plotH - (i/5)*plotH;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL+plotW, y); ctx.stroke();
+  }
+  for (let i=0; i<=5; i++) {
+    const x = padL + (i/5)*plotW;
+    ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT+plotH); ctx.stroke();
+  }
+
+  // X-axis labels
+  ctx.fillStyle = '#475569';
+  ctx.font = '10px Space Mono, monospace';
+  ctx.textAlign = 'center';
+  for (let i=0; i<=5; i++) {
+    const lam = (lambdaMin + (lambdaMax-lambdaMin)*i/5)*1e9;
+    ctx.fillText(Math.round(lam)+'нм', padL + (i/5)*plotW, padT+plotH+15);
+  }
+
+  // Y-axis labels
+  ctx.textAlign = 'right';
+  for (let i=0; i<=4; i++) {
+    const y = padT + plotH - (i/4)*plotH;
+    ctx.fillText((i/4*100).toFixed(0)+'%', padL-6, y+4);
+  }
+
+  // Axis titles
+  ctx.fillStyle = '#64748b';
+  ctx.font = '10px Space Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Толқын ұзындығы λ', padL + plotW/2, H-6);
+
+  ctx.save();
+  ctx.translate(12, padT + plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Интенсивтілік', 0, 0);
+  ctx.restore();
+
+  // Visible spectrum overlay
+  const visStart = (380e-9 - lambdaMin)/(lambdaMax-lambdaMin);
+  const visEnd   = (750e-9 - lambdaMin)/(lambdaMax-lambdaMin);
+  const grad = ctx.createLinearGradient(
+    padL + visStart*plotW, 0, padL + visEnd*plotW, 0
+  );
+  grad.addColorStop(0, 'rgba(120,0,200,0.12)');
+  grad.addColorStop(0.2, 'rgba(0,0,255,0.1)');
+  grad.addColorStop(0.4, 'rgba(0,200,100,0.1)');
+  grad.addColorStop(0.7, 'rgba(255,220,0,0.1)');
+  grad.addColorStop(1, 'rgba(255,50,0,0.12)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(padL + visStart*plotW, padT, (visEnd-visStart)*plotW, plotH);
+
+  // Ghost curves
+  ghostTemps.forEach(gt => {
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(100,116,139,0.25)';
+    ctx.lineWidth = 1;
+    for (let i=0; i<N; i++) {
+      const lam = lambdaMin + (lambdaMax-lambdaMin)*i/N;
+      const bv = planck(lam, gt);
+      const x = padL + (lam-lambdaMin)/(lambdaMax-lambdaMin)*plotW;
+      const y = padT + plotH - (bv/maxB)*plotH;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  });
+
+  // Rayleigh-Jeans
+  if (showClassical) {
+    ctx.beginPath();
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6,4]);
+    let firstRJ = true;
+    for (let i=0; i<N; i++) {
+      const lam = lambdaMin + (lambdaMax-lambdaMin)*i/N;
+      const rjv = rayleighJeans(lam, currentTemp);
+      const x = padL + (lam-lambdaMin)/(lambdaMax-lambdaMin)*plotW;
+      const y = padT + plotH - Math.min((rjv/maxB)*plotH, plotH*2);
+      if (firstRJ) { ctx.moveTo(x,y); firstRJ=false; }
+      else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // UV catastrophe label
+    ctx.fillStyle = 'rgba(239,68,68,0.7)';
+    ctx.font = '10px Space Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('← Ультракүлгін апат', padL+4, padT+18);
+  }
+
+  // Planck curve with fill
+  const T = currentTemp;
+  const fillGrad = ctx.createLinearGradient(padL, 0, padL+plotW, 0);
+  fillGrad.addColorStop(0, 'rgba(100,0,180,0.3)');
+  fillGrad.addColorStop(0.15, 'rgba(59,130,246,0.3)');
+  fillGrad.addColorStop(0.35, 'rgba(0,200,100,0.25)');
+  fillGrad.addColorStop(0.55, 'rgba(255,220,0,0.25)');
+  fillGrad.addColorStop(0.75, 'rgba(255,100,0,0.25)');
+  fillGrad.addColorStop(1, 'rgba(150,0,0,0.2)');
+
+  // Fill area under Planck curve
+  ctx.beginPath();
+  ctx.moveTo(padL, padT+plotH);
+  for (let i=0; i<N; i++) {
+    const lam = lambdaMin + (lambdaMax-lambdaMin)*i/N;
+    const bv = planck(lam, T);
+    const x = padL + (lam-lambdaMin)/(lambdaMax-lambdaMin)*plotW;
+    const y = padT + plotH - (bv/maxB)*plotH;
+    ctx.lineTo(x,y);
+  }
+  ctx.lineTo(padL+plotW, padT+plotH);
+  ctx.closePath();
+  ctx.fillStyle = fillGrad;
+  ctx.fill();
+
+  // Planck curve line
+  ctx.beginPath();
+  const planckGrad = ctx.createLinearGradient(padL,0,padL+plotW,0);
+  planckGrad.addColorStop(0,'#a855f7');
+  planckGrad.addColorStop(0.2,'#3b82f6');
+  planckGrad.addColorStop(0.4,'#06b6d4');
+  planckGrad.addColorStop(0.6,'#10b981');
+  planckGrad.addColorStop(0.8,'#f59e0b');
+  planckGrad.addColorStop(1,'#ef4444');
+  ctx.strokeStyle = planckGrad;
+  ctx.lineWidth = 2.5;
+  for (let i=0; i<N; i++) {
+    const lam = lambdaMin + (lambdaMax-lambdaMin)*i/N;
+    const bv = planck(lam, T);
+    const x = padL + (lam-lambdaMin)/(lambdaMax-lambdaMin)*plotW;
+    const y = padT + plotH - (bv/maxB)*plotH;
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // Wien peak marker
+  const wienLam = b/T;
+  if (wienLam >= lambdaMin && wienLam <= lambdaMax) {
+    const wx = padL + (wienLam-lambdaMin)/(lambdaMax-lambdaMin)*plotW;
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(wx, padT); ctx.lineTo(wx, padT+plotH); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = '9px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('λ_max', wx, padT+12);
+  }
+}
+
+// ══════════════════════════════════════════════
+// PHOTON VISUALIZATION
+// ══════════════════════════════════════════════
+function drawPhotons() {
+  const canvas = document.getElementById('photonCanvas');
+  canvas.width = canvas.parentElement.clientWidth - 56;
+  canvas.height = 160;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0,0,W,H);
+
+  // Draw photons for wavelengths: 700nm(red), 580nm(yellow), 500nm(green), 450nm(blue), 380nm(violet)
+  const photons = [
+    { lam: 700e-9, color:'#ff3300', name:'Қызыл\n700нм' },
+    { lam: 580e-9, color:'#ffaa00', name:'Сары\n580нм' },
+    { lam: 520e-9, color:'#44ff66', name:'Жасыл\n520нм' },
+    { lam: 460e-9, color:'#2277ff', name:'Көк\n460нм' },
+    { lam: 380e-9, color:'#aa00ff', name:'Күлгін\n380нм' },
+  ];
+
+  const T = currentTemp;
+  // Max energy for sizing: at 380nm
+  const maxE = h*c/(380e-9);
+
+  photons.forEach((ph, i) => {
+    const x = (i+0.5)*(W/photons.length);
+    const energy = h*c/ph.lam;
+    const energyEV = energy/1.602e-19;
+
+    // Size inversely proportional to energy (large=low energy, small=high energy)
+    const maxR = 28, minR = 8;
+    const r = maxR - (energy/maxE)*(maxR-minR);
+
+    // Brightness based on Planck at this wavelength
+    const intensity = planck(ph.lam, T);
+    const maxInt = planck(b/T, T);
+    const alpha = maxInt > 0 ? Math.min(1, Math.max(0.15, intensity/maxInt)) : 0.15;
+
+    // Draw photon circle
+    const grd = ctx.createRadialGradient(x-r*0.3, H/2-r*0.3, r*0.1, x, H/2, r);
+    const colH = ph.color;
+    grd.addColorStop(0, 'white');
+    grd.addColorStop(0.3, colH);
+    grd.addColorStop(1, 'transparent');
+
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.arc(x, H/2, r, 0, Math.PI*2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+
+    // Glow
+    ctx.shadowColor = ph.color;
+    ctx.shadowBlur = 15;
+    ctx.beginPath();
+    ctx.arc(x, H/2, r*0.7, 0, Math.PI*2);
+    ctx.fillStyle = ph.color + '88';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.globalAlpha = 1;
+
+    // Energy label
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '9px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(energyEV.toFixed(2)+' эВ', x, H/2+r+14);
+
+    // Name
+    ctx.fillStyle = '#475569';
+    ctx.fillText(ph.name.split('\n')[1], x, H-6);
+  });
+
+  // Label
+  ctx.fillStyle = '#334155';
+  ctx.font = '9px Space Mono, monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('Шар өлшемі ↔ Толқын ұзындығы (λ)  |  Жарықтығы ↔ Интенсивтілік', 6, 12);
+}
+
+// ══════════════════════════════════════════════
+// CLASSICAL TOGGLE
+// ══════════════════════════════════════════════
+function toggleClassical() {
+  showClassical = !showClassical;
+  const btn = document.getElementById('classicalToggle');
+  btn.classList.toggle('on', showClassical);
+  document.getElementById('rjLegend').style.display = showClassical ? 'flex' : 'none';
+  drawSpectrum();
+}
+
+// ══════════════════════════════════════════════
+// CALCULATOR
+// ══════════════════════════════════════════════
+function wavelengthToColor(nm) {
+  if (nm < 380) return { hex:'#9400D3', region:'Ультракүлгін', name:'Ультракүлгін' };
+  if (nm < 450) return { hex:'#7B00FF', region:'Күлгін (Violet)', name:'Күлгін' };
+  if (nm < 495) return { hex:'#0000FF', region:'Көк (Blue)', name:'Көк' };
+  if (nm < 570) return { hex:'#00CC44', region:'Жасыл (Green)', name:'Жасыл' };
+  if (nm < 590) return { hex:'#FFFF00', region:'Сары (Yellow)', name:'Сары' };
+  if (nm < 625) return { hex:'#FF8800', region:'Қызғылт сары (Orange)', name:'Қызғылт сары' };
+  if (nm < 750) return { hex:'#FF0000', region:'Қызыл (Red)', name:'Қызыл' };
+  return { hex:'#8B0000', region:'Инфрақызыл (IR)', name:'Инфрақызыл' };
+}
+
+function calcFromWave() {
+  const nm = parseFloat(document.getElementById('waveInput').value);
+  if (!nm || nm <= 0) return;
+  const lambda = nm * 1e-9;
+  const freq = c / lambda;
+  document.getElementById('freqInput').value = freq.toExponential(4);
+  showCalcResult(freq, nm);
+}
+
+function calcFromFreq() {
+  const freq = parseFloat(document.getElementById('freqInput').value);
+  if (!freq || freq <= 0) return;
+  const nm = (c/freq)*1e9;
+  document.getElementById('waveInput').value = nm.toFixed(2);
+  showCalcResult(freq, nm);
+}
+
+function showCalcResult(freq, nm) {
+  const energy = h * freq;
+  const energyEV = energy / 1.602e-19;
+
+  document.getElementById('resultJ').textContent = energy.toExponential(3) + ' Дж';
+  document.getElementById('resultEV').textContent = energyEV.toFixed(4) + ' эВ';
+
+  const colInfo = wavelengthToColor(nm);
+  const swatch = document.getElementById('photonSwatch');
+  swatch.style.background = colInfo.hex;
+  swatch.style.boxShadow = `0 0 24px ${colInfo.hex}, 0 0 8px ${colInfo.hex}`;
+  swatch.style.color = colInfo.hex;
+
+  const regEl = document.getElementById('spectrumRegion');
+  regEl.innerHTML = `
+    <span style="color:var(--accent-cyan)">Жиілік:</span> ${freq.toExponential(4)} Гц<br>
+    <span style="color:var(--accent-cyan)">Толқын ұзындығы:</span> ${nm.toFixed(2)} нм<br>
+    <span style="color:var(--accent-cyan)">Спектр аймағы:</span> <span style="color:${colInfo.hex}">${colInfo.region}</span><br>
+    <span style="color:var(--accent-cyan)">Энергия:</span> ${energy.toExponential(3)} Дж = ${energyEV.toFixed(4)} эВ
+  `;
+}
+
+// ══════════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════════
+const quizData = [
+  {
+    q: "Планк гипотезасы бойынша электромагниттік энергия қалай сәулеленеді?",
+    opts: [
+      "Үзіліссіз ағын ретінде",
+      "Дискретті порциялармен (кванттармен)",
+      "Тек жоғары жиіліктерде дискретті",
+      "Толқын пакеттері ретінде",
+    ],
+    correct: 1,
+    explain: "Планк 1900 жылы энергияның E = hν мөлшеріндегі дискретті порциялармен — кванттармен — сәулеленетінін ұсынды. Бұл классикалық физикамен толық алшақтық болды."
+  },
+  {
+    q: "Температура 2 есе артса, абсолют қара дененің сәулелену қуаты (Стефан-Больцман заңы бойынша) неше есе артады?",
+    opts: ["2 есе", "4 есе", "8 есе", "16 есе"],
+    correct: 3,
+    explain: "j = σT⁴ формуласы бойынша T 2 есе артса, j = 2⁴ = 16 есе артады. Бұл жылулық сәуленің температурадан күшті тәуелділігін көрсетеді."
+  },
+  {
+    q: "«Ультракүлгін апат» дегеніміз не?",
+    opts: [
+      "УК сәулесінің адамға зияны",
+      "Классикалық физика УК аймақта шексіз энергияны болжайды",
+      "Планктің формуласының УК аймақта жұмыс істемеуі",
+      "Температура жоғарылағанда УК сәуленің азаюы",
+    ],
+    correct: 1,
+    explain: "Рэлей–Джинс заңы λ→0 болғанда интенсивтілік шексіздікке ұмтылатынын болжайды. Бұл абсурд нәтиже 'ультракүлгін апат' деп аталды және классикалық физиканың сәтсіздігін дәлелдеді."
+  },
+  {
+    q: "Вин ыдырау заңы бойынша, температура жоғарылаған сайын максималды интенсивтіліктің толқын ұзындығы қалай өзгереді?",
+    opts: [
+      "Ұзарады (қызыл жаққа ығысады)",
+      "Өзгермейді",
+      "Қысқарады (күлгін жаққа ығысады)",
+      "Алдымен ұзарады, сосын қысқарады",
+    ],
+    correct: 2,
+    explain: "λ_max · T = b (тұрақты). Температура жоғарылаған сайын λ_max кішірейеді, яғни максимум қысқа толқындарға — жоғары жиіліктерге ығысады. Сондықтан ыстық дене ақшыл-көк болады."
+  },
+  {
+    q: "h = 6.626×10⁻³⁴ Дж·с тұрақтысы кімнің атымен аталады?",
+    opts: ["Больцман тұрақтысы", "Стефан тұрақтысы", "Планк тұрақтысы", "Вин тұрақтысы"],
+    correct: 2,
+    explain: "Планк тұрақтысы h = 6.626×10⁻³⁴ Дж·с — кванттық физиканың іргелі тұрақтысы. Ол E = hν формуласында бір фотонның энергиясын анықтайды. 1900 жылы Макс Планк енгізді."
+  }
+];
+
+let quizAnswers = {};
+let quizSubmitted = {};
+
+function initQuiz() {
+  quizAnswers = {};
+  quizSubmitted = {};
+  document.getElementById('quizFooter').style.display = 'none';
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+
+  quizData.forEach((item, qi) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'q'+qi;
+
+    const opts = item.opts.map((opt, oi) =>
+      `<button class="option-btn" id="opt_${qi}_${oi}" onclick="selectOption(${qi},${oi})">${opt}</button>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="q-number">Сұрақ ${qi+1} / ${quizData.length}</div>
+      <div class="q-text">${item.q}</div>
+      <div class="options">${opts}</div>
+      <div class="feedback" id="fb_${qi}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function selectOption(qi, oi) {
+  if (quizSubmitted[qi]) return;
+  quizSubmitted[qi] = true;
+
+  const correct = quizData[qi].correct;
+  const card = document.getElementById('q'+qi);
+  const fb = document.getElementById('fb_'+qi);
+
+  // Disable all
+  for (let i=0; i<quizData[qi].opts.length; i++) {
+    const btn = document.getElementById(`opt_${qi}_${i}`);
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('show-correct');
+  }
+
+  const btn = document.getElementById(`opt_${qi}_${oi}`);
+  if (oi === correct) {
+    btn.classList.remove('show-correct');
+    btn.classList.add('selected-correct');
+    fb.className = 'feedback show correct';
+    fb.textContent = '✓ Дұрыс! ' + quizData[qi].explain;
+    card.classList.add('correct');
+  } else {
+    btn.classList.add('selected-wrong');
+    fb.className = 'feedback show wrong';
+    fb.textContent = '✗ Қате. ' + quizData[qi].explain;
+    card.classList.add('wrong');
+  }
+
+  quizAnswers[qi] = oi;
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  if (Object.keys(quizSubmitted).length === quizData.length) {
+    let score = 0;
+    quizData.forEach((item, qi) => {
+      if (quizAnswers[qi] === item.correct) score++;
+    });
+
+    const footer = document.getElementById('quizFooter');
+    footer.style.display = 'block';
+    document.getElementById('scoreDisplay').textContent = score + '/' + quizData.length;
+
+    let msg, color;
+    if (score === 5) { msg = '🏆 Тамаша! Тақырыпты керемет меңгердің!'; color='var(--accent-green)'; }
+    else if (score >= 4) { msg = '⭐ Өте жақсы! Тақырыпты жақсы білесің.'; color='var(--accent-cyan)'; }
+    else if (score >= 3) { msg = '👍 Жақсы! Теорияны қайталап шық.'; color='var(--accent-amber)'; }
+    else { msg = '📚 Теория бөлімін қайтадан оқып шық.'; color='#f87171'; }
+
+    document.getElementById('scoreMsg').textContent = msg;
+    document.getElementById('scoreDisplay').style.color = color;
+    footer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+window.addEventListener('load', () => {
+  updateSimulation(3000);
+  initQuiz();
+});
+
+window.addEventListener('resize', () => {
+  drawSpectrum();
+  drawPhotons();
+});
+</script>
+</body>
+</html>
