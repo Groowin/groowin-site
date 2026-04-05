@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фотоэффект • Виртуалды Зертхана</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════════ */
+:root{
+  --bg:       #070b14;
+  --bg1:      #0b1020;
+  --bg2:      #0f1628;
+  --panel:    rgba(11,18,36,.96);
+  --card:     #111b30;
+  --card2:    #162038;
+  --border:   rgba(80,140,255,.18);
+  --border2:  rgba(140,80,255,.22);
+  --blue:     #4d9fff;
+  --blue2:    #2270e8;
+  --violet:   #a855f7;
+  --violet2:  #7c3aed;
+  --cyan:     #22d3ee;
+  --green:    #10b981;
+  --yellow:   #fbbf24;
+  --red:      #ef4444;
+  --orange:   #f97316;
+  --text:     #e2eaff;
+  --text2:    #7a9cc8;
+  --text3:    #3d5880;
+  --r:        'Rajdhani',sans-serif;
+  --n:        'Nunito',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--n);overflow-x:hidden;
+  min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 20% 10%,rgba(77,159,255,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 90%,rgba(168,85,247,.07) 0%,transparent 60%);
+}
+
+/* ── HEADER ── */
+header{
+  padding:22px 28px 16px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  border-bottom:1px solid var(--border);
+  background:rgba(7,11,20,.92);
+  backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:200;
+}
+.logo-wrap{display:flex;align-items:center;gap:12px;}
+.logo-ico{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,var(--blue2),var(--violet2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  box-shadow:0 0 18px rgba(77,159,255,.3);
+}
+.logo-text{font-family:var(--r);font-size:22px;font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--blue),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-sub{font-size:11px;color:var(--text3);letter-spacing:2px;font-family:var(--r);}
+
+/* ── NAV ── */
+nav{display:flex;gap:6px;flex-wrap:wrap;}
+.nb{
+  padding:8px 18px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;color:var(--text3);font-family:var(--r);
+  font-size:13px;font-weight:600;letter-spacing:.5px;cursor:pointer;
+  transition:all .2s;
+}
+.nb:hover{color:var(--text2);border-color:var(--border2);}
+.nb.on{
+  background:linear-gradient(135deg,rgba(77,159,255,.18),rgba(168,85,247,.18));
+  border-color:var(--blue);color:var(--blue);
+  box-shadow:0 0 14px rgba(77,159,255,.15);
+}
+
+/* ── SECTIONS ── */
+.sec{display:none;animation:fin .35s ease;}
+.sec.on{display:block;}
+@keyframes fin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.wrap{max-width:1280px;margin:0 auto;padding:28px 20px;}
+
+/* ── CARDS ── */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:22px;position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(77,159,255,.35),transparent);
+}
+.card.violet::before{background:linear-gradient(90deg,transparent,rgba(168,85,247,.4),transparent);}
+.card.green::before{background:linear-gradient(90deg,transparent,rgba(16,185,129,.4),transparent);}
+.card.yellow::before{background:linear-gradient(90deg,transparent,rgba(251,191,36,.35),transparent);}
+
+.clabel{
+  font-family:var(--r);font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--blue);margin-bottom:12px;
+  display:flex;align-items:center;gap:7px;
+}
+.clabel::before{content:'';width:18px;height:1px;background:var(--blue);box-shadow:0 0 5px var(--blue);}
+.clabel.v{color:var(--violet);}
+.clabel.v::before{background:var(--violet);box-shadow:0 0 5px var(--violet);}
+.clabel.g{color:var(--green);}
+.clabel.g::before{background:var(--green);box-shadow:0 0 5px var(--green);}
+.clabel.y{color:var(--yellow);}
+.clabel.y::before{background:var(--yellow);box-shadow:0 0 5px var(--yellow);}
+
+/* ═══════════════════════════════════════════════
+   SECTION 1 — THEORY
+═══════════════════════════════════════════════ */
+.theory-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+@media(max-width:800px){.theory-grid{grid-template-columns:1fr;}}
+
+.theory-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:24px;
+}
+.theory-card h2{font-size:18px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:9px;}
+.theory-card p{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:10px;}
+.theory-card p:last-child{margin-bottom:0;}
+
+.formula-chip{
+  display:inline-block;
+  background:rgba(77,159,255,.1);border:1px solid rgba(77,159,255,.25);
+  border-radius:8px;padding:8px 16px;
+  font-family:var(--r);font-size:16px;font-weight:700;color:var(--cyan);
+  letter-spacing:1px;margin:10px 0;text-align:center;width:100%;
+}
+
+.term-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.term{
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:10px;padding:11px 14px;
+}
+.term-title{font-family:var(--r);font-size:11px;letter-spacing:1px;color:var(--blue);font-weight:600;}
+.term-desc{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.6;}
+
+/* Timeline */
+.timeline{display:flex;flex-direction:column;gap:0;margin:12px 0;}
+.timeline::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--blue),var(--violet));border-radius:1px;}
+.tl-wrap{position:relative;}
+.tl-item{display:flex;gap:16px;padding:10px 0 10px 0;}
+.tl-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  background:var(--card2);border:2px solid var(--blue);z-index:1;}
+.tl-body strong{font-size:13px;color:var(--text);display:block;margin-bottom:3px;}
+.tl-body span{font-size:12px;color:var(--text2);line-height:1.55;}
+
+/* Fun fact */
+.fun-fact{
+  background:linear-gradient(135deg,rgba(251,191,36,.07),rgba(249,115,22,.07));
+  border:1px solid rgba(251,191,36,.25);border-radius:14px;padding:18px 20px;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.ff-ico{font-size:28px;flex-shrink:0;}
+.ff-title{font-family:var(--r);font-size:12px;letter-spacing:2px;color:var(--yellow);margin-bottom:5px;}
+.ff-text{font-size:13px;color:var(--text2);line-height:1.7;}
+
+/* ═══════════════════════════════════════════════
+   SECTION 2 — SIMULATOR
+═══════════════════════════════════════════════ */
+.sim-layout{
+  display:grid;
+  grid-template-columns:270px 1fr 220px;
+  gap:18px;align-items:start;
+}
+@media(max-width:1100px){.sim-layout{grid-template-columns:1fr;}}
+
+/* Control panel */
+.ctrl{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:18px;
+}
+
+.ctrl-group label{
+  font-family:var(--r);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text3);display:block;margin-bottom:8px;
+}
+.ctrl-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.ctrl-name{font-size:13px;font-weight:700;color:var(--text);}
+.ctrl-val{font-family:var(--r);font-size:14px;font-weight:700;color:var(--cyan);}
+
+/* Spectrum slider */
+.spec-slider-wrap{position:relative;margin-bottom:6px;}
+.spec-bar{
+  height:6px;border-radius:3px;
+  background:linear-gradient(90deg,
+    #8800ff 0%,    /* 200nm UV */
+    #7b00ff 8%,
+    #0000ff 18%,   /* 380nm violet */
+    #0044ff 25%,
+    #00aaff 35%,   /* 490nm blue */
+    #00ff88 45%,   /* 560nm green */
+    #ffff00 55%,   /* 590nm yellow */
+    #ff8800 65%,   /* 620nm orange */
+    #ff0000 75%,   /* 680nm red */
+    #880000 85%,   /* 750nm deep red */
+    #440000 100%   /* 800nm IR */
+  );
+  margin-bottom:6px;
+}
+input[type=range].spec{
+  -webkit-appearance:none;width:100%;height:6px;border-radius:3px;
+  background:transparent;outline:none;cursor:pointer;margin:0;
+  position:relative;z-index:2;
+}
+input[type=range].spec::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#fff;box-shadow:0 0 10px rgba(255,255,255,.8),0 0 4px rgba(0,0,0,.4);
+  cursor:pointer;border:2px solid var(--bg);transition:transform .15s;
+}
+input[type=range].spec::-webkit-slider-thumb:hover{transform:scale(1.2);}
+
+input[type=range].bright{
+  -webkit-appearance:none;width:100%;height:6px;border-radius:3px;
+  background:rgba(255,255,255,.08);outline:none;cursor:pointer;
+}
+input[type=range].bright::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#fff;box-shadow:0 0 8px rgba(255,255,255,.7);
+  cursor:pointer;border:2px solid var(--bg);
+}
+.nm-labels{display:flex;justify-content:space-between;font-family:var(--r);font-size:9px;color:var(--text3);}
+
+/* Metal selector */
+.metal-btns{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+.metal-btn{
+  padding:11px 14px;border-radius:10px;border:1px solid var(--border);
+  background:rgba(255,255,255,.03);color:var(--text2);
+  font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .2s;text-align:left;display:flex;align-items:center;gap:10px;
+}
+.metal-btn:hover{border-color:var(--border2);color:var(--text);}
+.metal-btn.on{
+  background:linear-gradient(135deg,rgba(77,159,255,.14),rgba(168,85,247,.14));
+  border-color:var(--blue);color:var(--blue);
+}
+.metal-btn .mico{font-size:16px;}
+.metal-btn .minfo{display:flex;flex-direction:column;}
+.metal-btn .mname{font-family:var(--r);font-size:12px;font-weight:700;letter-spacing:.5px;}
+.metal-btn .mwork{font-size:11px;color:var(--text3);}
+.metal-btn.on .mwork{color:var(--text2);}
+
+/* Ammeter display */
+.ammeter{
+  background:rgba(0,0,0,.4);border:1px solid rgba(16,185,129,.3);
+  border-radius:12px;padding:14px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.ammeter::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent,rgba(16,185,129,.05));
+  pointer-events:none;
+}
+.am-lbl{font-family:var(--r);font-size:9px;letter-spacing:3px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
+.am-val{font-family:var(--r);font-size:32px;font-weight:700;color:var(--green);
+  text-shadow:0 0 20px rgba(16,185,129,.6);}
+.am-unit{font-family:var(--r);font-size:12px;color:var(--text3);}
+
+/* Status badge */
+.status-badge{
+  padding:9px 14px;border-radius:10px;
+  font-family:var(--r);font-size:12px;font-weight:600;letter-spacing:.5px;
+  text-align:center;transition:all .3s;
+}
+.status-badge.ok{
+  background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:var(--green);
+}
+.status-badge.fail{
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red);
+  animation:shake .4s ease;
+}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* ── SIMULATION CANVAS AREA ── */
+.sim-area{
+  background:#000;border:1px solid var(--border);border-radius:16px;
+  position:relative;overflow:hidden;
+}
+#simCanvas{display:block;width:100%;border-radius:16px;}
+
+/* ── RIGHT: CALCULATOR ── */
+.calc-panel{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;
+}
+.calc-row{
+  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;padding:12px;
+}
+.cr-label{font-family:var(--r);font-size:9px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.cr-val{font-family:var(--r);font-size:16px;font-weight:700;color:var(--cyan);}
+.cr-val.violet{color:var(--violet);}
+.cr-val.green{color:var(--green);}
+.cr-val.red{color:var(--red);}
+
+.calc-note{font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border);padding-top:12px;}
+.calc-note b{color:var(--text2);}
+
+/* Energy game */
+.game-panel{margin-top:16px;}
+.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.game-title{font-family:var(--r);font-size:12px;font-weight:700;color:var(--violet);letter-spacing:1px;}
+.game-score{font-family:var(--r);font-size:11px;color:var(--text3);}
+.game-progress-bg{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-bottom:10px;}
+.game-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--violet));transition:width .4s ease;}
+.game-notes{font-size:11px;color:var(--text2);line-height:1.65;}
+.game-btn{
+  width:100%;margin-top:10px;padding:9px;
+  background:linear-gradient(135deg,rgba(77,159,255,.18),rgba(168,85,247,.18));
+  border:1px solid var(--blue);border-radius:8px;
+  color:var(--blue);font-family:var(--r);font-size:12px;font-weight:700;letter-spacing:1px;
+  cursor:pointer;transition:all .2s;
+}
+.game-btn:hover{background:linear-gradient(135deg,rgba(77,159,255,.3),rgba(168,85,247,.3));}
+
+/* ═══════════════════════════════════════════════
+   SECTION 3 — QUIZ
+═══════════════════════════════════════════════ */
+.quiz-wrap{max-width:780px;margin:0 auto;}
+.q-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:24px;margin-bottom:14px;
+  transition:border-color .3s,background .3s;
+}
+.q-card.ok{border-color:var(--green);background:rgba(16,185,129,.04);}
+.q-card.no{border-color:var(--red);background:rgba(239,68,68,.04);}
+.q-num{font-family:var(--r);font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
+.q-text{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;line-height:1.5;}
+.q-opts{display:flex;flex-direction:column;gap:8px;}
+.q-opt{
+  padding:11px 16px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:9px;
+  color:var(--text2);font-size:14px;font-weight:600;
+  cursor:pointer;text-align:left;transition:all .18s;
+}
+.q-opt:hover:not(:disabled){border-color:var(--blue);color:var(--text);background:rgba(77,159,255,.07);}
+.q-opt.ok{background:rgba(16,185,129,.12);border-color:var(--green);color:#6ee7b7;}
+.q-opt.no{background:rgba(239,68,68,.1);border-color:var(--red);color:#fca5a5;}
+.q-opt.show-ok{background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.3);color:#86efac;}
+.q-opt:disabled{cursor:not-allowed;}
+.q-fb{
+  margin-top:10px;padding:10px 14px;border-radius:8px;
+  font-size:12px;font-family:var(--r);letter-spacing:.3px;
+  display:none;line-height:1.6;
+}
+.q-fb.show{display:block;}
+.q-fb.ok{background:rgba(16,185,129,.08);color:#6ee7b7;}
+.q-fb.no{background:rgba(239,68,68,.08);color:#fca5a5;}
+
+.quiz-result{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:36px;text-align:center;
+}
+.qr-score{
+  font-family:var(--r);font-size:64px;font-weight:700;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.qr-bar-bg{height:8px;background:rgba(255,255,255,.06);border-radius:4px;margin:16px auto;max-width:400px;overflow:hidden;}
+.qr-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--violet));transition:width 1s ease;}
+.qr-msg{font-size:16px;color:var(--text2);margin-bottom:22px;}
+.retry-btn{
+  padding:12px 36px;background:transparent;border:1px solid var(--blue);
+  border-radius:10px;color:var(--blue);font-family:var(--r);font-size:12px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;
+}
+.retry-btn:hover{background:var(--blue);color:#000;}
+
+/* ── SECTION TITLES ── */
+.stitle{margin-bottom:24px;}
+.stitle h2{font-size:26px;font-weight:800;letter-spacing:-.3px;}
+.stitle p{color:var(--text3);font-size:12px;margin-top:5px;letter-spacing:1.5px;font-family:var(--r);}
+
+/* ── DIVIDER ── */
+hr{border:none;border-top:1px solid var(--border);margin:20px 0;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo-wrap">
+    <div class="logo-ico">⚡</div>
+    <div>
+      <div class="logo-text">Фотоэффект Зертханасы</div>
+      <div class="logo-sub">9-СЫНЫП • ФИЗИКА • ВИРТУАЛДЫ ЗЕРТХАНА</div>
+    </div>
+  </div>
+  <nav>
+    <button class="nb on" onclick="goTab('theory',this)">📖 Теория</button>
+    <button class="nb" onclick="goTab('sim',this)">⚡ Симулятор</button>
+    <button class="nb" onclick="goTab('quiz',this)">✏ Тест</button>
+  </nav>
+</header>
+
+<!-- ════════════════════════════════════════════
+     SECTION 1: THEORY
+════════════════════════════════════════════ -->
+<section id="theory" class="sec on">
+<div class="wrap">
+  <div class="stitle">
+    <h2>Фотоэффект — Жарық пен Металл</h2>
+    <p>ТЕОРИЯ • ТАРИХ • НЕГІЗГІ ҰҒЫМДАР</p>
+  </div>
+
+  <div class="theory-grid">
+    <!-- Definition -->
+    <div class="theory-card" style="border-color:rgba(77,159,255,.25)">
+      <h2 style="color:var(--blue)">⚡ Фотоэффект дегеніміз не?</h2>
+      <p><strong style="color:var(--text)">Фотоэффект</strong> — жарық сәулесі металл бетіне түскенде электрондардың металдан бөлініп шығу құбылысы.</p>
+      <p>Бұл 1887 жылы Генрих Герц байқаған, ал 1905 жылы <strong style="color:var(--cyan)">Альберт Эйнштейн</strong> ғылыми тұрғыдан дәлелдеген жаңалық болды.</p>
+      <div class="formula-chip">E = h · ν = h · c / λ</div>
+      <p style="font-size:12px;color:var(--text3)">h = 6.626×10⁻³⁴ Дж·с (Планк тұрақтысы) • ν — жиілік • λ — толқын ұзындығы</p>
+      <div class="formula-chip" style="background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.3);color:var(--violet);margin-top:8px;">
+        E<sub>кин</sub> = h·ν − A<sub>шығу</sub>
+      </div>
+      <p style="font-size:12px;color:var(--text3)">A<sub>шығу</sub> — металдан электронды бөліп шығаруға жұмсалатын «шығу жұмысы» (эВ)</p>
+    </div>
+
+    <!-- Quantum nature -->
+    <div class="theory-card" style="border-color:rgba(168,85,247,.25)">
+      <h2 style="color:var(--violet)">⚛ Кванттық табиғат</h2>
+      <p>Эйнштейн жарықтың үзіліссіз толқын емес, жеке <strong style="color:var(--violet)">фотондардан</strong> тұратынын дәлелдеді.</p>
+      <p>Бір фотон → бір электрон. Жарықтың жиілігі жоғары болса — электронның кинетикалық энергиясы жоғары.</p>
+      <p><strong style="color:var(--red)">«Қызыл шекара»</strong> — фотон энергиясы шығу жұмысынан аз болса, жарықтылық қаншалықты жоғары болса да, фотоэффект болмайды!</p>
+      <hr>
+      <div class="term-grid">
+        <div class="term">
+          <div class="term-title">ФОТОН</div>
+          <div class="term-desc">Жарықтың энергия «бөліктері» — кванттар. E=hν мөлшерінде энергия тасымалдайды.</div>
+        </div>
+        <div class="term">
+          <div class="term-title">ЭЛЕКТРОН</div>
+          <div class="term-desc">Металдағы бос электрон — фотонды жұтып, бетінен шығып кетеді.</div>
+        </div>
+        <div class="term">
+          <div class="term-title">КАТОД (K)</div>
+          <div class="term-desc">Жарық түсетін металл бет. Электрондар осы жерден шығады.</div>
+        </div>
+        <div class="term">
+          <div class="term-title">АНОД (A)</div>
+          <div class="term-desc">Электрондарды «қабылдайтын» оң зарядты пластина. Ток пайда болады.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- History timeline -->
+  <div class="theory-card" style="margin-bottom:20px;border-color:rgba(34,211,238,.2)">
+    <h2 style="color:var(--cyan)">🕐 Тарих пен Жаңалықтар</h2>
+    <div class="tl-wrap">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot">🔭</div>
+          <div class="tl-body">
+            <strong>1887 — Генрих Герц</strong>
+            <span>Ультракүлгін сәуле металл бетіне тиген кезде электр разряды оңай пайда болатынын байқайды. Алайда неге екенін түсіндіре алмайды.</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="border-color:var(--violet)">💡</div>
+          <div class="tl-body">
+            <strong>1905 — Альберт Эйнштейн</strong>
+            <span>«Ерекше жыл» — Эйнштейн фотоэффектті жарықтың кванттық табиғатымен түсіндіреді. E = hν формуласын ұсынады. Классикалық физика бұл мәселені шеше алмаған болатын.</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="border-color:var(--yellow)">🏆</div>
+          <div class="tl-body">
+            <strong>1921 — Нобель сыйлығы</strong>
+            <span>Эйнштейн фотоэффектті ашқаны үшін физика бойынша Нобель сыйлығын алды (салыстырмалылық теориясы үшін емес!).</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="border-color:var(--green)">📱</div>
+          <div class="tl-body">
+            <strong>Қазіргі уақыт</strong>
+            <span>Фотоэффект: цифрлы камера матрицалары, күн батареялары, фотодиодтар, медициналық томография — бүгінгі технологиялардың негізі.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fun fact -->
+  <div class="fun-fact">
+    <div class="ff-ico">📱</div>
+    <div>
+      <div class="ff-title">🌟 ҚЫЗЫҚТЫ ФАКТ</div>
+      <div class="ff-text">
+        <strong style="color:var(--yellow)">Смартфон камерасы «инфрақызыл» жарықты «көреді»!</strong><br>
+        Теледидар пультін алып, смартфон камерасы арқылы оның ұшын бақылаңыз — экранда күлгін-ақ жарқылды көресіз!
+        Себебі пульттің LED-і инфрақызыл жарық шығарады (λ ≈ 940 нм), адам көзі бұны байқамайды,
+        бірақ смартфон матрицасының CMOS сенсоры — фотоэффект негізіндегі фотодиодтар — оны анықтайды.
+        Бұл — фотоэффекттің күнделікті өмірдегі тікелей қолданысы!
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SECTION 2: SIMULATOR
+════════════════════════════════════════════ -->
+<section id="sim" class="sec">
+<div class="wrap">
+  <div class="stitle">
+    <h2>Интерактивті Симулятор</h2>
+    <p>ПАРАМЕТРЛЕРДІ ӨЗГЕРТІП, ФОТОЭФФЕКТТІ БАҚЫЛА</p>
+  </div>
+
+  <div class="sim-layout">
+    <!-- LEFT: CONTROLS -->
+    <div class="ctrl">
+
+      <!-- Wavelength -->
+      <div class="ctrl-group">
+        <label>Жарық түсі (толқын ұзындығы)</label>
+        <div class="ctrl-row">
+          <span class="ctrl-name" id="colorName">Ультракүлгін</span>
+          <span class="ctrl-val" id="nmVal">300 нм</span>
+        </div>
+        <div class="spec-slider-wrap">
+          <div class="spec-bar"></div>
+          <input type="range" class="spec" id="nmSlider" min="200" max="800" value="300" oninput="onSlide()">
+        </div>
+        <div class="nm-labels"><span>200нм</span><span>УК</span><span>Ауқымды</span><span>Қызыл</span><span>800нм</span></div>
+      </div>
+
+      <!-- Intensity -->
+      <div class="ctrl-group">
+        <label>Жарық жарықтығы (интенсивтілік)</label>
+        <div class="ctrl-row">
+          <span class="ctrl-name">Интенсивтілік</span>
+          <span class="ctrl-val" id="intensityVal">60%</span>
+        </div>
+        <input type="range" class="bright" id="intensitySlider" min="0" max="100" value="60" oninput="onSlide()">
+      </div>
+
+      <!-- Metal selector -->
+      <div class="ctrl-group">
+        <label>Металл катод (материал)</label>
+        <div class="metal-btns">
+          <button class="metal-btn on" onclick="setMetal('Na',this)">
+            <span class="mico">🔶</span>
+            <div class="minfo">
+              <span class="mname">Натрий (Na)</span>
+              <span class="mwork">Шығу жұмысы: 2.36 эВ — λ<sub>max</sub>≈526нм</span>
+            </div>
+          </button>
+          <button class="metal-btn" onclick="setMetal('Zn',this)">
+            <span class="mico">🔷</span>
+            <div class="minfo">
+              <span class="mname">Мырыш (Zn)</span>
+              <span class="mwork">Шығу жұмысы: 4.33 эВ — λ<sub>max</sub>≈286нм</span>
+            </div>
+          </button>
+          <button class="metal-btn" onclick="setMetal('Cu',this)">
+            <span class="mico">🟠</span>
+            <div class="minfo">
+              <span class="mname">Мыс (Cu)</span>
+              <span class="mwork">Шығу жұмысы: 4.65 эВ — λ<sub>max</sub>≈267нм</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ammeter -->
+      <div class="ammeter">
+        <div class="am-lbl">Ток күші (Амперметр)</div>
+        <div class="am-val" id="amVal">0.00</div>
+        <div class="am-unit">мкА</div>
+      </div>
+
+      <!-- Status -->
+      <div class="status-badge fail" id="statusBadge">
+        ⛔ Фотоэффект жоқ — жиілік жеткіліксіз
+      </div>
+    </div>
+
+    <!-- CENTER: CANVAS -->
+    <div class="sim-area">
+      <canvas id="simCanvas" height="420"></canvas>
+    </div>
+
+    <!-- RIGHT: CALCULATOR + GAME -->
+    <div>
+      <div class="calc-panel">
+        <div class="clabel v">Деректер Калькуляторы</div>
+
+        <div class="calc-row">
+          <div class="cr-label">Толқын ұзындығы λ</div>
+          <div class="cr-val" id="cLambda">300 нм</div>
+        </div>
+        <div class="calc-row">
+          <div class="cr-label">Жиілік ν</div>
+          <div class="cr-val" id="cFreq">1.00×10¹⁵ Гц</div>
+        </div>
+        <div class="calc-row">
+          <div class="cr-label">Фотон энергиясы E=hν</div>
+          <div class="cr-val violet" id="cEphot">4.14 эВ</div>
+        </div>
+        <div class="calc-row">
+          <div class="cr-label">Шығу жұмысы A</div>
+          <div class="cr-val" id="cWork">2.36 эВ (Na)</div>
+        </div>
+        <div class="calc-row">
+          <div class="cr-label">Кинетикалық энергия E<sub>кин</sub></div>
+          <div class="cr-val green" id="cEkin">1.78 эВ</div>
+        </div>
+
+        <div class="calc-note">
+          <b>E = hν</b> — Планк-Эйнштейн формуласы<br>
+          <b>E<sub>кин</sub> = E − A</b> — Электрон жылдамдығын анықтайды<br>
+          E<sub>кин</sub> < 0 болса → фотоэффект болмайды
+        </div>
+      </div>
+
+      <!-- Energy game -->
+      <div class="card violet" style="margin-top:16px">
+        <div class="clabel v">⚡ Энергия жинау ойыны</div>
+        <div class="game-header">
+          <div class="game-title">МАҚСАТ: <span id="gTarget">100</span> Дж</div>
+          <div class="game-score">Жиналды: <span id="gCollected">0</span> Дж</div>
+        </div>
+        <div class="game-progress-bg">
+          <div class="game-progress-fill" id="gBar" style="width:0%"></div>
+        </div>
+        <div class="game-notes" id="gNotes">
+          Симулятор іске қосылғанда фотондар энергия жинайды.<br>
+          Бір фотон = <span id="gQuant">—</span> шартты бірлік.
+        </div>
+        <button class="game-btn" onclick="resetGame()">↺ Ойынды қайта бастау</button>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SECTION 3: QUIZ
+════════════════════════════════════════════ -->
+<section id="quiz" class="sec">
+<div class="wrap">
+  <div class="stitle">
+    <h2>Білімді Тексеру</h2>
+    <p>10 СҰРАҚТАН ТҰРАТЫН ИНТЕРАКТИВТІ ТЕСТ</p>
+  </div>
+  <div class="quiz-wrap">
+    <div id="qContainer"></div>
+    <div id="qResult" class="quiz-result" style="display:none">
+      <div style="font-family:var(--r);font-size:10px;letter-spacing:3px;color:var(--text3)">НӘТИЖЕҢ</div>
+      <div class="qr-score" id="qrScore">0/10</div>
+      <div class="qr-bar-bg"><div class="qr-bar-fill" id="qrBar" style="width:0%"></div></div>
+      <div class="qr-msg" id="qrMsg"></div>
+      <button class="retry-btn" onclick="buildQuiz()">↺ Қайта тапсыру</button>
+    </div>
+  </div>
+</div>
+</section>
+
+<script>
+/* ═══════════════════════════════════════════════
+   CONSTANTS & STATE
+═══════════════════════════════════════════════ */
+const h   = 6.626e-34;   // Planck
+const c   = 2.998e8;     // speed of light
+const eV  = 1.602e-19;   // 1 eV in Joules
+
+const METALS = {
+  Na: { name:'Натрий (Na)', work: 2.36, lambdaMax: 526, color:'#ff8800' },
+  Zn: { name:'Мырыш (Zn)',  work: 4.33, lambdaMax: 286, color:'#66aaff' },
+  Cu: { name:'Мыс (Cu)',    work: 4.65, lambdaMax: 267, color:'#ff6633' },
+};
+
+let metal   = 'Na';
+let nm      = 300;
+let intens  = 60;
+let active  = false;     // photoeffect happening?
+
+// Game state
+let gCollected = 0;
+let gTarget    = 100;
+let gQuant     = 0;
+
+/* ═══════════════════════════════════════════════
+   NAV TABS
+═══════════════════════════════════════════════ */
+function goTab(id, el) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  el.classList.add('on');
+  if (id === 'sim') { resizeCanvas(); }
+}
+
+/* ═══════════════════════════════════════════════
+   WAVELENGTH → COLOR
+═══════════════════════════════════════════════ */
+function nmToRgb(nm) {
+  if (nm < 380) return [140, 0, 255];
+  if (nm < 440) return [Math.round((440-nm)/(440-380)*140), 0, 255];
+  if (nm < 490) return [0, Math.round((nm-440)/(490-440)*255), 255];
+  if (nm < 510) return [0, 255, Math.round((510-nm)/(510-490)*255)];
+  if (nm < 580) return [Math.round((nm-510)/(580-510)*255), 255, 0];
+  if (nm < 645) return [255, Math.round((645-nm)/(645-580)*255), 0];
+  if (nm <= 750) return [255, 0, 0];
+  return [180, 0, 0];   // IR
+}
+
+function nmToHex(nm) {
+  const [r, g, b] = nmToRgb(nm);
+  return `rgb(${r},${g},${b})`;
+}
+
+function nmToName(nm) {
+  if (nm < 380) return 'Ультракүлгін (УК)';
+  if (nm < 450) return 'Күлгін';
+  if (nm < 495) return 'Көк';
+  if (nm < 570) return 'Жасыл';
+  if (nm < 590) return 'Сары';
+  if (nm < 625) return 'Қызғылт сары';
+  if (nm < 750) return 'Қызыл';
+  return 'Инфрақызыл (ИК)';
+}
+
+/* ═══════════════════════════════════════════════
+   PHYSICS CALCULATIONS
+═══════════════════════════════════════════════ */
+function calcPhysics() {
+  const lam = nm * 1e-9;
+  const freq = c / lam;
+  const Ephot = (h * freq) / eV;       // in eV
+  const work = METALS[metal].work;
+  const Ekin = Ephot - work;
+  active = Ekin > 0;
+  return { freq, Ephot, work, Ekin, active };
+}
+
+/* ═══════════════════════════════════════════════
+   SLIDER & CONTROL EVENTS
+═══════════════════════════════════════════════ */
+function setMetal(m, el) {
+  metal = m;
+  document.querySelectorAll('.metal-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  updateAll();
+}
+
+function onSlide() {
+  nm     = +document.getElementById('nmSlider').value;
+  intens = +document.getElementById('intensitySlider').value;
+  updateAll();
+}
+
+function updateAll() {
+  const { freq, Ephot, work, Ekin, active: act } = calcPhysics();
+
+  // Labels
+  document.getElementById('nmVal').textContent      = nm + ' нм';
+  document.getElementById('intensityVal').textContent= intens + '%';
+  document.getElementById('colorName').textContent  = nmToName(nm);
+
+  // Calculator
+  document.getElementById('cLambda').textContent = nm + ' нм';
+  document.getElementById('cFreq').textContent   = (freq/1e15).toFixed(3) + '×10¹⁵ Гц';
+  document.getElementById('cEphot').textContent  = Ephot.toFixed(3) + ' эВ';
+  document.getElementById('cWork').textContent   = work.toFixed(2) + ' эВ (' + metal + ')';
+
+  const ekinEl = document.getElementById('cEkin');
+  if (act) {
+    ekinEl.textContent = Ekin.toFixed(3) + ' эВ';
+    ekinEl.className = 'cr-val green';
+  } else {
+    ekinEl.textContent = Ekin.toFixed(3) + ' эВ (жеткіліксіз!)';
+    ekinEl.className = 'cr-val red';
+  }
+
+  // Ammeter: proportional to intensity × active
+  const current = act ? (intens / 100 * 4.8 * (Ekin / (Ephot + 0.01))).toFixed(2) : '0.00';
+  document.getElementById('amVal').textContent = current;
+
+  // Status
+  const badge = document.getElementById('statusBadge');
+  if (act) {
+    badge.className = 'status-badge ok';
+    badge.textContent = `✅ Фотоэффект БЕЛСЕНДІ — λ < ${METALS[metal].lambdaMax}нм`;
+  } else {
+    badge.className = 'status-badge fail';
+    badge.textContent = `⛔ Фотоэффект жоқ — λ > ${METALS[metal].lambdaMax}нм (қызыл шекара)`;
+  }
+
+  // Game quant
+  gQuant = act ? +(Ekin * 5).toFixed(1) : 0;
+  document.getElementById('gQuant').textContent = gQuant > 0 ? gQuant + ' бірлік' : '—';
+}
+
+/* ═══════════════════════════════════════════════
+   CANVAS SIMULATION
+═══════════════════════════════════════════════ */
+const canvas = document.getElementById('simCanvas');
+const ctx    = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const parent = canvas.parentElement;
+  canvas.width  = parent.clientWidth || 580;
+  canvas.height = 420;
+}
+
+// Particle pools
+const photons   = [];
+const electrons = [];
+let frameN = 0;
+
+function spawnPhoton() {
+  const [r,g,b] = nmToRgb(nm);
+  photons.push({
+    x: 10,
+    y: canvas.height * 0.42 + (Math.random() - 0.5) * 60,
+    vx: 3.5 + Math.random() * 1.5,
+    vy: (Math.random() - 0.5) * 0.4,
+    r, g, b,
+    alpha: 1,
+    size: nm < 380 ? 3.5 : nm < 500 ? 4 : nm < 650 ? 4.5 : 5,
+    trail: [],
+  });
+}
+
+function spawnElectron(x, y) {
+  electrons.push({
+    x, y,
+    vx: 2.5 + Math.random() * 2,
+    vy: (Math.random() - 0.5) * 3.5,
+    alpha: 1,
+    size: 3,
+    trail: [],
+  });
+}
+
+function drawTube() {
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H * 0.44;
+  const tw = W * 0.72, th = 130;
+  const tx = cx - tw / 2;
+
+  // Glass envelope (outer)
+  ctx.save();
+  ctx.shadowColor = 'rgba(100,180,255,0.2)';
+  ctx.shadowBlur = 18;
+
+  // Glass gradient
+  const glassGrad = ctx.createLinearGradient(tx, cy - th/2, tx, cy + th/2);
+  glassGrad.addColorStop(0, 'rgba(120,180,255,0.12)');
+  glassGrad.addColorStop(0.5, 'rgba(80,140,230,0.06)');
+  glassGrad.addColorStop(1, 'rgba(120,180,255,0.12)');
+
+  // Tube shell
+  ctx.beginPath();
+  ctx.roundRect(tx, cy - th/2, tw, th, [28, 28, 28, 28]);
+  ctx.fillStyle = glassGrad;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(120,180,255,0.35)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Shine line
+  ctx.beginPath();
+  ctx.moveTo(tx + 20, cy - th/2 + 10);
+  ctx.lineTo(tx + tw - 20, cy - th/2 + 10);
+  ctx.strokeStyle = 'rgba(200,220,255,0.18)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.restore();
+
+  // Inner vacuum darkness
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(tx + 4, cy - th/2 + 4, tw - 8, th - 8, 24);
+  ctx.fillStyle = 'rgba(4,8,18,0.85)';
+  ctx.fill();
+  ctx.restore();
+
+  // ── CATHODE (K) ──
+  const catX = tx + 36;
+  ctx.save();
+
+  // Cathode body
+  const catGrad = ctx.createLinearGradient(catX - 8, 0, catX + 8, 0);
+  catGrad.addColorStop(0, '#1a2a44');
+  catGrad.addColorStop(0.5, '#2a4060');
+  catGrad.addColorStop(1, '#1a2a44');
+  ctx.beginPath();
+  ctx.roundRect(catX - 8, cy - 50, 16, 100, 4);
+  ctx.fillStyle = catGrad;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(80,140,255,0.5)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Cathode label
+  ctx.font = 'bold 14px Rajdhani, sans-serif';
+  ctx.fillStyle = 'rgba(100,160,255,0.9)';
+  ctx.textAlign = 'center';
+  ctx.fillText('K', catX, cy + 65);
+
+  // Light beam effect on cathode
+  if (intens > 0) {
+    const [lr, lg, lb] = nmToRgb(nm);
+    const beamGrad = ctx.createLinearGradient(10, cy, catX - 8, cy);
+    beamGrad.addColorStop(0, `rgba(${lr},${lg},${lb},${intens/400})`);
+    beamGrad.addColorStop(1, `rgba(${lr},${lg},${lb},0)`);
+    ctx.beginPath();
+    ctx.moveTo(10, cy - 30);
+    ctx.lineTo(catX - 8, cy - 28);
+    ctx.lineTo(catX - 8, cy + 28);
+    ctx.lineTo(10, cy + 30);
+    ctx.fillStyle = beamGrad;
+    ctx.fill();
+
+    // Glow on cathode surface when photoeffect active
+    if (active) {
+      const { Ekin } = calcPhysics();
+      const glowA = Math.min(0.5, Ekin / 3) * (intens / 100);
+      const metalColor = METALS[metal].color;
+      ctx.shadowColor = metalColor;
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.roundRect(catX - 8, cy - 50, 8, 100, [4, 0, 0, 4]);
+      ctx.fillStyle = `rgba(${nmToRgb(nm).join(',')},${glowA})`;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+  ctx.restore();
+
+  // ── ANODE (A) ──
+  const anoX = tx + tw - 36;
+  ctx.save();
+  const anoGrad = ctx.createLinearGradient(anoX - 8, 0, anoX + 8, 0);
+  anoGrad.addColorStop(0, '#1a2a44');
+  anoGrad.addColorStop(0.5, '#233850');
+  anoGrad.addColorStop(1, '#1a2a44');
+  ctx.beginPath();
+  ctx.roundRect(anoX - 8, cy - 44, 16, 88, 4);
+  ctx.fillStyle = anoGrad;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(80,200,255,0.4)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.font = 'bold 14px Rajdhani, sans-serif';
+  ctx.fillStyle = 'rgba(100,200,255,0.9)';
+  ctx.textAlign = 'center';
+  ctx.fillText('A', anoX, cy + 65);
+  ctx.restore();
+
+  // ── CIRCUIT WIRES (below) ──
+  const wireY1 = cy + th/2 + 8;
+  const wireY2 = cy + th/2 + 72;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(80,140,255,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([]);
+
+  // Left wire down
+  ctx.beginPath();
+  ctx.moveTo(catX, cy + th/2);
+  ctx.lineTo(catX, wireY1);
+  ctx.lineTo(cx - 70, wireY1);
+  ctx.lineTo(cx - 70, wireY2);
+  ctx.stroke();
+
+  // Right wire down
+  ctx.beginPath();
+  ctx.moveTo(anoX, cy + th/2);
+  ctx.lineTo(anoX, wireY1);
+  ctx.lineTo(cx + 70, wireY1);
+  ctx.lineTo(cx + 70, wireY2);
+  ctx.stroke();
+
+  // Bottom connecting wire
+  ctx.beginPath();
+  ctx.moveTo(cx - 70, wireY2);
+  ctx.lineTo(cx - 20, wireY2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx + 20, wireY2);
+  ctx.lineTo(cx + 70, wireY2);
+  ctx.stroke();
+
+  // Voltmeter circle (V) on left side
+  ctx.beginPath();
+  ctx.arc(cx - 100, wireY1 + 16, 18, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(168,85,247,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(168,85,247,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.font = 'bold 13px Rajdhani, sans-serif';
+  ctx.fillStyle = 'rgba(168,85,247,0.9)';
+  ctx.textAlign = 'center';
+  ctx.fillText('V', cx - 100, wireY1 + 20);
+
+  // Ammeter circle (mA) on right side
+  ctx.beginPath();
+  ctx.arc(cx + 100, wireY1 + 16, 18, 0, Math.PI * 2);
+  ctx.fillStyle = active ? 'rgba(16,185,129,0.15)' : 'rgba(40,60,100,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = active ? 'rgba(16,185,129,0.6)' : 'rgba(80,120,180,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.font = 'bold 10px Rajdhani, sans-serif';
+  ctx.fillStyle = active ? 'rgba(16,185,129,0.9)' : 'rgba(80,120,180,0.5)';
+  ctx.textAlign = 'center';
+  ctx.fillText('mA', cx + 100, wireY1 + 20);
+
+  // Battery symbol (center bottom)
+  const batY = wireY2;
+  const batX = cx;
+  // + plate
+  ctx.beginPath();
+  ctx.moveTo(batX - 12, batY); ctx.lineTo(batX + 12, batY);
+  ctx.strokeStyle = 'rgba(251,191,36,0.7)';
+  ctx.lineWidth = 3; ctx.stroke();
+  // − plate
+  ctx.beginPath();
+  ctx.moveTo(batX - 7, batY + 10); ctx.lineTo(batX + 7, batY + 10);
+  ctx.strokeStyle = 'rgba(251,191,36,0.5)';
+  ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.font = '10px Rajdhani, sans-serif';
+  ctx.fillStyle = 'rgba(251,191,36,0.7)';
+  ctx.textAlign = 'left';
+  ctx.fillText('+', batX + 14, batY + 4);
+
+  ctx.restore();
+
+  // ── LIGHT SOURCE (left edge) ──
+  if (intens > 0) {
+    const [lr, lg, lb] = nmToRgb(nm);
+    const srcAlpha = intens / 100;
+    ctx.save();
+    // Lamp housing
+    ctx.beginPath();
+    ctx.roundRect(2, cy - 38, 22, 76, 8);
+    ctx.fillStyle = 'rgba(20,30,55,0.9)';
+    ctx.fill();
+    ctx.strokeStyle = `rgba(${lr},${lg},${lb},0.6)`;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Lamp glow
+    ctx.shadowColor = `rgb(${lr},${lg},${lb})`;
+    ctx.shadowBlur = 24 * srcAlpha;
+    ctx.beginPath();
+    ctx.arc(13, cy, 8, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${lr},${lg},${lb},${srcAlpha})`;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Beam rays
+    for (let i = -3; i <= 3; i++) {
+      const angle = i * 0.12;
+      const blen = 30 + intens * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(22, cy + i * 8);
+      ctx.lineTo(22 + blen * Math.cos(angle), cy + i * 8 + blen * Math.sin(angle));
+      ctx.strokeStyle = `rgba(${lr},${lg},${lb},${srcAlpha * 0.4})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+function tickParticles() {
+  const W = canvas.width, H = canvas.height;
+  const cy = H * 0.44;
+  const catX = W * 0.14 + 36 + 8; // right edge of cathode
+
+  // Photons
+  for (let i = photons.length - 1; i >= 0; i--) {
+    const p = photons[i];
+    p.trail.push({ x: p.x, y: p.y });
+    if (p.trail.length > 8) p.trail.shift();
+    p.x += p.vx; p.y += p.vy;
+
+    // Hit cathode
+    if (p.x >= catX - 2) {
+      photons.splice(i, 1);
+      if (active && intens > 0) {
+        const count = Math.max(1, Math.round(intens / 30));
+        for (let j = 0; j < count; j++) spawnElectron(catX, p.y);
+        // Game energy
+        if (gCollected < gTarget) {
+          gCollected = Math.min(gTarget, gCollected + gQuant);
+          updateGameUI();
+        }
+      }
+      continue;
+    }
+
+    // Draw trail
+    p.trail.forEach((t, ti) => {
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, p.size * 0.5 * (ti / p.trail.length), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${p.r},${p.g},${p.b},${(ti / p.trail.length) * 0.4})`;
+      ctx.fill();
+    });
+
+    // Draw photon
+    ctx.save();
+    ctx.shadowColor = `rgb(${p.r},${p.g},${p.b})`;
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${p.r},${p.g},${p.b},${p.alpha})`;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Electrons
+  for (let i = electrons.length - 1; i >= 0; i--) {
+    const e = electrons[i];
+    e.trail.push({ x: e.x, y: e.y });
+    if (e.trail.length > 10) e.trail.shift();
+    e.x += e.vx; e.y += e.vy;
+    e.alpha -= 0.012;
+
+    // Draw trail
+    e.trail.forEach((t, ti) => {
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, 2 * (ti / e.trail.length), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(100,220,255,${(ti / e.trail.length) * 0.3 * e.alpha})`;
+      ctx.fill();
+    });
+
+    // Draw electron
+    ctx.save();
+    ctx.shadowColor = 'rgba(100,220,255,0.8)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(100,220,255,${e.alpha})`;
+    ctx.fill();
+    ctx.restore();
+
+    if (e.alpha <= 0 || e.x > W - 10) electrons.splice(i, 1);
+  }
+}
+
+function spawnRate() {
+  if (intens === 0) return false;
+  const baseRate = intens / 100;
+  // More photons at higher intensity
+  return Math.random() < baseRate * 0.45;
+}
+
+function renderLoop() {
+  requestAnimationFrame(renderLoop);
+  frameN++;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Background
+  const bg = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  bg.addColorStop(0, '#070b14');
+  bg.addColorStop(1, '#0a1020');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawTube();
+
+  // Spawn photons
+  if (intens > 0 && spawnRate()) spawnPhoton();
+
+  tickParticles();
+
+  // "Қызыл шекара" label
+  if (!active && nm > METALS[metal].lambdaMax) {
+    ctx.save();
+    ctx.font = 'bold 12px Rajdhani, sans-serif';
+    ctx.fillStyle = 'rgba(239,68,68,0.7)';
+    ctx.textAlign = 'center';
+    ctx.fillText('⛔ ҚЫЗЫЛ ШЕКАРА — фотоэффект жоқ', canvas.width / 2, 28);
+    ctx.restore();
+  }
+
+  // Active pulse
+  if (active && frameN % 60 < 30) {
+    ctx.save();
+    ctx.font = 'bold 11px Rajdhani, sans-serif';
+    ctx.fillStyle = 'rgba(16,185,129,0.7)';
+    ctx.textAlign = 'center';
+    ctx.fillText('✅ ФОТОЭФФЕКТ БЕЛСЕНДІ', canvas.width / 2, 28);
+    ctx.restore();
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   ENERGY GAME
+═══════════════════════════════════════════════ */
+function updateGameUI() {
+  const pct = Math.min(100, (gCollected / gTarget) * 100);
+  document.getElementById('gCollected').textContent = gCollected.toFixed(1);
+  document.getElementById('gBar').style.width = pct + '%';
+  if (gCollected >= gTarget) {
+    document.getElementById('gNotes').innerHTML =
+      '🎉 <strong style="color:var(--green)">Мақсатқа жеттің!</strong><br>Кванттар арқылы энергия жиналды — бұл Планктің дискретті энергия заңы!';
+  }
+}
+
+function resetGame() {
+  gCollected = 0;
+  gTarget = Math.round(50 + Math.random() * 150);
+  document.getElementById('gTarget').textContent = gTarget;
+  document.getElementById('gCollected').textContent = '0';
+  document.getElementById('gBar').style.width = '0%';
+  document.getElementById('gNotes').innerHTML =
+    'Симулятор іске қосылғанда фотондар энергия жинайды.<br>Бір фотон = <span id="gQuant">—</span> шартты бірлік.';
+}
+
+/* ═══════════════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════════════ */
+const QUESTIONS = [
+  {
+    q: 'Фотоэффект дегеніміз не?',
+    opts: ['Металдың жылынуы','Жарық түскенде металдан электрондардың шығуы','Электрондардың металға сіңуі','Жарықтың шағылысуы'],
+    a: 1, hint: 'Фотоэффект — жарық сәулесі металл бетіне түскенде электрондардың металдан бөлініп шығу құбылысы.'
+  },
+  {
+    q: 'Фотоэффектті қай ғалым ғылыми тұрғыдан түсіндірді?',
+    opts: ['Ньютон','Герц','Эйнштейн','Максвелл'],
+    a: 2, hint: 'Альберт Эйнштейн 1905 жылы фотоэффектті жарықтың кванттық табиғатымен түсіндірді.'
+  },
+  {
+    q: 'E = hν формуласында «h» нені білдіреді?',
+    opts: ['Электрон заряды','Планк тұрақтысы','Жарық жылдамдығы','Толқын ұзындығы'],
+    a: 1, hint: 'h = 6.626×10⁻³⁴ Дж·с — Планк тұрақтысы, кванттық физиканың іргелі тұрақтысы.'
+  },
+  {
+    q: '«Қызыл шекара» дегеніміз не?',
+    opts: ['Жарықтың қызыл түсі','Жиілік жеткіліксіз болса фотоэффекттің тоқтауы','Металдың қызаруы','Электрон саны шекі'],
+    a: 1, hint: 'Егер фотон энергиясы шығу жұмысынан аз болса, жарықтылық қаншалықты жоғары болса да фотоэффект болмайды.'
+  },
+  {
+    q: 'Жарықтың жиілігі артқанда электрондардың кинетикалық энергиясы қалай өзгереді?',
+    opts: ['Кемиді','Өзгермейді','Артады','Нөлге дейін кемиді'],
+    a: 2, hint: 'E_кин = hν − A: жиілік (ν) артса, кинетикалық энергия да артады.'
+  },
+  {
+    q: 'Жарық жарықтығын арттырсак, фотоэффект кезінде не болады?',
+    opts: ['Электрон саны артады','Электрон энергиясы артады','Фотоэффект тоқтайды','Ештеңе өзгермейді'],
+    a: 0, hint: 'Жарықтылық = фотондар саны. Көп фотон → көп электрон. Бірақ әр электронның энергиясы тек жиілікке байланысты.'
+  },
+  {
+    q: 'Фотоэффект тәжірибесіндегі катод (K) дегеніміз не?',
+    opts: ['Батарея','Жарық сәулесі','Электрондар шығатын металл бет','Электрон қабылдайтын пластина'],
+    a: 2, hint: 'Катод — жарық түсетін металл бет, электрондар осы бетінен шығады.'
+  },
+  {
+    q: 'Мыс (Cu) пен Натрий (Na) үшін: қайсысының «шығу жұмысы» аз?',
+    opts: ['Мыс (Cu) — 4.65 эВ','Натрий (Na) — 2.36 эВ','Екеуі тең','Жауап формулаға байланысты'],
+    a: 1, hint: 'Na үшін A=2.36 эВ, Cu үшін A=4.65 эВ — Натрийден электронды шығару оңайырақ.'
+  },
+  {
+    q: 'Фотоэффект қазіргі технологияда қайда қолданылады?',
+    opts: ['Тек ескі ғылымда','Цифрлы камераларда, күн батареяларында','Тек дыбыс жабдықтарында','Пайдаланылмайды'],
+    a: 1, hint: 'Цифрлы камера матрицалары (CMOS/CCD), күн батареялары, фотодиодтар — барлығы фотоэффект негізінде жұмыс істейді.'
+  },
+  {
+    q: 'Эйнштейн фотоэффекті үшін Нобель сыйлығын қай жылы алды?',
+    opts: ['1905','1915','1921','1933'],
+    a: 2, hint: '1921 жылы Альберт Эйнштейн фотоэффектті ашқаны үшін (салыстырмалылық үшін емес!) Нобель сыйлығын алды.'
+  },
+];
+
+let qAnswers = {}, qDone = {};
+
+function buildQuiz() {
+  qAnswers = {}; qDone = {};
+  document.getElementById('qResult').style.display = 'none';
+  const c = document.getElementById('qContainer');
+  c.innerHTML = '';
+  QUESTIONS.forEach((item, qi) => {
+    const card = document.createElement('div');
+    card.className = 'q-card'; card.id = 'qc' + qi;
+    const opts = item.opts.map((o, oi) =>
+      `<button class="q-opt" id="qo_${qi}_${oi}" onclick="pickAnswer(${qi},${oi})">${o}</button>`
+    ).join('');
+    card.innerHTML = `
+      <div class="q-num">Сұрақ ${qi+1} / ${QUESTIONS.length}</div>
+      <div class="q-text">${item.q}</div>
+      <div class="q-opts">${opts}</div>
+      <div class="q-fb" id="qfb${qi}"></div>`;
+    c.appendChild(card);
+  });
+}
+
+function pickAnswer(qi, oi) {
+  if (qDone[qi]) return;
+  qDone[qi] = true; qAnswers[qi] = oi;
+  const item = QUESTIONS[qi];
+  const fb   = document.getElementById('qfb' + qi);
+  const card = document.getElementById('qc' + qi);
+
+  for (let i = 0; i < item.opts.length; i++) {
+    const b = document.getElementById(`qo_${qi}_${i}`);
+    b.disabled = true;
+    if (i === item.a) b.classList.add('show-ok');
+  }
+  const selBtn = document.getElementById(`qo_${qi}_${oi}`);
+  selBtn.classList.remove('show-ok');
+
+  if (oi === item.a) {
+    selBtn.classList.add('ok');
+    fb.className = 'q-fb show ok';
+    fb.textContent = '✓ Дұрыс! ' + item.hint;
+    card.classList.add('ok');
+  } else {
+    selBtn.classList.add('no');
+    fb.className = 'q-fb show no';
+    fb.textContent = '✗ Қате. ' + item.hint;
+    card.classList.add('no');
+  }
+
+  if (Object.keys(qDone).length === QUESTIONS.length) showQuizResult();
+}
+
+function showQuizResult() {
+  let score = 0;
+  QUESTIONS.forEach((_, qi) => { if (qAnswers[qi] === QUESTIONS[qi].a) score++; });
+  const pct = score / QUESTIONS.length * 100;
+  const res = document.getElementById('qResult');
+  res.style.display = 'block';
+  document.getElementById('qrScore').textContent = score + '/' + QUESTIONS.length;
+  setTimeout(() => { document.getElementById('qrBar').style.width = pct + '%'; }, 100);
+
+  let msg;
+  if (score === 10) msg = '🏆 Тамаша! Тақырыпты толығымен меңгердің!';
+  else if (score >= 8) msg = '⭐ Өте жақсы нәтиже!';
+  else if (score >= 6) msg = '👍 Жақсы. Теорияны қайталап шық.';
+  else msg = '📚 Теория бөлімін тағы оқып, қайта тапсыр.';
+  document.getElementById('qrMsg').textContent = msg;
+  res.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  resizeCanvas();
+  updateAll();
+  renderLoop();
+  buildQuiz();
+});
+
+window.addEventListener('resize', resizeCanvas);
+</script>
+</body>
+</html>
