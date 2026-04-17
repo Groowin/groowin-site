@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кешенді Тест: Математика және Физика</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+        body { font-family: 'Nunito', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .card { background: white; border-radius: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .option-box { border: 2px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; cursor: pointer; transition: 0.2s; background: #fff; }
+        .option-box:hover { border-color: #3b82f6; background-color: #eff6ff; }
+        input[type="radio"]:checked + .option-box { border-color: #2563eb; background-color: #dbeafe; font-weight: 700; }
+        .correct { border-color: #10b981 !important; background-color: #ecfdf5 !important; }
+        .wrong { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        .level-tag { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        .tag-a { background: #dcfce7; color: #166534; }
+        .tag-b { background: #fef9c3; color: #854d0e; }
+        .tag-c { background: #fee2e2; color: #991b1b; }
+        .subject-alg { color: #4f46e5; }
+        .subject-geo { color: #059669; }
+        .subject-phy { color: #d97706; }
+        .submitted { pointer-events: none; opacity: 0.8; }
+        .sticky-nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(10px); background: rgba(255,255,255,0.9); }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+<div id="app" class="max-w-4xl mx-auto">
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="card p-8 md:p-12 text-center border-t-8 border-blue-600">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-slate-800 mb-4">Кешенді Білім Сынағы</h1>
+        <p class="text-slate-500 mb-8 text-lg font-medium">Алгебра, Геометрия және Физика пәндерінен 60 сұрақ</p>
+        
+        <div class="max-w-sm mx-auto space-y-6 mb-10">
+            <div class="text-left">
+                <label class="block text-sm font-bold text-slate-600 mb-2 uppercase">👤 Аты-жөніңіз:</label>
+                <input type="text" id="user-name" placeholder="Мысалы: Асан Үсенов" class="w-full p-4 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none text-lg font-bold text-slate-800">
+            </div>
+            <div class="text-left">
+                <label class="block text-sm font-bold text-slate-600 mb-2 uppercase">⏱️ Тест уақыты (минут):</label>
+                <input type="number" id="user-timer" value="90" min="10" max="180" class="w-full p-4 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none text-2xl font-black text-blue-600 text-center">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mb-10 text-sm">
+            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                <span class="block font-black text-indigo-600 text-xl mb-1">20</span>
+                <span class="font-bold text-indigo-800">Алгебра</span>
+            </div>
+            <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                <span class="block font-black text-emerald-600 text-xl mb-1">20</span>
+                <span class="font-bold text-emerald-800">Геометрия</span>
+            </div>
+            <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                <span class="block font-black text-amber-600 text-xl mb-1">20</span>
+                <span class="font-bold text-amber-800">Физика</span>
+            </div>
+        </div>
+
+        <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-black py-5 px-12 rounded-2xl text-xl shadow-xl transition transform active:scale-95 w-full md:w-auto">
+            ТЕСТТІ БАСТАУ
+        </button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="hidden">
+        <div class="sticky-nav p-4 rounded-2xl shadow-md border border-slate-200 mb-8 flex justify-between items-center">
+            <div>
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Оқушы</div>
+                <div id="display-name" class="font-bold text-slate-800">Аноним</div>
+            </div>
+            <div class="text-center">
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Уақыт</div>
+                <div id="display-timer" class="text-2xl font-mono font-black text-blue-600">00:00</div>
+            </div>
+            <div class="text-right">
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Прогресс</div>
+                <div id="progress-text" class="font-bold text-slate-800">0 / 60</div>
+            </div>
+        </div>
+
+        <!-- Сұрақтар тізімі -->
+        <div id="questions-container" class="space-y-6"></div>
+
+        <button id="finish-btn" onclick="finishQuiz()" class="w-full bg-slate-900 hover:bg-black text-white font-black py-6 rounded-2xl text-2xl mt-12 mb-24 shadow-2xl transition transform active:scale-95">
+            ТЕСТТІ АЯҚТАУ ЖӘНЕ ТЕКСЕРУ
+        </button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden card p-8 md:p-12 text-center border-t-8 border-green-500 mb-10">
+        <h2 class="text-3xl font-black mb-2 text-slate-800">Қорытынды нәтиже</h2>
+        <p id="result-name" class="text-slate-500 mb-6 font-bold text-lg"></p>
+        
+        <div class="relative w-48 h-48 mx-auto mb-8">
+            <svg class="w-full h-full" viewBox="0 0 36 36">
+                <path class="text-slate-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" />
+                <path id="pie-circle" class="text-green-500" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span id="final-pct" class="text-4xl font-black text-slate-800">0%</span>
+                <span id="final-score" class="text-sm font-bold text-slate-500">0 / 60</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 text-left">
+            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                <div class="text-xs font-bold text-indigo-400 uppercase mb-1">Алгебра</div>
+                <div id="score-alg" class="text-2xl font-black text-indigo-700">0 / 20</div>
+            </div>
+            <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                <div class="text-xs font-bold text-emerald-400 uppercase mb-1">Геометрия</div>
+                <div id="score-geo" class="text-2xl font-black text-emerald-700">0 / 20</div>
+            </div>
+            <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                <div class="text-xs font-bold text-amber-400 uppercase mb-1">Физика</div>
+                <div id="score-phy" class="text-2xl font-black text-amber-700">0 / 20</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-50 rounded-2xl p-6 text-left mb-10">
+            <h3 class="font-black text-slate-700 mb-4">📊 Қателер статистикасы:</h3>
+            <div id="mistakes-container" class="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                <!-- Mistakes injected here -->
+            </div>
+        </div>
+
+        <button onclick="location.reload()" class="bg-blue-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition">
+            Қайта тапсыру
+        </button>
+    </div>
+
+</div>
+
+<script>
+    // Database of 60 Questions
+    const questions = [
+        // ================= ALGEBRA (20) =================
+        // A-level (10)
+        { s: 'Алгебра', l: 'A', q: "Тригонометрия: $60^\\circ$ бұрышын радиан арқылы өрнектеңіз.", a: ["$\\frac{\\pi}{3}$", "$\\frac{\\pi}{6}$", "$\\frac{\\pi}{4}$", "$\\frac{\\pi}{2}$"], c: 0 },
+        { s: 'Алгебра', l: 'A', q: "$\\frac{\\pi}{4}$ радиан неше градусқа тең?", a: ["$30^\\circ$", "$45^\\circ$", "$60^\\circ$", "$90^\\circ$"], c: 1 },
+        { s: 'Алгебра', l: 'A', q: "$\sin(30^\\circ)$ мәнін табыңыз.", a: ["$1$", "$\\frac{\\sqrt{3}}{2}$", "$\\frac{1}{2}$", "$\\frac{\\sqrt{2}}{2}$"], c: 2 },
+        { s: 'Алгебра', l: 'A', q: "Келтіру формуласы: $\cos(180^\\circ - \\alpha)$ неге тең?", a: ["$\\cos \\alpha$", "$-\\cos \\alpha$", "$\\sin \\alpha$", "$-\\sin \\alpha$"], c: 1 },
+        { s: 'Алгебра', l: 'A', q: "Келтіру формуласы: $\sin(90^\\circ + \\alpha)$ неге тең?", a: ["$\\sin \\alpha$", "$-\\sin \\alpha$", "$\\cos \\alpha$", "$-\\cos \\alpha$"], c: 2 },
+        { s: 'Алгебра', l: 'A', q: "Екі еселенген бұрыш формуласы: $\sin(2\\alpha) =$ ?", a: ["$2\\sin\\alpha$", "$2\\sin\\alpha \\cos\\alpha$", "$\\cos^2\\alpha - \\sin^2\\alpha$", "$\\sin^2\\alpha + \\cos^2\\alpha$"], c: 1 },
+        { s: 'Алгебра', l: 'A', q: "Қосу формуласы: $\sin(\\alpha + \\beta) =$ ?", a: ["$\\sin\\alpha\\cos\\beta + \\cos\\alpha\\sin\\beta$", "$\\cos\\alpha\\cos\\beta - \\sin\\alpha\\sin\\beta$", "$\\sin\\alpha\\sin\\beta - \\cos\\alpha\\cos\\beta$", "$\\sin\\alpha\\cos\\alpha + \\sin\\beta\\cos\\beta$"], c: 0 },
+        { s: 'Алгебра', l: 'A', q: "$\cos(2\\alpha)$ формуласын көрсетіңіз.", a: ["$2\\sin\\alpha \\cos\\alpha$", "$\\cos^2\\alpha - \\sin^2\\alpha$", "$1 - \\cos^2\\alpha$", "$\\sin^2\\alpha + \\cos^2\\alpha$"], c: 1 },
+        { s: 'Алгебра', l: 'A', q: "Тригонометриялық теңдеу: $\sin x = \\frac{1}{2}$ теңдеуінің I ширектегі шешімі қандай?", a: ["$\\frac{\\pi}{3}$", "$\\frac{\\pi}{6}$", "$\\frac{\\pi}{4}$", "$\\frac{\\pi}{2}$"], c: 1 },
+        { s: 'Алгебра', l: 'A', q: "Градусты радианға айналдыру: $150^\\circ$ бұрышын радианмен жазыңыз.", a: ["$\\frac{5\\pi}{6}$", "$\\frac{2\\pi}{3}$", "$\\frac{3\\pi}{4}$", "$\\frac{7\\pi}{6}$"], c: 0 },
+        // B-level (7)
+        { s: 'Алгебра', l: 'B', q: "Келтіру формуласын қолданыңыз: $\sin(120^\\circ)$ мәні неге тең?", a: ["$\\frac{1}{2}$", "$\\frac{\\sqrt{3}}{2}$", "$-\\frac{\\sqrt{3}}{2}$", "$-\\frac{1}{2}$"], c: 1 },
+        { s: 'Алгебра', l: 'B', q: "Егер $\sin\\alpha = 0.6$ (I ширек) болса, $\cos(2\\alpha)$ мәнін табыңыз.", a: ["$0.64$", "$0.28$", "$0.96$", "$0.36$"], c: 0 },
+        { s: 'Алгебра', l: 'B', q: "Қосу формуласын қолданыңыз: $\cos(75^\\circ)$ табыңыз ($75^\\circ = 45^\\circ + 30^\\circ$).", a: ["$\\frac{\\sqrt{6} - \\sqrt{2}}{4}$", "$\\frac{\\sqrt{6} + \\sqrt{2}}{4}$", "$\\frac{\\sqrt{2}}{2}$", "$\\frac{\\sqrt{3}}{2}$"], c: 0 },
+        { s: 'Алгебра', l: 'B', q: "$\cos x = -\\frac{\\sqrt{2}}{2}$ теңдеуінің $[0; \\pi]$ кесіндісіндегі түбірін табыңыз.", a: ["$\\frac{3\\pi}{4}$", "$\\frac{\\pi}{4}$", "$\\frac{5\\pi}{4}$", "$\\frac{2\\pi}{3}$"], c: 0 },
+        { s: 'Алгебра', l: 'B', q: "Келтіру формуласын қолданып $\\text{tg}(315^\\circ)$ есептеңіз.", a: ["$1$", "$-1$", "$\\sqrt{3}$", "$-\\sqrt{3}$"], c: 1 },
+        { s: 'Алгебра', l: 'B', q: "Өрнекті ықшамдаңыз: $\\frac{\\sin(2\\alpha)}{2\\sin\\alpha}$", a: ["$\\sin\\alpha$", "$\\text{tg}\\alpha$", "$\\cos\\alpha$", "$1$"], c: 2 },
+        { s: 'Алгебра', l: 'B', q: "Есептеңіз: $2\\sin(15^\\circ)\\cos(15^\\circ)$", a: ["$\\frac{\\sqrt{3}}{2}$", "$\\frac{1}{2}$", "$\\frac{\\sqrt{2}}{2}$", "$1$"], c: 1 },
+        // C-level (3)
+        { s: 'Алгебра', l: 'C', q: "Теңдеуді шешіңіз: $\\sin(2x) = \\frac{\\sqrt{3}}{2}$. $[0; \\frac{\\pi}{2}]$ аралығындағы барлық түбірлерін табыңыз.", a: ["$\\frac{\\pi}{6}$", "$\\frac{\\pi}{3}$", "$\\frac{\\pi}{6}; \\frac{\\pi}{3}$", "$\\frac{\\pi}{12}; \\frac{5\\pi}{12}$"], c: 2 },
+        { s: 'Алгебра', l: 'C', q: "Егер $\\text{tg}\\alpha = 2$ болса, $\\cos(2\\alpha)$ мәнін табыңыз.", a: ["$-\\frac{3}{5}$", "$\\frac{3}{5}$", "$\\frac{4}{5}$", "$-\\frac{4}{5}$"], c: 0 },
+        { s: 'Алгебра', l: 'C', q: "Теңдеуді шешіңіз: $\\sin x + \\cos x = \\sqrt{2}$. ($[0; \\pi]$ аралығындағы түбір)", a: ["$\\frac{\\pi}{4}$", "$\\frac{\\pi}{2}$", "$\\frac{3\\pi}{4}$", "$\\frac{\\pi}{3}$"], c: 0 },
+
+        // ================= GEOMETRY (20) =================
+        // A-level (10)
+        { s: 'Геометрия', l: 'A', q: "Тіктөртбұрыштың қабырғалары 4 см және 9 см. Ауданын табыңыз.", a: ["13 см²", "26 см²", "36 см²", "72 см²"], c: 2 },
+        { s: 'Геометрия', l: 'A', q: "Пифагор теоремасы: Тікбұрышты үшбұрыштың катеттері 6 және 8. Гипотенузасы қандай?", a: ["10", "14", "100", "48"], c: 0 },
+        { s: 'Геометрия', l: 'A', q: "Үшбұрыштың табаны 12, оған түскен биіктігі 5. Үшбұрыштың ауданы:", a: ["60", "30", "17", "34"], c: 1 },
+        { s: 'Геометрия', l: 'A', q: "Параллелограммның іргелес қабырғалары 5 және 7. Оның периметрі:", a: ["12", "24", "35", "17"], c: 1 },
+        { s: 'Геометрия', l: 'A', q: "Ромбтың диагональдары $d_1 = 10$, $d_2 = 8$. Оның ауданын табыңыз.", a: ["80", "40", "18", "36"], c: 1 },
+        { s: 'Геометрия', l: 'A', q: "Трапецияның табандары 6 және 14. Орта сызығының ұзындығы қандай?", a: ["20", "8", "10", "12"], c: 2 },
+        { s: 'Геометрия', l: 'A', q: "Екі ұқсас үшбұрыштың ұқсастық коэффициенті $k=3$. Олардың аудандарының қатынасы қандай?", a: ["3", "6", "9", "27"], c: 2 },
+        { s: 'Геометрия', l: 'A', q: "Радиусы $R$ шеңбердің ұзындығы қандай формуламен табылады?", a: ["$\\pi R^2$", "$2\\pi R$", "$\\pi R$", "$\\frac{4}{3}\\pi R^3$"], c: 1 },
+        { s: 'Геометрия', l: 'A', q: "Косинустар теоремасының дұрыс жазылуы:", a: ["$c^2 = a^2 + b^2 + 2ab\\cos\\gamma$", "$c^2 = a^2 + b^2 - ab\\cos\\gamma$", "$c^2 = a^2 + b^2 - 2ab\\cos\\gamma$", "$\\frac{a}{\\sin\\alpha} = \\frac{b}{\\sin\\beta}$"], c: 2 },
+        { s: 'Геометрия', l: 'A', q: "Ромбтың бір қабырғасы 5 см. Периметрін табыңыз.", a: ["10 см", "25 см", "20 см", "15 см"], c: 2 },
+        // B-level (7)
+        { s: 'Геометрия', l: 'B', q: "Герон формуласы: Қабырғалары 3, 4, 5 болатын үшбұрыштың ауданын табыңыз.", a: ["6", "12", "10", "8"], c: 0 },
+        { s: 'Геометрия', l: 'B', q: "Үшбұрыштың екі қабырғасы 5 және 8, ал олардың арасындағы бұрышы $60^\\circ$. Үшінші қабырғаны (косинустар теоремасы) табыңыз.", a: ["$7$", "$9$", "$\\sqrt{39}$", "$\\sqrt{89}$"], c: 0 },
+        { s: 'Геометрия', l: 'B', q: "Трапецияның табандары 4 және 8, биіктігі 5. Ауданын табыңыз.", a: ["30", "60", "24", "40"], c: 0 },
+        { s: 'Геометрия', l: 'B', q: "Шеңбердің ауданы $16\\pi$. Оның радиусы қандай?", a: ["2", "4", "8", "16"], c: 1 },
+        { s: 'Геометрия', l: 'B', q: "Тіктөртбұрыштың қабырғалары 6 және 8. Оған сырттай сызылған шеңбердің радиусы қандай?", a: ["10", "14", "5", "7"], c: 2 },
+        { s: 'Геометрия', l: 'B', q: "Синустар теоремасы: $\\Delta ABC$-да $\\angle A = 30^\\circ$, $\\angle B = 45^\\circ$, $a = 10$. $b$ қабырғасын табыңыз.", a: ["$10\\sqrt{2}$", "$5\\sqrt{2}$", "$10\\sqrt{3}$", "$20$"], c: 0 },
+        { s: 'Геометрия', l: 'B', q: "Ромбтың периметрі 40, ал бір диагоналі 16. Екінші диагоналін табыңыз.", a: ["12", "24", "10", "8"], c: 0 },
+        // C-level (3)
+        { s: 'Геометрия', l: 'C', svg: `<svg class="w-full max-w-[200px] h-32 mx-auto my-3" viewBox="0 0 200 120"><polygon points="60,20 140,20 180,100 20,100" fill="#f0fdf4" stroke="#059669" stroke-width="2"/><circle cx="100" cy="60" r="40" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="4"/><text x="95" y="15" font-size="14" fill="#047857" font-weight="bold">2</text><text x="95" y="115" font-size="14" fill="#047857" font-weight="bold">8</text></svg>`, q: "Суреттегі теңбүйірлі трапецияға шеңбер іштей сызылған. Табандары 2 және 8. Трапецияның ауданын табыңыз.", a: ["20", "25", "40", "16"], c: 0 },
+        { s: 'Геометрия', l: 'C', q: "Қабырғалары 6, 8, 10 болатын үшбұрышқа сырттай сызылған шеңбердің радиусы (R) қандай?", a: ["5", "10", "24", "4.8"], c: 0 },
+        { s: 'Геометрия', l: 'C', svg: `<svg class="w-full max-w-[200px] h-32 mx-auto my-3" viewBox="0 0 200 120"><polygon points="20,100 100,20 180,100" fill="#f8fafc" stroke="#334155" stroke-width="2"/><polygon points="60,60 140,60 180,100 20,100" fill="#bfdbfe" opacity="0.5"/><line x1="60" y1="60" x2="140" y2="60" stroke="#2563eb" stroke-width="2"/><text x="105" y="55" font-size="12" fill="#2563eb">Орта сызық</text></svg>`, q: "Ұқсастыққа есеп: Үшбұрыштың орта сызығы одан ауданы $S_1$ болатын кіші үшбұрыш және ауданы $S_2$ болатын трапеция (көк түсті) қиып түседі. $S_1 : S_2$ қатынасы қандай?", a: ["1 : 2", "1 : 3", "1 : 4", "1 : 1"], c: 1 },
+
+        // ================= PHYSICS (20) =================
+        // A-level (10)
+        { s: 'Физика', l: 'A', q: "Эйнштейннің фотоэффектке арналған теңдеуін көрсетіңіз.", a: ["$E = mc^2$", "$h\\nu = A + \\frac{mv^2}{2}$", "$\\lambda = \\frac{h}{p}$", "$F = G\\frac{m_1 m_2}{r^2}$"], c: 1 },
+        { s: 'Физика', l: 'A', q: "Планк формуласы бойынша фотонның энергиясы неге тең?", a: ["$E = mc^2$", "$E = h\\nu$", "$E = \\frac{mv^2}{2}$", "$E = mgh$"], c: 1 },
+        { s: 'Физика', l: 'A', q: "${}^{14}_6\\text{C}$ көміртегі изотопында қанша протон бар?", a: ["14", "6", "8", "20"], c: 1 },
+        { s: 'Физика', l: 'A', q: "${}^{235}_{92}\\text{U}$ уран ядросында қанша нейтрон бар?", a: ["92", "235", "143", "327"], c: 2 },
+        { s: 'Физика', l: 'A', q: "1 электрон-вольт ($1 \\text{ эВ}$) қанша Джоульге тең?", a: ["$1.6 \\cdot 10^{-19} \\text{ Дж}$", "$6.62 \\cdot 10^{-34} \\text{ Дж}$", "$9 \\cdot 10^{16} \\text{ Дж}$", "$3 \\cdot 10^8 \\text{ Дж}$"], c: 0 },
+        { s: 'Физика', l: 'A', q: "Мария Кюри қандай радиоактивті элементтерді ашты?", a: ["Уран және Торий", "Полоний және Радий", "Резерфордий және Дубна", "Плутоний және Нептуний"], c: 1 },
+        { s: 'Физика', l: 'A', q: "Альфа-ыдырау кезінде ядродан қандай бөлшек ұшып шығады?", a: ["Электрон", "Протон", "Гелий ядросы (${}^4_2\\text{He}$)", "Фотон"], c: 2 },
+        { s: 'Физика', l: 'A', q: "Бета-ыдырау (электрондық) кезінде ядродан қандай бөлшек ұшып шығады?", a: ["Электрон", "Позитрон", "Протон", "Нейтрон"], c: 0 },
+        { s: 'Физика', l: 'A', q: "Фотоэффект құбылысы дегеніміз не?", a: ["Жарықтың сынуы", "Жарықтың әсерінен заттан электрондардың ыршып шығуы", "Атом ядросының бөлінуі", "Рентген сәулесінің пайда болуы"], c: 1 },
+        { s: 'Физика', l: 'A', q: "Планк тұрақтысының өлшем бірлігі қандай?", a: ["Дж/с", "Дж$\\cdot$с", "Н$\\cdot$м", "ЭВ"], c: 1 },
+        // B-level (7)
+        { s: 'Физика', l: 'B', q: "Егер жарықтың толқын ұзындығы $\\lambda = 600$ нм болса, оның жиілігін ($\\nu$) табыңыз. ($c = 3 \\cdot 10^8$ м/с)", a: ["$5 \\cdot 10^{14}$ Гц", "$2 \\cdot 10^{14}$ Гц", "$5 \\cdot 10^{15}$ Гц", "$1.8 \\cdot 10^{11}$ Гц"], c: 0 },
+        { s: 'Физика', l: 'B', q: "Рентген түтігіндегі кернеу $U = 100$ В. Электронның кинетикалық энергиясы ($E_k = eU$) қандай болады?", a: ["$1.6 \\cdot 10^{-17}$ Дж", "$100$ Дж", "$1.6 \\cdot 10^{-19}$ Дж", "$1.6 \\cdot 10^{-21}$ Дж"], c: 0 },
+        { s: 'Физика', l: 'B', svg: `<svg class="w-full max-w-[250px] h-24 mx-auto my-3" viewBox="0 0 300 100"><circle cx="50" cy="50" r="30" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="35" y="45" font-size="14" font-weight="bold">226</text><text x="35" y="65" font-size="14" font-weight="bold">88</text><text x="65" y="55" font-size="16" font-weight="bold">Ra</text><path d="M 90 50 L 150 50" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155" /></marker></defs><circle cx="200" cy="50" r="20" fill="#dcfce7" stroke="#059669" stroke-width="2"/><text x="185" y="55" font-size="16" font-weight="bold">Rn</text><circle cx="260" cy="20" r="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/><text x="256" y="25" font-size="12" font-weight="bold">α</text></svg>`, q: "Радий (${}^{226}_{88}\\text{Ra}$) бір альфа-ыдырауға ұшыраған соң Радон (${}^A_Z\\text{Rn}$) ядросына айналады. Түзілген ядроның массалық саны (A) мен заряды (Z) қандай?", a: ["$A=224, Z=86$", "$A=222, Z=86$", "$A=226, Z=87$", "$A=222, Z=84$"], c: 1 },
+        { s: 'Физика', l: 'B', q: "Элемент 1 альфа және 2 бета-ыдырауға ұшырады. Менделеев кестесінде оның орны қалай өзгереді?", a: ["2 орын алға (солға) жылжиды", "Орны өзгермейді", "1 орын артқа (оңға) жылжиды", "4 орын алға жылжиды"], c: 1 },
+        { s: 'Физика', l: 'B', q: "Фотоэффект: Металдың шығу жұмысы $A = 2$ эВ. Оған энергиясы $E = 5$ эВ фонондар түссе, ұшып шыққан электрондардың кинетикалық энергиясы неге тең?", a: ["7 эВ", "2.5 эВ", "3 эВ", "10 эВ"], c: 2 },
+        { s: 'Физика', l: 'B', q: "Егер металдың шығу жұмысы $A = 4.14$ эВ болса, фотоэффектінің қызыл шекарасының жиілігі ($\\nu_{min} = A/h$) қандай? ($h \\approx 4.14 \\cdot 10^{-15}$ эВ$\\cdot$с)", a: ["$10^{15}$ Гц", "$10^{14}$ Гц", "$10^{16}$ Гц", "$10^{12}$ Гц"], c: 0 },
+        { s: 'Физика', l: 'B', q: "Оттегінің бейтарап атомында (${}^{16}_8\\text{O}$) қанша электрон бар?", a: ["16", "8", "24", "0"], c: 1 },
+        // C-level (3)
+        { s: 'Физика', l: 'C', q: "Рентген түтігіне $U = 50$ кВ кернеу берілген. Пайда болатын рентген сәулесінің минимал толқын ұзындығын ($\\lambda_{min}$) табыңыз. ($hc \\approx 1240$ эВ$\\cdot$нм)", a: ["$0.0248$ нм", "$0.248$ нм", "$2.48$ нм", "$24.8$ нм"], c: 0 },
+        { s: 'Физика', l: 'C', q: "Ядролық реакцияда белгісіз бөлшекті табыңыз: ${}^{14}_7\\text{N} + {}^4_2\\text{He} \\rightarrow {}^{17}_8\\text{O} + X$", a: ["Нейтрон (${}^1_0\\text{n}$)", "Электрон (${}^0_{-1}\\text{e}$)", "Протон (${}^1_1\\text{p}$)", "Альфа бөлшек (${}^4_2\\text{He}$)"], c: 2 },
+        { s: 'Физика', l: 'C', q: "Энергиясы $E$ болатын фотонның импульсін (p) анықтайтын формуланы көрсетіңіз.", a: ["$p = E \\cdot c$", "$p = \\frac{E}{c}$", "$p = \\frac{E}{c^2}$", "$p = \\sqrt{2mE}$"], c: 1 }
+    ];
+
+    let timerInterval;
+    let timeRemaining;
+    let mistakes = [];
+
+    function startQuiz() {
+        const nameInput = document.getElementById('user-name').value;
+        const timeInput = document.getElementById('user-timer').value;
+        
+        document.getElementById('display-name').innerText = nameInput || 'Аноним';
+        timeRemaining = (timeInput > 0 ? timeInput : 90) * 60;
+        
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        
+        renderQuestions();
+        startTimer();
+    }
+
+    function startTimer() {
+        const display = document.getElementById('display-timer');
+        timerInterval = setInterval(() => {
+            timeRemaining--;
+            const m = Math.floor(timeRemaining / 60);
+            const s = timeRemaining % 60;
+            display.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            
+            if (timeRemaining <= 300) display.classList.add('text-red-500');
+            if (timeRemaining <= 0) finishQuiz();
+        }, 1000);
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('questions-container');
+        
+        questions.forEach((item, idx) => {
+            const div = document.createElement('div');
+            
+            let borderColor = '';
+            let textColor = '';
+            if(item.s === 'Алгебра') { borderColor = 'border-indigo-400'; textColor = 'text-indigo-600'; }
+            else if(item.s === 'Геометрия') { borderColor = 'border-emerald-400'; textColor = 'text-emerald-600'; }
+            else { borderColor = 'border-amber-400'; textColor = 'text-amber-600'; }
+
+            div.className = `card p-6 border-l-8 ${borderColor} transition-all duration-300`;
+            div.id = `q-block-${idx}`;
+            
+            let html = `
+                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-500">${idx+1}</span>
+                        <span class="font-black uppercase tracking-wider text-xs ${textColor}">${item.s}</span>
+                    </div>
+                    <span class="level-tag tag-${item.l.toLowerCase()}">${item.l} деңгейі</span>
+                </div>
+                <div class="text-lg font-bold text-slate-800 mb-6 leading-relaxed">
+                    ${item.q}
+                </div>
+            `;
+            
+            if(item.svg) html += item.svg;
+
+            html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
+            item.a.forEach((opt, i) => {
+                html += `
+                    <label class="block relative">
+                        <input type="radio" name="q${idx}" value="${i}" class="hidden peer" onchange="updateProgress()">
+                        <div class="option-box peer-checked:ring-2 peer-checked:ring-blue-500">
+                            ${opt}
+                            <span class="feedback-icon hidden absolute right-3 top-1/2 -translate-y-1/2 text-lg"></span>
+                        </div>
+                    </label>
+                `;
+            });
+            html += `</div>`;
+            div.innerHTML = html;
+            container.appendChild(div);
+        });
+
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    function updateProgress() {
+        const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+        document.getElementById('progress-text').innerText = `${answered} / 60`;
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        document.getElementById('quiz-screen').classList.add('submitted');
+        
+        let scoreTotal = 0, scoreAlg = 0, scoreGeo = 0, scorePhy = 0;
+        mistakes = [];
+
+        questions.forEach((item, idx) => {
+            const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+            const options = document.getElementsByName(`q${idx}`);
+            
+            // Highlight Correct
+            const correctBox = options[item.c].nextElementSibling;
+            correctBox.classList.add('correct');
+            correctBox.querySelector('.feedback-icon').innerHTML = "✅";
+            correctBox.querySelector('.feedback-icon').classList.remove('hidden');
+
+            if (selected) {
+                const val = parseInt(selected.value);
+                if (val === item.c) {
+                    scoreTotal++;
+                    if(item.s === 'Алгебра') scoreAlg++;
+                    else if(item.s === 'Геометрия') scoreGeo++;
+                    else scorePhy++;
+                } else {
+                    selected.nextElementSibling.classList.add('wrong');
+                    selected.nextElementSibling.querySelector('.feedback-icon').innerHTML = "❌";
+                    selected.nextElementSibling.querySelector('.feedback-icon').classList.remove('hidden');
+                    
+                    mistakes.push({
+                        num: idx + 1,
+                        subj: item.s,
+                        q: item.q,
+                        userAns: item.a[val],
+                        correctAns: item.a[item.c]
+                    });
+                }
+            } else {
+                mistakes.push({
+                    num: idx + 1,
+                    subj: item.s,
+                    q: item.q,
+                    userAns: "Жауап берілмеді",
+                    correctAns: item.a[item.c]
+                });
+            }
+        });
+
+        // Populate Result Screen
+        document.getElementById('finish-btn').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        
+        document.getElementById('result-name').innerText = document.getElementById('display-name').innerText + ", сіздің нәтижеңіз:";
+        document.getElementById('final-score').innerText = `${scoreTotal} / 60`;
+        const pct = Math.round((scoreTotal / 60) * 100);
+        document.getElementById('final-pct').innerText = `${pct}%`;
+        document.getElementById('pie-circle').setAttribute('stroke-dasharray', `${pct}, 100`);
+
+        document.getElementById('score-alg').innerText = `${scoreAlg} / 20`;
+        document.getElementById('score-geo').innerText = `${scoreGeo} / 20`;
+        document.getElementById('score-phy').innerText = `${scorePhy} / 20`;
+
+        // Render Mistakes
+        const mistContainer = document.getElementById('mistakes-container');
+        if(mistakes.length === 0) {
+            mistContainer.innerHTML = "<p class='text-green-600 font-bold'>Қате жоқ! Керемет!</p>";
+        } else {
+            mistakes.forEach(m => {
+                const md = document.createElement('div');
+                md.className = "p-3 border border-red-100 bg-white rounded-lg text-sm";
+                md.innerHTML = `
+                    <div class="font-bold text-slate-700 mb-1"><span class="text-red-500">#${m.num} [${m.subj}]</span> ${m.q}</div>
+                    <div class="text-red-600 line-through">Сіздің жауап: ${m.userAns}</div>
+                    <div class="text-green-600 font-bold">Дұрыс жауап: ${m.correctAns}</div>
+                `;
+                mistContainer.appendChild(md);
+            });
+            if (window.MathJax) MathJax.typesetPromise([mistContainer]);
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+</body>
+</html>
