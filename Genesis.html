@@ -3,191 +3,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Физика: Виртуалды Зертхана</title>
-    <!-- Tailwind CSS for layout and modern icons via Lucide -->
+    <title>Genesis Physics | Interactive Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #f59e0b; /* Қызғылт сары / Amber */
+            --secondary: #ef4444; /* Қызыл / Red */
+            --bg-dark: #020617; /* Терең қара-көк / Қара */
+        }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top right, #1a202c, #111827);
-            color: #f7fafc;
-            min-height: 100vh;
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-dark);
+            color: #e2e8f0;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%);
+        }
+
+        /* Custom Cursor */
+        #cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        #cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Progress Bar */
+        #progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            z-index: 1000;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 15px var(--primary);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(245, 158, 11, 0.1);
+            transform-style: preserve-3d;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-8px);
-            border-color: #3b82f6;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(59, 130, 246, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 40px rgba(245, 158, 11, 0.15);
         }
 
         .gradient-text {
-            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            background: linear-gradient(90deg, #fbbf24, #f97316, #ef4444);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .icon-container {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
 
-        .btn-glow {
-            position: relative;
-            overflow: hidden;
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
-        .btn-glow::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.3), transparent 60%);
-            animation: rotate 4s linear infinite;
-            z-index: -1;
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
         }
 
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
+        /* Анимация пайда болу */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .sim-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 2rem 0;
+        .animate-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 0 #92400e;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #92400e;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
         }
     </style>
 </head>
-<body class="p-4 md:p-12">
+<body>
 
-    <div class="max-w-6xl mx-auto">
-        <!-- Header -->
+    <div id="particles-js"></div>
+    <div id="cursor"></div>
+    <div id="cursor-dot"></div>
+    <div id="progress-container"><div id="progress-bar"></div></div>
+
+    <div class="container mx-auto px-6 py-12 relative z-10">
+        
+        <!-- Header Section -->
         <header class="text-center mb-16">
-            <h1 class="text-5xl font-extrabold mb-4 gradient-text">Genesis Physics</h1>
-            <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-                Күрделі физикалық құбылыстарды интерактивті симуляторлар арқылы зерттеңіз. 
-                Әрбір батырма сізді жаңа виртуалды тәжірибеге апарады.
-            </p>
+            <h1 class="text-6xl font-extrabold mb-4 tracking-tighter">
+                <span class="text-white">GENESIS</span>
+                <span class="gradient-text">PHYSICS</span>
+            </h1>
+            <p class="text-gray-400 text-lg mb-8 font-light tracking-wide">Виртуалды энергия мен кванттық әлем хабы</p>
+
+            <!-- Search Bar -->
+            <div class="max-w-xl mx-auto mb-10 relative">
+                <input type="text" id="searchInput" placeholder="Симуляторды іздеу..." 
+                    class="w-full bg-slate-900/80 border border-slate-700 py-4 px-6 rounded-2xl text-white placeholder-gray-500 backdrop-blur-md transition-all">
+                <div class="absolute right-6 top-4 text-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="filter-btn active px-8 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider" data-filter="all">Барлығы</button>
+                <button class="filter-btn px-8 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider text-gray-400" data-filter="quantum">Кванттық</button>
+                <button class="filter-btn px-8 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider text-gray-400" data-filter="atomic">Атомдық</button>
+                <button class="filter-btn px-8 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider text-gray-400" data-filter="radiation">Сәулелену</button>
+            </div>
         </header>
 
-        <!-- Simulation Grid -->
-        <div class="sim-grid">
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="simulatorGrid">
             
-            <!-- 1. Қара дене -->
-            <div class="glass-card p-8 rounded-3xl flex flex-column items-start">
-                <div class="w-full">
-                    <div class="icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Қара дене сәулеленуі</h3>
-                    <p class="text-gray-400 text-sm mb-6">Вин заңы мен температураның сәулелену спектріне әсерін зерттеу.</p>
-                    <a href="https://groowin.github.io/groowin-site/Qara-dene-vin.html" target="_blank" 
-                       class="inline-block w-full text-center py-3 px-6 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold transition-colors">
-                        Симуляторды ашу
-                    </a>
+            <!-- Card 1 -->
+            <div class="glass-card p-8 rounded-[2rem] animate-card" data-category="radiation" data-title="қара дене сәулелену">
+                <div class="text-orange-500 mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
                 </div>
+                <h3 class="text-2xl font-bold mb-3 text-white tracking-tight">Қара дене</h3>
+                <p class="text-slate-400 text-sm mb-10 leading-relaxed">Температура мен сәулеленудің энергиялық үлестірілуі.</p>
+                <a href="https://groowin.github.io/groowin-site/Qara-dene-vin.html" target="_blank" 
+                   class="btn-action block w-full py-4 rounded-2xl text-center font-bold text-white uppercase tracking-widest text-sm">
+                    Симуляторды бастау
+                </a>
             </div>
 
-            <!-- 2. Франк-Герц -->
-            <div class="glass-card p-8 rounded-3xl flex flex-column items-start">
-                <div class="w-full">
-                    <div class="icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M16 7l-4 4-4-4"/><path d="M16 17l-4-4-4 4"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Франк-Герц тәжірибесі</h3>
-                    <p class="text-gray-400 text-sm mb-6">Атомдардың энергия деңгейлерінің дискреттілігін дәлелдейтін эксперимент.</p>
-                    <a href="https://groowin.github.io/groowin-site/Frank-hertz.html" target="_blank" 
-                       class="inline-block w-full text-center py-3 px-6 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold transition-colors">
-                        Симуляторды ашу
-                    </a>
+            <!-- Card 2 -->
+            <div class="glass-card p-8 rounded-[2rem] animate-card" data-category="quantum" data-title="франк герц">
+                <div class="text-red-500 mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M16 7l-4 4-4-4M16 17l-4-4-4 4"/></svg>
                 </div>
+                <h3 class="text-2xl font-bold mb-3 text-white tracking-tight">Франк-Герц</h3>
+                <p class="text-slate-400 text-sm mb-10 leading-relaxed">Атом ішіндегі энергияның квантталуын бақылау.</p>
+                <a href="https://groowin.github.io/groowin-site/Frank-hertz.html" target="_blank" 
+                   class="btn-action block w-full py-4 rounded-2xl text-center font-bold text-white uppercase tracking-widest text-sm">
+                    Симуляторды бастау
+                </a>
             </div>
 
-            <!-- 3. Фотоэффект -->
-            <div class="glass-card p-8 rounded-3xl flex flex-column items-start">
-                <div class="w-full">
-                    <div class="icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.8 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Фотоэффект</h3>
-                    <p class="text-gray-400 text-sm mb-6">Жарық әсерінен металдан электрондардың ұшып шығу құбылысы.</p>
-                    <a href="https://groowin.github.io/groowin-site/Fotoaffact.html" target="_blank" 
-                       class="inline-block w-full text-center py-3 px-6 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold transition-colors">
-                        Симуляторды ашу
-                    </a>
+            <!-- Card 3 -->
+            <div class="glass-card p-8 rounded-[2rem] animate-card" data-category="quantum" data-title="фотоэффект">
+                <div class="text-orange-500 mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.8 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6m-5 4h4"/></svg>
                 </div>
+                <h3 class="text-2xl font-bold mb-3 text-white tracking-tight">Фотоэффект</h3>
+                <p class="text-slate-400 text-sm mb-10 leading-relaxed">Фотондардың металмен әрекеттесу теориясы.</p>
+                <a href="https://groowin.github.io/groowin-site/Fotoaffact.html" target="_blank" 
+                   class="btn-action block w-full py-4 rounded-2xl text-center font-bold text-white uppercase tracking-widest text-sm">
+                    Симуляторды бастау
+                </a>
             </div>
 
-            <!-- 4. Ядролық байланыс -->
-            <div class="glass-card p-8 rounded-3xl flex flex-column items-start">
-                <div class="w-full">
-                    <div class="icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/><path d="M2 12h1"/><path d="M21 12h1"/><path d="M12 2v1"/><path d="M12 21v1"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Ядролық байланыс</h3>
-                    <p class="text-gray-400 text-sm mb-6">Атом ядросының құрылымы мен байланыс энергиясын зерттеу моделі.</p>
-                    <a href="https://groowin.github.io/groowin-site/atom-model.html" target="_blank" 
-                       class="inline-block w-full text-center py-3 px-6 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold transition-colors">
-                        Симуляторды ашу
-                    </a>
+            <!-- Card 4 -->
+            <div class="glass-card p-8 rounded-[2rem] animate-card" data-category="atomic" data-title="ядролық байланыс">
+                <div class="text-red-500 mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0m0 14.14a10 10 0 0 0 14.14 0"/></svg>
                 </div>
+                <h3 class="text-2xl font-bold mb-3 text-white tracking-tight">Ядролық байланыс</h3>
+                <p class="text-slate-400 text-sm mb-10 leading-relaxed">Нуклондардың байланыс энергиясын есептеу моделі.</p>
+                <a href="https://groowin.github.io/groowin-site/atom-model.html" target="_blank" 
+                   class="btn-action block w-full py-4 rounded-2xl text-center font-bold text-white uppercase tracking-widest text-sm">
+                    Симуляторды бастау
+                </a>
             </div>
 
-            <!-- 5. Радиоактивті ыдырау -->
-            <div class="glass-card p-8 rounded-3xl flex flex-column items-start">
-                <div class="w-full">
-                    <div class="icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M12 12l5 0"/><path d="M12 12l-2.5 4.3"/><path d="M12 12l-2.5 -4.3"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Радиоактивті ыдырау</h3>
-                    <p class="text-gray-400 text-sm mb-6">Жартылай ыдырау периоды мен статистикалық заңдылықтар.</p>
-                    <a href="https://groowin.github.io/groowin-site/Radioactive-decay.html" target="_blank" 
-                       class="inline-block w-full text-center py-3 px-6 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold transition-colors">
-                        Симуляторды ашу
-                    </a>
+            <!-- Card 5 -->
+            <div class="glass-card p-8 rounded-[2rem] animate-card" data-category="atomic" data-title="радиоактивті ыдырау">
+                <div class="text-orange-500 mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M12 12l5 0m-7.5 4.3 2.5-4.3m0 0-2.5-4.3"/></svg>
                 </div>
+                <h3 class="text-2xl font-bold mb-3 text-white tracking-tight">Радиоактивтілік</h3>
+                <p class="text-slate-400 text-sm mb-10 leading-relaxed">Ыдырау заңы мен атомдардың өмір сүру уақыты.</p>
+                <a href="https://groowin.github.io/groowin-site/Radioactive-decay.html" target="_blank" 
+                   class="btn-action block w-full py-4 rounded-2xl text-center font-bold text-white uppercase tracking-widest text-sm">
+                    Симуляторды бастау
+                </a>
             </div>
 
-            <!-- 6. Планк Гипотезасы -->
-            <div class="glass-card p-8 rounded-3xl flex flex-column items-start">
-                <div class="w-full">
-                    <div class="icon-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Планк Гипотезасы</h3>
-                    <p class="text-gray-400 text-sm mb-6">Кванттық физиканың негізі: энергияның үлестермен шығуы.</p>
-                    <a href="https://groowin.github.io/groowin-site/planck_9grade.html" target="_blank" 
-                       class="inline-block w-full text-center py-3 px-6 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold transition-colors">
-                        Симуляторды ашу
-                    </a>
+            <!-- Card 6 -->
+            <div class="glass-card p-8 rounded-[2rem] animate-card" data-category="quantum" data-title="планк гипотезасы">
+                <div class="text-red-500 mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></svg>
                 </div>
+                <h3 class="text-2xl font-bold mb-3 text-white tracking-tight">Планк заңы</h3>
+                <p class="text-slate-400 text-sm mb-10 leading-relaxed">Кванттық физиканың тууы мен жарық энергиясы.</p>
+                <a href="https://groowin.github.io/groowin-site/planck_9grade.html" target="_blank" 
+                   class="btn-action block w-full py-4 rounded-2xl text-center font-bold text-white uppercase tracking-widest text-sm">
+                    Симуляторды бастау
+                </a>
             </div>
 
         </div>
 
-        <!-- Footer -->
-        <footer class="mt-20 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-            <p>&copy; 2024 Genesis Physics Simulator Hub. Барлық құқықтар қорғалған.</p>
+        <footer class="mt-24 pt-12 border-t border-slate-800/50 text-center text-slate-600">
+            <p class="text-xs uppercase tracking-widest">Genesis Advanced Physics Engine & Laboratory © 2024</p>
         </footer>
     </div>
 
+    <script>
+        // 1. Particles.js Configuration (Orange Atoms)
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 60, density: { enable: true, value_area: 800 } },
+                color: { value: ["#f59e0b", "#ef4444", "#ffffff"] },
+                shape: { type: "circle" },
+                opacity: { value: 0.3, random: true },
+                size: { value: 2, random: true },
+                line_linked: { enable: true, distance: 150, color: "#f59e0b", opacity: 0.1, width: 1 },
+                move: { enable: true, speed: 1, direction: "none", random: true, out_mode: "out" }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: { onhover: { enable: true, mode: "bubble" }, onclick: { enable: true, mode: "repulse" }, resize: true },
+                modes: { bubble: { distance: 200, size: 4, duration: 2, opacity: 0.8 }, repulse: { distance: 200 } }
+            },
+            retina_detect: true
+        });
+
+        // 2. 3D Tilt Initialization
+        VanillaTilt.init(document.querySelectorAll(".glass-card"), {
+            max: 8,
+            speed: 500,
+            glare: true,
+            "max-glare": 0.15,
+            perspective: 1200
+        });
+
+        // 3. Custom Cursor Logic
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursor-dot');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            cursorDot.style.left = e.clientX - 2 + 'px';
+            cursorDot.style.top = e.clientY - 2 + 'px';
+        });
+
+        // 4. Progress Bar Logic
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        };
+
+        // 5. Search & Filter Logic
+        const searchInput = document.getElementById('searchInput');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('.glass-card');
+
+        function filterSimulators() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+
+            cards.forEach(card => {
+                const title = card.dataset.title.toLowerCase();
+                const category = card.dataset.category;
+                const matchesSearch = title.includes(searchTerm);
+                const matchesFilter = activeFilter === 'all' || category === activeFilter;
+
+                if (matchesSearch && matchesFilter) {
+                    card.style.display = 'block';
+                    card.style.animation = 'none';
+                    setTimeout(() => card.style.animation = 'fadeIn 0.4s ease forwards', 10);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', filterSimulators);
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterSimulators();
+            });
+        });
+    </script>
 </body>
 </html>
