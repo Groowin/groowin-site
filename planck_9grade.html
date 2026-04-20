@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Жылулық Сәуле Шығару • 9-сынып</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e14;
+  --bg2: #13131c;
+  --bg3: #1a1a28;
+  --card: #1e1e2e;
+  --card2: #252538;
+  --border: #2e2e4a;
+  --border2: #3a3a5c;
+  --accent: #f97316;
+  --accent2: #fb923c;
+  --blue: #60a5fa;
+  --violet: #a78bfa;
+  --green: #4ade80;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --text: #e2e0ff;
+  --text2: #9896c8;
+  --text3: #5a5880;
+  --mono: 'JetBrains Mono', monospace;
+  --body: 'Nunito', sans-serif;
+  --glow-orange: rgba(249,115,22,0.35);
+  --glow-yellow: rgba(251,191,36,0.35);
+  --glow-white: rgba(255,240,220,0.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* PARTICLES BG */
+#bgCanvas {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  opacity: 0.6;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative; z-index: 10;
+  padding: 48px 20px 36px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(249,115,22,0.06) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+}
+.grade-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(249,115,22,0.12);
+  border: 1px solid rgba(249,115,22,0.3);
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--accent2);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.grade-badge::before { content:'🔥'; font-size:13px; }
+h1 {
+  font-size: clamp(26px,5vw,52px);
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #fff5e6 0%, #fbbf24 40%, #f97316 70%, #ef4444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-sub {
+  font-size: 15px;
+  color: var(--text2);
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; justify-content: center; gap: 6px;
+  padding: 12px 16px;
+  background: rgba(14,14,20,0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.tab {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--text2); border-color: var(--border2); }
+.tab.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 18px var(--glow-orange);
+}
+
+/* ── SECTIONS ── */
+.sec { display:none; animation: fadein .35s ease; }
+.sec.on { display: block; }
+@keyframes fadein { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 5; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(249,115,22,0.4), transparent);
+}
+.clabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.clabel::before {
+  content:'';
+  width:5px; height:5px;
+  border-radius:50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+@media(max-width:860px){ .g2,.g3{ grid-template-columns:1fr; } }
+
+/* ══════════════════════════════════════
+   SIMULATOR SECTION
+══════════════════════════════════════ */
+.sim-top {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+@media(max-width:900px){ .sim-top{ grid-template-columns:1fr; } }
+
+/* Forge scene */
+.forge-scene {
+  background: #000;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.forge-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center bottom, #0f0500 0%, #000 60%);
+}
+
+/* Floor glow */
+#floorGlow {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 80px;
+  border-radius: 50%;
+  filter: blur(25px);
+  transition: all 0.4s ease;
+}
+
+/* Rod */
+#rod {
+  position: relative; z-index: 3;
+  width: 200px; height: 34px;
+  border-radius: 17px;
+  transition: background 0.25s, box-shadow 0.25s;
+}
+.rod-ends {
+  position: absolute;
+  width: 24px; height: 44px;
+  top: -5px;
+  border-radius: 6px;
+  background: #888;
+  z-index: 4;
+}
+.rod-ends.left { left: -8px; }
+.rod-ends.right { right: -8px; }
+
+/* Sparks */
+.spark {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 5;
+  animation: sparkfly 1s ease-out forwards;
+}
+@keyframes sparkfly {
+  0%   { transform: translate(0,0) scale(1); opacity:1; }
+  100% { transform: translate(var(--dx),var(--dy)) scale(0); opacity:0; }
+}
+
+/* Temp readout */
+#tempReadout {
+  position: absolute;
+  top: 14px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  z-index: 6;
+  text-shadow: 0 0 14px currentColor;
+  white-space: nowrap;
+}
+#colorName {
+  position: absolute;
+  bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.45);
+  z-index: 6;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Slider */
+.slider-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 6px;
+  margin-top: 18px;
+}
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #1a0500, #8b1500, #c84b00, #ff8c00, #ffdf00, #fff5dc);
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.5);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+  transition: transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* Mini stats */
+.mini-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+.mstat {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  text-align: center;
+}
+.mstat-v {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent2);
+}
+.mstat-l {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 3px;
+  font-family: var(--mono);
+  letter-spacing: 0.5px;
+}
+
+/* ── QUANTA ANIMATION ── */
+#quantaWrap {
+  background: #000;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+}
+#quantaCanvas { width:100%; height:100%; display:block; }
+
+/* Color scale legend */
+.color-scale {
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(90deg,
+    #ff0000,#ff4400,#ff8800,#ffcc00,#ffffff,#ccdaff,#aabbff,#8899ff,#6677ff,#4455ee
+  );
+  margin: 14px 0 6px;
+}
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+}
+
+/* ══════════════════════════════════════
+   THEORY SECTION
+══════════════════════════════════════ */
+.theory-block {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 30px;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.theory-block::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(167,139,250,0.5), transparent);
+}
+.theory-block h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.theory-block p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text2);
+  margin-bottom: 12px;
+}
+.theory-block p:last-child { margin-bottom: 0; }
+
+.analogy-box {
+  background: rgba(96,165,250,0.07);
+  border: 1px solid rgba(96,165,250,0.25);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+.analogy-box p { color: #93c5fd !important; margin: 0 !important; }
+
+.fact-box {
+  background: rgba(74,222,128,0.06);
+  border: 1px solid rgba(74,222,128,0.2);
+  border-left: 3px solid var(--green);
+  border-radius: 0 12px 12px 0;
+  padding: 14px 18px;
+  margin: 12px 0;
+}
+.fact-box p { color: #86efac !important; margin: 0 !important; font-size: 14px !important; }
+
+.formula-big {
+  background: var(--bg);
+  border: 1px solid rgba(167,139,250,0.3);
+  border-radius: 12px;
+  padding: 22px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 700;
+  color: #a78bfa;
+  text-shadow: 0 0 20px rgba(167,139,250,0.5);
+  margin: 18px 0;
+  letter-spacing: 2px;
+}
+.formula-sub {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* Visual timeline */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 20px 0;
+  position: relative;
+}
+.timeline::before {
+  content:'';
+  position:absolute; left:18px; top:0; bottom:0;
+  width:2px;
+  background: linear-gradient(180deg, var(--accent), var(--violet));
+}
+.t-item {
+  display: flex;
+  gap: 20px;
+  padding: 14px 0;
+  position: relative;
+}
+.t-dot {
+  width:36px; height:36px;
+  border-radius:50%;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  font-size: 14px;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.t-content { flex:1; padding-top: 4px; }
+.t-content strong { color: var(--text); font-size: 14px; display: block; margin-bottom: 4px; }
+.t-content span { color: var(--text2); font-size: 13px; line-height: 1.5; }
+
+/* Experiment */
+.exp-steps {
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+.exp-step {
+  counter-increment: step;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: var(--bg2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.exp-step::before {
+  content: counter(step);
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.exp-step p { font-size: 14px; color: var(--text2); line-height: 1.6; margin: 0; }
+
+/* ══════════════════════════════════════
+   CALCULATOR SECTION
+══════════════════════════════════════ */
+.calc-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: start;
+}
+@media(max-width:760px){ .calc-wrap{ grid-template-columns:1fr; } }
+
+.inp-group { margin-bottom: 18px; }
+.inp-group label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.inp-group input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.inp-group input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+}
+
+.freq-presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.preset-btn {
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.preset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.calc-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--accent), #dc2626);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 22px var(--glow-orange);
+}
+.calc-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(249,115,22,0.5); }
+
+.result-panel {
+  background: var(--bg);
+  border: 1px solid rgba(167,139,250,0.3);
+  border-radius: 14px;
+  padding: 26px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+.res-lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; }
+.res-big {
+  font-family: var(--mono);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--violet);
+  text-shadow: 0 0 22px rgba(167,139,250,0.5);
+  transition: all 0.3s;
+}
+.res-ev { font-family: var(--mono); font-size: 17px; color: var(--accent2); }
+.res-unit { font-family: var(--mono); font-size: 12px; color: var(--text3); }
+.photon-ball {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  margin: 6px auto;
+  transition: all 0.4s;
+  box-shadow: 0 0 25px currentColor;
+}
+.res-color-name { font-size: 14px; font-weight: 700; }
+
+/* Example calc */
+.example-calc {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  margin-top: 22px;
+}
+.example-calc h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent2);
+  margin-bottom: 14px;
+  font-family: var(--mono);
+}
+.calc-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.calc-step {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.calc-step .step-eq { color: var(--text2); flex: 1; }
+.calc-step .step-res { color: var(--yellow); font-weight: 700; }
+
+/* ══════════════════════════════════════
+   QUIZ SECTION
+══════════════════════════════════════ */
+.quiz-wrap { max-width: 740px; margin: 0 auto; }
+
+.q-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 26px;
+  margin-bottom: 16px;
+  transition: border-color 0.3s, background 0.3s;
+}
+.q-card.ok { border-color: var(--green); background: rgba(74,222,128,0.04); }
+.q-card.no { border-color: var(--red); background: rgba(248,113,113,0.04); }
+.q-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.q-text { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; line-height: 1.5; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt {
+  padding: 12px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text2);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent); color: var(--text); background: rgba(249,115,22,0.06); }
+.opt.ok { background: rgba(74,222,128,0.12); border-color: var(--green); color: #6ee7b7; }
+.opt.no { background: rgba(248,113,113,0.1); border-color: var(--red); color: #fca5a5; }
+.opt.hint { background: rgba(74,222,128,0.06); border-color: rgba(74,222,128,0.35); color: #86efac; }
+.opt:disabled { cursor: not-allowed; }
+.fb {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  display: none;
+  line-height: 1.6;
+}
+.fb.show { display: block; }
+.fb.ok { background: rgba(74,222,128,0.08); color: #6ee7b7; }
+.fb.no { background: rgba(248,113,113,0.08); color: #fca5a5; }
+
+.result-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px;
+  text-align: center;
+}
+.score-big {
+  font-family: var(--mono);
+  font-size: 64px;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #fbbf24, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 12px 0;
+}
+.score-msg { font-size: 17px; color: var(--text2); margin-bottom: 24px; font-weight: 600; }
+.score-bar-wrap {
+  width: 100%; height: 10px;
+  background: var(--bg);
+  border-radius: 5px;
+  margin: 0 auto 24px;
+  max-width: 400px;
+  overflow: hidden;
+}
+.score-bar { height: 100%; border-radius: 5px; transition: width 1s ease; background: linear-gradient(90deg,var(--accent),var(--yellow)); }
+.retry-btn {
+  padding: 12px 36px;
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.retry-btn:hover { background: var(--accent); color: #fff; }
+
+/* ── SECTION TITLE ── */
+.sec-title { margin-bottom: 30px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+.sec-title h2 { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; }
+.sec-title p { color: var(--text3); font-family: var(--mono); font-size: 12px; margin-top: 5px; letter-spacing: 1px; }
+
+/* ── FUN FACTS ROW ── */
+.facts-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:20px; }
+@media(max-width:700px){ .facts-row{ grid-template-columns:1fr; } }
+.fact-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+.fact-icon { font-size: 28px; margin-bottom: 10px; }
+.fact-card h4 { font-size: 14px; font-weight: 800; margin-bottom: 6px; color: var(--text); }
+.fact-card p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<header>
+  <div class="grade-badge">9-сынып • Физика</div>
+  <h1>Жылулық Сәуле Шығару<br>және Планк Гипотезасы</h1>
+  <p class="header-sub">Энергия — үздіксіз ағын емес, жеке түйіршіктер!</p>
+</header>
+
+<nav>
+  <button class="tab on"   onclick="gotoTab('sim')">⚗️ Симулятор</button>
+  <button class="tab"      onclick="gotoTab('theory')">📖 Теория</button>
+  <button class="tab"      onclick="gotoTab('calc')">🧮 Калькулятор</button>
+  <button class="tab"      onclick="gotoTab('quiz')">✏️ Тест (10 сұрақ)</button>
+</nav>
+
+<!-- ═══════════════════════════════ SIMULATOR ═══ -->
+<section id="sim" class="sec on">
+<div class="wrap">
+  <div class="sec-title">
+    <h2>Темір өзекше симуляторы</h2>
+    <p>Температураны жоғарылатып, түс пен кванттардың қалай өзгеретінін бақыла</p>
+  </div>
+
+  <div class="sim-top">
+    <!-- LEFT -->
+    <div>
+      <div class="card">
+        <div class="clabel">Қыздыру симуляторы</div>
+
+        <div class="forge-scene">
+          <div class="forge-bg"></div>
+          <div id="floorGlow"></div>
+          <div id="rod">
+            <div class="rod-ends left"></div>
+            <div class="rod-ends right"></div>
+          </div>
+          <div id="tempReadout" style="color:#555">300 К</div>
+          <div id="colorName">СУЫҚ — СӘУЛЕ ЖОҚ</div>
+        </div>
+
+        <div class="slider-row">
+          <span>300 К</span>
+          <span>Температура</span>
+          <span>10 000 К</span>
+        </div>
+        <input type="range" id="tempSlider" min="300" max="10000" value="300" step="50"
+          oninput="updateTemp(this.value)">
+
+        <div class="mini-stats">
+          <div class="mstat"><div class="mstat-v" id="st1">—</div><div class="mstat-l">Сәуле аймағы</div></div>
+          <div class="mstat"><div class="mstat-v" id="st2">—</div><div class="mstat-l">Квант энергиясы</div></div>
+        </div>
+      </div>
+
+      <!-- Color scale -->
+      <div class="card" style="margin-top:18px">
+        <div class="clabel">Температура → Түс шкаласы</div>
+        <div class="color-scale"></div>
+        <div class="scale-labels">
+          <span>Қызыл (1500 К)</span>
+          <span>Сары (4000 К)</span>
+          <span>Ақ (7000 К)</span>
+          <span>Көкшіл (10 000 К)</span>
+        </div>
+        <p style="font-size:13px;color:var(--text3);font-family:var(--mono);margin-top:12px;line-height:1.7">
+          Температура ↑ → Толқын ұзындығы ↓ → Жиілік ↑ → Квант энергиясы ↑
+        </p>
+      </div>
+    </div>
+
+    <!-- RIGHT: Quanta animation -->
+    <div>
+      <div class="card" style="height:100%">
+        <div class="clabel">Кванттар анимациясы — E = h·ν</div>
+        <div id="quantaWrap">
+          <canvas id="quantaCanvas"></canvas>
+        </div>
+        <div style="margin-top:14px;padding:14px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
+          <p style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9">
+            <span style="color:var(--accent2)">● Үлкен шарлар</span> = ұзын толқын = <b>аз энергия</b> (қызыл/ИК)<br>
+            <span style="color:var(--violet)">● Кішкентай шарлар</span> = қысқа толқын = <b>жоғары энергия</b> (күлгін/УК)<br>
+            <span style="color:var(--text3)">Температура ↑ болған сайын жоғары энергиялы кванттар <b>көбейеді</b></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ THEORY ═══ -->
+<section id="theory" class="sec">
+<div class="wrap">
+  <div class="sec-title">
+    <h2>Теория және Тарих</h2>
+    <p>Классикалық физика vs Кванттық революция</p>
+  </div>
+
+  <div class="theory-block">
+    <h2>🌡️ Жылулық сәуле шығару дегеніміз не?</h2>
+    <p>Кез келген дене — сен, плита, жұлдыз — температурасы абсолюттік нөлден жоғары болса, <strong>электромагниттік толқындар шығарады</strong>. Бұл толқындарды жылулық сәуле шығару дейміз.</p>
+    <p>Дене неғұрлым ыстық болса, соғұрлым жоғары жиілікті (қысқа толқынды) сәуле шығарады. Сондықтан темір қызғанда алдымен қызыл, содан сары, ақырында ақ болады.</p>
+    <div class="fact-box">
+      <p>🌟 Қызықты факт: Адам денесі де сәуле шығарады! Бірақ ~36.6°C температурада бұл инфрақызыл сәуле — оны тек жылу камерасы көреді.</p>
+    </div>
+  </div>
+
+  <div class="theory-block">
+    <h2>💥 «Ультракүлгін апат» — классикалық физиканың сәтсіздігі</h2>
+    <p>XIX ғасырдың аяғында ғалымдар классикалық физика заңдарымен ыстық дененің спектрін есептеуге тырысты. Нәтиже шокты болды:</p>
+
+    <div class="timeline">
+      <div class="t-item">
+        <div class="t-dot">📐</div>
+        <div class="t-content">
+          <strong>Классикалық формула (Рэлей–Джинс)</strong>
+          <span>Қысқа толқындарда (ультракүлгін аймақта) дене <b>шексіз энергия</b> шығаруы керек деп есептеді</span>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-dot">🚨</div>
+        <div class="t-content">
+          <strong>«Ультракүлгін апат»</strong>
+          <span>Іс жүзінде ешбір дене шексіз энергия шығармайды. Классикалық физика мүлдем дұрыс жауап бере алмады!</span>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-dot">💡</div>
+        <div class="t-content">
+          <strong>1900 жыл — Планктің шешімі</strong>
+          <span>Макс Планк батыл гипотеза ұсынды: энергия үздіксіз ағын емес, <b>дискретті порциялармен — кванттармен</b> тарайды</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theory-block">
+    <h2>⚛️ Планк гипотезасы — E = h·ν</h2>
+    <p>1900 жылы 14 желтоқсанда <strong>Макс Планк</strong> физика тарихын мүлдем өзгерткен формуланы ұсынды:</p>
+
+    <div class="formula-big">
+      E = h · ν
+      <div class="formula-sub">
+        E — квант энергиясы (Дж) &nbsp;|&nbsp; h = 6.63×10⁻³⁴ Дж·с &nbsp;|&nbsp; ν — жиілік (Гц)
+      </div>
+    </div>
+
+    <div class="analogy-box">
+      <p>💧 <strong>Аналогия:</strong> Энергияны ағып жатқан су ретінде елестетпе. Оны <b>стақанмен құйылатын су</b> деп ойла. Бір стақан = бір квант = E = hν. Жоғары жиілік = үлкен стақан = көп энергия!</p>
+    </div>
+
+    <p>Маңызды қорытынды: Жоғары жиілікті (ультракүлгін) сәуле шығару үшін өте үлкен «стақан» — өте көп энергия қажет. Ал мұндай энергия аз температурада жоқ. Сондықтан УК апат болмайды!</p>
+
+    <div class="facts-row">
+      <div class="fact-card">
+        <div class="fact-icon">☀️</div>
+        <h4>Күннің «нақты» түсі</h4>
+        <p>Күн бізге сары болып көрінгенімен, оның сәулеленуі жасыл-сары аймақта максимум береді. Беткі температурасы ~6000 К.</p>
+      </div>
+      <div class="fact-card">
+        <div class="fact-icon">🔬</div>
+        <h4>h — ең кішкентай константа</h4>
+        <p>Планк тұрақтысы h = 6.63×10⁻³⁴ Дж·с. Бұл физика тарихындағы ең маңызды саннардың бірі. Оны Планк өзі «шайтандық трюк» деп атаған.</p>
+      </div>
+      <div class="fact-card">
+        <div class="fact-icon">🏆</div>
+        <h4>Нобель сыйлығы</h4>
+        <p>Макс Планк 1918 жылы «энергия кванттарын ашқаны» үшін физика бойынша Нобель сыйлығын алды.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home Experiment -->
+  <div class="theory-block">
+    <h2>🧪 Үйдегі эксперимент: «Тірі физика»</h2>
+    <p><strong>Мақсаты:</strong> Температура мен түс байланысын тікелей бақылау.</p>
+
+    <div class="exp-steps">
+      <div class="exp-step"><p>Үйдегі электр плитасын немесе тостерді қос (үлкендермен бірге, абай бол!).</p></div>
+      <div class="exp-step"><p>Спиральдың баяу қыза бастайтынын бақыла. Алғашқы кезде ештеңе де көрінбейді — тек ИК сәуле шығады.</p></div>
+      <div class="exp-step"><p>Бірнеше минуттан кейін күңгірт қызыл түс пайда болады. Неліктен бірден ақ болмайды?</p></div>
+      <div class="exp-step"><p><strong>Қорытынды жаз:</strong> Температура өскен сайын максималды сәуленің толқын ұзындығы қысқарып, жиілігі артады → түс өзгереді.</p></div>
+    </div>
+
+    <div class="fact-box" style="margin-top:14px">
+      <p>💡 Жауап: Алдымен қызыл болады, себебі төмен температурада тек ұзын толқынды (қызыл) кванттарды «сатып алуға» жеткілікті энергия бар. Температура өскенде ғана қысқа толқынды (сары, ақ) кванттар пайда болады.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ CALCULATOR ═══ -->
+<section id="calc" class="sec">
+<div class="wrap">
+  <div class="sec-title">
+    <h2>Квант Энергиясы Калькуляторы</h2>
+    <p>E = h · ν формуласымен есепте</p>
+  </div>
+
+  <div class="calc-wrap">
+    <div class="card">
+      <div class="clabel">Жиілікті енгіз</div>
+
+      <div class="inp-group">
+        <label>Жиілік ν (Гц)</label>
+        <input type="number" id="freqIn" placeholder="мыс: 5e14" step="any" oninput="doCalc()">
+      </div>
+
+      <p style="font-size:13px;color:var(--text3);font-family:var(--mono);margin-bottom:10px">Дайын мысалдар:</p>
+      <div class="freq-presets">
+        <button class="preset-btn" onclick="setPreset(4.3e14,'Қызыл жарық')">Қызыл 700нм</button>
+        <button class="preset-btn" onclick="setPreset(5.1e14,'Сары жарық')">Сары 590нм</button>
+        <button class="preset-btn" onclick="setPreset(5.9e14,'Жасыл жарық')">Жасыл 510нм</button>
+        <button class="preset-btn" onclick="setPreset(6.7e14,'Көк жарық')">Көк 450нм</button>
+        <button class="preset-btn" onclick="setPreset(7.9e14,'Күлгін')">Күлгін 380нм</button>
+        <button class="preset-btn" onclick="setPreset(1e15,'УК сәуле')">УК 300нм</button>
+      </div>
+
+      <button class="calc-btn" style="margin-top:20px" onclick="doCalc()">Есептеу</button>
+
+      <div style="margin-top:16px;font-family:var(--mono);font-size:11px;color:var(--text3);line-height:1.9;padding:12px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+        h = 6.626 × 10⁻³⁴ Дж·с (Планк тұрақтысы)<br>
+        c = 2.998 × 10⁸ м/с (жарық жылдамдығы)<br>
+        1 эВ = 1.602 × 10⁻¹⁹ Дж
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="clabel">Нәтиже</div>
+        <div class="result-panel">
+          <div id="photonBall" class="photon-ball" style="background:#2a2a2a"></div>
+          <div class="res-lbl">Фотон энергиясы</div>
+          <div class="res-big" id="resJ">—</div>
+          <div class="res-unit">Джоуль (Дж)</div>
+          <div class="res-ev" id="resEV">—</div>
+          <div class="res-unit">электрон-вольт (эВ)</div>
+          <div class="res-color-name" id="resColorName" style="color:var(--text3)">Жиілікті енгіз</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Example walkthrough -->
+  <div class="example-calc">
+    <h3>📝 Толық мысал: Сары жарық үшін (ν = 5·10¹⁴ Гц)</h3>
+    <div class="calc-steps">
+      <div class="calc-step">
+        <span class="step-eq">Берілген: ν = 5 × 10¹⁴ Гц, h = 6.63 × 10⁻³⁴ Дж·с</span>
+      </div>
+      <div class="calc-step">
+        <span class="step-eq">E = h × ν = 6.63×10⁻³⁴ × 5×10¹⁴</span>
+        <span class="step-res">= 3.315×10⁻¹⁹ Дж</span>
+      </div>
+      <div class="calc-step">
+        <span class="step-eq">эВ-қа айналдыру: E = 3.315×10⁻¹⁹ ÷ 1.602×10⁻¹⁹</span>
+        <span class="step-res">≈ 2.07 эВ</span>
+      </div>
+      <div class="calc-step">
+        <span class="step-eq">Нәтиже: Бір фотонның энергиясы</span>
+        <span class="step-res">≈ 3.3 × 10⁻¹⁹ Дж ≈ 2.1 эВ</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════ QUIZ ═══ -->
+<section id="quiz" class="sec">
+<div class="wrap">
+  <div class="sec-title">
+    <h2>Бекіту тесті</h2>
+    <p>10 сұрақ — білімді тексер!</p>
+  </div>
+  <div class="quiz-wrap">
+    <div id="qContainer"></div>
+    <div id="qResult" class="result-card" style="display:none">
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--text3);text-transform:uppercase">Нәтижең</div>
+      <div class="score-big" id="scoreBig">0/10</div>
+      <div class="score-bar-wrap"><div class="score-bar" id="scoreBar" style="width:0%"></div></div>
+      <div class="score-msg" id="scoreMsg"></div>
+      <button class="retry-btn" onclick="buildQuiz()">Қайта бастау ↺</button>
+    </div>
+  </div>
+</div>
+</section>
+
+<script>
+// ════════════════════════════════════════
+// BG PARTICLE ANIMATION
+// ════════════════════════════════════════
+const bgC = document.getElementById('bgCanvas');
+const bgX = bgC.getContext('2d');
+let bgParts = [];
+
+function initBg() {
+  bgC.width = window.innerWidth;
+  bgC.height = window.innerHeight;
+  bgParts = Array.from({length:60}, () => ({
+    x: Math.random()*bgC.width,
+    y: Math.random()*bgC.height,
+    r: Math.random()*1.5+0.3,
+    vx: (Math.random()-.5)*.15,
+    vy: (Math.random()-.5)*.15,
+    a: Math.random()*.5+.1,
+    col: `hsl(${Math.random()*60+10},80%,60%)`
+  }));
+}
+
+function animBg() {
+  bgX.clearRect(0,0,bgC.width,bgC.height);
+  bgParts.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0)p.x=bgC.width; if(p.x>bgC.width)p.x=0;
+    if(p.y<0)p.y=bgC.height; if(p.y>bgC.height)p.y=0;
+    bgX.beginPath();
+    bgX.arc(p.x,p.y,p.r,0,Math.PI*2);
+    bgX.fillStyle=p.col;
+    bgX.globalAlpha=p.a;
+    bgX.fill();
+  });
+  bgX.globalAlpha=1;
+  requestAnimationFrame(animBg);
+}
+
+initBg();
+animBg();
+window.addEventListener('resize', initBg);
+
+// ════════════════════════════════════════
+// TAB NAVIGATION
+// ════════════════════════════════════════
+function gotoTab(id) {
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  event.target.classList.add('on');
+  if(id==='sim') { setTimeout(()=>{ resizeQuanta(); startQuanta(); }, 50); }
+}
+
+// ════════════════════════════════════════
+// TEMPERATURE → COLOR
+// ════════════════════════════════════════
+function tCol(T) {
+  if(T < 800)  return {r:10,g:0,b:0};
+  if(T < 1200) {
+    const t=(T-800)/400;
+    return {r:Math.round(10+t*190),g:Math.round(t*8),b:0};
+  }
+  if(T < 2000) {
+    const t=(T-1200)/800;
+    return {r:200+Math.round(t*55),g:Math.round(8+t*72),b:0};
+  }
+  if(T < 3500) {
+    const t=(T-2000)/1500;
+    return {r:255,g:Math.round(80+t*130),b:Math.round(t*20)};
+  }
+  if(T < 5500) {
+    const t=(T-3500)/2000;
+    return {r:255,g:Math.round(210+t*45),b:Math.round(20+t*200)};
+  }
+  if(T < 7500) {
+    const t=(T-5500)/2000;
+    return {r:Math.round(255-t*20),g:Math.round(255-t*15),b:255};
+  }
+  const t=(T-7500)/2500;
+  return {r:Math.round(235-t*40),g:Math.round(240-t*35),b:255};
+}
+
+function rgbs(c,a=1){ return `rgba(${c.r},${c.g},${c.b},${a})`; }
+
+function tLabel(T) {
+  if(T<700)   return 'СУЫҚ — СӘУЛЕ ЖОҚ';
+  if(T<1100)  return 'ИК СӘУЛЕ (ҚАРАҢҒЫ ҚЫЗЫЛ)';
+  if(T<1800)  return 'ҚЫЗЫЛ ЖАРЫҚ';
+  if(T<3000)  return 'ҚЫЗҒЫЛТ — САРЫ';
+  if(T<5000)  return 'АҚ — САРҒЫШ';
+  if(T<7000)  return 'АҚ ЖАРЫҚ';
+  return 'АҚ — КӨК';
+}
+
+function tRegion(T) {
+  if(T<600)  return 'Инфрақызыл';
+  if(T<1100) return 'ИК → Қызыл';
+  if(T<2000) return 'Қызыл';
+  if(T<3500) return 'Қызыл-Сары';
+  if(T<5500) return 'Сары-Ақ';
+  if(T<7000) return 'Ақ жарық';
+  return 'Ақ-Көк';
+}
+
+// ════════════════════════════════════════
+// UPDATE SIMULATION
+// ════════════════════════════════════════
+function updateTemp(T) {
+  T = parseFloat(T);
+  const col = tCol(T);
+  const cs = rgbs(col);
+  const rod = document.getElementById('rod');
+  const fg  = document.getElementById('floorGlow');
+  const tr  = document.getElementById('tempReadout');
+  const cn  = document.getElementById('colorName');
+
+  const lighter = `rgba(${Math.min(255,col.r+100)},${Math.min(255,col.g+70)},${Math.min(255,col.b+40)},1)`;
+  rod.style.background = T < 700
+    ? 'linear-gradient(90deg,#2a2a2a,#3a3a3a,#2a2a2a)'
+    : `radial-gradient(ellipse at 50% 40%, ${lighter}, ${cs})`;
+  rod.style.boxShadow = T < 700
+    ? 'none'
+    : `0 0 ${Math.min(60, T/150)}px ${rgbs(col,0.6)}, 0 0 ${Math.min(100,T/100)}px ${rgbs(col,0.3)}`;
+
+  fg.style.background = T < 700
+    ? 'transparent'
+    : `radial-gradient(ellipse at center, ${rgbs(col,0.4)} 0%, transparent 70%)`;
+
+  tr.textContent = T.toLocaleString() + ' К';
+  tr.style.color = T < 700 ? '#555' : cs;
+  cn.textContent = tLabel(T);
+
+  // sparks at high temp
+  if(T > 4000 && Math.random() < 0.3) spawnSpark(col);
+
+  document.getElementById('st1').textContent = tRegion(T);
+
+  // peak energy at Wien wavelength (approx)
+  const h=6.626e-34, c2=2.998e8, b=2.898e-3;
+  const lam = b/T;
+  const freq = c2/lam;
+  const E = h*freq;
+  const Eev = E/1.602e-19;
+  document.getElementById('st2').textContent = Eev.toFixed(2) + ' эВ';
+
+  currentT = T;
+}
+
+let currentT = 300;
+
+function spawnSpark(col) {
+  const scene = document.querySelector('.forge-scene');
+  const sp = document.createElement('div');
+  sp.className = 'spark';
+  const dx = (Math.random()-0.5)*120;
+  const dy = -(Math.random()*60+20);
+  const size = Math.random()*4+2;
+  sp.style.cssText = `
+    width:${size}px;height:${size}px;
+    background:rgba(${col.r},${col.g},${col.b},0.9);
+    left:calc(50% + ${(Math.random()-0.5)*60}px);
+    top:calc(50% - 17px);
+    --dx:${dx}px;--dy:${dy}px;
+    box-shadow:0 0 4px rgba(${col.r},${col.g},${col.b},0.8);
+  `;
+  scene.appendChild(sp);
+  setTimeout(()=>sp.remove(), 1000);
+}
+
+// ════════════════════════════════════════
+// QUANTA ANIMATION
+// ════════════════════════════════════════
+const qCanvas = document.getElementById('quantaCanvas');
+const qCtx = qCanvas.getContext('2d');
+let quanta = [];
+let qAnim;
+
+function resizeQuanta() {
+  const wrap = document.getElementById('quantaWrap');
+  qCanvas.width = wrap.clientWidth;
+  qCanvas.height = wrap.clientHeight;
+}
+
+function makeQuanta() {
+  const T = currentT;
+  // Distribution: at high T, more small (high energy) quanta
+  const n = 18;
+  quanta = [];
+  for(let i=0; i<n; i++) {
+    // Random frequency weighted by temperature
+    const frac = Math.random();
+    // Higher T = higher prob of high freq quanta
+    const tempFactor = Math.min(1, T / 10000);
+    const freqWeight = frac < (0.3 + tempFactor*0.5) ? Math.random()*0.5+0.5 : Math.random()*0.5;
+    const freq = 4e14 + freqWeight * 4e14; // 4e14 to 8e14
+
+    const c = freqToColor(freq);
+    const r = 22 - freqWeight*14; // large=red, small=violet
+    quanta.push({
+      x: Math.random() * qCanvas.width,
+      y: Math.random() * qCanvas.height,
+      r,
+      vx: (Math.random()-.5) * (1.5 + tempFactor*2.5),
+      vy: (Math.random()-.5) * (1.5 + tempFactor*2.5),
+      col: c,
+      freq,
+      alpha: 0.2 + Math.random()*0.6,
+      pulse: Math.random()*Math.PI*2,
+    });
+  }
+}
+
+function freqToColor(freq) {
+  // freq: 4e14 (red) to 8e14 (violet)
+  const t = (freq - 4e14) / (4e14);
+  const r = Math.round(255 * (1-t*0.8));
+  const g = Math.round(80 + t*40);
+  const b = Math.round(t*255);
+  return `rgb(${r},${g},${b})`;
+}
+
+function animQuanta(ts) {
+  qCtx.clearRect(0,0,qCanvas.width,qCanvas.height);
+  qCtx.fillStyle = '#000';
+  qCtx.fillRect(0,0,qCanvas.width,qCanvas.height);
+
+  const T = currentT;
+  const tempFactor = Math.min(1, (T-300)/9700);
+
+  quanta.forEach(q => {
+    q.x += q.vx; q.y += q.vy;
+    q.pulse += 0.05;
+    if(q.x < -30) q.x = qCanvas.width+30;
+    if(q.x > qCanvas.width+30) q.x = -30;
+    if(q.y < -30) q.y = qCanvas.height+30;
+    if(q.y > qCanvas.height+30) q.y = -30;
+
+    const pulse = 1 + Math.sin(q.pulse)*0.08;
+    const r = q.r * pulse;
+
+    // Glow
+    const grd = qCtx.createRadialGradient(q.x-r*.3,q.y-r*.3,r*.05,q.x,q.y,r*1.8);
+    grd.addColorStop(0,'white');
+    grd.addColorStop(0.3,q.col);
+    grd.addColorStop(1,'transparent');
+    qCtx.globalAlpha = q.alpha * (0.4 + tempFactor*0.6);
+    qCtx.beginPath();
+    qCtx.arc(q.x,q.y,r*1.8,0,Math.PI*2);
+    qCtx.fillStyle = grd;
+    qCtx.fill();
+
+    // Core
+    qCtx.globalAlpha = q.alpha;
+    qCtx.beginPath();
+    qCtx.arc(q.x,q.y,r,0,Math.PI*2);
+    qCtx.fillStyle = q.col;
+    qCtx.fill();
+    qCtx.globalAlpha = 1;
+
+    // Speed trail
+    if(T > 2000) {
+      qCtx.globalAlpha = 0.15;
+      qCtx.strokeStyle = q.col;
+      qCtx.lineWidth = r*0.5;
+      qCtx.beginPath();
+      qCtx.moveTo(q.x, q.y);
+      qCtx.lineTo(q.x - q.vx*5, q.y - q.vy*5);
+      qCtx.stroke();
+      qCtx.globalAlpha = 1;
+    }
+  });
+
+  // Update speeds based on T
+  quanta.forEach(q => {
+    const s = 1.5 + tempFactor*3;
+    const mag = Math.sqrt(q.vx**2 + q.vy**2);
+    if(mag > 0) {
+      q.vx = (q.vx/mag)*s;
+      q.vy = (q.vy/mag)*s;
+    }
+  });
+
+  // Temp label
+  qCtx.fillStyle = 'rgba(255,255,255,0.12)';
+  qCtx.font = '11px JetBrains Mono, monospace';
+  qCtx.textAlign = 'right';
+  qCtx.fillText(`T = ${T.toLocaleString()} К`, qCanvas.width-12, qCanvas.height-10);
+
+  qAnim = requestAnimationFrame(animQuanta);
+}
+
+function startQuanta() {
+  if(qAnim) cancelAnimationFrame(qAnim);
+  makeQuanta();
+  animQuanta();
+}
+
+// ════════════════════════════════════════
+// CALCULATOR
+// ════════════════════════════════════════
+const h_const = 6.626e-34;
+
+function setPreset(freq, name) {
+  document.getElementById('freqIn').value = freq;
+  doCalc();
+}
+
+function doCalc() {
+  const freq = parseFloat(document.getElementById('freqIn').value);
+  if(!freq || freq<=0) return;
+  const E = h_const * freq;
+  const Eev = E / 1.602e-19;
+
+  document.getElementById('resJ').textContent = E.toExponential(3) + ' Дж';
+  document.getElementById('resEV').textContent = Eev.toFixed(3) + ' эВ';
+
+  const nm = (2.998e8/freq)*1e9;
+  const info = nmInfo(nm);
+  const ball = document.getElementById('photonBall');
+  ball.style.background = info.hex;
+  ball.style.boxShadow = `0 0 28px ${info.hex}, 0 0 10px ${info.hex}`;
+  ball.style.color = info.hex;
+  document.getElementById('resColorName').textContent = info.name + ' (' + Math.round(nm) + ' нм)';
+  document.getElementById('resColorName').style.color = info.hex;
+}
+
+function nmInfo(nm) {
+  if(nm<10)   return {hex:'#ffffff',name:'Рентген сәулесі'};
+  if(nm<380)  return {hex:'#8800ff',name:'Ультракүлгін'};
+  if(nm<450)  return {hex:'#6600ff',name:'Күлгін'};
+  if(nm<495)  return {hex:'#0066ff',name:'Көк'};
+  if(nm<570)  return {hex:'#00cc44',name:'Жасыл'};
+  if(nm<590)  return {hex:'#ffee00',name:'Сары'};
+  if(nm<625)  return {hex:'#ff8800',name:'Қызғылт-сары'};
+  if(nm<750)  return {hex:'#ff2200',name:'Қызыл'};
+  return {hex:'#880000',name:'Инфрақызыл'};
+}
+
+// ════════════════════════════════════════
+// QUIZ
+// ════════════════════════════════════════
+const QS = [
+  {
+    q: "Жылулық сәуле шығару дегеніміз не?",
+    opts:["Денелердің тек күн сәулесінен қызуы","Денелердің ішкі энергиясы есебінен электромагниттік толқын шығаруы","Тек дыбыс шығару","Тек химиялық реакция кезінде энергия бөлу"],
+    a:1, hint:"Кез келген дене температурасы абсолюттік нөлден жоғары болса, ол электромагниттік сәуле шығарады."
+  },
+  {
+    q: "Энергияның ең кіші үлесі қалай аталады?",
+    opts:["Электрон","Квант (Фотон)","Атом","Молекула"],
+    a:1, hint:"Планк гипотезасы бойынша энергия дискретті порциялармен — кванттармен тарайды."
+  },
+  {
+    q: "Макс Планк өз гипотезасын қай жылы ұсынды?",
+    opts:["1900 ж.","1945 ж.","1812 ж.","1865 ж."],
+    a:0, hint:"1900 жылы 14 желтоқсанда Планк тарихи баяндама жасады."
+  },
+  {
+    q: "Энергия квантының формуласы қандай?",
+    opts:["E = mc²","E = h·ν","F = ma","P = mv"],
+    a:1, hint:"E = h·ν, мұнда h — Планк тұрақтысы, ν — жиілік."
+  },
+  {
+    q: "Темір қызғанда оның түсі қалай өзгереді?",
+    opts:["Ақтан қызылға қарай","Қызылдан сарыға, ақ-көкке қарай","Жасылдан қызылға","Өзгермейді"],
+    a:1, hint:"Температура артқан сайын максималды сәуленің жиілігі артады: қызыл → сары → ақ → көкшіл."
+  },
+  {
+    q: "«h» әрпімен белгіленетін Планк тұрақтысының мәні шамамен қанша?",
+    opts:["6.63·10⁻³⁴ Дж·с","9.11·10⁻³¹ кг","3·10⁸ м/с","1.38·10⁻²³ Дж/К"],
+    a:0, hint:"h = 6.626×10⁻³⁴ Дж·с — кванттық физиканың іргелі тұрақтысы."
+  },
+  {
+    q: "Адамның денесі қандай сәуле шығарады?",
+    opts:["Рентген сәулесі","Инфрақызыл (жылулық) сәуле","Ультракүлгін сәуле","Гамма сәулесі"],
+    a:1, hint:"~36.6°C температурада дене инфрақызыл сәуле шығарады — оны тек жылу камерасы анықтайды."
+  },
+  {
+    q: "Неліктен Планк гипотезасы революциялық болды?",
+    opts:["Ол энергияны үздіксіз деп айтты","Ол энергияны үзікті (дискретті) деп дәлелдеді","Ол жарық жылдамдығын өзгертті","Ол атомды ашты"],
+    a:1, hint:"Классикалық физика энергияны үздіксіз деп санады. Планк энергияның дискретті порциялармен тарайтынын ашты."
+  },
+  {
+    q: "Егер жиілік (ν) артса, квант энергиясы не болады?",
+    opts:["Артады","Кемиді","Өзгермейді","Нөлге тең болады"],
+    a:0, hint:"E = h·ν формуласынан: жиілік артса, энергия да тура пропорционал артады."
+  },
+  {
+    q: "Күннен бізге энергия қандай жолмен жетеді?",
+    opts:["Жылу өткізгіштік (кондукция)","Сәулелену (радиация)","Конвекция","Диффузия"],
+    a:1, hint:"Күн мен Жердің арасы — вакуум. Ол арқылы тек электромагниттік сәуле өте алады."
+  }
+];
+
+let qAnswers = {}, qDone = {};
+
+function buildQuiz() {
+  qAnswers = {}; qDone = {};
+  document.getElementById('qResult').style.display = 'none';
+  const c = document.getElementById('qContainer');
+  c.innerHTML = '';
+  QS.forEach((item,qi) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'qc'+qi;
+    const optsHTML = item.opts.map((o,oi) =>
+      `<button class="opt" id="o_${qi}_${oi}" onclick="pick(${qi},${oi})">${o}</button>`
+    ).join('');
+    card.innerHTML = `
+      <div class="q-num">Сұрақ ${qi+1} / ${QS.length}</div>
+      <div class="q-text">${item.q}</div>
+      <div class="opts">${optsHTML}</div>
+      <div class="fb" id="fb${qi}"></div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+function pick(qi, oi) {
+  if(qDone[qi]) return;
+  qDone[qi] = true;
+  qAnswers[qi] = oi;
+  const item = QS[qi];
+  const fb = document.getElementById('fb'+qi);
+  const card = document.getElementById('qc'+qi);
+
+  for(let i=0; i<item.opts.length; i++) {
+    const b = document.getElementById(`o_${qi}_${i}`);
+    b.disabled = true;
+    if(i===item.a) b.classList.add('hint');
+  }
+  const sel = document.getElementById(`o_${qi}_${oi}`);
+  sel.classList.remove('hint');
+
+  if(oi===item.a) {
+    sel.classList.add('ok');
+    fb.className='fb show ok';
+    fb.textContent='✓ Дұрыс! '+item.hint;
+    card.classList.add('ok');
+  } else {
+    sel.classList.add('no');
+    fb.className='fb show no';
+    fb.textContent='✗ Қате. '+item.hint;
+    card.classList.add('no');
+  }
+
+  if(Object.keys(qDone).length===QS.length) showResult();
+}
+
+function showResult() {
+  let score = 0;
+  QS.forEach((_,qi) => { if(qAnswers[qi]===QS[qi].a) score++; });
+  const pct = score/QS.length*100;
+  const res = document.getElementById('qResult');
+  res.style.display='block';
+  document.getElementById('scoreBig').textContent = score+'/'+QS.length;
+  setTimeout(()=>{ document.getElementById('scoreBar').style.width=pct+'%'; }, 100);
+
+  let msg;
+  if(score===10) msg='🏆 Керемет! Тақырыпты толығымен меңгердің!';
+  else if(score>=8) msg='⭐ Өте жақсы нәтиже! Жалғастыр!';
+  else if(score>=6) msg='👍 Жақсы! Теорияны қайталап шық.';
+  else if(score>=4) msg='📚 Теория бөлімін тағы оқып шық.';
+  else msg='🔄 Алдымен теорияны мұқият оқы да, қайта тапсыр.';
+  document.getElementById('scoreMsg').textContent = msg;
+
+  res.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+window.addEventListener('load', () => {
+  updateTemp(300);
+  resizeQuanta();
+  startQuanta();
+  buildQuiz();
+});
+
+window.addEventListener('resize', () => {
+  resizeQuanta();
+});
+
+// Re-link slider oninput to also update quanta speed
+document.getElementById('tempSlider').addEventListener('input', function() {
+  updateTemp(this.value);
+});
+</script>
+</body>
+</html>
