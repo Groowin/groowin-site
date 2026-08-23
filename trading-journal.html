@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Трейдинг журналы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F14;
+    --surface:#131920;
+    --surface-2:#1A222B;
+    --border:#232C36;
+    --text:#E7ECF2;
+    --text-muted:#8993A1;
+    --accent:#E8A33D;
+    --accent-soft:rgba(232,163,61,0.14);
+    --profit:#3ED598;
+    --profit-soft:rgba(62,213,152,0.14);
+    --loss:#F0616B;
+    --loss-soft:rgba(240,97,107,0.14);
+    --be:#8993A1;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:28px 18px 80px;}
+
+  /* header */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+  .title{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:-0.01em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .title .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);}
+  .weeknav{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:6px 6px 6px 14px;}
+  .weeknav span{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);min-width:118px;text-align:center;}
+  .weeknav button{
+    width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--surface-2);
+    color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
+    transition:background .15s, border-color .15s;
+  }
+  .weeknav button:hover{background:var(--accent-soft);border-color:var(--accent);}
+
+  /* stats */
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;
+  }
+  .stat{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:14px 14px 12px;
+  }
+  .stat .label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+  .stat .value{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;}
+  .stat .value.profit{color:var(--profit);}
+  .stat .value.loss{color:var(--loss);}
+
+  /* sparkline signature */
+  .curve-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px 16px 8px;margin-bottom:22px;
+  }
+  .curve-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .curve-head h3{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;margin:0;color:var(--text-muted);letter-spacing:.02em;}
+  .curve-head .curve-total{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;}
+  svg.spark{width:100%;height:110px;display:block;overflow:visible;}
+  .spark-days{display:flex;justify-content:space-between;padding:2px 4px 6px;}
+  .spark-days span{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;width:14.28%;text-align:center;}
+
+  /* day tabs */
+  .tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px;}
+  .tab{
+    flex:1;min-width:78px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:9px 4px;text-align:center;cursor:pointer;transition:all .15s;position:relative;
+  }
+  .tab:hover{border-color:var(--accent);}
+  .tab.active{background:var(--accent-soft);border-color:var(--accent);}
+  .tab .d-name{font-size:11.5px;font-weight:600;color:var(--text-muted);}
+  .tab.active .d-name{color:var(--accent);}
+  .tab .d-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;}
+  .tab .d-badge{
+    position:absolute;top:-6px;right:-6px;background:var(--accent);color:#0B0F14;font-size:10px;font-weight:700;
+    width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  }
+  .tab .d-badge.empty{display:none;}
+
+  /* day content */
+  .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .day-head h2{font-family:'Space Grotesk',sans-serif;font-size:16px;margin:0;}
+  .add-btn{
+    background:var(--accent);color:#100C04;border:none;border-radius:8px;padding:9px 16px;
+    font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;
+    transition:filter .15s;
+  }
+  .add-btn:hover{filter:brightness(1.08);}
+
+  .empty-state{
+    text-align:center;padding:48px 16px;color:var(--text-muted);border:1px dashed var(--border);border-radius:var(--radius);
+  }
+  .empty-state p{font-size:13px;margin:6px 0 0;}
+
+  .trade-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:14px;margin-bottom:10px;display:flex;gap:14px;
+  }
+  .trade-thumb{
+    width:78px;height:78px;border-radius:8px;object-fit:cover;background:var(--surface-2);flex-shrink:0;cursor:zoom-in;
+    border:1px solid var(--border);
+  }
+  .trade-thumb.placeholder{display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:22px;}
+  .trade-body{flex:1;min-width:0;}
+  .trade-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px;}
+  .badge{
+    font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.03em;
+  }
+  .badge.long{background:var(--profit-soft);color:var(--profit);}
+  .badge.short{background:var(--loss-soft);color:var(--loss);}
+  .badge.win{background:var(--profit-soft);color:var(--profit);}
+  .badge.loss{background:var(--loss-soft);color:var(--loss);}
+  .badge.be{background:rgba(137,147,161,.15);color:var(--be);}
+  .trade-setup{font-weight:600;font-size:14px;}
+  .trade-meta{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-muted);display:flex;gap:12px;flex-wrap:wrap;margin-bottom:4px;}
+  .trade-note{font-size:12.5px;color:var(--text-muted);line-height:1.4;}
+  .trade-r{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;margin-left:auto;white-space:nowrap;}
+  .trade-actions{display:flex;flex-direction:column;gap:6px;justify-content:flex-start;}
+  .icon-btn{
+    background:none;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);width:26px;height:26px;
+    cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn:hover{border-color:var(--loss);color:var(--loss);}
+
+  /* modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(5,7,10,.7);backdrop-filter:blur(3px);
+    display:none;align-items:flex-start;justify-content:center;padding:30px 14px;overflow-y:auto;z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;width:100%;max-width:480px;
+  }
+  .modal h3{font-family:'Space Grotesk',sans-serif;margin:0 0 16px;font-size:17px;}
+  .field{margin-bottom:13px;}
+  .field label{display:block;font-size:11.5px;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+  .field input[type=text], .field input[type=number], .field textarea, .field select{
+    width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:7px;color:var(--text);
+    padding:9px 10px;font-family:'Inter',sans-serif;font-size:13.5px;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .seg{display:flex;border:1px solid var(--border);border-radius:7px;overflow:hidden;}
+  .seg button{flex:1;background:var(--surface-2);border:none;color:var(--text-muted);padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+  .seg button.active.long{background:var(--profit-soft);color:var(--profit);}
+  .seg button.active.short{background:var(--loss-soft);color:var(--loss);}
+  .seg button.active.win{background:var(--profit-soft);color:var(--profit);}
+  .seg button.active.loss{background:var(--loss-soft);color:var(--loss);}
+  .seg button.active.be{background:rgba(137,147,161,.18);color:var(--be);}
+  .file-drop{
+    border:1.5px dashed var(--border);border-radius:8px;padding:14px;text-align:center;cursor:pointer;
+    font-size:12.5px;color:var(--text-muted);position:relative;
+  }
+  .file-drop:hover{border-color:var(--accent);}
+  .file-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .file-preview{width:100%;max-height:150px;object-fit:contain;border-radius:6px;margin-top:8px;display:none;}
+  .modal-actions{display:flex;gap:10px;margin-top:18px;}
+  .btn-primary{
+    flex:1;background:var(--accent);color:#100C04;border:none;border-radius:8px;padding:11px;font-weight:700;font-size:13.5px;cursor:pointer;
+  }
+  .btn-secondary{
+    background:var(--surface-2);color:var(--text-muted);border:1px solid var(--border);border-radius:8px;padding:11px 16px;font-size:13.5px;cursor:pointer;
+  }
+
+  .lightbox{position:fixed;inset:0;background:rgba(5,7,10,.9);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;cursor:zoom-out;}
+  .lightbox.show{display:flex;}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:8px;}
+
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--surface-2);
+    border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;
+    transition:opacity .2s, transform .2s;pointer-events:none;z-index:70;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:560px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .row3{grid-template-columns:1fr;}
+    .trade-card{flex-wrap:wrap;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="title"><span class="dot"></span>Трейдинг журналы</div>
+    <div class="weeknav">
+      <button id="prevWeek" aria-label="Алдыңғы апта">‹</button>
+      <span id="weekLabel">—</span>
+      <button id="nextWeek" aria-label="Келесі апта">›</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="label">Мәміле</div><div class="value" id="statCount">0</div></div>
+    <div class="stat"><div class="label">Win rate</div><div class="value" id="statWinrate">—</div></div>
+    <div class="stat"><div class="label">Жалпы R</div><div class="value" id="statTotalR">0</div></div>
+    <div class="stat"><div class="label">Орташа R</div><div class="value" id="statAvgR">0</div></div>
+  </div>
+
+  <div class="curve-card">
+    <div class="curve-head">
+      <h3>R-қисығы (апта бойынша)</h3>
+      <div class="curve-total" id="curveTotal">0R</div>
+    </div>
+    <svg class="spark" id="sparkSvg" viewBox="0 0 700 110" preserveAspectRatio="none"></svg>
+    <div class="spark-days" id="sparkDays"></div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="day-head">
+    <h2 id="dayHeadTitle">—</h2>
+    <button class="add-btn" id="openAdd">+ Мәміле қосу</button>
+  </div>
+
+  <div id="tradeList"></div>
+
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">Жаңа мәміле</h3>
+    <form id="tradeForm">
+      <div class="field">
+        <label>Монета / пара</label>
+        <input type="text" id="fCoin" list="coinList" placeholder="мыс. BTC, ETH, ZRO, SUI" required style="text-transform:uppercase">
+        <datalist id="coinList">
+          <option value="BTC">
+          <option value="ETH">
+          <option value="ZRO">
+          <option value="DOT">
+          <option value="CHZ">
+          <option value="SUI">
+          <option value="SOL">
+          <option value="XRP">
+        </datalist>
+      </div>
+
+      <div class="field">
+        <label>Бағыт</label>
+        <div class="seg" id="segDirection">
+          <button type="button" data-val="long" class="active long">LONG</button>
+          <button type="button" data-val="short" class="short">SHORT</button>
+        </div>
+      </div>
+
+      <div class="row3">
+        <div class="field"><label>Entry</label><input type="number" step="any" id="fEntry" placeholder="0.00"></div>
+        <div class="field"><label>Stop-loss</label><input type="number" step="any" id="fSl" placeholder="0.00"></div>
+        <div class="field"><label>Take-profit</label><input type="number" step="any" id="fTp" placeholder="0.00"></div>
+      </div>
+
+      <div class="field">
+        <label>Нәтиже</label>
+        <div class="seg" id="segResult">
+          <button type="button" data-val="win" class="active win">WIN</button>
+          <button type="button" data-val="loss" class="loss">LOSS</button>
+          <button type="button" data-val="be" class="be">BE</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Нәтиже (R) — автоесептеледі</label>
+        <div id="rPreview" style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;background:var(--surface-2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;">—</div>
+      </div>
+
+      <div class="field">
+        <label>Жазба / thesis</label>
+        <textarea id="fNote" rows="3" placeholder="Неге кірдің, HTF bias қандай болды..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Скриншот</label>
+        <div class="file-drop" id="fileDrop">
+          <span id="fileDropText">Скриншотты осында тастаңыз немесе таңдаңыз</span>
+          <input type="file" id="fScreenshot" accept="image/*">
+        </div>
+        <img class="file-preview" id="filePreview">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="cancelBtn">Бас тарту</button>
+        <button type="submit" class="btn-primary">Сақтау</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox"><img id="lightboxImg" src=""></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const DAY_NAMES = ["Дс","Сс","Ср","Бс","Жм","Сн","Жс"];
+  const DAY_FULL = ["Дүйсенбі","Сейсенбі","Сәрсенбі","Бейсенбі","Жұма","Сенбі","Жексенбі"];
+  const STORAGE_KEY = "trades";
+
+  let trades = [];
+  let weekOffset = 0;
+  let selectedDayISO = null;
+  let currentDirection = "long";
+  let currentResult = "win";
+  let editingId = null;
+  let pendingScreenshot = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function toISO(d){
+    const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  function getMonday(date){
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = (day === 0 ? -6 : 1) - day;
+    d.setDate(d.getDate() + diff);
+    d.setHours(0,0,0,0);
+    return d;
+  }
+  function getWeekDates(offset){
+    const base = new Date();
+    base.setDate(base.getDate() + offset*7);
+    const monday = getMonday(base);
+    const arr = [];
+    for(let i=0;i<7;i++){
+      const d = new Date(monday);
+      d.setDate(monday.getDate()+i);
+      arr.push(d);
+    }
+    return arr;
+  }
+  function fmtShort(d){
+    return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+  const monthsKz = ["қаң","ақп","нау","сәу","мам","мау","шіл","там","қыр","қаз","қар","жел"];
+  function weekLabel(dates){
+    const a = dates[0], b = dates[6];
+    if(a.getMonth()===b.getMonth()){
+      return `${a.getDate()}–${b.getDate()} ${monthsKz[a.getMonth()]}`;
+    }
+    return `${a.getDate()} ${monthsKz[a.getMonth()]} – ${b.getDate()} ${monthsKz[b.getMonth()]}`;
+  }
+
+  function showToast(msg){
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 2200);
+  }
+
+  async function loadTrades(){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, false);
+      trades = res && res.value ? JSON.parse(res.value) : [];
+    }catch(e){
+      trades = [];
+    }
+  }
+  async function saveTrades(){
+    try{
+      await window.storage.set(STORAGE_KEY, JSON.stringify(trades), false);
+    }catch(e){
+      showToast("Сақтау кезінде қате шықты");
+    }
+  }
+
+  function render(){
+    const dates = getWeekDates(weekOffset);
+    $("weekLabel").textContent = weekLabel(dates);
+    if(!selectedDayISO || !dates.some(d=>toISO(d)===selectedDayISO)){
+      const todayISO = toISO(new Date());
+      const match = dates.find(d=>toISO(d)===todayISO);
+      selectedDayISO = match ? todayISO : toISO(dates[0]);
+    }
+
+    renderTabs(dates);
+    renderStats(dates);
+    renderCurve(dates);
+    renderDayContent(dates);
+  }
+
+  function tradesForDate(iso){
+    return trades.filter(t=>t.date===iso);
+  }
+  function weekTrades(dates){
+    const isos = dates.map(toISO);
+    return trades.filter(t=>isos.includes(t.date));
+  }
+
+  function renderTabs(dates){
+    const wrap = $("tabs");
+    wrap.innerHTML = "";
+    dates.forEach((d,i)=>{
+      const iso = toISO(d);
+      const count = tradesForDate(iso).length;
+      const el = document.createElement("div");
+      el.className = "tab" + (iso===selectedDayISO ? " active" : "");
+      el.innerHTML = `
+        <div class="d-name">${DAY_NAMES[i]}</div>
+        <div class="d-date">${fmtShort(d)}</div>
+        <div class="d-badge${count===0?' empty':''}">${count}</div>
+      `;
+      el.addEventListener("click", ()=>{ selectedDayISO = iso; render(); });
+      wrap.appendChild(el);
+    });
+  }
+
+  function renderStats(dates){
+    const wt = weekTrades(dates);
+    const decided = wt.filter(t=>t.result==='win'||t.result==='loss');
+    const wins = wt.filter(t=>t.result==='win').length;
+    const totalR = wt.reduce((s,t)=> s + (Number(t.resultR)||0), 0);
+    const avgR = wt.length ? totalR/wt.length : 0;
+    const winrate = decided.length ? (wins/decided.length*100) : null;
+
+    $("statCount").textContent = wt.length;
+    $("statWinrate").textContent = winrate===null ? "—" : `${winrate.toFixed(0)}%`;
+    const totalREl = $("statTotalR");
+    totalREl.textContent = (totalR>=0?"+":"") + totalR.toFixed(1) + "R";
+    totalREl.className = "value " + (totalR>0?"profit":(totalR<0?"loss":""));
+    const avgREl = $("statAvgR");
+    avgREl.textContent = (avgR>=0?"+":"") + avgR.toFixed(2) + "R";
+    avgREl.className = "value " + (avgR>0?"profit":(avgR<0?"loss":""));
+  }
+
+  function renderCurve(dates){
+    const svg = $("sparkSvg");
+    const W = 700, H = 110, pad = 14;
+    const perDay = dates.map(d=>{
+      const iso = toISO(d);
+      return tradesForDate(iso).reduce((s,t)=> s + (Number(t.resultR)||0), 0);
+    });
+    const cum = [];
+    let running = 0;
+    perDay.forEach(v=>{ running += v; cum.push(running); });
+    const allVals = [0, ...cum];
+    const min = Math.min(...allVals), max = Math.max(...allVals);
+    const range = (max-min) || 1;
+    const stepX = (W - pad*2) / 6;
+
+    const pts = cum.map((v,i)=>{
+      const x = pad + stepX*i;
+      const y = H - pad - ((v-min)/range)*(H-pad*2);
+      return {x,y,v, day: perDay[i]};
+    });
+
+    const zeroY = H - pad - ((0-min)/range)*(H-pad*2);
+    const lineColor = (running>=0) ? "var(--profit)" : "var(--loss)";
+
+    let path = `M ${pad} ${zeroY} `;
+    pts.forEach(p=> path += `L ${p.x} ${p.y} `);
+
+    const areaPath = path + `L ${pts[pts.length-1].x} ${zeroY} L ${pad} ${zeroY} Z`;
+
+    let svgContent = `
+      <line x1="${pad}" y1="${zeroY}" x2="${W-pad}" y2="${zeroY}" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,4"/>
+      <path d="${areaPath}" fill="${lineColor}" opacity="0.08" stroke="none"/>
+      <path d="${path}" fill="none" stroke="${lineColor}" stroke-width="2"/>
+    `;
+    pts.forEach(p=>{
+      const dotColor = p.day>0 ? "var(--profit)" : (p.day<0 ? "var(--loss)" : "var(--text-muted)");
+      svgContent += `<circle cx="${p.x}" cy="${p.y}" r="4" fill="${dotColor}" stroke="var(--bg)" stroke-width="2"/>`;
+    });
+    svg.innerHTML = svgContent;
+
+    const totalEl = $("curveTotal");
+    totalEl.textContent = (running>=0?"+":"") + running.toFixed(1) + "R";
+    totalEl.style.color = running>0 ? "var(--profit)" : (running<0 ? "var(--loss)" : "var(--text)");
+
+    const daysWrap = $("sparkDays");
+    daysWrap.innerHTML = DAY_NAMES.map(n=>`<span>${n}</span>`).join("");
+  }
+
+  function renderDayContent(dates){
+    const idx = dates.findIndex(d=>toISO(d)===selectedDayISO);
+    const d = dates[idx>=0?idx:0];
+    $("dayHeadTitle").textContent = `${DAY_FULL[idx>=0?idx:0]}, ${fmtShort(d)}`;
+
+    const list = tradesForDate(selectedDayISO).sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+    const container = $("tradeList");
+    container.innerHTML = "";
+
+    if(list.length===0){
+      container.innerHTML = `<div class="empty-state">Бұл күнге мәміле жазылмаған<p>«+ Мәміле қосу» түймесін басып, алғашқы жазбаңды қос</p></div>`;
+      return;
+    }
+
+    list.forEach(t=>{
+      const card = document.createElement("div");
+      card.className = "trade-card";
+      const r = Number(t.resultR)||0;
+      const rColor = r>0 ? "var(--profit)" : (r<0 ? "var(--loss)" : "var(--text-muted)");
+      card.innerHTML = `
+        ${t.screenshot
+          ? `<img class="trade-thumb" src="${t.screenshot}" data-full="${t.screenshot}">`
+          : `<div class="trade-thumb placeholder">◎</div>`}
+        <div class="trade-body">
+          <div class="trade-top">
+            <span class="badge ${t.direction}">${t.direction}</span>
+            <span class="badge ${t.result}">${t.result}</span>
+            <span class="trade-setup" style="text-transform:uppercase;font-family:'JetBrains Mono',monospace;">${escapeHtml(t.coin)}</span>
+          </div>
+          <div class="trade-meta">
+            ${t.entry?`<span>Entry ${escapeHtml(t.entry)}</span>`:''}
+            ${t.sl?`<span>SL ${escapeHtml(t.sl)}</span>`:''}
+            ${t.tp?`<span>TP ${escapeHtml(t.tp)}</span>`:''}
+          </div>
+          ${t.note?`<div class="trade-note">${escapeHtml(t.note)}</div>`:''}
+        </div>
+        <div class="trade-r" style="color:${rColor}">${r>=0?'+':''}${r.toFixed(1)}R</div>
+        <div class="trade-actions">
+          <button class="icon-btn" data-del="${t.id}" title="Жою">✕</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    container.querySelectorAll("[data-del]").forEach(btn=>{
+      btn.addEventListener("click", async (e)=>{
+        const id = e.currentTarget.getAttribute("data-del");
+        trades = trades.filter(t=>t.id!==id);
+        await saveTrades();
+        render();
+        showToast("Мәміле жойылды");
+      });
+    });
+    container.querySelectorAll(".trade-thumb[data-full]").forEach(img=>{
+      img.addEventListener("click", ()=>{
+        $("lightboxImg").src = img.getAttribute("data-full");
+        $("lightbox").classList.add("show");
+      });
+    });
+  }
+
+  function escapeHtml(s){
+    const div = document.createElement("div");
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  // auto R calculation from entry/sl/tp + result + direction
+  function computeR(){
+    const entry = parseFloat($("fEntry").value);
+    const sl = parseFloat($("fSl").value);
+    const tp = parseFloat($("fTp").value);
+
+    if(isNaN(entry) || isNaN(sl) || (currentResult==='win' && isNaN(tp))){
+      return null;
+    }
+    const risk = Math.abs(entry - sl);
+    if(risk === 0) return null;
+
+    if(currentResult === 'be') return 0;
+    if(currentResult === 'loss') return -1;
+    // win: reward/risk ratio
+    const reward = Math.abs(tp - entry);
+    return reward / risk;
+  }
+
+  function updateRPreview(){
+    const r = computeR();
+    const el = $("rPreview");
+    if(r === null){
+      el.textContent = "Entry және SL (WIN үшін TP де) толтырыңыз";
+      el.style.color = "var(--text-muted)";
+      el.style.fontSize = "12.5px";
+      el.style.fontWeight = "500";
+    } else {
+      el.textContent = (r>=0?"+":"") + r.toFixed(2) + "R";
+      el.style.color = r>0 ? "var(--profit)" : (r<0 ? "var(--loss)" : "var(--text)");
+      el.style.fontSize = "18px";
+      el.style.fontWeight = "700";
+    }
+  }
+
+  ["fEntry","fSl","fTp"].forEach(id=>{
+    $(id).addEventListener("input", updateRPreview);
+  });
+
+  // modal handling
+  function openModal(){
+    editingId = null;
+    $("modalTitle").textContent = "Жаңа мәміле";
+    $("tradeForm").reset();
+    currentDirection = "long"; currentResult = "win"; pendingScreenshot = null;
+    setSeg("segDirection", "long");
+    setSeg("segResult", "win");
+    $("filePreview").style.display = "none";
+    $("fileDropText").textContent = "Скриншотты осында тастаңыз немесе таңдаңыз";
+    updateRPreview();
+    $("overlay").classList.add("show");
+  }
+  function closeModal(){
+    $("overlay").classList.remove("show");
+  }
+  function setSeg(groupId, val){
+    const group = $(groupId);
+    group.querySelectorAll("button").forEach(b=>{
+      b.classList.toggle("active", b.getAttribute("data-val")===val);
+    });
+  }
+
+  $("openAdd").addEventListener("click", openModal);
+  $("cancelBtn").addEventListener("click", closeModal);
+  $("overlay").addEventListener("click", (e)=>{ if(e.target.id==="overlay") closeModal(); });
+  $("lightbox").addEventListener("click", ()=> $("lightbox").classList.remove("show"));
+
+  $("segDirection").addEventListener("click", (e)=>{
+    const btn = e.target.closest("button"); if(!btn) return;
+    currentDirection = btn.getAttribute("data-val");
+    setSeg("segDirection", currentDirection);
+    updateRPreview();
+  });
+  $("segResult").addEventListener("click", (e)=>{
+    const btn = e.target.closest("button"); if(!btn) return;
+    currentResult = btn.getAttribute("data-val");
+    setSeg("segResult", currentResult);
+    updateRPreview();
+  });
+
+  $("fScreenshot").addEventListener("change", (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const img = new Image();
+      img.onload = function(){
+        const maxW = 900;
+        const scale = Math.min(1, maxW/img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width*scale;
+        canvas.height = img.height*scale;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        pendingScreenshot = canvas.toDataURL("image/jpeg", 0.72);
+        $("filePreview").src = pendingScreenshot;
+        $("filePreview").style.display = "block";
+        $("fileDropText").textContent = file.name;
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  $("tradeForm").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const coin = $("fCoin").value.trim().toUpperCase();
+    if(!coin){ showToast("Монета атауын жаз"); return; }
+
+    const computedR = computeR();
+
+    const entry = {
+      id: editingId || (Date.now().toString(36)+Math.random().toString(36).slice(2,7)),
+      date: selectedDayISO,
+      coin,
+      direction: currentDirection,
+      entry: $("fEntry").value.trim(),
+      sl: $("fSl").value.trim(),
+      tp: $("fTp").value.trim(),
+      result: currentResult,
+      resultR: computedR === null ? 0 : computedR,
+      note: $("fNote").value.trim(),
+      screenshot: pendingScreenshot,
+      createdAt: Date.now()
+    };
+    trades.push(entry);
+    await saveTrades();
+    closeModal();
+    render();
+    showToast("Мәміле сақталды");
+  });
+
+  $("prevWeek").addEventListener("click", ()=>{ weekOffset--; selectedDayISO=null; render(); });
+  $("nextWeek").addEventListener("click", ()=>{ weekOffset++; selectedDayISO=null; render(); });
+
+  (async function init(){
+    await loadTrades();
+    render();
+  })();
+})();
+</script>
+</body>
+</html>
