@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ғылым тарихының бастаулары</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14100c;
+    --parchment:#f2e6cf;
+    --parchment-dim:#cfc0a0;
+    --ochre:#c07f3f;
+    --indigo:#5b7a9d;
+    --line: rgba(242,230,207,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0;
+    background:var(--ink);
+    color:var(--parchment);
+    font-family:'PT Sans', sans-serif;
+  }
+  ::selection{ background:var(--ochre); color:var(--ink); }
+
+  .scroll-track{ position:relative; height:560vh; }
+
+  .stage{
+    position:sticky; top:0; height:100vh; width:100%;
+    overflow:hidden; background:var(--ink);
+  }
+
+  video{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; filter:saturate(0.92) contrast(1.03);
+  }
+
+  .scrim{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,16,12,0.55) 0%, rgba(20,16,12,0.02) 24%, rgba(20,16,12,0.02) 58%, rgba(20,16,12,0.7) 100%);
+    pointer-events:none;
+  }
+
+  .kicker{
+    position:absolute; top:2.2rem; left:2.4rem;
+    font-size:0.8rem; letter-spacing:0.03em; color:var(--parchment-dim);
+    z-index:5;
+  }
+
+  .progress{
+    position:absolute; top:2.35rem; left:50%; transform:translateX(-50%);
+    display:flex; gap:0.9rem; align-items:center; z-index:5;
+  }
+  .progress .tick{
+    width:6px; height:6px; border-radius:50%;
+    background:rgba(242,230,207,0.28);
+    transition:background .4s ease, transform .4s ease;
+  }
+  .progress .tick.active{ background:var(--ochre); transform:scale(1.5); }
+
+  /* ---- main topic panels (dark scrim style, one per act, rotating corners) ---- */
+  .panel{
+    position:absolute; max-width:min(520px, 84vw);
+    z-index:4; opacity:0; transform:translateY(12px);
+    transition:opacity .55s ease, transform .55s ease;
+    pointer-events:none;
+  }
+  .panel.visible{ opacity:1; transform:translateY(0); }
+  .panel .label{
+    display:block; font-size:0.78rem; letter-spacing:0.03em;
+    color:var(--ochre); margin-bottom:0.6rem;
+  }
+  .panel h2{
+    font-family:'Philosopher', serif; font-weight:700;
+    font-size:clamp(1.7rem, 4vw, 2.7rem); line-height:1.1;
+    margin:0 0 0.75rem 0; color:var(--parchment);
+  }
+  .panel p{
+    font-size:1rem; line-height:1.6; color:var(--parchment-dim);
+    margin:0; max-width:50ch;
+  }
+  .pos-bl{ left:2.4rem; bottom:3.2rem; }
+  .pos-tl{ left:2.4rem; top:6.6rem; }
+  .pos-br{ right:2.4rem; bottom:3.2rem; text-align:right; margin-left:auto; }
+  .pos-br p{ margin-left:auto; }
+  .pos-tr{ right:2.4rem; top:6.6rem; text-align:right; }
+  .pos-tr p{ margin-left:auto; }
+
+  #panel-3 .label{ color:var(--indigo); }
+
+  /* ---- fact bubbles: speech-bubble style, opposite corner from the main panel ---- */
+  .bubble{
+    position:absolute; max-width:300px;
+    background:var(--parchment); color:var(--ink);
+    padding:1.05rem 1.3rem; border-radius:20px;
+    font-size:0.92rem; line-height:1.52;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    opacity:0; transform:translateY(10px) scale(0.97);
+    transition:opacity .5s ease, transform .5s ease;
+    z-index:6; pointer-events:none;
+  }
+  .bubble.visible{ opacity:1; transform:translateY(0) scale(1); }
+  .bubble .tag{
+    display:block; font-size:0.72rem; letter-spacing:0.02em;
+    color:#7a5a34; margin-bottom:0.35rem; font-weight:700;
+  }
+
+  .intro-hint{
+    position:absolute; bottom:3.2rem; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+    font-size:0.78rem; letter-spacing:0.03em; color:var(--parchment-dim);
+    z-index:5; transition:opacity 0.5s ease;
+  }
+  .intro-hint svg{ width:16px; height:16px; animation:bob 1.8s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{transform:translateY(0);opacity:.5;} 50%{transform:translateY(6px);opacity:1;} }
+
+  .closing{
+    position:relative; background:var(--ink);
+    padding:5rem 2.4rem 6rem; border-top:1px solid var(--line);
+  }
+  .closing-inner{ max-width:640px; margin:0 auto; }
+  .closing .label{ font-size:0.78rem; letter-spacing:0.03em; color:var(--indigo); display:block; margin-bottom:0.7rem; }
+  .closing h3{ font-family:'Philosopher', serif; font-size:clamp(1.5rem,3.2vw,2.1rem); margin:0 0 1rem 0; line-height:1.18; }
+  .closing p{ color:var(--parchment-dim); line-height:1.7; font-size:1rem; max-width:60ch; }
+  .closing .credit{ margin-top:2.2rem; padding-top:1.6rem; border-top:1px solid var(--line); font-size:0.88rem; color:rgba(207,192,160,0.65); }
+
+  @media (max-width:640px){
+    .kicker{ font-size:0.7rem; top:1.3rem; left:1.3rem; }
+    .progress{ top:1.45rem; }
+    .panel, .bubble{ left:1.3rem !important; right:1.3rem !important; bottom:2rem !important; top:auto !important;
+      max-width:none; text-align:left !important; margin-left:0 !important; }
+    .panel h2{ font-size:clamp(1.4rem,7vw,1.9rem); }
+    .panel p{ font-size:0.92rem; }
+    .bubble{ display:none; } /* keep mobile focused: one message at a time */
+  }
+  @media (prefers-reduced-motion: reduce){
+    .panel, .bubble, .progress .tick, .intro-hint svg{ transition:none; animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-track" id="track">
+  <div class="stage">
+    <video id="reel" src="video/reel.mp4" muted playsinline preload="auto"></video>
+    <div class="scrim"></div>
+
+    <div class="kicker">Философия және ғылым тарихы</div>
+    <div class="progress">
+      <div class="tick active" data-act="0"></div>
+      <div class="tick" data-act="1"></div>
+      <div class="tick" data-act="2"></div>
+      <div class="tick" data-act="3"></div>
+    </div>
+
+    <!-- Act 0 -->
+    <div class="panel pos-bl" id="panel-0">
+      <span class="label">I. Бастау</span>
+      <h2>Ғылымның тууы</h2>
+      <p>Ғылым — адамның күнделікті мұқтаждығынан (практика) және әлемді тануға деген құштарлығынан (таным) туды. Синкретті білім бірте-бірте жүйелі, дәлелді, өзіндік әдісі бар білім түріне айналды.</p>
+    </div>
+
+    <!-- Act 1: Ancient East -->
+    <div class="panel pos-tl" id="panel-1">
+      <span class="label">II. Ежелгі Шығыс</span>
+      <h2>Дайын рецепт, дәлелсіз білім</h2>
+      <p>Мысырлықтар мен вавилондықтар — керемет математиктер. Жер өлшеу, аспан денелерін бақылау — бәрі нақты іске жарату үшін жиналды.</p>
+    </div>
+    <div class="bubble pos-br" id="bubble-1">
+      <span class="tag">Қызық факт</span>
+      Пифагор теоремасын Пифагордан 1000 жыл бұрын білген — бірақ ешкім «неге?» деп сұрамаған. Білім — құпия рецепт, билік құралы болды. 🤔
+    </div>
+
+    <!-- Act 2: Ancient Greece -->
+    <div class="panel pos-br" id="panel-2">
+      <span class="label">II. Ежелгі Грекия</span>
+      <h2>Ақыл-ой төңкерісі</h2>
+      <p>Гректер: «Тоқтаңыз, мұны дәлелдеп беріңіз!» деді. Теориялық ғылым осылай туды. Фалес, Пифагор, Аристотель — Еуропа ғылымының іргетасын қалады.</p>
+    </div>
+    <div class="bubble pos-tl" id="bubble-2">
+      <span class="tag">Фалес туралы аңыз</span>
+      Кедейлігі үшін мазақталған Фалес жұлдыздарды бақылап, зәйтүн өнімін алдын ала біліп, барлық сыққышты жалға алып қойды — бір жазда байып шықты.
+    </div>
+
+    <!-- Act 3: Islamic Renaissance -->
+    <div class="panel pos-tr" id="panel-3">
+      <span class="label">III. Орта ғасыр — Шығыс</span>
+      <h2>Ислам Ренессансы</h2>
+      <p>Бағдат пен Орталық Азияда ғылыми жарылыс болды: алгебра, медицина (Ибн Сина), астрономия (Ұлықбек). Әл-Фараби ілім мен дінді үйлестірді.</p>
+    </div>
+    <div class="bubble pos-bl" id="bubble-3">
+      <span class="tag">Бүгінге дейін жетті</span>
+      «Алгоритм» сөзі — әл-Хорезмидің есімінен. Ал ХІІІ ғасырда әл-Джазари судың күшімен жұмыс істейтін алғашқы роботтарды жасаған. 📱🤖
+    </div>
+
+    <div class="intro-hint" id="intro-hint">
+      <span>Скролл жаса</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </div>
+</div>
+
+<div class="closing">
+  <div class="closing-inner">
+    <span class="label">III. Орта ғасыр — Батыс</span>
+    <h3>Сұрақтың өзі — жаттығу</h3>
+    <p>Батыста ғылым толықтай дін аясында дамыды. Схоластар «иненің ұшына қанша періште сыяды?» секілді сұрақтарды жылдап талқылады. Күлкілі көрінгенімен, дәл осы дискуссиялар абстрактілі логиканы шыңдап, Болонья, Париж, Оксфорд университеттерінің тууына жол ашты — солар кейін қазіргі ғылымды тудырды.</p>
+    <p class="credit">Жоғарыдағы видео — осы тарихи кезеңдерді бейнелейтін, жасанды интеллект арқылы генерацияланған көрініс.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  const track = document.getElementById('track');
+  const video = document.getElementById('reel');
+  const panels = [0,1,2,3].map(i => document.getElementById('panel-'+i));
+  const bubbles = { 1: document.getElementById('bubble-1'), 2: document.getElementById('bubble-2'), 3: document.getElementById('bubble-3') };
+  const ticks = document.querySelectorAll('.progress .tick');
+  const introHint = document.getElementById('intro-hint');
+
+  const bounds = [
+    {start:0.00, end:0.255},
+    {start:0.255, end:0.520},
+    {start:0.520, end:0.700},
+    {start:0.795, end:1.00}
+  ];
+  const bubbleBounds = {
+    1: {start:0.34, end:0.520},
+    2: {start:0.575, end:0.695},
+    3: {start:0.845, end:1.00}
+  };
+  const FADE = 0.025;
+
+  let ready = false, duration = 0, ticking = false, hintHidden = false;
+
+  video.addEventListener('loadedmetadata', function(){
+    duration = video.duration || 0;
+    ready = true;
+    update();
+  });
+  video.load();
+
+  function opacityFor(frac, b){
+    if (frac < b.start - FADE || frac > b.end + FADE) return 0;
+    if (frac < b.start) return (frac - (b.start - FADE)) / FADE;
+    if (frac > b.end) return 1 - (frac - b.end) / FADE;
+    return 1;
+  }
+
+  function update(){
+    ticking = false;
+    const rect = track.getBoundingClientRect();
+    const scrollable = track.offsetHeight - window.innerHeight;
+    let frac = scrollable > 0 ? (-rect.top) / scrollable : 0;
+    frac = Math.max(0, Math.min(1, frac));
+
+    if (!hintHidden && frac > 0.015){ introHint.style.opacity = '0'; hintHidden = true; }
+    if (ready && duration){ video.currentTime = frac * duration; }
+
+    let activeIdx = 0;
+    panels.forEach((p, i) => {
+      const o = opacityFor(frac, bounds[i]);
+      p.classList.toggle('visible', o > 0.5);
+      p.style.opacity = o;
+      if (o > 0.5) activeIdx = i;
+    });
+    Object.keys(bubbleBounds).forEach(k => {
+      const o = opacityFor(frac, bubbleBounds[k]);
+      bubbles[k].classList.toggle('visible', o > 0.5);
+      bubbles[k].style.opacity = o;
+    });
+
+    ticks.forEach((t, i) => t.classList.toggle('active', i === activeIdx));
+  }
+
+  window.addEventListener('scroll', function(){
+    if (!ticking){ window.requestAnimationFrame(update); ticking = true; }
+  }, {passive:true});
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>
+
+</body>
+</html>
