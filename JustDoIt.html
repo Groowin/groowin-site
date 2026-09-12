@@ -102,6 +102,30 @@ const THEMES = {
 };
 const ThemeCtx = createContext(THEMES.indigo);
 
+/* ---------- storage adapter: uses Claude's window.storage when present,
+   falls back to localStorage when the page runs as a plain standalone site ---------- */
+const hasHostStorage = typeof window !== "undefined" && window.storage && typeof window.storage.get === "function";
+const storageAdapter = {
+  get: async (key) => {
+    if (hasHostStorage) return window.storage.get(key);
+    try {
+      const v = window.localStorage.getItem(key);
+      return v !== null ? { key, value: v } : null;
+    } catch (e) {
+      return null;
+    }
+  },
+  set: async (key, value) => {
+    if (hasHostStorage) return window.storage.set(key, value);
+    try {
+      window.localStorage.setItem(key, value);
+      return { key, value };
+    } catch (e) {
+      return null;
+    }
+  },
+};
+
 const DAY_NAMES = ["Дүйсенбі", "Сейсенбі", "Сәрсенбі", "Бейсенбі", "Жұма", "Сенбі", "Жексенбі"];
 const DAY_SHORT = ["Дс", "Сс", "Ср", "Бс", "Жм", "Сб", "Жс"];
 const HABIT_SEED = [
@@ -260,7 +284,7 @@ function Planner() {
     (async () => {
       let initial = null;
       try {
-        const res = await window.storage.get("planner-data");
+        const res = await storageAdapter.get("planner-data");
         if (res && res.value) initial = JSON.parse(res.value);
       } catch (e) {
         initial = null;
@@ -284,7 +308,11 @@ function Planner() {
   }, [weekKey, loaded]);
 
   const persist = useCallback((newData) => {
-    window.storage.set("planner-data", JSON.stringify(newData)).catch(() => {});
+    try {
+      storageAdapter.set("planner-data", JSON.stringify(newData)).catch(() => {});
+    } catch (e) {
+      /* ignore — never let a storage failure crash the app */
+    }
   }, []);
 
   const commit = useCallback(
