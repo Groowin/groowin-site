@@ -1,1 +1,735 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Апта журналы</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; }
+  #root { min-height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useCallback, createContext, useContext } = React;
 
+/* ---------- minimal inline icon set (feather/lucide-style strokes) ---------- */
+function Icon({ children, size = 14, color = "currentColor", fill = "none", strokeWidth = 2, style }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" style={style}>
+      {children}
+    </svg>
+  );
+}
+const Check = (p) => <Icon {...p}><polyline points="20 6 9 17 4 12" /></Icon>;
+const Plus = (p) => <Icon {...p}><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></Icon>;
+const X = (p) => <Icon {...p}><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></Icon>;
+const ChevronLeft = (p) => <Icon {...p}><polyline points="15 18 9 12 15 6" /></Icon>;
+const ChevronRight = (p) => <Icon {...p}><polyline points="9 18 15 12 9 6" /></Icon>;
+const Trash2 = (p) => (
+  <Icon {...p}>
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+    <path d="M10 11v6" />
+    <path d="M14 11v6" />
+    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+  </Icon>
+);
+const Flag = ({ fill = "none", color = "currentColor", size = 13, ...rest }) => (
+  <Icon color={color} size={size} fill={fill === "none" ? "none" : color} {...rest}>
+    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+    <line x1="4" y1="22" x2="4" y2="15" />
+  </Icon>
+);
+const Copy = (p) => (
+  <Icon {...p}>
+    <rect x="9" y="9" width="13" height="13" rx="2" />
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+  </Icon>
+);
+const Target = (p) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="12" cy="12" r="6" />
+    <circle cx="12" cy="12" r="2" />
+  </Icon>
+);
+
+
+/* ---------- theme tokens ---------- */
+const THEMES = {
+  indigo: {
+    label: "Индиго", swatch: "#3D4E9C",
+    page: "#EDEFF2", paper: "#FFFFFF", line: "#D6DBE1", lineSoft: "#E6E9ED",
+    ink: "#182233", inkSoft: "#5B6472", inkFaint: "#8A93A0",
+    primary: "#3D4E9C", primarySoft: "#EEF0FA",
+    success: "#1E7F6E", successSoft: "#E7F3F0",
+    warn: "#CE8A2E", warnSoft: "#FBF0DE",
+    danger: "#B5473F", dangerSoft: "#FBECEA",
+  },
+  dark: {
+    label: "Қараңғы", swatch: "#4FB6E3",
+    page: "#14161C", paper: "#1B1E26", line: "#2B303B", lineSoft: "#242832",
+    ink: "#E7E9EE", inkSoft: "#9BA3B0", inkFaint: "#6A7280",
+    primary: "#4FB6E3", primarySoft: "#1E2C36",
+    success: "#3FAE7A", successSoft: "#1B2E28",
+    warn: "#D9A441", warnSoft: "#332A18",
+    danger: "#E1615B", dangerSoft: "#33201F",
+  },
+  amber: {
+    label: "Күз", swatch: "#B5642E",
+    page: "#F3ECE1", paper: "#FFFBF5", line: "#E4D6C2", lineSoft: "#EDE3D3",
+    ink: "#3B2E22", inkSoft: "#7A6A56", inkFaint: "#A5947E",
+    primary: "#B5642E", primarySoft: "#F5E6D6",
+    success: "#4C7A54", successSoft: "#E7F0E5",
+    warn: "#C79A3D", warnSoft: "#F6ECD4",
+    danger: "#A6432E", dangerSoft: "#F5E0DA",
+  },
+  ocean: {
+    label: "Мұхит", swatch: "#1F7A6C",
+    page: "#E9F2F0", paper: "#FFFFFF", line: "#CFE3DE", lineSoft: "#E1EEEB",
+    ink: "#1C3733", inkSoft: "#587C75", inkFaint: "#8AA9A2",
+    primary: "#1F7A6C", primarySoft: "#E2F1EC",
+    success: "#2F9E6E", successSoft: "#E7F3EC",
+    warn: "#CE8A2E", warnSoft: "#FBF0DE",
+    danger: "#B5473F", dangerSoft: "#FBECEA",
+  },
+};
+const ThemeCtx = createContext(THEMES.indigo);
+
+const DAY_NAMES = ["Дүйсенбі", "Сейсенбі", "Сәрсенбі", "Бейсенбі", "Жұма", "Сенбі", "Жексенбі"];
+const DAY_SHORT = ["Дс", "Сс", "Ср", "Бс", "Жм", "Сб", "Жс"];
+const HABIT_SEED = [
+  { name: "Таңертең 05:00-де тұру", emoji: "⏰" },
+  { name: "Салқын су құю", emoji: "🚿" },
+  { name: "Спортзал", emoji: "💪" },
+  { name: "Оқу / білім алу", emoji: "📖" },
+  { name: "Күнді жоспарлау", emoji: "🗒️" },
+];
+const PRIORITIES = ["none", "important", "urgent"];
+
+/* ---------- date helpers ---------- */
+function getMonday(d) {
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + diff);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+function addDays(d, n) {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+function toKey(d) {
+  return d.toISOString().slice(0, 10);
+}
+function short(d) {
+  return d.toLocaleDateString("kk-KZ", { day: "2-digit", month: "2-digit" });
+}
+function uid() {
+  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+}
+
+/* ---------- default data shape ---------- */
+function emptyWeek() {
+  return { days: Array.from({ length: 7 }, () => ({ tasks: [], notes: [] })), goals: [] };
+}
+function seedHabitDefs() {
+  return HABIT_SEED.map((h) => ({ id: uid(), ...h }));
+}
+function ensureWeek(data, weekKey) {
+  if (!data.weeks[weekKey]) data.weeks[weekKey] = emptyWeek();
+  if (!data.weeks[weekKey].goals) data.weeks[weekKey].goals = [];
+  if (!data.habitChecks[weekKey]) data.habitChecks[weekKey] = {};
+  data.habitDefs.forEach((h) => {
+    if (!data.habitChecks[weekKey][h.id]) data.habitChecks[weekKey][h.id] = Array(7).fill(false);
+  });
+  return data;
+}
+function weekProgress(data, weekKey) {
+  const w = data.weeks[weekKey];
+  if (!w) return 0;
+  const total = w.days.reduce((s, d) => s + d.tasks.length, 0);
+  const done = w.days.reduce((s, d) => s + d.tasks.filter((t) => t.done).length, 0);
+  return total ? Math.round((done / total) * 100) : 0;
+}
+function computeStreak(data, habitId) {
+  const checkDay = (d) => {
+    const wk = toKey(getMonday(d));
+    const dow = (d.getDay() + 6) % 7;
+    return !!(data.habitChecks[wk] && data.habitChecks[wk][habitId] && data.habitChecks[wk][habitId][dow]);
+  };
+  let today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let cursor = new Date(today);
+  if (!checkDay(cursor)) cursor = addDays(cursor, -1);
+  let streak = 0;
+  for (let i = 0; i < 120; i++) {
+    if (checkDay(cursor)) {
+      streak++;
+      cursor = addDays(cursor, -1);
+    } else break;
+  }
+  return streak;
+}
+function nowHHMM() {
+  return new Date().toTimeString().slice(0, 5);
+}
+function buildSummary(week, dayDates, habitDefs, habitChecksWeek) {
+  const lines = [`Апта: ${short(dayDates[0])}–${short(dayDates[6])}`, ""];
+  week.days.forEach((day, i) => {
+    lines.push(`${DAY_NAMES[i]} (${short(dayDates[i])})`);
+    if (day.tasks.length === 0) lines.push("  тапсырма жоқ");
+    day.tasks.forEach((t) => lines.push(`  [${t.done ? "x" : " "}] ${t.text}${t.time ? " · " + t.time : ""}`));
+    lines.push("");
+  });
+  if (week.goals.length) {
+    lines.push("Апта мақсаттары:");
+    week.goals.forEach((g) => lines.push(`  [${g.done ? "x" : " "}] ${g.text}`));
+    lines.push("");
+  }
+  if (habitDefs.length) {
+    lines.push("Әдеттер:");
+    habitDefs.forEach((h) => {
+      const arr = habitChecksWeek[h.id] || Array(7).fill(false);
+      lines.push(`  ${h.emoji} ${h.name}: ${arr.filter(Boolean).length}/7`);
+    });
+  }
+  return lines.join("\n");
+}
+
+/* ---------- small visual primitives ---------- */
+function Ring({ pct, size = 44, stroke = 5, color, track, label }) {
+  const T = useContext(ThemeCtx);
+  const c0 = color || T.primary;
+  const tr = track || T.lineSoft;
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const off = circ * (1 - Math.min(100, Math.max(0, pct)) / 100);
+  return (
+    <div style={{ position: "relative", width: size, height: size }}>
+      <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+        <circle cx={size / 2} cy={size / 2} r={r} stroke={tr} strokeWidth={stroke} fill="none" />
+        <circle
+          cx={size / 2} cy={size / 2} r={r} stroke={c0} strokeWidth={stroke} fill="none"
+          strokeDasharray={circ} strokeDashoffset={off} strokeLinecap="round"
+          style={{ transition: "stroke-dashoffset 300ms ease" }}
+        />
+      </svg>
+      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'IBM Plex Mono', monospace", fontSize: size < 50 ? 10 : 15, color: T.ink, fontWeight: 600 }}>
+        {label !== undefined ? label : `${Math.round(pct)}%`}
+      </div>
+    </div>
+  );
+}
+
+function Checkbox({ checked, onClick, color }) {
+  const T = useContext(ThemeCtx);
+  const c0 = color || T.success;
+  return (
+    <button
+      onClick={onClick}
+      style={{ width: 20, height: 20, minWidth: 20, borderRadius: 4, border: `1.5px solid ${checked ? c0 : T.line}`, background: checked ? c0 : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}
+      aria-label={checked ? "орындалды" : "орындалмады"}
+    >
+      {checked && <Check size={13} color="#fff" strokeWidth={3} />}
+    </button>
+  );
+}
+
+/* ---------- app ---------- */
+function Planner() {
+  const [data, setData] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+  const [tab, setTab] = useState("week");
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [toast, setToast] = useState("");
+
+  const monday = getMonday(addDays(new Date(), weekOffset * 7));
+  const weekKey = toKey(monday);
+  const dayDates = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
+
+  useEffect(() => {
+    (async () => {
+      let initial = null;
+      try {
+        const res = await window.storage.get("planner-data");
+        if (res && res.value) initial = JSON.parse(res.value);
+      } catch (e) {
+        initial = null;
+      }
+      if (!initial) initial = { weeks: {}, habitDefs: seedHabitDefs(), habitChecks: {}, theme: "indigo" };
+      if (!initial.theme) initial.theme = "indigo";
+      ensureWeek(initial, toKey(getMonday(new Date())));
+      setData(initial);
+      setLoaded(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    setData((prev) => {
+      const clone = JSON.parse(JSON.stringify(prev));
+      ensureWeek(clone, weekKey);
+      return clone;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weekKey, loaded]);
+
+  const persist = useCallback((newData) => {
+    window.storage.set("planner-data", JSON.stringify(newData)).catch(() => {});
+  }, []);
+
+  const commit = useCallback(
+    (mutator) => {
+      setData((prev) => {
+        const clone = JSON.parse(JSON.stringify(prev));
+        ensureWeek(clone, weekKey);
+        mutator(clone);
+        persist(clone);
+        return clone;
+      });
+    },
+    [weekKey, persist]
+  );
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 2200);
+  };
+
+  const T = data ? THEMES[data.theme] || THEMES.indigo : THEMES.indigo;
+
+  useEffect(() => {
+    document.documentElement.style.background = T.page;
+    document.body.style.background = T.page;
+  }, [T]);
+
+  if (!loaded || !data) {
+    return (
+      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: T.page, fontFamily: "'IBM Plex Mono', monospace", color: T.inkFaint }}>
+        жүктелуде…
+      </div>
+    );
+  }
+
+  const week = data.weeks[weekKey] || emptyWeek();
+  const habitChecksWeek = data.habitChecks[weekKey] || {};
+
+  /* ---- mutators ---- */
+  const addTask = (i, rawText, time, priority) =>
+    commit((d) => {
+      const parts = rawText.split(/[,;]/).map((s) => s.trim()).filter(Boolean);
+      parts.forEach((p) => d.weeks[weekKey].days[i].tasks.push({ id: uid(), text: p, done: false, time: time || "", priority: priority || "none" }));
+    });
+  const toggleTask = (i, id) => commit((d) => { const t = d.weeks[weekKey].days[i].tasks.find((x) => x.id === id); if (t) t.done = !t.done; });
+  const deleteTask = (i, id) => commit((d) => { d.weeks[weekKey].days[i].tasks = d.weeks[weekKey].days[i].tasks.filter((x) => x.id !== id); });
+  const cyclePriority = (i, id) => commit((d) => {
+    const t = d.weeks[weekKey].days[i].tasks.find((x) => x.id === id);
+    if (t) { const idx = PRIORITIES.indexOf(t.priority || "none"); t.priority = PRIORITIES[(idx + 1) % PRIORITIES.length]; }
+  });
+  const addNote = (i, text) => commit((d) => d.weeks[weekKey].days[i].notes.push({ id: uid(), text }));
+  const deleteNote = (i, id) => commit((d) => { d.weeks[weekKey].days[i].notes = d.weeks[weekKey].days[i].notes.filter((x) => x.id !== id); });
+
+  const addGoal = (text) => commit((d) => d.weeks[weekKey].goals.push({ id: uid(), text, done: false }));
+  const toggleGoal = (id) => commit((d) => { const g = d.weeks[weekKey].goals.find((x) => x.id === id); if (g) g.done = !g.done; });
+  const deleteGoal = (id) => commit((d) => { d.weeks[weekKey].goals = d.weeks[weekKey].goals.filter((x) => x.id !== id); });
+
+  const addHabit = (name, emoji) => commit((d) => {
+    const h = { id: uid(), name, emoji: emoji || "•" };
+    d.habitDefs.push(h);
+    d.habitChecks[weekKey][h.id] = Array(7).fill(false);
+  });
+  const deleteHabit = (id) => commit((d) => {
+    d.habitDefs = d.habitDefs.filter((h) => h.id !== id);
+    Object.keys(d.habitChecks).forEach((wk) => delete d.habitChecks[wk][id]);
+  });
+  const toggleHabit = (id, dayIdx) => commit((d) => { d.habitChecks[weekKey][id][dayIdx] = !d.habitChecks[weekKey][id][dayIdx]; });
+
+  const setTheme = (name) => commit((d) => { d.theme = name; });
+
+  const copySummary = async () => {
+    const text = buildSummary(week, dayDates, data.habitDefs, habitChecksWeek);
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast("Көшірілді!");
+    } catch (e) {
+      window.prompt("Мәтінді көшіріңіз:", text);
+    }
+  };
+
+  /* ---- analytics ---- */
+  const totalTasks = week.days.reduce((s, day) => s + day.tasks.length, 0);
+  const completed = week.days.reduce((s, day) => s + day.tasks.filter((t) => t.done).length, 0);
+  const incomplete = totalTasks - completed;
+  const avgProgress = totalTasks ? Math.round((completed / totalTasks) * 100) : 0;
+  const perDay = week.days.map((day) => ({ total: day.tasks.length, done: day.tasks.filter((t) => t.done).length }));
+  let mostProductiveIdx = 0;
+  perDay.forEach((p, i) => { if (p.done > perDay[mostProductiveIdx].done) mostProductiveIdx = i; });
+  const fullDays = perDay.filter((p) => p.total > 0 && p.done === p.total).length;
+  const maxVal = Math.max(1, ...perDay.map((p) => p.total));
+  const goalsDone = week.goals.filter((g) => g.done).length;
+
+  return (
+    <ThemeCtx.Provider value={T}>
+      <div style={{ minHeight: "100dvh", background: T.page, fontFamily: "'Inter', sans-serif", color: T.ink }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+          * { box-sizing: border-box; }
+          html, body { background: ${T.page}; overscroll-behavior-y: none; min-height: 100%; }
+          input::placeholder { color: ${T.inkFaint}; }
+          ::-webkit-scrollbar { height: 6px; width: 6px; }
+          ::-webkit-scrollbar-thumb { background: ${T.line}; border-radius: 3px; }
+          input[type="time"] { color-scheme: ${data.theme === "dark" ? "dark" : "light"}; }
+        `}</style>
+
+        {/* header */}
+        <div style={{ borderBottom: `1px solid ${T.line}`, background: T.paper }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto", padding: "18px 20px", display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 22, letterSpacing: -0.5 }}>Апта журналы</div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: T.inkFaint, marginTop: 2 }}>
+                {short(dayDates[0])}–{short(dayDates[6])} · {monday.getFullYear()}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <button onClick={() => setWeekOffset((w) => w - 1)} style={navBtn(T)}><ChevronLeft size={16} /></button>
+              <button onClick={() => setWeekOffset(0)} style={{ ...navBtn(T), width: "auto", padding: "0 12px", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: weekOffset === 0 ? T.primary : T.inkSoft, borderColor: weekOffset === 0 ? T.primary : T.line }}>бүгін</button>
+              <button onClick={() => setWeekOffset((w) => w + 1)} style={navBtn(T)}><ChevronRight size={16} /></button>
+            </div>
+
+            <div style={{ display: "flex", gap: 6 }}>
+              {Object.entries(THEMES).map(([key, th]) => (
+                <button
+                  key={key} onClick={() => setTheme(key)} title={th.label}
+                  style={{ width: 22, height: 22, borderRadius: "50%", background: th.swatch, border: data.theme === key ? `2px solid ${T.ink}` : `2px solid transparent`, cursor: "pointer", padding: 0, outline: `1px solid ${T.line}`, outlineOffset: 1 }}
+                />
+              ))}
+            </div>
+
+            <button onClick={copySummary} style={{ display: "flex", alignItems: "center", gap: 6, border: `1px solid ${T.line}`, borderRadius: 6, background: "transparent", padding: "7px 12px", fontSize: 12.5, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, color: T.inkSoft, cursor: "pointer" }}>
+              <Copy size={14} /> Аптаны көшіру
+            </button>
+
+            <div style={{ display: "flex", border: `1px solid ${T.line}`, borderRadius: 6, overflow: "hidden" }}>
+              {[["week", "Апта"], ["habits", "Әдеттер"], ["analytics", "Талдау"]].map(([key, label]) => (
+                <button key={key} onClick={() => setTab(key)} style={{ padding: "8px 16px", fontSize: 13, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, border: "none", cursor: "pointer", background: tab === key ? T.ink : "transparent", color: tab === key ? T.paper : T.inkSoft }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "22px 20px 60px" }}>
+          {tab === "week" && (
+            <>
+              <GoalsPanel goals={week.goals} onAdd={addGoal} onToggle={toggleGoal} onDelete={deleteGoal} />
+              <WeekBoard dayDates={dayDates} week={week} onAddTask={addTask} onToggleTask={toggleTask} onDeleteTask={deleteTask} onCyclePriority={cyclePriority} onAddNote={addNote} onDeleteNote={deleteNote} />
+            </>
+          )}
+          {tab === "habits" && (
+            <HabitsBoard habitDefs={data.habitDefs} checks={habitChecksWeek} data={data} onToggle={toggleHabit} onAdd={addHabit} onDelete={deleteHabit} />
+          )}
+          {tab === "analytics" && (
+            <AnalyticsBoard perDay={perDay} maxVal={maxVal} totalTasks={totalTasks} completed={completed} incomplete={incomplete} avgProgress={avgProgress} mostProductiveIdx={mostProductiveIdx} fullDays={fullDays} goalsDone={goalsDone} goalsTotal={week.goals.length} data={data} weekOffset={weekOffset} />
+          )}
+        </div>
+
+        {toast && (
+          <div style={{ position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", background: T.ink, color: T.paper, padding: "10px 18px", borderRadius: 6, fontSize: 13, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
+            {toast}
+          </div>
+        )}
+      </div>
+    </ThemeCtx.Provider>
+  );
+}
+
+const navBtn = (T) => ({ width: 32, height: 32, borderRadius: 6, border: `1px solid ${T.line}`, background: T.paper, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: T.inkSoft });
+
+/* ---------- goals panel ---------- */
+function GoalsPanel({ goals, onAdd, onToggle, onDelete }) {
+  const T = useContext(ThemeCtx);
+  const [text, setText] = useState("");
+  const submit = () => { if (!text.trim()) return; onAdd(text.trim()); setText(""); };
+  return (
+    <div style={{ background: T.paper, border: `1px solid ${T.line}`, borderRadius: 6, padding: 16, marginBottom: 14 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <Target size={16} color={T.primary} />
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 15 }}>Апта мақсаттары</div>
+        <div style={{ marginLeft: "auto", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: T.inkFaint }}>
+          {goals.filter((g) => g.done).length}/{goals.length} аяқталды
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 8 }}>
+        {goals.map((g) => (
+          <div key={g.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Checkbox checked={g.done} onClick={() => onToggle(g.id)} color={T.primary} />
+            <div style={{ flex: 1, fontSize: 13.5, color: g.done ? T.inkFaint : T.ink, textDecoration: g.done ? "line-through" : "none" }}>{g.text}</div>
+            <button onClick={() => onDelete(g.id)} style={{ border: "none", background: "none", cursor: "pointer", color: T.inkFaint }}><X size={13} /></button>
+          </div>
+        ))}
+        {goals.length === 0 && <div style={{ fontSize: 12.5, color: T.inkFaint }}>Осы аптаға мақсат қойылмаған</div>}
+      </div>
+      <div style={{ display: "flex", gap: 6 }}>
+        <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} placeholder="жаңа мақсат…" style={inputStyle(T)} />
+        <button onClick={submit} style={addBtnStyle(T)}><Plus size={14} /></button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- week board ---------- */
+function WeekBoard({ dayDates, week, onAddTask, onToggleTask, onDeleteTask, onCyclePriority, onAddNote, onDeleteNote }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(210px, 1fr))", gap: 12, overflowX: "auto" }}>
+      {dayDates.map((date, i) => (
+        <DayColumn key={i} idx={i} date={date} day={week.days[i]} onAddTask={onAddTask} onToggleTask={onToggleTask} onDeleteTask={onDeleteTask} onCyclePriority={onCyclePriority} onAddNote={onAddNote} onDeleteNote={onDeleteNote} />
+      ))}
+    </div>
+  );
+}
+
+function priorityColor(T, p) {
+  if (p === "urgent") return T.danger;
+  if (p === "important") return T.warn;
+  return T.inkFaint;
+}
+
+function DayColumn({ idx, date, day, onAddTask, onToggleTask, onDeleteTask, onCyclePriority, onAddNote, onDeleteNote }) {
+  const T = useContext(ThemeCtx);
+  const [text, setText] = useState("");
+  const [time, setTime] = useState("");
+  const [note, setNote] = useState("");
+  const done = day.tasks.filter((t) => t.done).length;
+  const total = day.tasks.length;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  const todayKey = toKey(new Date());
+  const isToday = toKey(date) === todayKey;
+  const isPast = toKey(date) < todayKey;
+  const hhmm = nowHHMM();
+
+  const submit = () => { if (!text.trim()) return; onAddTask(idx, text.trim(), time, "none"); setText(""); setTime(""); };
+  const submitNote = () => { if (!note.trim()) return; onAddNote(idx, note.trim()); setNote(""); };
+
+  return (
+    <div style={{ background: T.paper, border: `1px solid ${T.line}`, borderRadius: 6, display: "flex", flexDirection: "column", minHeight: 420 }}>
+      <div style={{ padding: "12px 12px 10px", borderBottom: `1px solid ${T.lineSoft}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 14, color: isToday ? T.primary : T.ink }}>{DAY_NAMES[idx]}</div>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: T.inkFaint }}>{short(date)}</div>
+        </div>
+        <Ring pct={pct} size={36} stroke={4} color={total ? (pct === 100 ? T.success : T.primary) : T.lineSoft} label={total ? undefined : "–"} />
+      </div>
+
+      <div style={{ padding: "10px 12px", flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
+        {day.tasks.length === 0 && <div style={{ fontSize: 12, color: T.inkFaint, padding: "8px 0" }}>Алғашқы тапсырманы қосыңыз</div>}
+        {day.tasks.map((t) => {
+          const overdue = !t.done && t.time && (isPast || (isToday && hhmm > t.time));
+          return (
+            <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 7 }}>
+              <Checkbox checked={t.done} onClick={() => onToggleTask(idx, t.id)} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13.5, color: t.done ? T.inkFaint : T.ink, textDecoration: t.done ? "line-through" : "none", overflowWrap: "break-word" }}>{t.text}</div>
+                {t.time && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, color: overdue ? T.danger : T.inkFaint }}>{t.time}</div>}
+              </div>
+              <button onClick={() => onCyclePriority(idx, t.id)} style={{ border: "none", background: "none", cursor: "pointer", padding: 2, display: "flex" }} title="маңыздылық">
+                <Flag size={13} color={priorityColor(T, t.priority)} fill={t.priority !== "none" ? priorityColor(T, t.priority) : "none"} />
+              </button>
+              <button onClick={() => onDeleteTask(idx, t.id)} style={{ border: "none", background: "none", cursor: "pointer", color: T.inkFaint, padding: 2 }}>
+                <X size={13} />
+              </button>
+            </div>
+          );
+        })}
+        <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 4 }}>
+          <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} placeholder="жаңа тапсырма (үтірмен бірнешеу)…" style={{ ...inputStyle(T), width: "100%" }} />
+          <div style={{ display: "flex", gap: 6 }}>
+            <input value={time} onChange={(e) => setTime(e.target.value)} type="time" style={{ ...inputStyle(T), flex: 1 }} />
+            <button onClick={submit} style={addBtnStyle(T)}><Plus size={14} /></button>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ padding: "8px 12px", borderTop: `1px solid ${T.lineSoft}`, display: "flex", gap: 10, fontFamily: "'IBM Plex Mono', monospace", fontSize: 11 }}>
+        <span style={{ color: T.success }}>орындалды {done}</span>
+        <span style={{ color: T.danger }}>орындалмады {total - done}</span>
+      </div>
+
+      <div style={{ padding: "10px 12px", borderTop: `1px solid ${T.lineSoft}` }}>
+        <div style={{ fontSize: 11, color: T.inkFaint, marginBottom: 6, fontFamily: "'IBM Plex Mono', monospace" }}>күн жазбалары</div>
+        {day.notes.map((n, ni) => (
+          <div key={n.id} style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12.5, marginBottom: 4 }}>
+            <span style={{ color: T.inkFaint, fontFamily: "'IBM Plex Mono', monospace" }}>{ni + 1}.</span>
+            <span style={{ flex: 1 }}>{n.text}</span>
+            <button onClick={() => onDeleteNote(idx, n.id)} style={{ border: "none", background: "none", cursor: "pointer", color: T.inkFaint }}><X size={11} /></button>
+          </div>
+        ))}
+        <div style={{ display: "flex", gap: 6 }}>
+          <input value={note} onChange={(e) => setNote(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submitNote()} placeholder="жазба қосу…" style={{ ...inputStyle(T), fontSize: 12.5 }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const inputStyle = (T) => ({ flex: 1, border: `1.5px solid ${T.inkFaint}`, borderRadius: 7, padding: "9px 10px", fontSize: 14, outline: "none", fontFamily: "'Inter', sans-serif", minWidth: 0, minHeight: 38, background: T.page, color: T.ink, boxSizing: "border-box" });
+const addBtnStyle = (T) => ({ border: `1.5px solid ${T.ink}`, borderRadius: 7, background: T.ink, color: T.paper, width: 38, minHeight: 38, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 });
+
+/* ---------- habits board ---------- */
+function HabitsBoard({ habitDefs, checks, data, onToggle, onAdd, onDelete }) {
+  const T = useContext(ThemeCtx);
+  const [name, setName] = useState("");
+  const submit = () => { if (!name.trim()) return; onAdd(name.trim()); setName(""); };
+
+  return (
+    <div style={{ background: T.paper, border: `1px solid ${T.line}`, borderRadius: 6, overflow: "hidden" }}>
+      <div style={{ padding: "14px 16px", borderBottom: `1px solid ${T.lineSoft}`, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 15 }}>Әдеттер трекері</div>
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 720 }}>
+          <thead>
+            <tr style={{ background: T.page }}>
+              <th style={{ ...thStyle(T), textAlign: "left", minWidth: 190 }}>Әдет</th>
+              {DAY_SHORT.map((d) => <th key={d} style={{ ...thStyle(T), width: 42 }}>{d}</th>)}
+              <th style={{ ...thStyle(T), width: 60 }}>Серия</th>
+              <th style={{ ...thStyle(T), width: 130 }}>Үлгерім</th>
+              <th style={{ ...thStyle(T), width: 36 }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {habitDefs.map((h) => {
+              const arr = checks[h.id] || Array(7).fill(false);
+              const doneCount = arr.filter(Boolean).length;
+              const pct = Math.round((doneCount / 7) * 100);
+              const streak = computeStreak(data, h.id);
+              return (
+                <tr key={h.id} style={{ borderTop: `1px solid ${T.lineSoft}` }}>
+                  <td style={{ padding: "10px 14px", fontSize: 13.5 }}><span style={{ marginRight: 8 }}>{h.emoji}</span>{h.name}</td>
+                  {arr.map((c, di) => (
+                    <td key={di} style={{ textAlign: "center", padding: "10px 4px" }}>
+                      <div style={{ display: "flex", justifyContent: "center" }}><Checkbox checked={c} onClick={() => onToggle(h.id, di)} color={T.primary} /></div>
+                    </td>
+                  ))}
+                  <td style={{ textAlign: "center", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12.5, color: streak > 0 ? T.warn : T.inkFaint }}>
+                    {streak > 0 ? `🔥 ${streak}` : "–"}
+                  </td>
+                  <td style={{ padding: "10px 14px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ flex: 1, height: 6, borderRadius: 3, background: T.lineSoft, overflow: "hidden" }}>
+                        <div style={{ width: `${pct}%`, height: "100%", background: pct === 100 ? T.success : T.warn }} />
+                      </div>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11.5, color: T.inkSoft, width: 32 }}>{pct}%</span>
+                    </div>
+                  </td>
+                  <td style={{ textAlign: "center" }}>
+                    <button onClick={() => onDelete(h.id)} style={{ border: "none", background: "none", cursor: "pointer", color: T.inkFaint }}><Trash2 size={14} /></button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ padding: 14, display: "flex", gap: 8, borderTop: `1px solid ${T.lineSoft}` }}>
+        <input value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} placeholder="жаңа әдет…" style={inputStyle(T)} />
+        <button onClick={submit} style={addBtnStyle(T)}><Plus size={14} /></button>
+      </div>
+    </div>
+  );
+}
+
+const thStyle = (T) => ({ padding: "10px 8px", fontSize: 11, fontFamily: "'IBM Plex Mono', monospace", color: T.inkFaint, fontWeight: 500, textAlign: "center" });
+
+/* ---------- analytics board ---------- */
+function AnalyticsBoard({ perDay, maxVal, totalTasks, completed, incomplete, avgProgress, mostProductiveIdx, fullDays, goalsDone, goalsTotal, data, weekOffset }) {
+  const T = useContext(ThemeCtx);
+  const stats = [
+    { label: "Барлық тапсырмалар", value: totalTasks },
+    { label: "Орындалды", value: completed, color: T.success },
+    { label: "Орындалмады", value: incomplete, color: T.danger },
+    { label: "Орташа үлгерім", value: `${avgProgress}%`, color: T.primary },
+    { label: "Өнімді күн", value: totalTasks ? DAY_SHORT[mostProductiveIdx] : "–" },
+    { label: "100% орындалған күндер", value: fullDays },
+    { label: "Аяқталған мақсаттар", value: `${goalsDone}/${goalsTotal}`, color: T.primary },
+  ];
+
+  const chartW = 560, chartH = 190, padL = 30, padB = 26, padT = 10;
+  const barW = (chartW - padL - 10) / 7 - 10;
+
+  const compareWeeks = [-3, -2, -1, 0].map((j) => {
+    const mon = getMonday(addDays(new Date(), (weekOffset + j) * 7));
+    return { label: short(mon), pct: weekProgress(data, toKey(mon)), current: j === 0 };
+  });
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+      {stats.map((s, i) => (
+        <div key={i} style={{ background: T.paper, border: `1px solid ${T.line}`, borderRadius: 6, padding: 16 }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 24, fontWeight: 600, color: s.color || T.ink }}>{s.value}</div>
+          <div style={{ fontSize: 12.5, color: T.inkFaint, marginTop: 4 }}>{s.label}</div>
+        </div>
+      ))}
+
+      <div style={{ gridColumn: "span 2", background: T.paper, border: `1px solid ${T.line}`, borderRadius: 6, padding: 16 }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 14, marginBottom: 10 }}>Апта үлгерімі</div>
+        <div style={{ display: "flex", gap: 14, alignItems: "center", marginBottom: 10, fontSize: 11.5, color: T.inkSoft, fontFamily: "'IBM Plex Mono', monospace" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ width: 10, height: 10, background: T.primary, borderRadius: 2, display: "inline-block" }} />орындалды</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ width: 14, height: 2, background: T.warn, display: "inline-block" }} />жоспарланды</span>
+        </div>
+        <svg width="100%" viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="xMidYMid meet">
+          {[0, 0.25, 0.5, 0.75, 1].map((t, i) => (
+            <line key={i} x1={padL} x2={chartW - 5} y1={padT + (chartH - padT - padB) * t} y2={padT + (chartH - padT - padB) * t} stroke={T.lineSoft} strokeWidth={1} />
+          ))}
+          {perDay.map((p, i) => {
+            const x = padL + i * ((chartW - padL - 10) / 7) + 8;
+            const h = (p.done / maxVal) * (chartH - padT - padB);
+            const y = chartH - padB - h;
+            return (
+              <g key={i}>
+                <rect x={x} y={y} width={barW} height={h} fill={T.primary} rx={2} />
+                <text x={x + barW / 2} y={chartH - 8} textAnchor="middle" fontSize="10" fontFamily="'IBM Plex Mono', monospace" fill={T.inkFaint}>{DAY_SHORT[i]}</text>
+              </g>
+            );
+          })}
+          <polyline fill="none" stroke={T.warn} strokeWidth={2}
+            points={perDay.map((p, i) => { const x = padL + i * ((chartW - padL - 10) / 7) + 8 + barW / 2; const y = chartH - padB - (p.total / maxVal) * (chartH - padT - padB); return `${x},${y}`; }).join(" ")} />
+        </svg>
+      </div>
+
+      <div style={{ background: T.paper, border: `1px solid ${T.line}`, borderRadius: 6, padding: 16, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10 }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 14, alignSelf: "flex-start" }}>Жалпы орындалды</div>
+        <Ring pct={avgProgress} size={120} stroke={12} color={avgProgress === 100 ? T.success : T.primary} />
+      </div>
+
+      <div style={{ gridColumn: "span 3", background: T.paper, border: `1px solid ${T.line}`, borderRadius: 6, padding: 16 }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 14, marginBottom: 12 }}>Соңғы 4 апта</div>
+        <div style={{ display: "flex", gap: 16, alignItems: "flex-end", height: 110 }}>
+          {compareWeeks.map((w, i) => (
+            <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flex: 1 }}>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11.5, color: w.current ? T.primary : T.inkSoft }}>{w.pct}%</div>
+              <div style={{ width: "60%", height: 70, background: T.lineSoft, borderRadius: 3, display: "flex", alignItems: "flex-end", overflow: "hidden" }}>
+                <div style={{ width: "100%", height: `${w.pct}%`, background: w.current ? T.primary : T.inkFaint }} />
+              </div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, color: T.inkFaint }}>{w.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<Planner />);
+</script>
+</body>
+</html>
