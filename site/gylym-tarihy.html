@@ -115,6 +115,34 @@
   .intro-hint svg{ width:16px; height:16px; animation:bob 1.8s ease-in-out infinite; }
   @keyframes bob{ 0%,100%{transform:translateY(0);opacity:.5;} 50%{transform:translateY(6px);opacity:1;} }
 
+  /* ---- auto-play control ---- */
+  .control-bar{
+    position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:0.55rem;
+    z-index:9;
+  }
+  .play-btn{
+    width:54px; height:54px; border-radius:50%; border:none;
+    background:var(--ochre); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:0 8px 24px rgba(0,0,0,0.4);
+    transition:transform .2s ease, background .2s ease;
+  }
+  .play-btn:hover{ transform:scale(1.07); }
+  .play-btn:active{ transform:scale(0.96); }
+  .play-btn svg{ width:20px; height:20px; }
+  .play-btn .icon-pause{ display:none; }
+  .play-btn.is-playing .icon-play{ display:none; }
+  .play-btn.is-playing .icon-pause{ display:block; }
+  .control-hint{
+    font-size:0.76rem; letter-spacing:0.02em; color:var(--parchment-dim);
+    transition:opacity .3s ease;
+  }
+  @media (max-width:640px){
+    .control-bar{ bottom:1.6rem; }
+    .play-btn{ width:46px; height:46px; }
+  }
+
   .closing{
     position:relative; background:var(--ink);
     padding:5rem 2.4rem 6rem; border-top:1px solid var(--line);
@@ -169,7 +197,7 @@
     </div>
     <div class="bubble pos-br" id="bubble-1">
       <span class="tag">Қызық факт</span>
-      Пифагор теоремасын Пифагордан 1000 жыл бұрын білген — бірақ ешкім «неге?» деп сұрамаған. Білім — құпия рецепт, билік құралы болды. 🤔
+      Пифагор теоремасын Пифагордан 1000 жыл бұрын білген — бірақ ешкім «неге?» деп сұрамаған. Білім — құпия рецепт, билік құралы болды.
     </div>
 
     <!-- Act 2: Ancient Greece -->
@@ -180,7 +208,7 @@
     </div>
     <div class="bubble pos-tl" id="bubble-2">
       <span class="tag">Фалес туралы аңыз</span>
-      Кедейлігі үшін мазақталған Фалес жұлдыздарды бақылап, зәйтүн өнімін алдын ала біліп, барлық сыққышты жалға алып қойды — бір жазда байып шықты.
+      Кедейлігі үшін мазақталған Фалес жұлдыздарды бақылап, зәйтүн өнімін алдын ала біліп, барлық сыққышты жалға алып қойды — бір жазда байып шықты. 🫒
     </div>
 
     <!-- Act 3: Islamic Renaissance -->
@@ -197,6 +225,14 @@
     <div class="intro-hint" id="intro-hint">
       <span>Скролл жаса</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+
+    <div class="control-bar">
+      <button class="play-btn" id="playBtn" aria-label="Автоойнату">
+        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <span class="control-hint" id="controlHint">Автоойнату</span>
     </div>
   </div>
 </div>
@@ -218,6 +254,9 @@
   const bubbles = { 1: document.getElementById('bubble-1'), 2: document.getElementById('bubble-2'), 3: document.getElementById('bubble-3') };
   const ticks = document.querySelectorAll('.progress .tick');
   const introHint = document.getElementById('intro-hint');
+  const playBtn = document.getElementById('playBtn');
+  const controlHint = document.getElementById('controlHint');
+  const stage = document.querySelector('.stage');
 
   const bounds = [
     {start:0.00, end:0.255},
@@ -233,11 +272,12 @@
   const FADE = 0.025;
 
   let ready = false, duration = 0, ticking = false, hintHidden = false;
+  let autoMode = false, autoRafId = null;
 
   video.addEventListener('loadedmetadata', function(){
     duration = video.duration || 0;
     ready = true;
-    update();
+    scrollDrivenUpdate();
   });
   video.load();
 
@@ -248,15 +288,10 @@
     return 1;
   }
 
-  function update(){
-    ticking = false;
-    const rect = track.getBoundingClientRect();
-    const scrollable = track.offsetHeight - window.innerHeight;
-    let frac = scrollable > 0 ? (-rect.top) / scrollable : 0;
-    frac = Math.max(0, Math.min(1, frac));
-
+  // Updates panels/bubbles/ticks/hint purely from a 0..1 progress fraction.
+  // Used by BOTH manual scroll-scrubbing and native auto-playback.
+  function applyFrac(frac){
     if (!hintHidden && frac > 0.015){ introHint.style.opacity = '0'; hintHidden = true; }
-    if (ready && duration){ video.currentTime = frac * duration; }
 
     let activeIdx = 0;
     panels.forEach((p, i) => {
@@ -270,15 +305,92 @@
       bubbles[k].classList.toggle('visible', o > 0.5);
       bubbles[k].style.opacity = o;
     });
-
     ticks.forEach((t, i) => t.classList.toggle('active', i === activeIdx));
   }
 
+  function currentFracFromScroll(){
+    const rect = track.getBoundingClientRect();
+    const scrollable = track.offsetHeight - window.innerHeight;
+    let frac = scrollable > 0 ? (-rect.top) / scrollable : 0;
+    return Math.max(0, Math.min(1, frac));
+  }
+
+  // Manual mode: scroll position scrubs the video (paused, currentTime set directly).
+  function scrollDrivenUpdate(){
+    ticking = false;
+    if (autoMode) return; // ignore scroll echoes generated by our own auto-scroll
+    const frac = currentFracFromScroll();
+    if (ready && duration){ video.currentTime = frac * duration; }
+    applyFrac(frac);
+  }
+
+  // Auto mode: the video plays natively (smooth, full quality, no per-frame seeking),
+  // and the page scroll position follows the video's own clock via rAF.
+  function autoTick(){
+    if (!autoMode) return;
+    const scrollable = track.offsetHeight - window.innerHeight;
+    const frac = duration ? Math.min(1, video.currentTime / duration) : 0;
+    if (scrollable > 0){ window.scrollTo(0, frac * scrollable); }
+    applyFrac(frac);
+
+    if (video.ended || frac >= 0.999){
+      stopAuto();
+      return;
+    }
+    autoRafId = requestAnimationFrame(autoTick);
+  }
+
+  function startAuto(){
+    autoMode = true;
+    playBtn.classList.add('is-playing');
+    controlHint.textContent = 'Экранды бас — тоқтату';
+    video.play();
+    autoRafId = requestAnimationFrame(autoTick);
+  }
+
+  function stopAuto(){
+    autoMode = false;
+    playBtn.classList.remove('is-playing');
+    controlHint.textContent = 'Автоойнату';
+    video.pause();
+    if (autoRafId){ cancelAnimationFrame(autoRafId); autoRafId = null; }
+  }
+
+  function toggleAuto(){
+    if (!autoMode){ startAuto(); }
+    else if (video.paused){
+      video.play();
+      playBtn.classList.add('is-playing');
+      controlHint.textContent = 'Экранды бас — тоқтату';
+      autoRafId = requestAnimationFrame(autoTick);
+    } else {
+      video.pause();
+      if (autoRafId){ cancelAnimationFrame(autoRafId); autoRafId = null; }
+      playBtn.classList.remove('is-playing');
+      controlHint.textContent = 'Жалғастыру үшін бас';
+    }
+  }
+
+  playBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    toggleAuto();
+  });
+
+  // Clicking anywhere on the video stage also pauses/resumes auto-playback.
+  stage.addEventListener('click', function(){
+    if (autoMode){ toggleAuto(); }
+  });
+
+  // A genuine user-initiated scroll (wheel/touch) hands control back to manual
+  // scrubbing immediately, so it never fights with the auto-scroll loop.
+  window.addEventListener('wheel', function(){ if (autoMode) stopAuto(); }, {passive:true});
+  window.addEventListener('touchstart', function(){ if (autoMode) stopAuto(); }, {passive:true});
+
   window.addEventListener('scroll', function(){
-    if (!ticking){ window.requestAnimationFrame(update); ticking = true; }
+    if (!ticking){ window.requestAnimationFrame(scrollDrivenUpdate); ticking = true; }
   }, {passive:true});
-  window.addEventListener('resize', update);
-  update();
+  window.addEventListener('resize', scrollDrivenUpdate);
+  scrollDrivenUpdate();
 })();
 </script>
 
