@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мектеп кешені — 3Д модель</title>
+<style>
+  :root{
+    --ink:#12212e;
+    --paper:#eef3f6;
+    --steel:#3c586b;
+    --gold:#e8ab37;
+    --gold-dim:#7a5c1f;
+    --leaf:#4f7a4c;
+    --panel-bg:#0f2233;
+    --panel-bg2:#16324a;
+    --line:#2a4759;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;background:var(--ink);font-family:'Segoe UI',-apple-system,Roboto,Arial,sans-serif;overflow:hidden;color:var(--paper);}
+  #scene{position:fixed;inset:0;}
+  #scene canvas{display:block;}
+
+  .top-bar{
+    position:fixed;top:0;left:0;right:0;z-index:5;
+    display:flex;align-items:baseline;gap:14px;
+    padding:18px 24px 10px 24px;
+    pointer-events:none;
+    background:linear-gradient(180deg, rgba(10,20,28,.75), rgba(10,20,28,0));
+  }
+  .top-bar h1{font-size:19px;margin:0;font-weight:600;letter-spacing:.2px;}
+  .top-bar span{font-size:13px;color:#9fb6c4;}
+
+  .hint{
+    position:fixed;left:24px;bottom:18px;z-index:5;
+    font-size:12.5px;color:#8fa6b5;background:rgba(10,20,28,.55);
+    padding:8px 12px;border-radius:8px;border:1px solid var(--line);
+    pointer-events:none;
+  }
+
+  #dash{
+    position:fixed;right:0;top:0;bottom:0;width:330px;
+    background:linear-gradient(180deg,var(--panel-bg),var(--panel-bg2));
+    border-left:1px solid var(--line);
+    padding:22px 20px 20px 20px;
+    overflow-y:auto;z-index:6;
+    transition:transform .35s ease;
+  }
+  #dash.collapsed{transform:translateX(100%);}
+  #dashToggle{
+    position:fixed;right:330px;top:22px;z-index:7;
+    width:34px;height:34px;border-radius:8px 0 0 8px;
+    background:var(--panel-bg2);border:1px solid var(--line);border-right:none;
+    color:var(--paper);cursor:pointer;font-size:15px;
+    transition:right .35s ease;
+  }
+  #dashToggle.collapsed{right:0;}
+
+  .dash-title{font-size:15px;font-weight:700;margin:0 0 2px 0;color:var(--gold);letter-spacing:.2px;}
+  .dash-sub{font-size:12px;color:#8fa6b5;margin:0 0 18px 0;line-height:1.5;}
+
+  .metric{margin-bottom:14px;padding:13px 14px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;}
+  .metric-label{font-size:11.5px;color:#8fa6b5;margin-bottom:4px;}
+  .metric-value{font-size:22px;font-weight:700;color:var(--paper);}
+  .metric-value small{font-size:12px;font-weight:400;color:#8fa6b5;margin-left:3px;}
+  .metric-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:9px;overflow:hidden;}
+  .metric-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));width:0%;transition:width 1.2s ease;}
+
+  .clock-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  #timeSlider{flex:1;accent-color:var(--gold);}
+  #timeLabel{font-size:13px;font-variant-numeric:tabular-nums;color:var(--gold);min-width:44px;text-align:right;}
+  .clock-note{font-size:11px;color:#7d95a4;margin:-10px 0 16px 0;}
+
+  .section-h{font-size:12px;text-transform:none;color:#c6d7e0;font-weight:700;margin:20px 0 8px 0;border-top:1px solid var(--line);padding-top:16px;}
+  .usage-list{list-style:none;margin:0;padding:0;font-size:12.5px;color:#b7c9d3;line-height:1.7;}
+  .usage-list li{display:flex;gap:8px;margin-bottom:6px;}
+  .usage-list li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);margin-top:6px;flex:none;}
+
+  .toggles{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+  .tbtn{
+    font-size:12px;padding:7px 11px;border-radius:20px;border:1px solid var(--line);
+    background:rgba(255,255,255,.03);color:#c6d7e0;cursor:pointer;
+  }
+  .tbtn.on{background:var(--gold);border-color:var(--gold);color:#231600;font-weight:600;}
+
+  #loading{
+    position:fixed;inset:0;background:#0e1b25;z-index:20;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;
+  }
+  #loading .spin{width:34px;height:34px;border-radius:50%;border:3px solid #26404f;border-top-color:var(--gold);animation:sp 1s linear infinite;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+  #loading p{font-size:13px;color:#8fa6b5;}
+
+  @media (max-width:760px){
+    #dash{width:82vw;}
+    #dashToggle{right:82vw;}
+    #dashToggle.collapsed{right:0;}
+    .top-bar h1{font-size:16px;}
+    .top-bar span{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="spin"></div><p>Модель құрылуда…</p></div>
+
+<div id="scene"></div>
+
+<div class="top-bar">
+  <h1>№ Мектеп кешені</h1>
+  <span>Күн панельдерімен жабдықталған — интерактивті 3Д модель</span>
+</div>
+
+<div class="hint">Тінтуірмен айналдыру • дөңгелету — жақындату/алыстату • сүйреу — жылжыту</div>
+
+<button id="dashToggle">›</button>
+<div id="dash">
+  <p class="dash-title">Күн энергиясы — тірі есептеу</p>
+  <p class="dash-sub">Төбедегі 42 панель негізінде күн уақытына қарай автоматты түрде есептеледі. Слайдерді жылжытып, тәулік бойы қуат қалай өзгеретінін көріңіз.</p>
+
+  <div class="clock-row">
+    <span style="font-size:16px;">☀️</span>
+    <input type="range" id="timeSlider" min="0" max="24" step="0.1" value="12">
+    <span id="timeLabel">12:00</span>
+  </div>
+  <p class="clock-note">Күннің әр сағатындағы қуат өндірісі</p>
+
+  <div class="metric">
+    <div class="metric-label">Қазіргі қуат өндірісі</div>
+    <div class="metric-value" id="mPower">0<small>кВт</small></div>
+    <div class="metric-bar"><i id="barPower"></i></div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Бүгінгі жиынтық өндіріс</div>
+    <div class="metric-value" id="mDaily">0<small>кВт·сағ</small></div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Айына болжамды үнем</div>
+    <div class="metric-value" id="mMoney">0<small>₸</small></div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Жылына азайтылған CO₂</div>
+    <div class="metric-value" id="mCO2">0<small>кг</small></div>
+  </div>
+
+  <p class="section-h">Энергияны қайда жұмсауға болады</p>
+  <ul class="usage-list">
+    <li>Сынып бөлмелерін жарықтандыру және проекторлар мен интерактивті тақталарды қуаттандыру</li>
+    <li>Компьютер сыныбы мен STEM-зертхана жабдықтарын іске қосу</li>
+    <li>Қыс мезгілінде қосымша жылыту жүйесін (электр насостарын) қолдау</li>
+    <li>Спорт залы мен акт залының вентиляциясын қамтамасыз ету</li>
+    <li>Артық энергияны жинақтап, каникул кезінде немесе түнде батареяда сақтау</li>
+    <li>Артылған қуатты жалпы қалалық электр желісіне сатып, мектеп бюджетіне қосымша қаражат табу</li>
+  </ul>
+
+  <p class="section-h">Көрініс баптаулары</p>
+  <div class="toggles">
+    <button class="tbtn on" id="tglSun">Күн жарығы</button>
+    <button class="tbtn on" id="tglRotate">Автоайналу</button>
+    <button class="tbtn" id="tglNight">Түнгі режим</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // ---------- lightweight orbit/pan/zoom controls (no external dependency) ----------
+  function SimpleOrbitControls(camera, domElement){
+    this.camera = camera;
+    this.domElement = domElement;
+    this.target = new THREE.Vector3(0,0,0);
+    this.enableDamping = true;
+    this.dampingFactor = 0.08;
+    this.minDistance = 5;
+    this.maxDistance = 200;
+    this.maxPolarAngle = Math.PI/2 - 0.02;
+    this.minPolarAngle = 0.15;
+    this.autoRotate = false;
+    this.autoRotateSpeed = 0.6;
+
+    const offset = new THREE.Vector3().copy(camera.position).sub(this.target);
+    const spherical = new THREE.Spherical().setFromVector3(offset);
+    let sphericalTheta = spherical.theta;
+    let sphericalPhi = spherical.phi;
+    let sphericalRadius = spherical.radius;
+    let targetTheta = sphericalTheta;
+    let targetPhi = sphericalPhi;
+    let targetRadius = sphericalRadius;
+
+    let rotating = false, panning = false;
+    let lastX = 0, lastY = 0;
+    const panOffset = new THREE.Vector3();
+
+    const self = this;
+
+    function onPointerDown(e){
+      if (e.button === 2 || e.shiftKey){ panning = true; } else { rotating = true; }
+      lastX = e.clientX; lastY = e.clientY;
+    }
+    function onPointerMove(e){
+      const dx = e.clientX - lastX, dy = e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY;
+      if (rotating){
+        targetTheta -= dx * 0.006;
+        targetPhi -= dy * 0.006;
+        targetPhi = Math.max(self.minPolarAngle, Math.min(self.maxPolarAngle, targetPhi));
+      } else if (panning){
+        const distFactor = targetRadius * 0.0013;
+        const panX = new THREE.Vector3();
+        const panY = new THREE.Vector3();
+        panX.setFromMatrixColumn(camera.matrix, 0);
+        panY.setFromMatrixColumn(camera.matrix, 1);
+        panOffset.addScaledVector(panX, -dx*distFactor);
+        panOffset.addScaledVector(panY, dy*distFactor);
+      }
+    }
+    function onPointerUp(){ rotating = false; panning = false; }
+    function onWheel(e){
+      e.preventDefault();
+      const scale = Math.pow(0.95, -e.deltaY*0.02);
+      targetRadius = Math.max(self.minDistance, Math.min(self.maxDistance, targetRadius / scale));
+    }
+    function onTouchStart(e){
+      if (e.touches.length===1){ rotating=true; lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; }
+      else if (e.touches.length===2){ rotating=false; self._pinchDist = dist2(e.touches); }
+    }
+    function dist2(t){ const dx=t[0].clientX-t[1].clientX, dy=t[0].clientY-t[1].clientY; return Math.sqrt(dx*dx+dy*dy); }
+    function onTouchMove(e){
+      e.preventDefault();
+      if (e.touches.length===1 && rotating){
+        const dx = e.touches[0].clientX-lastX, dy = e.touches[0].clientY-lastY;
+        lastX=e.touches[0].clientX; lastY=e.touches[0].clientY;
+        targetTheta -= dx*0.006;
+        targetPhi -= dy*0.006;
+        targetPhi = Math.max(self.minPolarAngle, Math.min(self.maxPolarAngle, targetPhi));
+      } else if (e.touches.length===2){
+        const d = dist2(e.touches);
+        const scale = d/(self._pinchDist||d);
+        self._pinchDist = d;
+        targetRadius = Math.max(self.minDistance, Math.min(self.maxDistance, targetRadius/scale));
+      }
+    }
+    function onTouchEnd(){ rotating=false; panning=false; }
+    function onContextMenu(e){ e.preventDefault(); }
+
+    domElement.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    domElement.addEventListener('wheel', onWheel, {passive:false});
+    domElement.addEventListener('touchstart', onTouchStart, {passive:true});
+    domElement.addEventListener('touchmove', onTouchMove, {passive:false});
+    domElement.addEventListener('touchend', onTouchEnd);
+    domElement.addEventListener('contextmenu', onContextMenu);
+
+    this.update = function(){
+      if (self.autoRotate && !rotating){
+        targetTheta -= self.autoRotateSpeed*0.006;
+      }
+      self.target.add(panOffset);
+      panOffset.multiplyScalar(0);
+
+      const damp = self.enableDamping ? self.dampingFactor : 1;
+      sphericalTheta += (targetTheta - sphericalTheta) * damp;
+      sphericalPhi += (targetPhi - sphericalPhi) * damp;
+      sphericalRadius += (targetRadius - sphericalRadius) * damp;
+
+      const sinPhiRadius = Math.sin(sphericalPhi) * sphericalRadius;
+      const off = new THREE.Vector3(
+        sinPhiRadius * Math.sin(sphericalTheta),
+        Math.cos(sphericalPhi) * sphericalRadius,
+        sinPhiRadius * Math.cos(sphericalTheta)
+      );
+      camera.position.copy(self.target).add(off);
+      camera.lookAt(self.target);
+    };
+  }
+
+  // ---------- basic setup ----------
+  const mount = document.getElementById('scene');
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xbcd6e8);
+  scene.fog = new THREE.Fog(0xbcd6e8, 60, 210);
+
+  const camera = new THREE.PerspectiveCamera(42, window.innerWidth/window.innerHeight, 0.1, 500);
+  camera.position.set(48, 34, 58);
+
+  const renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  mount.appendChild(renderer.domElement);
+
+  const controls = new SimpleOrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 4, 0);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 20;
+  controls.maxDistance = 130;
+  controls.maxPolarAngle = Math.PI/2 - 0.03;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.6;
+  controls.update();
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // ---------- lighting ----------
+  const hemi = new THREE.HemisphereLight(0xdfefff, 0x4d5a3f, 0.65);
+  scene.add(hemi);
+
+  const sun = new THREE.DirectionalLight(0xfff3d8, 1.25);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048,2048);
+  sun.shadow.camera.left = -55; sun.shadow.camera.right = 55;
+  sun.shadow.camera.top = 55; sun.shadow.camera.bottom = -55;
+  sun.shadow.camera.far = 160;
+  sun.shadow.bias = -0.0003;
+  scene.add(sun);
+  scene.add(sun.target);
+
+  const fill = new THREE.DirectionalLight(0xbcd4ff, 0.28);
+  fill.position.set(-30,20,-20);
+  scene.add(fill);
+
+  // ---------- materials ----------
+  const M = {
+    ground: new THREE.MeshStandardMaterial({color:0x8fae6b, roughness:1}),
+    asphalt: new THREE.MeshStandardMaterial({color:0x3d4247, roughness:0.95}),
+    pavement: new THREE.MeshStandardMaterial({color:0xcfc9bd, roughness:0.9}),
+    wall: new THREE.MeshStandardMaterial({color:0xe9dfc4, roughness:0.75}),
+    wallDark: new THREE.MeshStandardMaterial({color:0xd8c9a3, roughness:0.75}),
+    glass: new THREE.MeshPhysicalMaterial({color:0x8fb7c9, roughness:0.15, metalness:0.15, transparent:true, opacity:0.75, envMapIntensity:1}),
+    glassWarm: new THREE.MeshPhysicalMaterial({color:0xffdd99, roughness:0.15, metalness:0.1, transparent:true, opacity:0.85, emissive:0xffaa33, emissiveIntensity:0}),
+    roofGray: new THREE.MeshStandardMaterial({color:0x5c6873, roughness:0.7}),
+    roofArch: new THREE.MeshStandardMaterial({color:0x7c8994, roughness:0.55, metalness:0.2, side:THREE.DoubleSide}),
+    panelFrame: new THREE.MeshStandardMaterial({color:0xc9ccce, roughness:0.4, metalness:0.6}),
+    panelCell: new THREE.MeshPhysicalMaterial({color:0x14324f, roughness:0.28, metalness:0.55, clearcoat:0.6, clearcoatRoughness:0.25}),
+    trunk: new THREE.MeshStandardMaterial({color:0x5b4530, roughness:1}),
+    leaf: new THREE.MeshStandardMaterial({color:0x4f7a44, roughness:0.9}),
+    leaf2: new THREE.MeshStandardMaterial({color:0x5c8b4e, roughness:0.9}),
+    fence: new THREE.MeshStandardMaterial({color:0x2b2f33, roughness:0.6, metalness:0.3}),
+    court: new THREE.MeshStandardMaterial({color:0xb3502f, roughness:0.9}),
+    line: new THREE.MeshBasicMaterial({color:0xffffff}),
+    bus: new THREE.MeshStandardMaterial({color:0xf3c521, roughness:0.5, metalness:0.15}),
+    lamp: new THREE.MeshStandardMaterial({color:0x2c2f33, roughness:0.5, metalness:0.4}),
+    lampGlow: new THREE.MeshStandardMaterial({color:0xfff3c4, emissive:0xffdd66, emissiveIntensity:0}),
+    door: new THREE.MeshStandardMaterial({color:0x35424d, roughness:0.5, metalness:0.2}),
+    curb: new THREE.MeshStandardMaterial({color:0xdcdad2, roughness:0.9}),
+  };
+
+  const world = new THREE.Group();
+  scene.add(world);
+
+  // ---------- ground / site ----------
+  const site = new THREE.Mesh(new THREE.PlaneGeometry(120,72), M.ground);
+  site.rotation.x = -Math.PI/2;
+  site.receiveShadow = true;
+  world.add(site);
+
+  const road = new THREE.Mesh(new THREE.PlaneGeometry(120,14), M.asphalt);
+  road.rotation.x = -Math.PI/2;
+  road.position.set(0,0.01,42);
+  road.receiveShadow = true;
+  world.add(road);
+  // road markings
+  for(let x=-54;x<54;x+=6){
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(3,0.35), M.line);
+    m.rotation.x=-Math.PI/2; m.position.set(x,0.02,42);
+    world.add(m);
+  }
+  const crossWalk = new THREE.Group();
+  for(let i=-3;i<=3;i++){
+    const s = new THREE.Mesh(new THREE.PlaneGeometry(0.9,6), M.line);
+    s.rotation.x=-Math.PI/2; s.position.set(i*1.4,0.02,42);
+    crossWalk.add(s);
+  }
+  world.add(crossWalk);
+
+  // paved plaza / paths
+  function pavement(w,d,x,z){
+    const p = new THREE.Mesh(new THREE.PlaneGeometry(w,d), M.pavement);
+    p.rotation.x=-Math.PI/2; p.position.set(x,0.015,z); p.receiveShadow=true;
+    world.add(p);
+  }
+  pavement(44,20,0,10);   // front plaza
+  pavement(6,22,0,22);    // entrance path to gate
+
+  // perimeter fence
+  function fenceRun(len, x, z, rotY){
+    const grp = new THREE.Group();
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(len,0.12,0.12), M.fence);
+    rail.position.y=1.35; grp.add(rail);
+    const rail2 = rail.clone(); rail2.position.y=0.35; grp.add(rail2);
+    const n = Math.round(len/1.7);
+    for(let i=0;i<=n;i++){
+      const px = -len/2 + i*(len/n);
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.12,1.7,0.12), M.fence);
+      post.position.set(px,0.85,0); post.castShadow=true;
+      grp.add(post);
+    }
+    grp.position.set(x,0,z); grp.rotation.y = rotY;
+    world.add(grp);
+  }
+  fenceRun(56,0,28,0);
+  fenceRun(56,0,-28,0);
+  fenceRun(56,-30,0,Math.PI/2);
+  fenceRun(56,30,0,Math.PI/2);
+  // gate posts
+  [-3,3].forEach(x=>{
+    const gp = new THREE.Mesh(new THREE.BoxGeometry(0.5,2.2,0.5), M.fence);
+    gp.position.set(x,1.1,28); gp.castShadow=true; world.add(gp);
+  });
+
+  // ---------- helper builders ----------
+  function box(w,h,d, mat){
+    const g = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+    g.castShadow=true; g.receiveShadow=true;
+    return g;
+  }
+
+  function tree(x,z,scale){
+    scale = scale||1;
+    const grp = new THREE.Group();
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.2,1.6,7), M.trunk);
+    trunk.position.y=0.8; trunk.castShadow=true;
+    grp.add(trunk);
+    const leafMat = Math.random()>0.5?M.leaf:M.leaf2;
+    const c1 = new THREE.Mesh(new THREE.IcosahedronGeometry(1.05,0), leafMat);
+    c1.position.y=2.0; c1.castShadow=true; grp.add(c1);
+    const c2 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.8,0), leafMat);
+    c2.position.set(0.5,2.4,0.2); c2.castShadow=true; grp.add(c2);
+    const c3 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.7,0), leafMat);
+    c3.position.set(-0.45,2.3,-0.3); c3.castShadow=true; grp.add(c3);
+    grp.position.set(x,0,z);
+    grp.scale.setScalar(scale*(0.85+Math.random()*0.3));
+    grp.rotation.y = Math.random()*Math.PI;
+    world.add(grp);
+  }
+
+  function lamp(x,z){
+    const grp = new THREE.Group();
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.08,3.4,8), M.lamp);
+    pole.position.y=1.7; pole.castShadow=true; grp.add(pole);
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.06,0.06), M.lamp);
+    arm.position.set(0.25,3.35,0); grp.add(arm);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.14,10,10), M.lampGlow);
+    head.position.set(0.48,3.3,0); grp.add(head);
+    grp.userData.glow = head;
+    grp.position.set(x,0,z);
+    world.add(grp);
+    lamps.push(grp);
+  }
+  const lamps = [];
+
+  // ---------- Main academic building ----------
+  const main = new THREE.Group();
+  main.position.set(2,0,4);
+  world.add(main);
+
+  const mainBody = box(26,7.4,10, M.wall);
+  mainBody.position.set(0,3.7,0);
+  main.add(mainBody);
+
+  // window bands (3 floors) via emissive glass strips
+  function windowBand(w, y, x, z, rotY, count){
+    const grp = new THREE.Group();
+    const ww = w/count*0.62;
+    for(let i=0;i<count;i++){
+      const wx = -w/2 + w/count*(i+0.5);
+      const win = new THREE.Mesh(new THREE.PlaneGeometry(ww,1.15), M.glassWarm);
+      win.position.set(wx,y,0.01);
+      win.userData.isWindow = true;
+      grp.add(win);
+    }
+    grp.position.set(x,0,z);
+    grp.rotation.y = rotY;
+    main.add(grp);
+  }
+  windowBand(24,1.9, 0, 5.01, 0, 11);
+  windowBand(24,3.9, 0, 5.01, 0, 11);
+  windowBand(24,5.9, 0, 5.01, 0, 11);
+  windowBand(9,1.9, -13.01,0, Math.PI/2, 4);
+  windowBand(9,3.9, -13.01,0, Math.PI/2, 4);
+  windowBand(9,1.9, 13.01,0, -Math.PI/2, 4);
+  windowBand(9,3.9, 13.01,0, -Math.PI/2, 4);
+
+  // flat roof with parapet
+  const mainRoof = box(26.4,0.4,10.4, M.roofGray);
+  mainRoof.position.set(0,7.6,0);
+  main.add(mainRoof);
+  const parapetMat = M.roofGray;
+  [[-13,0,0.4,10.4],[13,0,0.4,10.4],[0,-5,26.4,0.4],[0,5,26.4,0.4]].forEach(([x,z,w,d])=>{
+    const p = box(w,0.5,d, parapetMat); p.position.set(x,8.05,z); main.add(p);
+  });
+
+  // central entrance tower
+  const tower = box(6.4,10,6.8, M.wallDark);
+  tower.position.set(0,5,3.2);
+  main.add(tower);
+  const towerGlass = new THREE.Mesh(new THREE.PlaneGeometry(4.6,7.6), M.glass);
+  towerGlass.position.set(0,4.6,6.61);
+  main.add(towerGlass);
+  const towerCap = box(1.2,1.4,1.2, M.roofGray);
+  towerCap.position.set(0,10.7,3.2);
+  main.add(towerCap);
+  const towerSpire = new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,1.6,6), M.fence);
+  towerSpire.position.set(0,12.2,3.2);
+  main.add(towerSpire);
+
+  // entrance canopy + doors
+  const canopy = box(5.6,0.25,3, M.roofGray);
+  canopy.position.set(0,3.3,7.4);
+  main.add(canopy);
+  [-0.6,0.6].forEach((cx,i)=>{
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,3.2,8), M.panelFrame);
+    post.position.set((i==0?-2.6:2.6),1.6,8.7); post.castShadow=true; main.add(post);
+  });
+  const door = box(2.6,2.6,0.15, M.door);
+  door.position.set(0,1.3,6.05);
+  main.add(door);
+  const steps = box(6.6,0.3,2.4, M.pavement);
+  steps.position.set(0,0.15,8.6);
+  main.add(steps);
+
+  // ---------- Solar panels on main roof ----------
+  const solarGroup = new THREE.Group();
+  solarGroup.position.set(0,7.85,0);
+  main.add(solarGroup);
+  const panelRows = 6, panelCols = 7;
+  const pW = 1.55, pD = 1.0, gap=0.18;
+  const totalW = panelCols*(pW+gap)-gap;
+  const totalD = panelRows*(pD+gap)-gap;
+  const panelMeshes = [];
+  for(let r=0;r<panelRows;r++){
+    for(let c=0;c<panelCols;c++){
+      const px = -totalW/2 + c*(pW+gap) + pW/2;
+      const pz = -totalD/2 + r*(pD+gap) + pD/2;
+      if (Math.abs(pz) > 4.6) continue; // keep within roof bounds near tower
+      const frame = box(pW,0.08,pD, M.panelFrame);
+      frame.position.set(px,0.05,pz);
+      frame.rotation.x = -0.12;
+      solarGroup.add(frame);
+      const cell = box(pW-0.08,0.02,pD-0.08, M.panelCell);
+      cell.position.set(px,0.1,pz);
+      cell.rotation.x = -0.12;
+      solarGroup.add(cell);
+      panelMeshes.push(cell);
+    }
+  }
+  // tilt supports
+  for(let c=0;c<panelCols;c+=2){
+    const px = -totalW/2 + c*(pW+gap) + pW/2;
+    const bar = box(0.08,0.5,totalD, M.panelFrame);
+    bar.position.set(px,-0.15,0); bar.rotation.x=0;
+    solarGroup.add(bar);
+  }
+
+  // ---------- Gym building (curved roof) ----------
+  const gym = new THREE.Group();
+  gym.position.set(-24,0,-2);
+  world.add(gym);
+  const gymBody = box(15,5.6,11, M.wall);
+  gymBody.position.set(0,2.8,0);
+  gym.add(gymBody);
+  // barrel roof using half-cylinder
+  const barrelGeo = new THREE.CylinderGeometry(6.2,6.2,15,24,1,false,0,Math.PI);
+  const barrel = new THREE.Mesh(barrelGeo, M.roofArch);
+  barrel.rotation.z = Math.PI/2;
+  barrel.position.set(0,5.6,0);
+  barrel.castShadow = true; barrel.receiveShadow = true;
+  gym.add(barrel);
+  // gym end wall glass
+  const gymGlass = new THREE.Mesh(new THREE.PlaneGeometry(9,4.6), M.glass);
+  gymGlass.position.set(0,3.1,5.51);
+  gym.add(gymGlass);
+  for(let i=-3;i<=3;i++){
+    const mull = box(0.08,4.6,0.06, M.panelFrame);
+    mull.position.set(i*1.3,3.1,5.55); gym.add(mull);
+  }
+  const gymDoor = box(1.8,2.4,0.15, M.door);
+  gymDoor.position.set(0,1.2,5.58);
+  gym.add(gymDoor);
+
+  // link corridor between gym and main
+  const link = box(6.5,3.2,3.2, M.wallDark);
+  link.position.set(-13.2,1.6,2.5);
+  main.add(link);
+
+  // ---------- Basketball court ----------
+  const court = new THREE.Group();
+  court.position.set(-24,0.02,-16);
+  world.add(court);
+  const courtFloor = new THREE.Mesh(new THREE.PlaneGeometry(13,7.5), M.court);
+  courtFloor.rotation.x=-Math.PI/2; courtFloor.receiveShadow=true;
+  court.add(courtFloor);
+  function courtLine(w,d,x,z){
+    const l = new THREE.Mesh(new THREE.PlaneGeometry(w,d), M.line);
+    l.rotation.x=-Math.PI/2; l.position.set(x,0.01,z);
+    court.add(l);
+  }
+  courtLine(13,0.1,0,3.7); courtLine(13,0.1,0,-3.7);
+  courtLine(0.1,7.5,6.4,0); courtLine(0.1,7.5,-6.4,0);
+  courtLine(0.1,7.5,0,0);
+  const circle = new THREE.Mesh(new THREE.RingGeometry(1.15,1.28,32), M.line);
+  circle.rotation.x=-Math.PI/2; circle.position.y=0.011;
+  court.add(circle);
+  // hoops
+  [-6.0,6.0].forEach(hx=>{
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,3.2,8), M.fence);
+    pole.position.set(hx,1.6,0); pole.castShadow=true; court.add(pole);
+    const board = box(1.2,0.8,0.06, M.panelFrame);
+    board.position.set(hx>0?hx-0.55:hx+0.55,3.0,0); court.add(board);
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.26,0.03,8,16), new THREE.MeshStandardMaterial({color:0xcc4422}));
+    rim.rotation.x = Math.PI/2;
+    rim.position.set(hx>0?hx-0.85:hx+0.85,2.7,0);
+    court.add(rim);
+  });
+  // court fence (chain-link look via thin bars)
+  function courtFenceRun(len,x,z,rotY,h){
+    const grp = new THREE.Group();
+    const n = Math.round(len/1.1);
+    for(let i=0;i<=n;i++){
+      const px=-len/2+i*(len/n);
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,h,6), M.fence);
+      post.position.set(px,h/2,0); grp.add(post);
+    }
+    const top = new THREE.Mesh(new THREE.BoxGeometry(len,0.04,0.04), M.fence);
+    top.position.y=h; grp.add(top);
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(len,h), new THREE.MeshStandardMaterial({color:0x8a9aa3, transparent:true, opacity:0.28, side:THREE.DoubleSide, wireframe:true}));
+    mesh.position.y=h/2; grp.add(mesh);
+    grp.position.set(x,0,z); grp.rotation.y=rotY;
+    court.add(grp);
+  }
+  courtFenceRun(13.4,0,3.9,0,3.2);
+  courtFenceRun(13.4,0,-3.9,0,3.2);
+  courtFenceRun(7.9,6.7,0,Math.PI/2,3.2);
+  courtFenceRun(7.9,-6.7,0,Math.PI/2,3.2);
+
+  // ---------- Secondary building + parking + buses ----------
+  const annex = new THREE.Group();
+  annex.position.set(22,0,-6);
+  world.add(annex);
+  const annexBody = box(11,4.2,7, M.wall);
+  annexBody.position.set(0,2.1,0);
+  annex.add(annexBody);
+  const annexRoof = box(11.4,0.3,7.4, M.roofGray);
+  annexRoof.position.set(0,4.35,0);
+  annex.add(annexRoof);
+  for(let i=-3;i<=3;i++){
+    const w = new THREE.Mesh(new THREE.PlaneGeometry(0.9,1.3), M.glassWarm);
+    w.position.set(i*1.4,2.3,3.51);
+    annex.add(w);
+  }
+  const annexDoor = box(1.4,2.1,0.12, M.door);
+  annexDoor.position.set(0,1.05,3.53);
+  annex.add(annexDoor);
+
+  // parking lot
+  const lot = new THREE.Mesh(new THREE.PlaneGeometry(20,12), M.asphalt);
+  lot.rotation.x=-Math.PI/2; lot.position.set(24,0.015,12); lot.receiveShadow=true;
+  world.add(lot);
+  for(let i=0;i<6;i++){
+    const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.15,4.4), M.line);
+    stripe.rotation.x=-Math.PI/2;
+    stripe.position.set(16+i*2.6,0.02,10);
+    world.add(stripe);
+  }
+
+  function bus(x,z){
+    const grp = new THREE.Group();
+    const body = box(4.4,2.0,1.9, M.bus);
+    body.position.y=1.2; grp.add(body);
+    const roofline = box(4.4,0.15,1.9, new THREE.MeshStandardMaterial({color:0xe0e0e0}));
+    roofline.position.y=2.25; grp.add(roofline);
+    const windshield = new THREE.Mesh(new THREE.PlaneGeometry(1.7,0.9), M.glass);
+    windshield.position.set(-2.21,1.45,0); windshield.rotation.y=Math.PI/2;
+    grp.add(windshield);
+    for(let i=0;i<3;i++){
+      const win = new THREE.Mesh(new THREE.PlaneGeometry(0.85,0.6), M.glass);
+      win.position.set(-1+i*1.05,1.5,0.96);
+      grp.add(win);
+    }
+    [[-1.4,-0.8],[1.4,-0.8],[-1.4,0.8],[1.4,0.8]].forEach(([wx,wz])=>{
+      const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.38,0.3,14), new THREE.MeshStandardMaterial({color:0x1b1b1b}));
+      wheel.rotation.z=Math.PI/2;
+      wheel.position.set(wx,0.4,wz); grp.add(wheel);
+    });
+    grp.position.set(x,0,z);
+    grp.rotation.y = Math.PI/2;
+    grp.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+    world.add(grp);
+  }
+  bus(19,15); bus(24,15); bus(29,15);
+
+  // ---------- decoration: trees, lamps, benches ----------
+  const treeSpots = [
+    [-46,26],[-40,26],[-34,26],[-28,26],[-20,26],[-14,26],[-6,26],[2,26],[10,26],[18,26],[26,26],[34,26],[40,26],[46,26],
+    [-46,-26],[-38,-26],[-30,-26],[-22,-26],[-14,-26],[-6,-26],[2,-26],[10,-26],[18,-26],[26,-26],[34,-26],[42,-26],
+    [-29,-24],[-29,-8],[-18,-24],[-31,4],[-15,5],[-9,-1],[9,-1],[15,5],[8,10],[-6,0]
+  ];
+  treeSpots.forEach(([x,z])=>tree(x,z));
+
+  const lampSpots = [[-16,20],[-8,20],[0,20],[8,20],[16,20],[-16,5],[16,5],[-30,-20],[-18,-20]];
+  lampSpots.forEach(([x,z])=>lamp(x,z));
+
+  function bench(x,z,rot){
+    const grp = new THREE.Group();
+    const seat = box(1.4,0.08,0.5, M.panelFrame);
+    seat.position.y=0.5; grp.add(seat);
+    const back = box(1.4,0.5,0.08, M.panelFrame);
+    back.position.set(0,0.75,-0.21); grp.add(back);
+    [-0.6,0.6].forEach(lx=>{
+      const leg = box(0.08,0.5,0.5, M.trunk);
+      leg.position.set(lx,0.25,0); grp.add(leg);
+    });
+    grp.position.set(x,0,z); grp.rotation.y=rot||0;
+    grp.traverse(o=>{if(o.isMesh){o.castShadow=true;}});
+    world.add(grp);
+  }
+  bench(-4,16,0); bench(8,16,0); bench(-2,10.5,Math.PI);
+
+  // little front garden beds
+  [[-4,15],[8,15]].forEach(([x,z])=>{
+    const bed = new THREE.Mesh(new THREE.PlaneGeometry(8,3.5), new THREE.MeshStandardMaterial({color:0x3f5a34, roughness:1}));
+    bed.rotation.x=-Math.PI/2; bed.position.set(x,0.018,z); world.add(bed);
+  });
+
+  // ---------- Sun position / day-night ----------
+  const sunPathRadius = 70;
+  function setTimeOfDay(hour){
+    const t = THREE.MathUtils.clamp(hour,0,24);
+    const angle = ((t-6)/12)*Math.PI; // 6h -> 0 (east horizon), 18h -> PI (west horizon)
+    const elevation = Math.sin(THREE.MathUtils.clamp(angle,0,Math.PI));
+    const azimuth = Math.cos(angle);
+    const sx = azimuth*sunPathRadius;
+    const sy = Math.max(elevation,0.02)*sunPathRadius*0.55 + 4;
+    const sz = -30 + elevation*10;
+    sun.position.set(sx,sy,sz);
+    sun.target.position.set(0,4,0);
+
+    const dayFactor = Math.max(elevation,0);
+    sun.intensity = 0.15 + dayFactor*1.25;
+    hemi.intensity = 0.25 + dayFactor*0.5;
+
+    const dawn = new THREE.Color(0xffb37a);
+    const noon = new THREE.Color(0xfff3d8);
+    const night = new THREE.Color(0x1c2d44);
+    let skyCol;
+    if (t<6 || t>18){
+      skyCol = night;
+      sun.color.set(0x33456b);
+    } else if (t<8 || t>16){
+      skyCol = dawn.clone().lerp(new THREE.Color(0x9fc4de), 0.5);
+      sun.color.copy(dawn);
+    } else {
+      skyCol = new THREE.Color(0xbcd6e8);
+      sun.color.copy(noon);
+    }
+    scene.background.copy(skyCol);
+    scene.fog.color.copy(skyCol);
+
+    const nightOn = (t<7 || t>18) ? 1 : 0;
+    M.glassWarm.emissiveIntensity = nightOn*0.9;
+    M.lampGlow.emissiveIntensity = nightOn*1.4;
+
+    return {dayFactor, hour:t};
+  }
+  let manualSun = true;
+
+  // ---------- resize / render loop ----------
+  function animate(){
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene,camera);
+  }
+
+  // ---------- Solar energy simulation (dashboard) ----------
+  const PEAK_KW = 15.2;        // rated array output near local noon
+  const PANEL_COUNT = panelMeshes.length;
+  const TARIFF = 22.5;         // KZT per kWh (illustrative)
+  const CO2_PER_KWH = 0.52;    // kg CO2 avoided per kWh (grid average, illustrative)
+
+  function powerAtHour(h){
+    if (h<6.5 || h>19.5) return 0;
+    const x = (h-6.5)/(19.5-6.5); // 0..1
+    const shape = Math.sin(Math.PI*x);
+    return Math.max(0, PEAK_KW * Math.pow(shape, 1.15));
+  }
+  function dailyTotal(){
+    let sum=0;
+    for(let h=0; h<24; h+=0.25){ sum += powerAtHour(h)*0.25; }
+    return sum;
+  }
+  const DAILY_KWH = dailyTotal();
+  const MONTHLY_KWH = DAILY_KWH*30;
+  const YEARLY_KWH = DAILY_KWH*365;
+
+  const mPower = document.getElementById('mPower');
+  const mDaily = document.getElementById('mDaily');
+  const mMoney = document.getElementById('mMoney');
+  const mCO2 = document.getElementById('mCO2');
+  const barPower = document.getElementById('barPower');
+  const timeSlider = document.getElementById('timeSlider');
+  const timeLabel = document.getElementById('timeLabel');
+
+  function fmt(n, d){ return n.toLocaleString('ru-RU', {maximumFractionDigits:d===undefined?0:d}); }
+
+  function updateDashboard(hour){
+    const p = powerAtHour(hour);
+    mPower.innerHTML = fmt(p,1) + '<small>кВт</small>';
+    barPower.style.width = Math.min(100, (p/PEAK_KW)*100) + '%';
+    mDaily.innerHTML = fmt(DAILY_KWH) + '<small>кВт·сағ</small>';
+    mMoney.innerHTML = fmt(MONTHLY_KWH*TARIFF) + '<small>₸</small>';
+    mCO2.innerHTML = fmt(YEARLY_KWH*CO2_PER_KWH) + '<small>кг</small>';
+
+    const hh = Math.floor(hour);
+    const mm = Math.round((hour-hh)*60);
+    timeLabel.textContent = String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+
+    // panel cell glow scales with output at high sun
+    const glowStrength = Math.min(1, p/PEAK_KW);
+    panelMeshes.forEach(c=>{ c.material.clearcoat = 0.35+glowStrength*0.5; });
+
+    setTimeOfDay(hour);
+  }
+
+  let clockRunning = true;
+  let simHour = 12;
+  timeSlider.addEventListener('input', e=>{
+    clockRunning = false;
+    simHour = parseFloat(e.target.value);
+    updateDashboard(simHour);
+  });
+
+  let lastT = performance.now();
+  function tick(now){
+    const dt = (now-lastT)/1000; lastT = now;
+    if (clockRunning){
+      simHour += dt*0.4; // slow auto day-cycle
+      if (simHour>24) simHour-=24;
+      timeSlider.value = simHour;
+      updateDashboard(simHour);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // initial
+  updateDashboard(simHour);
+  animate();
+  requestAnimationFrame(tick);
+
+  setTimeout(()=>{ document.getElementById('loading').style.display='none'; }, 350);
+
+  // ---------- UI toggle buttons ----------
+  const dash = document.getElementById('dash');
+  const dashToggle = document.getElementById('dashToggle');
+  dashToggle.addEventListener('click', ()=>{
+    dash.classList.toggle('collapsed');
+    dashToggle.classList.toggle('collapsed');
+    dashToggle.textContent = dash.classList.contains('collapsed') ? '‹' : '›';
+  });
+
+  const tglSun = document.getElementById('tglSun');
+  tglSun.addEventListener('click', ()=>{
+    clockRunning = !clockRunning;
+    tglSun.classList.toggle('on', clockRunning);
+  });
+
+  const tglRotate = document.getElementById('tglRotate');
+  tglRotate.addEventListener('click', ()=>{
+    controls.autoRotate = !controls.autoRotate;
+    tglRotate.classList.toggle('on', controls.autoRotate);
+  });
+
+  const tglNight = document.getElementById('tglNight');
+  tglNight.addEventListener('click', ()=>{
+    clockRunning = false;
+    const isNight = tglNight.classList.toggle('on');
+    simHour = isNight ? 21 : 12;
+    timeSlider.value = simHour;
+    updateDashboard(simHour);
+  });
+
+})();
+</script>
+</body>
+</html>
