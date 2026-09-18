@@ -56,6 +56,49 @@
   }
   #dashToggle.collapsed{right:0;}
 
+  /* ---- left info panel: benefits / risks ---- */
+  #infoBox{
+    position:fixed;left:0;top:0;bottom:0;width:310px;
+    background:linear-gradient(180deg,var(--panel-bg),var(--panel-bg2));
+    border-right:1px solid var(--line);
+    padding:22px 20px 20px 20px;
+    overflow-y:auto;z-index:6;
+    transition:transform .35s ease;
+  }
+  #infoBox.collapsed{transform:translateX(-100%);}
+  #infoToggle{
+    position:fixed;left:310px;top:22px;z-index:7;
+    width:34px;height:34px;border-radius:0 8px 8px 0;
+    background:var(--panel-bg2);border:1px solid var(--line);border-left:none;
+    color:var(--paper);cursor:pointer;font-size:15px;
+    transition:left .35s ease;
+  }
+  #infoToggle.collapsed{left:0;}
+
+  .info-title{font-size:15px;font-weight:700;margin:0 0 2px 0;color:#7fd98f;letter-spacing:.2px;}
+  .info-sub{font-size:12px;color:#8fa6b5;margin:0 0 14px 0;line-height:1.5;}
+  .info-h{font-size:13px;font-weight:700;margin:16px 0 8px 0;display:flex;align-items:center;gap:6px;}
+  .info-h.good{color:#7fd98f;}
+  .info-h.bad{color:#e8836a;}
+  .info-list{list-style:none;margin:0;padding:0;font-size:12.5px;color:#b7c9d3;line-height:1.65;}
+  .info-list li{display:flex;gap:8px;margin-bottom:8px;}
+  .info-list li::before{content:"";width:6px;height:6px;border-radius:50%;margin-top:6px;flex:none;}
+  .info-list.good li::before{background:#7fd98f;}
+  .info-list.bad li::before{background:#e8836a;}
+  .info-note{font-size:11px;color:#6f8797;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);line-height:1.5;}
+
+  /* ---- building name tooltip ---- */
+  #label3d{
+    position:fixed;z-index:8;pointer-events:none;
+    background:rgba(15,30,42,.92);border:1px solid var(--gold);
+    color:var(--paper);font-size:13px;font-weight:600;
+    padding:6px 11px;border-radius:7px;
+    transform:translate(-50%,-130%);
+    opacity:0;transition:opacity .18s ease;
+    white-space:nowrap;
+  }
+  #label3d.show{opacity:1;}
+
   .dash-title{font-size:15px;font-weight:700;margin:0 0 2px 0;color:var(--gold);letter-spacing:.2px;}
   .dash-sub{font-size:12px;color:#8fa6b5;margin:0 0 18px 0;line-height:1.5;}
 
@@ -111,7 +154,37 @@
   <span>Күн панельдерімен жабдықталған — интерактивті 3Д модель</span>
 </div>
 
-<div class="hint">Тінтуірмен айналдыру • дөңгелету — жақындату/алыстату • сүйреу — жылжыту</div>
+<div class="hint">Тінтуірмен айналдыру • дөңгелету — жақындату/алыстату • ғимаратты басу — атауын көру</div>
+
+<div id="label3d"></div>
+
+<button id="infoToggle">‹</button>
+<div id="infoBox">
+  <p class="info-title">Күн панельдерінің пайдасы мен қауіптері</p>
+  <p class="info-sub">Қазақстан контексінде — оңтүстік өңірлерде жылына шамамен 2 200–3 000 сағат күн сәулесі түседі, бұл Еуропа елдерінен де жоғары көрсеткіш.</p>
+
+  <p class="info-h good">✓ Пайдасы</p>
+  <ul class="info-list good">
+    <li>Мектептің электр төлемін айтарлықтай азайтады, үнемделген қаражатты оқу құралдарына жұмсауға болады</li>
+    <li>ҚР-да «микрогенерация» заңы бар — артық өндірілген энергияны нетто есептеу арқылы жалпы желіге сатуға болады</li>
+    <li>Жаздың ыстық кезінде электр желісінің жүктемесін азайтып, ток өшуін азайтады</li>
+    <li>Соңғы жылдары Қазақстанда жеке күн станцияларының саны бірнеше есе өсуде — үрдіс жалғасуда</li>
+    <li>Көмірге тәуелді электр өндірісінен бас тартып, CO₂ шығарындысын қысқартады</li>
+    <li>Оқушыларға жаңартылатын энергия технологиясын көзбен көріп үйрену мүмкіндігін береді</li>
+  </ul>
+
+  <p class="info-h bad">✕ Қауіптері / шектеулері</p>
+  <ul class="info-list bad">
+    <li>Қыста күндіз қысқа болғандықтан және қар түскенде панельдер аз қуат береді</li>
+    <li>Бұлтты және жаңбырлы күндері өндіріс күрт төмендейді (төмендегі ауа-райы режимін қараңыз)</li>
+    <li>Бастапқы құрылғы құны жоғары, өзін-өзі ақтауы шамамен 7–10 жылды алады</li>
+    <li>Шаң мен құм панельдің бетін жауып, тиімділігін төмендетеді — тұрақты тазалау керек</li>
+    <li>Инвертор сияқты бөлшектерді 10–15 жылда ауыстыру қажет болуы мүмкін</li>
+    <li>Бұлтты кезеңге арналған батарея жүйесі болмаса, түнде және қараңғы күндері желіге тәуелділік сақталады</li>
+  </ul>
+
+  <p class="info-note">Ескерту: сандар — Қазақстанның жаңартылатын энергетика саясаты мен нарық үрдістері негізінде берілген жалпы бағдар, нақты жоба үшін мамандандырылған есептеу қажет.</p>
+</div>
 
 <button id="dashToggle">›</button>
 <div id="dash">
@@ -146,6 +219,11 @@
     <div class="metric-value" id="mCO2">0<small>кг</small></div>
   </div>
 
+  <div class="metric" id="mWeatherImpact" style="display:none;">
+    <div class="metric-label">Ауа-райы әсері</div>
+    <div class="metric-value" id="mImpact" style="color:#e8836a;">0<small>%</small></div>
+  </div>
+
   <p class="section-h">Энергияны қайда жұмсауға болады</p>
   <ul class="usage-list">
     <li>Сынып бөлмелерін жарықтандыру және проекторлар мен интерактивті тақталарды қуаттандыру</li>
@@ -156,11 +234,29 @@
     <li>Артылған қуатты жалпы қалалық электр желісіне сатып, мектеп бюджетіне қосымша қаражат табу</li>
   </ul>
 
+  <p class="section-h">Ауа-райы (панельге әсері)</p>
+  <div class="toggles">
+    <button class="tbtn on" id="wClear">☀️ Ашық</button>
+    <button class="tbtn" id="wCloudy">☁️ Бұлтты</button>
+    <button class="tbtn" id="wRainy">🌧️ Жаңбырлы</button>
+  </div>
+  <p class="clock-note" id="weatherNote">Ашық аспанда панельдер толық қуатпен жұмыс істейді.</p>
+
+  <p class="section-h">Маусым (күн ұзақтығы)</p>
+  <div class="toggles">
+    <button class="tbtn on" id="seasonSummer">☀️ Жаз</button>
+    <button class="tbtn" id="seasonWinter">❄️ Қыс</button>
+  </div>
+  <p class="clock-note" id="seasonNote">Жазда күн ұзақ тұрады, панельдер көбірек энергия жинайды.</p>
+
   <p class="section-h">Көрініс баптаулары</p>
   <div class="toggles">
     <button class="tbtn on" id="tglSun">Күн жарығы</button>
     <button class="tbtn on" id="tglRotate">Автоайналу</button>
     <button class="tbtn" id="tglNight">Түнгі режим</button>
+    <button class="tbtn" id="tglGate">Қақпаны ашу</button>
+    <button class="tbtn" id="tglInterior">Ішкі көрініс</button>
+    <button class="tbtn" id="tglSound">🔈 Дыбыс</button>
   </div>
 </div>
 
@@ -421,6 +517,29 @@
     gp.position.set(x,1.1,28); gp.castShadow=true; world.add(gp);
   });
 
+  // ---------- swinging gate leaves ----------
+  function gateLeaf(hingeX, dir){
+    // dir: +1 leaf extends toward +x from hinge, -1 extends toward -x
+    const pivot = new THREE.Group();
+    pivot.position.set(hingeX,0,28);
+    world.add(pivot);
+    const bars = new THREE.Group();
+    for(let i=0;i<=5;i++){
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.05,2.0,0.05), M.fence);
+      bar.position.set(dir*(0.25+i*0.5),1.0,0); bar.castShadow=true;
+      bars.add(bar);
+    }
+    const railTop = new THREE.Mesh(new THREE.BoxGeometry(3,0.08,0.08), M.fence);
+    railTop.position.set(dir*1.5,1.9,0); bars.add(railTop);
+    const railBot = new THREE.Mesh(new THREE.BoxGeometry(3,0.08,0.08), M.fence);
+    railBot.position.set(dir*1.5,0.3,0); bars.add(railBot);
+    pivot.add(bars);
+    return pivot;
+  }
+  const gateLeft = gateLeaf(-3,1);
+  const gateRight = gateLeaf(3,-1);
+  let gateOpen = false, gateAngle = 0;
+
   // ---------- helper builders ----------
   function box(w,h,d, mat){
     const g = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
@@ -465,11 +584,51 @@
   // ---------- Main academic building ----------
   const main = new THREE.Group();
   main.position.set(2,0,4);
+  main.userData.label = 'Негізгі оқу ғимараты';
   world.add(main);
 
-  const mainBody = box(26,7.4,10, M.wall);
+  const mainBodyMat = M.wall.clone();
+  mainBodyMat.transparent = true;
+  const mainBody = box(26,7.4,10, mainBodyMat);
   mainBody.position.set(0,3.7,0);
   main.add(mainBody);
+
+  // ---------- interior cutaway (classrooms & corridor, hidden by default) ----------
+  const interior = new THREE.Group();
+  interior.visible = false;
+  main.add(interior);
+  const floorMat = new THREE.MeshStandardMaterial({color:0xcac2ad, roughness:0.9});
+  const corridorMat = new THREE.MeshStandardMaterial({color:0xb7c4cc, roughness:0.85});
+  const roomColors = [0xe9b98f,0x9fc9d6,0xc9d99a,0xe3c9e6,0xf0d67f,0xa8d6bd];
+  [0.15, 2.75, 5.35].forEach((fy,floorIdx)=>{
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(25,0.12,9), floorMat);
+    floor.position.set(0,fy,0);
+    interior.add(floor);
+    const corridor = new THREE.Mesh(new THREE.BoxGeometry(25,0.02,1.6), corridorMat);
+    corridor.position.set(0,fy+0.07,0);
+    interior.add(corridor);
+    for(let side=-1; side<=1; side+=2){
+      for(let i=0;i<5;i++){
+        const rw = 4.4, rd = 3.3;
+        const rx = -10 + i*5;
+        const rz = side*2.9;
+        const room = new THREE.Mesh(new THREE.BoxGeometry(rw,1.9,rd),
+          new THREE.MeshStandardMaterial({color:roomColors[(i+floorIdx)%roomColors.length], roughness:0.85, transparent:true, opacity:0.85}));
+        room.position.set(rx, fy+1.0, rz);
+        interior.add(room);
+        const wall1 = new THREE.Mesh(new THREE.BoxGeometry(0.06,2.0,rd), new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.9}));
+        wall1.position.set(rx-rw/2, fy+1.0, rz);
+        interior.add(wall1);
+      }
+    }
+  });
+
+  function setInterior(on){
+    interior.visible = on;
+    mainBodyMat.opacity = on ? 0.06 : 1;
+    mainRoofOpacityTarget = on ? 0.08 : 1;
+  }
+  let mainRoofOpacityTarget = 1;
 
   // window bands (3 floors) via emissive glass strips
   function windowBand(w, y, x, z, rotY, count){
@@ -495,7 +654,9 @@
   windowBand(9,3.9, 13.01,0, -Math.PI/2, 4);
 
   // flat roof with parapet
-  const mainRoof = box(26.4,0.4,10.4, M.roofGray);
+  const mainRoofMat = M.roofGray.clone();
+  mainRoofMat.transparent = true;
+  const mainRoof = box(26.4,0.4,10.4, mainRoofMat);
   mainRoof.position.set(0,7.6,0);
   main.add(mainRoof);
   const parapetMat = M.roofGray;
@@ -535,6 +696,7 @@
   // ---------- Solar panels on main roof ----------
   const solarGroup = new THREE.Group();
   solarGroup.position.set(0,7.85,0);
+  solarGroup.userData.label = 'Күн панельдері (фотоэлектрлік модульдер)';
   main.add(solarGroup);
   const panelRows = 6, panelCols = 7;
   const pW = 1.55, pD = 1.0, gap=0.18;
@@ -568,6 +730,7 @@
   // ---------- Gym building (curved roof) ----------
   const gym = new THREE.Group();
   gym.position.set(-24,0,-2);
+  gym.userData.label = 'Спорт залы';
   world.add(gym);
   const gymBody = box(15,5.6,11, M.wall);
   gymBody.position.set(0,2.8,0);
@@ -599,6 +762,7 @@
   // ---------- Basketball court ----------
   const court = new THREE.Group();
   court.position.set(-24,0.02,-16);
+  court.userData.label = 'Баскетбол алаңы';
   world.add(court);
   const courtFloor = new THREE.Mesh(new THREE.PlaneGeometry(13,7.5), M.court);
   courtFloor.rotation.x=-Math.PI/2; courtFloor.receiveShadow=true;
@@ -649,6 +813,7 @@
   // ---------- Secondary building + parking + buses ----------
   const annex = new THREE.Group();
   annex.position.set(22,0,-6);
+  annex.userData.label = 'Қосалқы ғимарат / шеберхана';
   world.add(annex);
   const annexBody = box(11,4.2,7, M.wall);
   annexBody.position.set(0,2.1,0);
@@ -668,6 +833,7 @@
   // parking lot
   const lot = new THREE.Mesh(new THREE.PlaneGeometry(20,12), M.asphalt);
   lot.rotation.x=-Math.PI/2; lot.position.set(24,0.015,12); lot.receiveShadow=true;
+  lot.userData.label = 'Автотұрақ';
   world.add(lot);
   for(let i=0;i<6;i++){
     const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.15,4.4), M.line);
@@ -697,6 +863,7 @@
     });
     grp.position.set(x,0,z);
     grp.rotation.y = Math.PI/2;
+    grp.userData.label = 'Мектеп автобусы';
     grp.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
     world.add(grp);
   }
@@ -735,11 +902,89 @@
     bed.rotation.x=-Math.PI/2; bed.position.set(x,0.018,z); world.add(bed);
   });
 
+  // ---------- weather: clouds & rain ----------
+  let weather = 'clear'; // 'clear' | 'cloudy' | 'rainy'
+  const weatherFactorMap = { clear:1, cloudy:0.20, rainy:0.05 };
+
+  const cloudMat = new THREE.MeshStandardMaterial({color:0xdfe6ea, roughness:1, transparent:true, opacity:0});
+  const clouds = new THREE.Group();
+  const cloudSpots = [[-20,26,-10],[10,24,5],[-2,27,18],[24,23,-8],[-35,25,10],[30,26,12],[0,22,-20]];
+  cloudSpots.forEach(([x,y,z])=>{
+    const cGrp = new THREE.Group();
+    for(let i=0;i<4;i++){
+      const puff = new THREE.Mesh(new THREE.IcosahedronGeometry(2.0+Math.random()*1.4,0), cloudMat);
+      puff.position.set((Math.random()-0.5)*5,(Math.random()-0.5)*0.8,(Math.random()-0.5)*3);
+      cGrp.add(puff);
+    }
+    cGrp.position.set(x,y,z);
+    cGrp.userData.driftSpeed = 0.15+Math.random()*0.2;
+    clouds.add(cGrp);
+  });
+  world.add(clouds);
+
+  const rainGeo = new THREE.BufferGeometry();
+  const RAIN_COUNT = 900;
+  const rainPos = new Float32Array(RAIN_COUNT*3);
+  for(let i=0;i<RAIN_COUNT;i++){
+    rainPos[i*3]   = (Math.random()-0.5)*100;
+    rainPos[i*3+1] = Math.random()*35;
+    rainPos[i*3+2] = (Math.random()-0.5)*70;
+  }
+  rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos,3));
+  const rainMat = new THREE.PointsMaterial({color:0xaec9db, size:0.12, transparent:true, opacity:0});
+  const rain = new THREE.Points(rainGeo, rainMat);
+  world.add(rain);
+
+  function setWeather(w){
+    weather = w;
+    ['wClear','wCloudy','wRainy'].forEach(id=>document.getElementById(id).classList.remove('on'));
+    document.getElementById(w==='clear'?'wClear':w==='cloudy'?'wCloudy':'wRainy').classList.add('on');
+    const notes = {
+      clear:'Ашық аспанда панельдер толық қуатпен жұмыс істейді.',
+      cloudy:'Бұлт күн сәулесінің көбін бөгейді — панельдер энергия алуы қиындайды, қуат шамамен 80%-ға дейін төмендейді.',
+      rainy:'Жаңбырда тікелей сәуле жоқ — панельдер энергия алуы өте қиын, қуат шамамен 95%-ға дейін құлайды. Тек жаңбыр панельдің бетін өзі тазалап кетеді.'
+    };
+    document.getElementById('weatherNote').textContent = notes[w];
+    if (soundOn && rainGain && audioCtx) rainGain.gain.setTargetAtTime(w==='rainy'?0.06:0, audioCtx.currentTime, 0.4);
+    const impactBox = document.getElementById('mWeatherImpact');
+    const impactVal = document.getElementById('mImpact');
+    if (w==='clear'){ impactBox.style.display='none'; }
+    else {
+      impactBox.style.display='block';
+      const lossPct = Math.round((1-weatherFactorMap[w])*100);
+      impactVal.innerHTML = '−'+lossPct+'<small>%</small>';
+    }
+    updateDashboard(simHour);
+  }
+
+  // ---------- season: day length & panel context ----------
+  let season = 'summer'; // 'summer' | 'winter'
+  const seasonHours = { summer:{rise:5.5, set:20.5}, winter:{rise:9.0, set:17.0} };
+  const seasonFactorMap = { summer:1.0, winter:0.55 };
+
+  function setSeason(s){
+    season = s;
+    document.getElementById('seasonSummer').classList.toggle('on', s==='summer');
+    document.getElementById('seasonWinter').classList.toggle('on', s==='winter');
+    document.getElementById('seasonNote').textContent = s==='summer'
+      ? 'Жазда күн ұзақ тұрады, панельдер көбірек энергия жинайды.'
+      : 'Қыста күн қысқа, төмен тұрады, кейде қар түседі — панельдер азырақ энергия береді.';
+    const groundTarget = s==='summer' ? new THREE.Color(0x8fae6b) : new THREE.Color(0xe7edf0);
+    M.ground.color.copy(groundTarget);
+    const leafTarget1 = s==='summer' ? new THREE.Color(0x4f7a44) : new THREE.Color(0xa9b6ac);
+    const leafTarget2 = s==='summer' ? new THREE.Color(0x5c8b4e) : new THREE.Color(0xb7c2b9);
+    M.leaf.color.copy(leafTarget1);
+    M.leaf2.color.copy(leafTarget2);
+    recomputeTotals();
+    updateDashboard(simHour);
+  }
+
   // ---------- Sun position / day-night ----------
   const sunPathRadius = 70;
   function setTimeOfDay(hour){
     const t = THREE.MathUtils.clamp(hour,0,24);
-    const angle = ((t-6)/12)*Math.PI; // 6h -> 0 (east horizon), 18h -> PI (west horizon)
+    const rise = seasonHours[season].rise, set = seasonHours[season].set;
+    const angle = ((t-rise)/(set-rise))*Math.PI;
     const elevation = Math.sin(THREE.MathUtils.clamp(angle,0,Math.PI));
     const azimuth = Math.cos(angle);
     const sx = azimuth*sunPathRadius;
@@ -756,31 +1001,194 @@
     const noon = new THREE.Color(0xfff3d8);
     const night = new THREE.Color(0x1c2d44);
     let skyCol;
-    if (t<6 || t>18){
+    if (t<rise || t>set){
       skyCol = night;
       sun.color.set(0x33456b);
-    } else if (t<8 || t>16){
+    } else if (t<rise+2 || t>set-2){
       skyCol = dawn.clone().lerp(new THREE.Color(0x9fc4de), 0.5);
       sun.color.copy(dawn);
     } else {
       skyCol = new THREE.Color(0xbcd6e8);
       sun.color.copy(noon);
     }
+    if (weather==='cloudy'){ skyCol.lerp(new THREE.Color(0x8fa0a8), 0.55); sun.intensity*=0.55; hemi.intensity*=0.85; }
+    if (weather==='rainy'){ skyCol.lerp(new THREE.Color(0x5c6a71), 0.7); sun.intensity*=0.3; hemi.intensity*=0.65; }
+
     scene.background.copy(skyCol);
     scene.fog.color.copy(skyCol);
+    scene.fog.near = weather==='clear' ? 60 : (weather==='cloudy'?42:26);
+    scene.fog.far = weather==='clear' ? 210 : (weather==='cloudy'?150:95);
 
-    const nightOn = (t<7 || t>18) ? 1 : 0;
+    const nightOn = (t<rise+0.5 || t>set-0.5) ? 1 : 0;
     M.glassWarm.emissiveIntensity = nightOn*0.9;
     M.lampGlow.emissiveIntensity = nightOn*1.4;
+
+    const cloudTarget = weather==='clear' ? 0 : (weather==='cloudy'?0.85:0.7);
+    cloudMat.opacity += (cloudTarget-cloudMat.opacity)*0.08;
+    rainMat.opacity += ((weather==='rainy'?0.75:0)-rainMat.opacity)*0.1;
 
     return {dayFactor, hour:t};
   }
   let manualSun = true;
 
+  // ---------- energy flow visualization: sun -> solar panels ----------
+  const ENERGY_N = 46;
+  const energyGeo = new THREE.BufferGeometry();
+  const energyPos = new Float32Array(ENERGY_N*3);
+  energyGeo.setAttribute('position', new THREE.BufferAttribute(energyPos,3));
+  const energyMat = new THREE.PointsMaterial({color:0xffd873, size:0.32, transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false});
+  const energyPoints = new THREE.Points(energyGeo, energyMat);
+  scene.add(energyPoints);
+  const energyProgress = new Float32Array(ENERGY_N);
+  const energyLane = new Float32Array(ENERGY_N);
+  for(let i=0;i<ENERGY_N;i++){ energyProgress[i] = Math.random(); energyLane[i] = Math.random(); }
+
+  const solarWorldPos = new THREE.Vector3();
+  const sunDirWorld = new THREE.Vector3();
+  function updateEnergyFlow(dt, powerFraction){
+    energyMat.opacity += ((powerFraction>0.03?0.85:0) - energyMat.opacity)*0.08;
+    if (energyMat.opacity < 0.02) return;
+    solarGroup.getWorldPosition(solarWorldPos);
+    sunDirWorld.copy(sun.position).normalize();
+    const speed = 0.35 + powerFraction*1.1;
+    for(let i=0;i<ENERGY_N;i++){
+      energyProgress[i] += dt*speed;
+      if (energyProgress[i]>1){ energyProgress[i]-=1; energyLane[i]=Math.random(); }
+      const p = energyProgress[i];
+      const spreadX = (energyLane[i]-0.5)*3.4;
+      const spreadZ = (Math.sin(energyLane[i]*17.0)-0.5)*3.0;
+      const start = new THREE.Vector3().copy(sunDirWorld).multiplyScalar(60).add(new THREE.Vector3(spreadX*3,0,spreadZ*3));
+      const end = new THREE.Vector3(solarWorldPos.x+spreadX, solarWorldPos.y, solarWorldPos.z+spreadZ);
+      const arcY = Math.sin(p*Math.PI)*4;
+      energyPos[i*3]   = THREE.MathUtils.lerp(start.x,end.x,p);
+      energyPos[i*3+1] = THREE.MathUtils.lerp(start.y,end.y,p) + arcY*0.3;
+      energyPos[i*3+2] = THREE.MathUtils.lerp(start.z,end.z,p);
+    }
+    energyGeo.attributes.position.needsUpdate = true;
+  }
+
+  // ---------- click-to-label raycasting ----------
+  const raycaster = new THREE.Raycaster();
+  const pointerNDC = new THREE.Vector2();
+  const label3d = document.getElementById('label3d');
+  let labelTimer = null;
+  let downX=0, downY=0, downT=0;
+
+  renderer.domElement.addEventListener('pointerdown', e=>{ downX=e.clientX; downY=e.clientY; downT=performance.now(); });
+  renderer.domElement.addEventListener('pointerup', e=>{
+    const moved = Math.hypot(e.clientX-downX, e.clientY-downY);
+    const dt = performance.now()-downT;
+    if (moved>6 || dt>400) return; // treat as drag, not click
+    pointerNDC.x = (e.clientX/window.innerWidth)*2-1;
+    pointerNDC.y = -(e.clientY/window.innerHeight)*2+1;
+    raycaster.setFromCamera(pointerNDC, camera);
+    const hits = raycaster.intersectObjects(world.children, true);
+    if (!hits.length) return;
+    let obj = hits[0].object;
+    let label = null;
+    while(obj){
+      if (obj.userData && obj.userData.label){ label = obj.userData.label; break; }
+      obj = obj.parent;
+    }
+    if (!label) return;
+    label3d.textContent = label;
+    label3d.style.left = e.clientX+'px';
+    label3d.style.top = e.clientY+'px';
+    label3d.classList.add('show');
+    clearTimeout(labelTimer);
+    labelTimer = setTimeout(()=>label3d.classList.remove('show'), 2200);
+  });
+
+  // ---------- gate toggle ----------
+  function updateGate(dt){
+    const targetAngle = gateOpen ? Math.PI*0.55 : 0;
+    gateAngle += (targetAngle-gateAngle)*Math.min(1,dt*2.2);
+    gateLeft.rotation.y = -gateAngle;
+    gateRight.rotation.y = gateAngle;
+    mainRoofMat.opacity += (mainRoofOpacityTarget-mainRoofMat.opacity)*Math.min(1,dt*3);
+  }
+
+  // ---------- ambient sound (procedural, no external files) ----------
+  let audioCtx = null, soundOn = false, windGain=null, rainGain=null, birdTimer=null;
+  function initAudio(){
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const bufSize = audioCtx.sampleRate*2;
+    const noiseBuf = audioCtx.createBuffer(1,bufSize,audioCtx.sampleRate);
+    const data = noiseBuf.getChannelData(0);
+    for(let i=0;i<bufSize;i++) data[i] = Math.random()*2-1;
+
+    const windSrc = audioCtx.createBufferSource();
+    windSrc.buffer = noiseBuf; windSrc.loop = true;
+    const windFilter = audioCtx.createBiquadFilter();
+    windFilter.type='bandpass'; windFilter.frequency.value=260; windFilter.Q.value=0.6;
+    windGain = audioCtx.createGain(); windGain.gain.value=0.05;
+    windSrc.connect(windFilter).connect(windGain).connect(audioCtx.destination);
+    windSrc.start();
+
+    const rainSrc = audioCtx.createBufferSource();
+    rainSrc.buffer = noiseBuf; rainSrc.loop = true;
+    const rainFilter = audioCtx.createBiquadFilter();
+    rainFilter.type='highpass'; rainFilter.frequency.value=1800;
+    rainGain = audioCtx.createGain(); rainGain.gain.value=0;
+    rainSrc.connect(rainFilter).connect(rainGain).connect(audioCtx.destination);
+    rainSrc.start();
+
+    function scheduleBird(){
+      const delay = 1.5+Math.random()*4;
+      birdTimer = setTimeout(()=>{
+        if (soundOn && weather!=='rainy'){
+          const dayF = setTimeOfDay(simHour).dayFactor;
+          if (dayF>0.1){
+            const osc = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            osc.type='sine';
+            const base = 1800+Math.random()*900;
+            osc.frequency.setValueAtTime(base, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(base*1.4, audioCtx.currentTime+0.08);
+            g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.05, audioCtx.currentTime+0.02);
+            g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+0.18);
+            osc.connect(g).connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime+0.2);
+          }
+        }
+        scheduleBird();
+      }, delay*1000);
+    }
+    scheduleBird();
+  }
+  function setSound(on){
+    soundOn = on;
+    if (on){ initAudio(); if (audioCtx.state==='suspended') audioCtx.resume(); }
+    if (windGain) windGain.gain.setTargetAtTime(on ? 0.05 : 0, audioCtx.currentTime, 0.3);
+    if (rainGain) rainGain.gain.setTargetAtTime(on && weather==='rainy' ? 0.06 : 0, audioCtx.currentTime, 0.3);
+  }
+
   // ---------- resize / render loop ----------
-  function animate(){
+  let prevT = performance.now();
+  function animate(now){
     requestAnimationFrame(animate);
+    const dt = Math.min(0.05,(now-prevT)/1000); prevT = now;
     controls.update();
+    updateGate(dt);
+
+    // cloud drift
+    clouds.children.forEach(c=>{ c.position.x += c.userData.driftSpeed*dt; if (c.position.x>60) c.position.x=-60; });
+
+    // rain fall
+    if (rainMat.opacity>0.01){
+      const pos = rainGeo.attributes.position.array;
+      for(let i=0;i<RAIN_COUNT;i++){
+        pos[i*3+1] -= dt*24;
+        if (pos[i*3+1] < 0){ pos[i*3+1] = 30+Math.random()*8; pos[i*3] = (Math.random()-0.5)*100; pos[i*3+2] = (Math.random()-0.5)*70; }
+      }
+      rainGeo.attributes.position.needsUpdate = true;
+    }
+
+    const curPower = powerAtHour(simHour)*weatherFactorMap[weather];
+    updateEnergyFlow(dt, curPower/PEAK_KW);
+
     renderer.render(scene,camera);
   }
 
@@ -791,19 +1199,24 @@
   const CO2_PER_KWH = 0.52;    // kg CO2 avoided per kWh (grid average, illustrative)
 
   function powerAtHour(h){
-    if (h<6.5 || h>19.5) return 0;
-    const x = (h-6.5)/(19.5-6.5); // 0..1
+    const rise = seasonHours[season].rise, set = seasonHours[season].set;
+    if (h<rise || h>set) return 0;
+    const x = (h-rise)/(set-rise);
     const shape = Math.sin(Math.PI*x);
-    return Math.max(0, PEAK_KW * Math.pow(shape, 1.15));
+    return Math.max(0, PEAK_KW * seasonFactorMap[season] * Math.pow(shape, 1.15));
   }
   function dailyTotal(){
     let sum=0;
     for(let h=0; h<24; h+=0.25){ sum += powerAtHour(h)*0.25; }
     return sum;
   }
-  const DAILY_KWH = dailyTotal();
-  const MONTHLY_KWH = DAILY_KWH*30;
-  const YEARLY_KWH = DAILY_KWH*365;
+  let DAILY_KWH, MONTHLY_KWH, YEARLY_KWH;
+  function recomputeTotals(){
+    DAILY_KWH = dailyTotal();
+    MONTHLY_KWH = DAILY_KWH*30;
+    YEARLY_KWH = DAILY_KWH*365;
+  }
+  recomputeTotals();
 
   const mPower = document.getElementById('mPower');
   const mDaily = document.getElementById('mDaily');
@@ -816,7 +1229,8 @@
   function fmt(n, d){ return n.toLocaleString('ru-RU', {maximumFractionDigits:d===undefined?0:d}); }
 
   function updateDashboard(hour){
-    const p = powerAtHour(hour);
+    const wf = weatherFactorMap[weather];
+    const p = powerAtHour(hour)*wf;
     mPower.innerHTML = fmt(p,1) + '<small>кВт</small>';
     barPower.style.width = Math.min(100, (p/PEAK_KW)*100) + '%';
     mDaily.innerHTML = fmt(DAILY_KWH) + '<small>кВт·сағ</small>';
@@ -856,7 +1270,7 @@
 
   // initial
   updateDashboard(simHour);
-  animate();
+  requestAnimationFrame(animate);
   requestAnimationFrame(tick);
 
   setTimeout(()=>{ document.getElementById('loading').style.display='none'; }, 350);
@@ -889,6 +1303,42 @@
     simHour = isNight ? 21 : 12;
     timeSlider.value = simHour;
     updateDashboard(simHour);
+  });
+
+  const tglGate = document.getElementById('tglGate');
+  tglGate.addEventListener('click', ()=>{
+    gateOpen = !gateOpen;
+    tglGate.classList.toggle('on', gateOpen);
+    tglGate.textContent = gateOpen ? 'Қақпаны жабу' : 'Қақпаны ашу';
+  });
+
+  document.getElementById('wClear').addEventListener('click', ()=>setWeather('clear'));
+  document.getElementById('wCloudy').addEventListener('click', ()=>setWeather('cloudy'));
+  document.getElementById('wRainy').addEventListener('click', ()=>setWeather('rainy'));
+
+  document.getElementById('seasonSummer').addEventListener('click', ()=>setSeason('summer'));
+  document.getElementById('seasonWinter').addEventListener('click', ()=>setSeason('winter'));
+
+  const tglInterior = document.getElementById('tglInterior');
+  tglInterior.addEventListener('click', ()=>{
+    const on = tglInterior.classList.toggle('on');
+    setInterior(on);
+    tglInterior.textContent = on ? 'Сыртқы көрініс' : 'Ішкі көрініс';
+  });
+
+  const tglSound = document.getElementById('tglSound');
+  tglSound.addEventListener('click', ()=>{
+    const on = tglSound.classList.toggle('on');
+    setSound(on);
+    tglSound.textContent = on ? '🔊 Дыбыс' : '🔈 Дыбыс';
+  });
+
+  const infoBox = document.getElementById('infoBox');
+  const infoToggle = document.getElementById('infoToggle');
+  infoToggle.addEventListener('click', ()=>{
+    infoBox.classList.toggle('collapsed');
+    infoToggle.classList.toggle('collapsed');
+    infoToggle.textContent = infoBox.classList.contains('collapsed') ? '›' : '‹';
   });
 
 })();
