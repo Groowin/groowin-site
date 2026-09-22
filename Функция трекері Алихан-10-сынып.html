@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Функция трекері</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.85em' font-size='84'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style id="app-style">
+  :root{
+    --paper:#EEF1F6;
+    --grid:rgba(22,34,58,.07);
+    --ink:#16223A;
+    --ink-soft:#54617C;
+    --card:#FFFFFF;
+    --border:#DCE2ED;
+    --curve:#E2574C;
+    --gold:#C9922E;
+    --gold-bg:#FBF0DC;
+    --focus:#3B6EF0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#111826;
+      --grid:rgba(255,255,255,.06);
+      --ink:#ECEFF6;
+      --ink-soft:#9AA5BD;
+      --card:#182234;
+      --border:#2B364C;
+      --curve:#FF7A6E;
+      --gold:#E7B65C;
+      --gold-bg:#2C2410;
+      --focus:#6E93FF;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#111826; --grid:rgba(255,255,255,.06); --ink:#ECEFF6; --ink-soft:#9AA5BD;
+    --card:#182234; --border:#2B364C; --curve:#FF7A6E; --gold:#E7B65C; --gold-bg:#2C2410; --focus:#6E93FF;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,.serif{font-family:'Fraunces', Georgia, serif;}
+  ::selection{background:var(--gold-bg); color:var(--ink);}
+  a{color:inherit;}
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--focus); outline-offset:2px; border-radius:4px;}
+
+  .wrap{max-width:720px; margin:0 auto; padding:34px 20px 80px;}
+
+  /* ---------- header ---------- */
+  header{margin-bottom:26px;}
+  .title-row{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
+  h1{font-size:clamp(26px,5vw,34px); font-weight:600; margin:0 0 6px; line-height:1.15; letter-spacing:-.01em;}
+  .sub{color:var(--ink-soft); font-size:15px; line-height:1.55; max-width:52ch; margin:0;}
+  .reset-btn{
+    flex:0 0 auto; background:none; border:1px solid var(--border); color:var(--ink-soft);
+    font-size:12.5px; padding:7px 12px; border-radius:8px; cursor:pointer; white-space:nowrap;
+    transition:border-color .15s, color .15s;
+  }
+  .reset-btn:hover{border-color:var(--curve); color:var(--curve);}
+
+  .progress-card{
+    margin-top:20px; background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:18px 20px; display:flex; align-items:center; gap:18px;
+  }
+  .progress-nums{flex:0 0 auto; min-width:120px;}
+  .progress-pct{font-family:'Fraunces',serif; font-size:30px; font-weight:600; line-height:1;}
+  .progress-label{font-size:12.5px; color:var(--ink-soft); margin-top:4px;}
+  .curve-box{flex:1 1 auto; height:52px;}
+  .curve-box svg{width:100%; height:100%; display:block; overflow:visible;}
+  .curve-track{fill:none; stroke:var(--border); stroke-width:2.5;}
+  .curve-fill{fill:none; stroke:var(--curve); stroke-width:2.5; stroke-linecap:round; transition:stroke-dashoffset .5s ease;}
+  .curve-dot{fill:var(--curve); transition:cx .5s ease, cy .5s ease;}
+
+  /* ---------- chapters ---------- */
+  .chapter{margin-top:22px; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--card);}
+  .chapter-head{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:15px 18px; cursor:pointer; user-select:none; background:transparent; border:none; width:100%; text-align:left; color:var(--ink);
+  }
+  .chapter-title{font-family:'Fraunces',serif; font-size:16.5px; font-weight:600; line-height:1.3;}
+  .chapter-meta{display:flex; align-items:center; gap:10px; flex:0 0 auto;}
+  .chapter-count{font-size:12.5px; color:var(--ink-soft); white-space:nowrap;}
+  .chevron{width:9px; height:9px; border-right:1.6px solid var(--ink-soft); border-bottom:1.6px solid var(--ink-soft); transform:rotate(45deg); transition:transform .2s; flex:0 0 auto; margin-top:-3px;}
+  .chapter.open .chevron{transform:rotate(-135deg); margin-top:3px;}
+  .chapter-bar{height:3px; background:var(--border); position:relative;}
+  .chapter-bar > i{position:absolute; inset:0; width:0%; background:var(--gold); transition:width .4s ease;}
+
+  .topics{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+  .chapter.open .topics{max-height:6000px;}
+  .topic{border-top:1px solid var(--border); padding:13px 18px 15px 14px; display:flex; gap:12px; align-items:flex-start;}
+  .topic.done{background:linear-gradient(90deg, var(--gold-bg), transparent 40%);}
+
+  .chk{
+    flex:0 0 auto; width:20px; height:20px; margin-top:2px; border-radius:5px; border:1.6px solid var(--border);
+    background:var(--paper); cursor:pointer; display:flex; align-items:center; justify-content:center; position:relative;
+    appearance:none; -webkit-appearance:none;
+  }
+  .chk:checked{background:var(--gold); border-color:var(--gold);}
+  .chk:checked::after{
+    content:""; width:5px; height:9px; border-right:2px solid #fff; border-bottom:2px solid #fff;
+    transform:rotate(40deg) translate(-1px,-1px);
+  }
+
+  .topic-body{flex:1 1 auto; min-width:0;}
+  .topic-top{display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;}
+  .topic-title{font-size:14.8px; font-weight:500; cursor:pointer; line-height:1.4;}
+  .topic.done .topic-title{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:var(--border); text-decoration-thickness:1.4px;}
+  .page-badge{
+    flex:0 0 auto; font-size:11.5px; color:var(--ink-soft); border:1px solid var(--border); border-radius:20px;
+    padding:1.5px 8px; white-space:nowrap;
+  }
+  .idea{margin-top:6px; font-size:13.2px; color:var(--ink-soft); line-height:1.5; display:flex; gap:6px;}
+  .idea .bulb{flex:0 0 auto;}
+  .idea p{margin:0;}
+
+  .note-toggle{margin-top:7px; font-size:12px; color:var(--curve); background:none; border:none; padding:0; cursor:pointer; font-weight:600;}
+  .note-wrap{margin-top:7px; display:none;}
+  .note-wrap.open{display:block;}
+  .note-wrap textarea{
+    width:100%; min-height:52px; resize:vertical; border:1px solid var(--border); border-radius:8px;
+    background:var(--paper); color:var(--ink); font-family:inherit; font-size:13px; padding:8px 10px; line-height:1.45;
+  }
+
+  .sync-note{margin-top:22px; font-size:12px; color:var(--ink-soft); text-align:center; line-height:1.6;}
+  .sync-note b{color:var(--ink);}
+
+  @media (max-width:420px){
+    .progress-card{flex-direction:column; align-items:flex-start;}
+    .curve-box{width:100%;}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script id="state-data" type="application/json">{"checked":{"domain":true,"incdec":true,"periodicity":true},"notes":{}}</script>
+<script>
+(function(){
+  "use strict";
+  var SELF_SRC = document.currentScript.textContent;
+
+  /* ---------------- data ---------------- */
+  var CHAPTERS = [
+    { id:"ch1", title:"1-тарау. Функция, оның қасиеттері мен графигі", topics:[
+      {id:"domain", title:"Анықталу облысы мен мәндер жиыны", page:11,
+        idea:"Функцияны «қабылдау машинасы» ретінде сурет салдыр: кіріс x пен шығыс y-ды бөлек дөңгелектерге жаз, рұқсат етілмеген x-терді бірге тап."},
+      {id:"incdec", title:"Өсу және кему аралықтары", page:19,
+        idea:"Күн бойы температура графигін алып, «қашан жылынды, қашан суытты» деп сұрақ қой — таңбадан бұрын интуиция жұмыс істесін."},
+      {id:"periodicity", title:"Периодты функциялар", page:38,
+        idea:"Сағат тілін немесе апта күндерін мысалға алып, period ұғымын қайталанатын оқиға ретінде таныстыр."},
+      {id:"monotonic", title:"Монотонды, өспейтін/кемімейтін функциялар", page:21,
+        idea:"Тегіс (жазық) телімі бар график сыз — «өспейтін» мен «өсетін» арасындағы жіңішке айырманы дәл осы жерден көрсет."},
+      {id:"bounded", title:"Шектелген функция", page:22,
+        idea:"Графикке көлденең сызық сыздырып, «одан асып кетпейді ме?» деп сұра — шектелгендікті көзбен тап."},
+      {id:"extrema", title:"Экстремум, ең үлкен және ең кіші мән", page:24,
+        idea:"Таудың жергілікті шыңы (локальді) мен ең биік шыңы (глобальді) метафорасын қолдан — айырмасы бірден есте қалады."},
+      {id:"evenodd", title:"Жұп және тақ функциялар", page:30,
+        idea:"Қағазды Oy осі бойымен бүктеп көр — сәйкес келсе жұп; 180°-қа бұрғанда сәйкес келсе тақ функция."},
+      {id:"composite", title:"Күрделі функциялар (композиция)", page:46,
+        idea:"«Конвейр» идеясы: бірінші станок бір амал жасайды, дайын өнім екінші станокқа түседі дегендей тізбектеп түсіндір."},
+      {id:"inverse", title:"Өзара кері функциялар", page:53,
+        idea:"y=x түзуін «айна» етіп сал — тура және кері функция графиктері бір-бірінің шағылысуы екенін көрнекі көрсет."},
+      {id:"fullstudy", title:"Графикті салу және функцияны толық зерттеу", page:60,
+        idea:"Барлық үйренген қасиеттерді біріктіріп, бір функцияны «детектив» сияқты толық тексертіп шық — қорытынды жаттығу осы."}
+    ]},
+    { id:"ch2", title:"2-тарау. Тригонометриялық функциялар", topics:[
+      {id:"radian", title:"Радиандық өлшем және алгебралық бұрыш", page:74,
+        idea:"Пиццаны бөлу арқылы түсіндір: толық шеңбер = 2π «тілім»."},
+      {id:"trigdef", title:"Тригонометриялық функциялардың анықтамалары", page:76,
+        idea:"Бірлік шеңберді қолмен сыздырт — sin мен cos нүктенің координаталары екенін көрсет."},
+      {id:"singraph", title:"y = sin x графигі", page:79,
+        idea:"Шеңбердегі нүктені айналдырып, биіктігін (y) қатар тұрған графикке «құятын» тәсілмен сал — синусоида қайдан шыққанын аш."},
+      {id:"cosgraph", title:"y = cos x графигі", page:82,
+        idea:"sin x графигін солға π/2-ге жылжытсақ cos x шығатынын салыстырып көрсет."},
+      {id:"trigexamples", title:"Графиктерді салу мен зерттеуге мысалдар", page:82,
+        idea:"Амплитуда мен период өзгергенде графиктің қалай «созылатынын/жиырылатынын» бірнеше мысалда салыстыр."},
+      {id:"tggraph", title:"y = tg x графигі", page:88,
+        idea:"Асимптотаны «жақындайды, бірақ ешқашан тимейді» деген өмірлік мысалмен таныстыр."},
+      {id:"ctggraph", title:"y = ctg x графигі", page:90,
+        idea:"tg және ctg графиктерін период пен асимптота орындары бойынша бір кестеде салыстыр."},
+      {id:"invtrigintro", title:"Кері тригонометриялық функциялар: жалпы идея", page:99,
+        idea:"Көлденең сызық сынағы арқылы неге тек шектелген аралықта ғана кері функция болатынын көрсет."},
+      {id:"arccot", title:"Арккотангенс", page:99,
+        idea:"y=ctg x графигінің (0;π) аралығындағы бөлігін бөлек сызып, неге дәл осы аралық таңдалғанын түсіндір."},
+      {id:"arctan", title:"Арктангенс", page:101,
+        idea:"arctan-ды «бұрышты іздеуші машина» ретінде таныстыр: tg мәнін бересің — ол бұрышты қайтарады."},
+      {id:"arccos", title:"Арккосинус", page:103,
+        idea:"Бірлік шеңберде белгілі cos мәніне сәйкес бұрышты бірге іздеп тап."},
+      {id:"arcsin", title:"Арксинус", page:105,
+        idea:"arcsin пен arccos қосындысы неге әрқашан π/2 екенін шеңбер арқылы дәлелдет."},
+      {id:"arcexpr", title:"Арқфункциялары бар өрнектерді түрлендіру", page:111,
+        idea:"Әр қадамда «қай аралықтамыз?» деп сұрақ қойдыр — қателердің көбі осыдан шығады."},
+      {id:"arceqineq", title:"Арқфункциялары бар теңдеулер мен теңсіздіктер", page:117,
+        idea:"Шешуден бұрын ОДЗ (анықталу облысын) тексеруді әдетке айналдыр."}
+    ]},
+    { id:"ch3", title:"3-тарау. Тригонометриялық теңдеулер мен теңсіздіктер", topics:[
+      {id:"simpletrigeq", title:"Қарапайым тригонометриялық теңдеулер (sin x=a, cos x=a, tg x=a, ctg x=a)", page:124,
+        idea:"Бірлік шеңберде шешім нүктелерін белгілеп, «+2πn» бөлігі неге қажет екенін көрнекі көрсет."},
+      {id:"complextrigeq", title:"Күрделі тригонометриялық теңдеулерді шешу әдістері", page:144,
+        idea:"Шешпес бұрын «бұл қай түрге ұқсайды?» деп жіктеуге үйрет — таңдау дағдысы шешуден маңызды."},
+      {id:"trigineq", title:"Қарапайым тригонометриялық теңсіздіктер", page:157,
+        idea:"Сан осінде емес, бірлік шеңберде «доғаны бояп» шешім аралығын тап — көрнекі әрі қатесіз тәсіл."}
+    ]}
+  ];
+
+  var DEFAULT_CHECKED = ["domain","incdec","periodicity"];
+  var OPEN_BY_DEFAULT = {ch1:true, ch2:false, ch3:false};
+
+  /* ---------------- state ---------------- */
+  var LS_KEY = "funktsiya-trekeri-state-v1";
+
+  function defaultState(){
+    var checked = {};
+    DEFAULT_CHECKED.forEach(function(id){ checked[id]=true; });
+    return {checked:checked, notes:{}};
+  }
+  function normalize(s){
+    return {checked: (s && s.checked) || {}, notes: (s && s.notes) || {}};
+  }
+  function embeddedState(){
+    var raw = document.getElementById("state-data");
+    var txt = raw ? raw.textContent.trim() : "";
+    if(txt && txt.indexOf("@@STATE@@")===-1){
+      try{ var parsed = JSON.parse(txt); if(parsed && typeof parsed==="object") return normalize(parsed); }catch(e){}
+    }
+    return defaultState();
+  }
+  function localState(){
+    try{
+      var raw = localStorage.getItem(LS_KEY);
+      if(raw){ var parsed = JSON.parse(raw); if(parsed && typeof parsed==="object") return normalize(parsed); }
+    }catch(e){}
+    return null;
+  }
+  // localStorage (this browser) is treated as the reliable source of truth once
+  // it exists, since the "artifact" self-publish capability is not guaranteed to
+  // be available in every viewer. The document's own embedded state is only the
+  // starting point / cross-device baseline.
+  function loadState(){
+    return localState() || embeddedState();
+  }
+  function saveLocal(st){
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(st)); }catch(e){}
+  }
+
+  var state = loadState();
+  var openChapters = {};
+  Object.keys(OPEN_BY_DEFAULT).forEach(function(k){ openChapters[k]=OPEN_BY_DEFAULT[k]; });
+
+  var allTopics = [];
+  CHAPTERS.forEach(function(c){ c.topics.forEach(function(t){ allTopics.push(t); }); });
+  var TOTAL = allTopics.length;
+
+  /* ---------------- publish (artifact capability) ---------------- */
+  var artifactNS = null;
+  var artifactTried = false;
+  var pendingTimer = null;
+
+  function escapeScriptClose(s){ return s.replace(/<\/script/gi, "<\\/script"); }
+
+  // Fixed, hand-authored <head> markup used when rebuilding the document for
+  // publish. Deliberately NOT read from the live document.head: the hosting
+  // runtime injects its own bookkeeping scripts into <head> at load time, and
+  // copying those would bake a growing pile of stale runtime code into every
+  // saved version.
+  var HEAD_HTML = [
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">',
+    '<title>Функция трекері</title>',
+    '<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ctext y=\'.85em\' font-size=\'84\'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">',
+    '<link rel="preconnect" href="https://fonts.googleapis.com">',
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+    '<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">',
+    '<style>' + document.getElementById("app-style").textContent + '</style>'
+  ].join("\n");
+
+  function buildFullHTML(st){
+    var stateJson = escapeScriptClose(JSON.stringify(st));
+    var scriptSrc = escapeScriptClose(SELF_SRC);
+    return "<!doctype html>\n<html lang=\"kk\">\n<head>\n" + HEAD_HTML + "\n</head>\n<body>\n<div id=\"root\"></div>\n<script id=\"state-data\" type=\"application/json\">" + stateJson + "<\/script>\n<script>" + scriptSrc + "<\/script>\n</body>\n</html>";
+  }
+
+  function schedulePublish(){
+    saveLocal(state); // reliable, synchronous, always happens
+    if(pendingTimer) clearTimeout(pendingTimer);
+    pendingTimer = setTimeout(doPublish, 450); // best-effort cross-device sync
+  }
+
+  function doPublish(){
+    pendingTimer = null;
+    var html = buildFullHTML(state);
+    (async function(){
+      try{
+        if(!artifactTried){
+          artifactTried = true;
+          if(window.claude && typeof window.claude.use === "function"){
+            artifactNS = await window.claude.use("artifact");
+          }
+        }
+        if(artifactNS && artifactNS.publish){
+          await artifactNS.publish(html);
+          return; // successful publish reloads this view
+        }
+      }catch(err){
+        // conflict -> view reloads itself; anything else -> artifact sync just didn't happen this time
+      }
+    })();
+  }
+
+  /* ---------------- render ---------------- */
+  function pct(){
+    var done=0; allTopics.forEach(function(t){ if(state.checked[t.id]) done++; });
+    return {done:done, total:TOTAL, p: TOTAL? Math.round(done/TOTAL*100):0};
+  }
+
+  function curveSVG(p){
+    var w=300,h=52,pad=6;
+    var pts=[[pad,h-pad],[w*0.28,h*0.62],[w*0.55,h*0.38],[w*0.8,h*0.22],[w-pad,pad]];
+    var d="M"+pts.map(function(pt){return pt[0]+","+pt[1];}).join(" L");
+    var t = p/100;
+    var seg = Math.min(pts.length-1, Math.floor(t*(pts.length-1)));
+    var localT = (t*(pts.length-1)) - seg;
+    var a=pts[seg], b=pts[Math.min(seg+1,pts.length-1)];
+    var dotX = a[0]+(b[0]-a[0])*localT;
+    var dotY = a[1]+(b[1]-a[1])*localT;
+    return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true">'
+      + '<path class="curve-track" d="'+d+'"/>'
+      + '<path class="curve-fill" id="curveFill" d="'+d+'"/>'
+      + '<circle class="curve-dot" cx="'+dotX+'" cy="'+dotY+'" r="4.5"/>'
+      + '</svg>';
+  }
+
+  function chapterProgress(c){
+    var done=0; c.topics.forEach(function(t){ if(state.checked[t.id]) done++; });
+    return {done:done,total:c.topics.length};
+  }
+
+  function render(){
+    var stat = pct();
+    var root = document.getElementById("root");
+    var html = "";
+
+    html += '<div class="wrap">';
+    html += '<header>';
+    html += '  <div class="title-row">';
+    html += '    <div><h1>Функция трекері</h1><p class="sub">10-сынып, «Алгебра және анализ бастамалары» оқулығы бойынша. Әр тақырыпты өткен сайын белгілеп отыр — прогресс автоматты сақталады.</p></div>';
+    html += '    <button class="reset-btn" id="resetBtn" type="button">Тазалау</button>';
+    html += '  </div>';
+    html += '  <div class="progress-card">';
+    html += '    <div class="progress-nums"><div class="progress-pct">'+stat.p+'%</div><div class="progress-label">'+stat.done+' / '+stat.total+' тақырып өтілді</div></div>';
+    html += '    <div class="curve-box">'+curveSVG(stat.p)+'</div>';
+    html += '  </div>';
+    html += '</header>';
+
+    CHAPTERS.forEach(function(c){
+      var cp = chapterProgress(c);
+      var isOpen = !!openChapters[c.id];
+      var barPct = cp.total? Math.round(cp.done/cp.total*100):0;
+      html += '<section class="chapter'+(isOpen?' open':'')+'" data-chapter="'+c.id+'">';
+      html += '  <button class="chapter-head" data-toggle-chapter="'+c.id+'" type="button" aria-expanded="'+isOpen+'">';
+      html += '    <span class="chapter-title">'+c.title+'</span>';
+      html += '    <span class="chapter-meta"><span class="chapter-count">'+cp.done+'/'+cp.total+'</span><span class="chevron"></span></span>';
+      html += '  </button>';
+      html += '  <div class="chapter-bar"><i style="width:'+barPct+'%"></i></div>';
+      html += '  <div class="topics">';
+      c.topics.forEach(function(t){
+        var done = !!state.checked[t.id];
+        var note = state.notes[t.id] || "";
+        html += '<div class="topic'+(done?' done':'')+'" data-topic="'+t.id+'">';
+        html += '  <input class="chk" type="checkbox" data-check="'+t.id+'" '+(done?'checked':'')+' aria-label="'+t.title+'">';
+        html += '  <div class="topic-body">';
+        html += '    <div class="topic-top"><span class="topic-title" data-check-label="'+t.id+'">'+t.title+'</span><span class="page-badge">'+t.page+'-бет</span></div>';
+        html += '    <div class="idea"><span class="bulb">💡</span><p>'+t.idea+'</p></div>';
+        html += '    <button class="note-toggle" data-note-toggle="'+t.id+'" type="button">'+(note?'жазбаны көру':'өз жазбаңды қос')+'</button>';
+        html += '    <div class="note-wrap'+(note?' open':'')+'" data-note-wrap="'+t.id+'"><textarea placeholder="Осы тақырып бойынша өз ескертпең..." data-note-input="'+t.id+'">'+note+'</textarea></div>';
+        html += '  </div>';
+        html += '</div>';
+      });
+      html += '  </div>';
+      html += '</section>';
+    });
+
+    html += '<p class="sync-note">Прогресс осы браузерде <b>автоматты сақталады</b> — бетті жауып, қайта ашсаңыз да сол қалпында тұрады.</p>';
+    html += '</div>';
+
+    root.innerHTML = html;
+    bindEvents();
+  }
+
+  function bindEvents(){
+    var root = document.getElementById("root");
+
+    root.querySelectorAll("[data-toggle-chapter]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-toggle-chapter");
+        openChapters[id] = !openChapters[id];
+        render();
+      });
+    });
+
+    root.querySelectorAll("[data-check]").forEach(function(cb){
+      cb.addEventListener("change", function(){
+        var id = cb.getAttribute("data-check");
+        state.checked[id] = cb.checked;
+        render();
+        schedulePublish();
+      });
+    });
+
+    root.querySelectorAll("[data-check-label]").forEach(function(lab){
+      lab.addEventListener("click", function(){
+        var id = lab.getAttribute("data-check-label");
+        var cb = root.querySelector('[data-check="'+id+'"]');
+        if(cb){ cb.checked = !cb.checked; cb.dispatchEvent(new Event("change")); }
+      });
+    });
+
+    root.querySelectorAll("[data-note-toggle]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-note-toggle");
+        var wrap = root.querySelector('[data-note-wrap="'+id+'"]');
+        if(wrap){
+          wrap.classList.toggle("open");
+          if(wrap.classList.contains("open")){
+            var ta = wrap.querySelector("textarea");
+            if(ta) ta.focus();
+          }
+        }
+      });
+    });
+
+    root.querySelectorAll("[data-note-input]").forEach(function(ta){
+      var timer=null;
+      ta.addEventListener("input", function(){
+        var id = ta.getAttribute("data-note-input");
+        state.notes[id] = ta.value;
+        if(timer) clearTimeout(timer);
+        timer = setTimeout(schedulePublish, 700);
+      });
+    });
+
+    var resetBtn = document.getElementById("resetBtn");
+    if(resetBtn){
+      resetBtn.addEventListener("click", function(){
+        if(confirm("Барлық белгілер мен жазбалар тазаланады. Жалғастырасыз ба?")){
+          var checked = {};
+          DEFAULT_CHECKED.forEach(function(id){ checked[id]=true; });
+          state = {checked:checked, notes:{}};
+          render();
+          schedulePublish();
+        }
+      });
+    }
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
