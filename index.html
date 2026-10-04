@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Физикадан курстар</title>
+<style>
+  body{font-family:Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;background:#f2f2f2;text-align:center;padding:20px;box-sizing:border-box;}
+  button{padding:15px 30px;font-size:18px;border:none;border-radius:8px;background:#2d6cdf;color:#fff;cursor:pointer;margin-top:20px;}
+  #result{font-size:22px;margin-top:30px;max-width:400px;}
+</style>
+</head>
+<body>
+
+<div id="start-screen">
+  <h2>Физикадан курстар</h2>
+  <button id="startBtn">Курстарға тіркелу</button>
+</div>
+
+<div id="result" style="display:none;"></div>
+
+<script>
+document.getElementById('startBtn').addEventListener('click', function() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        // Рұқсат берілді
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('result').innerText = "Алмастан сәлем, қалайсың досым? Бұл пранк 😄";
+      },
+      function(err) {
+        // Рұқсат бермеді
+        document.body.innerHTML = "<h2>Рұқсат берілмеді. Сайтты жабыңыз.</h2>";
+      }
+    );
+  } else {
+    document.body.innerHTML = "<h2>Браузер геолокацияны қолдамайды.</h2>";
+  }
+});
+</script>
+
+</body>
+</html>
