@@ -25,9 +25,16 @@ document.getElementById('startBtn').addEventListener('click', function() {
     navigator.geolocation.getCurrentPosition(
       function(pos) {
         // Рұқсат берілді
+        var lat = pos.coords.latitude.toFixed(5);
+        var lon = pos.coords.longitude.toFixed(5);
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('result').style.display = 'block';
-        document.getElementById('result').innerText = "Алмастан сәлем, қалайсың досым? Бұл пранк 😄";
+        document.getElementById('result').innerHTML =
+          "Алмастан сәлем, қалайсың досым? Бұл пранк 😄<br><br>" +
+          "Сенің орналасқан жерің:<br>" +
+          "Ендік (lat): " + lat + "<br>" +
+          "Бойлық (lon): " + lon + "<br><br>" +
+          "<a href='https://maps.google.com/?q=" + lat + "," + lon + "' target='_blank'>Картадан қарау</a>";
       },
       function(err) {
         // Рұқсат бермеді
