@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ньютонның құлыптаулы бөлмесі</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,500&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#efe7d6; --panel:#fbf6ea; --ink:#2a2438; --muted:#6b6280; --line:#d9ccb0;
+  --accent:#b8791f; --good:#2f8f5b; --bad:#c2453d;
+  --paper:#f6ecd2; --paper-ink:#2b2236;
+  --serif:'Lora',Georgia,'Times New Roman',serif;
+  --sans:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12112a; --panel:#1e1c3d; --ink:#f1ead8; --muted:#a9a2c4; --line:#38345f;
+    --accent:#f2c14e; --good:#5fd08f; --bad:#ff7a70;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12112a; --panel:#1e1c3d; --ink:#f1ead8; --muted:#a9a2c4; --line:#38345f;
+  --accent:#f2c14e; --good:#5fd08f; --bad:#ff7a70;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);font-size:clamp(14px,.95vw + 4px,20px)}
+body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:700;overflow-x:hidden}
+.app{min-height:100%;height:100%;display:flex;flex-direction:column}
+
+/* header */
+.top{display:flex;align-items:center;gap:14px;padding:10px 14px;flex-wrap:wrap}
+.brand{font:700 1.35rem/1.1 var(--serif);margin:0;letter-spacing:.2px}
+.dots{display:flex;gap:7px;align-items:center}
+.dot{width:1.15rem;height:1.15rem;border-radius:50%;border:2px solid var(--accent);display:grid;place-items:center;font-size:.7rem;color:transparent;transition:background .3s}
+.dot.done{background:var(--accent);color:#1b1530}
+.spacer{flex:1}
+.timer{font-variant-numeric:tabular-nums;font-weight:800;color:var(--muted)}
+.btn{border:1px solid var(--line);border-radius:10px;padding:.5em .95em;font:800 .95rem var(--sans);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible,.key:focus-visible,.slot:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);color:#1b1530;border-color:transparent}
+.btn.big{font-size:1.15rem;padding:.7em 1.5em}
+.hidden{display:none!important}
+
+/* layout */
+.main{flex:1;min-height:0;display:flex;gap:14px;padding:0 14px 14px}
+.stage{flex:1;min-width:0;display:flex;align-items:center;justify-content:center}
+.scene{
+  position:relative;width:100%;aspect-ratio:16/9;
+  max-width:calc((100vh - 100px) * 16 / 9);
+  max-width:calc((100dvh - 100px) * 16 / 9);
+  container-type:inline-size;border-radius:16px;overflow:hidden;user-select:none;-webkit-user-select:none;
+  box-shadow:0 14px 40px rgba(0,0,0,.35);background:#24224a;
+}
+.side{width:clamp(250px,21vw,330px);display:flex;flex-direction:column;gap:12px;overflow:auto;padding-bottom:4px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.pcard h3{margin:0 0 10px;font:700 1.05rem var(--serif)}
+.inv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.slot{aspect-ratio:1;border:2px dashed var(--line);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px;text-align:center;font-size:.72rem;color:var(--muted);touch-action:none}
+.slot.full{border:2px solid var(--accent);background:rgba(242,193,78,.12);cursor:grab;color:var(--ink)}
+.slot.sel{background:rgba(242,193,78,.35);box-shadow:0 0 0 3px var(--accent)}
+.slot .ico{width:62%;aspect-ratio:1}
+.slot .ico svg{width:100%;height:100%;display:block}
+.slot.pop{animation:pop .6s}
+.journal{list-style:none;margin:0;padding:0;display:grid;gap:7px;font-size:.88rem}
+.journal li{display:flex;gap:8px;align-items:baseline;padding:6px 8px;border-radius:9px;background:rgba(127,127,127,.09);color:var(--muted)}
+.journal li.done{background:rgba(95,208,143,.15);color:var(--ink)}
+.journal em{font-style:normal;font-family:var(--serif);font-weight:700;margin-left:auto;color:var(--good);white-space:nowrap}
+.hintline{font-size:.8rem;color:var(--muted);font-weight:600;line-height:1.4}
+
+/* scene art */
+.wall{position:absolute;left:0;right:0;top:0;height:71.1%;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 2.2cqw,transparent 2.2cqw 4.4cqw),linear-gradient(180deg,#22204a,#3a356c)}
+.wain{position:absolute;left:0;right:0;top:58.7%;height:12.4%;background:linear-gradient(#5a3544,#3b2431);border-top:.45cqw solid rgba(201,151,58,.5)}
+.base{position:absolute;left:0;right:0;top:70.2%;height:1.6%;background:#26161c}
+.floor{position:absolute;left:0;right:0;top:71.1%;bottom:0;
+  background:repeating-linear-gradient(90deg,rgba(0,0,0,.2) 0 .25cqw,transparent .25cqw 7cqw),linear-gradient(#7c4c2a,#4c2d1a)}
+.glow{position:absolute;left:34%;top:23%;width:30%;aspect-ratio:1;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,196,96,.30),transparent 66%);animation:flick 3.4s ease-in-out infinite}
+.vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.5))}
+.el{position:absolute}
+.el svg{display:block;width:100%;height:100%;overflow:visible}
+.el.deco{pointer-events:none}
+.hot{cursor:pointer;transition:filter .15s}
+.hot:hover{filter:brightness(1.15) drop-shadow(0 0 .8cqw rgba(255,214,120,.75))}
+.has-sel .hot{cursor:crosshair}
+body.dragging .hot{filter:drop-shadow(0 0 .7cqw rgba(255,214,120,.9))}
+.drag{touch-action:none;cursor:grab}
+.drag.grab{cursor:grabbing;z-index:20;filter:drop-shadow(0 1.2cqw 1.2cqw rgba(0,0,0,.5))}
+#el-painting{transform:rotate(-3deg)}
+#el-painting.wig{animation:wig 2.6s ease-in-out 1.5s 2}
+
+.s-open,.d-open,.w-open{display:none}
+.el.open .s-open,.el.open .d-open,.el.open .w-open{display:block}
+.el.open .s-closed,.el.open .d-closed,.el.open .w-closed{display:none}
+.el.empty .w-letter{display:none}
+.m-dust{transition:opacity .9s}
+.el.revealed .m-dust{opacity:0}
+.c-gear{display:none}
+.c-hh,.c-hm{transform-origin:55px 55px}
+.el.running .c-gear{display:block;transform-origin:55px 78px;animation:spin 3s linear infinite}
+.el.running .c-socket{display:none}
+.el.running .c-hh{animation:spin 24s linear infinite}
+.el.running .c-hm{animation:spin 3s linear infinite}
+.flame{transform-origin:160px 36px;animation:fl 1.3s ease-in-out infinite alternate}
+.nbob{animation:bob 2.4s ease-in-out infinite}
+.wave{transform-origin:110px 106px;animation:wave 1.6s ease-in-out infinite}
+#el-newton{transition:left 3.4s linear,opacity .7s}
+.walk .nbob{animation-duration:.32s}
+.walk .wave{animation-duration:.4s}
+
+.bubble{position:absolute;left:3%;bottom:47.4%;width:27%;background:#fff8e6;color:#2b2236;border-radius:1.5cqw;
+  padding:.9cqw 1.3cqw;font:800 1.55cqw/1.32 var(--sans);box-shadow:0 .5cqw 1.5cqw rgba(0,0,0,.4);z-index:8;pointer-events:none}
+.bubble::after{content:"";position:absolute;left:52%;bottom:-1.3cqw;border:.8cqw solid transparent;border-top:1.4cqw solid #fff8e6;border-bottom:0}
+.toast{position:absolute;left:50%;top:3%;transform:translate(-50%,-14px);max-width:70%;background:rgba(18,14,40,.92);color:#fff;
+  padding:.9cqw 1.8cqw;border-radius:1.2cqw;font:800 1.7cqw/1.3 var(--sans);text-align:center;opacity:0;transition:opacity .25s,transform .25s;z-index:30;pointer-events:none;border:.2cqw solid #f2c14e}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.ghost{position:fixed;width:84px;height:84px;margin:-42px 0 0 -42px;pointer-events:none;z-index:200;filter:drop-shadow(0 8px 10px rgba(0,0,0,.5));transform:scale(1.15)}
+.ghost svg{width:100%;height:100%}
+
+/* overlays */
+.overlay{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:14px;background:rgba(10,8,28,.78);backdrop-filter:blur(4px);overflow:auto}
+.card{background:var(--panel);color:var(--ink);border-radius:20px;width:min(1100px,100%);max-height:94vh;overflow:auto;padding:clamp(18px,2.4vw,34px);box-shadow:0 24px 70px rgba(0,0,0,.5);position:relative}
+.card h1,.card h2{font-family:var(--serif);margin:0 0 .4em;line-height:1.15}
+.card h1{font-size:clamp(1.8rem,3.4vw,3rem)}
+.card p{line-height:1.55;font-weight:600}
+.rules{list-style:none;padding:0;margin:1em 0 1.4em;display:grid;gap:.6em;font-size:1.05rem}
+.card.narrow{width:min(760px,100%)}
+.paper{background:var(--paper);color:var(--paper-ink);border:.35rem double #b79a5a}
+.paper .tag{font:800 .9rem var(--sans);color:#7a5518;margin-bottom:.3rem}
+.paper h2{font-size:clamp(1.5rem,2.5vw,2.4rem)}
+.x{position:absolute;right:14px;top:12px;border:0;background:rgba(0,0,0,.08);width:2.4rem;height:2.4rem;border-radius:50%;font-size:1.2rem;cursor:pointer;color:inherit}
+.prob{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(16px,2.4vw,34px);align-items:start}
+.ptext{font:600 clamp(1.1rem,1.9vw,1.75rem)/1.5 var(--serif);margin:0}
+.ptext b{background:rgba(184,121,31,.25);padding:0 .2em;border-radius:4px}
+.track{position:relative;height:clamp(70px,10vh,100px);border-radius:12px;background:linear-gradient(#d6c8a2,#bfae80);margin-top:16px;overflow:hidden;border:2px solid #8a6a3a}
+.track .road{position:absolute;left:4%;right:4%;top:66%;height:4px;background:repeating-linear-gradient(90deg,#6a5530 0 14px,transparent 14px 26px)}
+.track .flag{position:absolute;top:8%;font-size:1.7rem}
+.track .flag.s{left:2.5%}.track .flag.f{right:2%}
+.track .tick{position:absolute;top:30%;bottom:10%;width:3px;background:#7a5518;opacity:.7}
+.mover{position:absolute;top:10%;font-size:2.3rem;transform:translateX(-50%);line-height:1.2}
+.tlabel{position:absolute;right:12px;bottom:5px;font-size:.85rem;font-weight:800;color:#4a3a1a}
+.entry{background:rgba(0,0,0,.06);border-radius:16px;padding:14px}
+.display{height:3.4rem;border-radius:12px;background:#17142b;color:#6dffa8;font:700 2rem/3.4rem ui-monospace,Menlo,Consolas,monospace;padding:0 .7em;display:flex;justify-content:space-between;align-items:center;letter-spacing:.08em}
+.display small{font:800 .95rem var(--sans);color:#a8a2cc;letter-spacing:0}
+.display.shake{animation:shake .4s}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.pad.lock{opacity:.4;pointer-events:none}
+.key{height:clamp(46px,6vh,66px);border-radius:12px;border:2px solid #b79a5a;background:#fff9e6;color:#2b2236;font:800 clamp(1.2rem,2vw,1.8rem) var(--sans);cursor:pointer}
+.key:hover{background:#ffeebb}
+.key:active{transform:translateY(2px)}
+.msg{min-height:3.2em;margin:12px 0 4px;font-size:1rem;line-height:1.4;font-weight:800}
+.msg.ok{color:#1f7a49}.msg.bad{color:#b23a32}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.hintbox{margin-top:10px;padding:10px 12px;border-left:5px solid #b8791f;background:rgba(184,121,31,.14);border-radius:8px;font-size:.98rem;line-height:1.45;font-weight:700}
+.paper .btn{background:#fff9e6;color:#2b2236;border-color:#b79a5a}
+.paper .btn.primary{background:#b8791f;color:#fff;border-color:transparent}
+
+table.ans{width:100%;border-collapse:collapse;font-size:.95rem}
+table.ans th,table.ans td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;font-weight:600}
+table.ans th{font-family:var(--serif);font-weight:700}
+.wrapx{overflow-x:auto}
+.formula{display:flex;gap:10px;flex-wrap:wrap;margin:1em 0}
+.formula span{background:rgba(184,121,31,.16);border:1px solid var(--accent);border-radius:10px;padding:.35em .8em;font:700 1.05rem var(--serif)}
+.conf{position:fixed;top:-40px;font-size:1.8rem;z-index:70;pointer-events:none;animation:fall linear forwards}
+
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes flick{50%{opacity:.78;transform:scale(1.04)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes fl{from{transform:scale(1,1) rotate(-3deg)}to{transform:scale(.88,1.12) rotate(3deg)}}
+@keyframes bob{50%{transform:translateY(-3px)}}
+@keyframes wave{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(10deg)}}
+@keyframes wig{0%,100%{transform:rotate(-3deg)}25%{transform:rotate(2deg)}75%{transform:rotate(-7deg)}}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@keyframes fall{to{transform:translateY(112vh) rotate(540deg)}}
+@media (prefers-reduced-motion: reduce){
+  .nbob,.wave,.flame,.glow,#el-painting.wig{animation:none}
+}
+@media (max-width:900px){
+  .main{flex-direction:column}
+  .scene{max-width:100%}
+  .side{width:100%;flex-direction:row;flex-wrap:wrap}
+  .side .pcard{flex:1 1 260px}
+  .prob{grid-template-columns:1fr}
+  .bubble{font-size:1.9cqw}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1 class="brand">🍎 Ньютонның құлыптаулы бөлмесі</h1>
+    <div class="dots" id="dots" aria-label="Деңгейлер"></div>
+    <div class="spacer"></div>
+    <span class="timer" id="timer">⏱ 00:00</span>
+    <button class="btn" id="bFull" title="Толық экран">⛶ Толық экран</button>
+    <button class="btn" id="bTeach">👩‍🏫 Мұғалімге</button>
+    <button class="btn" id="bReset">↻ Қайта бастау</button>
+  </header>
+
+  <div class="main">
+    <div class="stage"><div class="scene" id="scene"></div></div>
+    <aside class="side">
+      <section class="pcard">
+        <h3>🎒 Инвентарь</h3>
+        <div class="inv" id="inv"></div>
+        <p class="hintline" style="margin:8px 0 0">Затты сүйреп апарып, қолданатын жерге түсіріңдер (немесе таңдап, нысанды басыңдар).</p>
+      </section>
+      <section class="pcard">
+        <h3>📓 Ньютонның дәптері</h3>
+        <ul class="journal" id="journal"></ul>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<!-- intro -->
+<div class="overlay" id="intro">
+  <div class="card narrow">
+    <h1>Ньютонның құлыптаулы бөлмесі</h1>
+    <p style="color:var(--muted);margin-top:0">7-сынып · Физика · Есептер шығару: жылдамдық және орташа жылдамдық (7.2.1.4)</p>
+    <p>Түн. Ұлы ғалым Исаак Ньютон кітапханасында жұмыс істеп отырып, есіктің құлыптанып қалғанын байқады. Бөлмедегі құлыптардың әрқайсысын физика есебін шығарып қана ашуға болады. Ньютонға шығуға көмектесейік!</p>
+    <ul class="rules">
+      <li>🖱 Бөлмедегі заттарды басып көріңдер. Кейбірін сүйреп жылжытуға болады.</li>
+      <li>🎒 Табылған затты инвентарьдан қажетті жерге сүйреп апарыңдар.</li>
+      <li>🔢 Есептің жауабы — код. Есепті топпен дәптерде шығарыңдар!</li>
+      <li>📓 Табылған жауаптар Ньютонның дәптерінде сақталады. Соңғы есепте керек болады.</li>
+    </ul>
+    <button class="btn primary big" id="bStart">Квестті бастау ▶</button>
+  </div>
+</div>
+
+<!-- problem modal -->
+<div class="overlay hidden" id="modal">
+  <div class="card paper">
+    <button class="x" id="bClose" aria-label="Жабу">✕</button>
+    <div class="tag" id="pTag"></div>
+    <h2 id="pTitle"></h2>
+    <div class="prob">
+      <div>
+        <p class="ptext" id="pText"></p>
+        <div class="track" id="track"></div>
+      </div>
+      <div class="entry">
+        <div class="display" id="disp"><span id="dval">—</span><small id="dunit"></small></div>
+        <div class="pad" id="pad"></div>
+        <div class="msg" id="msg"></div>
+        <div class="row">
+          <button class="btn primary" id="bCheck">Кодты енгізу ✔</button>
+          <button class="btn primary hidden" id="bNext">Жалғастыру ▶</button>
+          <button class="btn" id="bHint">💡 Ньютонның кеңесі</button>
+        </div>
+        <div class="hintbox hidden" id="hintbox"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- teacher -->
+<div class="overlay hidden" id="teach">
+  <div class="card">
+    <button class="x" id="bTClose" aria-label="Жабу">✕</button>
+    <h2>Мұғалімге арналған бет</h2>
+    <p>Ойын тек проектор мен тақтаға арналған: жүргізуші — мұғалім (немесе оқушы), сыныпты 4–5 топқа бөлу ұсынылады. Топтар есепті дәптерде «Берілгені → Формула → Есептеу → Жауап» түрінде шығарады, ал бірінші дайын топ кодты шақырады.</p>
+    <div class="formula"><span>v = s : t</span><span>s = v · t</span><span>t = s : v</span><span>v<sub>орт</sub> = s<sub>жалпы</sub> : t<sub>жалпы</sub></span><span>1 м/с = 3,6 км/сағ</span></div>
+    <div class="wrapx"><table class="ans">
+      <tr><th>Деңгей</th><th>Жауап</th><th>Шешуі</th></tr>
+      <tr><td>1. Сейф</td><td>3 м/с</td><td>v = 12 м : 4 с = 3 м/с</td></tr>
+      <tr><td>2. Жәшік</td><td>60 м</td><td>s = 5 м/с · 12 с = 60 м</td></tr>
+      <tr><td>3. Карта</td><td>5 м/с</td><td>s = 120 + 180 = 300 м; t = 20 + 40 = 60 с; v<sub>орт</sub> = 300 : 60 = 5 м/с. Жиі қате: (6 + 4,5) : 2 = 5,25 — ойында арнайы ескерту шығады.</td></tr>
+      <tr><td>4. Сағат</td><td>300 м</td><td>54 км/сағ = 54 : 3,6 = 15 м/с; s = 15 · 20 = 300 м. Жиі қате: 54 · 20 = 1080.</td></tr>
+      <tr><td>5. Есік</td><td>4,5 м/с</td><td>t₁ = 60 : 3 = 20 с; t₂ = 300 : 5 = 60 с; v<sub>орт</sub> = (60 + 300) : (20 + 60) = 360 : 80 = 4,5 м/с. Жиі қате: (3 + 5) : 2 = 4.</td></tr>
+    </table></div>
+    <h3 style="font-family:var(--serif);margin-bottom:.3em">Сабақ барысы (шамамен 45 минут)</h3>
+    <ul style="line-height:1.6;font-weight:600;margin-top:0">
+      <li>5 мин. Ұйымдастыру, формулаларды қайталау, топтарға бөлу.</li>
+      <li>3 мин. Сюжет: Ньютон бөлмеде құлыптанып қалды. Ойын ережесін көрсету.</li>
+      <li>25–28 мин. Квест: әр деңгей шамамен 5 минут. Әр деңгейде басқа топ кодты енгізеді.</li>
+      <li>5 мин. Рефлексия: неге 5-деңгейде жауап 4 емес, 4,5? Орташа жылдамдық жылдамдықтардың орташа арифметикалық мәні емес екенін талқылау.</li>
+      <li>2 мин. Үй тапсырмасы немесе бағалау: өздері ұқсас квест есебін құрастырады.</li>
+    </ul>
+    <p style="color:var(--muted)">Кеңес: «⛶ Толық экран» батырмасын басып, бөлмені проекторға шығарыңдар. Мерзім жетпесе, 4-деңгейді (бірлік аудару) қалдырып, 5-деңгейді өткізуге болмайды: ол алдыңғы жауаптарға байланысты.</p>
+  </div>
+</div>
+
+<!-- win -->
+<div class="overlay hidden" id="win">
+  <div class="card narrow" style="text-align:center">
+    <h1>🎉 Ньютон бостандықта!</h1>
+    <p id="winText"></p>
+    <div class="formula" style="justify-content:center"><span>v = s : t</span><span>s = v · t</span><span>t = s : v</span><span>v<sub>орт</sub> = s<sub>жалпы</sub> : t<sub>жалпы</sub></span></div>
+    <p>Есте сақтаңдар: орташа жылдамдық — бүкіл жолды бүкіл уақытқа бөлу, ал жылдамдықтардың орташа арифметикалық мәні емес.</p>
+    <button class="btn primary big" id="bAgain">Қайта ойнау</button>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)};
+var scene=$('#scene');
+
+/* ---------- helpers ---------- */
+function gearPts(cx,cy,ro,ri,n){
+  var step=Math.PI*2/n,bw=step*.26,tw=step*.15,p=[];
+  for(var i=0;i<n;i++){
+    var a=i*step;
+    [[ri,a-bw],[ro,a-tw],[ro,a+tw],[ri,a+bw]].forEach(function(q){
+      p.push((cx+q[0]*Math.cos(q[1])).toFixed(1)+','+(cy+q[0]*Math.sin(q[1])).toFixed(1));
+    });
+  }
+  return p.join(' ');
+}
+function fmt(n){return String(n).replace('.',',')}
+
+/* ---------- SVG art ---------- */
+var ART={};
+ART.window='<svg viewBox="0 0 140 180"><defs><linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c0f33"/><stop offset="1" stop-color="#2d3d80"/></linearGradient><clipPath id="cW"><path d="M12 170V68a58 58 0 0 1 116 0V170Z"/></clipPath></defs>'+
+ '<path d="M12 170V68a58 58 0 0 1 116 0V170Z" fill="url(#gSky)"/><g clip-path="url(#cW)">'+
+ '<circle cx="94" cy="52" r="26" fill="#fff4cf" opacity=".12"/><circle cx="94" cy="52" r="16" fill="#fff4cf"/>'+
+ '<circle cx="40" cy="40" r="1.6" fill="#fff"/><circle cx="58" cy="26" r="1.2" fill="#fff"/><circle cx="30" cy="70" r="1.3" fill="#fff"/><circle cx="116" cy="92" r="1.4" fill="#fff"/><circle cx="72" cy="78" r="1.2" fill="#fff"/>'+
+ '<path d="M132 124C104 112 80 130 50 120" stroke="#2b1c10" stroke-width="4" fill="none" stroke-linecap="round"/>'+
+ '<ellipse cx="96" cy="118" rx="9" ry="4.5" fill="#2f7a42" transform="rotate(-20 96 118)"/><ellipse cx="70" cy="122" rx="9" ry="4.5" fill="#2f7a42" transform="rotate(15 70 122)"/>'+
+ '<circle cx="58" cy="134" r="11" fill="#d6453d"/><circle cx="54" cy="130" r="3.2" fill="#ff9a8e" opacity=".8"/><line x1="58" y1="123" x2="55" y2="119" stroke="#2b1c10" stroke-width="2"/></g>'+
+ '<path d="M12 170V68a58 58 0 0 1 116 0V170Z" fill="none" stroke="#8a5a2b" stroke-width="8"/><line x1="70" y1="10" x2="70" y2="170" stroke="#8a5a2b" stroke-width="5"/><line x1="12" y1="104" x2="128" y2="104" stroke="#8a5a2b" stroke-width="5"/>'+
+ '<rect x="4" y="168" width="132" height="11" rx="3" fill="#a2713d"/></svg>';
+
+ART.map='<svg viewBox="0 0 140 120"><rect x="6" y="6" width="128" height="108" rx="4" fill="#e9d6a8" stroke="#8a6a3a" stroke-width="3"/>'+
+ '<rect x="0" y="1" width="140" height="9" rx="4.5" fill="#c9a96a" stroke="#8a6a3a"/><rect x="0" y="110" width="140" height="9" rx="4.5" fill="#c9a96a" stroke="#8a6a3a"/>'+
+ '<g><path d="M22 90C44 40 66 96 74 62" fill="none" stroke="#a23d2e" stroke-width="3" stroke-dasharray="6 5"/><path d="M74 62C88 40 104 52 118 34" fill="none" stroke="#2a5a8a" stroke-width="3" stroke-dasharray="6 5"/>'+
+ '<circle cx="22" cy="90" r="5" fill="#2a2a2a"/><circle cx="74" cy="62" r="4" fill="#2a2a2a"/><circle cx="118" cy="34" r="5" fill="#2a2a2a"/>'+
+ '<text x="12" y="106" font-size="8.5" font-family="Lora,serif" fill="#3a2a1a">шеберхана</text><text x="82" y="28" font-size="8.5" font-family="Lora,serif" fill="#3a2a1a">кітапхана</text>'+
+ '<text x="30" y="52" font-size="8" font-family="Lora,serif" fill="#a23d2e">1-бөлік</text><text x="84" y="60" font-size="8" font-family="Lora,serif" fill="#2a5a8a">2-бөлік</text></g>'+
+ '<g class="m-dust"><rect x="6" y="6" width="128" height="108" rx="4" fill="#4b3c2c" opacity=".88"/><path d="M20 40h50M20 54h80M20 68h60M20 82h90" stroke="#e9d6a8" stroke-width="2" opacity=".18"/></g></svg>';
+
+ART.painting='<svg viewBox="0 0 150 180"><defs><linearGradient id="gP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1b36a"/><stop offset="1" stop-color="#7a5aa8"/></linearGradient></defs>'+
+ '<path d="M75 9L30 32M75 9L120 32" stroke="#c9b27a" stroke-width="1.6"/><circle cx="75" cy="9" r="3" fill="#8a8f98"/>'+
+ '<rect x="14" y="26" width="122" height="148" rx="5" fill="#c9973a" stroke="#6d4a12" stroke-width="3"/><rect x="26" y="38" width="98" height="116" fill="url(#gP)"/>'+
+ '<path d="M26 124Q60 104 90 120T124 114V154H26Z" fill="#2f6b3a"/><rect x="70" y="78" width="10" height="48" fill="#5a3a1e"/>'+
+ '<circle cx="75" cy="68" r="22" fill="#2f8a4a"/><circle cx="57" cy="78" r="15" fill="#2f8a4a"/><circle cx="93" cy="78" r="15" fill="#2f8a4a"/>'+
+ '<circle cx="66" cy="84" r="6" fill="#d6453d"/><circle cx="88" cy="70" r="5" fill="#d6453d"/>'+
+ '<rect x="50" y="159" width="50" height="9" rx="2" fill="#e9d6a8" stroke="#6d4a12"/></svg>';
+
+ART.safe='<svg viewBox="0 0 100 110"><rect x="2" y="2" width="96" height="106" rx="8" fill="#3b4048" stroke="#1d2024" stroke-width="3"/>'+
+ '<g class="s-closed"><rect x="10" y="10" width="80" height="90" rx="6" fill="#586070" stroke="#2a2e34" stroke-width="2"/>'+
+ '<circle cx="50" cy="48" r="23" fill="#2b2f36" stroke="#c9973a" stroke-width="3"/><circle cx="50" cy="48" r="18" fill="none" stroke="#c9973a" stroke-width="3" stroke-dasharray="1.3 4.1"/><circle cx="50" cy="48" r="12" fill="#444a54"/>'+
+ '<line x1="50" y1="48" x2="50" y2="34" stroke="#f2c14e" stroke-width="3" stroke-linecap="round"/>'+
+ '<rect x="28" y="78" width="44" height="14" rx="3" fill="#10161c"/><text x="50" y="89" text-anchor="middle" font-size="10" fill="#5cff9a" font-family="monospace">? ? ?</text>'+
+ '<circle cx="16" cy="16" r="2.4" fill="#2a2e34"/><circle cx="84" cy="16" r="2.4" fill="#2a2e34"/></g>'+
+ '<g class="s-open"><rect x="10" y="10" width="80" height="90" rx="6" fill="#14171b"/><rect x="14" y="68" width="72" height="4" fill="#2c323a"/>'+
+ '<polygon points="10,10 -8,2 -8,108 10,100" fill="#586070" stroke="#2a2e34" stroke-width="2"/></g></svg>';
+
+ART.clock=(function(){
+  var t='';
+  for(var i=0;i<12;i++){var a=i*Math.PI/6,r1=i%3===0?33:37,r2=42;
+    t+='<line x1="'+(55+r1*Math.sin(a)).toFixed(1)+'" y1="'+(55-r1*Math.cos(a)).toFixed(1)+'" x2="'+(55+r2*Math.sin(a)).toFixed(1)+'" y2="'+(55-r2*Math.cos(a)).toFixed(1)+'" stroke="#4a3a1a" stroke-width="'+(i%3===0?3:1.6)+'"/>';}
+  var g=gearPts(55,78,11,7.5,8);
+  return '<svg viewBox="0 0 110 110"><circle cx="55" cy="55" r="52" fill="#b98a2f" stroke="#6d4a12" stroke-width="3"/><circle cx="55" cy="55" r="45" fill="#f6ecd2" stroke="#8a6a3a" stroke-width="2"/>'+t+
+  '<g class="c-socket"><polygon points="'+g+'" fill="#1f1824" stroke="#6d4a12" stroke-width="1.2"/></g>'+
+  '<g class="c-gear"><polygon points="'+g+'" fill="#d9a63a" stroke="#6d4a12" stroke-width="1.2"/><circle cx="55" cy="78" r="2.6" fill="#6d4a12"/></g>'+
+  '<g class="c-hh" style="transform:rotate(300deg)"><line x1="55" y1="55" x2="55" y2="35" stroke="#2b2236" stroke-width="4.5" stroke-linecap="round"/></g>'+
+  '<g class="c-hm" style="transform:rotate(60deg)"><line x1="55" y1="55" x2="55" y2="24" stroke="#2b2236" stroke-width="3" stroke-linecap="round"/></g><circle cx="55" cy="55" r="3.5" fill="#4a3a1a"/></svg>';
+})();
+
+ART.door='<svg viewBox="0 0 170 330"><defs><linearGradient id="gL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff2b0"/><stop offset="1" stop-color="#ffc85a"/></linearGradient></defs>'+
+ '<rect x="0" y="0" width="170" height="332" rx="6" fill="#3a2418"/>'+
+ '<g class="d-closed"><rect x="10" y="10" width="150" height="322" fill="#7a4a24" stroke="#4a2c14" stroke-width="3"/>'+
+ '<rect x="50" y="18" width="70" height="17" rx="3" fill="#2f8f5b"/><text x="85" y="31" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Nunito,sans-serif">ШЫҒУ</text>'+
+ '<rect x="26" y="48" width="56" height="100" fill="#6a3f1e" stroke="#4a2c14" stroke-width="3"/><rect x="88" y="48" width="56" height="100" fill="#6a3f1e" stroke="#4a2c14" stroke-width="3"/>'+
+ '<rect x="26" y="168" width="56" height="140" fill="#6a3f1e" stroke="#4a2c14" stroke-width="3"/><rect x="88" y="168" width="56" height="140" fill="#6a3f1e" stroke="#4a2c14" stroke-width="3"/>'+
+ '<rect x="122" y="196" width="26" height="40" rx="5" fill="#e6b84a" stroke="#8a6a1a" stroke-width="2"/><circle cx="135" cy="210" r="4" fill="#3a2a10"/><rect x="133" y="210" width="4" height="12" fill="#3a2a10"/>'+
+ '<circle cx="108" cy="190" r="8" fill="#e6b84a" stroke="#8a6a1a" stroke-width="2"/></g>'+
+ '<g class="d-open"><rect x="10" y="10" width="150" height="322" fill="url(#gL)"/><polygon points="10,10 56,30 56,312 10,332" fill="#7a4a24" stroke="#4a2c14" stroke-width="3"/></g></svg>';
+
+ART.desk='<svg viewBox="0 0 320 225">'+
+ '<rect x="28" y="40" width="74" height="15" fill="#7a2e3a" stroke="#3a1420"/><rect x="34" y="26" width="64" height="15" fill="#2e5a7a" stroke="#142a3a"/><rect x="40" y="12" width="54" height="15" fill="#3a6a3a" stroke="#142a14"/>'+
+ '<rect x="30" y="46" width="70" height="2" fill="#f1e6c4"/><rect x="36" y="32" width="60" height="2" fill="#f1e6c4"/><rect x="42" y="18" width="50" height="2" fill="#f1e6c4"/>'+
+ '<ellipse cx="160" cy="66" rx="22" ry="5" fill="#c9973a"/><rect x="152" y="36" width="16" height="30" fill="#f3ead0" stroke="#cfc3a0"/>'+
+ '<g class="flame"><path d="M160 36C150 24 160 16 160 7C171 18 171 28 160 36Z" fill="#ffb43a"/><path d="M160 35C155 28 160 24 160 19C165 26 165 31 160 35Z" fill="#fff0a0"/></g>'+
+ '<rect x="226" y="50" width="24" height="16" rx="4" fill="#23202c"/><path d="M240 50L276 6" stroke="#f2efe6" stroke-width="3"/><path d="M276 6C286 14 276 30 262 28C268 20 270 12 276 6Z" fill="#f2efe6" stroke="#bdb6a4"/>'+
+ '<circle cx="292" cy="56" r="11" fill="#d6453d"/><circle cx="288" cy="52" r="3" fill="#ff9a8e" opacity=".8"/><path d="M292 46Q295 40 300 40" stroke="#2b1c10" stroke-width="2" fill="none"/>'+
+ '<rect x="0" y="66" width="320" height="20" rx="4" fill="#9a6a38" stroke="#5a3a1a" stroke-width="2"/>'+
+ '<rect x="8" y="86" width="304" height="52" fill="#7a4a24" stroke="#4a2c14" stroke-width="2"/>'+
+ '<rect x="14" y="138" width="20" height="87" fill="#6a3f1e" stroke="#4a2c14" stroke-width="2"/><rect x="286" y="138" width="20" height="87" fill="#6a3f1e" stroke="#4a2c14" stroke-width="2"/></svg>';
+
+ART.drawer='<svg viewBox="0 0 100 40"><g class="w-closed"><rect x="1" y="1" width="98" height="38" rx="4" fill="#a8733a" stroke="#4a2c14" stroke-width="2.5"/>'+
+ '<rect x="8" y="7" width="84" height="26" rx="3" fill="none" stroke="#7a4a24" stroke-width="2"/><ellipse cx="50" cy="20" rx="10" ry="6" fill="#e6b84a" stroke="#8a6a1a" stroke-width="1.5"/><circle cx="50" cy="20" r="2" fill="#4a2c14"/></g>'+
+ '<g class="w-open"><rect x="2" y="-2" width="96" height="16" fill="#1c1208"/><g class="w-letter"><polygon points="22,12 78,12 82,-14 18,-10" fill="#f3e6c4" stroke="#b79a5a"/><path d="M28 6h46M26 0h50M26 -5h46" stroke="#8a6a3a" stroke-width="1.4"/></g>'+
+ '<rect x="-2" y="12" width="104" height="34" rx="4" fill="#b8803f" stroke="#4a2c14" stroke-width="2.5"/><ellipse cx="50" cy="30" rx="10" ry="6" fill="#e6b84a" stroke="#8a6a1a" stroke-width="1.5"/></g></svg>';
+
+ART.newton='<svg viewBox="0 0 150 250"><g class="nbob">'+
+ '<rect x="52" y="186" width="18" height="48" rx="6" fill="#efe9dc" stroke="#c9c0ac"/><rect x="80" y="186" width="18" height="48" rx="6" fill="#efe9dc" stroke="#c9c0ac"/>'+
+ '<ellipse cx="56" cy="240" rx="17" ry="8" fill="#1c1a24"/><ellipse cx="94" cy="240" rx="17" ry="8" fill="#1c1a24"/><rect x="52" y="232" width="9" height="5" fill="#e6b84a"/><rect x="90" y="232" width="9" height="5" fill="#e6b84a"/>'+
+ '<path d="M36 98Q75 82 114 98L126 198Q75 212 24 198Z" fill="#7a2e44" stroke="#4a1a2a" stroke-width="2"/>'+
+ '<path d="M62 98H88V200H62Z" fill="#e4c98a" stroke="#b59a58"/><path d="M75 98V204" stroke="#4a1a2a" stroke-width="2"/>'+
+ '<circle cx="68" cy="124" r="2.6" fill="#c9973a"/><circle cx="68" cy="146" r="2.6" fill="#c9973a"/><circle cx="68" cy="168" r="2.6" fill="#c9973a"/><circle cx="68" cy="190" r="2.6" fill="#c9973a"/>'+
+ '<path d="M62 98L75 124L88 98Z" fill="#fff" stroke="#d6d0c0"/>'+
+ '<path d="M40 106Q22 140 30 174" stroke="#7a2e44" stroke-width="17" stroke-linecap="round" fill="none"/><circle cx="30" cy="176" r="10" fill="#fff" stroke="#d6d0c0"/><circle cx="30" cy="186" r="7.5" fill="#f2c9a0"/>'+
+ '<g class="wave"><path d="M110 106Q132 92 128 62" stroke="#7a2e44" stroke-width="17" stroke-linecap="round" fill="none"/><circle cx="128" cy="62" r="10" fill="#fff" stroke="#d6d0c0"/><circle cx="128" cy="49" r="8" fill="#f2c9a0"/></g>'+
+ '<g fill="#f4f0e6" stroke="#cfc7b2" stroke-width="1.5"><circle cx="46" cy="56" r="15"/><circle cx="104" cy="56" r="15"/><circle cx="42" cy="82" r="15"/><circle cx="108" cy="82" r="15"/><circle cx="46" cy="104" r="12"/><circle cx="104" cy="104" r="12"/></g>'+
+ '<ellipse cx="75" cy="64" rx="25" ry="28" fill="#f2c9a0" stroke="#c99a6a"/>'+
+ '<g fill="#f4f0e6" stroke="#cfc7b2" stroke-width="1.5"><circle cx="75" cy="30" r="16"/><circle cx="55" cy="38" r="13"/><circle cx="95" cy="38" r="13"/></g>'+
+ '<circle cx="65" cy="63" r="2.9" fill="#2b2438"/><circle cx="85" cy="63" r="2.9" fill="#2b2438"/>'+
+ '<path d="M58 55q6-4 11-1M80 54q6-3 11 1" stroke="#6a5a4a" stroke-width="2" fill="none" stroke-linecap="round"/>'+
+ '<path d="M75 65q-5 9 1 10" stroke="#c08a60" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M65 78q10 9 20 0" stroke="#8a4a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>'+
+ '<circle cx="59" cy="73" r="5" fill="#f0a090" opacity=".5"/><circle cx="91" cy="73" r="5" fill="#f0a090" opacity=".5"/></g></svg>';
+
+var ITEMS={
+ key:{name:'Кішкентай кілт',svg:'<svg viewBox="0 0 60 60"><circle cx="17" cy="30" r="11" fill="none" stroke="#e6b84a" stroke-width="6"/><rect x="27" y="27" width="29" height="6" rx="2" fill="#e6b84a"/><rect x="43" y="33" width="5" height="10" fill="#e6b84a"/><rect x="51" y="33" width="5" height="8" fill="#e6b84a"/></svg>'},
+ lens:{name:'Үлкейткіш әйнек',svg:'<svg viewBox="0 0 60 60"><circle cx="25" cy="25" r="16" fill="rgba(170,215,255,.4)" stroke="#c9973a" stroke-width="6"/><path d="M16 20a11 11 0 0 1 9-6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><line x1="37" y1="37" x2="54" y2="54" stroke="#7a4a24" stroke-width="8" stroke-linecap="round"/></svg>'},
+ gear:{name:'Тісті доңғалақ',svg:'<svg viewBox="0 0 60 60"><polygon points="'+gearPts(30,30,27,19,10)+'" fill="#d9a63a" stroke="#6d4a12" stroke-width="2"/><circle cx="30" cy="30" r="7" fill="#2b2230"/></svg>'},
+ gold:{name:'Алтын кілт',svg:'<svg viewBox="0 0 60 60"><circle cx="17" cy="30" r="12" fill="none" stroke="#ffd84a" stroke-width="6"/><polygon points="17,24 19,28 23,28 20,31 21,35 17,33 13,35 14,31 11,28 15,28" fill="#ff5a4a"/><rect x="28" y="27" width="29" height="6" rx="2" fill="#ffd84a"/><rect x="43" y="33" width="5" height="11" fill="#ffd84a"/><rect x="51" y="33" width="5" height="8" fill="#ffd84a"/></svg>'}
+};
+ITEMS.key.target='drawer';ITEMS.lens.target='map';ITEMS.gear.target='clock';ITEMS.gold.target='door';
+
+/* ---------- levels ---------- */
+var LV=[
+ {tag:'1-деңгей · Сейф',title:'Мурзиктің жылдамдығы',unit:'м/с',ans:3,emoji:'🐈',scale:1,segs:[{s:12,t:4}],
+  text:'Сейфтің есігіне жапсырылған қағазда жазылған: «Менің мысығым Мурзик <b>12 м</b> дәлізді <b>4 с</b> ішінде жүгіріп өтті. Оның жылдамдығы қандай? Жауабы — сейфтің коды.»',
+  hints:['Бірқалыпты қозғалыстағы дененің жылдамдығы: v = s : t.','Жолды уақытқа бөл: 12 : 4 = ?'],
+  ok:'Сейф ашылды! Ішінде кішкентай кілт жатыр.'},
+ {tag:'2-деңгей · Үстел жәшігі',title:'Күйменің жолы',unit:'м',ans:60,emoji:'🐎',scale:3,segs:[{s:60,t:12}],
+  text:'Жәшіктен ескі хат шықты: «Менің күймем <b>5 м/с</b> жылдамдықпен бірқалыпты <b>12 с</b> жүрді. Күйме қанша жол жүрді? Жауабын тапсаңдар, үлкейткіш әйнекті қайда қалдырғанымды айтамын.»',
+  hints:['Жолды табу формуласы: s = v · t.','5 · 12 = ?'],
+  ok:'Дұрыс! Жәшіктің түбінен үлкейткіш әйнек табылды.'},
+ {tag:'3-деңгей · Ескі карта',title:'Орташа жылдамдық',unit:'м/с',ans:5,emoji:'🚶',scale:10,segs:[{s:120,t:20},{s:180,t:40}],
+  text:'Үлкейткіш әйнекпен қарағанда картадағы жазу көрінді: «Ньютон шеберханадан кітапханаға екі бөлікпен барды. <b>1-бөлік:</b> 120 м жолды 20 с-та. <b>2-бөлік:</b> 180 м жолды 40 с-та. Бүкіл жолдағы орташа жылдамдық қандай?»',
+  hints:['Орташа жылдамдық: v<sub>орт</sub> = s<sub>жалпы</sub> : t<sub>жалпы</sub>.','Жалпы жол = 120 + 180, жалпы уақыт = 20 + 40. Енді бөл.'],
+  wrong:function(v){ if(Math.abs(v-5.25)<1e-6) return 'Бұл екі жылдамдықтың (6 және 4,5) орташа арифметикалық мәні. Орташа жылдамдық = бүкіл жол : бүкіл уақыт!'; return ''; },
+  ok:'Дұрыс! Картаның астынан тісті доңғалақ түсті.'},
+ {tag:'4-деңгей · Сағат',title:'Өлшем бірліктері',unit:'м',ans:300,emoji:'🚗',scale:5,segs:[{s:300,t:20}],
+  text:'Тісті доңғалақ орнына түсіп, сағат жүре бастады. Ішінен жазба шықты: «Күйме <b>54 км/сағ</b> жылдамдықпен бірқалыпты <b>20 с</b> жүрді. Ол қанша метр жол жүрді?»',
+  hints:['1 м/с = 3,6 км/сағ. Алдымен жылдамдықты м/с-ке айналдыр: 54 : 3,6 = ?','Енді s = v · t формуласын қолдан.'],
+  wrong:function(v){ if(v===1080) return 'Өлшем бірліктері әртүрлі! км/сағ пен секундты бірге көбейтуге болмайды. Алдымен км/сағ → м/с.'; if(v===15) return '15 м/с — бұл жылдамдық. Ал сұрақ: жол қанша метр?'; return ''; },
+  ok:'Дұрыс! Сағаттың ішінен алтын кілт түсті.'},
+ {tag:'5-деңгей · Есік',title:'Қашу жолы',unit:'м/с',ans:4.5,emoji:'🏃',scale:20,segs:[{s:60,t:20},{s:300,t:60}],
+  text:'Есіктің құлпындағы жазба: «Қашу жолы екі бөліктен тұрады. <b>1-бөлік:</b> Мурзиктің жылдамдығымен (1-деңгей) күйменің жүрген жолын (2-деңгей) жүгір. <b>2-бөлік:</b> картадағы орташа жылдамдықпен (3-деңгей) сағаттағы күйменің жолын (4-деңгей) жүр. Бүкіл қашу жолындағы орташа жылдамдықты тап!» Мәндерді Ньютонның дәптерінен алыңдар.',
+  hints:['Әр бөліктің уақытын тап: t = s : v.','t₁ = 60 : 3, t₂ = 300 : 5. Содан кейін v<sub>орт</sub> = (s₁ + s₂) : (t₁ + t₂).'],
+  wrong:function(v){ if(v===4) return 'Бұл (3 + 5) : 2, яғни жылдамдықтардың орташа арифметикалық мәні. Орташа жылдамдық = бүкіл жол : бүкіл уақыт!'; return ''; },
+  ok:'Дұрыс! Есіктің құлпы ашылды!'}
+];
+var JR=[['Мурзиктің жылдамдығы','v = 3 м/с'],['Күйменің жолы','s = 60 м'],['Орташа жылдамдық','v = 5 м/с'],['Сағаттағы күйме жолы','s = 300 м'],['Қашу жолы','v = 4,5 м/с']];
+
+var SAY=[
+ 'Мен Исаак Ньютонмын! Бөлме құлыптаулы. Анау картина қисық тұр... жылжытып көріңдер!',
+ 'Картинаның артында сейф екен! Оны басыңдар.',
+ 'Кілт шықты! Оны қай құлыпқа салуға болады? Ойланыңдар.',
+ 'Жәшік ашылды! Ішіндегі хатты басып оқыңдар.',
+ 'Үлкейткіш әйнек! Қай жерде көрінбейтін жазу бар екен?',
+ 'Картадағы жазу көрінді! Картаны басыңдар.',
+ 'Тісті доңғалақ! Қай механизмде жетіспейді екен?',
+ 'Сағат жүріп жатыр! Ішіндегі жазбаны оқыңдар.',
+ 'Алтын кілт! Қай есікке сәйкес келеді?',
+ 'Есіктегі соңғы жазбаны оқыңдар. Дәптер көмектеседі!',
+ 'Рақмет! Мен бостандықтамын!'
+];
+var TIP=[
+ 'Картинаны тінтуірмен (саусақпен) ұстап, басқа жаққа сүйреп апарыңдар.',
+ 'Сейфті басып, жазбаны оқыңдар.',
+ 'Кілтті сүйреп апарып, құлыптаулы заттың үстіне түсіріңдер. Үстелге қараңдар.',
+ 'Жәшікті басып, хатты оқыңдар.',
+ 'Қабырғадағы қай зат шаңданып, жазуы көрінбей тұр?',
+ 'Картаны басып, жазбаны оқыңдар.',
+ 'Қай зат тоқтап тұр? Сағатқа қараңдар.',
+ 'Сағатты басып, жазбаны оқыңдар.',
+ 'Алтын кілт қай есікке түседі?',
+ 'Есікті басып, соңғы есепті шығарыңдар. Дәптерді қараңдар.',
+ 'Сау болыңдар!'
+];
+
+/* ---------- state ---------- */
+var S,EL={},tmr=null,toastT=null;
+function fresh(){return {started:false,aside:false,drawer:false,map:false,clock:false,door:false,solved:[false,false,false,false,false],inv:[],sel:null,cur:null,pending:null,val:'',hints:[0,0,0,0,0],t0:0,done:false,anim:null,walking:false};}
+S=fresh();
+
+function stage(){
+  var s=S.solved;
+  if(s[4])return 10; if(S.door)return 9; if(s[3])return 8; if(S.clock)return 7; if(s[2])return 6;
+  if(S.map)return 5; if(s[1])return 4; if(S.drawer)return 3; if(s[0])return 2; if(S.aside)return 1; return 0;
+}
+
+/* ---------- build scene ---------- */
+function mk(id,x,y,w,h,svg,cls){
+  var d=document.createElement('div');
+  d.className='el '+(cls||'');d.id='el-'+id;
+  d.style.left=(x/10)+'%';d.style.top=(y/5.625)+'%';d.style.width=(w/10)+'%';d.style.height=(h/5.625)+'%';
+  d.innerHTML=svg;scene.appendChild(d);EL[id]=d;
+  if(cls&&cls.indexOf('hot')>-1)d.dataset.hot=id;
+  return d;
+}
+function build(){
+  scene.innerHTML='<div class="wall"></div><div class="wain"></div><div class="base"></div><div class="floor"></div><div class="glow"></div>';
+  mk('rug',100,470,620,82,'<svg viewBox="0 0 620 82"><ellipse cx="310" cy="41" rx="306" ry="37" fill="#6d2b3a" stroke="#c9973a" stroke-width="4"/><ellipse cx="310" cy="41" rx="250" ry="27" fill="none" stroke="#c9973a" stroke-width="2" stroke-dasharray="8 7" opacity=".6"/></svg>','deco');
+  mk('window',40,70,140,180,ART.window,'hot');
+  mk('map',215,90,140,120,ART.map,'hot');
+  mk('clock',610,70,110,110,ART.clock,'hot');
+  mk('door',780,80,170,332,ART.door,'hot');
+  mk('safe',420,100,100,110,ART.safe,'hot');
+  mk('desk',330,250,320,225,ART.desk,'deco');
+  mk('drawer',440,342,100,40,ART.drawer,'hot');
+  var P=mk('painting',395,65,150,180,ART.painting,'hot drag wig');
+  mk('newton',120,275,150,250,ART.newton,'hot');
+  var v=document.createElement('div');v.className='vig';scene.appendChild(v);
+  var b=document.createElement('div');b.className='bubble';b.id='bubble';scene.appendChild(b);
+  var t=document.createElement('div');t.className='toast';t.id='toast';scene.appendChild(t);
+
+  ['window','map','clock','door','safe','drawer','newton'].forEach(function(id){
+    EL[id].addEventListener('click',function(){clickHot(id)});
+  });
+  setupPainting(P);
+  scene.addEventListener('click',function(e){
+    if(S.sel&&!e.target.closest('[data-hot]')){S.sel=null;scene.classList.remove('has-sel');renderInv();}
+  });
+}
+
+/* painting drag */
+function setupPainting(P){
+  var pd=null;
+  P.addEventListener('pointerdown',function(e){
+    if(S.sel)return;
+    pd={x:e.clientX,y:e.clientY,l:parseFloat(P.style.left),t:parseFloat(P.style.top),moved:false};
+    try{P.setPointerCapture(e.pointerId)}catch(_){}
+    P.classList.add('grab');P.classList.remove('wig');
+  });
+  P.addEventListener('pointermove',function(e){
+    if(!pd)return;
+    var r=scene.getBoundingClientRect();
+    if(Math.abs(e.clientX-pd.x)+Math.abs(e.clientY-pd.y)>4)pd.moved=true;
+    var w=parseFloat(P.style.width),h=parseFloat(P.style.height);
+    var nl=pd.l+(e.clientX-pd.x)/r.width*100,nt=pd.t+(e.clientY-pd.y)/r.height*100;
+    P.style.left=Math.max(0,Math.min(100-w,nl))+'%';
+    P.style.top=Math.max(1,Math.min(42,nt))+'%';
+  });
+  function end(){
+    if(!pd)return;
+    P.classList.remove('grab');
+    var moved=pd.moved;pd=null;
+    if(moved){checkPainting();}
+    else{
+      if(S.sel){tryUse(S.sel,'painting');}
+      else toast(S.aside?'Картина енді бөгет жасамайды.':'Картина қисық ілініп тұр... Артында бірдеңе бар ма? Сүйреп көріңдер!');
+    }
+  }
+  P.addEventListener('pointerup',end);
+  P.addEventListener('pointercancel',end);
+}
+function checkPainting(){
+  var a=EL.painting.getBoundingClientRect(),b=EL.safe.getBoundingClientRect();
+  var ix=Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left));
+  var iy=Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+  var cover=(ix*iy)/(b.width*b.height);
+  var was=S.aside;
+  S.aside=cover<0.3;
+  if(S.aside&&!was){toast('Картинаның артында сейф жасырылған екен!');}
+  if(!S.aside&&was){toast('Картина сейфті қайта жауып тұр.');}
+  say();
+}
+
+/* ---------- interactions ---------- */
+function clickHot(id){
+  if(!S.started)return;
+  if(S.sel){tryUse(S.sel,id);return;}
+  switch(id){
+    case 'window': toast('Түн ортасы. Ай жарқырап тұр, бірақ терезеден шыға алмаймын!');break;
+    case 'newton': toast(TIP[stage()],4200);break;
+    case 'safe':
+      if(!S.aside)toast('Сейфті картина жауып тұр.');
+      else if(S.solved[0])toast('Сейф бос.');
+      else openProblem(0);break;
+    case 'drawer':
+      if(!S.drawer)toast('Жәшік құлыптаулы. Кілт керек сияқты.');
+      else if(!S.solved[1])openProblem(1);
+      else toast('Жәшік бос.');break;
+    case 'map':
+      if(!S.map)toast('Карта шаңданып кеткен, жазуы көрінбейді. Үлкейтіп қарау керек шығар?');
+      else if(!S.solved[2])openProblem(2);
+      else toast('Карта оқылды.');break;
+    case 'clock':
+      if(!S.clock)toast('Сағат тоқтап тұр. Ішінен тісті доңғалақ жетіспейді!');
+      else if(!S.solved[3])openProblem(3);
+      else toast('Сағат жүріп тұр.');break;
+    case 'door':
+      if(!S.door)toast('Есік құлыптаулы. Алтын кілт керек, ол әлі табылған жоқ.');
+      else if(!S.solved[4])openProblem(4);
+      break;
+  }
+}
+function tryUse(id,hot){
+  var it=ITEMS[id];
+  S.sel=null;scene.classList.remove('has-sel');
+  if(!S.started){renderInv();return;}
+  if(hot===it.target){useItem(id);}
+  else if(hot==='safe'||hot==='painting'){toast('Бұл зат мұнда жарамайды.');}
+  else toast('Бұл зат мұнда жарамайды. Басқа жерді байқап көріңдер.');
+  renderInv();
+}
+function removeItem(id){S.inv=S.inv.filter(function(x){return x!==id});renderInv();}
+function useItem(id){
+  removeItem(id);
+  if(id==='key'){S.drawer=true;EL.drawer.classList.add('open');toast('Жәшік ашылды!');setTimeout(function(){openProblem(1)},800);}
+  if(id==='lens'){S.map=true;EL.map.classList.add('revealed');toast('Жазу көріне бастады...');setTimeout(function(){openProblem(2)},1000);}
+  if(id==='gear'){S.clock=true;EL.clock.classList.add('running');toast('Сағат жүре бастады!');setTimeout(function(){openProblem(3)},1000);}
+  if(id==='gold'){S.door=true;toast('Құлып ашылды! Бірақ есікте тағы бір жазба бар...');setTimeout(function(){openProblem(4)},900);}
+  say();
+}
+function give(id){
+  S.inv.push(id);renderInv();
+  toast('Алынды: '+ITEMS[id].name);
+  var s=document.querySelectorAll('.slot.full');if(s.length)s[s.length-1].classList.add('pop');
+}
+
+/* ---------- inventory + drag ---------- */
+var D=null;
+function renderInv(){
+  var box=$('#inv');box.innerHTML='';
+  for(var i=0;i<4;i++){
+    (function(id){
+      var d=document.createElement('div');
+      d.className='slot'+(id?' full':'')+(id&&S.sel===id?' sel':'');
+      if(id){
+        d.innerHTML='<div class="ico">'+ITEMS[id].svg+'</div><span>'+ITEMS[id].name+'</span>';
+        d.tabIndex=0;
+        d.addEventListener('pointerdown',function(e){startDrag(e,id)});
+      } else d.innerHTML='<span>бос</span>';
+      box.appendChild(d);
+    })(S.inv[i]);
+  }
+}
+function startDrag(e,id){
+  e.preventDefault();
+  D={id:id,x:e.clientX,y:e.clientY,moved:false,g:null};
+  window.addEventListener('pointermove',onMove);
+  window.addEventListener('pointerup',onUp);
+  window.addEventListener('pointercancel',onUp);
+}
+function onMove(e){
+  if(!D)return;
+  if(!D.moved&&Math.hypot(e.clientX-D.x,e.clientY-D.y)>6){
+    D.moved=true;
+    var g=document.createElement('div');g.className='ghost';g.innerHTML=ITEMS[D.id].svg;document.body.appendChild(g);D.g=g;
+    document.body.classList.add('dragging');
+  }
+  if(D.g){D.g.style.left=e.clientX+'px';D.g.style.top=e.clientY+'px';}
+}
+function onUp(e){
+  window.removeEventListener('pointermove',onMove);
+  window.removeEventListener('pointerup',onUp);
+  window.removeEventListener('pointercancel',onUp);
+  if(!D)return;
+  var d=D;D=null;document.body.classList.remove('dragging');
+  if(d.g){
+    d.g.remove();
+    var els=document.elementsFromPoint(e.clientX,e.clientY),hot=null;
+    for(var i=0;i<els.length;i++){var h=els[i].closest&&els[i].closest('[data-hot]');if(h){hot=h.dataset.hot;break;}}
+    if(hot)tryUse(d.id,hot);
+  } else {
+    S.sel=(S.sel===d.id)?null:d.id;
+    scene.classList.toggle('has-sel',!!S.sel);
+    renderInv();
+    if(S.sel)toast('Таңдалды: '+ITEMS[d.id].name+'. Енді қолданатын жерді басыңдар.');
+  }
+}
+
+/* ---------- bubble, toast, journal, dots ---------- */
+function say(){
+  var b=$('#bubble'),st=stage();
+  if(st===10){b.textContent=SAY[10];return;}
+  b.textContent=SAY[st];
+}
+function toast(m,ms){
+  var t=$('#toast');t.textContent=m;t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show')},ms||2800);
+}
+function renderJournal(){
+  var h='';
+  JR.forEach(function(r,i){
+    h+=S.solved[i]?'<li class="done"><span>'+(i+1)+'. '+r[0]+'</span><em>'+r[1]+'</em></li>':'<li><span>'+(i+1)+'. 🔒 жабық</span></li>';
+  });
+  $('#journal').innerHTML=h;
+  var d='';
+  for(var i=0;i<5;i++)d+='<span class="dot'+(S.solved[i]?' done':'')+'">✓</span>';
+  $('#dots').innerHTML=d;
+}
+
+/* ---------- problem modal ---------- */
+function buildPad(){
+  var h='';
+  ['1','2','3','4','5','6','7','8','9',',','0','⌫'].forEach(function(k){h+='<button class="key" data-k="'+k+'">'+k+'</button>'});
+  var pad=$('#pad');pad.innerHTML=h;
+  pad.addEventListener('click',function(e){
+    var b=e.target.closest('.key');if(!b)return;
+    var k=b.dataset.k;if(k==='⌫')back();else press(k);
+  });
+}
+function showVal(){$('#dval').textContent=S.val||'—';}
+function press(k){
+  if(S.pending!==null)return;
+  if(k===','){if(S.val.indexOf(',')>-1)return;if(!S.val)S.val='0';}
+  if(S.val.length>=6)return;
+  S.val+=k;showVal();msg('');
+}
+function back(){if(S.pending!==null)return;S.val=S.val.slice(0,-1);showVal();}
+function msg(t,cls){var m=$('#msg');m.textContent=t;m.className='msg'+(cls?' '+cls:'');}
+function buildTrack(L){
+  var tot=L.segs.reduce(function(a,b){return a+b.s},0),acc=0;
+  var h='<div class="road"></div><span class="flag s">⚑</span><span class="flag f">🏁</span>';
+  L.segs.slice(0,-1).forEach(function(sg){acc+=sg.s;h+='<i class="tick" style="left:'+(4+0.92*acc/tot*100)+'%"></i>';});
+  h+='<span class="mover" id="mover">'+L.emoji+'</span><span class="tlabel" id="tlabel"></span>';
+  $('#track').innerHTML=h;setMover(0);
+}
+function setMover(p){var m=$('#mover');if(m)m.style.left=(4+0.92*p)+'%';}
+function openProblem(i){
+  if(S.pending!==null||!$('#modal').classList.contains('hidden'))return;
+  var L=LV[i];S.cur=i;S.val='';
+  $('#modal').classList.remove('hidden');
+  $('#pTag').textContent=L.tag;$('#pTitle').textContent=L.title;$('#pText').innerHTML=L.text;
+  $('#dunit').textContent=L.unit;showVal();msg('');
+  buildTrack(L);
+  $('#pad').classList.remove('lock');
+  $('#bCheck').classList.remove('hidden');$('#bNext').classList.add('hidden');
+  showHint();
+}
+function showHint(){
+  var n=S.hints[S.cur],box=$('#hintbox');
+  if(n>0){box.classList.remove('hidden');box.innerHTML='💡 '+LV[S.cur].hints.slice(0,n).join('<br>💡 ');}
+  else box.classList.add('hidden');
+  $('#bHint').style.display=(n>=LV[S.cur].hints.length)?'none':'';
+}
+function check(){
+  if(S.cur===null||S.pending!==null||!S.val)return;
+  var L=LV[S.cur],v=parseFloat(S.val.replace(',','.'));
+  if(isNaN(v))return;
+  if(Math.abs(v-L.ans)<1e-6){
+    S.pending=S.cur;
+    msg('✅ '+L.ok,'ok');
+    $('#pad').classList.add('lock');
+    $('#bCheck').classList.add('hidden');$('#bNext').classList.remove('hidden');
+    runAnim(L);
+  } else {
+    var w=L.wrong?L.wrong(v):'';
+    msg('❌ '+(w||'Код дұрыс емес. Есепті қайта тексеріңдер немесе Ньютонның кеңесін алыңдар.'),'bad');
+    var d=$('#disp');d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake');
+  }
+}
+function runAnim(L){
+  var tok={};S.anim=tok;
+  var tot=L.segs.reduce(function(a,b){return a+b.t},0),totS=L.segs.reduce(function(a,b){return a+b.s},0);
+  var t0=performance.now(),lab=$('#tlabel');
+  function f(now){
+    if(S.anim!==tok)return;
+    var el=Math.min((now-t0)/1000*L.scale,tot),rem=el,s=0;
+    for(var i=0;i<L.segs.length;i++){
+      var sg=L.segs[i];
+      if(rem>=sg.t){s+=sg.s;rem-=sg.t;}else{s+=sg.s*rem/sg.t;break;}
+    }
+    setMover(s/totS*100);
+    lab.textContent='t = '+Math.round(el)+' с · s = '+Math.round(s)+' м'+(L.scale>1?'  (уақыт ×'+L.scale+' жылдам)':'');
+    if(el<tot)requestAnimationFrame(f);
+  }
+  requestAnimationFrame(f);
+}
+function closeModal(){
+  $('#modal').classList.add('hidden');
+  S.anim=null;
+  var i=S.pending;S.pending=null;
+  if(i!==null)reward(i);
+  S.cur=null;
+  say();
+}
+function reward(i){
+  S.solved[i]=true;renderJournal();
+  if(i===0){EL.safe.classList.add('open');give('key');}
+  if(i===1){EL.drawer.classList.add('empty');give('lens');}
+  if(i===2){give('gear');}
+  if(i===3){give('gold');}
+  if(i===4){finish();}
+}
+function finish(){
+  S.done=true;clearInterval(tmr);
+  EL.door.classList.add('open');
+  scene.classList.add('walk');
+  EL.newton.style.left='80%';
+  setTimeout(function(){EL.newton.style.opacity='0';},2900);
+  say();
+  setTimeout(function(){
+    var sec=Math.floor((Date.now()-S.t0)/1000);
+    $('#winText').textContent='Сендер 5 құлыпты ашып, Ньютонға есіктен шығуға көмектестіңдер. Уақыт: '+pad2(Math.floor(sec/60))+':'+pad2(sec%60)+'.';
+    $('#win').classList.remove('hidden');
+    confetti();
+  },3800);
+}
+function pad2(n){return (n<10?'0':'')+n}
+function confetti(){
+  var em=['🍎','✨','⭐','🎉','🔬'];
+  for(var i=0;i<36;i++){
+    var c=document.createElement('span');c.className='conf';c.textContent=em[i%em.length];
+    c.style.left=Math.random()*100+'vw';c.style.animationDuration=(2.5+Math.random()*2.5)+'s';c.style.animationDelay=(Math.random()*1.2)+'s';
+    document.body.appendChild(c);
+    setTimeout((function(x){return function(){x.remove()}})(c),7000);
+  }
+}
+
+/* ---------- start / timer / buttons ---------- */
+function tick(){
+  if(!S.started||S.done)return;
+  var sec=Math.floor((Date.now()-S.t0)/1000);
+  $('#timer').textContent='⏱ '+pad2(Math.floor(sec/60))+':'+pad2(sec%60);
+}
+function init(){
+  S=fresh();build();renderInv();renderJournal();say();buildPad();
+  $('#timer').textContent='⏱ 00:00';
+}
+$('#bStart').addEventListener('click',function(){
+  $('#intro').classList.add('hidden');
+  S.started=true;S.t0=Date.now();clearInterval(tmr);tmr=setInterval(tick,1000);
+});
+$('#bClose').addEventListener('click',closeModal);
+$('#bNext').addEventListener('click',closeModal);
+$('#bCheck').addEventListener('click',check);
+$('#bHint').addEventListener('click',function(){
+  var i=S.cur;if(i===null)return;
+  if(S.hints[i]<LV[i].hints.length)S.hints[i]++;
+  showHint();
+});
+$('#bTeach').addEventListener('click',function(){$('#teach').classList.remove('hidden')});
+$('#bTClose').addEventListener('click',function(){$('#teach').classList.add('hidden')});
+$('#bReset').addEventListener('click',function(){location.reload()});
+$('#bAgain').addEventListener('click',function(){location.reload()});
+$('#bFull').addEventListener('click',function(){
+  try{
+    if(document.fullscreenElement){document.exitFullscreen();}
+    else{(document.documentElement.requestFullscreen||function(){return Promise.reject()}).call(document.documentElement).catch(function(){toast('Толық экран бұл жерде қолжетімсіз. F11 пернесін басып көріңдер.')});}
+  }catch(_){toast('Толық экран бұл жерде қолжетімсіз. F11 пернесін басып көріңдер.');}
+});
+document.addEventListener('keydown',function(e){
+  if(!$('#teach').classList.contains('hidden')){if(e.key==='Escape')$('#teach').classList.add('hidden');return;}
+  if($('#modal').classList.contains('hidden'))return;
+  if(/^[0-9]$/.test(e.key))press(e.key);
+  else if(e.key===','||e.key==='.')press(',');
+  else if(e.key==='Backspace')back();
+  else if(e.key==='Enter'){if(S.pending!==null)closeModal();else check();}
+  else if(e.key==='Escape')closeModal();
+});
+init();
+})();
+</script>
+</body>
+</html>
