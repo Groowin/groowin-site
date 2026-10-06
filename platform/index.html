@@ -216,8 +216,7 @@ $('aAdd').onclick = async () => {
   loadUsers();
 };
 
-sb.auth.onAuthStateChange((_e, session) => showApp(session));
-sb.auth.getSession().then(({ data }) => showApp(data.session));
+sb.auth.onAuthStateChange((_e, session) => { setTimeout(() => showApp(session), 0); });
 </script>
 </body>
 </html>
