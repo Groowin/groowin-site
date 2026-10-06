@@ -34,7 +34,20 @@ input:focus,button:focus-visible{outline:3px solid var(--blue);outline-offset:2p
 table{width:100%;border-collapse:collapse;font-size:.9rem}
 th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--grid);white-space:nowrap}
 select{font:inherit;padding:4px;border:1px solid var(--ink);border-radius:6px;background:var(--paper);color:var(--ink)}
-.wrap.wide{max-width:980px}
+.wrap.wide{max-width:1180px}
+#app{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
+.side{position:sticky;top:20px;display:flex;flex-direction:column;gap:14px;padding:18px}
+.side .out{margin:0}
+.brand{font-weight:700;font-size:1.15rem}
+#nav{display:flex;flex-direction:column;gap:6px}
+#nav button{text-align:left;padding:10px 12px;border:1px solid transparent;background:transparent;color:var(--ink);border-radius:8px;font:inherit;cursor:pointer}
+#nav button:hover{background:rgba(160,190,255,.1)}
+#nav button.on{background:rgba(77,124,255,.28);border-color:rgba(160,190,255,.4);font-weight:500}
+.mainhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.mainhead h1{margin:0;font-size:1.6rem}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:8px 16px;margin:0}
+.kv dt{color:var(--mute)}.kv dd{margin:0}
+@media (max-width:760px){#app{grid-template-columns:1fr}.side{position:static}#nav{flex-direction:row;overflow-x:auto}#nav button{white-space:nowrap}}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .game{display:flex;flex-direction:column;gap:6px;text-align:left;padding:16px;border:2px solid var(--ink);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;cursor:pointer}
 .game:hover{box-shadow:4px 4px 0 var(--sun)}
@@ -42,7 +55,7 @@ select{font:inherit;padding:4px;border:1px solid var(--ink);border-radius:6px;ba
 .game .gm{color:var(--mute);font-size:.88rem}
 .vbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .vbar .out{margin:0}
-#frame{width:100%;height:calc(100vh - 150px);min-height:520px;border:2px solid var(--ink);border-radius:10px;background:#fff}
+#frame{width:100%;height:calc(100vh - 230px);min-height:520px;border:2px solid var(--ink);border-radius:10px;background:#fff}
 .wrap{position:relative;z-index:1}
 .card{background:var(--card);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(160,190,255,.3);box-shadow:0 0 70px rgba(77,124,255,.2)}
 input,select,.tabs button,.out,.game,#frame{border-color:rgba(160,190,255,.4)}
@@ -54,6 +67,18 @@ h1{text-shadow:0 0 30px rgba(120,160,255,.5)}
 @keyframes blink{50%{opacity:0}}
 @keyframes appear{from{opacity:0;transform:translateY(10px)}}
 @media (prefers-reduced-motion:no-preference){#auth h1{animation:appear 1.6s 2.2s both}#auth .sub{animation:appear 1.6s 2.7s both}#auth .card{animation:appear 1.6s 3.2s both}}
+.news{border:1px solid rgba(160,190,255,.3);border-radius:12px;padding:14px 16px;margin-top:12px}
+.news h3{margin:0 0 4px;font-size:1.05rem}.news p{margin:0 0 8px;white-space:pre-wrap}.news small{color:var(--mute)}
+#badge{display:inline-block;min-width:1.4em;padding:0 6px;margin-left:6px;border-radius:99px;background:var(--sun);color:#12233D;font-size:.8rem;text-align:center}
+textarea{width:100%;min-height:90px;padding:11px 12px;border:2px solid rgba(160,190,255,.4);border-radius:8px;font:inherit;background:rgba(5,8,22,.6);color:var(--ink);resize:vertical}
+html[data-theme=light]{--paper:#EEF3F8;--grid:#D3DFEC;--ink:#12233D;--blue:#2F6BFF;--card:rgba(255,255,255,.94);--err:#C62828;--mute:#5B6B82;background:#EEF3F8}
+html[data-theme=light] body{background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/32px 32px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/32px 32px,#EEF3F8}
+html[data-theme=light] .card{border:2px solid var(--ink);box-shadow:6px 6px 0 var(--sun);-webkit-backdrop-filter:none;backdrop-filter:none}
+html[data-theme=light] :is(input,select,textarea,.tabs button,.out,.game,#frame,.news){border-color:var(--ink)}
+html[data-theme=light] :is(input,select,textarea,.game){background:var(--paper)}
+html[data-theme=light] h1{text-shadow:none}
+html[data-theme=light] .msg.ok{color:var(--blue)}
+html[data-theme=light] #nav button.on{background:rgba(47,107,255,.14)}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .15s}}
 </style>
@@ -87,22 +112,56 @@ h1{text-shadow:0 0 30px rgba(120,160,255,.5)}
 
 <!-- Кіргеннен кейін -->
 <section id="app" hidden>
-  <div class="card">
-    <h1 id="hello"></h1>
-    <p class="sub"><span class="role" id="role"></span></p>
-    <div id="catalog">
-      <div class="tabs" role="tablist" id="subjTabs">
-        <button role="tab" data-s="physics" aria-selected="true">Физика</button>
-        <button role="tab" data-s="math" aria-selected="false">Математика</button>
-      </div>
+  <aside class="side card">
+    <div class="brand">Физмат әлемі</div>
+    <nav id="nav">
+      <button data-v="physics" class="on">Физика</button>
+      <button data-v="math">Математика</button>
+      <button data-v="news">Хабарландыру<span id="badge" hidden></span></button>
+      <button data-v="account">Менің аккаунтым</button>
+      <button data-v="students" id="navStudents" hidden>Оқушылар</button>
+    </nav>
+    <button class="out" id="themeBtn">Жарық тема</button>
+    <button class="out" id="logout">Шығу</button>
+  </aside>
+  <main class="main card">
+    <div class="mainhead"><h1 id="hello"></h1><span class="role" id="role"></span></div>
+
+    <div id="v-catalog">
+      <h2 id="catTitle" style="margin:0 0 12px;font-size:1.2rem">Физика</h2>
       <div class="grid" id="games"></div>
     </div>
-    <div id="viewer" hidden>
+
+    <div id="v-viewer" hidden>
       <div class="vbar"><button class="out" id="back">← Артқа</button><strong id="vtitle"></strong></div>
       <iframe id="frame" title="Ойын" allow="fullscreen"></iframe>
     </div>
-    <details id="admin" hidden style="margin-top:22px">
-      <summary style="cursor:pointer;font-weight:500">Админ панель: рұқсат берілген адамдар</summary>
+
+    <div id="v-news" hidden>
+      <h2 style="margin:0 0 12px;font-size:1.2rem">Хабарландырулар</h2>
+      <div id="newsForm" hidden>
+        <label for="nTitle">Тақырыбы</label>
+        <input id="nTitle">
+        <label for="nBody">Мәтіні</label>
+        <textarea id="nBody"></textarea>
+        <button class="go" id="nAdd">Жариялау</button>
+        <p class="msg" id="nMsg" role="status" aria-live="polite"></p>
+      </div>
+      <div id="newsList"></div>
+    </div>
+
+    <div id="v-account" hidden>
+      <h2 style="margin:0 0 12px;font-size:1.2rem">Менің аккаунтым</h2>
+      <dl class="kv">
+        <dt>Аты-жөні</dt><dd id="accName"></dd>
+        <dt>Телефон</dt><dd id="accPhone"></dd>
+        <dt>Рөл</dt><dd id="accRole"></dd>
+      </dl>
+    </div>
+
+    <div id="v-students" hidden>
+      <h2 style="margin:0 0 4px;font-size:1.2rem">Оқушылар мен мұғалімдер</h2>
+      <p class="sub" style="margin-bottom:8px">Тізімге қосылған нөмір ғана тіркеле алады.</p>
       <label for="aName">Аты-жөні</label>
       <input id="aName">
       <label for="aPhone">Телефон нөмірі</label>
@@ -119,9 +178,8 @@ h1{text-shadow:0 0 30px rgba(120,160,255,.5)}
         <thead><tr><th>Аты</th><th>Телефон</th><th>Рөл</th><th>Күйі</th><th></th></tr></thead>
         <tbody id="users"></tbody>
       </table></div>
-    </details>
-    <button class="out" id="logout">Шығу</button>
-  </div>
+    </div>
+  </main>
 </section>
 
 </main>
@@ -187,9 +245,10 @@ $('logout').onclick = () => sb.auth.signOut();
 async function showApp(session) {
   $('auth').hidden = !!session;
   $('app').hidden = !session;
+  applyTheme(!!session); window.skyShow && window.skyShow(!session);
   document.querySelector('.wrap').classList.toggle('wide', !!session);
   if (!session) closeGame();
-  if (!session) { typedFor = null; say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
+  if (!session) { typedFor = null; clearInterval(newsTimer); newsTimer = null; document.title = 'Физмат әлемі'; say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const { data: me } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
   if (me && me.active === false) {
     blockedMsg = 'Аккаунт бұғатталған. Админге жаз.';
@@ -199,11 +258,15 @@ async function showApp(session) {
   meId = session.user.id;
   const roles = { admin: 'Админ', teacher: 'Мұғалім', student: 'Оқушы' };
   const hi = 'Сәлем, ' + (me?.full_name || 'қонақ') + '!';
-  if (typedFor !== session.user.id) { typedFor = session.user.id; typeText($('hello'), hi); window.skyWarp && window.skyWarp(); }
+  if (typedFor !== session.user.id) { typedFor = session.user.id; typeText($('hello'), hi); window.skyWarp && window.skyWarp(); go('physics'); }
   else $('hello').textContent = hi;
   $('role').textContent = roles[me?.role] || 'Оқушы';
-  $('admin').hidden = me?.role !== 'admin';
-  if (me?.role === 'admin') loadUsers();
+  $('accName').textContent = me?.full_name || '';
+  $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
+  $('accRole').textContent = roles[me?.role] || 'Оқушы';
+  $('navStudents').hidden = me?.role !== 'admin';
+  isAdmin = me?.role === 'admin'; meName = me?.full_name || ''; $('newsForm').hidden = !isAdmin;
+  loadNews(); if (!newsTimer) newsTimer = setInterval(loadNews, 60000);
 }
 
 const ROLE_KK = { student: 'Оқушы', teacher: 'Мұғалім', admin: 'Админ' };
@@ -269,7 +332,7 @@ function typeText(el, text) {
   const cv = $('sky'), ctx = cv.getContext('2d');
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W, H, mx, my, tmx, tmy, warp = 0, spin = 0;
-  const t0 = performance.now(); let last = t0;
+  let t0 = performance.now(); let last = t0; let state = 'on', timers = [];
   const sprite = (r, g, b) => {
     const c = document.createElement('canvas'); c.width = c.height = 64;
     const x = c.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
@@ -309,8 +372,20 @@ function typeText(el, text) {
   addEventListener('pointermove', e => { tmx = e.clientX; tmy = e.clientY; });
   addEventListener('resize', resize);
   window.skyWarp = () => { if (!still) warp = 1; };
+  window.skyShow = v => {
+    if (still) { cv.style.display = v ? '' : 'none'; return; }
+    if (!v && state === 'on') {
+      state = 'fading'; cv.style.transition = 'opacity 1s';
+      timers = [setTimeout(() => { cv.style.opacity = 0; }, 1200), setTimeout(() => { state = 'off'; cv.style.display = 'none'; }, 2300)];
+    } else if (v && state !== 'on') {
+      timers.forEach(clearTimeout); const wasOff = state === 'off';
+      state = 'on'; cv.style.transition = 'none'; cv.style.opacity = 1; cv.style.display = '';
+      t0 = performance.now(); last = t0; if (wasOff) requestAnimationFrame(frame);
+    }
+  };
 
   function frame(now) {
+    if (state === 'off') return;
     const dt = Math.min((now - last) / 1000, .05); last = now;
     const tt = (now - t0) / 1000;
     mx += (tmx - mx) * .04; my += (tmy - my) * .04;
@@ -370,19 +445,71 @@ function renderGames() {
 function openGame(g) {
   $('vtitle').textContent = g.title;
   $('frame').src = '../' + encodeURIComponent(g.file);
-  $('catalog').hidden = true; $('viewer').hidden = false;
+  show('viewer');
 }
 function closeGame() {
   $('frame').src = 'about:blank';
-  $('viewer').hidden = true; $('catalog').hidden = false;
 }
-$('back').onclick = closeGame;
-document.querySelectorAll('#subjTabs button').forEach(b => b.onclick = () => {
-  subj = b.dataset.s;
-  document.querySelectorAll('#subjTabs button').forEach(x => x.setAttribute('aria-selected', x === b));
-  renderGames();
-});
+$('back').onclick = () => go(subj);
+const VIEWS = ['catalog', 'viewer', 'news', 'account', 'students'];
+function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); }
+function go(key) {
+  closeGame();
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === key));
+  if (key === 'physics' || key === 'math') {
+    subj = key; $('catTitle').textContent = key === 'physics' ? 'Физика' : 'Математика';
+    renderGames(); show('catalog');
+  } else { show(key); if (key === 'students') loadUsers(); if (key === 'news') markSeen(); }
+}
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => go(b.dataset.v));
 renderGames();
+
+// ===== Тема =====
+const ls = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+let pref = ls.get('theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+function applyTheme(inApp) {
+  document.documentElement.dataset.theme = inApp ? pref : 'dark';
+  $('themeBtn').textContent = pref === 'light' ? 'Қараңғы тема' : 'Жарық тема';
+}
+$('themeBtn').onclick = () => { pref = pref === 'light' ? 'dark' : 'light'; ls.set('theme', pref); applyTheme(true); };
+
+// ===== Хабарландырулар =====
+let isAdmin = false, meName = '', newsTimer = null, newsCache = [];
+function renderNews() {
+  const box = $('newsList'); box.replaceChildren();
+  if (!newsCache.length) { const p = document.createElement('p'); p.className = 'sub'; p.textContent = 'Әзірге хабарландыру жоқ.'; box.appendChild(p); }
+  newsCache.forEach(n => {
+    const d = document.createElement('div'); d.className = 'news';
+    const h = document.createElement('h3'); h.textContent = n.title;
+    const p = document.createElement('p'); p.textContent = n.body || '';
+    const m = document.createElement('small'); m.textContent = new Date(n.created_at).toLocaleDateString('kk-KZ') + (n.author ? ', ' + n.author : '');
+    d.append(h, p, m);
+    if (isAdmin) {
+      const b = document.createElement('button'); b.className = 'out'; b.textContent = 'Жою'; b.style.cssText = 'margin:8px 0 0 12px;padding:4px 10px';
+      b.onclick = async () => { if (!confirm('Хабарландыруды жою керек пе?')) return; await sb.from('announcements').delete().eq('id', n.id); loadNews(); };
+      d.appendChild(b);
+    }
+    box.appendChild(d);
+  });
+  if (!$('v-news').hidden) ls.set('newsSeen', Date.now());
+  const seen = +ls.get('newsSeen') || 0;
+  const unread = newsCache.filter(n => new Date(n.created_at).getTime() > seen).length;
+  $('badge').textContent = unread; $('badge').hidden = !unread;
+  document.title = (unread ? '(' + unread + ') ' : '') + 'Физмат әлемі';
+}
+function markSeen() { ls.set('newsSeen', Date.now()); renderNews(); }
+async function loadNews() {
+  const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: false }).limit(30);
+  newsCache = data || []; renderNews();
+}
+$('nAdd').onclick = async () => {
+  const t = $('nTitle').value.trim(), b = $('nBody').value.trim(), m = $('nMsg');
+  const say2 = (x, c) => { m.textContent = x; m.className = 'msg ' + c; };
+  if (!t) return say2('Тақырыбын жаз.', 'err');
+  const { error } = await sb.from('announcements').insert({ title: t, body: b, author: meName });
+  if (error) return say2('Қате: ' + error.message, 'err');
+  $('nTitle').value = ''; $('nBody').value = ''; say2('Жарияланды.', 'ok'); loadNews();
+};
 
 // Supabase-тің ішкі callback-інде басқа сұраныс жіберуге болмайды (қатып қалады), сондықтан setTimeout
 sb.auth.onAuthStateChange((_e, session) => { setTimeout(() => showApp(session), 0); });
