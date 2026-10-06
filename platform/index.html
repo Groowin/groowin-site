@@ -6,6 +6,7 @@
 <title>Физмат әлемі · Кіру</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
 <style>
 :root{--paper:#EEF3F8;--grid:#D3DFEC;--ink:#12233D;--blue:#2F6BFF;--sun:#FFC83D;--card:#fff;--err:#C62828;--mute:#5B6B82}
 @media (prefers-color-scheme:dark){:root{--paper:#0F1B2E;--grid:#1B2B45;--ink:#EAF1FB;--blue:#6C93FF;--card:#16253D;--err:#FF8A80;--mute:#9AAAC2}}
@@ -33,6 +34,15 @@ input:focus,button:focus-visible{outline:3px solid var(--blue);outline-offset:2p
 table{width:100%;border-collapse:collapse;font-size:.9rem}
 th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--grid);white-space:nowrap}
 select{font:inherit;padding:4px;border:1px solid var(--ink);border-radius:6px;background:var(--paper);color:var(--ink)}
+.wrap.wide{max-width:980px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.game{display:flex;flex-direction:column;gap:6px;text-align:left;padding:16px;border:2px solid var(--ink);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;cursor:pointer}
+.game:hover{box-shadow:4px 4px 0 var(--sun)}
+.game .gi{font-size:2rem;line-height:1}
+.game .gm{color:var(--mute);font-size:.88rem}
+.vbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.vbar .out{margin:0}
+#frame{width:100%;height:calc(100vh - 150px);min-height:520px;border:2px solid var(--ink);border-radius:10px;background:#fff}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .15s}}
 </style>
@@ -68,9 +78,19 @@ select{font:inherit;padding:4px;border:1px solid var(--ink);border-radius:6px;ba
   <div class="card">
     <h1 id="hello"></h1>
     <p class="sub"><span class="role" id="role"></span></p>
-    <p>Кіру жұмыс істейді. Келесі қадам: математика мен физика бөлімдерін осында қосамыз.</p>
-    <div id="admin" hidden>
-      <h2 style="font-size:1.1rem;margin:20px 0 0">Рұқсат берілген адамдар</h2>
+    <div id="catalog">
+      <div class="tabs" role="tablist" id="subjTabs">
+        <button role="tab" data-s="physics" aria-selected="true">Физика</button>
+        <button role="tab" data-s="math" aria-selected="false">Математика</button>
+      </div>
+      <div class="grid" id="games"></div>
+    </div>
+    <div id="viewer" hidden>
+      <div class="vbar"><button class="out" id="back">← Артқа</button><strong id="vtitle"></strong></div>
+      <iframe id="frame" title="Ойын" allow="fullscreen"></iframe>
+    </div>
+    <details id="admin" hidden style="margin-top:22px">
+      <summary style="cursor:pointer;font-weight:500">Админ панель: рұқсат берілген адамдар</summary>
       <label for="aName">Аты-жөні</label>
       <input id="aName">
       <label for="aPhone">Телефон нөмірі</label>
@@ -87,7 +107,7 @@ select{font:inherit;padding:4px;border:1px solid var(--ink);border-radius:6px;ba
         <thead><tr><th>Аты</th><th>Телефон</th><th>Рөл</th><th>Күйі</th><th></th></tr></thead>
         <tbody id="users"></tbody>
       </table></div>
-    </div>
+    </details>
     <button class="out" id="logout">Шығу</button>
   </div>
 </section>
@@ -95,9 +115,7 @@ select{font:inherit;padding:4px;border:1px solid var(--ink);border-radius:6px;ba
 </main>
 
 <script>
-// 1) Supabase → Project Settings → API бөлімінен көшіріп қой
-const SUPABASE_URL = 'https://bllkkofusnxwuynuvvnn.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_Snu16I4gPs3EFSrYfjUl0g_6pdvuIRi';
+// Кілттер config.js файлында тұрады
 // Телефоннан жасалатын жасырын email үшін домен (нақты пошта қажет емес)
 const EMAIL_DOMAIN = 'fizmat.app';
 
@@ -156,6 +174,8 @@ $('logout').onclick = () => sb.auth.signOut();
 async function showApp(session) {
   $('auth').hidden = !!session;
   $('app').hidden = !session;
+  document.querySelector('.wrap').classList.toggle('wide', !!session);
+  if (!session) closeGame();
   if (!session) { say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const { data: me } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
   if (me && me.active === false) {
@@ -180,7 +200,7 @@ async function loadUsers() {
     sb.from('profiles').select('id,phone,active')
   ]);
   const byPhone = Object.fromEntries((profs || []).map(p => [p.phone, p]));
-  const body = $('users'); body.innerHTML = '';
+  const body = $('users'); const frag = document.createDocumentFragment();
   (allowed || []).forEach(a => {
     const p = byPhone[a.phone];
     const status = !p ? 'Тіркелмеген' : p.active ? 'Белсенді' : 'Бұғатталған';
@@ -200,8 +220,9 @@ async function loadUsers() {
         loadUsers();
       }));
     }
-    tr.appendChild(td); body.appendChild(tr);
+    tr.appendChild(td); frag.appendChild(tr);
   });
+  body.replaceChildren(frag);
 }
 
 $('aAdd').onclick = async () => {
@@ -217,6 +238,45 @@ $('aAdd').onclick = async () => {
   loadUsers();
 };
 
+// ===== Ойындар тізімі: жаңа ойын қосу үшін осы тізімге жол қос =====
+const GAMES = [
+  { subj: 'physics', icon: '🍎', title: 'Ньютонның құлыптаулы бөлмесі', type: 'Квест', grade: '7-сынып', topic: 'Орташа жылдамдық', file: 'квест-7сынып.html' },
+  { subj: 'physics', icon: '⚡', title: 'Фотоэффект зертханасы', type: 'Виртуалды зертхана', grade: '9-сынып', topic: 'Фотоэффект', file: 'Fotoaffact.html' }
+];
+let subj = 'physics';
+function renderGames() {
+  const box = $('games'), list = GAMES.filter(g => g.subj === subj);
+  box.replaceChildren();
+  if (!list.length) {
+    const p = document.createElement('p'); p.className = 'sub';
+    p.textContent = 'Бұл бөлімге ойындар жақында қосылады.'; box.appendChild(p); return;
+  }
+  list.forEach(g => {
+    const b = document.createElement('button'); b.className = 'game';
+    const mk = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; e.textContent = txt; return e; };
+    b.append(mk('span', 'gi', g.icon), mk('strong', '', g.title), mk('span', '', g.topic), mk('span', 'gm', g.type + ', ' + g.grade));
+    b.onclick = () => openGame(g);
+    box.appendChild(b);
+  });
+}
+function openGame(g) {
+  $('vtitle').textContent = g.title;
+  $('frame').src = '../' + encodeURIComponent(g.file);
+  $('catalog').hidden = true; $('viewer').hidden = false;
+}
+function closeGame() {
+  $('frame').src = 'about:blank';
+  $('viewer').hidden = true; $('catalog').hidden = false;
+}
+$('back').onclick = closeGame;
+document.querySelectorAll('#subjTabs button').forEach(b => b.onclick = () => {
+  subj = b.dataset.s;
+  document.querySelectorAll('#subjTabs button').forEach(x => x.setAttribute('aria-selected', x === b));
+  renderGames();
+});
+renderGames();
+
+// Supabase-тің ішкі callback-інде басқа сұраныс жіберуге болмайды (қатып қалады), сондықтан setTimeout
 sb.auth.onAuthStateChange((_e, session) => { setTimeout(() => showApp(session), 0); });
 </script>
 </body>
