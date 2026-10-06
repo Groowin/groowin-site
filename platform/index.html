@@ -8,11 +8,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <style>
-:root{--paper:#EEF3F8;--grid:#D3DFEC;--ink:#12233D;--blue:#2F6BFF;--sun:#FFC83D;--card:#fff;--err:#C62828;--mute:#5B6B82}
-@media (prefers-color-scheme:dark){:root{--paper:#0F1B2E;--grid:#1B2B45;--ink:#EAF1FB;--blue:#6C93FF;--card:#16253D;--err:#FF8A80;--mute:#9AAAC2}}
+:root{--paper:#070B1E;--grid:rgba(160,190,255,.2);--ink:#E8EEFF;--blue:#4D7CFF;--sun:#FFC83D;--card:rgba(10,18,40,.58);--err:#FF8A80;--mute:#9AAEDB}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;font:16px/1.5 Rubik,system-ui,sans-serif;color:var(--ink);background-color:var(--paper);
-background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:32px 32px;display:grid;place-items:center;padding:20px}
+html{background:#050816}
+body{margin:0;min-height:100vh;font:16px/1.5 Rubik,system-ui,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 50% 55%,#10193d 0%,#050816 72%);display:grid;place-items:center;padding:20px}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .wrap{width:100%;max-width:420px}
 h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.02em}
 .sub{margin:0 0 20px;color:var(--mute)}
@@ -43,11 +43,23 @@ select{font:inherit;padding:4px;border:1px solid var(--ink);border-radius:6px;ba
 .vbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .vbar .out{margin:0}
 #frame{width:100%;height:calc(100vh - 150px);min-height:520px;border:2px solid var(--ink);border-radius:10px;background:#fff}
+.wrap{position:relative;z-index:1}
+.card{background:var(--card);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(160,190,255,.3);box-shadow:0 0 70px rgba(77,124,255,.2)}
+input,select,.tabs button,.out,.game,#frame{border-color:rgba(160,190,255,.4)}
+input,select{background:rgba(5,8,22,.6)}
+.game{background:rgba(5,8,22,.45)}
+.msg.ok{color:#9DB8FF}
+h1{text-shadow:0 0 30px rgba(120,160,255,.5)}
+#hello.typing::after{content:'';display:inline-block;width:.08em;height:.9em;margin-left:.1em;background:var(--blue);vertical-align:-.08em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@keyframes appear{from{opacity:0;transform:translateY(10px)}}
+@media (prefers-reduced-motion:no-preference){#auth h1{animation:appear 1.6s 2.2s both}#auth .sub{animation:appear 1.6s 2.7s both}#auth .card{animation:appear 1.6s 3.2s both}}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .15s}}
 </style>
 </head>
 <body>
+<canvas id="sky" aria-hidden="true"></canvas>
 <main class="wrap">
 
 <!-- Кіру / Тіркелу -->
@@ -124,6 +136,7 @@ const $ = id => document.getElementById(id);
 let mode = 'in';
 let meId = null;
 let blockedMsg = '';
+let typedFor = null;
 
 const normPhone = p => {
   let d = p.replace(/\D/g, '');
@@ -176,7 +189,7 @@ async function showApp(session) {
   $('app').hidden = !session;
   document.querySelector('.wrap').classList.toggle('wide', !!session);
   if (!session) closeGame();
-  if (!session) { say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
+  if (!session) { typedFor = null; say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const { data: me } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
   if (me && me.active === false) {
     blockedMsg = 'Аккаунт бұғатталған. Админге жаз.';
@@ -185,7 +198,9 @@ async function showApp(session) {
   }
   meId = session.user.id;
   const roles = { admin: 'Админ', teacher: 'Мұғалім', student: 'Оқушы' };
-  $('hello').textContent = 'Сәлем, ' + (me?.full_name || 'қонақ') + '!';
+  const hi = 'Сәлем, ' + (me?.full_name || 'қонақ') + '!';
+  if (typedFor !== session.user.id) { typedFor = session.user.id; typeText($('hello'), hi); window.skyWarp && window.skyWarp(); }
+  else $('hello').textContent = hi;
   $('role').textContent = roles[me?.role] || 'Оқушы';
   $('admin').hidden = me?.role !== 'admin';
   if (me?.role === 'admin') loadUsers();
@@ -237,6 +252,99 @@ $('aAdd').onclick = async () => {
   show('Қосылды. Енді ол «Тіркелу» арқылы өз құпия сөзін қояды.', 'ok');
   loadUsers();
 };
+
+// ===== Жазылу эффектісі =====
+function typeText(el, text) {
+  clearInterval(el._t);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = text; return; }
+  el.textContent = ''; el.classList.add('typing'); let i = 0;
+  el._t = setInterval(() => {
+    el.textContent = text.slice(0, ++i);
+    if (i >= text.length) { clearInterval(el._t); setTimeout(() => el.classList.remove('typing'), 1500); }
+  }, 55);
+}
+
+// ===== Ғарыш фоны: жұлдыздар шашылып жүреді → Құс жолына жиналады → айналады =====
+(() => {
+  const cv = $('sky'), ctx = cv.getContext('2d');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, mx, my, tmx, tmy, warp = 0, spin = 0;
+  const t0 = performance.now(); let last = t0;
+  const sprite = (r, g, b) => {
+    const c = document.createElement('canvas'); c.width = c.height = 64;
+    const x = c.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, `rgba(${r},${g},${b},1)`); gr.addColorStop(.22, `rgba(${r},${g},${b},.4)`); gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
+    x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return c;
+  };
+  const SPR = [sprite(150, 185, 255), sprite(195, 150, 255), sprite(255, 205, 140), sprite(255, 255, 255)];
+  const IW = innerWidth, IH = innerHeight, ARMS = 3, rnd = Math.random;
+  const N = Math.max(1100, Math.min(2600, Math.round(IW * IH / 700)));
+  const sc = Math.max(.5, Math.min(1.2, Math.min(IW, IH * 1.6) / 1000));
+  const P = [];
+  const armAngle = r => (rnd() * ARMS | 0) * (6.283 / ARMS) + (rnd() - .5) * (.8 - .4 * r);
+  // 1) галактика жұлдыздары
+  for (let i = 0; i < N; i++) {
+    const core = rnd() < .22;
+    const r = core ? Math.pow(rnd(), 2) * .2 : .1 + Math.pow(rnd(), .85) * .9;
+    P.push({ r, a0: core ? rnd() * 6.283 : armAngle(r), z: rnd(), sx: rnd() * IW, sy: rnd() * IH, d: rnd() * .9,
+      e: still ? 1 : .015 + rnd() * .05, tw: .5 + rnd() * 1.5, ph: rnd() * 6.283,
+      s: core ? 3 + rnd() * 8 : 3 + rnd() * rnd() * 14, spr: core ? 2 : [0, 0, 1, 3][rnd() * 4 | 0], al: core ? .5 : .55 + rnd() * .45 });
+  }
+  // 2) тұман тәрізді жарық (иіндер бойымен)
+  for (let i = 0; i < N / 8; i++) {
+    const r = .12 + rnd() * .85;
+    P.push({ r, a0: armAngle(r), z: rnd(), sx: rnd() * IW, sy: rnd() * IH, d: rnd() * .9, e: still ? 1 : .01 + rnd() * .02,
+      tw: .2, ph: rnd() * 6.283, s: (90 + rnd() * 170) * sc, spr: rnd() < .6 ? 0 : 1, al: .045 + rnd() * .05, puff: true });
+  }
+  // 3) алыстағы жұлдыздар (орнында тұрады)
+  for (let i = 0; i < 180; i++) P.push({ bg: true, z: rnd(), sx: rnd() * IW, sy: rnd() * IH, tw: .5 + rnd() * 2, ph: rnd() * 6.283, s: 2 + rnd() * 3, spr: 3, al: .5, r: 0 });
+  P.forEach(p => { p.x = p.sx; p.y = p.sy; });
+
+  function resize() {
+    const d = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+    cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+    if (mx === undefined) { mx = tmx = W / 2; my = tmy = H / 2; }
+    if (still) frame(performance.now());
+  }
+  addEventListener('pointermove', e => { tmx = e.clientX; tmy = e.clientY; });
+  addEventListener('resize', resize);
+  window.skyWarp = () => { if (!still) warp = 1; };
+
+  function frame(now) {
+    const dt = Math.min((now - last) / 1000, .05); last = now;
+    const tt = (now - t0) / 1000;
+    mx += (tmx - mx) * .04; my += (tmy - my) * .04;
+    warp *= .965; if (!still) spin += dt * (.05 + warp * 2.2);
+    const nx = mx / W - .5, ny = my / H - .5;
+    const R = Math.min(W * .46, H * .8) * (1 + warp * .7);
+    const tilt = -.42 + nx * .8, flat = .5 + ny * .3, wind = 4.3 + nx * 2.4;
+    const ct = Math.cos(tilt), st = Math.sin(tilt);
+    ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+    const gk = still ? 1 : Math.min(1, Math.max(0, (tt - 1.5) / 3.5));
+    const cg = ctx.createRadialGradient(W / 2 - nx * 30, H / 2 - ny * 30, 0, W / 2, H / 2, R * .45);
+    cg.addColorStop(0, `rgba(255,214,150,${(.45 + warp * .3) * gk})`); cg.addColorStop(.4, `rgba(255,170,110,${.12 * gk})`); cg.addColorStop(1, 'rgba(255,170,110,0)');
+    ctx.fillStyle = cg; ctx.fillRect(0, 0, W, H);
+    for (const p of P) {
+      if (p.bg) { p.x = p.sx - nx * 20 * p.z; p.y = p.sy - ny * 20 * p.z; }
+      else {
+        const k = still ? 1 : Math.min(1, Math.max(0, (tt - 1 - p.d) / 3.4)), g = 1 - Math.pow(1 - k, 3);
+        const ang = p.a0 + p.r * wind + spin - (1 - g) * 3.5;
+        const gx = Math.cos(ang) * p.r * R, gy = Math.sin(ang) * p.r * R * flat;
+        const GX = W / 2 + gx * ct - gy * st - nx * 30 * p.z, GY = H / 2 + gx * st + gy * ct - ny * 30 * p.z;
+        const SX = p.sx + Math.sin(tt * .25 + p.ph) * 18, SY = p.sy + Math.cos(tt * .22 + p.ph) * 18;
+        const e = k >= 1 ? Math.max(p.e, warp * .3) : 1;
+        p.x += (SX + (GX - SX) * g - p.x) * e; p.y += (SY + (GY - SY) * g - p.y) * e;
+      }
+      const tw = p.puff ? 1 : .55 + .45 * Math.sin(tt * p.tw + p.ph);
+      ctx.globalAlpha = Math.min(1, p.al * tw * (1 - p.r * .25) * (p.puff ? Math.max(gk, .05) : 1));
+      ctx.drawImage(SPR[p.spr], p.x - p.s / 2, p.y - p.s / 2, p.s, p.s);
+    }
+    if (!still) requestAnimationFrame(frame);
+  }
+  resize();
+  if (!still) requestAnimationFrame(frame);
+})();
 
 // ===== Ойындар тізімі: жаңа ойын қосу үшін осы тізімге жол қос =====
 const GAMES = [
