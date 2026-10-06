@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Физмат әлемі · Кіру</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--paper:#EEF3F8;--grid:#D3DFEC;--ink:#12233D;--blue:#2F6BFF;--sun:#FFC83D;--card:#fff;--err:#C62828;--mute:#5B6B82}
+@media (prefers-color-scheme:dark){:root{--paper:#0F1B2E;--grid:#1B2B45;--ink:#EAF1FB;--blue:#6C93FF;--card:#16253D;--err:#FF8A80;--mute:#9AAAC2}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font:16px/1.5 Rubik,system-ui,sans-serif;color:var(--ink);background-color:var(--paper);
+background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:32px 32px;display:grid;place-items:center;padding:20px}
+.wrap{width:100%;max-width:420px}
+h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.02em}
+.sub{margin:0 0 20px;color:var(--mute)}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:24px;box-shadow:6px 6px 0 var(--sun)}
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tabs button{flex:1;padding:10px;border:2px solid var(--ink);background:transparent;color:var(--ink);border-radius:8px;font:inherit;font-weight:500;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--paper)}
+label{display:block;font-weight:500;margin:12px 0 4px}
+input{width:100%;padding:11px 12px;border:2px solid var(--ink);border-radius:8px;font:inherit;background:var(--paper);color:var(--ink)}
+input:focus,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.go{width:100%;margin-top:18px;padding:12px;border:0;border-radius:8px;background:var(--blue);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.go:disabled{opacity:.6;cursor:wait}
+.msg{min-height:1.4em;margin:12px 0 0;font-size:.92rem}
+.msg.err{color:var(--err)}.msg.ok{color:var(--blue)}
+.hint{font-size:.85rem;color:var(--mute);margin:6px 0 0}
+.role{display:inline-block;padding:2px 10px;border:2px solid var(--ink);border-radius:99px;background:var(--sun);color:#12233D;font-size:.85rem;font-weight:500}
+.out{margin-top:16px;padding:10px 14px;border:2px solid var(--ink);background:transparent;color:var(--ink);border-radius:8px;font:inherit;font-weight:500;cursor:pointer}
+.scroll{overflow-x:auto;margin-top:14px}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--grid);white-space:nowrap}
+select{font:inherit;padding:4px;border:1px solid var(--ink);border-radius:6px;background:var(--paper);color:var(--ink)}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .15s}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<!-- Кіру / Тіркелу -->
+<section id="auth">
+  <h1>Физмат әлемі</h1>
+  <p class="sub">Есеп шығар, зертханада тәжірибе жаса, ұпай жина.</p>
+  <div class="card">
+    <div class="tabs" role="tablist">
+      <button role="tab" id="t-in" aria-selected="true">Кіру</button>
+      <button role="tab" id="t-up" aria-selected="false">Тіркелу</button>
+    </div>
+    <div id="nameRow" hidden>
+      <label for="name">Аты-жөні</label>
+      <input id="name" autocomplete="name">
+    </div>
+    <label for="phone">Телефон нөмірі</label>
+    <input id="phone" type="tel" inputmode="tel" placeholder="+7 700 123 45 67" autocomplete="tel">
+    <label for="pass">Құпия сөз</label>
+    <input id="pass" type="password" autocomplete="current-password">
+    <p class="hint" id="passHint" hidden>Кемінде 6 таңба.</p>
+    <button class="go" id="submit">Кіру</button>
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<!-- Кіргеннен кейін -->
+<section id="app" hidden>
+  <div class="card">
+    <h1 id="hello"></h1>
+    <p class="sub"><span class="role" id="role"></span></p>
+    <p>Кіру жұмыс істейді. Келесі қадам: математика мен физика бөлімдерін осында қосамыз.</p>
+    <div id="admin" hidden>
+      <h2 style="font-size:1.1rem;margin:20px 0 0">Рұқсат берілген адамдар</h2>
+      <label for="aName">Аты-жөні</label>
+      <input id="aName">
+      <label for="aPhone">Телефон нөмірі</label>
+      <input id="aPhone" type="tel" inputmode="tel" placeholder="+7 700 123 45 67">
+      <label for="aRole">Рөл</label>
+      <select id="aRole" style="width:100%;padding:11px 12px">
+        <option value="student">Оқушы</option>
+        <option value="teacher">Мұғалім</option>
+        <option value="admin">Админ</option>
+      </select>
+      <button class="go" id="aAdd">Тізімге қосу</button>
+      <p class="msg" id="aMsg" role="status" aria-live="polite"></p>
+      <div class="scroll"><table>
+        <thead><tr><th>Аты</th><th>Телефон</th><th>Рөл</th><th>Күйі</th><th></th></tr></thead>
+        <tbody id="users"></tbody>
+      </table></div>
+    </div>
+    <button class="out" id="logout">Шығу</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+// 1) Supabase → Project Settings → API бөлімінен көшіріп қой
+const SUPABASE_URL = 'https://bllkkofusnxwuynuvvnn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_Snu16I4gPs3EFSrYfjUl0g_6pdvuIRi';
+// Телефоннан жасалатын жасырын email үшін домен (нақты пошта қажет емес)
+const EMAIL_DOMAIN = 'fizmat.app';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+let mode = 'in';
+let meId = null;
+
+const normPhone = p => {
+  let d = p.replace(/\D/g, '');
+  if (d.length === 11 && d[0] === '8') d = '7' + d.slice(1);
+  if (d.length === 10) d = '7' + d;
+  return d;
+};
+const toEmail = p => normPhone(p) + '@' + EMAIL_DOMAIN;
+const say = (t, cls) => { $('msg').textContent = t || ''; $('msg').className = 'msg ' + (cls || ''); };
+
+function setMode(m) {
+  mode = m;
+  $('t-in').setAttribute('aria-selected', m === 'in');
+  $('t-up').setAttribute('aria-selected', m === 'up');
+  $('nameRow').hidden = m === 'in';
+  $('passHint').hidden = m === 'in';
+  $('submit').textContent = m === 'in' ? 'Кіру' : 'Тіркелу';
+  $('pass').autocomplete = m === 'in' ? 'current-password' : 'new-password';
+  say('');
+}
+$('t-in').onclick = () => setMode('in');
+$('t-up').onclick = () => setMode('up');
+
+$('submit').onclick = async () => {
+  const phone = normPhone($('phone').value), pass = $('pass').value, name = $('name').value.trim();
+  if (phone.length !== 11) return say('Телефон нөмірін толық жаз: 11 сан.', 'err');
+  if (pass.length < 6) return say('Құпия сөз кемінде 6 таңба болсын.', 'err');
+  if (mode === 'up' && !name) return say('Аты-жөніңді жаз.', 'err');
+
+  $('submit').disabled = true; say('Күте тұр…');
+  const email = toEmail(phone);
+  const { error } = mode === 'in'
+    ? await sb.auth.signInWithPassword({ email, password: pass })
+    : await sb.auth.signUp({ email, password: pass, options: { data: { full_name: name, phone } } });
+  $('submit').disabled = false;
+
+  if (error) {
+    const m = error.message.toLowerCase();
+    if (m.includes('invalid login')) say('Нөмір немесе құпия сөз қате.', 'err');
+    else if (m.includes('already')) say('Бұл нөмір тіркелген. «Кіру» бөліміне өт.', 'err');
+    else if (m.includes('database error')) say('Бұл нөмір тізімде жоқ. Мұғалімге немесе админге жаз.', 'err');
+    else say('Қате: ' + error.message, 'err');
+  }
+};
+
+$('logout').onclick = () => sb.auth.signOut();
+
+async function showApp(session) {
+  $('auth').hidden = !!session;
+  $('app').hidden = !session;
+  if (!session) { say(''); return; }
+  const { data: me } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+  if (me && me.active === false) {
+    await sb.auth.signOut();
+    say('Аккаунт бұғатталған. Админге жаз.', 'err');
+    return;
+  }
+  meId = session.user.id;
+  const roles = { admin: 'Админ', teacher: 'Мұғалім', student: 'Оқушы' };
+  $('hello').textContent = 'Сәлем, ' + (me?.full_name || 'қонақ') + '!';
+  $('role').textContent = roles[me?.role] || 'Оқушы';
+  $('admin').hidden = me?.role !== 'admin';
+  if (me?.role === 'admin') loadUsers();
+}
+
+const ROLE_KK = { student: 'Оқушы', teacher: 'Мұғалім', admin: 'Админ' };
+const mini = (text, fn) => { const b = document.createElement('button'); b.textContent = text; b.className = 'out'; b.style.margin = '0 6px 0 0'; b.style.padding = '4px 10px'; b.onclick = fn; return b; };
+
+async function loadUsers() {
+  const [{ data: allowed }, { data: profs }] = await Promise.all([
+    sb.from('allowed_phones').select('*').order('created_at', { ascending: false }),
+    sb.from('profiles').select('id,phone,active')
+  ]);
+  const byPhone = Object.fromEntries((profs || []).map(p => [p.phone, p]));
+  const body = $('users'); body.innerHTML = '';
+  (allowed || []).forEach(a => {
+    const p = byPhone[a.phone];
+    const status = !p ? 'Тіркелмеген' : p.active ? 'Белсенді' : 'Бұғатталған';
+    const tr = document.createElement('tr');
+    [a.full_name, '+' + a.phone, ROLE_KK[a.role], status].forEach(t => {
+      const td = document.createElement('td'); td.textContent = t || ''; tr.appendChild(td);
+    });
+    const td = document.createElement('td');
+    if (!p || p.id !== meId) {
+      if (p) td.appendChild(mini(p.active ? 'Бұғаттау' : 'Ашу', async () => {
+        await sb.from('profiles').update({ active: !p.active }).eq('id', p.id); loadUsers();
+      }));
+      td.appendChild(mini('Жою', async () => {
+        if (!confirm('Бұл адамды тізімнен жою керек пе?')) return;
+        if (p) await sb.from('profiles').update({ active: false }).eq('id', p.id);
+        await sb.from('allowed_phones').delete().eq('phone', a.phone);
+        loadUsers();
+      }));
+    }
+    tr.appendChild(td); body.appendChild(tr);
+  });
+}
+
+$('aAdd').onclick = async () => {
+  const phone = normPhone($('aPhone').value), name = $('aName').value.trim(), role = $('aRole').value;
+  const m = $('aMsg');
+  const show = (t, c) => { m.textContent = t; m.className = 'msg ' + c; };
+  if (phone.length !== 11 || !name) return show('Аты-жөні мен 11 санды нөмірді жаз.', 'err');
+  const { error } = await sb.from('allowed_phones').upsert({ phone, full_name: name, role });
+  if (error) return show('Қате: ' + error.message, 'err');
+  await sb.from('profiles').update({ active: true, role, full_name: name }).eq('phone', phone);
+  $('aName').value = ''; $('aPhone').value = '';
+  show('Қосылды. Енді ол «Тіркелу» арқылы өз құпия сөзін қояды.', 'ok');
+  loadUsers();
+};
+
+sb.auth.onAuthStateChange((_e, session) => showApp(session));
+sb.auth.getSession().then(({ data }) => showApp(data.session));
+</script>
+</body>
+</html>
