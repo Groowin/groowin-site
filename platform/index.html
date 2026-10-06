@@ -105,6 +105,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
 let mode = 'in';
 let meId = null;
+let blockedMsg = '';
 
 const normPhone = p => {
   let d = p.replace(/\D/g, '');
@@ -155,11 +156,11 @@ $('logout').onclick = () => sb.auth.signOut();
 async function showApp(session) {
   $('auth').hidden = !!session;
   $('app').hidden = !session;
-  if (!session) { say(''); return; }
+  if (!session) { say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const { data: me } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
   if (me && me.active === false) {
+    blockedMsg = 'Аккаунт бұғатталған. Админге жаз.';
     await sb.auth.signOut();
-    say('Аккаунт бұғатталған. Админге жаз.', 'err');
     return;
   }
   meId = session.user.id;
