@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Физмат әлемі · Кіру</title>
+<title>Groowin</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -66,7 +66,7 @@ h1{text-shadow:0 0 30px rgba(120,160,255,.5)}
 #hello.typing::after{content:'';display:inline-block;width:.08em;height:.9em;margin-left:.1em;background:var(--blue);vertical-align:-.08em;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 @keyframes appear{from{opacity:0;transform:translateY(10px)}}
-@media (prefers-reduced-motion:no-preference){#auth h1{animation:appear 1.6s 2.2s both}#auth .sub{animation:appear 1.6s 2.7s both}#auth .card{animation:appear 1.6s 3.2s both}}
+@media (prefers-reduced-motion:no-preference){#auth h1{animation:appear 1.6s 2.2s both}#auth .sub,#auth .by{animation:appear 1.6s 2.7s both}#auth .card{animation:appear 1.6s 3.2s both}}
 .news{border:1px solid rgba(160,190,255,.3);border-radius:12px;padding:14px 16px;margin-top:12px}
 .news h3{margin:0 0 4px;font-size:1.05rem}.news p{margin:0 0 8px;white-space:pre-wrap}.news small{color:var(--mute)}
 #badge{display:inline-block;min-width:1.4em;padding:0 6px;margin-left:6px;border-radius:99px;background:var(--sun);color:#12233D;font-size:.8rem;text-align:center}
@@ -79,18 +79,26 @@ html[data-theme=light] :is(input,select,textarea,.game){background:var(--paper)}
 html[data-theme=light] h1{text-shadow:none}
 html[data-theme=light] .msg.ok{color:var(--blue)}
 html[data-theme=light] #nav button.on{background:rgba(47,107,255,.14)}
+.by{margin:-4px 0 8px;color:var(--mute);letter-spacing:.16em;font-size:.85rem;text-transform:uppercase}
+.icon-btn{display:grid;place-items:center;flex:none;width:40px;height:40px;padding:0;border:1px solid rgba(160,190,255,.4);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}
+#fsBtn{position:fixed;top:14px;right:14px;z-index:5}
+#app.collapsed{grid-template-columns:minmax(0,1fr)}
+#app.collapsed .side{display:none}
+html[data-theme=light] .icon-btn{border-color:var(--ink)}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .15s}}
 </style>
 </head>
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
+<button class="icon-btn" id="fsBtn" aria-label="Толық экран"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
 <main class="wrap">
 
 <!-- Кіру / Тіркелу -->
 <section id="auth">
-  <h1>Физмат әлемі</h1>
-  <p class="sub">Есеп шығар, зертханада тәжірибе жаса, ұпай жина.</p>
+  <h1>Groowin</h1>
+  <p class="by">by Askerov Almas</p>
+  <p class="sub">Ойнап үйренетін платформа.</p>
   <div class="card">
     <div class="tabs" role="tablist">
       <button role="tab" id="t-in" aria-selected="true">Кіру</button>
@@ -113,7 +121,7 @@ html[data-theme=light] #nav button.on{background:rgba(47,107,255,.14)}
 <!-- Кіргеннен кейін -->
 <section id="app" hidden>
   <aside class="side card">
-    <div class="brand">Физмат әлемі</div>
+    <div class="brand">Groowin<div class="by" style="margin:0">by Askerov Almas</div></div>
     <nav id="nav">
       <button data-v="physics" class="on">Физика</button>
       <button data-v="math">Математика</button>
@@ -125,7 +133,7 @@ html[data-theme=light] #nav button.on{background:rgba(47,107,255,.14)}
     <button class="out" id="logout">Шығу</button>
   </aside>
   <main class="main card">
-    <div class="mainhead"><h1 id="hello"></h1><span class="role" id="role"></span></div>
+    <div class="mainhead"><button class="icon-btn" id="sideBtn" aria-label="Панельді жасыру немесе көрсету" aria-expanded="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><h1 id="hello"></h1><span class="role" id="role"></span></div>
 
     <div id="v-catalog">
       <h2 id="catTitle" style="margin:0 0 12px;font-size:1.2rem">Физика</h2>
@@ -157,6 +165,16 @@ html[data-theme=light] #nav button.on{background:rgba(47,107,255,.14)}
         <dt>Телефон</dt><dd id="accPhone"></dd>
         <dt>Рөл</dt><dd id="accRole"></dd>
       </dl>
+      <h3 style="margin:22px 0 0;font-size:1.05rem">Атыңды өзгерту</h3>
+      <label for="accEdit">Аты-жөні</label>
+      <input id="accEdit" maxlength="80" autocomplete="name">
+      <button class="go" id="accSave" style="width:auto;padding:10px 22px">Сақтау</button>
+      <p class="msg" id="accMsg" role="status" aria-live="polite"></p>
+      <h3 style="margin:14px 0 0;font-size:1.05rem">Құпия сөзді өзгерту</h3>
+      <label for="pw1">Жаңа құпия сөз</label>
+      <input id="pw1" type="password" autocomplete="new-password">
+      <button class="go" id="pwSave" style="width:auto;padding:10px 22px">Өзгерту</button>
+      <p class="msg" id="pwMsg" role="status" aria-live="polite"></p>
     </div>
 
     <div id="v-students" hidden>
@@ -224,7 +242,7 @@ $('submit').onclick = async () => {
   if (pass.length < 6) return say('Құпия сөз кемінде 6 таңба болсын.', 'err');
   if (mode === 'up' && !name) return say('Аты-жөніңді жаз.', 'err');
 
-  $('submit').disabled = true; say('Күте тұр…');
+  $('submit').disabled = true; say('Күте тұр…'); ls.set('lastActive', Date.now()); lastTouch = Date.now();
   const email = toEmail(phone);
   const { error } = mode === 'in'
     ? await sb.auth.signInWithPassword({ email, password: pass })
@@ -248,7 +266,10 @@ async function showApp(session) {
   applyTheme(!!session); window.skyShow && window.skyShow(!session);
   document.querySelector('.wrap').classList.toggle('wide', !!session);
   if (!session) closeGame();
-  if (!session) { typedFor = null; clearInterval(newsTimer); newsTimer = null; document.title = 'Физмат әлемі'; say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
+  if (!session) { typedFor = null; clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
+  const lastA = +ls.get('lastActive');
+  if (lastA && Date.now() - lastA > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; await sb.auth.signOut(); return; }
+  touch();
   const { data: me } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
   if (me && me.active === false) {
     blockedMsg = 'Аккаунт бұғатталған. Админге жаз.';
@@ -262,10 +283,11 @@ async function showApp(session) {
   else $('hello').textContent = hi;
   $('role').textContent = roles[me?.role] || 'Оқушы';
   $('accName').textContent = me?.full_name || '';
+  if (document.activeElement !== $('accEdit')) $('accEdit').value = me?.full_name || '';
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   $('navStudents').hidden = me?.role !== 'admin';
-  isAdmin = me?.role === 'admin'; meName = me?.full_name || ''; $('newsForm').hidden = !isAdmin;
+  isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
   loadNews(); if (!newsTimer) newsTimer = setInterval(loadNews, 60000);
 }
 
@@ -474,7 +496,7 @@ function applyTheme(inApp) {
 $('themeBtn').onclick = () => { pref = pref === 'light' ? 'dark' : 'light'; ls.set('theme', pref); applyTheme(true); };
 
 // ===== Хабарландырулар =====
-let isAdmin = false, meName = '', newsTimer = null, newsCache = [];
+let isAdmin = false, isStaff = false, meName = '', newsTimer = null, newsCache = [];
 function renderNews() {
   const box = $('newsList'); box.replaceChildren();
   if (!newsCache.length) { const p = document.createElement('p'); p.className = 'sub'; p.textContent = 'Әзірге хабарландыру жоқ.'; box.appendChild(p); }
@@ -484,7 +506,7 @@ function renderNews() {
     const p = document.createElement('p'); p.textContent = n.body || '';
     const m = document.createElement('small'); m.textContent = new Date(n.created_at).toLocaleDateString('kk-KZ') + (n.author ? ', ' + n.author : '');
     d.append(h, p, m);
-    if (isAdmin) {
+    if (isAdmin || (n.author_id && n.author_id === meId)) {
       const b = document.createElement('button'); b.className = 'out'; b.textContent = 'Жою'; b.style.cssText = 'margin:8px 0 0 12px;padding:4px 10px';
       b.onclick = async () => { if (!confirm('Хабарландыруды жою керек пе?')) return; await sb.from('announcements').delete().eq('id', n.id); loadNews(); };
       d.appendChild(b);
@@ -495,7 +517,7 @@ function renderNews() {
   const seen = +ls.get('newsSeen') || 0;
   const unread = newsCache.filter(n => new Date(n.created_at).getTime() > seen).length;
   $('badge').textContent = unread; $('badge').hidden = !unread;
-  document.title = (unread ? '(' + unread + ') ' : '') + 'Физмат әлемі';
+  document.title = (unread ? '(' + unread + ') ' : '') + 'Groowin';
 }
 function markSeen() { ls.set('newsSeen', Date.now()); renderNews(); }
 async function loadNews() {
@@ -510,6 +532,50 @@ $('nAdd').onclick = async () => {
   if (error) return say2('Қате: ' + error.message, 'err');
   $('nTitle').value = ''; $('nBody').value = ''; say2('Жарияланды.', 'ok'); loadNews();
 };
+
+// ===== Панельді жасыру / толық экран =====
+$('sideBtn').onclick = () => {
+  const c = $('app').classList.toggle('collapsed');
+  $('sideBtn').setAttribute('aria-expanded', String(!c)); ls.set('sideCollapsed', c ? '1' : '');
+};
+if (ls.get('sideCollapsed')) { $('app').classList.add('collapsed'); $('sideBtn').setAttribute('aria-expanded', 'false'); }
+
+const fs = $('fsBtn'), FS_IN = fs.innerHTML;
+const FS_OUT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg>';
+if (!document.documentElement.requestFullscreen) fs.hidden = true;
+fs.onclick = () => { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => {}); };
+document.addEventListener('fullscreenchange', () => {
+  const on = !!document.fullscreenElement;
+  fs.innerHTML = on ? FS_OUT : FS_IN; fs.setAttribute('aria-label', on ? 'Толық экраннан шығу' : 'Толық экран');
+});
+
+// ===== Аккаунт: атын және құпия сөзін өзгерту =====
+const note = (id, t, c) => { const m = $(id); m.textContent = t; m.className = 'msg ' + c; };
+$('accSave').onclick = async () => {
+  const v = $('accEdit').value.trim();
+  if (!v) return note('accMsg', 'Атыңды жаз.', 'err');
+  const { error } = await sb.rpc('update_my_name', { new_name: v });
+  if (error) return note('accMsg', 'Қате: ' + error.message, 'err');
+  meName = v; $('accName').textContent = v; $('hello').textContent = 'Сәлем, ' + v + '!'; note('accMsg', 'Сақталды.', 'ok');
+};
+$('pwSave').onclick = async () => {
+  const v = $('pw1').value;
+  if (v.length < 6) return note('pwMsg', 'Кемінде 6 таңба болсын.', 'err');
+  const { error } = await sb.auth.updateUser({ password: v });
+  if (error) return note('pwMsg', 'Қате: ' + error.message, 'err');
+  $('pw1').value = ''; note('pwMsg', 'Құпия сөз өзгертілді.', 'ok');
+};
+
+// ===== 3 сағат белсенділік болмаса автоматты шығу =====
+const IDLE_MS = 3 * 3600 * 1000; let lastTouch = 0;
+function touch() { const n = Date.now(); if (n - lastTouch > 15000) { lastTouch = n; ls.set('lastActive', n); } }
+['pointermove', 'pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(e => addEventListener(e, touch, { passive: true }));
+setInterval(() => {
+  if (!typedFor) return;
+  if (document.visibilityState === 'visible' && !$('v-viewer').hidden) touch();   // ойын ашық тұрса, белсенді деп саналады
+  const last = +ls.get('lastActive') || Date.now();
+  if (Date.now() - last > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; sb.auth.signOut(); }
+}, 60000);
 
 // Supabase-тің ішкі callback-інде басқа сұраныс жіберуге болмайды (қатып қалады), сондықтан setTimeout
 sb.auth.onAuthStateChange((_e, session) => { setTimeout(() => showApp(session), 0); });
