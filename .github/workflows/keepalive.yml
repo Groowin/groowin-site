@@ -1,0 +1,16 @@
+name: Supabase keepalive
+
+on:
+  schedule:
+    - cron: '0 6 */3 * *'   # әр 3 күн сайын, таңғы 06:00 UTC
+  workflow_dispatch:          # қолмен іске қосуға болады
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supabase-ке сұраныс жіберу
+        run: |
+          curl -fsS "https://bllkkofusnxwuynuvvnn.supabase.co/rest/v1/announcements?select=id&limit=1" \
+            -H "apikey: sb_publishable_Snu16I4gPs3EFSrYfjUl0g_6pdvuIRi" \
+            -H "Authorization: Bearer sb_publishable_Snu16I4gPs3EFSrYfjUl0g_6pdvuIRi"
