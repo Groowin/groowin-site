@@ -97,6 +97,27 @@ html[data-theme=light] #app .side.card{border-right:2px solid var(--ink);backgro
 #reqBox{display:none}
 #authCard.req>:not(#reqBox){display:none}
 #authCard.req #reqBox{display:block}
+.grp>summary{font-size:1.1rem;font-weight:700;cursor:pointer;padding:10px 0}
+.grp2{margin:0 0 6px 14px}.grp2>summary{font-weight:500;cursor:pointer;padding:6px 0}
+.emo{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.emo button{width:42px;height:42px;font-size:1.4rem;border:1px solid rgba(160,190,255,.4);border-radius:8px;background:transparent;cursor:pointer}
+.emo button.on{outline:3px solid var(--blue)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tools .go,#stage .go{width:auto;margin:0;padding:10px 20px}
+.strow{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--grid)}
+.strow input{width:auto}.strow span{flex:1}
+#stage{position:fixed;inset:0;z-index:30;background:var(--paper);color:var(--ink);overflow:auto;padding:64px 24px 40px}
+#stage .big{font-size:clamp(2.4rem,9vw,7rem);font-weight:700;text-align:center;margin:6vh 0 24px;line-height:1.1}
+#stage .big.flash{animation:blink 1s steps(1) infinite;color:var(--err)}
+#stage .bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+#stage .bar input{width:90px}
+.ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:24px}
+.gcard{border:2px solid var(--ink);border-radius:14px;padding:16px;font-size:1.25rem}.gcard h3{margin:0 0 8px;font-size:1.5rem}
+html[data-theme=light] .light-hide{display:none}
+.me{margin-top:auto;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(160,190,255,.25);padding-top:14px}
+.mecard{display:flex;align-items:center;gap:10px;width:100%;padding:8px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.mecard:hover,.mecard.on{background:rgba(77,124,255,.2)}
+.av{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:var(--sun);color:#12233D;font-weight:700}
+.mt{display:flex;flex-direction:column;min-width:0}.mt strong,.mt small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mt small{color:var(--mute)}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .15s}}
 </style>
@@ -104,6 +125,7 @@ html[data-theme=light] #app .side.card{border-right:2px solid var(--ink);backgro
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
 <button class="icon-btn" id="fsBtn" aria-label="Толық экран"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+<div id="stage" hidden><button class="icon-btn" id="stClose" aria-label="Жабу" style="position:fixed;top:14px;right:14px;font-size:1.2rem">✕</button><div id="stageBody"></div></div>
 <main class="wrap">
 
 <!-- Кіру / Тіркелу -->
@@ -158,14 +180,18 @@ html[data-theme=light] #app .side.card{border-right:2px solid var(--ink);backgro
       <button data-v="math">Математика</button>
       <button data-v="rank" hidden>Рейтинг</button>
       <button data-v="news">Хабарландыру<span id="badge" hidden></span></button>
-      <button data-v="account">Менің аккаунтым</button>
+      <button data-v="rosters" id="navRosters" hidden>Менің сыныптарым</button>
       <button data-v="inbox" id="navInbox" hidden>Хабарлар<span id="badge2" hidden></span></button>
       <button data-v="games" id="navGames" hidden>Ойындар</button>
       <button data-v="classes" id="navClasses" hidden>Сыныптар</button>
+      <button data-v="teachers" id="navTeachers" hidden>Мұғалімдер</button>
       <button data-v="students" id="navStudents" hidden>Оқушылар</button>
     </nav>
-    <button class="out" id="themeBtn">Жарық тема</button>
-    <button class="out" id="logout">Шығу</button>
+    <div class="me">
+      <button class="mecard" id="meCard" type="button" aria-label="Менің аккаунтым"><span class="av" id="meAv">?</span><span class="mt"><strong id="meNm"></strong><small id="meRl"></small></span></button>
+      <button class="out" id="themeBtn">Жарық тема</button>
+      <button class="out" id="logout">Шығу</button>
+    </div>
   </aside>
   <main class="main card">
     <div class="mainhead"><button class="icon-btn" id="sideBtn" aria-label="Панельді жасыру немесе көрсету" aria-expanded="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><h1 id="hello"></h1><span class="role" id="role"></span><span class="role" id="xp" hidden></span></div>
@@ -180,9 +206,37 @@ html[data-theme=light] #app .side.card{border-right:2px solid var(--ink);backgro
       <iframe id="frame" title="Ойын" allow="fullscreen"></iframe>
     </div>
 
+    <div id="v-rosters" hidden>
+      <div id="rsHome">
+        <h2 style="margin:0 0 6px;font-size:1.2rem">Менің сыныптарым</h2>
+        <p class="sub" style="font-size:.9rem">Сыныптар мен оқушы аттарын осында сақтайсың, тізімді тек өзің көресің. Оқушыларға аккаунт керек емес.</p>
+        <label for="rsName">Жаңа сынып</label>
+        <input id="rsName" placeholder="Мысалы: 7А, содан кейін Enter">
+        <button class="go" id="rsAdd">Сынып жасау</button>
+        <div class="grid" id="rsList" style="margin-top:16px"></div>
+      </div>
+      <div id="rsDetail" hidden>
+        <div class="vbar"><button class="out" id="rsBack">← Артқа</button><strong id="rsTitle"></strong><button class="out" id="rsDel" style="margin-left:auto">Сыныпты жою</button></div>
+        <div class="tools">
+          <button class="go" id="tRandom">Кездейсоқ оқушы</button><button class="go" id="tGroups">Топқа бөлу</button>
+          <button class="go" id="tTimer">Таймер</button><button class="go" id="tRefl">Рефлексия</button>
+        </div>
+        <label for="stName">Оқушы қосу</label>
+        <input id="stName" placeholder="Аты-жөнін жазып Enter бас. Тізімді қойсаң, бәрі бірден қосылады">
+        <p class="sub" id="stCount" style="margin:8px 0;font-size:.9rem"></p>
+        <div id="stList"></div>
+        <button class="out" id="stClear">Барлығын өшіру</button>
+      </div>
+    </div>
+
     <div id="v-inbox" hidden>
       <h2 style="margin:0 0 6px;font-size:1.2rem">Хабарлар</h2>
       <p class="sub" style="font-size:.9rem">Құпия сөз бермес бұрын адамның кім екенін тексер: мұғалімінен немесе сыныптастарынан сұра.</p>
+      <div class="tabs" id="inTabs">
+        <button data-k="all" data-t="Барлығы" aria-selected="true">Барлығы</button>
+        <button data-k="password" data-t="Құпия сөз" aria-selected="false">Құпия сөз</button>
+        <button data-k="access" data-t="Рұқсат сұрау" aria-selected="false">Рұқсат сұрау</button>
+      </div>
       <div id="inboxList"></div>
     </div>
 
@@ -196,13 +250,13 @@ html[data-theme=light] #app .side.card{border-right:2px solid var(--ink);backgro
       <label for="gSubj">Пән</label>
       <select id="gSubj" style="width:100%;padding:11px 12px"><option value="physics">Физика</option><option value="math">Математика</option></select>
       <label for="gType">Түрі</label>
-      <select id="gType" style="width:100%;padding:11px 12px"><option>Квест</option><option>Виртуалды зертхана</option><option>Ойын</option><option>Есептер</option></select>
+      <input id="gType" list="typeList" placeholder="Мысалы: Квест"><datalist id="typeList"><option value="Квест"><option value="Виртуалды зертхана"><option value="Ойын"><option value="Есептер"><option value="Викторина"></datalist>
       <label for="gTopic">Тақырып</label>
       <input id="gTopic">
       <label for="gGrade">Сынып деңгейі</label>
       <input id="gGrade" placeholder="7-сынып">
       <label for="gIcon">Белгіше (эмодзи)</label>
-      <input id="gIcon" placeholder="🎮" maxlength="4">
+      <input id="gIcon" readonly value="🎮" aria-label="Таңдалған белгіше" style="width:70px;text-align:center;font-size:1.3rem"><div class="emo" id="emoGrid"></div>
       <label>Қай сыныптарға ашық</label>
       <div id="gAccess"></div>
       <p class="sub" style="font-size:.85rem;margin:0">Ешқайсысын таңдамасаң, барлық оқушыға ашық. Мұғалімдер мен админ бәрін көреді.</p>
@@ -256,14 +310,16 @@ html[data-theme=light] #app .side.card{border-right:2px solid var(--ink);backgro
       <button class="go" id="accSave" style="width:auto;padding:10px 22px">Сақтау</button>
       <p class="msg" id="accMsg" role="status" aria-live="polite"></p>
       <h3 style="margin:14px 0 0;font-size:1.05rem">Құпия сөзді өзгерту</h3>
+      <p class="sub" style="font-size:.9rem;margin:6px 0 0">Қазіргі құпия сөзді ешкім, тіпті админ де көре алмайды: ол құпиялап сақталады. Ұмытсаң, жаңасын орнатуға болады.</p>
       <label for="pw1">Жаңа құпия сөз</label>
       <input id="pw1" type="password" autocomplete="new-password">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin:8px 0 0"><input type="checkbox" id="pwShow" style="width:auto"> Жазғанда көрсету</label>
       <button class="go" id="pwSave" style="width:auto;padding:10px 22px">Өзгерту</button>
       <p class="msg" id="pwMsg" role="status" aria-live="polite"></p>
     </div>
 
     <div id="v-students" hidden>
-      <h2 style="margin:0 0 4px;font-size:1.2rem">Оқушылар мен мұғалімдер</h2>
+      <h2 id="uTitle" style="margin:0 0 4px;font-size:1.2rem">Оқушылар</h2>
       <p class="sub" style="margin-bottom:8px">Тізімге қосылған нөмір ғана тіркеле алады.</p>
       <label for="aName">Аты-жөні</label>
       <input id="aName">
@@ -275,7 +331,7 @@ html[data-theme=light] #app .side.card{border-right:2px solid var(--ink);backgro
         <option value="teacher">Мұғалім</option>
         <option value="admin">Админ</option>
       </select>
-      <label for="aClass">Сынып</label>
+      <label for="aClass" id="aClassLab">Сынып</label>
       <select id="aClass" style="width:100%;padding:11px 12px"></select>
       <button class="go" id="aAdd">Тізімге қосу</button>
       <p class="msg" id="aMsg" role="status" aria-live="polite"></p>
@@ -380,14 +436,15 @@ async function showApp(session) {
   else $('hello').textContent = hi;
   $('role').textContent = roles[me?.role] || 'Оқушы';
   $('accName').textContent = me?.full_name || '';
+  $('meNm').textContent = me?.full_name || 'Қонақ'; $('meRl').textContent = roles[me?.role] || 'Оқушы'; $('meAv').textContent = (me?.full_name || '?').trim().charAt(0).toUpperCase();
   if (document.activeElement !== $('accEdit')) $('accEdit').value = me?.full_name || '';
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   $('navStudents').hidden = me?.role !== 'admin';
   meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
-  $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs();
-  $('navClasses').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
+  $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
+  $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
   loadClassList(); loadGames();
   if (XP_ON && me?.role === 'student') { const { data: x } = await sb.rpc('my_xp'); setXP(x || 0); } else $('xp').hidden = true;
 }
@@ -402,7 +459,7 @@ async function loadUsers() {
   ]);
   const byPhone = Object.fromEntries((profs || []).map(p => [p.phone, p]));
   const body = $('users'); const frag = document.createDocumentFragment();
-  (allowed || []).forEach(a => {
+  (allowed || []).filter(a => (a.role === 'student') === (userRole === 'student')).forEach(a => {
     const p = byPhone[a.phone];
     const status = !p ? 'Тіркелмеген' : p.active ? 'Белсенді' : 'Бұғатталған';
     const tr = document.createElement('tr');
@@ -586,15 +643,15 @@ function closeGame() {
   $('frame').src = 'about:blank';
 }
 $('back').onclick = () => go(subj);
-const VIEWS = ['catalog', 'viewer', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+const VIEWS = ['catalog', 'viewer', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); }
 function go(key) {
-  closeGame();
+  closeGame(); $('meCard').classList.toggle('on', key === 'account');
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === key));
   if (key === 'physics' || key === 'math') {
     subj = key; $('catTitle').textContent = key === 'physics' ? 'Физика' : 'Математика';
     renderGames(); show('catalog');
-  } else { show(key); if (key === 'students') loadUsers(); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); }
+  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); }
 }
 document.querySelectorAll('#nav button').forEach(b => b.onclick = () => go(b.dataset.v));
 renderGames();
@@ -670,7 +727,7 @@ $('accSave').onclick = async () => {
   if (!v) return note('accMsg', 'Атыңды жаз.', 'err');
   const { error } = await sb.rpc('update_my_name', { new_name: v });
   if (error) return note('accMsg', 'Қате: ' + error.message, 'err');
-  meName = v; $('accName').textContent = v; $('hello').textContent = 'Сәлем, ' + v + '!'; note('accMsg', 'Сақталды.', 'ok');
+  meName = v; $('accName').textContent = v; $('meNm').textContent = v; $('meAv').textContent = v.charAt(0).toUpperCase(); $('hello').textContent = 'Сәлем, ' + v + '!'; note('accMsg', 'Сақталды.', 'ok');
 };
 $('pwSave').onclick = async () => {
   const v = $('pw1').value;
@@ -733,6 +790,117 @@ $('cAdd').onclick = async () => {
   note('cMsg', error ? 'Қате: ' + error.message : 'Қосылды.', error ? 'err' : 'ok'); $('cName').value = ''; loadClasses();
 };
 
+// ===== Мұғалімнің сыныптары =====
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
+let curRoster = null, rsStudents = [], pool = [], tm = null;
+const today = () => new Date().toLocaleDateString('sv-SE');
+const present = () => rsStudents.filter(s => s.absent_on !== today());
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function showRosterHome() { curRoster = null; $('rsHome').hidden = false; $('rsDetail').hidden = true; loadRosters(); }
+async function loadRosters() {
+  const { data } = await sb.from('rosters').select('*, roster_students(count)').order('created_at');
+  const box = $('rsList'); box.replaceChildren();
+  (data || []).forEach(r => {
+    const b = el('button', 'game'); b.append(el('strong', '', r.name), el('span', 'gm', (r.roster_students?.[0]?.count || 0) + ' оқушы'));
+    b.onclick = () => openRoster(r); box.appendChild(b);
+  });
+  if (!(data || []).length) box.appendChild(el('p', 'sub', 'Әзірге сынып жоқ. Жоғарыда жаңасын жаса.'));
+}
+$('rsAdd').onclick = async () => {
+  const n = $('rsName').value.trim(); if (!n) return;
+  const { error } = await sb.from('rosters').insert({ name: n.slice(0, 40) });
+  if (error) return alert('Қате: ' + error.message);
+  $('rsName').value = ''; loadRosters();
+};
+$('rsName').onkeydown = e => { if (e.key === 'Enter') $('rsAdd').click(); };
+async function openRoster(r) {
+  curRoster = r; pool = []; $('rsHome').hidden = true; $('rsDetail').hidden = false; $('rsTitle').textContent = r.name;
+  const { data } = await sb.from('roster_students').select('*').eq('roster_id', r.id).order('created_at');
+  rsStudents = data || []; renderStudents();
+}
+function renderStudents() {
+  const box = $('stList'); box.replaceChildren();
+  $('stCount').textContent = rsStudents.length + ' оқушы, бүгін жоқ: ' + (rsStudents.length - present().length);
+  rsStudents.forEach(s => {
+    const row = el('div', 'strow'), cb = document.createElement('input'), gone = s.absent_on === today();
+    cb.type = 'checkbox'; cb.checked = gone; cb.title = 'Бүгін жоқ'; cb.setAttribute('aria-label', 'Бүгін жоқ: ' + s.name);
+    cb.onchange = async () => { s.absent_on = cb.checked ? today() : null; await sb.from('roster_students').update({ absent_on: s.absent_on }).eq('id', s.id); renderStudents(); };
+    const nm = el('span', '', s.name); if (gone) { nm.style.opacity = .5; nm.style.textDecoration = 'line-through'; }
+    row.append(cb, nm, mini('✕', async () => { await sb.from('roster_students').delete().eq('id', s.id); rsStudents = rsStudents.filter(t => t.id !== s.id); renderStudents(); }));
+    box.appendChild(row);
+  });
+}
+async function addStudents(text) {
+  const names = text.split(/\n/).map(x => x.replace(/^\s*\d+[.)]\s*/, '').trim().slice(0, 60)).filter(Boolean);
+  if (!names.length) return;
+  const { data, error } = await sb.from('roster_students').insert(names.map(name => ({ roster_id: curRoster.id, name }))).select();
+  if (error) return alert('Қате: ' + error.message);
+  rsStudents.push(...data); renderStudents();
+}
+$('stName').onkeydown = e => { if (e.key === 'Enter') { addStudents($('stName').value); $('stName').value = ''; } };
+$('stName').onpaste = e => { const t = e.clipboardData.getData('text'); if (t.includes('\n')) { e.preventDefault(); addStudents(t); } };
+$('rsBack').onclick = showRosterHome;
+$('stClear').onclick = async () => { if (!confirm('Сыныптағы барлық оқушыны өшіру керек пе?')) return; await sb.from('roster_students').delete().eq('roster_id', curRoster.id); rsStudents = []; renderStudents(); };
+$('rsDel').onclick = async () => { if (!confirm(curRoster.name + ' сыныбын толық жою керек пе?')) return; await sb.from('rosters').delete().eq('id', curRoster.id); showRosterHome(); };
+
+// ===== Сабақ құралдары (проекторға арналған үлкен экран) =====
+function stage() { $('stage').hidden = false; const b = $('stageBody'); b.replaceChildren(); return b; }
+$('stClose').onclick = () => { $('stage').hidden = true; clearInterval(tm); };
+$('tRandom').onclick = () => {
+  if (!present().length) return alert('Оқушы жоқ немесе бәрі «жоқ» деп белгіленген.');
+  const b = stage(), nm = el('div', 'big', '?'), info = el('p', 'sub', ''); info.style.textAlign = 'center';
+  const go = el('button', 'go', 'Келесі'), box = el('div', 'bar'); box.append(go, mini('Басынан бастау', () => { pool = []; info.textContent = 'Тізім жаңартылды'; })); box.lastChild.style.cssText += ';padding:10px 20px';
+  go.onclick = () => {
+    const ids = present().map(s => s.id); pool = pool.filter(id => ids.includes(id)); if (!pool.length) pool = [...ids];
+    const id = pool.splice(Math.floor(Math.random() * pool.length), 1)[0], win = rsStudents.find(s => s.id === id).name, names = present().map(s => s.name);
+    go.disabled = true; let n = 0;
+    const t = setInterval(() => { nm.textContent = names[Math.floor(Math.random() * names.length)]; if (++n > 14) { clearInterval(t); nm.textContent = win; info.textContent = 'Таңдалмағандар қалды: ' + pool.length; go.disabled = false; } }, 90);
+  };
+  b.append(nm, info, box);
+};
+const GNAMES = ['Жұлдыз', 'Ғарыш', 'Планета', 'Комета', 'Күн', 'Ай', 'Галактика', 'Метеор', 'Орбита', 'Сатурн', 'Марс', 'Юпитер'];
+$('tGroups').onclick = () => {
+  const act = present(); if (act.length < 2) return alert('Кемінде 2 оқушы керек.');
+  const b = stage(), inp = document.createElement('input'), grid = el('div', 'ggrid'), bar = el('div', 'bar'), lab = el('label', '', 'Топ саны');
+  inp.type = 'number'; inp.min = 2; inp.max = Math.min(10, act.length); inp.value = Math.min(4, act.length); lab.style.margin = '0';
+  const run = () => {
+    const k = Math.max(2, Math.min(+inp.value || 2, act.length)), arr = shuffle(act), names = shuffle(GNAMES);
+    grid.replaceChildren();
+    for (let g = 0; g < k; g++) { const c = el('div', 'gcard'); c.appendChild(el('h3', '', names[g % names.length])); arr.filter((_, i) => i % k === g).forEach(s => c.appendChild(el('div', '', s.name))); grid.appendChild(c); }
+  };
+  const go = el('button', 'go', 'Бөлу / қайта араластыру'); go.onclick = run; bar.append(lab, inp, go); b.append(bar, grid); run();
+};
+$('tTimer').onclick = () => {
+  const b = stage(), disp = el('div', 'big', '05:00'), inp = document.createElement('input'), bar = el('div', 'bar');
+  inp.type = 'number'; inp.min = 1; inp.max = 120; inp.value = 5; let left = 300;
+  const draw = () => { disp.textContent = String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0'); };
+  const set = () => { clearInterval(tm); left = Math.max(1, Math.min(+inp.value || 5, 120)) * 60; disp.classList.remove('flash'); draw(); };
+  const start = el('button', 'go', 'Бастау'), stop = el('button', 'go', 'Тоқтату'), reset = el('button', 'go', 'Қайта қою');
+  start.onclick = () => { clearInterval(tm); tm = setInterval(() => { if (--left <= 0) { left = 0; clearInterval(tm); disp.classList.add('flash'); } draw(); }, 1000); };
+  stop.onclick = () => clearInterval(tm); reset.onclick = set; inp.onchange = set;
+  bar.append(el('label', '', 'Минут'), inp, start, stop, reset); bar.firstChild.style.margin = '0'; b.append(disp, bar);
+};
+const REFL = [
+  ['Бағдаршам', 'Әр оқушы сабақты түсінгенін түспен көрсетеді: жасыл — бәрін түсіндім, сары — жартылай, қызыл — көмек керек.'],
+  ['Бір сөзбен', 'Сабақты бір сөзбен сипатта және сол сөзді неге таңдағаныңды айт.'],
+  ['Білдім, түсінбедім, білгім келеді', 'Үш сөйлем жаз: не білдім, нені түсінбедім, нені әлі білгім келеді.'],
+  ['Шығу билеті', 'Сыныптан шығар алдында қағазға бір жаңа білгенің немесе бір сұрағың жазылады.'],
+  ['Бес саусақ', 'Қолыңды көтер: бес саусақ — бәрі түсінікті, бір саусақ — ештеңе түсінбедім.'],
+  ['Жұппен айту', 'Көршіңе 30 секундта сабақта не үйренгеніңді айт, содан кейін көршің қайталайды.'],
+  ['Ең пайдалы сұрақ', 'Сабақ туралы ең пайдалы сұрақты ойлап тап. Сыныптастарың жауап береді.'],
+  ['Мақал-мәтел', 'Сабақты бір мақал немесе мәтелмен сипатта.'],
+  ['Алға қадам', 'Сабақ мазмұнына байланысты тұжырым оқылады, келіскендер бір қадам алға шығады.'],
+  ['Үш сөйлем', 'Бүгін білдім... Маған ұнады... Келесі сабақта қалаймын...'],
+  ['Тақтаға сурет', 'Сабақтың мәнін бір сурет немесе схема етіп тақтаға сал.'],
+  ['Эмоция бағалау', 'Сабақтан кейінгі көңіл-күйіңді бір эмодзимен көрсетіп, неге екенін түсіндір.']
+];
+$('tRefl').onclick = () => {
+  const b = stage(), h = el('div', 'big', ''), p = el('p', '', ''), bar = el('div', 'bar'), go = el('button', 'go', 'Басқа тәсіл');
+  p.style.cssText = 'text-align:center;font-size:clamp(1.2rem,3vw,2rem);max-width:900px;margin:0 auto 24px';
+  const run = () => { const [t, d] = REFL[Math.floor(Math.random() * REFL.length)]; h.textContent = t; p.textContent = d; };
+  go.onclick = run; bar.append(go); b.append(h, p, bar); run();
+};
+
 // ===== Кіру бетінен админге сұраныс жіберу =====
 let reqKind = 'password';
 function openReq(kind) {
@@ -751,9 +919,23 @@ $('rGo').onclick = async () => {
   $('rGo').disabled = true;
   const { error } = await sb.rpc('submit_request', { p_kind: reqKind, p_name: name, p_phone: phone, p_role: reqKind === 'access' ? $('rRole').value : null, p_message: $('rText').value.trim() });
   $('rGo').disabled = false;
-  if (error) return note('rNote', error.message.includes('too many') ? 'Тым көп сұраныс. Кейінірек қайталап көр.' : 'Жіберілмеді. Кейінірек қайталап көр.', 'err');
+  if (error) return note('rNote', error.message.includes('not registered') ? 'Бұл нөмір тіркелмеген немесе бұғатталған. Рұқсат керек болса, мұғалімге не админге жаз.' : error.message.includes('too many') ? 'Тым көп сұраныс. Кейінірек қайталап көр.' : 'Жіберілмеді. Кейінірек қайталап көр.', 'err');
   note('rNote', 'Жіберілді. Админ жауап береді.', 'ok');
 };
+
+// ===== Пайдаланушылар беті: оқушылар / мұғалімдер =====
+let userRole = 'student', inKind = 'all';
+function setUserPage(role) {
+  userRole = role; const t = role === 'student';
+  $('uTitle').textContent = t ? 'Оқушылар' : 'Мұғалімдер мен админдер';
+  $('aRole').replaceChildren(...(t ? [['student', 'Оқушы']] : [['teacher', 'Мұғалім'], ['admin', 'Админ']]).map(([v, l]) => new Option(l, v)));
+  if (!t) $('aClass').value = '';
+  $('aClassLab').hidden = $('aClass').hidden = $('imp').hidden = !t;
+  loadUsers();
+}
+$('meCard').onclick = () => go('account');
+$('pwShow').onchange = () => { $('pw1').type = $('pwShow').checked ? 'text' : 'password'; };
+document.querySelectorAll('#inTabs button').forEach(b => b.onclick = () => { inKind = b.dataset.k; loadReqs(); });
 
 // ===== Админнің «Хабарлар» бөлімі =====
 async function loadReqs() {
@@ -761,10 +943,11 @@ async function loadReqs() {
   const list = data || [], n = list.filter(r => r.status === 'new').length;
   $('badge2').textContent = n; $('badge2').hidden = !n;
   if ($('v-inbox').hidden) return;
+  document.querySelectorAll('#inTabs button').forEach(b => { const k = b.dataset.k, c = list.filter(r => r.status === 'new' && (k === 'all' || r.kind === k)).length; b.textContent = b.dataset.t + (c ? ' (' + c + ')' : ''); b.setAttribute('aria-selected', String(k === inKind)); });
   const box = $('inboxList'); box.replaceChildren();
   if (!list.length) { const p = document.createElement('p'); p.className = 'sub'; p.textContent = 'Хабар жоқ.'; box.appendChild(p); }
   const done = async id => { await sb.from('requests').update({ status: 'done' }).eq('id', id); loadReqs(); };
-  list.forEach(r => {
+  list.filter(r => inKind === 'all' || r.kind === inKind).forEach(r => {
     const d = document.createElement('div'); d.className = 'news'; if (r.status === 'done') d.style.opacity = .55;
     const h = document.createElement('h3'); h.textContent = r.kind === 'password' ? 'Құпия сөзді ұмытты' : 'Рұқсат сұрайды (' + (ROLE_KK[r.role_wanted] || 'Оқушы') + ')';
     const p = document.createElement('p'); p.textContent = [r.full_name, '+' + r.phone, r.message].filter(Boolean).join(', ');
@@ -794,6 +977,7 @@ async function resetPw(phone) {
   const pw = genPw();
   const { error } = await sb.functions.invoke('admin-reset-password', { body: { phone, password: pw } });
   if (error) {
+    if (error.name === 'FunctionsFetchError') return alert('Функцияға қосылу мүмкін болмады. Supabase-те admin-reset-password функциясы орнатылғанын және «Verify JWT» өшірулі екенін тексер.');
     let m = error.message; try { m = (await error.context.json()).error || m; } catch {}
     return alert('Қате: ' + m);
   }
@@ -861,6 +1045,10 @@ $('impGo').onclick = async () => {
   note('impMsg', rows.length + ' адам қосылды немесе жаңартылды.' + (skipped ? ' Админдер өткізілді: ' + skipped + '.' : ''), 'ok'); loadUsers();
 };
 
+// ===== Эмодзи таңдау =====
+const EMOJI = ['🎮','🧪','⚡','🍎','🔬','🚀','🌍','🔭','🧲','💡','🔥','💧','🌈','🧮','📐','📏','🔢','➗','🧠','🎯','🏆','🧩','🎲','⚖️','🔋','🌡️','🌌','🪐','☀️','🌙','🧬','⏱️','🎓','📚','🏹','🔊','📡','🌊','🏎️','✈️'];
+EMOJI.forEach(e => { const b = el('button', '', e); b.type = 'button'; b.setAttribute('aria-label', e); b.onclick = () => { $('gIcon').value = e; $('emoGrid').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); }; $('emoGrid').appendChild(b); });
+
 // ===== Ойындар (дерекқордан) =====
 const SUBJ_KK = { physics: 'Физика', math: 'Математика' };
 async function loadGames() {
@@ -889,7 +1077,14 @@ async function loadGameAdmin() {
   const { data } = await sb.from('games').select('*, game_access(class_id)').order('sort').order('created_at');
   $('gAccess').replaceChildren(addBox = accessBox([]));
   const box = $('gList'); box.replaceChildren();
-  (data || []).forEach(g => {
+  const sub = {}, gr = {}, ORD = { physics: 0, math: 1 }, gnum = g => parseInt(g.grade) || 99;
+  const wrap = g => {
+    if (!sub[g.subj]) { const d = el('details', 'grp'); d.append(el('summary', '', SUBJ_KK[g.subj] || g.subj)); box.appendChild(d); sub[g.subj] = d; }
+    const lab = g.grade || 'Деңгейі көрсетілмеген', k = g.subj + '|' + lab;
+    if (!gr[k]) { const d = el('details', 'grp2'); d.append(el('summary', '', lab)); sub[g.subj].appendChild(d); gr[k] = d; }
+    return gr[k];
+  };
+  (data || []).sort((a, b) => (ORD[a.subj] ?? 9) - (ORD[b.subj] ?? 9) || gnum(a) - gnum(b) || a.title.localeCompare(b.title)).forEach(g => {
     const ids = (g.game_access || []).map(x => x.class_id);
     const d = document.createElement('div'); d.className = 'news';
     const h = document.createElement('h3'); h.textContent = (g.icon || '🎮') + ' ' + g.title + (g.active ? '' : ' (жасырылған)');
@@ -902,8 +1097,9 @@ async function loadGameAdmin() {
     act.append(
       mini(g.active ? 'Жасыру' : 'Көрсету', async () => { await sb.from('games').update({ active: !g.active }).eq('id', g.id); loadGameAdmin(); loadGames(); }),
       mini('Жою', async () => { if (confirm('Ойынды жою керек пе?')) { await sb.from('games').delete().eq('id', g.id); loadGameAdmin(); loadGames(); } }));
-    d.append(h, p, det, act); box.appendChild(d);
+    d.append(h, p, det, act); wrap(g).appendChild(d);
   });
+  [...Object.values(sub), ...Object.values(gr)].forEach(d => { d.querySelector('summary').textContent += ' (' + d.querySelectorAll('.news').length + ')'; });
 }
 $('gAdd').onclick = async () => {
   const v = id => $(id).value.trim();
@@ -912,7 +1108,7 @@ $('gAdd').onclick = async () => {
   const { error } = await sb.from('games').insert({ id, subj: $('gSubj').value, title: v('gTitle'), topic: v('gTopic'), type: $('gType').value, grade: v('gGrade'), icon: v('gIcon') || '🎮', url: v('gUrl'), sort: 100 });
   if (error) return note('gMsg', 'Қате: ' + error.message, 'err');
   await saveAccess(id, addBox.get());
-  ['gTitle', 'gTopic', 'gGrade', 'gUrl', 'gIcon'].forEach(k => $(k).value = '');
+  ['gTitle', 'gTopic', 'gGrade', 'gUrl'].forEach(k => $(k).value = '');
   note('gMsg', 'Қосылды.', 'ok'); loadGameAdmin(); loadGames();
 };
 
