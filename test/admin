@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="kk" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Админ панелі</title>
+<style>
+:root{
+  --bg:#f3f5fb; --card:#ffffff; --text:#1a2233; --muted:#6a7489; --line:#e3e8f1;
+  --accent:#4f6df5; --accent2:#7c5cf6; --ok:#16a34a; --okbg:#e7f8ee; --bad:#e5384f; --badbg:#fdebee;
+  --warn:#f59e0b; --warnbg:rgba(245,158,11,.14); --shadow:0 10px 30px rgba(30,45,90,.08); --topbar:rgba(255,255,255,.85);
+}
+[data-theme="dark"]{
+  --bg:#0d1220; --card:#161d30; --text:#e8ecf7; --muted:#95a0b8; --line:#26304a;
+  --accent:#6b86ff; --accent2:#9378ff; --ok:#34d27b; --okbg:rgba(52,210,123,.12); --bad:#ff5d73; --badbg:rgba(255,93,115,.12);
+  --shadow:0 10px 30px rgba(0,0,0,.35); --topbar:rgba(13,18,32,.85);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .25s,color .25s;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+.hidden{display:none!important}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+
+.topbar{position:fixed;inset:0 0 auto 0;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:var(--topbar);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:50}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700}
+.logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font-size:16px}
+.tb-right{display:flex;gap:8px;align-items:center}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);display:grid;place-items:center;transition:.15s}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.icon-btn svg{width:20px;height:20px}
+
+main{max-width:980px;margin:0 auto;padding:84px 16px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:22px;margin-bottom:14px}
+.center{min-height:calc(100vh - 200px);display:grid;place-items:center}
+.narrow{width:100%;max-width:400px}
+h1{margin:0 0 6px;font-size:24px}
+h2{margin:0 0 12px;font-size:19px}
+.sub{color:var(--muted);margin:0 0 18px;line-height:1.5}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 6px}
+input.t,select.t{width:100%;padding:12px 13px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);font-size:15px;outline:none;transition:.15s;font-family:inherit}
+input.t:focus,select.t:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(79,109,245,.15)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border:0;border-radius:12px;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 20px rgba(79,109,245,.3);transition:.15s}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+.btn.full{width:100%;margin-top:18px}
+.btn.ghost{background:var(--bg);color:var(--text);box-shadow:none;border:1px solid var(--line)}
+.btn.danger{background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:none}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:10px;box-shadow:none}
+.err{margin-top:12px;padding:10px 13px;border-radius:12px;background:var(--badbg);color:var(--bad);font-weight:600;font-size:14px;display:none}
+.err.show{display:block}
+
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{padding:10px 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-weight:700;font-size:15px}
+.tab.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent}
+.row2{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+@media(max-width:760px){.row2{grid-template-columns:1fr}}
+.row2 label.f{margin-top:0}
+
+.stu{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
+.stu .info{min-width:240px;flex:1}
+.nm{font-size:17px;font-weight:700;margin-bottom:2px}
+.lg{color:var(--muted);font-size:13px;margin-bottom:8px}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.pill{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.pill.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
+.pill.bad{background:var(--badbg);color:var(--bad);border-color:var(--bad)}
+.pill.warn{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}
+.pill.info{background:rgba(79,109,245,.12);color:var(--accent);border-color:var(--accent)}
+.meta{color:var(--muted);font-size:14px;line-height:1.6}
+.meta b{color:var(--text)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-content:flex-start;max-width:420px}
+.empty{text-align:center;color:var(--muted);padding:30px}
+.trow{display:grid;grid-template-columns:2fr 1fr auto auto;gap:10px;align-items:center}
+@media(max-width:760px){.trow{grid-template-columns:1fr}}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.chk input{width:18px;height:18px;accent-color:var(--accent)}
+
+.overlay{position:fixed;inset:0;background:rgba(8,12,24,.65);display:grid;place-items:center;z-index:100;padding:16px;backdrop-filter:blur(4px)}
+.modal{width:100%;max-width:440px;background:var(--card);border-radius:22px;padding:26px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45);max-height:92vh;overflow:auto}
+.modal.wide{max-width:780px;text-align:left}
+.modal .big{font-size:42px;margin-bottom:4px}
+.modal p{color:var(--muted);line-height:1.55;margin:0 0 16px}
+.modal .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.creds{background:var(--bg);border:1px dashed var(--accent);border-radius:14px;padding:14px;margin:0 0 14px;text-align:left;line-height:1.8;font-size:15px;word-break:break-all}
+
+.ring{--p:0;--c:var(--ok);width:130px;height:130px;border-radius:50%;margin:6px auto 12px;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line) 0)}
+.ring div{width:104px;height:104px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:28px;font-weight:800}
+.rv-top{text-align:center;margin-bottom:12px}
+.qcard{border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.qh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.qn{font-weight:800;color:var(--accent);font-size:13px;background:rgba(79,109,245,.12);padding:4px 10px;border-radius:8px}
+.badge{margin-left:auto;font-weight:800;font-size:12px;padding:4px 10px;border-radius:99px}
+.badge.ok{background:var(--okbg);color:var(--ok)}
+.badge.no{background:var(--badbg);color:var(--bad)}
+.qb{font-size:15px;line-height:1.5;margin:0 0 10px;white-space:pre-wrap;color:var(--text)}
+.opts{display:grid;gap:8px}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);line-height:1.4;font-size:14px}
+.opt .lt{flex:none;width:24px;height:24px;border-radius:7px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted)}
+.opt.correct{border-color:var(--ok);background:var(--okbg)}
+.opt.wrong{border-color:var(--bad);background:var(--badbg)}
+.opt .tag{margin-left:auto;font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.opt.correct .tag{background:var(--ok);color:#fff}
+.opt.wrong .tag{background:var(--bad);color:#fff}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><div class="logo">⚙</div><span>Админ панелі</span></div>
+  <div class="tb-right">
+    <button class="icon-btn" id="btnTheme" title="Тақырыпты ауыстыру" aria-label="Тақырып"></button>
+    <button class="btn ghost sm hidden" id="btnOut">Шығу</button>
+  </div>
+</header>
+
+<main>
+  <!-- LOGIN -->
+  <section id="v-login" class="center">
+    <div class="card narrow">
+      <h1>Админ кіруі</h1>
+      <p class="sub">Тек админ ғана кіре алады.</p>
+      <form id="loginForm">
+        <label class="f">Email</label>
+        <input class="t" id="aEmail" type="email" required autocomplete="username">
+        <label class="f">Құпиясөз</label>
+        <input class="t" id="aPass" type="password" required autocomplete="current-password">
+        <div class="err" id="loginErr"></div>
+        <button class="btn full" id="loginBtn" type="submit">Кіру</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- APP -->
+  <section id="v-app" class="hidden">
+    <div class="tabs">
+      <button class="tab on" id="tabS">Студенттер</button>
+      <button class="tab" id="tabT">Тесттер</button>
+    </div>
+
+    <div id="paneS">
+      <div class="card">
+        <h2>Жаңа студент қосу</h2>
+        <form id="newForm" class="row2" autocomplete="off">
+          <div><label class="f">Логин</label><input class="t" id="nLogin" placeholder="Мысалы: aidar" required autocapitalize="off"></div>
+          <div><label class="f">Құпиясөз</label><input class="t" id="nPass" placeholder="кемінде 4 таңба" required></div>
+          <div><label class="f">Тест</label><select class="t" id="nTest"></select></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn ghost" type="button" id="btnGen" title="Кездейсоқ құпиясөз">🎲</button>
+            <button class="btn" type="submit">Қосу</button>
+          </div>
+        </form>
+        <div class="err" id="newErr"></div>
+      </div>
+      <div id="stuList"></div>
+    </div>
+
+    <div id="paneT" class="hidden">
+      <div class="card">
+        <h2>Жаңа тест жасау</h2>
+        <form id="newTestForm" class="trow" autocomplete="off">
+          <input class="t" id="ntTitle" placeholder="Тест атауы" required>
+          <input class="t" id="ntDur" type="number" min="1" max="600" placeholder="Минут" required>
+          <button class="btn" type="submit">Жасау</button>
+        </form>
+        <div class="err" id="ntErr"></div>
+      </div>
+      <div id="testList"></div>
+    </div>
+  </section>
+</main>
+
+<div id="modalRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+'use strict';
+const SUPABASE_URL = 'https://qisvnncjmvewbspkzftm.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_j4UM1_f5701JLJalOVvvoQ_R6fWm7jk';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = s => document.querySelector(s);
+const LET = ['A','B','C','D','E','F','G','H'];
+const ICON = {
+  sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
+};
+let tests = [], students = [], autoId = null, tab = 'S';
+
+function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
+async function rpc(fn,args){ const {data,error}=await sb.rpc(fn,args||{}); if(error) throw error; return data; }
+function errText(e){
+  const m=(e&&e.message)||String(e);
+  if(m.includes('not_admin')) return 'Бұл аккаунтта админ құқығы жоқ.';
+  if(m.includes('Invalid login')) return 'Email немесе құпиясөз қате.';
+  if(m.includes('duplicate')) return 'Мұндай логин бұрыннан бар.';
+  if(m.includes('weak')) return 'Логин кемінде 3, құпиясөз кемінде 4 таңба болуы керек.';
+  if(m.includes('JWT')||m.includes('expired')) return 'Сессия аяқталды, қайта кіріңіз.';
+  return 'Қате: '+m;
+}
+function showErr(id,msg){ const e=$(id); e.textContent=msg; e.classList.toggle('show',!!msg); }
+function fmtDT(x){ if(!x) return '—'; try{ return new Date(x).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return String(x); } }
+function show(name){ $('#v-login').classList.toggle('hidden',name!=='login'); $('#v-app').classList.toggle('hidden',name!=='app'); $('#btnOut').classList.toggle('hidden',name!=='app'); }
+
+/* ---------- theme ---------- */
+function applyTheme(t){ document.documentElement.setAttribute('data-theme',t); $('#btnTheme').innerHTML=t==='dark'?ICON.sun:ICON.moon; try{localStorage.setItem('theme',t);}catch(e){} }
+(function(){ let t=null; try{t=localStorage.getItem('theme');}catch(e){} if(!t) t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; applyTheme(t); })();
+$('#btnTheme').onclick=()=>applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+
+/* ---------- dialog ---------- */
+function dialog(o){
+  return new Promise(res=>{
+    const root=$('#modalRoot'); root.innerHTML='';
+    const ov=el('div','overlay'); const m=el('div','modal'+(o.wide?' wide':''));
+    if(o.icon) m.appendChild(el('div','big',o.icon));
+    if(o.title) m.appendChild(el('h2','',o.title));
+    if(o.text) m.appendChild(el('p','',o.text));
+    if(o.node) m.appendChild(o.node);
+    let inp=null;
+    if(o.input){ inp=document.createElement('input'); inp.className='t'; inp.placeholder=o.input; m.appendChild(inp); }
+    const row=el('div','row');
+    o.buttons.forEach(b=>{ const x=el('button','btn '+(b.cls||''),b.label); x.onclick=()=>{ root.innerHTML=''; res({v:b.value,text:inp?inp.value:''}); }; row.appendChild(x); });
+    m.appendChild(row); ov.appendChild(m); root.appendChild(ov);
+    if(inp) setTimeout(()=>inp.focus(),50);
+  });
+}
+function dialogOpen(){ return !!document.querySelector('#modalRoot .overlay'); }
+async function info(icon,title,text){ await dialog({icon,title,text,buttons:[{label:'Жақсы',value:1}]}); }
+
+/* ---------- auth ---------- */
+$('#loginForm').addEventListener('submit', async e=>{
+  e.preventDefault(); showErr('#loginErr','');
+  const b=$('#loginBtn'); b.disabled=true; b.textContent='Тексерілуде...';
+  try{
+    const {error}=await sb.auth.signInWithPassword({email:$('#aEmail').value.trim(),password:$('#aPass').value});
+    if(error) throw error;
+    await enter();
+  }catch(err){ showErr('#loginErr',errText(err)); }
+  b.disabled=false; b.textContent='Кіру';
+});
+$('#btnOut').onclick=async()=>{ clearInterval(autoId); try{await sb.auth.signOut();}catch(e){} show('login'); };
+async function enter(){
+  try{
+    await loadAll(); show('app');
+    clearInterval(autoId); autoId=setInterval(()=>{ if(tab==='S'&&!dialogOpen()&&!document.hidden) loadStudents().catch(()=>{}); },10000);
+  }catch(err){
+    show('login'); showErr('#loginErr',errText(err));
+    if((err.message||'').includes('not_admin')) try{await sb.auth.signOut();}catch(e){}
+  }
+}
+
+/* ---------- tabs ---------- */
+function setTab(t){
+  tab=t; $('#tabS').classList.toggle('on',t==='S'); $('#tabT').classList.toggle('on',t==='T');
+  $('#paneS').classList.toggle('hidden',t!=='S'); $('#paneT').classList.toggle('hidden',t!=='T');
+}
+$('#tabS').onclick=()=>setTab('S'); $('#tabT').onclick=()=>setTab('T');
+
+/* ---------- load ---------- */
+async function loadAll(){ await loadTests(); await loadStudents(); }
+async function loadTests(){ tests=await rpc('admin_list_tests')||[]; renderTests(); fillTestSelect(); }
+async function loadStudents(){ students=await rpc('admin_list_students')||[]; renderStudents(); }
+function fillTestSelect(){
+  const sel=$('#nTest'), cur=sel.value; sel.innerHTML='';
+  tests.filter(t=>t.is_active).forEach(t=>{ const o=document.createElement('option'); o.value=t.id; o.textContent=t.title+' ('+t.duration_minutes+' мин, '+t.q_count+' сұрақ)'; sel.appendChild(o); });
+  if(!sel.options.length){ const o=document.createElement('option'); o.value=''; o.textContent='Алдымен «Тесттер» бөлімінде тест жасаңыз'; sel.appendChild(o); }
+  if(cur) sel.value=cur;
+}
+
+/* ---------- students ---------- */
+function statusPill(s){
+  if(!s.status) return ['Әлі бастамаған',''];
+  if(s.status==='in_progress'){
+    if(s.ends_at && new Date(s.ends_at).getTime()<Date.now()) return ['Уақыты өтті (аяқталмаған)','warn'];
+    return ['Тапсыруда','info'];
+  }
+  return ({finished:['Аяқтады','ok'],kicked:['Ескертуден шығарылды','bad'],timeout:['Уақыт бітті','warn']})[s.status]||[s.status,''];
+}
+function renderStudents(){
+  const box=$('#stuList'); box.innerHTML='';
+  if(!students.length){ box.appendChild(el('div','card empty','Әлі студент жоқ. Жоғарыдан қосыңыз.')); return; }
+  students.forEach(s=>{
+    const c=el('div','card stu'); const inf=el('div','info');
+    inf.appendChild(el('div','nm',s.full_name||'(аты әлі жазылмаған)'));
+    inf.appendChild(el('div','lg mono','логин: '+s.login+(s.test_title?'  ·  '+s.test_title:'')));
+    const pills=el('div','pills'); const st=statusPill(s);
+    pills.appendChild(el('span','pill '+st[1],st[0]));
+    if(s.is_blocked) pills.appendChild(el('span','pill bad','Бұғатталған'));
+    pills.appendChild(el('span','pill',s.device_bound?'Құрылғы байланған':'Құрылғы бос'));
+    inf.appendChild(pills);
+    const meta=el('div','meta');
+    const res=s.percent!=null?(s.percent+'% ('+s.correct_count+'/'+s.total+')'):'—';
+    meta.innerHTML='Нәтиже: <b></b> · Ескерту: <b></b> · Басталды: <b></b>';
+    const bs=meta.querySelectorAll('b'); bs[0].textContent=res; bs[1].textContent=(s.warnings!=null?s.warnings:0)+'/2'; bs[2].textContent=fmtDT(s.started_at);
+    inf.appendChild(meta); c.appendChild(inf);
+    const acts=el('div','acts');
+    const add=(label,cls,fn)=>{ const b=el('button','btn sm '+cls,label); b.onclick=fn; acts.appendChild(b); };
+    add('Нәтиже','',()=>openResult(s));
+    add('Құпиясөз','ghost',()=>changePass(s));
+    add(s.is_blocked?'Бұғаттан шығару':'Бұғаттау',s.is_blocked?'good':'danger',()=>confirmDo({icon:s.is_blocked?'🔓':'⛔',title:s.is_blocked?'Бұғаттан шығару':'Бұғаттау',text:s.is_blocked?'Студент қайта кіре алады.':'Студент дереу шығарылады, қайта кіре алмайды (тест кезінде де).',cls:s.is_blocked?'good':'danger'},'admin_set_blocked',{p_student:s.id,p_blocked:!s.is_blocked}));
+    add('Құрылғыны ысыру','ghost',()=>confirmDo({icon:'💻',title:'Құрылғыны ысыру',text:'Студент келесі кіргенде жаңа құрылғыға байланады.'},'admin_reset_device',{p_student:s.id}));
+    add('Қайта тапсыру','ghost',()=>confirmDo({icon:'🔁',title:'Қайта тапсыруға рұқсат',text:'Қазіргі нәтиже ЖОЙЫЛАДЫ, студент тестті басынан тапсырады.',cls:'danger',yes:'Иә, жою'},'admin_reset_attempt',{p_student:s.id}));
+    add('Өшіру','danger',()=>confirmDo({icon:'🗑',title:'Студентті өшіру',text:'Студент пен оның нәтижесі толық жойылады.',cls:'danger',yes:'Өшіру'},'admin_delete_student',{p_student:s.id}));
+    c.appendChild(acts); box.appendChild(c);
+  });
+}
+async function act(fn,args){
+  try{ await rpc(fn,args); await loadStudents(); }
+  catch(e){ await info('⚠️','Қате',errText(e)); }
+}
+async function confirmDo(o,fn,args){
+  const r=await dialog({icon:o.icon,title:o.title,text:o.text,buttons:[{label:'Жоқ',cls:'ghost',value:0},{label:o.yes||'Иә',cls:o.cls||'',value:1}]});
+  if(r.v) act(fn,args);
+}
+async function changePass(s){
+  const r=await dialog({icon:'🔑',title:'Жаңа құпиясөз',text:s.login+' үшін жаңа құпиясөз жазыңыз (кемінде 4 таңба).',input:'Жаңа құпиясөз',buttons:[{label:'Бас тарту',cls:'ghost',value:0},{label:'Сақтау',value:1}]});
+  if(!r.v) return;
+  if(r.text.length<4){ await info('⚠️','Қате','Құпиясөз кемінде 4 таңба болуы керек.'); return; }
+  try{ await rpc('admin_set_password',{p_student:s.id,p_password:r.text}); await info('✅','Құпиясөз өзгертілді','Жаңа құпиясөз: '+r.text); }
+  catch(e){ await info('⚠️','Қате',errText(e)); }
+}
+
+/* ---------- result detail ---------- */
+async function openResult(s){
+  let r;
+  try{ r=await rpc('admin_get_attempt',{p_student:s.id}); }catch(e){ await info('⚠️','Қате',errText(e)); return; }
+  if(!r){ await info('ℹ️','Нәтиже жоқ','Бұл студент тестті әлі бастамаған.'); return; }
+  const node=el('div');
+  const top=el('div','rv-top'); const p=Number(r.percent||0);
+  const ring=el('div','ring'); ring.style.setProperty('--p',p); ring.style.setProperty('--c',p>=80?'var(--ok)':p>=50?'var(--warn)':'var(--bad)');
+  ring.appendChild(el('div','',r.percent!=null?p+'%':'—')); top.appendChild(ring);
+  const lines=[];
+  lines.push((r.student_name||s.login)+' · '+(r.correct_count!=null?r.correct_count+'/'+r.total+' дұрыс':'аяқталмаған'));
+  const st=statusPill({status:r.status,ends_at:null});
+  let mins=''; if(r.started_at&&r.finished_at){ mins=' · '+Math.max(1,Math.round((new Date(r.finished_at)-new Date(r.started_at))/60000))+' мин'; }
+  lines.push('Күйі: '+st[0]+' · Ескерту: '+(r.warnings||0)+'/2'+mins);
+  lines.forEach(t=>top.appendChild(el('div','meta',t)));
+  node.appendChild(top);
+  (r.review||[]).forEach((q,i)=>{
+    const card=el('div','qcard'); const h=el('div','qh');
+    h.appendChild(el('span','qn','Сұрақ '+(i+1)));
+    h.appendChild(el('span','badge '+(q.is_correct?'ok':'no'),q.is_correct?'✓ Дұрыс':'✗ Қате'));
+    card.appendChild(h); card.appendChild(el('p','qb',q.body));
+    const opts=el('div','opts');
+    q.options.forEach((o,k)=>{
+      const isC=q.correct.includes(k), isCh=q.chosen.includes(k);
+      const row=el('div','opt'+(isC?' correct':isCh?' wrong':''));
+      row.appendChild(el('span','lt',LET[k]||String(k+1))); row.appendChild(el('span','',o));
+      if(isCh&&isC) row.appendChild(el('span','tag','Студент таңдады ✓'));
+      else if(isCh) row.appendChild(el('span','tag','Студент таңдады'));
+      else if(isC) row.appendChild(el('span','tag','Дұрыс жауап'));
+      opts.appendChild(row);
+    });
+    card.appendChild(opts); node.appendChild(card);
+  });
+  await dialog({wide:true,node,buttons:[{label:'Жабу',value:1}]});
+}
+
+/* ---------- create student ---------- */
+function randPass(){ const ch='abcdefghjkmnpqrstuvwxyz23456789'; let s=''; const a=new Uint32Array(8); crypto.getRandomValues(a); a.forEach(n=>s+=ch[n%ch.length]); return s; }
+$('#btnGen').onclick=()=>{ $('#nPass').value=randPass(); };
+$('#newForm').addEventListener('submit', async e=>{
+  e.preventDefault(); showErr('#newErr','');
+  const login=$('#nLogin').value.trim().toLowerCase(), pass=$('#nPass').value, test=$('#nTest').value;
+  if(!test){ showErr('#newErr','Алдымен «Тесттер» бөлімінде тест жасаңыз.'); return; }
+  try{
+    await rpc('admin_create_student',{p_login:login,p_password:pass,p_test_id:test});
+    const node=el('div','creds mono'); node.textContent='Логин: '+login+'\nҚұпиясөз: '+pass; node.style.whiteSpace='pre-wrap';
+    const r=await dialog({icon:'✅',title:'Студент қосылды',text:'Осы деректерді студентке беріңіз. Құпиясөз кейін көрсетілмейді.',node,buttons:[{label:'Көшіру',cls:'ghost',value:'copy'},{label:'Жақсы',value:1}]});
+    if(r.v==='copy'){ try{ await navigator.clipboard.writeText('Логин: '+login+'\nҚұпиясөз: '+pass); }catch(e){} }
+    $('#nLogin').value=''; $('#nPass').value='';
+    await loadStudents();
+  }catch(err){ showErr('#newErr',errText(err)); }
+});
+
+/* ---------- tests ---------- */
+function renderTests(){
+  const box=$('#testList'); box.innerHTML='';
+  if(!tests.length){ box.appendChild(el('div','card empty','Әлі тест жоқ.')); return; }
+  tests.forEach(t=>{
+    const c=el('div','card');
+    const row=el('div','trow');
+    const ti=document.createElement('input'); ti.className='t'; ti.value=t.title;
+    const du=document.createElement('input'); du.className='t'; du.type='number'; du.min=1; du.max=600; du.value=t.duration_minutes;
+    const lab=el('label','chk'); const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=t.is_active; lab.appendChild(cb); lab.appendChild(el('span','','Белсенді'));
+    const sv=el('button','btn sm','Сақтау');
+    sv.onclick=async()=>{ try{ await rpc('admin_save_test',{p_id:t.id,p_title:ti.value,p_duration:parseInt(du.value,10),p_active:cb.checked}); await loadTests(); await info('✅','Сақталды','Тест өзгерістері сақталды.'); }catch(e){ await info('⚠️','Қате',errText(e)); } };
+    row.appendChild(ti); row.appendChild(du); row.appendChild(lab); row.appendChild(sv);
+    c.appendChild(row); c.appendChild(el('div','meta','Уақыт: минутпен · Сұрақ саны: '+t.q_count)); box.appendChild(c);
+  });
+}
+$('#newTestForm').addEventListener('submit', async e=>{
+  e.preventDefault(); showErr('#ntErr','');
+  try{ await rpc('admin_save_test',{p_id:null,p_title:$('#ntTitle').value,p_duration:parseInt($('#ntDur').value,10),p_active:true}); $('#ntTitle').value=''; $('#ntDur').value=''; await loadTests(); }
+  catch(err){ showErr('#ntErr',errText(err)); }
+});
+
+/* ---------- init ---------- */
+(async function(){
+  try{ const {data}=await sb.auth.getSession(); if(data&&data.session){ await enter(); return; } }catch(e){}
+  show('login');
+})();
+})();
+</script>
+</body>
+</html>
