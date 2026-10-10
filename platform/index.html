@@ -118,6 +118,23 @@ html[data-theme=light] .light-hide{display:none}
 .mecard:hover,.mecard.on{background:rgba(77,124,255,.2)}
 .av{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:var(--sun);color:#12233D;font-weight:700}
 .mt{display:flex;flex-direction:column;min-width:0}.mt strong,.mt small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mt small{color:var(--mute)}
+
+.main :is(input:not([type=checkbox]):not([type=file]),select,textarea){max-width:460px}
+.main .go{max-width:460px}.main .tabs{max-width:560px}
+.grphead{display:flex!important;justify-content:space-between;align-items:center;font-weight:500}
+#subjItems{display:flex;flex-direction:column;gap:4px;margin:2px 0 6px 12px;padding-left:8px;border-left:2px solid rgba(160,190,255,.25)}
+.gradegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.gradeBtn{display:flex;flex-direction:column;gap:4px;padding:16px;border:2px solid rgba(160,190,255,.4);border-radius:12px;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.gradeBtn:hover{box-shadow:4px 4px 0 var(--sun)}.gradeBtn strong{font-size:1.3rem}.gradeBtn.empty{opacity:.55}
+.crumbs{margin:0 0 14px;display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+.crumbs .out{margin:0 4px 0 0}
+.mtools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.main .mtools input{width:240px}.mtools .out{margin:0}
+.upl{cursor:pointer;display:inline-block}
+.mrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--grid)}
+.mrow .nm{flex:1;min-width:160px;cursor:pointer;word-break:break-word}.mrow .out{margin:0;padding:4px 10px}
+#stage .demo{display:block;max-width:100%;max-height:calc(100vh - 150px);margin:0 auto}
+#stage iframe.demo{width:100%;height:calc(100vh - 140px);border:0;background:#fff}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .15s}}
 </style>
@@ -139,7 +156,7 @@ html[data-theme=light] .light-hide{display:none}
       <button role="tab" id="t-up" aria-selected="false">Тіркелу</button>
     </div>
     <div id="nameRow" hidden>
-      <label for="name">Аты-жөні</label>
+      <label for="name">Аты-жөні (міндетті емес)</label>
       <input id="name" autocomplete="name">
     </div>
     <label for="phone">Телефон нөмірі</label>
@@ -176,11 +193,15 @@ html[data-theme=light] .light-hide{display:none}
   <aside class="side card">
     <div class="brand"><span>Groowin</span><button class="icon-btn" id="sideClose" aria-label="Панельді жасыру" style="width:34px;height:34px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>
     <nav id="nav">
-      <button data-v="physics" class="on">Физика</button>
-      <button data-v="math">Математика</button>
+      <button type="button" class="grphead" id="subjHead" aria-expanded="true"><span>Пәндер</span><span id="subjArrow">▾</span></button>
+      <div id="subjItems">
+        <button data-v="physics" class="on">Физика</button>
+        <button data-v="math">Математика</button>
+      </div>
       <button data-v="rank" hidden>Рейтинг</button>
       <button data-v="news">Хабарландыру<span id="badge" hidden></span></button>
       <button data-v="rosters" id="navRosters" hidden>Менің сыныптарым</button>
+      <button data-v="mats" id="navMats" hidden>Менің материалдарым</button>
       <button data-v="inbox" id="navInbox" hidden>Хабарлар<span id="badge2" hidden></span></button>
       <button data-v="games" id="navGames" hidden>Ойындар</button>
       <button data-v="classes" id="navClasses" hidden>Сыныптар</button>
@@ -190,20 +211,30 @@ html[data-theme=light] .light-hide{display:none}
     <div class="me">
       <button class="mecard" id="meCard" type="button" aria-label="Менің аккаунтым"><span class="av" id="meAv">?</span><span class="mt"><strong id="meNm"></strong><small id="meRl"></small></span></button>
       <button class="out" id="themeBtn">Жарық тема</button>
-      <button class="out" id="logout">Шығу</button>
     </div>
   </aside>
   <main class="main card">
     <div class="mainhead"><button class="icon-btn" id="sideBtn" aria-label="Панельді жасыру немесе көрсету" aria-expanded="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><h1 id="hello"></h1><span class="role" id="role"></span><span class="role" id="xp" hidden></span></div>
 
     <div id="v-catalog">
-      <h2 id="catTitle" style="margin:0 0 12px;font-size:1.2rem">Физика</h2>
-      <div class="grid" id="games"></div>
+      <div class="crumbs" id="catCrumbs"></div>
+      <div id="games"></div>
     </div>
 
     <div id="v-viewer" hidden>
       <div class="vbar"><button class="out" id="back">← Артқа</button><strong id="vtitle"></strong><span class="sub" id="vmsg" style="margin:0 0 0 auto"></span></div>
       <iframe id="frame" title="Ойын" allow="fullscreen"></iframe>
+    </div>
+
+    <div id="v-mats" hidden>
+      <h2 style="margin:0 0 6px;font-size:1.2rem">Менің материалдарым</h2>
+      <p class="sub" style="font-size:.9rem">Жеке бетің: папка жасап, файл (сурет, бейне, слайд, құжат) жүктеп, интернеттен сілтеме қосасың. Оларды тек өзің көресің, сабақта проекторға шығарасың.</p>
+      <div class="crumbs" id="mCrumbs"></div>
+      <div class="mtools"><input id="mFolder" placeholder="Жаңа папка атауы"><button class="out" id="mFolderAdd">Папка жасау</button></div>
+      <div class="mtools"><label class="out upl">Файл жүктеу<input type="file" id="mFile" multiple hidden></label><span class="sub" style="margin:0;font-size:.85rem">Бір файл 50 МБ-қа дейін</span></div>
+      <div class="mtools"><input id="mLTitle" placeholder="Сілтеме атауы (мысалы, PhET маятник)"><input id="mLUrl" placeholder="https://..."><button class="out" id="mLinkAdd">Сілтеме қосу</button></div>
+      <p class="msg" id="mMsg" role="status" aria-live="polite"></p>
+      <div id="mList"></div>
     </div>
 
     <div id="v-rosters" hidden>
@@ -245,16 +276,16 @@ html[data-theme=light] .light-hide{display:none}
       <label for="gTitle">Атауы</label>
       <input id="gTitle">
       <label for="gUrl">Сілтемесі</label>
-      <input id="gUrl" placeholder="Fotoaffact.html немесе https://...">
-      <p class="sub" style="font-size:.85rem;margin:4px 0 0">Файл атауын жазсаң, ол groowin-site репозиторийінің басты бетіндегі файл болып саналады.</p>
+      <input id="gUrl" placeholder="https://... немесе файл атауы">
+      
       <label for="gSubj">Пән</label>
       <select id="gSubj" style="width:100%;padding:11px 12px"><option value="physics">Физика</option><option value="math">Математика</option></select>
       <label for="gType">Түрі</label>
-      <input id="gType" list="typeList" placeholder="Мысалы: Квест"><datalist id="typeList"><option value="Квест"><option value="Виртуалды зертхана"><option value="Ойын"><option value="Есептер"><option value="Викторина"></datalist>
+      <input id="gType" list="typeList" placeholder="Мысалы: Квест"><datalist id="typeList"><option value="Квест"><option value="Виртуалды зертхана"><option value="Ойын"><option value="Есептер"><option value="Геймификация"><option value="Викторина"><option value="Теория"><option value="Бейне"><option value="Тест"></datalist>
       <label for="gTopic">Тақырып</label>
       <input id="gTopic">
       <label for="gGrade">Сынып деңгейі</label>
-      <input id="gGrade" placeholder="7-сынып">
+      <select id="gGrade" style="width:100%;padding:11px 12px"><option value="">Сыныпты таңда</option><option>5-сынып</option><option>6-сынып</option><option>7-сынып</option><option>8-сынып</option><option>9-сынып</option><option>10-сынып</option><option>11-сынып</option></select>
       <label for="gIcon">Белгіше (эмодзи)</label>
       <input id="gIcon" readonly value="🎮" aria-label="Таңдалған белгіше" style="width:70px;text-align:center;font-size:1.3rem"><div class="emo" id="emoGrid"></div>
       <label>Қай сыныптарға ашық</label>
@@ -286,14 +317,27 @@ html[data-theme=light] .light-hide{display:none}
 
     <div id="v-news" hidden>
       <h2 style="margin:0 0 12px;font-size:1.2rem">Хабарландырулар</h2>
-      <div id="newsForm" hidden>
+      <div class="tabs" id="nTabs">
+        <button data-k="all" aria-selected="true">Барлығы</button>
+        <button data-k="info" aria-selected="false">Хабарландыру</button>
+        <button data-k="homework" aria-selected="false">Үй тапсырмасы</button>
+      </div>
+      <details id="newsForm" hidden style="margin:14px 0">
+        <summary style="cursor:pointer;font-weight:500">+ Жаңа жариялау</summary>
+        <label for="nKind">Түрі</label>
+        <select id="nKind" style="width:100%;padding:11px 12px"><option value="info">Хабарландыру</option><option value="homework">Үй тапсырмасы</option></select>
+        <label for="nTarget">Кімге</label>
+        <select id="nTarget" style="width:100%;padding:11px 12px"><option value="all">Барлығына</option><option value="class">Белгілі сыныпқа</option><option value="user">Жеке оқушыға</option></select>
+        <select id="nTClass" hidden style="width:100%;padding:11px 12px;margin-top:8px"></select>
+        <select id="nTUser" hidden style="width:100%;padding:11px 12px;margin-top:8px"></select>
+        <div id="nDueRow" hidden><label for="nDue">Тапсыру мерзімі</label><input id="nDue" type="date"></div>
         <label for="nTitle">Тақырыбы</label>
         <input id="nTitle">
         <label for="nBody">Мәтіні</label>
         <textarea id="nBody"></textarea>
         <button class="go" id="nAdd">Жариялау</button>
         <p class="msg" id="nMsg" role="status" aria-live="polite"></p>
-      </div>
+      </details>
       <div id="newsList"></div>
     </div>
 
@@ -316,11 +360,13 @@ html[data-theme=light] .light-hide{display:none}
       <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin:8px 0 0"><input type="checkbox" id="pwShow" style="width:auto"> Жазғанда көрсету</label>
       <button class="go" id="pwSave" style="width:auto;padding:10px 22px">Өзгерту</button>
       <p class="msg" id="pwMsg" role="status" aria-live="polite"></p>
+      <hr style="border:0;border-top:1px solid var(--grid);margin:22px 0 6px;max-width:460px">
+      <button class="out" id="logout">Шығу</button>
     </div>
 
     <div id="v-students" hidden>
       <h2 id="uTitle" style="margin:0 0 4px;font-size:1.2rem">Оқушылар</h2>
-      <p class="sub" style="margin-bottom:8px">Тізімге қосылған нөмір ғана тіркеле алады.</p>
+      <p class="sub" style="margin-bottom:8px">Тізімге қосылған нөмір ғана тіркеле алады. Қосқан оқушың алдымен «Тіркелу» бөлімінде өз құпия сөзін ойлап табуы керек. Күйі «Тіркелмеген» болса, ол әлі кірмеген.</p>
       <label for="aName">Аты-жөні</label>
       <input id="aName">
       <label for="aPhone">Телефон нөмірі</label>
@@ -333,6 +379,7 @@ html[data-theme=light] .light-hide{display:none}
       </select>
       <label for="aClass" id="aClassLab">Сынып</label>
       <select id="aClass" style="width:100%;padding:11px 12px"></select>
+      <input id="aNewClass" placeholder="Немесе жаңа сынып атауы: 7А" style="margin-top:8px">
       <button class="go" id="aAdd">Тізімге қосу</button>
       <p class="msg" id="aMsg" role="status" aria-live="polite"></p>
       <details id="imp" style="margin:6px 0 18px">
@@ -344,8 +391,10 @@ html[data-theme=light] .light-hide{display:none}
         <button class="go" id="impGo" hidden></button>
         <p class="msg" id="impMsg" role="status" aria-live="polite"></p>
       </details>
+      <label for="byFilter" id="byLab" hidden>Қосқан мұғалім бойынша</label>
+      <select id="byFilter" hidden></select>
       <div class="scroll"><table>
-        <thead><tr><th>Аты</th><th>Телефон</th><th>Рөл</th><th>Күйі</th><th>Сынып</th><th></th></tr></thead>
+        <thead><tr><th>Аты</th><th>Телефон</th><th>Рөл</th><th>Күйі</th><th>Сынып</th><th id="thBy">Қосқан</th><th></th></tr></thead>
         <tbody id="users"></tbody>
       </table></div>
     </div>
@@ -392,7 +441,6 @@ $('submit').onclick = async () => {
   const phone = normPhone($('phone').value), pass = $('pass').value, name = $('name').value.trim();
   if (phone.length !== 11) return say('Телефон нөмірін толық жаз: 11 сан.', 'err');
   if (pass.length < 6) return say('Құпия сөз кемінде 6 таңба болсын.', 'err');
-  if (mode === 'up' && !name) return say('Аты-жөніңді жаз.', 'err');
 
   $('submit').disabled = true; say('Күте тұр…'); ls.set('lastActive', Date.now()); lastTouch = Date.now();
   const email = toEmail(phone);
@@ -403,12 +451,20 @@ $('submit').onclick = async () => {
 
   if (error) {
     const m = error.message.toLowerCase();
-    if (m.includes('invalid login')) say('Нөмір немесе құпия сөз қате.', 'err');
+    if (m.includes('invalid login')) {
+      const st = await phoneStatus(phone);
+      if (st === 'allowed') { setMode('up'); say('Сен тізімдесің, бірақ әлі тіркелмегенсің. Өз құпия сөзіңді ойлап тап та, «Тіркелу» бас.', 'ok'); }
+      else say('Нөмір немесе құпия сөз қате. Алғаш рет кіріп жатсаң, алдымен «Тіркелу» бөліміне өтіп, өз құпия сөзіңді ойлап тап. Ұмытсаң, төмендегі «Құпия сөзді ұмыттым» сілтемесін бас.', 'err');
+    }
     else if (m.includes('already')) say('Бұл нөмір тіркелген. «Кіру» бөліміне өт.', 'err');
-    else if (m.includes('database error')) say('Бұл нөмір тізімде жоқ. Мұғалімге немесе админге жаз.', 'err');
+    else if (m.includes('database error')) {
+      const st = await phoneStatus(phone);
+      say(st === 'allowed' ? 'Тіркелу кезінде техникалық қате. Админге хабарла (SQL жаңартулары толық іске қосылғанын тексерсін).' : 'Бұл нөмір тізімде жоқ. Мұғалімге немесе админге жаз.', 'err');
+    }
     else say('Қате: ' + error.message, 'err');
   }
 };
+async function phoneStatus(phone) { const { data } = await sb.rpc('phone_status', { p_phone: phone }); return data || 'unknown'; }
 
 $('logout').onclick = () => sb.auth.signOut();
 
@@ -440,26 +496,35 @@ async function showApp(session) {
   if (document.activeElement !== $('accEdit')) $('accEdit').value = me?.full_name || '';
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
-  $('navStudents').hidden = me?.role !== 'admin';
   meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
+  $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navStudents').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
-  loadClassList(); loadGames();
+  loadClassList().then(() => { if (isStaff) fillTargets(); renderNews(); }); loadGames();
   if (XP_ON && me?.role === 'student') { const { data: x } = await sb.rpc('my_xp'); setXP(x || 0); } else $('xp').hidden = true;
 }
 
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
 const ROLE_KK = { student: 'Оқушы', teacher: 'Мұғалім', admin: 'Админ' };
 const mini = (text, fn) => { const b = document.createElement('button'); b.textContent = text; b.className = 'out'; b.style.margin = '0 6px 0 0'; b.style.padding = '4px 10px'; b.onclick = fn; return b; };
 
 async function loadUsers() {
   const [{ data: allowed }, { data: profs }] = await Promise.all([
     sb.from('allowed_phones').select('*').order('created_at', { ascending: false }),
-    sb.from('profiles').select('id,phone,active,class_id')
+    sb.from('profiles').select('id,phone,active,class_id,full_name')
   ]);
   const byPhone = Object.fromEntries((profs || []).map(p => [p.phone, p]));
+  $('thBy').hidden = !isAdmin;
+  const fsel = $('byFilter'); fsel.hidden = $('byLab').hidden = !isAdmin || userRole !== 'student';
+  if (!fsel.hidden) {
+    const cur = fsel.value, ids = [...new Set((allowed || []).filter(a => a.role === 'student').map(a => a.added_by || ''))];
+    fsel.replaceChildren(new Option('Барлығы', 'all'), ...ids.map(id => new Option(id ? ((profs || []).find(x => x.id === id)?.full_name || 'Атсыз') : 'Админ (ескі жазбалар)', id || 'none')));
+    fsel.value = [...fsel.options].some(o => o.value === cur) ? cur : 'all';
+  }
+  const flt = fsel.hidden ? 'all' : fsel.value;
   const body = $('users'); const frag = document.createDocumentFragment();
-  (allowed || []).filter(a => (a.role === 'student') === (userRole === 'student')).forEach(a => {
+  (allowed || []).filter(a => (a.role === 'student') === (userRole === 'student')).filter(a => flt === 'all' || (flt === 'none' ? !a.added_by : a.added_by === flt)).forEach(a => {
     const p = byPhone[a.phone];
     const status = !p ? 'Тіркелмеген' : p.active ? 'Белсенді' : 'Бұғатталған';
     const tr = document.createElement('tr');
@@ -473,6 +538,7 @@ async function loadUsers() {
       if (p) await sb.from('profiles').update({ class_id: v }).eq('id', p.id);
     };
     ctd.appendChild(csel); tr.appendChild(ctd);
+    if (isAdmin) { const by = (profs || []).find(x => x.id === a.added_by); const btd = document.createElement('td'); btd.textContent = a.added_by ? (by?.full_name || 'Админ/мұғалім') : '—'; tr.appendChild(btd); }
     const td = document.createElement('td');
     if (!p || p.id !== meId) {
       if (p) td.appendChild(mini(p.active ? 'Бұғаттау' : 'Ашу', async () => {
@@ -496,10 +562,16 @@ $('aAdd').onclick = async () => {
   const m = $('aMsg');
   const show = (t, c) => { m.textContent = t; m.className = 'msg ' + c; };
   if (phone.length !== 11 || !name) return show('Аты-жөні мен 11 санды нөмірді жаз.', 'err');
-  const { error } = await sb.from('allowed_phones').upsert({ phone, full_name: name, role, class_id: $('aClass').value || null });
-  if (error) return show('Қате: ' + error.message, 'err');
-  await sb.from('profiles').update({ active: true, role, full_name: name, class_id: $('aClass').value || null }).eq('phone', phone);
-  $('aName').value = ''; $('aPhone').value = '';
+  let classId = $('aClass').value || null; const nc = $('aNewClass').value.trim().replace(/\s+/g, '');
+  if (nc && role === 'student') {
+    const ex = classesCache.find(c => ckey(c.name) === ckey(nc));
+    if (ex) classId = ex.id;
+    else { const { data, error } = await sb.from('classes').insert({ name: nc }).select().single(); if (error) return show('Қате: ' + error.message, 'err'); classId = data.id; await loadClassList(); }
+  }
+  const { data: cnt, error } = await sb.rpc('staff_add_students', { p_rows: [{ phone, full_name: name, role, class_id: classId }] });
+  if (error) return show(error.message.includes('bad class') ? 'Бұл сынып саған бекітілмеген. Админнен қосуын сұра немесе жаңа сынып жаса.' : error.message.includes('function') ? 'update-7.sql әлі іске қосылмаған сияқты.' : 'Қате: ' + error.message, 'err');
+  if (!cnt) return show('Қосылмады: бұл нөмір басқа мұғалімнің оқушысы немесе админнің тізімінде бар.', 'err');
+  $('aName').value = ''; $('aPhone').value = ''; $('aNewClass').value = ''; await loadClassList();
   show('Қосылды. Енді ол «Тіркелу» арқылы өз құпия сөзін қояды.', 'ok');
   loadUsers();
 };
@@ -615,20 +687,34 @@ let GAMES = [
   { id: 'newton-7', subj: 'physics', icon: '🍎', title: 'Ньютонның құлыптаулы бөлмесі', type: 'Квест', grade: '7-сынып', topic: 'Орташа жылдамдық', url: 'квест-7сынып.html' },
   { id: 'photoeffect-9', subj: 'physics', icon: '⚡', title: 'Фотоэффект зертханасы', type: 'Виртуалды зертхана', grade: '9-сынып', topic: 'Фотоэффект', url: 'Fotoaffact.html' }
 ];
-let subj = 'physics';
+let subj = 'physics', gradeSel = null;
+const SUBJ_NAME = { physics: 'Физика', math: 'Математика' };
+const gKey = g => { const n = parseInt(g.grade); return n > 0 ? String(n) : 'other'; };
+const gLabel = k => k === 'other' ? 'Басқа' : k + '-сынып';
+function gameCard(g) {
+  const b = el('button', 'game'); b.append(el('span', 'gi', g.icon || '🎮'), el('strong', '', g.title), el('span', '', g.topic || ''), el('span', 'gm', [g.type, g.grade].filter(Boolean).join(', ')));
+  b.onclick = () => openGame(g); return b;
+}
 function renderGames() {
-  const box = $('games'), list = GAMES.filter(g => g.subj === subj);
-  box.replaceChildren();
-  if (!list.length) {
-    const p = document.createElement('p'); p.className = 'sub';
-    p.textContent = 'Бұл бөлімге ойындар жақында қосылады.'; box.appendChild(p); return;
+  const box = $('games'), cr = $('catCrumbs'), list = GAMES.filter(g => g.subj === subj);
+  box.replaceChildren(); cr.replaceChildren();
+  cr.append(mini(SUBJ_NAME[subj] || subj, () => { gradeSel = null; renderGames(); }));
+  if (gradeSel === null) {
+    const by = {}; list.forEach(g => { const k = gKey(g); by[k] = (by[k] || 0) + 1; });
+    const keys = ['5', '6', '7', '8', '9', '10', '11']; Object.keys(by).forEach(k => { if (!keys.includes(k) && k !== 'other') keys.push(k); });
+    keys.sort((a, b) => a - b); if (by.other) keys.push('other');
+    box.append(el('p', 'sub', 'Сыныпты таңда'));
+    const gr = el('div', 'gradegrid');
+    keys.forEach(k => { const b = el('button', 'gradeBtn' + (by[k] ? '' : ' empty')); b.append(el('strong', '', gLabel(k)), el('span', 'gm', by[k] ? by[k] + ' ойын/материал' : 'жақында')); b.onclick = () => { gradeSel = k; renderGames(); }; gr.appendChild(b); });
+    box.append(gr); return;
   }
-  list.forEach(g => {
-    const b = document.createElement('button'); b.className = 'game';
-    const mk = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; e.textContent = txt; return e; };
-    b.append(mk('span', 'gi', g.icon), mk('strong', '', g.title), mk('span', '', g.topic), mk('span', 'gm', g.type + ', ' + g.grade));
-    b.onclick = () => openGame(g);
-    box.appendChild(b);
+  cr.append(el('span', '', ' › '), mini(gLabel(gradeSel), () => {}));
+  const gl = list.filter(g => gKey(g) === gradeSel);
+  if (!gl.length) { box.append(el('p', 'sub', 'Бұл сыныпқа материал жақында қосылады.')); return; }
+  const types = {}; gl.forEach(g => { const t = (g.type || '').trim() || 'Басқа'; (types[t] = types[t] || []).push(g); });
+  Object.keys(types).sort().forEach(t => {
+    const d = el('details', 'grp'); d.open = true; d.append(el('summary', '', t + ' (' + types[t].length + ')'));
+    const gr = el('div', 'grid'); types[t].forEach(g => gr.appendChild(gameCard(g))); d.append(gr); box.appendChild(d);
   });
 }
 let curGame = null;
@@ -642,18 +728,19 @@ function closeGame() {
   curGame = null;
   $('frame').src = 'about:blank';
 }
-$('back').onclick = () => go(subj);
-const VIEWS = ['catalog', 'viewer', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+$('back').onclick = () => go(subj, true);
+const VIEWS = ['catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); }
-function go(key) {
+function go(key, keep) {
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === key));
   if (key === 'physics' || key === 'math') {
-    subj = key; $('catTitle').textContent = key === 'physics' ? 'Физика' : 'Математика';
+    subj = key; if (!keep) gradeSel = null;
     renderGames(); show('catalog');
-  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); }
+  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); }
 }
-document.querySelectorAll('#nav button').forEach(b => b.onclick = () => go(b.dataset.v));
+document.querySelectorAll('#nav button[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
+$('subjHead').onclick = () => { const h = $('subjItems').hidden = !$('subjItems').hidden; $('subjHead').setAttribute('aria-expanded', String(!h)); $('subjArrow').textContent = h ? '▸' : '▾'; };
 renderGames();
 
 // ===== Тема =====
@@ -666,19 +753,25 @@ function applyTheme(inApp) {
 $('themeBtn').onclick = () => { pref = pref === 'light' ? 'dark' : 'light'; ls.set('theme', pref); applyTheme(true); };
 
 // ===== Хабарландырулар =====
-let meRole = '', isAdmin = false, isStaff = false, meName = '', newsTimer = null, newsCache = [];
+let meRole = '', isAdmin = false, isStaff = false, meName = '', newsTimer = null, newsCache = [], nKindTab = 'all', stuCache = [];
+const KIND_KK = { info: 'Хабарландыру', homework: 'Үй тапсырмасы' };
+function targetLabel(n) {
+  if (n.target_user) return n.target_user === meId ? 'Саған жеке' : 'Оқушы: ' + (stuCache.find(x => x.id === n.target_user)?.full_name || '');
+  if (n.target_class) return 'Сынып: ' + (classesCache.find(c => c.id === n.target_class)?.name || '');
+  return 'Барлығына';
+}
 function renderNews() {
   const box = $('newsList'); box.replaceChildren();
-  if (!newsCache.length) { const p = document.createElement('p'); p.className = 'sub'; p.textContent = 'Әзірге хабарландыру жоқ.'; box.appendChild(p); }
-  newsCache.forEach(n => {
-    const d = document.createElement('div'); d.className = 'news';
-    const h = document.createElement('h3'); h.textContent = n.title;
-    const p = document.createElement('p'); p.textContent = n.body || '';
-    const m = document.createElement('small'); m.textContent = new Date(n.created_at).toLocaleDateString('kk-KZ') + (n.author ? ', ' + n.author : '');
-    d.append(h, p, m);
+  const list = newsCache.filter(n => nKindTab === 'all' || (n.kind || 'info') === nKindTab);
+  if (!list.length) box.appendChild(el('p', 'sub', 'Әзірге жоқ.'));
+  list.forEach(n => {
+    const d = el('div', 'news'), k = n.kind || 'info';
+    d.append(el('h3', '', (k === 'homework' ? '📚 ' : '') + n.title), el('p', '', n.body || ''));
+    const meta = [KIND_KK[k], targetLabel(n)]; if (k === 'homework' && n.due_date) meta.push('Мерзімі: ' + new Date(n.due_date).toLocaleDateString('kk-KZ'));
+    d.append(el('small', '', meta.join(' · ') + ' · ' + new Date(n.created_at).toLocaleDateString('kk-KZ') + (n.author ? ', ' + n.author : '')));
     if (isAdmin || (n.author_id && n.author_id === meId)) {
-      const b = document.createElement('button'); b.className = 'out'; b.textContent = 'Жою'; b.style.cssText = 'margin:8px 0 0 12px;padding:4px 10px';
-      b.onclick = async () => { if (!confirm('Хабарландыруды жою керек пе?')) return; await sb.from('announcements').delete().eq('id', n.id); loadNews(); };
+      const b = el('button', 'out', 'Жою'); b.style.cssText = 'margin:8px 0 0 12px;padding:4px 10px';
+      b.onclick = async () => { if (!confirm('Жою керек пе?')) return; await sb.from('announcements').delete().eq('id', n.id); loadNews(); };
       d.appendChild(b);
     }
     box.appendChild(d);
@@ -691,16 +784,32 @@ function renderNews() {
 }
 function markSeen() { ls.set('newsSeen', Date.now()); renderNews(); }
 async function loadNews() {
-  const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: false }).limit(30);
+  const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: false }).limit(50);
   newsCache = data || []; renderNews();
 }
+document.querySelectorAll('#nTabs button').forEach(b => b.onclick = () => { nKindTab = b.dataset.k; document.querySelectorAll('#nTabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); renderNews(); });
+function syncNForm() { $('nDueRow').hidden = $('nKind').value !== 'homework'; $('nTClass').hidden = $('nTarget').value !== 'class'; $('nTUser').hidden = $('nTarget').value !== 'user'; }
+$('nKind').onchange = $('nTarget').onchange = syncNForm;
+async function fillTargets() {
+  $('nTClass').replaceChildren(...assignable().map(c => new Option(c.name, c.id)));
+  const { data } = await sb.from('profiles').select('id,full_name,class_id').eq('role', 'student').eq('active', true).order('full_name').limit(500);
+  stuCache = data || [];
+  $('nTUser').replaceChildren(...stuCache.map(x => new Option((x.full_name || 'Атсыз') + (x.class_id ? ' (' + (classesCache.find(c => c.id === x.class_id)?.name || '') + ')' : ''), x.id)));
+  const all = $('nTarget').querySelector('option[value=all]'); all.hidden = all.disabled = !isAdmin;
+  if (!isAdmin && $('nTarget').value === 'all') $('nTarget').value = assignable().length ? 'class' : 'user';
+  syncNForm();
+}
 $('nAdd').onclick = async () => {
-  const t = $('nTitle').value.trim(), b = $('nBody').value.trim(), m = $('nMsg');
+  const t = $('nTitle').value.trim(), b = $('nBody').value.trim(), m = $('nMsg'), kind = $('nKind').value, tg = $('nTarget').value;
   const say2 = (x, c) => { m.textContent = x; m.className = 'msg ' + c; };
   if (!t) return say2('Тақырыбын жаз.', 'err');
-  const { error } = await sb.from('announcements').insert({ title: t, body: b, author: meName });
+  if (tg === 'all' && !isAdmin) return say2('Сыныпты немесе оқушыны таңда.', 'err');
+  if (tg === 'class' && !$('nTClass').value) return say2('Сыныпты таңда.', 'err');
+  if (tg === 'user' && !$('nTUser').value) return say2('Оқушыны таңда.', 'err');
+  const row = { title: t, body: b, author: meName, kind, due_date: kind === 'homework' && $('nDue').value ? $('nDue').value : null, target_class: tg === 'class' ? $('nTClass').value : null, target_user: tg === 'user' ? $('nTUser').value : null };
+  const { error } = await sb.from('announcements').insert(row);
   if (error) return say2('Қате: ' + error.message, 'err');
-  $('nTitle').value = ''; $('nBody').value = ''; say2('Жарияланды.', 'ok'); loadNews();
+  $('nTitle').value = ''; $('nBody').value = ''; $('nDue').value = ''; say2('Жарияланды.', 'ok'); loadNews();
 };
 
 // ===== Панельді жасыру / толық экран =====
@@ -750,17 +859,24 @@ setInterval(() => {
 
 // ===== Сыныптар =====
 let classesCache = [];
+let myClassIds = new Set();
+const assignable = () => isAdmin ? classesCache : classesCache.filter(c => myClassIds.has(c.id));
 async function loadClassList() {
-  const { data } = await sb.from('classes').select('*').order('name');
-  classesCache = data || [];
+  const [{ data }, tc] = await Promise.all([
+    sb.from('classes').select('*').order('name'),
+    isStaff && !isAdmin ? sb.from('teacher_classes').select('class_id').eq('teacher_id', meId) : Promise.resolve({ data: [] })
+  ]);
+  classesCache = data || []; myClassIds = new Set((tc.data || []).map(x => x.class_id));
   [$('aClass'), $('rankClass')].forEach((sel, i) => {
     const v = sel.value; sel.replaceChildren(new Option(i ? 'Барлық сыныптар' : 'Сыныпсыз', ''));
-    classesCache.forEach(c => sel.append(new Option(c.name, c.id))); sel.value = v;
+    assignable().forEach(c => sel.append(new Option(c.name, c.id))); sel.value = v;
   });
 }
 function classSelect(cur) {
   const sel = document.createElement('select'); sel.append(new Option('—', ''));
-  classesCache.forEach(c => sel.append(new Option(c.name, c.id))); sel.value = cur || ''; return sel;
+  const list = assignable();
+  if (cur && !list.some(c => c.id === cur)) { const c = classesCache.find(x => x.id === cur); if (c) sel.append(new Option(c.name, c.id)); }
+  list.forEach(c => sel.append(new Option(c.name, c.id))); sel.value = cur || ''; return sel;
 }
 async function loadClasses() {
   await loadClassList();
@@ -791,7 +907,6 @@ $('cAdd').onclick = async () => {
 };
 
 // ===== Мұғалімнің сыныптары =====
-const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
 let curRoster = null, rsStudents = [], pool = [], tm = null;
 const today = () => new Date().toLocaleDateString('sv-SE');
 const present = () => rsStudents.filter(s => s.absent_on !== today());
@@ -901,6 +1016,104 @@ $('tRefl').onclick = () => {
   go.onclick = run; bar.append(go); b.append(h, p, bar); run();
 };
 
+// ===== Менің материалдарым =====
+let mFolders = [], mItems = [], mCur = null;
+const mnote = (t, c) => note('mMsg', t, c || '');
+const extOf = n => ((n || '').match(/\.([A-Za-z0-9]{1,8})$/) || [, ''])[1].toLowerCase();
+const ICON_BY = { image: '🖼️', video: '🎬', audio: '🎵', pdf: '📕', office: '📊' };
+function matKind(it) {
+  if (it.kind === 'link') return 'link';
+  const e = extOf(it.title), mt = it.mime || '';
+  if (mt.startsWith('image/') || ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(e)) return 'image';
+  if (mt.startsWith('video/') || ['mp4', 'webm', 'mov', 'm4v'].includes(e)) return 'video';
+  if (mt.startsWith('audio/') || ['mp3', 'wav', 'ogg', 'm4a'].includes(e)) return 'audio';
+  if (e === 'pdf' || mt === 'application/pdf') return 'pdf';
+  if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'].includes(e)) return 'office';
+  return 'other';
+}
+async function loadMats() {
+  const [f, i] = await Promise.all([sb.from('mat_folders').select('*').order('name'), sb.from('mat_items').select('*').order('created_at')]);
+  mFolders = f.data || []; mItems = i.data || []; renderMats();
+}
+function renderMats() {
+  const cr = $('mCrumbs'); cr.replaceChildren(); const path = [];
+  for (let id = mCur; id;) { const f = mFolders.find(x => x.id === id); if (!f) break; path.unshift(f); id = f.parent_id; }
+  cr.append(mini('Басты бет', () => { mCur = null; renderMats(); }));
+  path.forEach(f => cr.append(el('span', '', '› '), mini(f.name, () => { mCur = f.id; renderMats(); })));
+  const box = $('mList'); box.replaceChildren();
+  mFolders.filter(f => (f.parent_id || null) === mCur).forEach(f => {
+    const r = el('div', 'mrow'), n = el('span', 'nm', '📁 ' + f.name); n.onclick = () => { mCur = f.id; renderMats(); };
+    r.append(n, mini('Жою', () => delFolder(f))); box.appendChild(r);
+  });
+  mItems.filter(it => (it.folder_id || null) === mCur).forEach(it => {
+    const k = matKind(it), r = el('div', 'mrow'), n = el('span', 'nm', (k === 'link' ? '🔗 ' : (ICON_BY[k] || '📄') + ' ') + it.title); n.onclick = () => showMat(it);
+    r.append(n, mini('Көрсету', () => showMat(it)));
+    if (it.kind === 'file') r.append(mini('Жүктеп алу', async () => { const { data } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 300, { download: it.title }); if (data) location.href = data.signedUrl; }));
+    r.append(mini('Жою', async () => { if (!confirm('«' + it.title + '» жойылсын ба?')) return; if (it.storage_path) await sb.storage.from('materials').remove([it.storage_path]); await sb.from('mat_items').delete().eq('id', it.id); loadMats(); }));
+    box.appendChild(r);
+  });
+  if (!box.children.length) box.appendChild(el('p', 'sub', 'Бұл папка бос.'));
+}
+async function delFolder(f) {
+  if (!confirm('«' + f.name + '» папкасы және ішіндегі бәрі жойылсын ба?')) return;
+  const desc = id => [id, ...mFolders.filter(x => x.parent_id === id).flatMap(x => desc(x.id))], ids = desc(f.id);
+  const paths = mItems.filter(i => ids.includes(i.folder_id) && i.storage_path).map(i => i.storage_path);
+  for (let i = 0; i < paths.length; i += 100) await sb.storage.from('materials').remove(paths.slice(i, i + 100));
+  await sb.from('mat_folders').delete().eq('id', f.id); if (ids.includes(mCur)) mCur = null; loadMats();
+}
+$('mFolderAdd').onclick = async () => {
+  const n = $('mFolder').value.trim().slice(0, 60); if (!n) return;
+  const { error } = await sb.from('mat_folders').insert({ name: n, parent_id: mCur });
+  if (error) return mnote('Қате: ' + error.message, 'err'); $('mFolder').value = ''; loadMats();
+};
+$('mFolder').onkeydown = e => { if (e.key === 'Enter') $('mFolderAdd').click(); };
+$('mFile').onchange = async e => {
+  const files = [...e.target.files]; e.target.value = '';
+  for (const f of files) {
+    if (f.size > 50 * 1024 * 1024) { mnote(f.name + ': 50 МБ-тан үлкен, жүктелмеді.', 'err'); continue; }
+    const path = meId + '/' + crypto.randomUUID() + (extOf(f.name) ? '.' + extOf(f.name) : ''); mnote('Жүктелуде: ' + f.name);
+    const up = await sb.storage.from('materials').upload(path, f, { contentType: f.type || 'application/octet-stream' });
+    if (up.error) { mnote('Қате: ' + up.error.message, 'err'); return; }
+    const ins = await sb.from('mat_items').insert({ kind: 'file', title: f.name.slice(0, 120), storage_path: path, mime: f.type, size: f.size, folder_id: mCur });
+    if (ins.error) { await sb.storage.from('materials').remove([path]); mnote('Қате: ' + ins.error.message, 'err'); return; }
+  }
+  mnote('Дайын.', 'ok'); loadMats();
+};
+$('mLinkAdd').onclick = async () => {
+  let u = $('mLUrl').value.trim(), t = $('mLTitle').value.trim(); if (!u) return;
+  if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  try { new URL(u); } catch { return mnote('Сілтеме дұрыс емес.', 'err'); }
+  const { error } = await sb.from('mat_items').insert({ kind: 'link', title: (t || new URL(u).hostname).slice(0, 120), url: u, folder_id: mCur });
+  if (error) return mnote('Қате: ' + error.message, 'err');
+  $('mLUrl').value = ''; $('mLTitle').value = ''; mnote('Қосылды.', 'ok'); loadMats();
+};
+function embedUrl(u) {
+  const m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/))([\w-]{11})/);
+  return m ? 'https://www.youtube.com/embed/' + m[1] : u;
+}
+async function showMat(it) {
+  const b = stage(), k = matKind(it); let src = it.url;
+  b.append(el('div', 'big', '')); b.firstChild.style.cssText = 'font-size:1.4rem;margin:0 0 12px'; b.firstChild.textContent = it.title;
+  if (it.kind === 'file') {
+    const { data, error } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 3600);
+    if (error) return b.append(el('p', '', 'Ашылмады: ' + error.message)); src = data.signedUrl;
+  }
+  let node;
+  if (k === 'image') { node = el('img', 'demo'); node.src = src; node.alt = it.title; }
+  else if (k === 'video') { node = el('video', 'demo'); node.src = src; node.controls = true; }
+  else if (k === 'audio') { node = el('audio', 'demo'); node.src = src; node.controls = true; }
+  else if (k === 'office') { node = el('iframe', 'demo'); node.src = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(src); }
+  else if (k === 'link') { node = el('iframe', 'demo'); node.src = embedUrl(src); node.allow = 'fullscreen; autoplay'; node.allowFullscreen = true; node.referrerPolicy = 'strict-origin-when-cross-origin'; node.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-presentation allow-modals'); }
+  else if (k === 'pdf') { node = el('iframe', 'demo'); node.src = src; }
+  else { node = el('p', '', 'Бұл файл түрін осы жерде көрсету мүмкін емес. «Жүктеп алу» батырмасын қолдан.'); }
+  b.append(node);
+  if (k === 'link') {
+    const bar = el('div', 'bar'); bar.style.marginTop = '10px';
+    const a = el('a', 'out', 'Жаңа қойындыда ашу'); a.href = src; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.style.textDecoration = 'none';
+    bar.append(a, el('span', 'sub', 'Кейбір сайттар ішке ашылуға рұқсат бермейді, онда осы түймені бас.')); b.append(bar);
+  }
+}
+
 // ===== Кіру бетінен админге сұраныс жіберу =====
 let reqKind = 'password';
 function openReq(kind) {
@@ -927,12 +1140,13 @@ $('rGo').onclick = async () => {
 let userRole = 'student', inKind = 'all';
 function setUserPage(role) {
   userRole = role; const t = role === 'student';
-  $('uTitle').textContent = t ? 'Оқушылар' : 'Мұғалімдер мен админдер';
+  $('uTitle').textContent = t ? (isAdmin ? 'Оқушылар' : 'Менің оқушыларым') : 'Мұғалімдер мен админдер';
   $('aRole').replaceChildren(...(t ? [['student', 'Оқушы']] : [['teacher', 'Мұғалім'], ['admin', 'Админ']]).map(([v, l]) => new Option(l, v)));
   if (!t) $('aClass').value = '';
-  $('aClassLab').hidden = $('aClass').hidden = $('imp').hidden = !t;
+  $('aClassLab').hidden = $('aClass').hidden = $('aNewClass').hidden = $('imp').hidden = !t;
   loadUsers();
 }
+$('byFilter').onchange = loadUsers;
 $('meCard').onclick = () => go('account');
 $('pwShow').onchange = () => { $('pw1').type = $('pwShow').checked ? 'text' : 'password'; };
 document.querySelectorAll('#inTabs button').forEach(b => b.onclick = () => { inKind = b.dataset.k; loadReqs(); });
@@ -967,7 +1181,7 @@ async function loadReqs() {
   });
 }
 
-// ===== Құпия сөзді қайта беру (Edge Function арқылы) =====
+// ===== Құпия сөзді қайта беру (дерекқор функциясы арқылы) =====
 function genPw() {
   const a = 'abcdefghjkmnpqrstuvwxyz23456789', r = crypto.getRandomValues(new Uint32Array(8));
   return [...r].map(x => a[x % a.length]).join('');
@@ -975,11 +1189,10 @@ function genPw() {
 async function resetPw(phone) {
   if (!confirm('+' + phone + ' үшін жаңа құпия сөз орнатылсын ба?')) return;
   const pw = genPw();
-  const { error } = await sb.functions.invoke('admin-reset-password', { body: { phone, password: pw } });
+  const { error } = await sb.rpc('set_user_password', { p_phone: phone, p_password: pw });
   if (error) {
-    if (error.name === 'FunctionsFetchError') return alert('Функцияға қосылу мүмкін болмады. Supabase-те admin-reset-password функциясы орнатылғанын және «Verify JWT» өшірулі екенін тексер.');
-    let m = error.message; try { m = (await error.context.json()).error || m; } catch {}
-    return alert('Қате: ' + m);
+    const m = error.message || '';
+    return alert(m.includes('forbidden') ? 'Бұл адамның құпия сөзін өзгертуге рұқсатың жоқ.' : m.includes('not registered') ? 'Бұл адам әлі тіркелмеген.' : m.includes('function') ? 'update-7.sql әлі іске қосылмаған сияқты.' : 'Қате: ' + m);
   }
   prompt('Құпия сөз өзгертілді. Оны көшіріп алып, пайдаланушыға жеткіз:', pw);
   return true;
@@ -1034,15 +1247,12 @@ $('impGo').onclick = async () => {
   const seen = new Set(), toMake = impRows.map(r => r.cls).filter(n => n && !classesCache.some(c => ckey(c.name) === ckey(n)) && !seen.has(ckey(n)) && seen.add(ckey(n)));
   if (toMake.length) { const { error } = await sb.from('classes').insert(toMake.map(n => ({ name: n.replace(/\s+/g, '') }))); if (error) return fail(error.message); }
   await loadClassList();
-  const { data: ex } = await sb.from('profiles').select('id,phone,role');
-  const admins = new Set((ex || []).filter(p => p.role === 'admin').map(p => p.phone));
-  const rows = impRows.filter(r => !admins.has(r.phone)).map(r => ({ phone: r.phone, full_name: r.full_name, role: r.role, class_id: classesCache.find(c => ckey(c.name) === ckey(r.cls))?.id || null }));
-  const { error } = await sb.from('allowed_phones').upsert(rows);
-  if (error) return fail(error.message);
-  await Promise.all((ex || []).filter(p => p.role !== 'admin').map(p => { const r = rows.find(x => x.phone === p.phone); return r && sb.from('profiles').update({ full_name: r.full_name, role: r.role, class_id: r.class_id }).eq('id', p.id); }));
-  const skipped = impRows.length - rows.length;
+  const rows = impRows.map(r => ({ phone: r.phone, full_name: r.full_name, role: isAdmin ? r.role : 'student', class_id: classesCache.find(c => ckey(c.name) === ckey(r.cls))?.id || null }));
+  const { data: n, error } = await sb.rpc('staff_add_students', { p_rows: rows });
+  if (error) return fail(error.message.includes('bad class') ? 'Файлдағы кейбір сынып саған бекітілмеген. Админнен қосуын сұра.' : error.message.includes('function') ? 'update-7.sql әлі іске қосылмаған сияқты.' : error.message);
+  const skipped = rows.length - (n || 0);
   $('impGo').disabled = false; $('impGo').hidden = true; $('impPrev').replaceChildren(); $('impFile').value = ''; impRows = [];
-  note('impMsg', rows.length + ' адам қосылды немесе жаңартылды.' + (skipped ? ' Админдер өткізілді: ' + skipped + '.' : ''), 'ok'); loadUsers();
+  note('impMsg', (n || 0) + ' адам қосылды немесе жаңартылды.' + (skipped ? ' Өткізілді: ' + skipped + ' (басқа мұғалімнің оқушысы не админ).' : ''), 'ok'); loadUsers();
 };
 
 // ===== Эмодзи таңдау =====
