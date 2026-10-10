@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Groowin</title>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <style>
 :root{--paper:#070B1E;--grid:rgba(160,190,255,.2);--ink:#E8EEFF;--blue:#4D7CFF;--sun:#FFC83D;--card:rgba(10,18,40,.58);--err:#FF8A80;--mute:#9AAEDB}
 *{box-sizing:border-box}
 html{background:#050816}
-body{margin:0;min-height:100vh;font:16px/1.5 Rubik,system-ui,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 50% 55%,#10193d 0%,#050816 72%);display:grid;place-items:center;padding:20px}
+body{margin:0;min-height:100vh;font:16px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 50% 55%,#10193d 0%,#050816 72%);display:grid;place-items:center;padding:20px}
 #sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .wrap{width:100%;max-width:420px}
 h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.02em}
@@ -137,6 +137,58 @@ html[data-theme=light] .light-hide{display:none}
 #stage iframe.demo{width:100%;height:calc(100vh - 140px);border:0;background:#fff}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .15s}}
+
+/* ===== UI v2: минимал дизайн (қараңғы / жарық / сүтті + акцент) ===== */
+:root{--accent:#3B6BFF;--accent-soft:color-mix(in srgb,var(--accent) 14%,transparent)}
+html[data-accent=blue]{--accent:#3B6BFF}html[data-accent=green]{--accent:#1FA971}html[data-accent=violet]{--accent:#7C5CFF}html[data-accent=orange]{--accent:#F28C28}
+html[data-theme]{--blue:var(--accent);--sun:var(--accent)}
+html[data-theme=dark]{--bg:#0E1117;--surf:#151A23;--paper:#1B212C;--card:#151A23;--line:rgba(255,255,255,.09);--grid:rgba(255,255,255,.08);--ink:#E6E9EF;--mute:#8B93A3;--err:#FF8A80;--hover:rgba(255,255,255,.05)}
+html[data-theme=light]{--bg:#F6F7F9;--surf:#fff;--paper:#F1F3F6;--card:#fff;--line:#E5E7EB;--grid:#E5E7EB;--ink:#14171F;--mute:#6B7280;--err:#C62828;--hover:rgba(20,23,31,.05)}
+html[data-theme=milk]{--bg:#FAF5EC;--surf:#FFFDF8;--paper:#F4EDE0;--card:#FFFDF8;--line:#E9E0D0;--grid:#E9E0D0;--ink:#2B2620;--mute:#8A7F70;--err:#C0392B;--hover:rgba(43,38,32,.05)}
+html[data-theme=milk] body.in-app .ni{color:#F28C28}
+body.in-app{background:var(--bg)!important;font-size:15px}
+html[data-theme] #app .side.card{background:var(--surf);border:0;border-right:1px solid var(--line);box-shadow:none;border-radius:0}
+html[data-theme] #app .main.card{background:transparent}
+body.in-app h1{text-shadow:none}
+body.in-app :is(input,select,textarea){border:1px solid var(--line);background:var(--paper);border-radius:10px;color:var(--ink)}
+body.in-app :is(input,select,textarea):focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+body.in-app :is(.out,.tabs button,.icon-btn){border:1px solid var(--line);background:var(--surf);color:var(--ink);border-radius:10px}
+body.in-app :is(.out,.icon-btn):hover{background:var(--hover)}
+body.in-app .go{background:var(--accent);color:#fff;border-radius:10px;font-weight:600}
+body.in-app .go:hover{filter:brightness(1.07)}
+body.in-app .tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+body.in-app :is(.game,.gradeBtn,.news,.gcard){background:var(--surf);border:1px solid var(--line);border-radius:14px;box-shadow:none;transition:transform .15s,border-color .15s,box-shadow .15s}
+body.in-app :is(.game,.gradeBtn):hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+body.in-app .game .gi{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--accent-soft);font-size:1.35rem}
+body.in-app #frame{border:1px solid var(--line);border-radius:14px}
+body.in-app :is(.role,.av){background:var(--accent-soft);color:var(--accent);border:0;font-weight:600}
+body.in-app :is(#badge,#badge2){background:var(--accent);color:#fff;margin-left:auto;font-weight:600}
+body.in-app .msg.ok,body.in-app .lk{color:var(--accent)}
+body.in-app :is(th,td,.strow,.mrow){border-color:var(--line)}
+body.in-app th{color:var(--mute);font-weight:500;font-size:.82rem}
+body.in-app .brand{font-size:1.15rem;font-weight:700;letter-spacing:-.01em}
+body.in-app .mainhead h1{font-size:1.5rem;letter-spacing:-.02em}
+body.in-app #nav{gap:2px}
+body.in-app #nav button{display:flex;align-items:center;gap:12px;width:100%;padding:9px 12px;border:0;border-radius:10px;color:var(--ink);font-weight:500}
+body.in-app #nav button .ni{flex:none;color:var(--accent)}
+body.in-app #nav button:hover{background:var(--hover)}
+body.in-app #nav button.on{background:var(--accent-soft);font-weight:600}
+body.in-app #nav .grphead{justify-content:flex-start}
+body.in-app #subjArrow{margin-left:auto;color:var(--mute);font-size:.8rem}
+body.in-app #subjItems{border-left:1px solid var(--line);margin-left:21px;padding-left:6px}
+body.in-app .me{flex-direction:row;align-items:center;border-top:1px solid var(--line);gap:6px}
+body.in-app .me #themeBtn{order:2;width:36px;height:36px;margin:0;flex:none;color:var(--accent)}
+body.in-app .mecard{flex:1;min-width:0}
+body.in-app .mecard:hover,body.in-app .mecard.on{background:var(--hover)}
+body.in-app .me{min-width:0}
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.seg button{padding:8px 16px;border:0;border-radius:9px;background:transparent;color:var(--ink);font:inherit;font-weight:500;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--surf);box-shadow:0 1px 3px rgba(0,0,0,.18);color:var(--accent);font-weight:600}
+.sw{display:flex;gap:12px}
+.sw button{width:32px;height:32px;border-radius:50%;border:0;background:var(--c);cursor:pointer;box-shadow:0 0 0 2px var(--bg),0 0 0 4px transparent}
+.sw button[aria-pressed=true]{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--c)}
+body.in-app hr{border-color:var(--line)}
+@media (max-width:760px){body.in-app #nav button{white-space:nowrap;width:auto}body.in-app #subjItems{margin:0;padding:0;border:0;flex-direction:row}}
 </style>
 </head>
 <body>
@@ -193,24 +245,24 @@ html[data-theme=light] .light-hide{display:none}
   <aside class="side card">
     <div class="brand"><span>Groowin</span><button class="icon-btn" id="sideClose" aria-label="Панельді жасыру" style="width:34px;height:34px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>
     <nav id="nav">
-      <button type="button" class="grphead" id="subjHead" aria-expanded="true"><span>Пәндер</span><span id="subjArrow">▾</span></button>
+      <button type="button" class="grphead" id="subjHead" aria-expanded="true"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2zM22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg><span class="nl">Пәндер</span><span id="subjArrow">▾</span></button>
       <div id="subjItems">
-        <button data-v="physics" class="on">Физика</button>
-        <button data-v="math">Математика</button>
+        <button data-v="physics" class="on"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1.4"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg><span class="nl">Физика</span></button>
+        <button data-v="math"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h3l3 7 5-16h7"/></svg><span class="nl">Математика</span></button>
       </div>
-      <button data-v="rank" hidden>Рейтинг</button>
-      <button data-v="news">Хабарландыру<span id="badge" hidden></span></button>
-      <button data-v="rosters" id="navRosters" hidden>Менің сыныптарым</button>
-      <button data-v="mats" id="navMats" hidden>Менің материалдарым</button>
-      <button data-v="inbox" id="navInbox" hidden>Хабарлар<span id="badge2" hidden></span></button>
-      <button data-v="games" id="navGames" hidden>Ойындар</button>
-      <button data-v="classes" id="navClasses" hidden>Сыныптар</button>
-      <button data-v="teachers" id="navTeachers" hidden>Мұғалімдер</button>
-      <button data-v="students" id="navStudents" hidden>Оқушылар</button>
+      <button data-v="rank" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20V11M12 20V4M18 20v-6"/></svg><span class="nl">Рейтинг</span></button>
+      <button data-v="news"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg><span class="nl">Хабарландыру</span><span id="badge" hidden></span></button>
+      <button data-v="rosters" id="navRosters" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span class="nl">Менің сыныптарым</span></button>
+      <button data-v="mats" id="navMats" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="nl">Менің материалдарым</span></button>
+      <button data-v="inbox" id="navInbox" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg><span class="nl">Хабарлар</span><span id="badge2" hidden></span></button>
+      <button data-v="games" id="navGames" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.4 11.5 2 15.5 2 17a3 3 0 0 0 5 2.2L9 17h6l2 2.2A3 3 0 0 0 22 17c0-1.5-.4-5.5-.7-8.4A4 4 0 0 0 17.3 5z"/></svg><span class="nl">Ойындар</span></button>
+      <button data-v="classes" id="navClasses" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nl">Сыныптар</span></button>
+      <button data-v="teachers" id="navTeachers" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg><span class="nl">Мұғалімдер</span></button>
+      <button data-v="students" id="navStudents" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg><span class="nl">Оқушылар</span></button>
     </nav>
-    <div class="me">
+    <div class="me"><button class="icon-btn" id="themeBtn" type="button" aria-label="Тема ауыстыру" title="Тема ауыстыру"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
       <button class="mecard" id="meCard" type="button" aria-label="Менің аккаунтым"><span class="av" id="meAv">?</span><span class="mt"><strong id="meNm"></strong><small id="meRl"></small></span></button>
-      <button class="out" id="themeBtn">Жарық тема</button>
+      
     </div>
   </aside>
   <main class="main card">
@@ -360,8 +412,12 @@ html[data-theme=light] .light-hide{display:none}
       <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin:8px 0 0"><input type="checkbox" id="pwShow" style="width:auto"> Жазғанда көрсету</label>
       <button class="go" id="pwSave" style="width:auto;padding:10px 22px">Өзгерту</button>
       <p class="msg" id="pwMsg" role="status" aria-live="polite"></p>
-      <hr style="border:0;border-top:1px solid var(--grid);margin:22px 0 6px;max-width:460px">
-      <button class="out" id="logout">Шығу</button>
+      <h3 style="margin:22px 0 8px;font-size:1.05rem">Көрініс</h3>
+      <div class="seg" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="dark">Қараңғы</button><button type="button" data-t="light">Жарық</button><button type="button" data-t="milk">Сүтті</button></div>
+      <p class="hint" style="margin:14px 0 8px">Акцент түсі</p>
+      <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button></div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:22px 0 6px;max-width:460px">
+      <button class="out" id="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:8px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Шығу</button>
     </div>
 
     <div id="v-students" hidden>
@@ -497,7 +553,7 @@ async function showApp(session) {
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
-  $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navStudents').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
+  $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
@@ -701,7 +757,7 @@ function renderGames() {
   cr.append(mini(SUBJ_NAME[subj] || subj, () => { gradeSel = null; renderGames(); }));
   if (gradeSel === null) {
     const by = {}; list.forEach(g => { const k = gKey(g); by[k] = (by[k] || 0) + 1; });
-    const keys = ['5', '6', '7', '8', '9', '10', '11']; Object.keys(by).forEach(k => { if (!keys.includes(k) && k !== 'other') keys.push(k); });
+    const keys = subj === 'physics' ? ['7', '8', '9', '10', '11'] : ['5', '6', '7', '8', '9', '10', '11']; Object.keys(by).forEach(k => { if (!keys.includes(k) && k !== 'other') keys.push(k); });
     keys.sort((a, b) => a - b); if (by.other) keys.push('other');
     box.append(el('p', 'sub', 'Сыныпты таңда'));
     const gr = el('div', 'gradegrid');
@@ -745,12 +801,19 @@ renderGames();
 
 // ===== Тема =====
 const ls = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
-let pref = ls.get('theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+const THEMES = ['dark', 'light', 'milk'], ACCENTS = ['blue', 'green', 'violet', 'orange'];
+let pref = ls.get('theme'); if (!THEMES.includes(pref)) pref = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+let acc = ls.get('accent'); if (!ACCENTS.includes(acc)) acc = pref === 'milk' ? 'orange' : 'blue';
 function applyTheme(inApp) {
   document.documentElement.dataset.theme = inApp ? pref : 'dark';
-  $('themeBtn').textContent = pref === 'light' ? 'Қараңғы тема' : 'Жарық тема';
+  document.documentElement.dataset.accent = acc;
+  document.querySelectorAll('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === pref)));
+  document.querySelectorAll('#accSw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.a === acc)));
 }
-$('themeBtn').onclick = () => { pref = pref === 'light' ? 'dark' : 'light'; ls.set('theme', pref); applyTheme(true); };
+function setTheme(t) { pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'orange'; applyTheme(true); }
+$('themeBtn').onclick = () => setTheme(THEMES[(THEMES.indexOf(pref) + 1) % THEMES.length]);
+document.querySelectorAll('#themeSeg button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
+document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc = b.dataset.a; ls.set('accent', acc); applyTheme(true); });
 
 // ===== Хабарландырулар =====
 let meRole = '', isAdmin = false, isStaff = false, meName = '', newsTimer = null, newsCache = [], nKindTab = 'all', stuCache = [];
