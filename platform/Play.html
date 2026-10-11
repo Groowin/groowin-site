@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1117">
+<title>Groowin · Викторина</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<style>
+:root{--bg:#0E1117;--surf:#151A23;--line:rgba(255,255,255,.1);--ink:#E6E9EF;--mute:#8B93A3;--accent:#3B6BFF;--ok:#1FA971;--bad:#E5484D}
+@media (prefers-color-scheme:light){:root{--bg:#F6F7F9;--surf:#fff;--line:#E5E7EB;--ink:#14171F;--mute:#6B7280}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+body{min-height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-weight:700;letter-spacing:-.01em}
+header span{color:var(--mute);font-weight:500;font-size:.9rem}
+main{flex:1;display:flex;flex-direction:column;padding:8px 18px 24px;max-width:560px;width:100%;margin:0 auto}
+h1{font-size:1.6rem;margin:12px 0 6px;letter-spacing:-.02em}
+p{margin:0 0 12px}.mute{color:var(--mute)}
+label{display:block;font-weight:600;margin:16px 0 6px}
+input{width:100%;padding:14px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surf);color:var(--ink);font:inherit;font-size:1.1rem}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.go{width:100%;margin-top:18px;padding:15px;border:0;border-radius:12px;background:var(--accent);color:#fff;font:inherit;font-size:1.1rem;font-weight:700;cursor:pointer}
+.go:disabled{opacity:.5}
+.err{color:var(--bad);min-height:1.4em;margin-top:10px}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--accent);animation:pulse 1.2s ease-in-out infinite;margin-bottom:10px}
+@keyframes pulse{50%{transform:scale(1.6);opacity:.4}}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.tm{min-width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:800;font-size:1.3rem}
+.bar{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:var(--accent);transform-origin:left;transition:transform .15s linear}
+.q{font-size:1.3rem;font-weight:700;margin:6px 0 12px}
+.img{display:block;max-width:100%;max-height:30vh;margin:0 auto 12px;border-radius:12px;object-fit:contain}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:14px 16px;border:0;border-radius:14px;background:var(--c);color:#fff;font:inherit;font-size:1.1rem;font-weight:600;text-align:left;cursor:pointer}
+.opt:active{transform:scale(.98)}
+.opt:disabled{cursor:default}.opt.dim{opacity:.35}.opt.pick{box-shadow:0 0 0 4px var(--ink)}
+.res{font-size:2.4rem;font-weight:800;margin:0}.res.ok{color:var(--ok)}.res.bad{color:var(--bad)}
+.pts{font-size:1.4rem;font-weight:700}
+.big{font-size:3rem;font-weight:800;color:var(--accent);margin:0;line-height:1.1}
+</style>
+</head>
+<body>
+<header><div>Groowin</div><span id="who"></span></header>
+<main id="m"></main>
+<script>
+const $ = id => document.getElementById(id);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
+const COL = ['#E21B3C', '#1368CE', '#D89E00', '#26890C'];
+const SHAPE = ['<path d="M12 3 22 20H2z"/>', '<path d="M12 2 22 12 12 22 2 12z"/>', '<circle cx="12" cy="12" r="9"/>', '<rect x="4" y="4" width="16" height="16" rx="1"/>'];
+const shape = i => '<svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" aria-hidden="true">' + SHAPE[i] + '</svg>';
+const store = { get: k => { try { return sessionStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch {} } };
+const m = $('m');
+const draw = (...n) => { m.replaceChildren(...n); };
+
+let myId = store.get('qid'); if (!myId) { myId = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()); store.set('qid', myId); }
+let sb = null, ch = null, code = '', name = '', gotState = false, curQ = -1, picked = -1, endAt = 0, tmr = null, helloTimer = null, lastPh = '', done = false;
+
+function joinScreen(msg) {
+  clearInterval(tmr); clearInterval(helloTimer);
+  const qs = new URLSearchParams(location.search), pre = (qs.get('c') || '').replace(/\D/g, '').slice(0, 6);
+  const h = el('h1', '', 'Квизге қосыл'), sub = el('p', 'mute', 'Кодты және атыңды жаз.');
+  const lc = el('label', '', 'Код'), ic = document.createElement('input'); ic.id = 'code'; ic.inputMode = 'numeric'; ic.maxLength = 6; ic.placeholder = '123456'; ic.autocomplete = 'off'; ic.value = pre || code;
+  const ln = el('label', '', 'Атың'), inn = document.createElement('input'); inn.id = 'nm'; inn.maxLength = 20; inn.placeholder = 'Мысалы: Айдос'; inn.autocomplete = 'nickname'; inn.value = name || store.get('qname') || '';
+  const go = el('button', 'go', 'Кіру'), er = el('div', 'err'); er.setAttribute('role', 'alert'); er.textContent = msg || '';
+  lc.htmlFor = 'code'; ln.htmlFor = 'nm';
+  go.onclick = () => {
+    const c = ic.value.replace(/\D/g, ''), n = inn.value.trim();
+    if (c.length !== 6) { er.textContent = 'Код 6 саннан тұрады.'; return; }
+    if (!n) { er.textContent = 'Атыңды жаз.'; inn.focus(); return; }
+    code = c; name = n.slice(0, 20); store.set('qname', name); connect();
+  };
+  inn.onkeydown = ic.onkeydown = e => { if (e.key === 'Enter') go.click(); };
+  draw(h, sub, lc, ic, ln, inn, go, er); (pre ? inn : ic).focus();
+}
+
+function waitScreen(title, text) { draw(Object.assign(el('div', 'center'), {})); const c = m.firstChild; c.append(el('div', 'dot'), el('h1', '', title), el('p', 'mute', text || '')); }
+
+function connect() {
+  waitScreen('Қосылуда…', 'Бөлме іздеп жатырмыз');
+  $('who').textContent = name;
+  gotState = false; done = false; curQ = -1; picked = -1; lastPh = '';
+  try { if (ch) sb.removeChannel(ch); } catch {}
+  if (!sb) sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+  ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: myId } } });
+  ch.on('broadcast', { event: 'st' }, ({ payload }) => onState(payload));
+  ch.on('broadcast', { event: 'kick' }, ({ payload }) => { if (payload && payload.id === myId) end('Бөлмеден шығарылдың', 'Қайта кіргің келсе, мұғалімнен сұра.', true); });
+  ch.subscribe(async s => {
+    if (s === 'SUBSCRIBED') {
+      await ch.track({ name });
+      const ask = () => ch.send({ type: 'broadcast', event: 'hello', payload: { id: myId } });
+      ask(); let tries = 0; clearInterval(helloTimer);
+      helloTimer = setInterval(() => {
+        if (gotState || done) { clearInterval(helloTimer); return; }
+        if (++tries > 7) { clearInterval(helloTimer); try { sb.removeChannel(ch); } catch {} joinScreen('Бөлме табылмады. Кодты тексер немесе мұғалім квизді әлі ашпаған болуы мүмкін.'); return; }
+        ask();
+      }, 2500);
+    } else if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') {
+      if (!done) joinScreen('Байланыс орнамады. Интернетті тексеріп, қайта көр.');
+    }
+  });
+}
+
+function end(title, text, kicked) {
+  done = true; clearInterval(tmr); clearInterval(helloTimer);
+  try { ch && ch.untrack(); sb.removeChannel(ch); } catch {}
+  waitScreen(title, text); m.querySelector('.dot').remove();
+  const b = el('button', 'go', 'Басқа квизге кіру'); b.onclick = () => joinScreen(''); m.firstChild.appendChild(b);
+}
+
+function onState(s) {
+  if (!s || done) return; gotState = true;
+  if (s.ph === 'closed') return end('Квиз аяқталды', 'Мұғалім бөлмені жапты.');
+  if (s.ph === 'lobby') { if (lastPh !== 'lobby') { lastPh = 'lobby'; curQ = -1; waitScreen('Сен кірдің!', 'Мұғалім квизді бастағанша күт. Атың экранда көрінеді.'); } return; }
+  if (s.ph === 'q') {
+    endAt = Date.now() + (typeof s.left === 'number' ? s.left : s.dur * 1000);
+    if (curQ !== s.qi || lastPh !== 'q') { curQ = s.qi; picked = -1; lastPh = 'q'; question(s); }
+    return;
+  }
+  if (s.ph === 'rev') {
+    if (lastPh === 'rev' && curQ === s.qi) return;
+    lastPh = 'rev'; curQ = s.qi; clearInterval(tmr); result(s); return;
+  }
+  if (s.ph === 'end') { lastPh = 'end'; clearInterval(tmr); final(s); }
+}
+
+function question(s) {
+  const top = el('div', 'top'), tm = el('div', 'tm', String(s.dur)), bar = el('div', 'bar'), fill = el('i'); bar.appendChild(fill);
+  top.append(tm, bar, el('span', 'mute', (s.qi + 1) + '/' + s.n));
+  const q = el('div', 'q', s.t), opts = el('div', 'opts');
+  const nodes = [top, q];
+  if (s.img) { const im = document.createElement('img'); im.className = 'img'; im.src = s.img; im.alt = ''; nodes.push(im); }
+  const status = el('p', 'mute', ''); status.style.textAlign = 'center'; status.style.marginTop = '12px';
+  s.o.forEach((v, k) => {
+    if (!v) return;
+    const b = el('button', 'opt'); b.type = 'button'; b.style.setProperty('--c', COL[k]);
+    const sh = el('span'); sh.innerHTML = shape(k); b.append(sh, el('span', '', v));
+    b.onclick = () => {
+      if (picked >= 0 || Date.now() > endAt + 500) return;
+      picked = k; opts.querySelectorAll('.opt').forEach((x, i) => { x.disabled = true; if (x !== b) x.classList.add('dim'); else x.classList.add('pick'); });
+      ch.send({ type: 'broadcast', event: 'ans', payload: { id: myId, qi: s.qi, c: k } });
+      status.textContent = 'Жауап қабылданды. Басқалар жауап бергенше күт.'; if (navigator.vibrate) navigator.vibrate(30);
+    };
+    opts.appendChild(b);
+  });
+  nodes.push(opts, status); draw(...nodes);
+  clearInterval(tmr);
+  tmr = setInterval(() => {
+    const left = endAt - Date.now(), sec = Math.max(0, Math.ceil(left / 1000));
+    tm.textContent = sec; fill.style.transform = 'scaleX(' + Math.max(0, Math.min(1, left / (s.dur * 1000))) + ')';
+    if (left <= 0) { clearInterval(tmr); opts.querySelectorAll('.opt').forEach(x => x.disabled = true); if (picked < 0) status.textContent = 'Уақыт бітті.'; }
+  }, 150);
+}
+
+function result(s) {
+  const r = (s.r || {})[myId], c = el('div', 'center');
+  if (!r) { c.append(el('div', 'dot'), el('h1', '', 'Келесі сұрақты күт'), el('p', 'mute', 'Сен осы сұраққа қатыспадың.')); draw(c); return; }
+  if (r.na) c.append(el('p', 'res bad', 'Жауап жоқ'));
+  else c.append(el('p', 'res ' + (r.ok ? 'ok' : 'bad'), r.ok ? 'Дұрыс!' : 'Қате'));
+  if (r.ok) c.append(el('p', 'pts', '+' + r.pts + ' ұпай'));
+  if (!r.ok && s.o) { }
+  c.append(el('p', 'mute', 'Барлығы: ' + r.score + ' ұпай'), el('p', '', r.rank + '-орын'), el('p', 'mute', 'Келесі сұрақты күт…'));
+  draw(c);
+  if (navigator.vibrate) navigator.vibrate(r.ok ? 40 : [60, 40, 60]);
+}
+
+function final(s) {
+  const r = (s.r || {})[myId], c = el('div', 'center');
+  c.append(el('h1', '', 'Квиз аяқталды'));
+  if (r) { c.append(el('p', 'big', r.rank + '-орын'), el('p', 'pts', r.score + ' ұпай'), el('p', 'mute', r.ok + ' / ' + s.n + ' дұрыс жауап')); }
+  const top = (s.top || []).slice(0, 3);
+  if (top.length) { const d = el('div'); d.style.cssText = 'margin-top:18px;text-align:left;min-width:220px'; top.forEach((p, i) => { const row = el('div'); row.style.cssText = 'display:flex;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)'; row.append(el('b', '', String(i + 1)), Object.assign(el('span', '', p.n), { style: 'flex:1' }), el('b', '', String(p.s))); d.appendChild(row); }); c.appendChild(d); }
+  draw(c);
+}
+
+joinScreen('');
+</script>
+</body>
+</html>
