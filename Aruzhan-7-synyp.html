@@ -54,7 +54,7 @@ h2 { font-family: var(--f-display); font-size: 22px; margin: 0 0 12px; line-heig
 .controls > * { min-width: 0; }
 fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 legend, .lbl { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 8px; display: block; }
-.seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
 .seg label { display: block; text-align: center; padding: 8px 4px; border: 1px solid var(--line); border-radius: 6px; background: var(--chip); cursor: pointer; font-size: 14px; line-height: 1.2; }
 .seg input:checked + label { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 700; }
@@ -109,7 +109,9 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
           <input type="radio" name="shape" id="s-wall" value="wall" checked><label for="s-wall">Тік қабырға</label>
           <input type="radio" name="shape" id="s-slope" value="slope"><label for="s-slope">Көлбеу</label>
           <input type="radio" name="shape" id="s-steps" value="steps"><label for="s-steps">Баспалдақты</label>
-          <input type="radio" name="shape" id="s-slots" value="slots"><label for="s-slots">Саңылаулы</label>
+          <input type="radio" name="shape" id="s-rocks" value="rocks"><label for="s-rocks">Кедір-бұдыр</label>
+          <input type="radio" name="shape" id="s-concave" value="concave"><label for="s-concave">Ойық</label>
+          <input type="radio" name="shape" id="s-float" value="float"><label for="s-float">Қалқымалы</label>
         </div>
         <p class="shape-note" id="shapeNote"></p>
       </fieldset>
@@ -128,7 +130,7 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
           <span class="status" id="status" role="status"></span>
         </div>
       </div>
-      <p class="disclaimer">Анимация көрнекілік үшін жасалған, нақты физикалық есеп емес. Мұнда су асып кетуі тек бөгет биіктігіне байланысты (саңылаулы бөгетте су ішінара өтеді), ал пішіндердің нақты айырмасын тек тәжірибе көрсетеді. Су соққысының күшін, асып өткен су көлемін және ағын жылдамдығын нақты тәжірибеде өзің өлшейсің. Зерттеу сұрағын, болжамды және қорытындыны да өзің жазасың.</p>
+      <p class="disclaimer">Анимация көрнекілік үшін жасалған, нақты физикалық есеп емес. Мұнда су асып кетуі тек бөгет биіктігіне байланысты, ал пішіндердің нақты айырмасын тек тәжірибе көрсетеді. Су соққысының күшін, асып өткен су көлемін және ағын жылдамдығын нақты тәжірибеде өзің өлшейсің. Зерттеу сұрағын, болжамды және қорытындыны да өзің жазасың.</p>
     </div>
   </div>
 
@@ -156,7 +158,7 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
       <ul class="mat">
         <li>Ұзын мөлдір контейнер немесе аквариум, 80 × 12 × 15 см (тақтайдан жасалған науаның ішіне үлдір төсеуге болады)</li>
         <li>Қақпақ: пластик не акрил тақташа 12 × 15 см, екі жағында бағыттауыш ойық</li>
-        <li>Бөгеттер: 4 пішін, фанерден немесе қалың картоннан, әрқайсысы 6, 9 және 12 см биіктікте</li>
+        <li>Бөгеттер: 6 пішін, фанерден немесе қалың картоннан, әрқайсысы 6, 9 және 12 см биіктікте. Кедір-бұдырға ұсақ тастар мен желім, ойыққа иілген қатырма не пластик, қалқымалыға пенопласт трапеция, шынжыр (не жіп) және 2 бекіткіш керек</li>
         <li>Науа астына үлкен табақ немесе ванна</li>
         <li>Мензурка не градуирленген ыдыс, асып өткен су үшін</li>
         <li>Динамометр (0–1 Н, сезімтал), жіп, шағын блок: су соққысының күшін өлшеу үшін</li>
@@ -172,7 +174,7 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
         <table>
           <thead><tr><th>Топ</th><th>Шама</th><th>Қалай өлшенеді</th></tr></thead>
           <tbody>
-            <tr><td>Өзгертеміз</td><td>Бөгет пішіні (4 түрлі), бөгет биіктігі (6, 9, 12 см)</td><td>Алдын ала дайындалған бөгеттерді ауыстырамыз</td></tr>
+            <tr><td>Өзгертеміз</td><td>Бөгет пішіні (6 түрлі), бөгет биіктігі (6, 9, 12 см)</td><td>Алдын ала дайындалған бөгеттерді ауыстырамыз</td></tr>
             <tr><td>Өлшейміз</td><td>Асып өткен су көлемі, мл</td><td>Қабылдағыштағы суды мензуркаға құямыз</td></tr>
             <tr><td>Өлшейміз</td><td>Су соққысының күші, Н</td><td>Бөгет тақташасы сырғанап, жіп пен блок арқылы динамометрге жалғанады. Динамометрдің ең үлкен көрсеткішін бейнеден оқимыз</td></tr>
             <tr><td>Өлшейміз</td><td>Су ағынының орташа жылдамдығы, см/с (v = s/t)</td><td>Бейнеге түсіріп, 10 см белгісінен өту уақытын кадрмен санаймыз</td></tr>
@@ -182,6 +184,7 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
           </tbody>
         </table>
       </div>
+      <p class="safe">Сынақ саны: 6 пішін × 3 биіктік × 3 қайталау = 54 сынақ. Алдымен бір биіктікпен баста, уақыт болса қалғандарын қос.</p>
       <p class="safe">Соққыны өлшеу: динамометр жеткілікті сезімтал болмаса, резеңке не серіппе қолданып, бөгеттің жылжу қашықтығын (см) өлшеуге болады. Қай әдіс жұмыс істейтінін алдын ала сынап көр.</p>
       <p class="safe">Қауіпсіздік: су тек науада тұрады, науа табақтың үстінде орналасады. Электр құрылғы керек емес. Науаны стендке іліп қоймай, үстелге қою керек.</p>
     </section>
@@ -196,7 +199,9 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
     wall: 'Тік қабырға: ең қарапайым нұсқа, басқаларымен салыстыруға негіз болады.',
     slope: 'Көлбеу бөгет: беті ағыс жағына қарай көлбеген.',
     steps: 'Баспалдақты бөгет: беті үш сатыдан тұрады.',
-    slots: 'Саңылаулы бөгет: тік жолақтар арасынан су ішінара өтеді.'
+    rocks: 'Кедір-бұдыр бөгет: ағыс жағындағы беті тастармен қапталған.',
+    concave: 'Ойық бөгет: ағыс жағындағы беті ойыс доға тәрізді.',
+    float: 'Қалқымалы бөгет: трапеция су бетінде жүзеді, екі жағынан шынжырмен түбіне бекітілген.'
   };
   var $ = function (id) { return document.getElementById(id); };
   var levelEl = $('level'), damEl = $('dam'), levelOut = $('levelOut'), damOut = $('damOut');
@@ -242,8 +247,8 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
   scene.add(sun);
 
   var PAL = {
-    light: { bg: 0xe8edf1, floor: 0xc3ccd3, edge: 0x4a5a68, dam: 0xb9824f, water: 0x2f8fd1, gate: 0xd9581a, tick: 0x4a5a68 },
-    dark: { bg: 0x0f1a22, floor: 0x2a3641, edge: 0x8aa0b3, dam: 0xc99663, water: 0x3aa0e6, gate: 0xf0803a, tick: 0x8aa0b3 }
+    light: { bg: 0xe8edf1, floor: 0xc3ccd3, edge: 0x4a5a68, dam: 0xb9824f, water: 0x2f8fd1, gate: 0xd9581a, tick: 0x4a5a68, rock: 0x8a8f94 },
+    dark: { bg: 0x0f1a22, floor: 0x2a3641, edge: 0x8aa0b3, dam: 0xc99663, water: 0x3aa0e6, gate: 0xf0803a, tick: 0x8aa0b3, rock: 0xa4abb2 }
   };
   function isDark() {
     var t = document.documentElement.getAttribute('data-theme');
@@ -257,6 +262,8 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
   var edgeMat = new THREE.LineBasicMaterial({ color: 0x4a5a68 });
   var tickMat = new THREE.LineBasicMaterial({ color: 0x4a5a68 });
   var damMat = new THREE.MeshStandardMaterial({ color: 0xb9824f, roughness: 0.8 });
+  var rockMat = new THREE.MeshStandardMaterial({ color: 0x8a8f94, roughness: 1, flatShading: true });
+  var chainMat = new THREE.LineBasicMaterial({ color: 0x4a5a68 });
   var waterMat = new THREE.MeshStandardMaterial({ color: 0x2f8fd1, transparent: true, opacity: 0.62, roughness: 0.25, side: THREE.DoubleSide });
   var gateMat = new THREE.MeshStandardMaterial({ color: 0xd9581a, transparent: true, opacity: 0.9, roughness: 0.5 });
 
@@ -267,6 +274,8 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
     edgeMat.color.setHex(p.edge);
     tickMat.color.setHex(p.tick);
     damMat.color.setHex(p.dam);
+    rockMat.color.setHex(p.rock);
+    chainMat.color.setHex(p.tick);
     waterMat.color.setHex(p.water);
     gateMat.color.setHex(p.gate);
   }
@@ -371,11 +380,13 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
   /* dam */
   var damGroup = new THREE.Group();
   scene.add(damGroup);
+  var floatMesh = null, chainLines = null, chainPos = null, floatH = 0;
   function clearDam() {
     while (damGroup.children.length) {
       var c = damGroup.children.pop();
       c.geometry.dispose();
     }
+    floatMesh = null; chainLines = null; chainPos = null;
   }
   function addBox(w, h, d, x, z) {
     var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), damMat);
@@ -400,10 +411,59 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
       damGroup.add(new THREE.Mesh(g, damMat));
     } else if (s === 'steps') {
       for (var i = 0; i < 3; i++) addBox(2, hd * (i + 1) / 3, fw, DAMX - 4 + i * 2, 0);
+    } else if (s === 'rocks') {
+      addBox(2, hd, fw, DAMX, 0);
+      var seed = 7;
+      var rnd = function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+      for (var r = 0; r < 24; r++) {
+        var rr = 0.7 + rnd() * 0.7;
+        var rock = new THREE.Mesh(new THREE.IcosahedronGeometry(rr, 0), rockMat);
+        rock.position.set(DAMX - 1 - rr * 0.3, 0.5 + rnd() * Math.max(hd - 1, 0.5), (rnd() - 0.5) * (fw - 1.6));
+        rock.rotation.set(rnd() * 3, rnd() * 3, rnd() * 3);
+        damGroup.add(rock);
+      }
+    } else if (s === 'concave') {
+      var cs = new THREE.Shape();
+      cs.moveTo(DAMX + 1, 0);
+      cs.lineTo(DAMX - 5, 0);
+      cs.quadraticCurveTo(DAMX - 0.2, hd * 0.2, DAMX - 2.5, hd);
+      cs.lineTo(DAMX + 1, hd);
+      cs.closePath();
+      var cg = new THREE.ExtrudeGeometry(cs, { depth: fw, bevelEnabled: false, curveSegments: 18 });
+      cg.translate(0, 0, -fw / 2);
+      damGroup.add(new THREE.Mesh(cg, damMat));
     } else {
-      var n = 6, bw = 1.2, gap = (fw - n * bw) / (n - 1);
-      for (var b = 0; b < n; b++) addBox(2, hd, bw, DAMX, -fw / 2 + bw / 2 + b * (bw + gap));
+      var ts = new THREE.Shape();
+      ts.moveTo(DAMX - 2, 0);
+      ts.lineTo(DAMX + 2, 0);
+      ts.lineTo(DAMX + 1, hd);
+      ts.lineTo(DAMX - 1, hd);
+      ts.closePath();
+      var tg2 = new THREE.ExtrudeGeometry(ts, { depth: fw, bevelEnabled: false });
+      tg2.translate(0, 0, -fw / 2);
+      floatMesh = new THREE.Mesh(tg2, damMat);
+      damGroup.add(floatMesh);
+      chainPos = new Float32Array(24);
+      var cgm = new THREE.BufferGeometry();
+      cgm.setAttribute('position', new THREE.BufferAttribute(chainPos, 3));
+      chainLines = new THREE.LineSegments(cgm, chainMat);
+      chainLines.frustumCulled = false;
+      damGroup.add(chainLines);
+      floatH = hd;
+      updateFloat(0);
     }
+  }
+  function updateFloat(t) {
+    if (!floatMesh) return;
+    var by = t > 0 ? Math.min(0.5 * hRaw(RUN1, t), 3) : 0;
+    floatMesh.position.y = by;
+    var zz = [-(W / 2 - 2), W / 2 - 2], k = 0;
+    for (var zi = 0; zi < 2; zi++) {
+      var z = zz[zi];
+      var pts = [DAMX - 6, 0.1, z, DAMX - 2, by + 0.2, z, DAMX + 6, 0.1, z, DAMX + 2, by + 0.2, z];
+      for (var q = 0; q < 12; q++) chainPos[k++] = pts[q];
+    }
+    chainLines.geometry.attributes.position.needsUpdate = true;
   }
 
   /* simulation (illustrative) */
@@ -432,6 +492,7 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
     runMesh.visible = t > 0;
     if (t > 0) setRun(function (x) { return hAt(x, t); });
     setCatch(Math.min(sim.catchV, 11));
+    updateFloat(t);
   }
   function step(dt) {
     if (!sim.playing) return;
@@ -439,8 +500,7 @@ ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
     var hd = hRaw(RUN1, sim.t);
     var hDam = +damEl.value;
     var over = Math.max(0, hd - hDam);
-    var leak = shapeVal() === 'slots' ? Math.min(hd, hDam) * 0.35 : 0;
-    sim.catchV += (over * 1.6 + leak * 0.8) * dt;
+    sim.catchV += over * 1.6 * dt;
     if (sim.t < arrive()) statusEl.textContent = 'Су бөгетке ағып келеді';
     else statusEl.textContent = 'Су бөгетке соғылды';
     if (sim.t > 11) {
