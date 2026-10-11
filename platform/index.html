@@ -254,6 +254,15 @@ body:not(.in-app) #sndBtn{display:none}
 @media (max-width:760px){.qh-lobby,.qh-revcols{grid-template-columns:1fr}.qh-opts,.qopts{grid-template-columns:1fr}.qh-qhead{grid-template-columns:auto 1fr}.qh-ans{display:none}}
 html[data-theme] body.in-app :is(.game,.plc,.gradeBtn,select,input,textarea,.out,.news){border-color:var(--line)}
 html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--accent)}
+
+.qdot{display:grid;place-items:center;flex:none;width:34px;height:34px;padding:0;border-radius:50%;border:3px solid #fff;background:transparent;color:transparent;cursor:pointer;transition:background .12s,color .12s,transform .12s}
+.qdot:hover{background:rgba(255,255,255,.28)}.qdot.on{background:#fff;color:#1c8a3f;transform:scale(1.08)}
+.qo.on{box-shadow:0 0 0 3px var(--ink)}.qo:not(.on){opacity:.88}
+.qhint{margin:8px 0 0}
+.qh-qr{display:block;border:0;cursor:zoom-in}
+.qh-zoom{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#fff;cursor:zoom-out;padding:20px}
+.qh-zq{width:min(78vmin,860px)}.qh-zq svg{display:block;width:100%;height:auto}
+.qh-zc{font-size:clamp(2rem,8vmin,5rem);font-weight:800;letter-spacing:.12em;color:#14171F}.qh-zh{color:#6B7280}
 </style>
 </head>
 <body>
@@ -1289,11 +1298,14 @@ async function loadQuizzes() {
     const d = document.createElement('details'), s = document.createElement('summary'), res = x.results || [];
     s.textContent = new Date(x.created_at).toLocaleString('kk-KZ', { dateStyle: 'short', timeStyle: 'short' }) + ' · ' + (x.title || 'Викторина') + ' · ' + x.players + ' оқушы' + (res[0] ? ' · 1-орын: ' + res[0].n : '');
     const ol = document.createElement('ol'); res.forEach(p => ol.appendChild(el('li', '', p.n + ' — ' + p.s + ' ұпай, ' + p.ok + ' дұрыс жауап')));
-    d.append(s, ol); rb.appendChild(d);
+    const del = mini('Жою', async () => { if (!confirm('Бұл ойынның нәтижесі жойылсын ба?')) return; await sb.from('quiz_runs').delete().eq('id', x.id); loadQuizzes(); });
+    del.style.marginTop = '8px'; d.append(s, ol, del); rb.appendChild(d);
   });
+  if ((r.data || []).length > 1) { const all = mini('Барлығын тазалау', async () => { if (!confirm('Барлық соңғы ойындар жойылсын ба?')) return; await sb.from('quiz_runs').delete().in('id', r.data.map(z => z.id)); loadQuizzes(); }); all.style.margin = '0 0 10px'; rb.prepend(all); }
   $('qzRunsHead').hidden = !(r.data || []).length;
 }
 $('qzNew').onclick = () => openEditor(null);
+$('qzToPlay').onclick = () => go('play');
 
 function openEditor(z) {
   qz = z ? { id: z.id, title: z.title, questions: structuredClone(z.questions || []) } : { id: null, title: '', questions: [newQ()] };
@@ -1343,9 +1355,13 @@ function qCard(q, i) {
     const sh = el('span', 'qs'); sh.innerHTML = shapeSvg(k, 20);
     const inp = document.createElement('input'); inp.value = v; inp.maxLength = 100; inp.placeholder = 'Жауап ' + (k + 1) + (k > 1 ? ' (міндетті емес)' : '');
     inp.oninput = () => { q.o[k] = inp.value; };
-    const lab = el('label', 'qr'); const rd = document.createElement('input'); rd.type = 'radio'; rd.name = 'qc' + i; rd.checked = q.c === k; rd.onchange = () => { q.c = k; };
-    lab.append(rd, el('span', '', 'Дұрыс')); r.append(sh, inp, lab); og.appendChild(r);
+    const lab = el('button', 'qdot' + (q.c === k ? ' on' : '')); lab.type = 'button'; lab.title = 'Дұрыс жауап осы'; lab.setAttribute('aria-label', 'Жауап ' + (k + 1) + ' дұрыс деп белгілеу'); lab.setAttribute('role', 'radio'); lab.setAttribute('aria-checked', String(q.c === k));
+    lab.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+    r.classList.toggle('on', q.c === k);
+    lab.onclick = () => { q.c = k; og.querySelectorAll('.qo').forEach((x, j) => { x.classList.toggle('on', j === k); const d = x.querySelector('.qdot'); d.classList.toggle('on', j === k); d.setAttribute('aria-checked', String(j === k)); }); };
+    r.append(sh, inp, lab); og.appendChild(r);
   });
+  og.appendChild(el('p', 'gm qhint', 'Дұрыс жауаптың дөңгелегін бас: ✓ белгісі тұрған жауап — дұрыс.'));
   const tr = el('div', 'qtime'), tl = el('label', '', 'Уақыт, секунд'), ti = document.createElement('input');
   ti.type = 'number'; ti.min = 5; ti.max = 300; ti.step = 5; ti.value = q.s; ti.onchange = () => { q.s = Math.max(5, Math.min(300, Math.round(+ti.value || 20))); ti.value = q.s; };
   tr.append(tl, ti, mini('Барлығына қолдану', () => { qz.questions.forEach(x => x.s = q.s); renderEditor(); }));
@@ -1386,7 +1402,7 @@ function hostQuiz(quiz) {
   const ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: 'host' } } });
   const send = (event, payload) => ch.send({ type: 'broadcast', event, payload });
   const push = () => send('st', ph === 'q' ? { ...lastMsg, left: Math.max(0, qEnd - Date.now()) } : lastMsg);
-  const active = () => [...players.values()].filter(p => p.here);
+  const active = () => [...players.values()].filter(p => p.here && !p.dq);
 
   // каркас
   const top = el('div', 'qh-top'), codeChip = el('span', 'qh-code', 'Код: ' + code), cnt = el('span', 'qh-cnt', '');
@@ -1405,7 +1421,7 @@ function hostQuiz(quiz) {
   close.onclick = () => { if (ph === 'lobby' || ph === 'end' || confirm('Ойынды тоқтатасың ба?')) shutdown(); };
   async function saveRun() {
     saved = true; const list = [...players.values()]; if (!list.length || qi < 0) return;
-    const res = list.sort((a, b) => b.score - a.score).map(p => ({ n: p.name, s: p.score, ok: p.ok }));
+    const res = list.sort((a, b) => (a.dq - b.dq) || b.score - a.score).map(p => ({ n: p.name + (p.dq ? ' (нәтижесі өшірілді)' : p.st ? ' (ескерту)' : ''), s: p.score, ok: p.ok }));
     await sb.from('quiz_runs').insert({ quiz_id: quiz.id || null, title: quiz.title, players: res.length, results: res });
   }
 
@@ -1413,12 +1429,18 @@ function hostQuiz(quiz) {
   let chips, startBtn;
   function lobby() {
     ph = 'lobby'; lastMsg = { ph: 'lobby' };
-    const qrBox = el('div', 'qh-qr'); qrBox.innerHTML = makeQR(joinUrl);
+    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl);
+    qrBox.onclick = () => {
+      const z = el('div', 'qh-zoom'); z.innerHTML = '<div class="qh-zq">' + makeQR(joinUrl) + '</div>'; z.appendChild(el('div', 'qh-zc', code)); z.appendChild(el('div', 'qh-zh', 'Жабу үшін кез келген жерді бас'));
+      const closeZ = () => { z.remove(); document.removeEventListener('keydown', zk, true); };
+      const zk = e => { if (e.key === 'Escape') { e.stopPropagation(); closeZ(); } };
+      z.onclick = closeZ; document.addEventListener('keydown', zk, true); root.appendChild(z);
+    };
     const right = el('div', 'qh-lr');
-    const t = el('h2', 'qh-h', quiz.title), s = el('p', 'qh-s', 'Телефонмен QR-ды сканерле немесе мына мекенжайға кір:');
-    const u = el('div', 'qh-url', joinUrl.replace(/^https?:\/\//, '')), c2 = el('div', 'qh-bigcode', code);
+    const t = el('h2', 'qh-h', quiz.title), s = el('p', 'qh-s', 'Телефонмен QR-ды сканерле. QR-ды басып үлкейтуге болады.');
+    const c2 = el('div', 'qh-bigcode', code);
     chips = el('div', 'qh-chips'); startBtn = el('button', 'qh-go', 'Бастау'); startBtn.type = 'button'; startBtn.disabled = true; startBtn.onclick = () => primary();
-    right.append(t, s, u, c2, chips, startBtn);
+    right.append(t, s, c2, chips, startBtn);
     const wrap = el('div', 'qh-lobby'); wrap.append(qrBox, right); setBody(wrap); drawLobby();
   }
   function drawLobby() {
@@ -1450,7 +1472,10 @@ function hostQuiz(quiz) {
       if (left <= 0) reveal();
     }, 120);
   }
-  function drawAns() { if (ansCnt) ansCnt.textContent = 'Жауап берді: ' + answers.size + ' / ' + active().length; }
+  function drawAns() {
+    if (!ansCnt) return; const w = [...players.values()].filter(p => p.st);
+    ansCnt.textContent = 'Жауап берді: ' + answers.size + ' / ' + active().length + (w.length ? ' · ⚠ ' + w.map(p => p.name + (p.dq ? ' (нәтижесі өшірілді)' : ' (ескерту)')).join(', ') : '');
+  }
   function optGrid(q, rev) {
     const g = el('div', 'qh-opts');
     q.o.forEach((v, k) => {
@@ -1467,29 +1492,31 @@ function hostQuiz(quiz) {
     const q = Q[qi], counts = [0, 0, 0, 0], r = {}, dur = q.s * 1000;
     players.forEach(p => {
       const a = answers.get(p.id); let pts = 0, ok = false;
+      if (p.dq) { r[p.id] = { ok: false, pts: 0, na: true, dq: true }; return; }
       if (a) { counts[a.c]++; if (a.c === q.c) { ok = true; pts = Math.round(1000 * (1 - Math.min(1, Math.max(0, a.t) / dur) / 2)); p.ok++; } }
       p.score += pts; r[p.id] = { ok, pts, na: !a };
     });
-    ranking = [...players.values()].sort((a, b) => b.score - a.score);
+    ranking = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score);
     ranking.forEach((p, i) => { r[p.id].rank = i + 1; r[p.id].score = p.score; });
     lastMsg = { ph: 'rev', qi, n: Q.length, c: q.c, counts, r }; push(); SFX.bell();
     const wrap = el('div', 'qh-q'), head = el('div', 'qh-qhead'); head.append(el('div', 'qh-qt', q.t)); wrap.appendChild(head);
     const cols = el('div', 'qh-revcols'), left = el('div'); left.appendChild(optGrid(q, { counts }));
     const bd = el('div', 'qh-board'); bd.appendChild(el('h3', '', 'Алдыңғы орындар'));
-    ranking.slice(0, 5).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(i + 1)), el('span', '', p.name), el('em', '', String(p.score))); bd.appendChild(row); });
+    ranking.filter(p => !p.dq).slice(0, 5).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(i + 1)), el('span', '', p.name + (p.st ? ' ⚠' : '')), el('em', '', String(p.score))); bd.appendChild(row); });
     const nx = el('button', 'qh-go', qi + 1 < Q.length ? 'Келесі сұрақ' : 'Қорытынды'); nx.type = 'button'; nx.onclick = primary;
     cols.append(left, bd); wrap.append(cols, nx); setBody(wrap);
   }
   function finish() {
     ph = 'end'; clearInterval(timer);
-    ranking = [...players.values()].sort((a, b) => b.score - a.score);
-    const r = {}; ranking.forEach((p, i) => { r[p.id] = { rank: i + 1, score: p.score, ok: p.ok }; });
-    lastMsg = { ph: 'end', n: Q.length, total: ranking.length, top: ranking.slice(0, 10).map(p => ({ n: p.name, s: p.score })), r }; push(); SFX.fan(); cnt.textContent = '';
+    ranking = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score);
+    const r = {}; ranking.forEach((p, i) => { r[p.id] = { rank: i + 1, score: p.score, ok: p.ok, dq: p.dq }; });
+    const ok = ranking.filter(p => !p.dq);
+    lastMsg = { ph: 'end', n: Q.length, total: ranking.length, top: ok.slice(0, 10).map(p => ({ n: p.name, s: p.score })), r }; push(); SFX.fan(); cnt.textContent = '';
     const wrap = el('div', 'qh-end'); wrap.appendChild(el('h2', 'qh-h', 'Викторина аяқталды'));
     const pod = el('div', 'qh-pod');
-    [1, 0, 2].forEach(i => { const p = ranking[i]; if (!p) return; const c = el('div', 'qh-pc p' + (i + 1)); c.append(el('b', '', p.name), el('em', '', p.score + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
+    [1, 0, 2].forEach(i => { const p = ok[i]; if (!p) return; const c = el('div', 'qh-pc p' + (i + 1)); c.append(el('b', '', p.name), el('em', '', p.score + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
     wrap.appendChild(pod);
-    const rest = el('div', 'qh-rest'); ranking.slice(3, 10).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(i + 4)), el('span', '', p.name), el('em', '', String(p.score))); rest.appendChild(row); });
+    const rest = el('div', 'qh-rest'); ok.slice(3, 10).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(i + 4)), el('span', '', p.name), el('em', '', String(p.score))); rest.appendChild(row); });
     const fin = el('button', 'qh-go', 'Аяқтау'); fin.type = 'button'; fin.onclick = shutdown;
     wrap.append(rest, fin); setBody(wrap); saveRun();
   }
@@ -1507,16 +1534,21 @@ function hostQuiz(quiz) {
       if (!players.has(id)) {
         let u = String(nm).slice(0, 20), n = 2; const taken = () => [...players.values()].some(p => p.name === u);
         while (taken()) u = String(nm).slice(0, 18) + ' ' + n++;
-        players.set(id, { id, name: u, score: 0, ok: 0, here: true }); SFX.pop();
+        players.set(id, { id, name: u, score: 0, ok: 0, here: true, st: 0, dq: false }); SFX.pop();
       }
       players.get(id).here = true;
     });
     players.forEach(p => { if (!st[p.id]) { if (ph === 'lobby') players.delete(p.id); else p.here = false; } });
     if (ph === 'lobby') drawLobby(); else { cnt.textContent = ph === 'end' ? '' : (qi + 1) + ' / ' + Q.length; drawAns(); }
   });
-  ch.on('broadcast', { event: 'hello' }, () => push());
+  ch.on('broadcast', { event: 'hello' }, ({ payload: m }) => { push(); const p = m && players.get(m.id); if (p && p.st) send('info', { id: p.id, st: p.st, dq: p.dq }); });
+  ch.on('broadcast', { event: 'away' }, ({ payload: m }) => {
+    const p = m && players.get(m.id); if (!p) return; p.st = Math.max(p.st, +m.n || 1);
+    if (p.st >= 2 && !p.dq) { p.dq = true; p.score = 0; p.ok = 0; }
+    SFX.bad(); if (ph === 'q') { drawAns(); if (answers.size >= active().length && active().length) setTimeout(() => { if (ph === 'q') reveal(); }, 700); } else if (ph === 'lobby') drawLobby();
+  });
   ch.on('broadcast', { event: 'ans' }, ({ payload: m }) => {
-    if (ph !== 'q' || !m || m.qi !== qi) return; const p = players.get(m.id); if (!p || answers.has(m.id)) return;
+    if (ph !== 'q' || !m || m.qi !== qi) return; const p = players.get(m.id); if (!p || p.dq || answers.has(m.id)) return;
     const c = +m.c; if (!(c >= 0 && c < 4) || !Q[qi].o[c]) return;
     answers.set(m.id, { c, t: Date.now() - qStart }); drawAns(); SFX.pop();
     if (answers.size >= active().length) setTimeout(() => { if (ph === 'q') reveal(); }, 700);
