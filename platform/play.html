@@ -40,10 +40,14 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .res{font-size:2.4rem;font-weight:800;margin:0}.res.ok{color:var(--ok)}.res.bad{color:var(--bad)}
 .pts{font-size:1.4rem;font-weight:700}
 .big{font-size:3rem;font-weight:800;color:var(--accent);margin:0;line-height:1.1}
+#fsb{border:1px solid var(--line);background:var(--surf);color:var(--ink);border-radius:10px;width:36px;height:36px;font-size:1.1rem;cursor:pointer}
+#warn{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:28px;background:var(--bg)}
+#warn[hidden]{display:none}#warn h1{color:var(--bad)}#warn .go{max-width:340px}
 </style>
 </head>
 <body>
-<header><div>Groowin</div><span id="who"></span></header>
+<header><div>Groowin</div><span id="who"></span><button id="fsb" type="button" hidden aria-label="Толық экран">⛶</button></header>
+<div id="warn" hidden></div>
 <main id="m"></main>
 <script>
 const $ = id => document.getElementById(id);
@@ -56,7 +60,43 @@ const m = $('m');
 const draw = (...n) => { m.replaceChildren(...n); };
 
 let myId = store.get('qid'); if (!myId) { myId = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()); store.set('qid', myId); }
+let strikes = 0, dq = false, away = false, wantFS = false;
 let sb = null, ch = null, code = '', name = '', gotState = false, curQ = -1, picked = -1, endAt = 0, tmr = null, helloTimer = null, lastPh = '', done = false;
+
+// ===== Толық экран және басқа бетке өтуді бақылау =====
+const fsEl = document.documentElement;
+const canFS = !!(fsEl.requestFullscreen || fsEl.webkitRequestFullscreen);
+const inFS = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+function enterFS() {
+  if (!canFS) return; wantFS = true;
+  try { const r = fsEl.requestFullscreen ? fsEl.requestFullscreen({ navigationUI: 'hide' }) : fsEl.webkitRequestFullscreen(); if (r && r.catch) r.catch(() => {}); } catch {}
+}
+function paintFS() { $('fsb').hidden = !(canFS && !done && gotState && !inFS()); }
+$('fsb').onclick = enterFS;
+function leave() {
+  if (done || dq || away || lastPh !== 'q') return;
+  away = true; strikes++; if (strikes >= 2) dq = true;
+  try { ch.send({ type: 'broadcast', event: 'away', payload: { id: myId, n: strikes } }); } catch {}
+}
+function back() {
+  if (!away) return; away = false;
+  const w = $('warn'); w.replaceChildren();
+  if (dq) {
+    w.append(el('h1', '', 'Нәтижең өшірілді'), el('p', '', 'Квиз кезінде екінші рет басқа бетке не бағдарламаға өттің.'), el('p', 'mute', 'Ойынды қарап отыра аласың, бірақ ұпай есептелмейді.'));
+    const ok = el('button', 'go', 'Түсіндім'); ok.onclick = () => { w.hidden = true; showDq(); }; w.appendChild(ok);
+  } else {
+    w.append(el('h1', '', 'Ескерту!'), el('p', '', 'Квиз кезінде басқа бетке не бағдарламаға өтуге болмайды.'), el('p', 'mute', 'Тағы бір рет шықсаң, нәтижең өшіріледі.'));
+    const ok = el('button', 'go', canFS ? 'Қайта толық экранға өту' : 'Ойынға қайту'); ok.onclick = () => { w.hidden = true; enterFS(); }; w.appendChild(ok);
+  }
+  w.hidden = false;
+}
+function showDq() { waitScreen('Нәтижең өшірілді', 'Ережені бұзғаның үшін ұпай есептелмейді. Квиз біткенше күт.'); }
+document.addEventListener('visibilitychange', () => { document.hidden ? leave() : back(); });
+window.addEventListener('blur', () => { setTimeout(() => { if (!document.hasFocus()) leave(); }, 250); });
+window.addEventListener('focus', () => { if (!document.hidden) back(); });
+['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => {
+  paintFS(); if (wantFS && !inFS() && lastPh === 'q') { leave(); back(); }
+}));
 
 function joinScreen(msg) {
   clearInterval(tmr); clearInterval(helloTimer);
@@ -70,7 +110,7 @@ function joinScreen(msg) {
     const c = ic.value.replace(/\D/g, ''), n = inn.value.trim();
     if (c.length !== 6) { er.textContent = 'Код 6 саннан тұрады.'; return; }
     if (!n) { er.textContent = 'Атыңды жаз.'; inn.focus(); return; }
-    code = c; name = n.slice(0, 20); store.set('qname', name); connect();
+    code = c; name = n.slice(0, 20); store.set('qname', name); strikes = 0; dq = false; away = false; enterFS(); connect();
   };
   inn.onkeydown = ic.onkeydown = e => { if (e.key === 'Enter') go.click(); };
   draw(h, sub, lc, ic, ln, inn, go, er); (pre ? inn : ic).focus();
@@ -86,6 +126,7 @@ function connect() {
   if (!sb) sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
   ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: myId } } });
   ch.on('broadcast', { event: 'st' }, ({ payload }) => onState(payload));
+  ch.on('broadcast', { event: 'info' }, ({ payload: m }) => { if (m && m.id === myId) { strikes = Math.max(strikes, m.st || 0); if (m.dq) dq = true; } });
   ch.on('broadcast', { event: 'kick' }, ({ payload }) => { if (payload && payload.id === myId) end('Бөлмеден шығарылдың', 'Қайта кіргің келсе, мұғалімнен сұра.', true); });
   ch.subscribe(async s => {
     if (s === 'SUBSCRIBED') {
@@ -104,16 +145,17 @@ function connect() {
 }
 
 function end(title, text, kicked) {
-  done = true; clearInterval(tmr); clearInterval(helloTimer);
+  done = true; $('fsb').hidden = true; try { if (inFS()) (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch {} wantFS = false; clearInterval(tmr); clearInterval(helloTimer);
   try { ch && ch.untrack(); sb.removeChannel(ch); } catch {}
   waitScreen(title, text); m.querySelector('.dot').remove();
   const b = el('button', 'go', 'Басқа квизге кіру'); b.onclick = () => joinScreen(''); m.firstChild.appendChild(b);
 }
 
 function onState(s) {
-  if (!s || done) return; gotState = true;
+  if (!s || done) return; gotState = true; paintFS();
   if (s.ph === 'closed') return end('Квиз аяқталды', 'Мұғалім бөлмені жапты.');
   if (s.ph === 'lobby') { if (lastPh !== 'lobby') { lastPh = 'lobby'; curQ = -1; waitScreen('Сен кірдің!', 'Мұғалім квизді бастағанша күт. Атың экранда көрінеді.'); } return; }
+  if (dq && s.ph !== 'lobby') { lastPh = s.ph; if (!$('warn').hidden) return; showDq(); return; }
   if (s.ph === 'q') {
     endAt = Date.now() + (typeof s.left === 'number' ? s.left : s.dur * 1000);
     if (curQ !== s.qi || lastPh !== 'q') { curQ = s.qi; picked = -1; lastPh = 'q'; question(s); }
