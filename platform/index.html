@@ -150,21 +150,21 @@ body.in-app{background:var(--bg)!important;font-size:15px}
 html[data-theme] #app .side.card{background:var(--surf);border:0;border-right:1px solid var(--line);box-shadow:none;border-radius:0}
 html[data-theme] #app .main.card{background:transparent}
 body.in-app h1{text-shadow:none}
-body.in-app :is(input,select,textarea){border:1px solid var(--line);background:var(--paper);border-radius:10px;color:var(--ink)}
-body.in-app :is(input,select,textarea):focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
-body.in-app :is(.out,.tabs button,.icon-btn){border:1px solid var(--line);background:var(--surf);color:var(--ink);border-radius:10px}
-body.in-app :is(.out,.icon-btn):hover{background:var(--hover)}
+html body.in-app :is(input,select,textarea){border:1px solid var(--line);background:var(--paper);border-radius:10px;color:var(--ink)}
+html body.in-app :is(input,select,textarea):focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+html body.in-app :is(.out,.tabs button,.icon-btn){border:1px solid var(--line);background:var(--surf);color:var(--ink);border-radius:10px}
+html body.in-app :is(.out,.icon-btn):hover{background:var(--hover)}
 body.in-app .go{background:var(--accent);color:#fff;border-radius:10px;font-weight:600}
 body.in-app .go:hover{filter:brightness(1.07)}
 body.in-app .tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
-body.in-app :is(.game,.gradeBtn,.news,.gcard){background:var(--surf);border:1px solid var(--line);border-radius:14px;box-shadow:none;transition:transform .15s,border-color .15s,box-shadow .15s}
-body.in-app :is(.game,.gradeBtn):hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+html body.in-app :is(.game,.gradeBtn,.news,.gcard){background:var(--surf);border:1px solid var(--line);border-radius:14px;box-shadow:none;transition:transform .15s,border-color .15s,box-shadow .15s}
+html body.in-app :is(.game,.gradeBtn):hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 8px 24px rgba(0,0,0,.08)}
 body.in-app .game .gi{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--accent-soft);font-size:1.35rem}
 body.in-app #frame{border:1px solid var(--line);border-radius:14px}
-body.in-app :is(.role,.av){background:var(--accent-soft);color:var(--accent);border:0;font-weight:600}
-body.in-app :is(#badge,#badge2){background:var(--accent);color:#fff;margin-left:auto;font-weight:600}
+html body.in-app :is(.role,.av){background:var(--accent-soft);color:var(--accent);border:0;font-weight:600}
+html body.in-app :is(#badge,#badge2){background:var(--accent);color:#fff;margin-left:auto;font-weight:600}
 body.in-app .msg.ok,body.in-app .lk{color:var(--accent)}
-body.in-app :is(th,td,.strow,.mrow){border-color:var(--line)}
+html body.in-app :is(th,td,.strow,.mrow){border-color:var(--line)}
 body.in-app th{color:var(--mute);font-weight:500;font-size:.82rem}
 body.in-app .brand{font-size:1.15rem;font-weight:700;letter-spacing:-.01em}
 body.in-app .mainhead h1{font-size:1.5rem;letter-spacing:-.02em}
@@ -189,11 +189,78 @@ body.in-app .me{min-width:0}
 .sw button[aria-pressed=true]{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--c)}
 body.in-app hr{border-color:var(--line)}
 @media (max-width:760px){body.in-app #nav button{white-space:nowrap;width:auto}body.in-app #subjItems{margin:0;padding:0;border:0;flex-direction:row}}
+
+/* ===== Ойын-сауық / викторина ===== */
+body:not(.in-app) #sndBtn{display:none}
+#sndBtn{position:fixed;top:14px;right:62px;z-index:40}
+.sfxToggle.off .w{display:none}
+.plc .gi{color:var(--accent)}
+.plc{min-height:130px}
+.qcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:14px}
+.qcard{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--surf,var(--paper));display:flex;flex-direction:column;gap:12px}
+.qct{display:flex;flex-direction:column;gap:4px}.qct strong{font-size:1.05rem}.qct .gm{color:var(--mute);font-size:.88rem}
+.qrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.qrow .go{width:auto;margin:0;padding:8px 18px}
+.qc{border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;background:var(--surf,var(--paper))}
+.qh{display:flex;align-items:center;gap:8px;margin-bottom:10px}.qh strong{flex:1}.qtb{display:flex;gap:4px;flex-wrap:wrap}
+.main .qc textarea{max-width:none;width:100%}
+.qimg{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}.qimg img{height:64px;border-radius:8px;border:1px solid var(--line)}
+.qimg .out{margin:0}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.qo{display:flex;align-items:center;gap:8px;padding:8px;border-radius:12px;background:var(--c)}
+.main .qc .qo input:not([type=radio]){flex:1;min-width:0;max-width:none;background:#fff;color:#111;border:0}
+.qs{display:grid;place-items:center;width:26px;flex:none}
+.qr{display:flex;align-items:center;gap:4px;color:#fff;font-size:.82rem;font-weight:600;margin:0;white-space:nowrap}.qr input{width:auto;accent-color:#fff}
+.qtime{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.qtime label{margin:0}.main .qtime input{width:90px}.qtime .out{margin:0}
+#qzHost{position:fixed;inset:0;z-index:50;background:var(--bg,var(--paper));color:var(--ink);display:flex;flex-direction:column}
+#qzHost[hidden]{display:none}
+.qh-top{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--line)}
+.qh-code{font-weight:700}.qh-cnt{color:var(--mute)}.qh-sp{flex:1}
+.qh-btn{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--line);border-radius:10px;background:var(--surf,var(--paper));color:var(--ink);font:inherit;cursor:pointer}
+.qh-body{flex:1;overflow:auto;padding:24px}
+.qh-lobby{display:grid;grid-template-columns:auto 1fr;gap:40px;max-width:1100px;margin:0 auto;align-items:start}
+.qh-qr{background:#fff;padding:12px;border-radius:18px;width:min(44vmin,380px)}.qh-qr svg{display:block;width:100%;height:auto}
+.qh-h{font-size:clamp(1.5rem,3.4vw,2.6rem);margin:0 0 8px}
+.qh-s{color:var(--mute);margin:0 0 6px}
+.qh-url{font-weight:600;word-break:break-all}
+.qh-bigcode{font-size:clamp(2.6rem,7vw,5.5rem);font-weight:800;letter-spacing:.1em;font-variant-numeric:tabular-nums;color:var(--accent);margin:6px 0 10px;line-height:1.1}
+.qh-chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 20px;min-height:44px}
+.qh-chip{padding:8px 14px;border:0;border-radius:99px;background:var(--accent-soft);color:var(--ink);font:inherit;font-weight:600;cursor:pointer;animation:qpop .25s}
+.qh-chip:hover{text-decoration:line-through}
+.qh-wait{color:var(--mute)}
+@keyframes qpop{from{transform:scale(.6);opacity:0}}
+.qh-go{padding:14px 32px;border:0;border-radius:12px;background:var(--accent);color:#fff;font:inherit;font-size:1.1rem;font-weight:700;cursor:pointer}
+.qh-go:disabled{opacity:.4;cursor:not-allowed}
+.qh-q{max-width:1100px;margin:0 auto}
+.qh-qhead{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;margin-bottom:12px}
+.qh-qhead>:only-child{grid-column:1/-1}
+.qh-time{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-size:2rem;font-weight:800}
+.qh-qt{font-size:clamp(1.4rem,3.2vw,2.6rem);font-weight:700;text-align:center}
+.qh-ans{color:var(--mute);text-align:right}
+.qh-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:18px}.qh-bar i{display:block;height:100%;background:var(--accent);transform-origin:left;transition:transform .12s linear}
+.qh-img{display:block;margin:0 auto 18px;max-width:100%;max-height:34vh;border-radius:14px;object-fit:contain}
+.qh-opts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.qh-opt{display:flex;align-items:center;gap:14px;padding:20px 24px;border-radius:14px;background:var(--c);color:#fff;font-size:clamp(1.1rem,2.3vw,1.8rem);font-weight:600;min-height:88px}
+.qh-opt.dim{opacity:.3}.qh-opt.ok{box-shadow:0 0 0 5px var(--ink)}
+.qh-ot{flex:1}.qh-n{font-size:1.6rem;font-weight:800}.qh-tick{font-size:1.8rem}
+.qh-revcols{display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start;margin-bottom:20px}
+.qh-board h3{margin:0 0 8px}
+.qh-row{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}.qh-row b{width:1.6em;color:var(--accent)}.qh-row span{flex:1}.qh-row em{font-style:normal;font-weight:700}
+.qh-end{max-width:800px;margin:0 auto;text-align:center}
+.qh-pod{display:flex;align-items:flex-end;justify-content:center;gap:14px;margin:30px 0}
+.qh-pc{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;padding:14px;border-radius:14px 14px 0 0;min-width:130px;background:var(--accent-soft)}
+.qh-pc.p1{min-height:230px;background:var(--accent);color:#fff}.qh-pc.p2{min-height:180px}.qh-pc.p3{min-height:140px}
+.qh-pc i{font-style:normal;font-size:2rem;font-weight:800}.qh-pc em{font-style:normal}
+.qh-rest{text-align:left;margin-bottom:20px}
+@media (max-width:760px){.qh-lobby,.qh-revcols{grid-template-columns:1fr}.qh-opts,.qopts{grid-template-columns:1fr}.qh-qhead{grid-template-columns:auto 1fr}.qh-ans{display:none}}
+html[data-theme] body.in-app :is(.game,.plc,.gradeBtn,select,input,textarea,.out,.news){border-color:var(--line)}
+html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--accent)}
 </style>
 </head>
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
 <button class="icon-btn" id="fsBtn" aria-label="Толық экран"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+<button class="icon-btn sfxToggle" id="sndBtn" type="button" aria-label="Дыбыс" aria-pressed="true"></button>
+<div id="qzHost" hidden></div>
 <div id="stage" hidden><button class="icon-btn" id="stClose" aria-label="Жабу" style="position:fixed;top:14px;right:14px;font-size:1.2rem">✕</button><div id="stageBody"></div></div>
 <main class="wrap">
 
@@ -250,6 +317,7 @@ body.in-app hr{border-color:var(--line)}
         <button data-v="physics" class="on"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1.4"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg><span class="nl">Физика</span></button>
         <button data-v="math"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h3l3 7 5-16h7"/></svg><span class="nl">Математика</span></button>
       </div>
+      <button data-v="play" id="navPlay" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg><span class="nl">Ойын-сауық</span></button>
       <button data-v="rank" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20V11M12 20V4M18 20v-6"/></svg><span class="nl">Рейтинг</span></button>
       <button data-v="news"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg><span class="nl">Хабарландыру</span><span id="badge" hidden></span></button>
       <button data-v="rosters" id="navRosters" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span class="nl">Менің сыныптарым</span></button>
@@ -312,6 +380,30 @@ body.in-app hr{border-color:var(--line)}
       </div>
     </div>
 
+    <div id="v-play" hidden>
+      <h2 style="margin:0 0 6px;font-size:1.2rem">Ойын-сауық</h2>
+      <p class="sub" style="font-size:.9rem">Сабақты жандандыратын құралдар. Оқушыларға аккаунт керек емес. «Кездейсоқ оқушы» мен «Топқа бөлу» үшін сыныпты таңда.</p>
+      <label for="plClass">Сынып</label>
+      <select id="plClass"></select>
+      <button class="lk" id="plNoClass" type="button" hidden>Сынып әлі жоқ. «Менің сыныптарым» бөлімінде жаса</button>
+      <div class="grid" id="plGrid" style="margin-top:16px"></div>
+    </div>
+    <div id="v-quiz" hidden>
+      <div id="qzList">
+        <div class="vbar"><button class="out" id="qzToPlay" type="button">← Ойын-сауық</button><h2 style="margin:0;font-size:1.2rem">Викторина</h2><button class="go" id="qzNew" type="button" style="margin-left:auto;width:auto">+ Жаңа викторина</button></div>
+        <p class="sub" style="font-size:.9rem">Сұрақтарды бір рет жасап сақтайсың. Ойын кезінде үлкен экранда QR шығады, оқушылар телефонымен кіріп, атын жазады да, жауап береді.</p>
+        <div class="qcards" id="qzCards"></div>
+        <h3 id="qzRunsHead" style="margin:26px 0 8px;font-size:1.05rem" hidden>Соңғы ойындар</h3>
+        <div id="qzRuns"></div>
+      </div>
+      <div id="qzEdit" hidden>
+        <div class="vbar" style="flex-wrap:wrap"><button class="out" id="qzBack" type="button">← Артқа</button><span class="gm" id="qzCount"></span><span class="msg" id="qzMsg" role="status" aria-live="polite" style="margin:0"></span><button class="out" id="qzSave" type="button" style="margin-left:auto">Сақтау</button><button class="go" id="qzStart" type="button" style="width:auto;margin:0;padding:10px 22px">Бастау</button></div>
+        <label for="qzTitle">Викторина атауы</label>
+        <input id="qzTitle" maxlength="120" placeholder="Мысалы: Қозғалыс, 7-сынып">
+        <div id="qzQs"></div>
+        <button class="out" id="qzAddQ" type="button">+ Сұрақ қосу</button>
+      </div>
+    </div>
     <div id="v-inbox" hidden>
       <h2 style="margin:0 0 6px;font-size:1.2rem">Хабарлар</h2>
       <p class="sub" style="font-size:.9rem">Құпия сөз бермес бұрын адамның кім екенін тексер: мұғалімінен немесе сыныптастарынан сұра.</p>
@@ -459,6 +551,9 @@ body.in-app hr{border-color:var(--line)}
 
 </main>
 
+<script>/* qrcode-generator 1.4.4 (MIT, Kazuhiko Arase) */
+var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(n*r,o*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});
+</script>
 <script>
 // Кілттер config.js файлында тұрады
 // Телефоннан жасалатын жасырын email үшін домен (нақты пошта қажет емес)
@@ -553,7 +648,7 @@ async function showApp(session) {
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
-  $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
+  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
@@ -785,15 +880,15 @@ function closeGame() {
   $('frame').src = 'about:blank';
 }
 $('back').onclick = () => go(subj, true);
-const VIEWS = ['catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+const VIEWS = ['play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); }
 function go(key, keep) {
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
-  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === key));
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === (key === 'quiz' ? 'play' : key)));
   if (key === 'physics' || key === 'math') {
     subj = key; if (!keep) gradeSel = null;
     renderGames(); show('catalog');
-  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); }
+  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
 }
 document.querySelectorAll('#nav button[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 $('subjHead').onclick = () => { const h = $('subjItems').hidden = !$('subjItems').hidden; $('subjHead').setAttribute('aria-expanded', String(!h)); $('subjArrow').textContent = h ? '▸' : '▾'; };
@@ -1029,10 +1124,11 @@ $('tRandom').onclick = () => {
   const b = stage(), nm = el('div', 'big', '?'), info = el('p', 'sub', ''); info.style.textAlign = 'center';
   const go = el('button', 'go', 'Келесі'), box = el('div', 'bar'); box.append(go, mini('Басынан бастау', () => { pool = []; info.textContent = 'Тізім жаңартылды'; })); box.lastChild.style.cssText += ';padding:10px 20px';
   go.onclick = () => {
+    SFX.drum();
     const ids = present().map(s => s.id); pool = pool.filter(id => ids.includes(id)); if (!pool.length) pool = [...ids];
     const id = pool.splice(Math.floor(Math.random() * pool.length), 1)[0], win = rsStudents.find(s => s.id === id).name, names = present().map(s => s.name);
     go.disabled = true; let n = 0;
-    const t = setInterval(() => { nm.textContent = names[Math.floor(Math.random() * names.length)]; if (++n > 14) { clearInterval(t); nm.textContent = win; info.textContent = 'Таңдалмағандар қалды: ' + pool.length; go.disabled = false; } }, 90);
+    const t = setInterval(() => { nm.textContent = names[Math.floor(Math.random() * names.length)]; if (++n > 14) { clearInterval(t); SFX.ok(); nm.textContent = win; info.textContent = 'Таңдалмағандар қалды: ' + pool.length; go.disabled = false; } }, 90);
   };
   b.append(nm, info, box);
 };
@@ -1042,6 +1138,7 @@ $('tGroups').onclick = () => {
   const b = stage(), inp = document.createElement('input'), grid = el('div', 'ggrid'), bar = el('div', 'bar'), lab = el('label', '', 'Топ саны');
   inp.type = 'number'; inp.min = 2; inp.max = Math.min(10, act.length); inp.value = Math.min(4, act.length); lab.style.margin = '0';
   const run = () => {
+    SFX.pop();
     const k = Math.max(2, Math.min(+inp.value || 2, act.length)), arr = shuffle(act), names = shuffle(GNAMES);
     grid.replaceChildren();
     for (let g = 0; g < k; g++) { const c = el('div', 'gcard'); c.appendChild(el('h3', '', names[g % names.length])); arr.filter((_, i) => i % k === g).forEach(s => c.appendChild(el('div', '', s.name))); grid.appendChild(c); }
@@ -1054,7 +1151,7 @@ $('tTimer').onclick = () => {
   const draw = () => { disp.textContent = String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0'); };
   const set = () => { clearInterval(tm); left = Math.max(1, Math.min(+inp.value || 5, 120)) * 60; disp.classList.remove('flash'); draw(); };
   const start = el('button', 'go', 'Бастау'), stop = el('button', 'go', 'Тоқтату'), reset = el('button', 'go', 'Қайта қою');
-  start.onclick = () => { clearInterval(tm); tm = setInterval(() => { if (--left <= 0) { left = 0; clearInterval(tm); disp.classList.add('flash'); } draw(); }, 1000); };
+  start.onclick = () => { clearInterval(tm); tm = setInterval(() => { if (--left <= 0) { left = 0; clearInterval(tm); disp.classList.add('flash'); SFX.bell(); } draw(); }, 1000); };
   stop.onclick = () => clearInterval(tm); reset.onclick = set; inp.onchange = set;
   bar.append(el('label', '', 'Минут'), inp, start, stop, reset); bar.firstChild.style.margin = '0'; b.append(disp, bar);
 };
@@ -1075,9 +1172,389 @@ const REFL = [
 $('tRefl').onclick = () => {
   const b = stage(), h = el('div', 'big', ''), p = el('p', '', ''), bar = el('div', 'bar'), go = el('button', 'go', 'Басқа тәсіл');
   p.style.cssText = 'text-align:center;font-size:clamp(1.2rem,3vw,2rem);max-width:900px;margin:0 auto 24px';
-  const run = () => { const [t, d] = REFL[Math.floor(Math.random() * REFL.length)]; h.textContent = t; p.textContent = d; };
+  const run = () => { SFX.pop(); const [t, d] = REFL[Math.floor(Math.random() * REFL.length)]; h.textContent = t; p.textContent = d; };
   go.onclick = run; bar.append(go); b.append(h, p, bar); run();
 };
+
+// ===== Дыбыс (Web Audio, файл керек емес) =====
+const SFX = (() => {
+  let ctx = null, muted = false;
+  try { muted = localStorage.getItem('sfxMuted') === '1'; } catch {}
+  const A = () => {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return null; } }
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    return ctx;
+  };
+  const tone = (f, t0, d, type = 'sine', v = .18, f2) => {
+    const c = A(); if (!c || muted) return;
+    const o = c.createOscillator(), g = c.createGain(), t = c.currentTime + t0;
+    o.type = type; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .015); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + d + .05);
+  };
+  const paint = () => document.querySelectorAll('.sfxToggle').forEach(b => { b.setAttribute('aria-pressed', String(!muted)); b.title = muted ? 'Дыбысты қосу' : 'Дыбысты өшіру'; b.classList.toggle('off', muted); });
+  const api = {
+    get muted() { return muted; },
+    setMuted(m) { muted = !!m; try { localStorage.setItem('sfxMuted', muted ? '1' : '0'); } catch {} paint(); if (!muted) api.pop(); },
+    unlock: A, paint,
+    tick: () => tone(900, 0, .05, 'square', .05),
+    pop: () => tone(520, 0, .09, 'sine', .15, 780),
+    bell: () => { tone(880, 0, 1.2, 'sine', .14); tone(1320, 0, .9, 'sine', .07); tone(1760, 0, .6, 'sine', .04); },
+    ok: () => { tone(660, 0, .12, 'triangle', .2); tone(880, .1, .12, 'triangle', .2); tone(1320, .2, .3, 'triangle', .2); },
+    bad: () => { tone(220, 0, .25, 'sawtooth', .12, 150); tone(165, .18, .35, 'sawtooth', .12, 110); },
+    start: () => { tone(392, 0, .18, 'triangle', .18); tone(523, .1, .18, 'triangle', .18); tone(784, .2, .3, 'triangle', .18); },
+    drum: () => { for (let i = 0; i < 9; i++) tone(170, i * .085, .12, 'sine', .3, 55); },
+    fan: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .14, .35, 'triangle', .2)); tone(1047, .6, .9, 'triangle', .2); }
+  };
+  return api;
+})();
+
+// ===== Ойын-сабақ: орталық бөлім =====
+const sfxIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="w" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>';
+document.querySelectorAll('.sfxToggle').forEach(b => { if (!b.firstChild) b.innerHTML = sfxIcon; b.onclick = () => SFX.setMuted(!SFX.muted); });
+SFX.paint();
+// Бірінші басқанда дыбыс жүйесін оятады (браузер талабы)
+document.addEventListener('pointerdown', () => SFX.unlock(), { once: true });
+
+const PLAY_TOOLS = [
+  { k: 'quiz', t: 'Викторина', d: 'Өз сұрақтарыңмен сыныпқа тікелей ойын. Оқушылар QR арқылы кіреді.', cls: false, ic: '<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 18h.01"/><circle cx="12" cy="12" r="10"/>' },
+  { k: 'random', t: 'Кездейсоқ оқушы', d: 'Сынып тізімінен біреуді әділ таңдайды, қайталамайды.', cls: true, ic: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01"/>' },
+  { k: 'groups', t: 'Топқа бөлу', d: 'Оқушыларды араластырып, тең топтарға бөледі.', cls: true, ic: '<circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M2 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1M12 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1"/>' },
+  { k: 'timer', t: 'Таймер', d: 'Үлкен экранға арналған кері санау, соңында дыбыс.', cls: false, ic: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>' },
+  { k: 'refl', t: 'Рефлексия', d: 'Сабақ соңына арналған 12 тәсілдің бірін кездейсоқ ұсынады.', cls: false, ic: '<path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/>' },
+  { k: 'team', t: 'Командалық ұпай', d: 'Командаларға ұпай беріп, үлкен экранда жарыс өткіз.', cls: false, ic: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>' },
+  { k: 'games', t: 'Геймификация', d: 'Пәндер бөліміндегі ойындар мен виртуалды зертханалар.', cls: false, ic: '<path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.4 11.5 2 15.5 2 17a3 3 0 0 0 5 2.2L9 17h6l2 2.2A3 3 0 0 0 22 17c0-1.5-.4-5.5-.7-8.4A4 4 0 0 0 17.3 5z"/>' }
+];
+let plRosters = [];
+async function loadPlay() {
+  const grid = $('plGrid');
+  if (!grid.children.length) {
+    PLAY_TOOLS.forEach(t => {
+      const b = el('button', 'game plc'); b.type = 'button';
+      const ic = el('span', 'gi'); ic.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + t.ic + '</svg>';
+      b.append(ic, el('strong', '', t.t), el('span', 'gm', t.d)); b.onclick = () => playTool(t); grid.appendChild(b);
+    });
+  }
+  const { data } = await sb.from('rosters').select('id,name').order('created_at');
+  plRosters = data || [];
+  const sel = $('plClass'), cur = sel.value; sel.replaceChildren();
+  if (!plRosters.length) sel.appendChild(new Option('Сынып жоқ', ''));
+  plRosters.forEach(r => sel.appendChild(new Option(r.name, r.id)));
+  if (plRosters.some(r => r.id === cur)) sel.value = cur; else if (plRosters.length) sel.value = ls.get('plClass') && plRosters.some(r => r.id === ls.get('plClass')) ? ls.get('plClass') : plRosters[0].id;
+  $('plNoClass').hidden = plRosters.length > 0;
+}
+$('plClass').onchange = () => ls.set('plClass', $('plClass').value);
+$('plNoClass').onclick = () => go('rosters');
+async function playTool(t) {
+  SFX.unlock();
+  if (t.k === 'quiz') return go('quiz');
+  if (t.k === 'games') return go('physics');
+  if (t.k === 'team') return teamBoard();
+  if (t.cls) {
+    const rid = $('plClass').value; if (!rid) return alert('Алдымен сынып таңда. Сыныпты «Менің сыныптарым» бөлімінде жасайсың.');
+    curRoster = plRosters.find(r => r.id === rid); pool = [];
+    const { data } = await sb.from('roster_students').select('*').eq('roster_id', rid).order('created_at'); rsStudents = data || [];
+  }
+  ({ random: 'tRandom', groups: 'tGroups', timer: 'tTimer', refl: 'tRefl' })[t.k] && $({ random: 'tRandom', groups: 'tGroups', timer: 'tTimer', refl: 'tRefl' }[t.k]).onclick();
+}
+
+// ===== Викторина: мұғалім жағы =====
+const QCOL = ['#E21B3C', '#1368CE', '#D89E00', '#26890C'];
+const QSHAPE = ['<path d="M12 3 22 20H2z"/>', '<path d="M12 2 22 12 12 22 2 12z"/>', '<circle cx="12" cy="12" r="9"/>', '<rect x="4" y="4" width="16" height="16" rx="1"/>'];
+const shapeSvg = (i, sz) => '<svg width="' + (sz || 26) + '" height="' + (sz || 26) + '" viewBox="0 0 24 24" fill="#fff" aria-hidden="true">' + QSHAPE[i] + '</svg>';
+let qz = null, quizzes = [];
+const newQ = () => ({ t: '', img: null, o: ['', '', '', ''], c: 0, s: 20 });
+const qmsg = (t, c) => note('qzMsg', t, c || '');
+
+async function loadQuizzes() {
+  $('qzEdit').hidden = true; $('qzList').hidden = false; qmsg('');
+  const [q, r] = await Promise.all([
+    sb.from('quizzes').select('id,title,questions,updated_at').order('updated_at', { ascending: false }),
+    sb.from('quiz_runs').select('*').order('created_at', { ascending: false }).limit(10)]);
+  const box = $('qzCards'); box.replaceChildren();
+  if (q.error) { box.appendChild(el('p', 'msg err', q.error.message.includes('quizzes') ? 'update-8.sql әлі іске қосылмаған. Оны Supabase → SQL Editor ішінде іске қос.' : 'Қате: ' + q.error.message)); return; }
+  quizzes = q.data || [];
+  quizzes.forEach(z => {
+    const c = el('div', 'qcard'), n = (z.questions || []).length;
+    const top = el('div', 'qct'); top.append(el('strong', '', z.title), el('span', 'gm', n + ' сұрақ · ' + new Date(z.updated_at).toLocaleDateString('kk-KZ')));
+    const row = el('div', 'qrow');
+    const st = el('button', 'go', 'Бастау'); st.onclick = () => n ? hostQuiz(z) : alert('Бұл викторинада сұрақ жоқ.');
+    row.append(st, mini('Өзгерту', () => openEditor(z)), mini('Көшіру', async () => { const { error } = await sb.from('quizzes').insert({ title: (z.title + ' (көшірме)').slice(0, 120), questions: z.questions }); if (error) alert(error.message); else loadQuizzes(); }),
+      mini('Жою', async () => { if (!confirm('«' + z.title + '» викторинасы жойылсын ба?')) return; await sb.from('quizzes').delete().eq('id', z.id); loadQuizzes(); }));
+    c.append(top, row); box.appendChild(c);
+  });
+  if (!quizzes.length) box.appendChild(el('p', 'sub', 'Әзірге викторина жоқ. «Жаңа викторина» батырмасын бас.'));
+  const rb = $('qzRuns'); rb.replaceChildren();
+  (r.data || []).forEach(x => {
+    const d = document.createElement('details'), s = document.createElement('summary'), res = x.results || [];
+    s.textContent = new Date(x.created_at).toLocaleString('kk-KZ', { dateStyle: 'short', timeStyle: 'short' }) + ' · ' + (x.title || 'Викторина') + ' · ' + x.players + ' оқушы' + (res[0] ? ' · 1-орын: ' + res[0].n : '');
+    const ol = document.createElement('ol'); res.forEach(p => ol.appendChild(el('li', '', p.n + ' — ' + p.s + ' ұпай, ' + p.ok + ' дұрыс жауап')));
+    d.append(s, ol); rb.appendChild(d);
+  });
+  $('qzRunsHead').hidden = !(r.data || []).length;
+}
+$('qzNew').onclick = () => openEditor(null);
+
+function openEditor(z) {
+  qz = z ? { id: z.id, title: z.title, questions: structuredClone(z.questions || []) } : { id: null, title: '', questions: [newQ()] };
+  if (!qz.questions.length) qz.questions.push(newQ());
+  $('qzList').hidden = true; $('qzEdit').hidden = false; qmsg('');
+  $('qzTitle').value = qz.title; renderEditor();
+}
+function renderEditor() {
+  const box = $('qzQs'); box.replaceChildren();
+  qz.questions.forEach((q, i) => box.appendChild(qCard(q, i)));
+  $('qzCount').textContent = qz.questions.length + ' сұрақ';
+}
+function moveQ(i, d) { const j = i + d; if (j < 0 || j >= qz.questions.length) return; [qz.questions[i], qz.questions[j]] = [qz.questions[j], qz.questions[i]]; renderEditor(); }
+async function shrinkImage(file, max) {
+  const bmp = await createImageBitmap(file), k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(bmp, 0, 0, c.width, c.height);
+  return new Promise(r => c.toBlob(r, 'image/jpeg', .82));
+}
+function qCard(q, i) {
+  const c = el('div', 'qc'), h = el('div', 'qh');
+  h.append(el('strong', '', 'Сұрақ ' + (i + 1)));
+  const tb = el('div', 'qtb');
+  tb.append(mini('↑', () => moveQ(i, -1)), mini('↓', () => moveQ(i, 1)),
+    mini('Көшіру', () => { qz.questions.splice(i + 1, 0, structuredClone(q)); renderEditor(); }),
+    mini('Жою', () => { if (qz.questions.length === 1) return alert('Кемінде бір сұрақ болуы керек.'); qz.questions.splice(i, 1); renderEditor(); }));
+  h.appendChild(tb);
+  const ta = document.createElement('textarea'); ta.value = q.t; ta.maxLength = 200; ta.rows = 2; ta.placeholder = 'Сұрақ мәтіні'; ta.oninput = () => { q.t = ta.value; };
+  const im = el('div', 'qimg');
+  const fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.hidden = true;
+  const addB = el('button', 'out', q.img ? 'Суретті ауыстыру' : 'Сурет қосу'); addB.type = 'button'; addB.onclick = () => fi.click();
+  fi.onchange = async () => {
+    const f = fi.files[0]; fi.value = ''; if (!f) return;
+    addB.disabled = true; addB.textContent = 'Жүктелуде…';
+    try {
+      const blob = await shrinkImage(f, 1000), path = meId + '/' + crypto.randomUUID() + '.jpg';
+      const up = await sb.storage.from('quiz-img').upload(path, blob, { contentType: 'image/jpeg' });
+      if (up.error) throw up.error;
+      q.img = sb.storage.from('quiz-img').getPublicUrl(path).data.publicUrl; renderEditor();
+    } catch (e) { addB.disabled = false; addB.textContent = 'Сурет қосу'; qmsg('Сурет жүктелмеді: ' + (e.message || e) + (String(e.message || '').includes('Bucket') ? ' (update-8.sql іске қосылды ма?)' : ''), 'err'); }
+  };
+  im.append(addB, fi);
+  if (q.img) { const p = document.createElement('img'); p.src = q.img; p.alt = ''; im.append(p, mini('Суретті өшіру', () => { q.img = null; renderEditor(); })); }
+  const og = el('div', 'qopts');
+  q.o.forEach((v, k) => {
+    const r = el('div', 'qo'); r.style.setProperty('--c', QCOL[k]);
+    const sh = el('span', 'qs'); sh.innerHTML = shapeSvg(k, 20);
+    const inp = document.createElement('input'); inp.value = v; inp.maxLength = 100; inp.placeholder = 'Жауап ' + (k + 1) + (k > 1 ? ' (міндетті емес)' : '');
+    inp.oninput = () => { q.o[k] = inp.value; };
+    const lab = el('label', 'qr'); const rd = document.createElement('input'); rd.type = 'radio'; rd.name = 'qc' + i; rd.checked = q.c === k; rd.onchange = () => { q.c = k; };
+    lab.append(rd, el('span', '', 'Дұрыс')); r.append(sh, inp, lab); og.appendChild(r);
+  });
+  const tr = el('div', 'qtime'), tl = el('label', '', 'Уақыт, секунд'), ti = document.createElement('input');
+  ti.type = 'number'; ti.min = 5; ti.max = 300; ti.step = 5; ti.value = q.s; ti.onchange = () => { q.s = Math.max(5, Math.min(300, Math.round(+ti.value || 20))); ti.value = q.s; };
+  tr.append(tl, ti, mini('Барлығына қолдану', () => { qz.questions.forEach(x => x.s = q.s); renderEditor(); }));
+  c.append(h, ta, im, og, tr); return c;
+}
+$('qzAddQ').onclick = () => { const last = qz.questions[qz.questions.length - 1]; const q = newQ(); if (last) q.s = last.s; qz.questions.push(q); renderEditor(); const cs = $('qzQs').children; cs[cs.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); cs[cs.length - 1].querySelector('textarea').focus(); };
+$('qzBack').onclick = () => { if (confirm('Сақталмаған өзгерістер жоғалады. Шығасың ба?')) loadQuizzes(); };
+function validateQuiz() {
+  if (!$('qzTitle').value.trim()) return 'Викторинаға атау жаз.';
+  for (let i = 0; i < qz.questions.length; i++) {
+    const q = qz.questions[i], n = i + 1;
+    if (!q.t.trim()) return n + '-сұрақтың мәтіні бос.';
+    if (q.o.filter(x => x.trim()).length < 2) return n + '-сұрақта кемінде 2 жауап керек.';
+    if (!q.o[q.c].trim()) return n + '-сұрақта дұрыс деп белгіленген жауап бос.';
+  }
+  return '';
+}
+async function saveQuiz() {
+  const err = validateQuiz(); if (err) { qmsg(err, 'err'); return false; }
+  qz.title = $('qzTitle').value.trim().slice(0, 120);
+  const row = { title: qz.title, questions: qz.questions.map(q => ({ t: q.t.trim(), img: q.img || null, o: q.o.map(x => x.trim()), c: q.c, s: q.s })), updated_at: new Date().toISOString() };
+  let res;
+  if (qz.id) res = await sb.from('quizzes').update(row).eq('id', qz.id).select().single();
+  else res = await sb.from('quizzes').insert(row).select().single();
+  if (res.error) { qmsg('Қате: ' + res.error.message, 'err'); return false; }
+  qz.id = res.data.id; qz.saved = res.data; qmsg('Сақталды.', 'ok'); return true;
+}
+$('qzSave').onclick = saveQuiz;
+$('qzStart').onclick = async () => { if (await saveQuiz()) hostQuiz({ id: qz.id, title: qz.title, questions: qz.saved.questions }); };
+
+// ===== Викторина: ойынды жүргізу (үлкен экран) =====
+function hostQuiz(quiz) {
+  SFX.unlock();
+  const Q = quiz.questions, code = String(100000 + Math.floor(Math.random() * 900000));
+  const joinUrl = new URL('play.html?c=' + code, location.href).href;
+  const root = $('qzHost'); root.hidden = false; root.replaceChildren(); document.body.style.overflow = 'hidden';
+  const players = new Map(), kicked = new Set(); let ph = 'lobby', qi = -1, qStart = 0, qEnd = 0, answers = new Map(), timer = null, beat = 0, lastMsg = { ph: 'lobby' }, saved = false, ranking = [];
+  const ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: 'host' } } });
+  const send = (event, payload) => ch.send({ type: 'broadcast', event, payload });
+  const push = () => send('st', ph === 'q' ? { ...lastMsg, left: Math.max(0, qEnd - Date.now()) } : lastMsg);
+  const active = () => [...players.values()].filter(p => p.here);
+
+  // каркас
+  const top = el('div', 'qh-top'), codeChip = el('span', 'qh-code', 'Код: ' + code), cnt = el('span', 'qh-cnt', '');
+  const mute = el('button', 'qh-btn sfxToggle'); mute.type = 'button';
+  const close = el('button', 'qh-btn', '✕'); close.type = 'button'; close.setAttribute('aria-label', 'Жабу');
+  const spacer = el('span', 'qh-sp'); top.append(codeChip, cnt, spacer, mute, close);
+  const body = el('div', 'qh-body'); root.append(top, body);
+  mute.innerHTML = sfxIcon; mute.onclick = () => SFX.setMuted(!SFX.muted); SFX.paint();
+  const setBody = (...n) => { body.replaceChildren(...n); };
+  const key = e => { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); primary(); } };
+  document.addEventListener('keydown', key);
+  function shutdown() {
+    clearInterval(timer); document.removeEventListener('keydown', key); try { send('st', { ph: 'closed' }); } catch {} setTimeout(() => { try { sb.removeChannel(ch); } catch {} }, 400); root.hidden = true; root.replaceChildren(); document.body.style.overflow = '';
+    if (!saved) saveRun(); if ($('qzList') && !$('v-quiz').hidden) loadQuizzes();
+  }
+  close.onclick = () => { if (ph === 'lobby' || ph === 'end' || confirm('Ойынды тоқтатасың ба?')) shutdown(); };
+  async function saveRun() {
+    saved = true; const list = [...players.values()]; if (!list.length || qi < 0) return;
+    const res = list.sort((a, b) => b.score - a.score).map(p => ({ n: p.name, s: p.score, ok: p.ok }));
+    await sb.from('quiz_runs').insert({ quiz_id: quiz.id || null, title: quiz.title, players: res.length, results: res });
+  }
+
+  // лобби
+  let chips, startBtn;
+  function lobby() {
+    ph = 'lobby'; lastMsg = { ph: 'lobby' };
+    const qrBox = el('div', 'qh-qr'); qrBox.innerHTML = makeQR(joinUrl);
+    const right = el('div', 'qh-lr');
+    const t = el('h2', 'qh-h', quiz.title), s = el('p', 'qh-s', 'Телефонмен QR-ды сканерле немесе мына мекенжайға кір:');
+    const u = el('div', 'qh-url', joinUrl.replace(/^https?:\/\//, '')), c2 = el('div', 'qh-bigcode', code);
+    chips = el('div', 'qh-chips'); startBtn = el('button', 'qh-go', 'Бастау'); startBtn.type = 'button'; startBtn.disabled = true; startBtn.onclick = () => primary();
+    right.append(t, s, u, c2, chips, startBtn);
+    const wrap = el('div', 'qh-lobby'); wrap.append(qrBox, right); setBody(wrap); drawLobby();
+  }
+  function drawLobby() {
+    if (ph !== 'lobby') return;
+    cnt.textContent = players.size + ' оқушы'; chips.replaceChildren();
+    if (!players.size) chips.appendChild(el('span', 'qh-wait', 'Оқушылар қосылуын күтіп тұрмыз…'));
+    players.forEach(p => { const c = el('button', 'qh-chip', p.name); c.type = 'button'; c.title = 'Шығару'; c.onclick = () => { kicked.add(p.id); send('kick', { id: p.id }); players.delete(p.id); drawLobby(); }; chips.appendChild(c); });
+    startBtn.disabled = !players.size; startBtn.textContent = players.size ? 'Бастау (' + players.size + ' оқушы)' : 'Бастау';
+  }
+  // сұрақ
+  let ansCnt, timeEl, bar;
+  function question(i) {
+    const q = Q[i]; qi = i; ph = 'q'; answers = new Map(); qStart = Date.now(); qEnd = qStart + q.s * 1000;
+    lastMsg = { ph: 'q', qi: i, n: Q.length, t: q.t, img: q.img || null, o: q.o, dur: q.s };
+    push(); SFX.start && SFX.start(); cnt.textContent = (i + 1) + ' / ' + Q.length;
+    const wrap = el('div', 'qh-q'), head = el('div', 'qh-qhead');
+    timeEl = el('div', 'qh-time', String(q.s)); ansCnt = el('div', 'qh-ans', '');
+    head.append(timeEl, el('div', 'qh-qt', q.t), ansCnt);
+    bar = el('div', 'qh-bar'); bar.appendChild(el('i'));
+    wrap.append(head, bar);
+    if (q.img) { const im = document.createElement('img'); im.className = 'qh-img'; im.src = q.img; im.alt = ''; wrap.appendChild(im); }
+    wrap.appendChild(optGrid(q, null)); setBody(wrap); drawAns();
+    clearInterval(timer); beat = Date.now(); let lastSec = -1;
+    timer = setInterval(() => {
+      const left = qEnd - Date.now(), sec = Math.max(0, Math.ceil(left / 1000));
+      timeEl.textContent = sec; bar.firstChild.style.transform = 'scaleX(' + Math.max(0, left / (q.s * 1000)) + ')';
+      if (sec !== lastSec) { lastSec = sec; if (sec > 0 && sec <= 5) SFX.tick(); }
+      if (Date.now() - beat > 3000) { beat = Date.now(); push(); }
+      if (left <= 0) reveal();
+    }, 120);
+  }
+  function drawAns() { if (ansCnt) ansCnt.textContent = 'Жауап берді: ' + answers.size + ' / ' + active().length; }
+  function optGrid(q, rev) {
+    const g = el('div', 'qh-opts');
+    q.o.forEach((v, k) => {
+      if (!v) return;
+      const b = el('div', 'qh-opt' + (rev ? (k === q.c ? ' ok' : ' dim') : '')); b.style.setProperty('--c', QCOL[k]);
+      const s = el('span', 'qh-sh'); s.innerHTML = shapeSvg(k, 30); b.append(s, el('span', 'qh-ot', v));
+      if (rev) { const n = el('span', 'qh-n', String(rev.counts[k])); b.appendChild(n); if (k === q.c) b.appendChild(el('span', 'qh-tick', '✓')); }
+      g.appendChild(b);
+    });
+    return g;
+  }
+  function reveal() {
+    if (ph !== 'q') return; clearInterval(timer); ph = 'rev';
+    const q = Q[qi], counts = [0, 0, 0, 0], r = {}, dur = q.s * 1000;
+    players.forEach(p => {
+      const a = answers.get(p.id); let pts = 0, ok = false;
+      if (a) { counts[a.c]++; if (a.c === q.c) { ok = true; pts = Math.round(1000 * (1 - Math.min(1, Math.max(0, a.t) / dur) / 2)); p.ok++; } }
+      p.score += pts; r[p.id] = { ok, pts, na: !a };
+    });
+    ranking = [...players.values()].sort((a, b) => b.score - a.score);
+    ranking.forEach((p, i) => { r[p.id].rank = i + 1; r[p.id].score = p.score; });
+    lastMsg = { ph: 'rev', qi, n: Q.length, c: q.c, counts, r }; push(); SFX.bell();
+    const wrap = el('div', 'qh-q'), head = el('div', 'qh-qhead'); head.append(el('div', 'qh-qt', q.t)); wrap.appendChild(head);
+    const cols = el('div', 'qh-revcols'), left = el('div'); left.appendChild(optGrid(q, { counts }));
+    const bd = el('div', 'qh-board'); bd.appendChild(el('h3', '', 'Алдыңғы орындар'));
+    ranking.slice(0, 5).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(i + 1)), el('span', '', p.name), el('em', '', String(p.score))); bd.appendChild(row); });
+    const nx = el('button', 'qh-go', qi + 1 < Q.length ? 'Келесі сұрақ' : 'Қорытынды'); nx.type = 'button'; nx.onclick = primary;
+    cols.append(left, bd); wrap.append(cols, nx); setBody(wrap);
+  }
+  function finish() {
+    ph = 'end'; clearInterval(timer);
+    ranking = [...players.values()].sort((a, b) => b.score - a.score);
+    const r = {}; ranking.forEach((p, i) => { r[p.id] = { rank: i + 1, score: p.score, ok: p.ok }; });
+    lastMsg = { ph: 'end', n: Q.length, total: ranking.length, top: ranking.slice(0, 10).map(p => ({ n: p.name, s: p.score })), r }; push(); SFX.fan(); cnt.textContent = '';
+    const wrap = el('div', 'qh-end'); wrap.appendChild(el('h2', 'qh-h', 'Викторина аяқталды'));
+    const pod = el('div', 'qh-pod');
+    [1, 0, 2].forEach(i => { const p = ranking[i]; if (!p) return; const c = el('div', 'qh-pc p' + (i + 1)); c.append(el('b', '', p.name), el('em', '', p.score + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
+    wrap.appendChild(pod);
+    const rest = el('div', 'qh-rest'); ranking.slice(3, 10).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(i + 4)), el('span', '', p.name), el('em', '', String(p.score))); rest.appendChild(row); });
+    const fin = el('button', 'qh-go', 'Аяқтау'); fin.type = 'button'; fin.onclick = shutdown;
+    wrap.append(rest, fin); setBody(wrap); saveRun();
+  }
+  function primary() {
+    if (ph === 'lobby') { if (players.size) { SFX.drum(); setTimeout(() => question(0), 700); } }
+    else if (ph === 'q') reveal();
+    else if (ph === 'rev') { qi + 1 < Q.length ? question(qi + 1) : finish(); }
+    else if (ph === 'end') shutdown();
+  }
+  // байланыс
+  ch.on('presence', { event: 'sync' }, () => {
+    const st = ch.presenceState();
+    Object.entries(st).forEach(([id, metas]) => {
+      const nm = metas[0] && metas[0].name; if (!nm || id === 'host' || kicked.has(id)) return;
+      if (!players.has(id)) {
+        let u = String(nm).slice(0, 20), n = 2; const taken = () => [...players.values()].some(p => p.name === u);
+        while (taken()) u = String(nm).slice(0, 18) + ' ' + n++;
+        players.set(id, { id, name: u, score: 0, ok: 0, here: true }); SFX.pop();
+      }
+      players.get(id).here = true;
+    });
+    players.forEach(p => { if (!st[p.id]) { if (ph === 'lobby') players.delete(p.id); else p.here = false; } });
+    if (ph === 'lobby') drawLobby(); else { cnt.textContent = ph === 'end' ? '' : (qi + 1) + ' / ' + Q.length; drawAns(); }
+  });
+  ch.on('broadcast', { event: 'hello' }, () => push());
+  ch.on('broadcast', { event: 'ans' }, ({ payload: m }) => {
+    if (ph !== 'q' || !m || m.qi !== qi) return; const p = players.get(m.id); if (!p || answers.has(m.id)) return;
+    const c = +m.c; if (!(c >= 0 && c < 4) || !Q[qi].o[c]) return;
+    answers.set(m.id, { c, t: Date.now() - qStart }); drawAns(); SFX.pop();
+    if (answers.size >= active().length) setTimeout(() => { if (ph === 'q') reveal(); }, 700);
+  });
+  ch.subscribe(async s => {
+    if (s === 'SUBSCRIBED') { await ch.track({ host: true }); }
+    if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') setBody(el('p', 'qh-s', 'Байланыс орнамады. Интернетті тексеріп, қайта көр. Supabase Realtime қосулы болуы керек.'));
+  });
+  lobby();
+}
+function makeQR(text) {
+  const q = qrcode(0, 'M'); q.addData(text); q.make(); const n = q.getModuleCount(); let d = '';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += 'M' + c + ' ' + r + 'h1v1h-1z';
+  return '<svg viewBox="-2 -2 ' + (n + 4) + ' ' + (n + 4) + '" shape-rendering="crispEdges" role="img" aria-label="QR-код"><rect x="-2" y="-2" width="' + (n + 4) + '" height="' + (n + 4) + '" fill="#fff"/><path d="' + d + '" fill="#111"/></svg>';
+}
+
+// ===== Командалық ұпай (геймификация) =====
+function teamBoard() {
+  const b = stage(), bar = el('div', 'bar'), grid = el('div', 'ggrid'), inp = document.createElement('input');
+  inp.type = 'number'; inp.min = 2; inp.max = 8; inp.value = 4;
+  const COLS = ['#E21B3C', '#1368CE', '#D89E00', '#26890C', '#7C5CFF', '#F28C28', '#0EA5B7', '#D6409F'];
+  let teams = [];
+  const draw = () => {
+    grid.replaceChildren(); const best = Math.max(...teams.map(t => t.s));
+    teams.forEach((t, i) => {
+      const c = el('div', 'gcard'); c.style.borderColor = COLS[i]; if (best > 0 && t.s === best) c.style.boxShadow = '0 0 0 4px ' + COLS[i];
+      const nm = document.createElement('input'); nm.value = t.n; nm.maxLength = 24; nm.setAttribute('aria-label', 'Команда аты'); nm.oninput = () => { t.n = nm.value; };
+      nm.style.cssText = 'width:100%;max-width:none;font-weight:700;font-size:1.2rem;margin-bottom:8px';
+      const sc = el('div', 'big', String(t.s)); sc.style.cssText = 'margin:8px 0;font-size:clamp(2.4rem,6vw,4.5rem);color:' + COLS[i];
+      const row = el('div', 'bar');
+      [['−1', -1], ['+1', 1], ['+5', 5]].forEach(([l, d]) => { const x = el('button', 'go', l); x.onclick = () => { t.s += d; d > 0 ? SFX.pop() : SFX.tick(); draw(); }; row.appendChild(x); });
+      c.append(nm, sc, row); grid.appendChild(c);
+    });
+  };
+  const go2 = el('button', 'go', 'Командаларды құру'), lab = el('label', '', 'Команда саны'); lab.style.margin = '0';
+  go2.onclick = () => { const n = Math.max(2, Math.min(8, +inp.value || 4)); teams = Array.from({ length: n }, (_, i) => ({ n: 'Команда ' + (i + 1), s: 0 })); SFX.start && SFX.start(); draw(); };
+  bar.append(lab, inp, go2); b.append(bar, grid); go2.click();
+}
 
 // ===== Менің материалдарым =====
 let mFolders = [], mItems = [], mCur = null;
