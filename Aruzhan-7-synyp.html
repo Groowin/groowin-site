@@ -1,561 +1,521 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Бөгет-науа моделі</title>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Бөгет макеті 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Sans+Narrow:wght@700&family=PT+Mono&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;800&display=swap">
 <style>
-/* Layout: lab-bench page. Header, one large 3D viewer with controls beneath, then spec tables in a two-column grid. */
-:root {
-  --bg: #f1f4f6;
-  --surface: #ffffff;
-  --fg: #14212b;
-  --muted: #566877;
-  --line: #d2dae0;
-  --accent: #c24e17;
-  --accent-fg: #ffffff;
-  --water: #1d6fae;
-  --chip: #e6ecf0;
-  --f-display: 'PT Sans Narrow', 'Arial Narrow', 'PT Sans', sans-serif;
-  --f-body: 'PT Sans', 'Segoe UI', system-ui, sans-serif;
-  --f-mono: 'PT Mono', ui-monospace, Menlo, Consolas, monospace;
+/* Layout: 3D stage on top, run controls, dam picker with a note, info cards, own-measurement table. */
+:root{
+  --bg:#f2f4f3; --panel:#ffffff; --fg:#17262b; --muted:#5a6a70; --line:#d3dbdd;
+  --accent:#1f6f8b; --accent-fg:#ffffff; --stage:#e6ebec; --warn:#a8531d; --warn-bg:#fbeee3;
+  --font:'Noto Sans',system-ui,'Segoe UI',Arial,sans-serif;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0d161d; --surface: #14212b; --fg: #e6edf2; --muted: #94a6b5; --line: #263643;
-    --accent: #f0803a; --accent-fg: #14120f; --water: #5ab0ee; --chip: #1c2d39;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0d161d; --surface: #14212b; --fg: #e6edf2; --muted: #94a6b5; --line: #263643;
-  --accent: #f0803a; --accent-fg: #14120f; --water: #5ab0ee; --chip: #1c2d39;
-  color-scheme: dark;
-}
-* { box-sizing: border-box; }
-body {
-  background: var(--bg); color: var(--fg);
-  font-family: var(--f-body); font-size: 16px; line-height: 1.5;
-  padding-inline: 16px; padding-block: 24px 48px;
-}
-.wrap { max-width: 1080px; margin-inline: auto; display: flex; flex-direction: column; gap: 24px; }
-header { display: flex; flex-direction: column; gap: 8px; }
-.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-h1 { font-family: var(--f-display); font-size: clamp(32px, 6vw, 52px); line-height: 1.05; margin: 0; text-wrap: balance; }
-.lead { margin: 0; max-width: 62ch; color: var(--muted); }
-h2 { font-family: var(--f-display); font-size: 22px; margin: 0 0 12px; line-height: 1.15; }
-
-.viewer { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-.stage { position: relative; height: clamp(300px, 52vw, 560px); touch-action: none; }
-.stage canvas { display: block; width: 100%; height: 100%; }
-.hint { position: absolute; left: 12px; bottom: 10px; font-family: var(--f-mono); font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--surface) 80%, transparent); padding: 2px 8px; border-radius: 4px; }
-.fallback { padding: 24px; color: var(--muted); }
-
-.controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 32px; padding: 16px; border-top: 1px solid var(--line); }
-.controls > * { min-width: 0; }
-fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
-legend, .lbl { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 8px; display: block; }
-.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.seg input { position: absolute; opacity: 0; pointer-events: none; }
-.seg label { display: block; text-align: center; padding: 8px 4px; border: 1px solid var(--line); border-radius: 6px; background: var(--chip); cursor: pointer; font-size: 14px; line-height: 1.2; }
-.seg input:checked + label { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 700; }
-.seg input:focus-visible + label { outline: 2px solid var(--fg); outline-offset: 2px; }
-.shape-note { margin: 8px 0 0; font-size: 14px; color: var(--muted); min-height: 2.9em; }
-.slider { display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; }
-.slider .row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-.slider output { font-family: var(--f-mono); font-size: 15px; font-variant-numeric: tabular-nums; }
-input[type=range] { width: 100%; accent-color: var(--accent); }
-.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
-button { font: inherit; font-weight: 700; padding: 9px 16px; border-radius: 6px; border: 1px solid var(--line); background: var(--chip); color: var(--fg); cursor: pointer; }
-button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
-button:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
-.status { font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
-.disclaimer { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 12px; }
-
-.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-.grid > section { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
-.grid .full { grid-column: 1 / -1; }
-.tw { overflow-x: auto; }
-table { border-collapse: collapse; width: 100%; font-size: 15px; }
-th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-th { font-family: var(--f-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
-td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-ul.mat { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
-.safe { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--chip); font-size: 14px; }
-
-@media (max-width: 760px) {
-  .controls { grid-template-columns: 1fr; }
-  .grid { grid-template-columns: 1fr; }
-  .seg { grid-template-columns: repeat(2, 1fr); }
-}
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12191c; --panel:#1b2428; --fg:#e6eef0; --muted:#97a8ad; --line:#2f3d42;
+  --accent:#5db6d6; --accent-fg:#0b1a20; --stage:#232e33; --warn:#f0b27a; --warn-bg:#2b2018; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12191c; --panel:#1b2428; --fg:#e6eef0; --muted:#97a8ad; --line:#2f3d42;
+  --accent:#5db6d6; --accent-fg:#0b1a20; --stage:#232e33; --warn:#f0b27a; --warn-bg:#2b2018; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.5;padding-inline:16px;padding-block:20px 40px}
+h1,h2,p,ol,ul{margin:0}
+.wrap{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-size:1.5rem;font-weight:800;line-height:1.2;text-wrap:balance}
+h2{font-size:1rem;font-weight:600}
+.sub{color:var(--muted);max-width:65ch}
+.stagebox{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--stage);aspect-ratio:16/10;min-height:300px;max-width:100%;touch-action:none}
+.stagebox canvas{display:block;width:100%;height:100%}
+.readout{position:absolute;left:12px;top:12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:.85rem;max-width:calc(100% - 24px)}
+.readout b{font-variant-numeric:tabular-nums;font-size:1.25rem}
+.readout .st{color:var(--accent);font-weight:600}
+.readout .mu{color:var(--muted)}
+.tools{position:absolute;right:12px;bottom:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+button{font:inherit;cursor:pointer;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:600}
+.picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.picker button{text-align:left;display:flex;flex-direction:column;gap:2px}
+.picker button small{color:var(--muted);font-size:.75rem}
+.picker button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.damnote{font-size:.9rem;color:var(--muted);max-width:75ch}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.cols{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card ol,.card ul{padding-left:1.2em;display:flex;flex-direction:column;gap:4px;font-size:.9rem}
+.water{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.water label{font-weight:600}
+.water input[type=range]{flex:1;min-width:140px;accent-color:var(--accent)}
+.vol{font-variant-numeric:tabular-nums}
+.vol b{font-size:1.15rem}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr.sel td{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+input[type=number]{font:inherit;width:6.5em;padding:5px 8px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px}
+.note{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:.9rem}
 </style>
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Зерде 2026–2027 · Физика · 7-сынып</div>
-    <h1>Бөгет-науа моделі</h1>
-    <p class="lead">Жоба тақырыбы: бөгет пішіні су соққысына қалай әсер етеді? Су науамен ағып, бөгетке соғылады. Бөгеттің пішіні мен биіктігін ауыстырып, құрастыру өлшемдерін қарауға болады. Модельді тышқанмен немесе саусақпен айналдыр.</p>
+    <h1>Бөгет пішіні су соққысына қалай әсер етеді? 3D макет</h1>
+    <p class="sub">Қақпаны ашып су жіберіңіз немесе науаға толқын жіберіңіз. Су бөгет пішінімен әрекеттесіп, динамометр жылжиды.</p>
   </header>
 
-  <div class="viewer">
-    <div class="stage" id="stage">
-      <canvas id="cv" aria-label="Науа мен бөгеттің 3D моделі"></canvas>
-      <div class="hint">Айналдыру: сүйреу · Жақындату: дөңгелек немесе қысу</div>
+  <div class="note">Су таяз су теңдеуімен есептеледі (1 өлшемді, ×0,35 баяу). Бөгеттің беті мен тастың үйкелісі су қозғалысын өзгертеді. Бұл модель нақты өлшемнің орнына жүрмейді. Динамометр көрсеткіші тек сіз енгізген сан.</div>
+
+  <div class="stagebox" id="stage">
+    <div class="readout">
+      <span class="st" id="status">Қақпа жабық</span><br>
+      Динамометр (0–5 Н, бөлік құны 0,1 Н)<br>
+      <b id="dynval">—</b> <span id="dynunit"></span><br>
+      <span class="mu" id="dynname"></span>
     </div>
-    <div class="controls">
-      <fieldset>
-        <legend>Бөгет пішіні</legend>
-        <div class="seg" role="radiogroup">
-          <input type="radio" name="shape" id="s-wall" value="wall" checked><label for="s-wall">Тік қабырға</label>
-          <input type="radio" name="shape" id="s-slope" value="slope"><label for="s-slope">Көлбеу</label>
-          <input type="radio" name="shape" id="s-steps" value="steps"><label for="s-steps">Баспалдақты</label>
-          <input type="radio" name="shape" id="s-rocks" value="rocks"><label for="s-rocks">Кедір-бұдыр</label>
-          <input type="radio" name="shape" id="s-concave" value="concave"><label for="s-concave">Ойық</label>
-          <input type="radio" name="shape" id="s-float" value="float"><label for="s-float">Қалқымалы</label>
-        </div>
-        <p class="shape-note" id="shapeNote"></p>
-      </fieldset>
-      <div>
-        <div class="slider">
-          <div class="row"><label class="lbl" for="level">Су деңгейі (су жинағышта)</label><output id="levelOut" for="level"></output></div>
-          <input type="range" id="level" min="6" max="14" step="1" value="12">
-        </div>
-        <div class="slider">
-          <div class="row"><label class="lbl" for="dam">Бөгет биіктігі</label><output id="damOut" for="dam"></output></div>
-          <input type="range" id="dam" min="4" max="14" step="1" value="10">
-        </div>
-        <div class="actions">
-          <button class="primary" id="go" type="button">Қақпақты көтеру</button>
-          <button id="reset" type="button">Қайта қою</button>
-          <span class="status" id="status" role="status"></span>
-        </div>
-      </div>
-      <p class="disclaimer">Анимация көрнекілік үшін жасалған, нақты физикалық есеп емес. Мұнда су асып кетуі тек бөгет биіктігіне байланысты, ал пішіндердің нақты айырмасын тек тәжірибе көрсетеді. Су соққысының күшін, асып өткен су көлемін және ағын жылдамдығын нақты тәжірибеде өзің өлшейсің. Зерттеу сұрағын, болжамды және қорытындыны да өзің жазасың.</p>
+    <div class="tools">
+      <button id="open" class="primary">Қақпаны ашу</button>
+      <button id="wave" class="primary">Толқын жіберу</button>
+      <button id="refill">Қайта толтыру</button>
+      <button id="zoomin" aria-label="Жақындату">+</button>
+      <button id="zoomout" aria-label="Алыстату">−</button>
+      <button id="reset">Камера</button>
     </div>
   </div>
 
-  <div class="grid">
-    <section>
-      <h2>Науа өлшемдері</h2>
-      <div class="tw">
-        <table>
-          <thead><tr><th>Бөлік</th><th>Өлшемі, см</th></tr></thead>
-          <tbody>
-            <tr><td>Науаның ішкі өлшемі (ұзындық × ен × биіктік)</td><td class="num">80 × 12 × 15</td></tr>
-            <tr><td>Су жинағыш бөлік</td><td class="num">0–20</td></tr>
-            <tr><td>Қақпақ (жоғары көтеріледі)</td><td class="num">20</td></tr>
-            <tr><td>Жүгіру жолы</td><td class="num">20–61</td></tr>
-            <tr><td>Бөгет (қалыңдығы 2)</td><td class="num">61–63</td></tr>
-            <tr><td>Асып өткен су қабылдағышы</td><td class="num">63–80</td></tr>
-            <tr><td>Жылдамдық белгілері</td><td class="num">әр 10 см</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+  <div class="card">
+    <h2>Қақпа артындағы су</h2>
+    <div class="water">
+      <label for="level">Су деңгейі, см</label>
+      <input type="range" id="level" min="4" max="12" step="1" value="10">
+      <span class="vol" id="vol"></span>
+    </div>
+    <p class="sub" style="font-size:.85rem">Қақпа науаның басынан 20 см қашықтықта тұр. Науаның ені 12 см. Көлем = ұзындығы × ені × деңгейі, 1 см³ = 1 мл. «Толқын жіберу» режимінде науа 6 см деңгейге дейін толады, оған салмақ түседі.</p>
+  </div>
 
-    <section>
-      <h2>Керек материалдар</h2>
-      <ul class="mat">
-        <li>Ұзын мөлдір контейнер немесе аквариум, 80 × 12 × 15 см (тақтайдан жасалған науаның ішіне үлдір төсеуге болады)</li>
-        <li>Қақпақ: пластик не акрил тақташа 12 × 15 см, екі жағында бағыттауыш ойық</li>
-        <li>Бөгеттер: 6 пішін, фанерден немесе қалың картоннан, әрқайсысы 6, 9 және 12 см биіктікте. Кедір-бұдырға ұсақ тастар мен желім, ойыққа иілген қатырма не пластик, қалқымалыға пенопласт трапеция, шынжыр (не жіп) және 2 бекіткіш керек</li>
-        <li>Науа астына үлкен табақ немесе ванна</li>
-        <li>Мензурка не градуирленген ыдыс, асып өткен су үшін</li>
-        <li>Динамометр (0–1 Н, сезімтал), жіп, шағын блок: су соққысының күшін өлшеу үшін</li>
-        <li>Бөгет тақташасы сырғанайтын тегіс табанға бекітіледі</li>
-        <li>Телефон (бейне), сызғыш, секундомер</li>
-        <li>Су шамамен 3 л</li>
+  <h2>Бөгет пішіні</h2>
+  <div class="picker" id="picker"></div>
+  <p class="damnote" id="damnote"></p>
+
+  <div class="cols">
+    <div class="card">
+      <h2>Динамометрдің бөлік құны</h2>
+      <ul>
+        <li>Бөлік құны: көрші екі белгінің айырмасын, олардың арасындағы бөлік санына бөлеміз.</li>
+        <li>Мұндағы шкала: 0–5 Н, 50 бөлікке бөлінген. Бөлік құны = 5 Н ÷ 50 = <b>0,1 Н</b>.</li>
+        <li>Көрсеткішті бөлік санына көбейтіп оқыңыз: 24 бөлік × 0,1 Н = 2,4 Н.</li>
+        <li>Өз динамометріңіздің шкаласы басқа болуы мүмкін, оның бөлік құнын өзіңіз тексеріңіз.</li>
       </ul>
-    </section>
+    </div>
+    <div class="card">
+      <h2>Динамометр не үшін керек?</h2>
+      <ul>
+        <li>Күшті ньютонмен өлшейді: серіппе созылса, шкала күшті көрсетеді (F = kΔx).</li>
+        <li>Әр бөгетке соққы бір құралмен өлшенеді, сондықтан алты пішін салыстырылады.</li>
+        <li>Әр өлшеуді 3 рет қайталап, көрсеткіштің ең үлкен мәнін жазыңыз.</li>
+      </ul>
+    </div>
+  </div>
 
-    <section class="full">
-      <h2>Тәжірибе схемасы</h2>
-      <div class="tw">
-        <table>
-          <thead><tr><th>Топ</th><th>Шама</th><th>Қалай өлшенеді</th></tr></thead>
-          <tbody>
-            <tr><td>Өзгертеміз</td><td>Бөгет пішіні (6 түрлі), бөгет биіктігі (6, 9, 12 см)</td><td>Алдын ала дайындалған бөгеттерді ауыстырамыз</td></tr>
-            <tr><td>Өлшейміз</td><td>Асып өткен су көлемі, мл</td><td>Қабылдағыштағы суды мензуркаға құямыз</td></tr>
-            <tr><td>Өлшейміз</td><td>Су соққысының күші, Н</td><td>Бөгет тақташасы сырғанап, жіп пен блок арқылы динамометрге жалғанады. Динамометрдің ең үлкен көрсеткішін бейнеден оқимыз</td></tr>
-            <tr><td>Өлшейміз</td><td>Су ағынының орташа жылдамдығы, см/с (v = s/t)</td><td>Бейнеге түсіріп, 10 см белгісінен өту уақытын кадрмен санаймыз</td></tr>
-            <tr><td>Өлшейміз</td><td>Су деңгейінің биіктігі, см</td><td>Науа қабырғасындағы сызғышпен бейнеден оқимыз</td></tr>
-            <tr><td>Тұрақты ұстаймыз</td><td>Су көлемі, қақпақтың көтерілу тәсілі, науаның көлбеуі (нөл)</td><td>Әр сынақта бірдей су деңгейі мен бірдей қол қимылы</td></tr>
-            <tr><td>Қайталау</td><td>Әр нұсқа кемінде 3 рет</td><td>Орташа мән кестеге және диаграммаға түседі</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="safe">Сынақ саны: 6 пішін × 3 биіктік × 3 қайталау = 54 сынақ. Алдымен бір биіктікпен баста, уақыт болса қалғандарын қос.</p>
-      <p class="safe">Соққыны өлшеу: динамометр жеткілікті сезімтал болмаса, резеңке не серіппе қолданып, бөгеттің жылжу қашықтығын (см) өлшеуге болады. Қай әдіс жұмыс істейтінін алдын ала сынап көр.</p>
-      <p class="safe">Қауіпсіздік: су тек науада тұрады, науа табақтың үстінде орналасады. Электр құрылғы керек емес. Науаны стендке іліп қоймай, үстелге қою керек.</p>
-    </section>
+  <div class="card">
+    <h2>Өз өлшемдеріңізді енгізіңіз</h2>
+    <p class="sub" style="font-size:.9rem">Мұнда сандар жоқ. Нақты науада динамометрмен өлшеп, соққы кезіндегі ең үлкен көрсеткішті жазыңыз. Су бөгетке тигенде динамометр сол мәнге барады. Беттен шықсаңыз, сандар жоғалады.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Бөгет</th><th>Ең үлкен көрсеткіш, Н</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-(function () {
-  var NOTES = {
-    wall: 'Тік қабырға: ең қарапайым нұсқа, басқаларымен салыстыруға негіз болады.',
-    slope: 'Көлбеу бөгет: беті ағыс жағына қарай көлбеген.',
-    steps: 'Баспалдақты бөгет: беті үш сатыдан тұрады.',
-    rocks: 'Кедір-бұдыр бөгет: ағыс жағындағы беті тастармен қапталған.',
-    concave: 'Ойық бөгет: ағыс жағындағы беті ойыс доға тәрізді.',
-    float: 'Қалқымалы бөгет: трапеция су бетінде жүзеді, екі жағынан шынжырмен түбіне бекітілген.'
-  };
-  var $ = function (id) { return document.getElementById(id); };
-  var levelEl = $('level'), damEl = $('dam'), levelOut = $('levelOut'), damOut = $('damOut');
-  var statusEl = $('status'), noteEl = $('shapeNote');
-  var W = 12, H = 15, L = 80, HW = W / 2 - 0.1;
-  var GATEX = -20, DAMX = 22, RUN0 = -19.6, RUN1 = 21, CATCH0 = 23, CATCH1 = 39.8;
-  var V = 16;
+(function(){
+const DAMS=[
+ {id:'wall',name:'Қатаң қабырға',desc:'тік, тегіс',note:'Видеода: толқын тік қабырғаға тіреліп, жоғары шашырайды.'},
+ {id:'slope',name:'Еңіс',desc:'көлбеу бет',note:'Видеода: толқын еңіспен көтеріліп, шыңынан асып өтеді. Шашырау аз.'},
+ {id:'steps',name:'Баспалдақ',desc:'сатылы бет',note:'Видеода жоқ. Бұл біздің жобаның пішіні, модель оны өз биіктігімен есептейді.'},
+ {id:'rock',name:'Тау жынысты',desc:'өрескел бет',note:'Видеода: торға салынған тастың саңылауларына су кіріп, энергиясы таралады. Шашырау аз.'},
+ {id:'concave',name:'Ойық',desc:'қисық, ойыс бет',note:'Видеодағы иілген төбе толқынды кері бұрады. Біздің ойық пішін басқа, ол біздің жоба үшін жасалған.'},
+ {id:'float',name:'Қалқымалы трапеция',desc:'шынжырмен байланған',note:'Видеода жоқ. Бұл біздің пішін: су төменгі 5 см-де астынан өтеді, үстіңгі бөлігі тоқтатады.'}
+];
+const vals={}; let cur=0;
+let impacted=false, impactAt=0, gateOpen=false, gateY=7.5, mode='gate';
+const $=id=>document.getElementById(id);
+const fmt=v=>v.toFixed(1).replace('.',',');
 
-  function shapeVal() { return document.querySelector('input[name=shape]:checked').value; }
-  function labels() {
-    levelOut.textContent = levelEl.value + ' см · ' + (20 * W * levelEl.value) + ' мл';
-    damOut.textContent = damEl.value + ' см';
-    noteEl.textContent = NOTES[shapeVal()];
-  }
-  labels();
-  statusEl.textContent = 'Қақпақ жабық';
-
-  var stage = $('stage'), canvas = $('cv');
-  var renderer;
-  try {
-    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-  } catch (e) {
-    stage.innerHTML = '<div class="fallback">Бұл құрылғыда 3D көрсету қолжетімсіз. Төмендегі өлшемдер кестесі модельсіз де жарайды.</div>';
-    return;
-  }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(38, 2, 1, 600);
-  camera.position.set(-18, 62, 112);
-  var controls = new THREE.OrbitControls(camera, canvas);
-  controls.target.set(0, 4, 0);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.08;
-  controls.maxPolarAngle = Math.PI * 0.49;
-  controls.minDistance = 40;
-  controls.maxDistance = 220;
-  controls.update();
-
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 0.85));
-  var sun = new THREE.DirectionalLight(0xffffff, 0.7);
-  sun.position.set(40, 90, 60);
-  scene.add(sun);
-
-  var PAL = {
-    light: { bg: 0xe8edf1, floor: 0xc3ccd3, edge: 0x4a5a68, dam: 0xb9824f, water: 0x2f8fd1, gate: 0xd9581a, tick: 0x4a5a68, rock: 0x8a8f94 },
-    dark: { bg: 0x0f1a22, floor: 0x2a3641, edge: 0x8aa0b3, dam: 0xc99663, water: 0x3aa0e6, gate: 0xf0803a, tick: 0x8aa0b3, rock: 0xa4abb2 }
-  };
-  function isDark() {
-    var t = document.documentElement.getAttribute('data-theme');
-    if (t === 'dark') return true;
-    if (t === 'light') return false;
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
-
-  var glass = new THREE.MeshStandardMaterial({ color: 0x9fd0ee, transparent: true, opacity: 0.14, side: THREE.DoubleSide, depthWrite: false, roughness: 0.2 });
-  var floorMat = new THREE.MeshStandardMaterial({ color: 0xc3ccd3, roughness: 0.9 });
-  var edgeMat = new THREE.LineBasicMaterial({ color: 0x4a5a68 });
-  var tickMat = new THREE.LineBasicMaterial({ color: 0x4a5a68 });
-  var damMat = new THREE.MeshStandardMaterial({ color: 0xb9824f, roughness: 0.8 });
-  var rockMat = new THREE.MeshStandardMaterial({ color: 0x8a8f94, roughness: 1, flatShading: true });
-  var chainMat = new THREE.LineBasicMaterial({ color: 0x4a5a68 });
-  var waterMat = new THREE.MeshStandardMaterial({ color: 0x2f8fd1, transparent: true, opacity: 0.62, roughness: 0.25, side: THREE.DoubleSide });
-  var gateMat = new THREE.MeshStandardMaterial({ color: 0xd9581a, transparent: true, opacity: 0.9, roughness: 0.5 });
-
-  function applyTheme() {
-    var p = isDark() ? PAL.dark : PAL.light;
-    scene.background = new THREE.Color(p.bg);
-    floorMat.color.setHex(p.floor);
-    edgeMat.color.setHex(p.edge);
-    tickMat.color.setHex(p.tick);
-    damMat.color.setHex(p.dam);
-    rockMat.color.setHex(p.rock);
-    chainMat.color.setHex(p.tick);
-    waterMat.color.setHex(p.water);
-    gateMat.color.setHex(p.gate);
-  }
-
-  /* flume body */
-  var floor = new THREE.Mesh(new THREE.BoxGeometry(L, 0.6, W + 0.6), floorMat);
-  floor.position.y = -0.3;
-  scene.add(floor);
-  function wall(w, h, d, x, y, z) {
-    var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), glass);
-    m.position.set(x, y, z);
-    scene.add(m);
-  }
-  wall(L, H, 0.3, 0, H / 2, W / 2 + 0.15);
-  wall(L, H, 0.3, 0, H / 2, -W / 2 - 0.15);
-  wall(0.3, H, W, -L / 2 - 0.15, H / 2, 0);
-  wall(0.3, H, W, L / 2 + 0.15, H / 2, 0);
-  var outline = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(L, H, W)), edgeMat);
-  outline.position.y = H / 2;
-  scene.add(outline);
-
-  /* ruler ticks every 10 cm along the front edge */
-  var tp = [];
-  tp.push(-L / 2, 0.05, W / 2 + 1.0, L / 2, 0.05, W / 2 + 1.0);
-  for (var i = 0; i <= 8; i++) {
-    var x = -L / 2 + i * 10;
-    tp.push(x, 0.05, W / 2 + 0.4, x, 0.05, W / 2 + 1.8);
-  }
-  var tg = new THREE.BufferGeometry();
-  tg.setAttribute('position', new THREE.Float32BufferAttribute(tp, 3));
-  scene.add(new THREE.LineSegments(tg, tickMat));
-  function label(text, x) {
-    var c = document.createElement('canvas');
-    c.width = 128; c.height = 64;
-    var g = c.getContext('2d');
-    g.fillStyle = '#7f909d';
-    g.font = 'bold 34px monospace';
-    g.textAlign = 'center';
-    g.textBaseline = 'middle';
-    g.fillText(text, 64, 32);
-    var s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false }));
-    s.scale.set(7, 3.5, 1);
-    s.position.set(x, 0.8, W / 2 + 3.6);
-    scene.add(s);
-  }
-  for (var j = 0; j <= 8; j++) label(String(j * 10), -L / 2 + j * 10);
-
-  /* gate */
-  var gate = new THREE.Mesh(new THREE.BoxGeometry(0.6, H, W), gateMat);
-  gate.position.set(GATEX, H / 2, 0);
-  scene.add(gate);
-
-  /* reservoir water */
-  var res = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), waterMat);
-  scene.add(res);
-  function setRes(h) {
-    h = Math.max(h, 0.05);
-    res.scale.set(20 - 0.8, h, W - 0.2);
-    res.position.set(-L / 2 + 10 - 0.1, h / 2, 0);
-  }
-
-  /* run water surface (custom strip) */
-  var N = 60;
-  var runPos = new Float32Array((N + 1) * 4 * 3);
-  var runIdx = [];
-  for (var k = 0; k < N; k++) {
-    var a = 4 * k, b = 4 * (k + 1);
-    runIdx.push(a, a + 1, b + 1, a, b + 1, b);
-    runIdx.push(a, b, b + 2, a, b + 2, a + 2);
-    runIdx.push(a + 1, a + 3, b + 3, a + 1, b + 3, b + 1);
-  }
-  var runGeo = new THREE.BufferGeometry();
-  runGeo.setAttribute('position', new THREE.BufferAttribute(runPos, 3));
-  runGeo.setIndex(runIdx);
-  var runMesh = new THREE.Mesh(runGeo, waterMat);
-  runMesh.frustumCulled = false;
-  scene.add(runMesh);
-  function setRun(hfn) {
-    for (var q = 0; q <= N; q++) {
-      var xx = RUN0 + (RUN1 - RUN0) * q / N;
-      var hh = hfn(xx);
-      var o = q * 12;
-      runPos[o] = xx; runPos[o + 1] = hh; runPos[o + 2] = HW;
-      runPos[o + 3] = xx; runPos[o + 4] = hh; runPos[o + 5] = -HW;
-      runPos[o + 6] = xx; runPos[o + 7] = 0.05; runPos[o + 8] = HW;
-      runPos[o + 9] = xx; runPos[o + 10] = 0.05; runPos[o + 11] = -HW;
-    }
-    runGeo.attributes.position.needsUpdate = true;
-    runGeo.computeVertexNormals();
-  }
-
-  /* catch water */
-  var catchW = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), waterMat);
-  scene.add(catchW);
-  function setCatch(h) {
-    catchW.visible = h > 0.05;
-    h = Math.max(h, 0.05);
-    catchW.scale.set(CATCH1 - CATCH0, h, W - 0.2);
-    catchW.position.set((CATCH0 + CATCH1) / 2, h / 2, 0);
-  }
-
-  /* dam */
-  var damGroup = new THREE.Group();
-  scene.add(damGroup);
-  var floatMesh = null, chainLines = null, chainPos = null, floatH = 0;
-  function clearDam() {
-    while (damGroup.children.length) {
-      var c = damGroup.children.pop();
-      c.geometry.dispose();
-    }
-    floatMesh = null; chainLines = null; chainPos = null;
-  }
-  function addBox(w, h, d, x, z) {
-    var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), damMat);
-    m.position.set(x, h / 2, z || 0);
-    damGroup.add(m);
-  }
-  function buildDam() {
-    clearDam();
-    var hd = +damEl.value, s = shapeVal(), fw = W - 0.2;
-    if (s === 'wall') {
-      addBox(2, hd, fw, DAMX, 0);
-    } else if (s === 'slope') {
-      var sh = new THREE.Shape();
-      var run = Math.max(hd * 0.9, 3);
-      sh.moveTo(DAMX + 1 - 2 - run, 0);
-      sh.lineTo(DAMX + 1, 0);
-      sh.lineTo(DAMX + 1, hd);
-      sh.lineTo(DAMX - 1, hd);
-      sh.closePath();
-      var g = new THREE.ExtrudeGeometry(sh, { depth: fw, bevelEnabled: false });
-      g.translate(0, 0, -fw / 2);
-      damGroup.add(new THREE.Mesh(g, damMat));
-    } else if (s === 'steps') {
-      for (var i = 0; i < 3; i++) addBox(2, hd * (i + 1) / 3, fw, DAMX - 4 + i * 2, 0);
-    } else if (s === 'rocks') {
-      addBox(2, hd, fw, DAMX, 0);
-      var seed = 7;
-      var rnd = function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-      for (var r = 0; r < 24; r++) {
-        var rr = 0.7 + rnd() * 0.7;
-        var rock = new THREE.Mesh(new THREE.IcosahedronGeometry(rr, 0), rockMat);
-        rock.position.set(DAMX - 1 - rr * 0.3, 0.5 + rnd() * Math.max(hd - 1, 0.5), (rnd() - 0.5) * (fw - 1.6));
-        rock.rotation.set(rnd() * 3, rnd() * 3, rnd() * 3);
-        damGroup.add(rock);
-      }
-    } else if (s === 'concave') {
-      var cs = new THREE.Shape();
-      cs.moveTo(DAMX + 1, 0);
-      cs.lineTo(DAMX - 5, 0);
-      cs.quadraticCurveTo(DAMX - 0.2, hd * 0.2, DAMX - 2.5, hd);
-      cs.lineTo(DAMX + 1, hd);
-      cs.closePath();
-      var cg = new THREE.ExtrudeGeometry(cs, { depth: fw, bevelEnabled: false, curveSegments: 18 });
-      cg.translate(0, 0, -fw / 2);
-      damGroup.add(new THREE.Mesh(cg, damMat));
-    } else {
-      var ts = new THREE.Shape();
-      ts.moveTo(DAMX - 2, 0);
-      ts.lineTo(DAMX + 2, 0);
-      ts.lineTo(DAMX + 1, hd);
-      ts.lineTo(DAMX - 1, hd);
-      ts.closePath();
-      var tg2 = new THREE.ExtrudeGeometry(ts, { depth: fw, bevelEnabled: false });
-      tg2.translate(0, 0, -fw / 2);
-      floatMesh = new THREE.Mesh(tg2, damMat);
-      damGroup.add(floatMesh);
-      chainPos = new Float32Array(24);
-      var cgm = new THREE.BufferGeometry();
-      cgm.setAttribute('position', new THREE.BufferAttribute(chainPos, 3));
-      chainLines = new THREE.LineSegments(cgm, chainMat);
-      chainLines.frustumCulled = false;
-      damGroup.add(chainLines);
-      floatH = hd;
-      updateFloat(0);
-    }
-  }
-  function updateFloat(t) {
-    if (!floatMesh) return;
-    var by = t > 0 ? Math.min(0.5 * hRaw(RUN1, t), 3) : 0;
-    floatMesh.position.y = by;
-    var zz = [-(W / 2 - 2), W / 2 - 2], k = 0;
-    for (var zi = 0; zi < 2; zi++) {
-      var z = zz[zi];
-      var pts = [DAMX - 6, 0.1, z, DAMX - 2, by + 0.2, z, DAMX + 6, 0.1, z, DAMX + 2, by + 0.2, z];
-      for (var q = 0; q < 12; q++) chainPos[k++] = pts[q];
-    }
-    chainLines.geometry.attributes.position.needsUpdate = true;
-  }
-
-  /* simulation (illustrative) */
-  var sim = { t: 0, playing: false, catchV: 0, shown: false };
-  function crest() { return +levelEl.value * 0.5; }
-  function arrive() { return (RUN1 - GATEX) / V; }
-  function hRaw(x, t) {
-    if (t <= 0) return 0.04;
-    var c = crest(), ta = arrive();
-    var xf = GATEX + V * t;
-    var front = 1 / (1 + Math.exp((x - Math.min(xf, RUN1 + 4)) / 1.4));
-    var tail = Math.exp(-Math.max(0, xf - x) / 45);
-    var decay = Math.exp(-Math.max(0, t - ta) / 7);
-    var h = c * front * tail * decay;
-    var tp2 = Math.max(0, t - ta);
-    var pile = c * 0.5 * (1 - Math.exp(-tp2 / 1.2)) * Math.exp(-tp2 / 6) * Math.exp(-(RUN1 - x) / 10);
-    return Math.max(h + pile, 0.04);
-  }
-  function hAt(x, t) { return Math.min(hRaw(x, t), +damEl.value + 0.5); }
-  function paint() {
-    var t = sim.t;
-    var lev = +levelEl.value;
-    var shown = t > 0 ? 0.3 + (lev - 0.3) * Math.exp(-t / 1.8) : lev;
-    setRes(shown);
-    gate.position.y = H / 2 + Math.min(t / 0.5, 1) * (H + 0.5);
-    runMesh.visible = t > 0;
-    if (t > 0) setRun(function (x) { return hAt(x, t); });
-    setCatch(Math.min(sim.catchV, 11));
-    updateFloat(t);
-  }
-  function step(dt) {
-    if (!sim.playing) return;
-    sim.t += dt;
-    var hd = hRaw(RUN1, sim.t);
-    var hDam = +damEl.value;
-    var over = Math.max(0, hd - hDam);
-    sim.catchV += over * 1.6 * dt;
-    if (sim.t < arrive()) statusEl.textContent = 'Су бөгетке ағып келеді';
-    else statusEl.textContent = 'Су бөгетке соғылды';
-    if (sim.t > 11) {
-      sim.playing = false;
-      statusEl.textContent = sim.catchV > 0.3 ? 'Су бөгеттен асып өтті (анимацияда)' : 'Бөгет суды тоқтатты (анимацияда)';
-    }
-  }
-  function reset() {
-    sim.t = 0; sim.playing = false; sim.catchV = 0;
-    statusEl.textContent = 'Қақпақ жабық';
-    paint();
-  }
-
-  /* wiring */
-  levelEl.addEventListener('input', function () { labels(); reset(); });
-  damEl.addEventListener('input', function () { labels(); buildDam(); reset(); });
-  Array.prototype.forEach.call(document.querySelectorAll('input[name=shape]'), function (r) {
-    r.addEventListener('change', function () { labels(); buildDam(); reset(); });
+/* ---------- UI ---------- */
+const picker=$('picker'), rows=$('rows');
+DAMS.forEach((d,i)=>{
+  const b=document.createElement('button');
+  b.innerHTML=(i+1)+'. '+d.name+'<small>'+d.desc+'</small>';
+  b.onclick=()=>select(i); picker.appendChild(b);
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td>'+(i+1)+'. '+d.name+'</td><td><input type="number" id="v'+i+'" min="0" max="5" step="0.1" placeholder="—" aria-label="'+d.name+' көрсеткіші, Н"></td>';
+  rows.appendChild(tr);
+  const inp=tr.querySelector('input');
+  inp.addEventListener('input',e=>{
+    const v=parseFloat(e.target.value);
+    if(isNaN(v)) delete vals[i]; else vals[i]=Math.max(0,Math.min(5,Math.round(v*10)/10));
+    if(i===cur) setDyn(impacted?targetFor():0);
   });
-  $('go').addEventListener('click', function () { reset(); sim.playing = true; });
-  $('reset').addEventListener('click', reset);
+  inp.addEventListener('focus',()=>{ if(cur!==i) select(i); });
+});
 
-  function resize() {
-    var w = stage.clientWidth, h = stage.clientHeight;
-    if (!w || !h) return;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.fov = w / h < 1.3 ? 52 : 38;
-    camera.updateProjectionMatrix();
+/* ---------- Scene ---------- */
+const stage=$('stage');
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.shadowMap.enabled=true;
+stage.insertBefore(renderer.domElement,stage.firstChild);
+const scene=new THREE.Scene();
+function bg(){scene.background=new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--stage').trim()||'#e6ebec')}
+bg();
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>setTimeout(bg,50))}catch(e){}
+new MutationObserver(()=>setTimeout(bg,50)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+const camera=new THREE.PerspectiveCamera(38,1.6,1,800);
+const tgt=new THREE.Vector3(62,3,2);
+const home={az:0.55,el:0.5,rad:150};
+let az=home.az,el=home.el,rad=home.rad;
+function placeCam(){
+  camera.position.set(tgt.x-rad*Math.cos(el)*Math.cos(az),tgt.y+rad*Math.sin(el),tgt.z+rad*Math.cos(el)*Math.sin(az));
+  camera.lookAt(tgt);
+}
+function resize(){
+  const w=stage.clientWidth,h=stage.clientHeight;
+  renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage); resize(); placeCam();
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x8a9a9f,0.6));
+const sun=new THREE.DirectionalLight(0xffffff,0.65);
+sun.position.set(40,120,90); sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-120,right:120,top:80,bottom:-80,near:10,far:350});
+scene.add(sun);
+
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.75,metalness:0},o));
+function box(w,h,d,x,y,z,mat,parent){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat); m.position.set(x,y,z);
+  m.castShadow=true; m.receiveShadow=true; (parent||scene).add(m); return m;
+}
+
+/* table + flume */
+box(150,2,56,64,-1.3,0,M(0xc49660),scene);
+const glass=new THREE.MeshPhysicalMaterial({color:0xbfe6f4,transparent:true,opacity:.2,roughness:.05,side:THREE.DoubleSide,depthWrite:false});
+box(66,.4,12.4,33,-.1,0,M(0xdfeef2,{transparent:true,opacity:.9}));
+[-6.1,6.1].forEach(z=>{const m=new THREE.Mesh(new THREE.BoxGeometry(66,15,.3),glass);m.position.set(33,7.5,z);scene.add(m);});
+{const m=new THREE.Mesh(new THREE.BoxGeometry(.3,15,12.4),glass);m.position.set(0,7.5,0);scene.add(m);}
+{
+  const c=document.createElement('canvas'); c.width=1320; c.height=44; const g=c.getContext('2d');
+  g.fillStyle='rgba(255,255,255,.85)'; g.fillRect(0,0,1320,44); g.fillStyle='#111'; g.font='16px sans-serif'; g.textAlign='center';
+  for(let i=0;i<=60;i++){const x=i*20+10; g.fillRect(x,0,1.5,i%10==0?22:i%5==0?15:9); if(i%10==0)g.fillText(i,x,40);}
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(60,2),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true}));
+  m.position.set(30,1.4,6.3); scene.add(m);
+}
+
+/* ---------- Physics: 1-D shallow water over the dam's bed profile ---------- */
+const N=62, GK=20, G=981, FK=58, SLOW=.35;
+const H=new Float32Array(N), Q=new Float32Array(N), BC=new Float32Array(N), DRAG=new Float32Array(N), BV=new Float32Array(N+1);
+const slopeFn=x=>x<52?0:x<60?(x-52)*1.25:10;
+const BED={
+  wall:x=>x<60?0:10,
+  slope:slopeFn,
+  steps:x=>x<54?0:x<56?2.5:x<58?5:x<60?7.5:10,
+  concave:x=>x<54?0:x<60?10*Math.pow((x-54)/6,2.5):10,
+  rock:slopeFn,
+  float:x=>0
+};
+function setPhysics(id){
+  const f=BED[id];
+  for(let i=0;i<N;i++){ BC[i]=f(i+.5); DRAG[i]=.3; if(id==='rock'&&i>=52&&i<60) DRAG[i]=28; }
+  for(let c=0;c<=N;c++) BV[c]=(f(c-.001)+f(c+.001))/2;
+}
+const waterMat=new THREE.MeshStandardMaterial({color:0x3aa6ea,transparent:true,opacity:.68,roughness:.12,side:THREE.DoubleSide,depthWrite:false});
+const topGeo=new THREE.PlaneGeometry(N,11.5,N,6); topGeo.rotateX(-Math.PI/2); topGeo.translate(N/2,0,0);
+const top=new THREE.Mesh(topGeo,waterMat); top.position.y=.1; scene.add(top);
+const sideGeo=new THREE.PlaneGeometry(N,1,N,1); sideGeo.translate(N/2,0,0);
+[-5.75,5.75].forEach(z=>{const s=new THREE.Mesh(sideGeo,waterMat); s.position.set(0,.1,z); scene.add(s);});
+const sv=new Float32Array(N+1);
+function drawWater(){
+  for(let c=0;c<=N;c++){
+    const l=c-1,r=c, wl=l>=0&&H[l]>.06, wr=r<N&&H[r]>.06;
+    let s;
+    if(wl&&wr) s=(BC[l]+H[l]+BC[r]+H[r])/2;
+    else if(wl) s=BC[l]+H[l]; else if(wr) s=BC[r]+H[r]; else s=BV[c]-.3;
+    sv[c]=s;
   }
-  if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
-  window.addEventListener('resize', resize);
-
-  applyTheme();
-  new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  if (window.matchMedia) {
-    var mq = window.matchMedia('(prefers-color-scheme: dark)');
-    if (mq.addEventListener) mq.addEventListener('change', applyTheme);
+  const tp=topGeo.attributes.position.array;
+  for(let i=0;i<tp.length;i+=3) tp[i+1]=sv[Math.round(tp[i])];
+  topGeo.attributes.position.needsUpdate=true;
+  const sp=sideGeo.attributes.position.array;
+  for(let c=0;c<=N;c++){ sp[c*3+1]=sv[c]; sp[(N+1+c)*3+1]=Math.min(BV[c],sv[c]); }
+  sideGeo.attributes.position.needsUpdate=true;
+}
+let spillVol=0, spillU=0;
+const FH=new Float32Array(N+1),FL=new Float32Array(N+1),FR=new Float32Array(N+1);
+function simulate(dt){
+  let t=dt;
+  const isFloat=DAMS[cur].id==='float';
+  while(t>1e-7){
+    let a=5;
+    for(let i=0;i<N;i++){const h=H[i]; if(h>.01) a=Math.max(a,Math.abs(Q[i]/h)+Math.sqrt(G*h));}
+    const d=Math.min(t,.4/a); t-=d;
+    for(let k=0;k<=N;k++){
+      let hL,qL,bL,hR,qR,bR;
+      if(k===0){hR=H[0];qR=Q[0];bR=BC[0];hL=hR;qL=-qR;bL=bR;}
+      else if(k===N){hL=H[N-1];qL=Q[N-1];bL=BC[N-1];hR=hL;qR=qL;bR=bL;}
+      else{hL=H[k-1];qL=Q[k-1];bL=BC[k-1];hR=H[k];qR=Q[k];bR=BC[k];}
+      if(k===GK&&!gateOpen){FH[k]=0;FL[k]=.5*G*hL*hL;FR[k]=.5*G*hR*hR;continue;}
+      const zm=Math.max(bL,bR);
+      let hLs=Math.max(0,bL+hL-zm), hRs=Math.max(0,bR+hR-zm);
+      const uL=hL>.01?qL/hL:0, uR=hR>.01?qR/hR:0;
+      if(isFloat&&k===FK) hLs=Math.min(hLs,5);   /* lid: only the lower 5 cm passes under the floating body */
+      const qLs=hLs*uL, qRs=hRs*uR;
+      const fqL=hLs>.01?qLs*qLs/hLs+.5*G*hLs*hLs:0, fqR=hRs>.01?qRs*qRs/hRs+.5*G*hRs*hRs:0;
+      const sL=hLs>.01?Math.abs(uL)+Math.sqrt(G*hLs):0, sR=hRs>.01?Math.abs(uR)+Math.sqrt(G*hRs):0;
+      const s=Math.max(sL,sR);
+      FH[k]=.5*(qLs+qRs)-.5*s*(hRs-hLs);
+      const fq=.5*(fqL+fqR)-.5*s*(qRs-qLs);
+      FL[k]=fq+.5*G*(hL*hL-hLs*hLs); FR[k]=fq+.5*G*(hR*hR-hRs*hRs);
+    }
+    if(FH[N]>0){ spillVol+=FH[N]*d; spillU=Q[N-1]/Math.max(H[N-1],.01); }
+    for(let i=0;i<N;i++){
+      H[i]-=d*(FH[i+1]-FH[i]); Q[i]-=d*(FL[i+1]-FR[i]);
+      Q[i]/=(1+d*DRAG[i]);
+      if(H[i]<.01){H[i]=0;Q[i]=0;}
+    }
   }
+}
+function resetWater(){
+  const lvl=+$('level').value;
+  H.fill(0);Q.fill(0);
+  if(mode==='gate'){ for(let i=0;i<GK;i++) H[i]=lvl; }
+  else { for(let i=0;i<N;i++) H[i]=Math.max(0,6-BC[i]); }
+  let sum=0; for(let i=0;i<N;i++) sum+=H[i];
+  $('vol').innerHTML=mode==='gate'
+    ? 'Бастапқы су: <b>'+(GK*12*lvl)+' мл</b> ('+GK+' × 12 × '+lvl+' см)'
+    : 'Науадағы су: <b>'+Math.round(sum*12)+' мл</b> (деңгейі 6 см)';
+  drawWater();
+}
 
-  buildDam();
-  reset();
-  resize();
+/* gate + wave maker */
+const gate=box(.5,15,11.8,GK,7.5,0,M(0xb7c4ca,{metalness:.3,roughness:.4}));
+const weight=box(6,4,10,5,30,0,M(0x4a5256,{metalness:.4,roughness:.5})); weight.visible=false;
+let drop=null;
 
-  var last = performance.now();
-  function loop(now) {
-    var dt = Math.min((now - last) / 1000, 0.05);
-    last = now;
-    step(dt);
-    if (sim.playing || sim.t > 0) paint();
-    controls.update();
-    renderer.render(scene, camera);
-    requestAnimationFrame(loop);
+/* village tray */
+const green=M(0x5aa469), dgreen=M(0x3f7f4f);
+box(60,1,32,96,.5,0,green);
+box(60,3,.6,96,1.5,-16.2,dgreen); box(60,3,.6,96,1.5,16.2,dgreen); box(.6,3,32,126.2,1.5,0,dgreen);
+box(.6,3,10,66.2,1.5,-11,dgreen); box(.6,3,10,66.2,1.5,11,dgreen);
+const wallM=M(0xd2ac72), roofM=M(0xb5543f);
+[86,98,110].forEach(x=>[-10,0,10].forEach(z=>{
+  box(4,4,4,x,3,z,wallM);
+  const r=new THREE.Mesh(new THREE.ConeGeometry(3.6,2.6,4),roofM); r.rotation.y=Math.PI/4; r.position.set(x,6.3,z); r.castShadow=true; scene.add(r);
+}));
+[[80,-12],[80,12],[118,-12],[118,12]].forEach(p=>{
+  box(.8,3,.8,p[0],2.5,p[1],M(0x7a5532));
+  const s=new THREE.Mesh(new THREE.SphereGeometry(2.4,14,12),M(0x2f7d3e)); s.position.set(p[0],6,p[1]); s.castShadow=true; scene.add(s);
+});
+{
+  const sw=new THREE.Group();
+  const d=new THREE.Mesh(new THREE.CylinderGeometry(3,3,1.2,28),M(0xd9dde0,{metalness:.5,roughness:.35})); d.castShadow=true; sw.add(d);
+  const f=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.5,.1,28),M(0xffffff)); f.position.y=.62; sw.add(f);
+  const b=new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,1.2,12),M(0xc0c4c8,{metalness:.5})); b.position.set(0,.4,-3.4); b.rotation.x=Math.PI/2; sw.add(b);
+  const n=new THREE.Mesh(new THREE.BoxGeometry(.15,.05,2),M(0xcc2a2a)); n.position.set(.4,.7,-.8); n.rotation.y=.6; sw.add(n);
+  sw.position.set(52,.6,19); scene.add(sw);
+  box(32,.25,3,22,0,19.5,M(0xe7eaec,{metalness:.4,roughness:.4}));
+}
+
+/* ---------- Dynamometer: 0-5 N, 50 divisions of 0.1 N ---------- */
+const DYN_Y=7.5, DX0=69, DLEN=10;
+const dyn=new THREE.Group(); scene.add(dyn);
+const steel=M(0xb9c1c6,{metalness:.7,roughness:.3});
+{
+  const plate=new THREE.Mesh(new THREE.BoxGeometry(.3,4,6),steel); plate.position.set(62.2,DYN_Y,0); dyn.add(plate);
+  const rod=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,7,10),steel); rod.rotation.z=Math.PI/2; rod.position.set(65.7,DYN_Y,0); dyn.add(rod);
+  const tube=new THREE.Mesh(new THREE.CylinderGeometry(1.25,1.25,12,28,1,true),new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.28,roughness:.05,side:THREE.DoubleSide,depthWrite:false}));
+  tube.rotation.z=Math.PI/2; tube.position.set(75,DYN_Y,0); dyn.add(tube);
+  const cap=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,.6,20),steel); cap.rotation.z=Math.PI/2; cap.position.set(81,DYN_Y,0); dyn.add(cap);
+  const pts=[]; for(let t=0;t<=1;t+=.01) pts.push(new THREE.Vector3(70+t*10,DYN_Y+Math.cos(t*60)*.7,Math.sin(t*60)*.7));
+  dyn.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),200,.1,6),steel));
+  const post=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,DYN_Y+.5,12),steel); post.position.set(82.4,(DYN_Y-.5)/2+1,0); dyn.add(post);
+  const foot=new THREE.Mesh(new THREE.CylinderGeometry(3,3.4,.8,20),steel); foot.position.set(82.4,1.4,0); dyn.add(foot);
+  const tickM=M(0x222222);
+  for(let i=0;i<=50;i++){
+    const major=i%10===0, mid=i%5===0;
+    const t=new THREE.Mesh(new THREE.BoxGeometry(.06,mid?.3:.18,major?1.4:mid?1:.7),tickM);
+    t.position.set(DX0+1+i*(DLEN/50),DYN_Y+1.3,0); dyn.add(t);
+    if(major){
+      const c=document.createElement('canvas'); c.width=64;c.height=64; const g=c.getContext('2d');
+      g.fillStyle='#111';g.font='bold 44px sans-serif';g.textAlign='center';g.fillText(i/10,32,48);
+      const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false}));
+      sp.scale.set(2,2,1); sp.position.set(DX0+1+i*(DLEN/50),DYN_Y+2.7,0); dyn.add(sp);
+    }
   }
-  requestAnimationFrame(loop);
+}
+const ind=new THREE.Mesh(new THREE.TorusGeometry(1.4,.22,10,24),M(0xd83030)); ind.rotation.y=Math.PI/2; dyn.add(ind);
+const indMat=ind.material;
+function setDyn(v){
+  ind.position.set(DX0+1+(v/5)*DLEN,DYN_Y,0);
+  const has=vals[cur]!==undefined;
+  indMat.color.set(has?0xd83030:0x9aa3a7);
+  if(!has){ $('dynval').textContent='—'; $('dynunit').textContent=''; $('dynname').textContent='өлшем енгізілмеген'; return; }
+  $('dynval').textContent=fmt(v); $('dynunit').textContent='Н';
+  $('dynname').textContent=Math.round(v*10)+' бөлік × 0,1 Н';
+}
+function targetFor(){ return vals[cur]!==undefined?vals[cur]:0; }
+
+/* ---------- Dams (meshes match the bed profiles above) ---------- */
+const damGroup=new THREE.Group(); damGroup.position.set(60,0,0); scene.add(damGroup);
+const wood=M(0xc9a26b), stone=M(0x8b8f90,{roughness:.95}), stoneD=M(0x6f7476,{roughness:.95}), buoy=M(0xe2822b), chainM=M(0x666d72,{metalness:.7,roughness:.4});
+function extrude(pts,mat){
+  const s=new THREE.Shape(); s.moveTo(pts[0][0],pts[0][1]);
+  pts.slice(1).forEach(p=>s.lineTo(p[0],p[1])); s.closePath();
+  const g=new THREE.ExtrudeGeometry(s,{depth:11.6,bevelEnabled:false}); g.translate(0,0,-5.8);
+  const m=new THREE.Mesh(g,mat); m.castShadow=true; m.receiveShadow=true; return m;
+}
+function buildDam(id){
+  while(damGroup.children.length) damGroup.remove(damGroup.children[0]);
+  if(id==='wall') damGroup.add(extrude([[0,0],[2,0],[2,10],[0,10]],wood));
+  if(id==='slope') damGroup.add(extrude([[-8,0],[2,0],[2,10],[0,10]],wood));
+  if(id==='steps') damGroup.add(extrude([[-6,0],[2,0],[2,10],[0,10],[0,7.5],[-2,7.5],[-2,5],[-4,5],[-4,2.5],[-6,2.5]],wood));
+  if(id==='concave'){
+    const p=[[-6,0],[2,0],[2,10],[0,10]];
+    for(let t=1;t>=0;t-=.05) p.push([-6+6*t,10*Math.pow(t,2.5)]);
+    damGroup.add(extrude(p,wood));
+  }
+  if(id==='rock'){
+    damGroup.add(extrude([[-7.4,0],[2,0],[2,10],[0,10],[0,9.6]],stoneD));
+    let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+    for(let r=0;r<8;r++){
+      const xs=-8+r*.8+.6;
+      for(let x=xs;x<0.4;x+=1.5) for(let c=0;c<6;c++){
+        const w=1.2+rnd()*.9,h=1.0+rnd()*.5,d=1.6+rnd()*.5;
+        const m=box(w,h,d,x+rnd()*.3,.6+r*1.2,-5+c*2,stone,damGroup);
+        m.rotation.set((rnd()-.5)*.5,(rnd()-.5)*.5,(rnd()-.5)*.5);
+      }
+    }
+  }
+  if(id==='float'){
+    damGroup.add(extrude([[-2.5,5],[2,5],[2,10],[-1,10]],buoy));
+    [-4,4].forEach(z=>{
+      const ch=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,5,6),chainM); ch.position.set(-.3,2.5,z); ch.castShadow=true; damGroup.add(ch);
+      const an=new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.4,12),chainM); an.position.set(-.3,.2,z); damGroup.add(an);
+    });
+  }
+}
+
+/* ---------- Droplets (speed taken from the simulated flow) ---------- */
+const MAXP=260, parts=[];
+const dropGeo=new THREE.SphereGeometry(.35,6,6), dropMat=new THREE.MeshStandardMaterial({color:0x56b4ee,transparent:true,opacity:.85});
+function addDrop(x,y,z,vx,vy,vz){
+  if(parts.length>=MAXP) return;
+  const m=new THREE.Mesh(dropGeo,dropMat); m.position.set(x,y,z); m.userData={vx,vy,vz};
+  scene.add(m); parts.push(m);
+}
+function clearDrops(){ parts.forEach(m=>scene.remove(m)); parts.length=0; }
+function emitDrops(dts){
+  for(let i=2;i<N-1;i++){
+    const h=H[i]; if(h<.3) continue;
+    const u=Q[i]/h, rise=BC[i+1]-BC[i];
+    if(u<8||rise<.15) continue;
+    let th=Math.atan2(rise,1)+(DAMS[cur].id==='concave'?.35:0);
+    const n=.01*h*u*u*Math.sin(th)*dts*(.5+Math.random());
+    for(let k=0;k<Math.floor(n)+(Math.random()<n%1?1:0);k++){
+      const v=u*(.6+.5*Math.random());
+      addDrop(i+.5,BC[i]+h,(Math.random()-.5)*10,v*Math.cos(th),v*Math.sin(th),(Math.random()-.5)*.15*v);
+    }
+  }
+  if(spillVol>0){
+    const n=Math.min(spillVol*12,10); spillVol=0;
+    for(let k=0;k<Math.floor(n)+(Math.random()<n%1?1:0);k++)
+      addDrop(62.2,BC[N-1]+Math.max(H[N-1],.5),(Math.random()-.5)*10,Math.max(spillU,5)*(.7+.4*Math.random()),4,(Math.random()-.5)*4);
+  }
+}
+function moveDrops(dts){
+  for(let i=parts.length-1;i>=0;i--){
+    const s=parts[i],u=s.userData; u.vy-=G*dts;
+    s.position.x+=u.vx*dts; s.position.y+=u.vy*dts; s.position.z+=u.vz*dts;
+    const ix=Math.max(0,Math.min(N-1,Math.floor(s.position.x)));
+    let floor= s.position.x<N? Math.max(BC[ix]+H[ix],BC[ix]) : 1.2;
+    if(s.position.x<N && H[ix]<.06) floor=BC[ix];
+    if(s.position.y<floor||s.position.x>126||s.position.x<0){scene.remove(s);parts.splice(i,1);}
+  }
+}
+
+/* ---------- Run control ---------- */
+function setStatus(s){ $('status').textContent=s; }
+function refill(){
+  gateOpen=false; gateY=7.5; gate.position.y=gateY; gate.visible=true; impacted=false; spillVol=0; drop=null; weight.visible=false;
+  clearDrops(); setPhysics(DAMS[cur].id); resetWater(); setDyn(0);
+  setStatus(mode==='gate'?'Қақпа жабық':'Науа толы, толқынды жіберіңіз');
+}
+function select(i){
+  cur=i; buildDam(DAMS[i].id);
+  [...picker.children].forEach((b,k)=>b.setAttribute('aria-pressed',k===i?'true':'false'));
+  [...rows.children].forEach((r,k)=>r.classList.toggle('sel',k===i));
+  $('damnote').textContent=DAMS[i].note;
+  refill();
+}
+$('open').onclick=()=>{
+  if(mode!=='gate'){ mode='gate'; refill(); }
+  if(gateOpen) return;
+  gateOpen=true; setStatus('Қақпа ашылды, су ағып жатыр');
+};
+$('wave').onclick=()=>{
+  mode="wave"; refill(); gateOpen=true; gateY=24; gate.position.y=gateY; gate.visible=false;
+  weight.position.set(5,30,0); weight.visible=true; drop={vy:0};
+  setStatus('Салмақ түсіп жатыр');
+};
+$('refill').onclick=refill;
+$('level').addEventListener('input',()=>{ mode='gate'; refill(); });
+
+let last=performance.now();
+function frame(now){
+  const dt=Math.min((now-last)/1000,.05); last=now; const dts=dt*SLOW;
+  if(gateOpen && mode==='gate'){ gateY=Math.min(gateY+dt*28,24); gate.position.y=gateY; gate.visible=gateY<22; }
+  if(drop){
+    drop.vy+=300*dt; weight.position.y-=drop.vy*dt;
+    if(weight.position.y<=8.2){
+      weight.visible=false; drop=null;
+      for(let i=1;i<12;i++) H[i]+=4*Math.pow(Math.sin(Math.PI*(i-.5)/11),2);
+      setStatus('Толқын науамен келе жатыр');
+    }
+  }
+  if(gateOpen && !drop){
+    simulate(dts);
+    emitDrops(dts);
+    if(!impacted){
+      for(let i=50;i<59;i++){ if(H[i]>.5&&Math.abs(Q[i]/H[i])>20){ impacted=true; impactAt=now; setStatus('Су бөгетке соқты'); break; } }
+    }
+  }
+  moveDrops(dts);
+  drawWater();
+  if(impacted){
+    setDyn(targetFor()*(1-Math.exp(-(now-impactAt)/1000*7)));
+    if(vals[cur]===undefined) setStatus('Су бөгетке соқты. Көрсеткішті нақты науада өлшеп енгізіңіз');
+  }
+  renderer.render(scene,camera);
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Camera controls ---------- */
+const cv=renderer.domElement; let drag=null;
+cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{
+  if(!drag) return;
+  az-=(e.clientX-drag.x)*.006; el=Math.max(.08,Math.min(1.45,el+(e.clientY-drag.y)*.006));
+  drag={x:e.clientX,y:e.clientY}; placeCam();
+});
+['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>{drag=null}));
+cv.addEventListener('wheel',e=>{e.preventDefault();rad=Math.max(60,Math.min(320,rad*(1+e.deltaY*.001)));placeCam()},{passive:false});
+$('zoomin').onclick=()=>{rad=Math.max(60,rad*.85);placeCam()};
+$('zoomout').onclick=()=>{rad=Math.min(320,rad*1.18);placeCam()};
+$('reset').onclick=()=>{az=home.az;el=home.el;rad=home.rad;placeCam()};
+
+select(0);
+requestAnimationFrame(frame);
 })();
 </script>
 
