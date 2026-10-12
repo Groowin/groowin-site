@@ -39,6 +39,10 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .opt:disabled{cursor:default}.opt.dim{opacity:.35}.opt.pick{box-shadow:0 0 0 4px var(--ink)}
 .res{font-size:2.4rem;font-weight:800;margin:0}.res.ok{color:var(--ok)}.res.bad{color:var(--bad)}
 .pts{font-size:1.4rem;font-weight:700}
+.team{align-self:center;padding:4px 14px;border-radius:99px;color:#fff;font-weight:700;font-size:.9rem;margin:0 0 8px}
+.numin{display:flex;flex-direction:column;gap:10px;margin-top:6px}.numin input{font-size:1.8rem;text-align:center;font-weight:700;padding:16px}
+.wordin{display:flex;gap:8px}.wordin input{flex:1}.wordin .go{width:auto;margin:0;padding:0 22px}
+.mine{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}.mine span{padding:5px 12px;border-radius:99px;background:var(--surf);border:1px solid var(--line);font-weight:600}
 .big{font-size:3rem;font-weight:800;color:var(--accent);margin:0;line-height:1.1}
 #fsb{border:1px solid var(--line);background:var(--surf);color:var(--ink);border-radius:10px;width:36px;height:36px;font-size:1.1rem;cursor:pointer}
 #warn{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:28px;background:var(--bg)}
@@ -57,6 +61,10 @@ const SHAPE = ['<path d="M12 3 22 20H2z"/>', '<path d="M12 2 22 12 12 22 2 12z"/
 const shape = i => '<svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" aria-hidden="true">' + SHAPE[i] + '</svg>';
 const store = { get: k => { try { return sessionStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch {} } };
 const m = $('m');
+const TNAME = ['Қызыл', 'Көк', 'Сары', 'Жасыл'];
+const fmtNum = n => String(Math.round(n * 1e6) / 1e6).replace('.', ',');
+let myTeam = -1;
+const teamTag = () => { if (myTeam < 0) return null; const t = el('div', 'team', 'Командаң: ' + TNAME[myTeam]); t.style.background = COL[myTeam]; return t; };
 const draw = (...n) => { m.replaceChildren(...n); };
 
 let myId = store.get('qid'); if (!myId) { myId = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()); store.set('qid', myId); }
@@ -153,6 +161,8 @@ function end(title, text, kicked) {
 
 function onState(s) {
   if (!s || done) return; gotState = true; paintFS();
+  if (s.tm && s.tm[myId] !== undefined) myTeam = s.tm[myId]; else if (s.r && s.r[myId] && s.r[myId].t !== undefined && s.r[myId].t >= 0) myTeam = s.r[myId].t;
+  if (s.g === 'cloud') return cloudScreen(s);
   if (s.ph === 'closed') return end('Квиз аяқталды', 'Мұғалім бөлмені жапты.');
   if (s.ph === 'lobby') { if (lastPh !== 'lobby') { lastPh = 'lobby'; curQ = -1; waitScreen('Сен кірдің!', 'Мұғалім квизді бастағанша күт. Атың экранда көрінеді.'); } return; }
   if (dq && s.ph !== 'lobby') { lastPh = s.ph; if (!$('warn').hidden) return; showDq(); return; }
@@ -172,10 +182,22 @@ function question(s) {
   const top = el('div', 'top'), tm = el('div', 'tm', String(s.dur)), bar = el('div', 'bar'), fill = el('i'); bar.appendChild(fill);
   top.append(tm, bar, el('span', 'mute', (s.qi + 1) + '/' + s.n));
   const q = el('div', 'q', s.t), opts = el('div', 'opts');
-  const nodes = [top, q];
+  const nodes = [top]; const tt = teamTag(); if (tt) nodes.push(tt); nodes.push(q);
   if (s.img) { const im = document.createElement('img'); im.className = 'img'; im.src = s.img; im.alt = ''; nodes.push(im); }
   const status = el('p', 'mute', ''); status.style.textAlign = 'center'; status.style.marginTop = '12px';
-  s.o.forEach((v, k) => {
+  if (s.k === 'num') {
+    const box = el('div', 'numin'), inp = document.createElement('input'), sendB = el('button', 'go', 'Жіберу');
+    inp.inputMode = 'decimal'; inp.autocomplete = 'off'; inp.placeholder = s.u ? 'Жауап, ' + s.u : 'Жауап (сан)'; inp.maxLength = 16; inp.setAttribute('aria-label', 'Жауап');
+    const sendNum = () => {
+      if (picked >= 0 || Date.now() > endAt + 500) return;
+      const v = parseFloat(inp.value.trim().replace(',', '.')); if (!Number.isFinite(v)) { status.textContent = 'Сан жаз, мысалы 12,5'; return; }
+      picked = 0; inp.disabled = true; sendB.disabled = true;
+      ch.send({ type: 'broadcast', event: 'ans', payload: { id: myId, qi: s.qi, v } });
+      status.textContent = 'Жауап қабылданды: ' + fmtNum(v) + (s.u ? ' ' + s.u : '') + '. Басқалар жауап бергенше күт.'; if (navigator.vibrate) navigator.vibrate(30);
+    };
+    sendB.onclick = sendNum; inp.onkeydown = e => { if (e.key === 'Enter') sendNum(); };
+    box.append(inp, sendB); opts.appendChild(box); opts.classList.add('numwrap');
+  } else s.o.forEach((v, k) => {
     if (!v) return;
     const b = el('button', 'opt'); b.type = 'button'; b.style.setProperty('--c', COL[k]);
     const sh = el('span'); sh.innerHTML = shape(k); b.append(sh, el('span', '', v));
@@ -192,7 +214,7 @@ function question(s) {
   tmr = setInterval(() => {
     const left = endAt - Date.now(), sec = Math.max(0, Math.ceil(left / 1000));
     tm.textContent = sec; fill.style.transform = 'scaleX(' + Math.max(0, Math.min(1, left / (s.dur * 1000))) + ')';
-    if (left <= 0) { clearInterval(tmr); opts.querySelectorAll('.opt').forEach(x => x.disabled = true); if (picked < 0) status.textContent = 'Уақыт бітті.'; }
+    if (left <= 0) { clearInterval(tmr); opts.querySelectorAll('.opt,input,button').forEach(x => x.disabled = true); if (picked < 0) status.textContent = 'Уақыт бітті.'; }
   }, 150);
 }
 
@@ -202,7 +224,8 @@ function result(s) {
   if (r.na) c.append(el('p', 'res bad', 'Жауап жоқ'));
   else c.append(el('p', 'res ' + (r.ok ? 'ok' : 'bad'), r.ok ? 'Дұрыс!' : 'Қате'));
   if (r.ok) c.append(el('p', 'pts', '+' + r.pts + ' ұпай'));
-  if (!r.ok && s.o) { }
+  if (!r.ok && s.k === 'num' && s.a !== undefined && s.a !== null) c.append(el('p', 'mute', 'Дұрыс жауап: ' + fmtNum(s.a) + (s.u ? ' ' + s.u : '')));
+  if (s.ts && myTeam >= 0) { const order = s.ts.map((v, i) => i).sort((a, b) => s.ts[b] - s.ts[a]); c.append(el('p', 'mute', 'Командаң (' + TNAME[myTeam] + '): ' + (order.indexOf(myTeam) + 1) + '-орын, ' + s.ts[myTeam] + ' ұпай')); }
   c.append(el('p', 'mute', 'Барлығы: ' + r.score + ' ұпай'), el('p', '', r.rank + '-орын'), el('p', 'mute', 'Келесі сұрақты күт…'));
   draw(c);
   if (navigator.vibrate) navigator.vibrate(r.ok ? 40 : [60, 40, 60]);
@@ -211,10 +234,28 @@ function result(s) {
 function final(s) {
   const r = (s.r || {})[myId], c = el('div', 'center');
   c.append(el('h1', '', 'Квиз аяқталды'));
+  if (s.ts && myTeam >= 0) { const order = s.ts.map((v, i) => i).sort((a, b) => s.ts[b] - s.ts[a]); c.append(el('p', 'pts', 'Командаң (' + TNAME[myTeam] + '): ' + (order.indexOf(myTeam) + 1) + '-орын')); }
   if (r) { c.append(el('p', 'big', r.rank + '-орын'), el('p', 'pts', r.score + ' ұпай'), el('p', 'mute', r.ok + ' / ' + s.n + ' дұрыс жауап')); }
   const top = (s.top || []).slice(0, 3);
   if (top.length) { const d = el('div'); d.style.cssText = 'margin-top:18px;text-align:left;min-width:220px'; top.forEach((p, i) => { const row = el('div'); row.style.cssText = 'display:flex;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)'; row.append(el('b', '', String(i + 1)), Object.assign(el('span', '', p.n), { style: 'flex:1' }), el('b', '', String(p.s))); d.appendChild(row); }); c.appendChild(d); }
   draw(c);
+}
+
+let cloudKey = '', cloudMine = [];
+function cloudScreen(s) {
+  if (s.ph === 'closed') return end('Сөз бұлты аяқталды', 'Рақмет!');
+  const key = s.t + '|' + (s.reset || 0);
+  if (key === cloudKey && lastPh === 'cloud') return;
+  if (s.reset && s.reset !== (cloudScreen.r || 0)) { cloudMine = []; }
+  cloudScreen.r = s.reset || 0; cloudKey = key; lastPh = 'cloud';
+  const c = el('div', 'center'); c.style.justifyContent = 'flex-start'; c.style.paddingTop = '24px';
+  const left = () => s.max - cloudMine.length, mine = el('div', 'mine'), msg = el('p', 'mute', '');
+  const box = el('div', 'wordin'), inp = document.createElement('input'), b = el('button', 'go', 'Жіберу');
+  inp.maxLength = 28; inp.placeholder = 'Бір сөз немесе қысқа тіркес'; inp.autocomplete = 'off'; inp.setAttribute('aria-label', 'Сөз');
+  const paint = () => { mine.replaceChildren(...cloudMine.map(w => el('span', '', w))); const l = left(); msg.textContent = l > 0 ? 'Тағы ' + l + ' сөз жібере аласың.' : 'Рақмет! Сөздерің экранға шықты.'; inp.disabled = b.disabled = l <= 0; };
+  const sendW = () => { const w = inp.value.trim(); if (!w || left() <= 0) return; ch.send({ type: 'broadcast', event: 'word', payload: { id: myId, w } }); cloudMine.push(w); inp.value = ''; paint(); if (navigator.vibrate) navigator.vibrate(25); inp.focus(); };
+  b.onclick = sendW; inp.onkeydown = e => { if (e.key === 'Enter') sendW(); };
+  box.append(inp, b); c.append(el('h1', '', s.t), box, msg, mine); paint(); draw(c); inp.focus();
 }
 
 joinScreen('');
