@@ -263,6 +263,42 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
 .qh-zoom{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#fff;cursor:zoom-out;padding:20px}
 .qh-zq{width:min(78vmin,860px)}.qh-zq svg{display:block;width:100%;height:auto}
 .qh-zc{font-size:clamp(2rem,8vmin,5rem);font-weight:800;letter-spacing:.12em;color:#14171F}.qh-zh{color:#6B7280}
+
+.qh-modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(0,0,0,.5);padding:16px;overflow:auto}
+.qh-mc{width:min(560px,100%);background:var(--surf,var(--paper));color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:24px;max-height:94vh;overflow:auto}
+.qh-mc h2{margin:0 0 14px;font-size:1.3rem}.qh-mr{margin:0 0 14px}.qh-mr>label{display:block;margin:0 0 6px;font-weight:600}
+.qh-mc input,.qh-mc textarea,.qh-mc select{width:100%;max-width:none;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font:inherit}
+.qh-mc .seg{display:flex;flex-wrap:wrap}.qh-mc .go{width:100%;max-width:none;margin-top:6px}
+.qh-btn2{padding:10px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surf,var(--paper));color:var(--ink);font:inherit;font-weight:600;cursor:pointer}.qh-btn2:hover{background:var(--hover)}
+.qh-turn{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 14px;padding:10px 14px;border-radius:14px;background:var(--accent-soft)}
+.qh-who{display:flex;align-items:center;gap:10px;margin-right:auto;font-size:1.3rem}.qh-wl{color:var(--mute);font-size:1rem}
+.qh-tg{padding:2px 10px;border-radius:99px;color:#fff;font-size:.85rem;font-weight:700}
+.qh-opt.tch{border:0;font:inherit;font-size:clamp(1.1rem,2.3vw,1.8rem);font-weight:600;text-align:left;cursor:pointer;min-height:104px}.qh-opt.tch:active{transform:scale(.98)}
+.qh-numhint{padding:36px;text-align:center;font-size:1.5rem;color:var(--mute);border:2px dashed var(--line);border-radius:16px}
+.qh-padw{max-width:420px;margin:0 auto}
+.qh-disp{min-height:78px;display:flex;align-items:baseline;justify-content:center;gap:6px;font-size:3rem;font-weight:800;border-radius:14px;background:var(--paper);border:1px solid var(--line);margin-bottom:10px;padding:8px 14px;font-variant-numeric:tabular-nums}.qh-disp small{font-size:1.2rem;color:var(--mute);font-weight:600}
+.qh-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.qh-pad button,.qh-padr button{min-height:76px;border:1px solid var(--line);border-radius:14px;background:var(--surf,var(--paper));color:var(--ink);font:inherit;font-size:2rem;font-weight:700;cursor:pointer}.qh-pad button:active{background:var(--accent-soft)}
+.qh-padr{margin-top:10px}.qh-padr button{width:100%}
+.qh-padw .okb{display:block;width:100%;margin-top:10px;min-height:74px;border:0;border-radius:14px;background:var(--accent);color:#fff;font:inherit;font-size:1.4rem;font-weight:800;cursor:pointer}
+.qh-numans{display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;min-height:200px;padding:20px;border-radius:16px;background:var(--accent-soft);text-align:center}.qh-numans b{font-size:clamp(2.4rem,6vw,4.5rem);color:var(--accent)}.qh-numans small{color:var(--mute);font-size:1.1rem}
+.qh-banner{display:flex;flex-direction:column;align-items:center;margin:0 0 16px;padding:14px;border-radius:16px;font-size:2.2rem;font-weight:800;color:#fff}.qh-banner small{font-size:1.2rem;font-weight:600;opacity:.9}.qh-banner.ok{background:#1FA971}.qh-banner.bad{background:#E5484D}
+.qh-race{display:grid;gap:10px;margin:16px 0}.qh-race.sm{margin:18px 0 0}
+.qh-lrow{display:grid;grid-template-columns:96px 1fr 64px;gap:12px;align-items:center}.qh-lrow b{color:var(--c)}.qh-lrow em{font-style:normal;font-weight:800;text-align:right}
+.qh-lane{position:relative;height:56px;border-radius:14px;background:var(--surf,var(--paper));border:1px solid var(--line);overflow:hidden}
+.qh-lane::after{content:'';position:absolute;right:0;top:0;bottom:0;width:10px;background:repeating-conic-gradient(var(--ink) 0 25%,transparent 0 50%) 0 0/10px 10px;opacity:.55}
+.qh-race.sm .qh-lane{height:44px}
+.qh-rkt{position:absolute;top:50%;left:0;width:46px;height:46px;margin-top:-23px;transition:left 1.1s cubic-bezier(.3,.8,.3,1)}.qh-rkt svg{display:block;width:100%;height:100%}
+.qh-cl{display:grid;grid-template-columns:auto 1fr;gap:32px;max-width:1300px;margin:0 auto;align-items:start}
+.qh-cside{display:flex;flex-direction:column;align-items:center;gap:10px}.qh-cside .qh-qr{width:min(26vmin,260px)}
+.qh-bigcode.sm{font-size:clamp(1.8rem,4vw,3rem);margin:0}
+.qh-cmain{min-width:0}.qh-cmain .qh-h{text-align:center}
+.qh-cloud{display:flex;flex-wrap:wrap;gap:4px 22px;align-items:center;justify-content:center;min-height:46vh;padding:12px}
+.qh-w{border:0;background:none;font:inherit;font-weight:800;line-height:1.1;cursor:pointer;padding:2px;animation:qpop .3s;transition:font-size .35s}.qh-w:hover{text-decoration:line-through;opacity:.7}
+.qh-cctl{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin-top:12px}
+.qh-crow{display:flex;gap:10px;width:min(620px,100%)}.qh-crow input{flex:1;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;font-size:1.2rem}
+.qnum{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}.qn1 label{display:block;font-size:.85rem;color:var(--mute);margin:0 0 4px}.main .qn1 input{max-width:none;width:100%}
+@media (max-width:760px){.qh-cl{grid-template-columns:1fr}.qnum{grid-template-columns:1fr}.qh-lrow{grid-template-columns:70px 1fr 50px}}
 </style>
 </head>
 <body>
@@ -1226,7 +1262,9 @@ SFX.paint();
 document.addEventListener('pointerdown', () => SFX.unlock(), { once: true });
 
 const PLAY_TOOLS = [
-  { k: 'quiz', t: 'Викторина', d: 'Өз сұрақтарыңмен сыныпқа тікелей ойын. Оқушылар QR арқылы кіреді.', cls: false, ic: '<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 18h.01"/><circle cx="12" cy="12" r="10"/>' },
+  { k: 'quiz', t: 'Викторина', d: 'Өз сұрақтарыңмен: 4 нұсқа не сан жауабы. Телефонмен (QR) не үлкен экранда.', cls: false, ic: '<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 18h.01"/><circle cx="12" cy="12" r="10"/>' },
+  { k: 'race', t: 'Ракета жарысы', d: 'Командалар жарысады: дұрыс жауап ракетаны алға жылжытады.', cls: false, ic: '<path d="M12 2c3 2.5 5 6 5 10l-2 3H9l-2-3c0-4 2-7.5 5-10z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M7 12.5 4 15l1 3 3-1.5M17 12.5l3 2.5-1 3-3-1.5M10 18.5 12 22l2-3.5"/>' },
+  { k: 'cloud', t: 'Сөз бұлты', d: 'Барлығы сөз жазады, ең көп айтылғаны үлкен болып шығады.', cls: false, ic: '<path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.7 1.5A4 4 0 0 0 6.5 19z"/>' },
   { k: 'random', t: 'Кездейсоқ оқушы', d: 'Сынып тізімінен біреуді әділ таңдайды, қайталамайды.', cls: true, ic: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01"/>' },
   { k: 'groups', t: 'Топқа бөлу', d: 'Оқушыларды араластырып, тең топтарға бөледі.', cls: true, ic: '<circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M2 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1M12 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1"/>' },
   { k: 'timer', t: 'Таймер', d: 'Үлкен экранға арналған кері санау, соңында дыбыс.', cls: false, ic: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>' },
@@ -1256,7 +1294,9 @@ $('plClass').onchange = () => ls.set('plClass', $('plClass').value);
 $('plNoClass').onclick = () => go('rosters');
 async function playTool(t) {
   SFX.unlock();
-  if (t.k === 'quiz') return go('quiz');
+  if (t.k === 'quiz') { quizPreset = null; return go('quiz'); }
+  if (t.k === 'race') { quizPreset = { team: true }; return go('quiz'); }
+  if (t.k === 'cloud') return openCloud();
   if (t.k === 'games') return go('physics');
   if (t.k === 'team') return teamBoard();
   if (t.cls) {
@@ -1272,7 +1312,7 @@ const QCOL = ['#E21B3C', '#1368CE', '#D89E00', '#26890C'];
 const QSHAPE = ['<path d="M12 3 22 20H2z"/>', '<path d="M12 2 22 12 12 22 2 12z"/>', '<circle cx="12" cy="12" r="9"/>', '<rect x="4" y="4" width="16" height="16" rx="1"/>'];
 const shapeSvg = (i, sz) => '<svg width="' + (sz || 26) + '" height="' + (sz || 26) + '" viewBox="0 0 24 24" fill="#fff" aria-hidden="true">' + QSHAPE[i] + '</svg>';
 let qz = null, quizzes = [];
-const newQ = () => ({ t: '', img: null, o: ['', '', '', ''], c: 0, s: 20 });
+const newQ = () => ({ t: '', img: null, o: ['', '', '', ''], c: 0, s: 20, k: 'c', a: null, tol: 0, u: '' });
 const qmsg = (t, c) => note('qzMsg', t, c || '');
 
 async function loadQuizzes() {
@@ -1297,7 +1337,7 @@ async function loadQuizzes() {
   (r.data || []).forEach(x => {
     const d = document.createElement('details'), s = document.createElement('summary'), res = x.results || [];
     s.textContent = new Date(x.created_at).toLocaleString('kk-KZ', { dateStyle: 'short', timeStyle: 'short' }) + ' · ' + (x.title || 'Викторина') + ' · ' + x.players + ' оқушы' + (res[0] ? ' · 1-орын: ' + res[0].n : '');
-    const ol = document.createElement('ol'); res.forEach(p => ol.appendChild(el('li', '', p.n + ' — ' + p.s + ' ұпай, ' + p.ok + ' дұрыс жауап')));
+    const ol = document.createElement('ol'); res.forEach(p => ol.appendChild(el('li', '', p.n + (p.t ? ' (' + p.t + ')' : '') + ' — ' + p.s + ' ұпай' + (p.ok ? ', ' + p.ok + ' дұрыс жауап' : ''))));
     const del = mini('Жою', async () => { if (!confirm('Бұл ойынның нәтижесі жойылсын ба?')) return; await sb.from('quiz_runs').delete().eq('id', x.id); loadQuizzes(); });
     del.style.marginTop = '8px'; d.append(s, ol, del); rb.appendChild(d);
   });
@@ -1349,8 +1389,17 @@ function qCard(q, i) {
   };
   im.append(addB, fi);
   if (q.img) { const p = document.createElement('img'); p.src = q.img; p.alt = ''; im.append(p, mini('Суретті өшіру', () => { q.img = null; renderEditor(); })); }
-  const og = el('div', 'qopts');
-  q.o.forEach((v, k) => {
+  const og = el('div', 'qopts'), isNum = q.k === 'num';
+  const tseg = segment([{ v: 'c', t: '4 нұсқа' }, { v: 'num', t: 'Сан жауабы' }], isNum ? 'num' : 'c', v => { q.k = v; renderEditor(); });
+  tseg.style.margin = '10px 0';
+  if (isNum) {
+    const nb = el('div', 'qnum');
+    const mk = (lab, val, ph, fn, mode) => { const w = el('div', 'qn1'); const i = document.createElement('input'); i.inputMode = mode || 'decimal'; i.placeholder = ph; i.value = val; i.oninput = () => fn(i.value); w.append(el('label', '', lab), i); return w; };
+    nb.append(mk('Дұрыс жауап (сан)', q.a === null || q.a === undefined ? '' : fmtNum(q.a), 'мысалы 12,5', v => { const n = parseNum(v); q.a = Number.isFinite(n) ? n : null; }),
+      mk('Қателік шегі ±', q.tol ? fmtNum(q.tol) : '', '0', v => { const n = parseNum(v); q.tol = Number.isFinite(n) && n > 0 ? n : 0; }),
+      mk('Өлшем бірлігі', q.u || '', 'м/с', v => { q.u = v.slice(0, 12); }, 'text'));
+    og.style.display = 'block'; og.append(nb, el('p', 'gm qhint', 'Оқушы жауапты өзі жазады. Қателік шегінде тұрған жауап дұрыс саналады (мысалы 12,5 ± 0,1).'));
+  } else q.o.forEach((v, k) => {
     const r = el('div', 'qo'); r.style.setProperty('--c', QCOL[k]);
     const sh = el('span', 'qs'); sh.innerHTML = shapeSvg(k, 20);
     const inp = document.createElement('input'); inp.value = v; inp.maxLength = 100; inp.placeholder = 'Жауап ' + (k + 1) + (k > 1 ? ' (міндетті емес)' : '');
@@ -1361,11 +1410,11 @@ function qCard(q, i) {
     lab.onclick = () => { q.c = k; og.querySelectorAll('.qo').forEach((x, j) => { x.classList.toggle('on', j === k); const d = x.querySelector('.qdot'); d.classList.toggle('on', j === k); d.setAttribute('aria-checked', String(j === k)); }); };
     r.append(sh, inp, lab); og.appendChild(r);
   });
-  og.appendChild(el('p', 'gm qhint', 'Дұрыс жауаптың дөңгелегін бас: ✓ белгісі тұрған жауап — дұрыс.'));
+  if (!isNum) og.appendChild(el('p', 'gm qhint', 'Дұрыс жауаптың дөңгелегін бас: ✓ белгісі тұрған жауап — дұрыс.'));
   const tr = el('div', 'qtime'), tl = el('label', '', 'Уақыт, секунд'), ti = document.createElement('input');
   ti.type = 'number'; ti.min = 5; ti.max = 300; ti.step = 5; ti.value = q.s; ti.onchange = () => { q.s = Math.max(5, Math.min(300, Math.round(+ti.value || 20))); ti.value = q.s; };
   tr.append(tl, ti, mini('Барлығына қолдану', () => { qz.questions.forEach(x => x.s = q.s); renderEditor(); }));
-  c.append(h, ta, im, og, tr); return c;
+  c.append(h, ta, im, tseg, og, tr); return c;
 }
 $('qzAddQ').onclick = () => { const last = qz.questions[qz.questions.length - 1]; const q = newQ(); if (last) q.s = last.s; qz.questions.push(q); renderEditor(); const cs = $('qzQs').children; cs[cs.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); cs[cs.length - 1].querySelector('textarea').focus(); };
 $('qzBack').onclick = () => { if (confirm('Сақталмаған өзгерістер жоғалады. Шығасың ба?')) loadQuizzes(); };
@@ -1374,6 +1423,7 @@ function validateQuiz() {
   for (let i = 0; i < qz.questions.length; i++) {
     const q = qz.questions[i], n = i + 1;
     if (!q.t.trim()) return n + '-сұрақтың мәтіні бос.';
+    if (q.k === 'num') { if (!Number.isFinite(q.a)) return n + '-сұрақта дұрыс жауап (сан) жазылмаған.'; continue; }
     if (q.o.filter(x => x.trim()).length < 2) return n + '-сұрақта кемінде 2 жауап керек.';
     if (!q.o[q.c].trim()) return n + '-сұрақта дұрыс деп белгіленген жауап бос.';
   }
@@ -1382,7 +1432,7 @@ function validateQuiz() {
 async function saveQuiz() {
   const err = validateQuiz(); if (err) { qmsg(err, 'err'); return false; }
   qz.title = $('qzTitle').value.trim().slice(0, 120);
-  const row = { title: qz.title, questions: qz.questions.map(q => ({ t: q.t.trim(), img: q.img || null, o: q.o.map(x => x.trim()), c: q.c, s: q.s })), updated_at: new Date().toISOString() };
+  const row = { title: qz.title, questions: qz.questions.map(q => q.k === 'num' ? ({ t: q.t.trim(), img: q.img || null, o: ['', '', '', ''], c: 0, s: q.s, k: 'num', a: q.a, tol: Math.max(0, q.tol || 0), u: (q.u || '').trim().slice(0, 12) }) : ({ t: q.t.trim(), img: q.img || null, o: q.o.map(x => x.trim()), c: q.c, s: q.s })), updated_at: new Date().toISOString() };
   let res;
   if (qz.id) res = await sb.from('quizzes').update(row).eq('id', qz.id).select().single();
   else res = await sb.from('quizzes').insert(row).select().single();
@@ -1393,171 +1443,431 @@ $('qzSave').onclick = saveQuiz;
 $('qzStart').onclick = async () => { if (await saveQuiz()) hostQuiz({ id: qz.id, title: qz.title, questions: qz.saved.questions }); };
 
 // ===== Викторина: ойынды жүргізу (үлкен экран) =====
-function hostQuiz(quiz) {
+// ===== Ойын түрлері: викторина, ракета жарысы, сөз бұлты (телефонмен немесе үлкен экранда) =====
+const TNAME = ['Қызыл', 'Көк', 'Сары', 'Жасыл'];
+const rocketSvg = c => '<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="' + c + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(90deg)"><path d="M12 2c3 2.5 5 6 5 10l-2 3H9l-2-3c0-4 2-7.5 5-10z" fill="' + c + '" fill-opacity=".2"/><circle cx="12" cy="9.5" r="1.6"/><path d="M7 12.5 4 15l1 3 3-1.5M17 12.5l3 2.5-1 3-3-1.5M10 18.5 12 22l2-3.5"/></svg>';
+const fmtNum = n => String(Math.round(n * 1e6) / 1e6).replace('.', ',');
+const parseNum = s => { const v = parseFloat(String(s).trim().replace(',', '.')); return Number.isFinite(v) ? v : NaN; };
+const isNumQ = q => q.k === 'num';
+const qOk = (q, ans) => isNumQ(q) ? Math.abs(ans - q.a) <= (q.tol || 0) + 1e-9 : ans === q.c;
+let quizPreset = null;
+
+function segment(opts, cur, cb) {
+  const d = el('div', 'seg'); d.setAttribute('role', 'group');
+  const paint = () => d.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === String(cur))));
+  opts.forEach(o => { const b = el('button', '', o.t); b.type = 'button'; b.dataset.v = String(o.v); b.onclick = () => { cur = o.v; paint(); cb(o.v); }; d.appendChild(b); });
+  paint(); return d;
+}
+function modal(title) {
+  const ov = el('div', 'qh-modal'), box = el('div', 'qh-mc');
+  const close = () => ov.remove();
+  ov.onclick = e => { if (e.target === ov) close(); };
+  box.appendChild(el('h2', '', title)); ov.appendChild(box); document.body.appendChild(ov);
+  return { box, close };
+}
+const mrow = (label, node) => { const w = el('div', 'qh-mr'); w.append(el('label', '', label), node); return w; };
+
+// ---- Бастау терезесі (викторина / ракета жарысы) ----
+async function openStart(quiz) {
   SFX.unlock();
-  const Q = quiz.questions, code = String(100000 + Math.floor(Math.random() * 900000));
-  const joinUrl = new URL('play.html?c=' + code, location.href).href;
+  let sv = {}; try { sv = JSON.parse(ls.get('gcfg') || '{}'); } catch {}
+  const pr = quizPreset || {};
+  const cfg = { team: pr.team !== undefined ? !!pr.team : !!sv.team, nTeams: sv.nTeams || 2, screen: !!sv.screen };
+  const { box, close } = modal(quiz.title);
+  const typeSeg = segment([{ v: 0, t: 'Жеке ойын' }, { v: 1, t: 'Ракета жарысы (командалар)' }], cfg.team ? 1 : 0, v => { cfg.team = !!v; paint(); });
+  const modeSeg = segment([{ v: 0, t: 'Телефонмен (QR)' }, { v: 1, t: 'Үлкен экранда (сенсорлы тақта)' }], cfg.screen ? 1 : 0, v => { cfg.screen = !!v; paint(); });
+  const ntSeg = segment([{ v: 2, t: '2' }, { v: 3, t: '3' }, { v: 4, t: '4' }], cfg.nTeams, v => { cfg.nTeams = v; });
+  const rTeam = mrow('Командалар саны', ntSeg);
+  const sel = document.createElement('select'), ta = document.createElement('textarea');
+  ta.rows = 6; ta.placeholder = 'Оқушылар аты, әр жолға біреу'; ta.maxLength = 3000;
+  const rSel = mrow('Сынып тізімінен алу', sel), rTa = mrow('Қатысушылар', ta);
+  const hint = el('p', 'gm', ''); const err = el('p', 'msg err', '');
+  const go = el('button', 'go', 'Бастау'); go.type = 'button';
+  box.append(mrow('Ойын түрі', typeSeg), mrow('Қалай ойнаймыз?', modeSeg), rTeam, rSel, rTa, hint, err, go);
+  function paint() {
+    rTeam.hidden = !cfg.team; rSel.hidden = rTa.hidden = !cfg.screen;
+    hint.textContent = cfg.screen
+      ? 'Экран режимі: QR жоқ. Әр сұраққа оқушы кездейсоқ шақырылады, ол тақтаға шығып жауапты экраннан басады.' + (cfg.team ? ' Командалар кезекпен жауап береді. Тізім бос болса, командалар ғана ойнайды.' : '')
+      : 'Телефон режимі: оқушылар QR арқылы кіріп, өз телефонынан жауап береді.' + (cfg.team ? ' Команданы ойын басында жүйе өзі бөледі.' : '');
+  }
+  paint();
+  sel.appendChild(new Option('Қолмен жазамын', ''));
+  try {
+    const { data } = await sb.from('rosters').select('id,name').order('created_at');
+    (data || []).forEach(r => sel.appendChild(new Option(r.name, r.id)));
+  } catch {}
+  sel.onchange = async () => {
+    if (!sel.value) return;
+    const { data } = await sb.from('roster_students').select('name').eq('roster_id', sel.value).order('created_at');
+    ta.value = (data || []).map(x => x.name).join('\n');
+  };
+  go.onclick = () => {
+    const names = [...new Set(ta.value.split('\n').map(s => s.trim().slice(0, 24)).filter(Boolean))].slice(0, 60);
+    if (cfg.screen && !cfg.team && !names.length) { err.textContent = 'Оқушылардың атын жаз немесе «Ракета жарысы» түрін таңда.'; return; }
+    ls.set('gcfg', JSON.stringify({ team: cfg.team, nTeams: cfg.nTeams, screen: cfg.screen }));
+    close(); runQuiz(quiz, { team: cfg.team, nTeams: cfg.nTeams, screen: cfg.screen, names: cfg.screen ? names : [] });
+  };
+}
+function hostQuiz(quiz) { openStart(quiz); }
+
+// ---- Ойын жүргізу ----
+function runQuiz(quiz, cfg) {
+  const Q = quiz.questions, screen = !!cfg.screen, team = !!cfg.team, NT = team ? Math.max(2, Math.min(4, cfg.nTeams || 2)) : 0;
+  const code = screen ? '' : String(100000 + Math.floor(Math.random() * 900000));
+  const joinUrl = screen ? '' : new URL('play.html?c=' + code, location.href).href;
   const root = $('qzHost'); root.hidden = false; root.replaceChildren(); document.body.style.overflow = 'hidden';
-  const players = new Map(), kicked = new Set(); let ph = 'lobby', qi = -1, qStart = 0, qEnd = 0, answers = new Map(), timer = null, beat = 0, lastMsg = { ph: 'lobby' }, saved = false, ranking = [];
-  const ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: 'host' } } });
-  const send = (event, payload) => ch.send({ type: 'broadcast', event, payload });
+  const players = new Map(), kicked = new Set();
+  let ph = 'lobby', qi = -1, qStart = 0, qEnd = 0, answers = new Map(), timer = null, beat = 0, lastMsg = { ph: 'lobby' }, saved = false, ranking = [];
+  let tscore = Array(NT).fill(0), tmap = {}, prevProg = Array(NT).fill(0), turn = null, asked = new Set(), screenRes = null, typed = '';
+  const maxPer = screen ? 1000 * Math.ceil(Q.length / Math.max(1, NT)) : 1000 * Q.length;
+  let ch = null;
+  const send = (event, payload) => { if (ch) { try { ch.send({ type: 'broadcast', event, payload }); } catch {} } };
   const push = () => send('st', ph === 'q' ? { ...lastMsg, left: Math.max(0, qEnd - Date.now()) } : lastMsg);
   const active = () => [...players.values()].filter(p => p.here && !p.dq);
+  const addPlayer = (id, name, here) => { const p = { id, name, score: 0, ok: 0, here, st: 0, dq: false, team: -1 }; players.set(id, p); return p; };
+  if (screen) (cfg.names || []).forEach((n, i) => addPlayer('s' + i, n, true));
 
   // каркас
-  const top = el('div', 'qh-top'), codeChip = el('span', 'qh-code', 'Код: ' + code), cnt = el('span', 'qh-cnt', '');
+  const top = el('div', 'qh-top'), codeChip = el('span', 'qh-code', screen ? 'Экран режимі' : 'Код: ' + code), cnt = el('span', 'qh-cnt', '');
   const mute = el('button', 'qh-btn sfxToggle'); mute.type = 'button';
   const close = el('button', 'qh-btn', '✕'); close.type = 'button'; close.setAttribute('aria-label', 'Жабу');
   const spacer = el('span', 'qh-sp'); top.append(codeChip, cnt, spacer, mute, close);
   const body = el('div', 'qh-body'); root.append(top, body);
   mute.innerHTML = sfxIcon; mute.onclick = () => SFX.setMuted(!SFX.muted); SFX.paint();
   const setBody = (...n) => { body.replaceChildren(...n); };
-  const key = e => { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); primary(); } };
+  const key = e => { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!(screen && ph === 'q')) primary(); } };
   document.addEventListener('keydown', key);
   function shutdown() {
-    clearInterval(timer); document.removeEventListener('keydown', key); try { send('st', { ph: 'closed' }); } catch {} setTimeout(() => { try { sb.removeChannel(ch); } catch {} }, 400); root.hidden = true; root.replaceChildren(); document.body.style.overflow = '';
+    clearInterval(timer); document.removeEventListener('keydown', key); send('st', { ph: 'closed' });
+    if (ch) setTimeout(() => { try { sb.removeChannel(ch); } catch {} }, 400);
+    root.hidden = true; root.replaceChildren(); document.body.style.overflow = '';
     if (!saved) saveRun(); if ($('qzList') && !$('v-quiz').hidden) loadQuizzes();
   }
   close.onclick = () => { if (ph === 'lobby' || ph === 'end' || confirm('Ойынды тоқтатасың ба?')) shutdown(); };
   async function saveRun() {
-    saved = true; const list = [...players.values()]; if (!list.length || qi < 0) return;
-    const res = list.sort((a, b) => (a.dq - b.dq) || b.score - a.score).map(p => ({ n: p.name + (p.dq ? ' (нәтижесі өшірілді)' : p.st ? ' (ескерту)' : ''), s: p.score, ok: p.ok }));
-    await sb.from('quiz_runs').insert({ quiz_id: quiz.id || null, title: quiz.title, players: res.length, results: res });
+    saved = true; if (qi < 0) return;
+    let res = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score).map(p => ({ n: p.name + (p.dq ? ' (нәтижесі өшірілді)' : p.st ? ' (ескерту)' : ''), s: p.score, ok: p.ok, t: p.team >= 0 ? TNAME[p.team] : undefined }));
+    if (team && (!players.size || screen)) res = tscore.map((s, t) => ({ n: TNAME[t] + ' команда', s, ok: 0 })).sort((a, b) => b.s - a.s).concat(res);
+    if (!res.length) return;
+    await sb.from('quiz_runs').insert({ quiz_id: quiz.id || null, title: quiz.title + (team ? ' (ракета жарысы)' : ''), players: players.size || NT, results: res });
+  }
+
+  // командалар
+  const smallest = () => { const n = Array(NT).fill(0); players.forEach(p => { if (p.team >= 0) n[p.team]++; }); return n.indexOf(Math.min(...n)); };
+  function assignTeams() { tmap = {}; shuffle([...players.values()]).forEach((p, i) => { p.team = i % NT; tmap[p.id] = p.team; }); }
+  function raceTrack(compact) {
+    const wrap = el('div', 'qh-race' + (compact ? ' sm' : ''));
+    for (let t = 0; t < NT; t++) {
+      const row = el('div', 'qh-lrow'); row.style.setProperty('--c', QCOL[t]);
+      const nm = el('b', '', TNAME[t]), lane = el('div', 'qh-lane'), rk = el('div', 'qh-rkt'), sc = el('em', '', String(tscore[t]));
+      rk.innerHTML = rocketSvg(QCOL[t]); lane.appendChild(rk);
+      const set = p => { rk.style.left = 'calc(' + (p * 100) + '% - ' + (p * 46) + 'px)'; };
+      set(prevProg[t]); const np = Math.min(1, tscore[t] / maxPer);
+      requestAnimationFrame(() => requestAnimationFrame(() => set(np))); prevProg[t] = np;
+      row.append(nm, lane, sc); wrap.appendChild(row);
+    }
+    return wrap;
   }
 
   // лобби
   let chips, startBtn;
   function lobby() {
     ph = 'lobby'; lastMsg = { ph: 'lobby' };
-    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl);
-    qrBox.onclick = () => {
-      const z = el('div', 'qh-zoom'); z.innerHTML = '<div class="qh-zq">' + makeQR(joinUrl) + '</div>'; z.appendChild(el('div', 'qh-zc', code)); z.appendChild(el('div', 'qh-zh', 'Жабу үшін кез келген жерді бас'));
-      const closeZ = () => { z.remove(); document.removeEventListener('keydown', zk, true); };
-      const zk = e => { if (e.key === 'Escape') { e.stopPropagation(); closeZ(); } };
-      z.onclick = closeZ; document.addEventListener('keydown', zk, true); root.appendChild(z);
-    };
     const right = el('div', 'qh-lr');
-    const t = el('h2', 'qh-h', quiz.title), s = el('p', 'qh-s', 'Телефонмен QR-ды сканерле. QR-ды басып үлкейтуге болады.');
-    const c2 = el('div', 'qh-bigcode', code);
+    const t = el('h2', 'qh-h', quiz.title + (team ? ' · ракета жарысы' : ''));
     chips = el('div', 'qh-chips'); startBtn = el('button', 'qh-go', 'Бастау'); startBtn.type = 'button'; startBtn.disabled = true; startBtn.onclick = () => primary();
-    right.append(t, s, c2, chips, startBtn);
-    const wrap = el('div', 'qh-lobby'); wrap.append(qrBox, right); setBody(wrap); drawLobby();
+    const wrap = el('div', 'qh-lobby');
+    if (!screen) {
+      const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl);
+      qrBox.onclick = () => zoomQR(root, joinUrl, code);
+      const s = el('p', 'qh-s', 'Телефонмен QR-ды сканерле. QR-ды басып үлкейтуге болады.');
+      right.append(t, s, el('div', 'qh-bigcode', code), chips, startBtn); wrap.append(qrBox, right);
+    } else {
+      wrap.style.gridTemplateColumns = '1fr';
+      const s = el('p', 'qh-s', team ? 'Командалар ойын басында кездейсоқ бөлінеді.' : 'Оқушылар кезекпен кездейсоқ шақырылады. Атын басып тізімнен алып тастауға болады.');
+      right.append(t, s, chips, startBtn); wrap.append(right);
+    }
+    setBody(wrap); drawLobby();
   }
   function drawLobby() {
     if (ph !== 'lobby') return;
-    cnt.textContent = players.size + ' оқушы'; chips.replaceChildren();
-    if (!players.size) chips.appendChild(el('span', 'qh-wait', 'Оқушылар қосылуын күтіп тұрмыз…'));
-    players.forEach(p => { const c = el('button', 'qh-chip', p.name); c.type = 'button'; c.title = 'Шығару'; c.onclick = () => { kicked.add(p.id); send('kick', { id: p.id }); players.delete(p.id); drawLobby(); }; chips.appendChild(c); });
-    startBtn.disabled = !players.size; startBtn.textContent = players.size ? 'Бастау (' + players.size + ' оқушы)' : 'Бастау';
+    cnt.textContent = players.size ? players.size + ' оқушы' : ''; chips.replaceChildren();
+    if (!players.size) chips.appendChild(el('span', 'qh-wait', screen ? 'Оқушылар жоқ: командалар ғана ойнайды.' : 'Оқушылар қосылуын күтіп тұрмыз…'));
+    players.forEach(p => { const c = el('button', 'qh-chip', p.name); c.type = 'button'; c.title = screen ? 'Алып тастау' : 'Шығару'; c.onclick = () => { if (!screen) { kicked.add(p.id); send('kick', { id: p.id }); } players.delete(p.id); drawLobby(); }; chips.appendChild(c); });
+    const ok = screen ? (team || players.size > 0) : players.size > 0;
+    startBtn.disabled = !ok; startBtn.textContent = players.size ? 'Бастау (' + players.size + ' оқушы)' : 'Бастау';
   }
+
   // сұрақ
-  let ansCnt, timeEl, bar;
+  let ansCnt, timeEl, bar, turnBox;
+  const turnTeam = () => team ? qi % NT : -1;
+  function pickTurn() {
+    if (!players.size) { turn = { team: turnTeam() }; return; }
+    let list = active().filter(p => !team || p.team === turnTeam()); if (!list.length) list = active();
+    let cand = list.filter(p => !asked.has(p.id)); if (!cand.length) { list.forEach(p => asked.delete(p.id)); cand = list; }
+    const p = cand[Math.floor(Math.random() * cand.length)]; turn = { pid: p.id }; asked.add(p.id);
+  }
+  function drawTurn() {
+    if (!turnBox) return; turnBox.replaceChildren();
+    const p = turn && turn.pid ? players.get(turn.pid) : null, tt = p ? p.team : (turn ? turn.team : -1);
+    const who = el('div', 'qh-who'); who.append(el('span', 'qh-wl', 'Жауап береді:'), el('b', '', p ? p.name : (tt >= 0 ? TNAME[tt] + ' команда' : '')));
+    if (tt >= 0) { const tg = el('span', 'qh-tg', TNAME[tt]); tg.style.background = QCOL[tt]; who.appendChild(tg); }
+    turnBox.appendChild(who);
+    if (players.size) {
+      const re = el('button', 'qh-btn2', 'Басқа оқушы'); re.type = 'button'; re.onclick = () => { pickTurn(); qStart = Date.now(); qEnd = qStart + Q[qi].s * 1000; SFX.drum && SFX.pop(); drawTurn(); };
+      const pk = el('button', 'qh-btn2', 'Тізімнен таңдау'); pk.type = 'button';
+      pk.onclick = () => {
+        const m = modal('Кім жауап береді?'); const g = el('div', 'qh-chips');
+        (active().filter(x => !team || x.team === turnTeam()).length ? active().filter(x => !team || x.team === turnTeam()) : active()).forEach(x => { const c = el('button', 'qh-chip', x.name); c.type = 'button'; c.onclick = () => { turn = { pid: x.id }; asked.add(x.id); qStart = Date.now(); qEnd = qStart + Q[qi].s * 1000; m.close(); drawTurn(); }; g.appendChild(c); });
+        m.box.appendChild(g);
+      };
+      turnBox.append(re, pk);
+    }
+  }
   function question(i) {
-    const q = Q[i]; qi = i; ph = 'q'; answers = new Map(); qStart = Date.now(); qEnd = qStart + q.s * 1000;
-    lastMsg = { ph: 'q', qi: i, n: Q.length, t: q.t, img: q.img || null, o: q.o, dur: q.s };
-    push(); SFX.start && SFX.start(); cnt.textContent = (i + 1) + ' / ' + Q.length;
+    const q = Q[i]; qi = i; ph = 'q'; answers = new Map(); screenRes = null; typed = ''; qStart = Date.now(); qEnd = qStart + q.s * 1000;
+    if (i === 0 && team && !screen) assignTeams();
+    if (screen) { if (i === 0 && team) assignTeams(); pickTurn(); }
+    lastMsg = { ph: 'q', qi: i, n: Q.length, t: q.t, img: q.img || null, o: q.o, dur: q.s, k: isNumQ(q) ? 'num' : 'c', u: q.u || '', tm: team && !screen ? tmap : undefined, nt: NT };
+    push(); SFX.start(); cnt.textContent = (i + 1) + ' / ' + Q.length;
     const wrap = el('div', 'qh-q'), head = el('div', 'qh-qhead');
     timeEl = el('div', 'qh-time', String(q.s)); ansCnt = el('div', 'qh-ans', '');
     head.append(timeEl, el('div', 'qh-qt', q.t), ansCnt);
     bar = el('div', 'qh-bar'); bar.appendChild(el('i'));
     wrap.append(head, bar);
+    if (screen) { turnBox = el('div', 'qh-turn'); wrap.appendChild(turnBox); drawTurn(); } else turnBox = null;
     if (q.img) { const im = document.createElement('img'); im.className = 'qh-img'; im.src = q.img; im.alt = ''; wrap.appendChild(im); }
-    wrap.appendChild(optGrid(q, null)); setBody(wrap); drawAns();
+    if (isNumQ(q)) wrap.appendChild(screen ? keypad(q) : el('div', 'qh-numhint', 'Жауапты телефоннан сан етіп жаз' + (q.u ? ' (' + q.u + ')' : '') + '.'));
+    else wrap.appendChild(optGrid(q, null, screen));
+    if (team) wrap.appendChild(raceTrack(true));
+    setBody(wrap); drawAns();
     clearInterval(timer); beat = Date.now(); let lastSec = -1;
     timer = setInterval(() => {
       const left = qEnd - Date.now(), sec = Math.max(0, Math.ceil(left / 1000));
-      timeEl.textContent = sec; bar.firstChild.style.transform = 'scaleX(' + Math.max(0, left / (q.s * 1000)) + ')';
+      timeEl.textContent = sec; bar.firstChild.style.transform = 'scaleX(' + Math.max(0, Math.min(1, left / (q.s * 1000))) + ')';
       if (sec !== lastSec) { lastSec = sec; if (sec > 0 && sec <= 5) SFX.tick(); }
-      if (Date.now() - beat > 3000) { beat = Date.now(); push(); }
+      if (!screen && Date.now() - beat > 3000) { beat = Date.now(); push(); }
       if (left <= 0) reveal();
     }, 120);
   }
   function drawAns() {
-    if (!ansCnt) return; const w = [...players.values()].filter(p => p.st);
+    if (!ansCnt || screen) return; const w = [...players.values()].filter(p => p.st);
     ansCnt.textContent = 'Жауап берді: ' + answers.size + ' / ' + active().length + (w.length ? ' · ⚠ ' + w.map(p => p.name + (p.dq ? ' (нәтижесі өшірілді)' : ' (ескерту)')).join(', ') : '');
   }
-  function optGrid(q, rev) {
+  function optGrid(q, rev, touch) {
     const g = el('div', 'qh-opts');
     q.o.forEach((v, k) => {
       if (!v) return;
-      const b = el('div', 'qh-opt' + (rev ? (k === q.c ? ' ok' : ' dim') : '')); b.style.setProperty('--c', QCOL[k]);
+      const b = el(touch && !rev ? 'button' : 'div', 'qh-opt' + (rev ? (k === q.c ? ' ok' : ' dim') : '') + (touch && !rev ? ' tch' : '')); b.style.setProperty('--c', QCOL[k]);
+      if (touch && !rev) { b.type = 'button'; b.onclick = () => answerScreen(k); }
       const s = el('span', 'qh-sh'); s.innerHTML = shapeSvg(k, 30); b.append(s, el('span', 'qh-ot', v));
       if (rev) { const n = el('span', 'qh-n', String(rev.counts[k])); b.appendChild(n); if (k === q.c) b.appendChild(el('span', 'qh-tick', '✓')); }
       g.appendChild(b);
     });
     return g;
   }
+  function keypad(q) {
+    const w = el('div', 'qh-padw'), disp = el('div', 'qh-disp', ''), pad = el('div', 'qh-pad');
+    const paint = () => { disp.textContent = typed || '…'; if (q.u && typed) disp.appendChild(el('small', '', ' ' + q.u)); };
+    ['7', '8', '9', '4', '5', '6', '1', '2', '3', '−', '0', ','].forEach(k => {
+      const b = el('button', '', k); b.type = 'button';
+      b.onclick = () => { const ch2 = k === '−' ? '-' : k; if (ch2 === '-' && typed) typed = typed.startsWith('-') ? typed.slice(1) : '-' + typed; else if (ch2 === ',' && typed.includes(',')) return; else if (typed.length < 14) typed += ch2; SFX.tick(); paint(); };
+      pad.appendChild(b);
+    });
+    const del = el('button', 'alt', '⌫'); del.type = 'button'; del.onclick = () => { typed = typed.slice(0, -1); paint(); };
+    const ok = el('button', 'okb', 'Жауап беру'); ok.type = 'button'; ok.onclick = () => { const v = parseNum(typed); if (Number.isFinite(v)) answerScreen(v); };
+    w.append(disp, pad, el('div', 'qh-padr', ''), ok); w.querySelector('.qh-padr').append(del); paint(); return w;
+  }
+  function answerScreen(val) {
+    if (ph !== 'q' || !screen) return;
+    const q = Q[qi], good = qOk(q, val), dur = q.s * 1000;
+    const pts = good ? Math.round(1000 * (1 - Math.min(1, Math.max(0, Date.now() - qStart) / dur) / 2)) : 0;
+    screenRes = { ok: good, pts, val: isNumQ(q) ? val : val };
+    const p = turn && turn.pid ? players.get(turn.pid) : null;
+    if (p) { p.score += pts; if (good) p.ok++; if (team && p.team >= 0) tscore[p.team] += pts; }
+    else if (turn && turn.team >= 0) tscore[turn.team] += pts;
+    reveal();
+  }
   function reveal() {
     if (ph !== 'q') return; clearInterval(timer); ph = 'rev';
-    const q = Q[qi], counts = [0, 0, 0, 0], r = {}, dur = q.s * 1000;
-    players.forEach(p => {
-      const a = answers.get(p.id); let pts = 0, ok = false;
-      if (p.dq) { r[p.id] = { ok: false, pts: 0, na: true, dq: true }; return; }
-      if (a) { counts[a.c]++; if (a.c === q.c) { ok = true; pts = Math.round(1000 * (1 - Math.min(1, Math.max(0, a.t) / dur) / 2)); p.ok++; } }
-      p.score += pts; r[p.id] = { ok, pts, na: !a };
-    });
+    const q = Q[qi], dur = q.s * 1000, counts = [0, 0, 0, 0], r = {}; let okc = 0;
+    if (!screen) {
+      const tp = Array(NT).fill(0), tn = Array(NT).fill(0);
+      players.forEach(p => {
+        if (p.dq) { r[p.id] = { ok: false, pts: 0, na: true, dq: true }; return; }
+        const a = answers.get(p.id); let pts = 0, ok = false;
+        if (a) { if (!isNumQ(q)) counts[a.c]++; ok = isNumQ(q) ? qOk(q, a.v) : a.c === q.c; if (ok) { okc++; pts = Math.round(1000 * (1 - Math.min(1, Math.max(0, a.t) / dur) / 2)); p.ok++; } }
+        p.score += pts; r[p.id] = { ok, pts, na: !a, t: p.team };
+        if (team && p.team >= 0) { tp[p.team] += pts; tn[p.team]++; }
+      });
+      if (team) for (let t = 0; t < NT; t++) tscore[t] += tn[t] ? Math.round(tp[t] / tn[t]) : 0;
+    } else if (screenRes) { okc = screenRes.ok ? 1 : 0; if (!isNumQ(q) && screenRes.val >= 0) counts[screenRes.val]++; }
     ranking = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score);
-    ranking.forEach((p, i) => { r[p.id].rank = i + 1; r[p.id].score = p.score; });
-    lastMsg = { ph: 'rev', qi, n: Q.length, c: q.c, counts, r }; push(); SFX.bell();
+    ranking.forEach((p, i) => { if (r[p.id]) { r[p.id].rank = i + 1; r[p.id].score = p.score; } });
+    if (!screen) { lastMsg = { ph: 'rev', qi, n: Q.length, k: isNumQ(q) ? 'num' : 'c', c: q.c, a: q.a, u: q.u || '', counts, okc, r, nt: NT, ts: tscore.slice() }; push(); }
+    if (screen) { screenRes && screenRes.ok ? SFX.ok() : SFX.bad(); } else SFX.bell();
     const wrap = el('div', 'qh-q'), head = el('div', 'qh-qhead'); head.append(el('div', 'qh-qt', q.t)); wrap.appendChild(head);
-    const cols = el('div', 'qh-revcols'), left = el('div'); left.appendChild(optGrid(q, { counts }));
-    const bd = el('div', 'qh-board'); bd.appendChild(el('h3', '', 'Алдыңғы орындар'));
-    ranking.filter(p => !p.dq).slice(0, 5).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(i + 1)), el('span', '', p.name + (p.st ? ' ⚠' : '')), el('em', '', String(p.score))); bd.appendChild(row); });
+    if (screen) {
+      const p = turn && turn.pid ? players.get(turn.pid) : null, who = p ? p.name : (turn && turn.team >= 0 ? TNAME[turn.team] + ' команда' : '');
+      const bn = el('div', 'qh-banner ' + (screenRes ? (screenRes.ok ? 'ok' : 'bad') : 'bad'), screenRes ? (screenRes.ok ? 'Дұрыс! +' + screenRes.pts : 'Қате') : 'Уақыт бітті');
+      bn.appendChild(el('small', '', who)); wrap.appendChild(bn);
+    }
+    const cols = el('div', 'qh-revcols'), left = el('div');
+    if (isNumQ(q)) {
+      const ans = el('div', 'qh-numans'); ans.append(el('small', '', 'Дұрыс жауап'), el('b', '', fmtNum(q.a) + (q.u ? ' ' + q.u : '')));
+      if (q.tol) ans.appendChild(el('small', '', '(± ' + fmtNum(q.tol) + ' қателікке рұқсат)'));
+      if (!screen) ans.appendChild(el('small', '', 'Дұрыс жауап бергендер: ' + okc + ' / ' + active().length));
+      left.appendChild(ans);
+    } else left.appendChild(optGrid(q, { counts }));
+    const bd = el('div', 'qh-board');
+    if (team) { bd.appendChild(el('h3', '', 'Жарыс')); bd.appendChild(raceTrack(false)); }
+    else { bd.appendChild(el('h3', '', 'Алдыңғы орындар')); ranking.filter(p => !p.dq).slice(0, 5).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(i + 1)), el('span', '', p.name + (p.st ? ' ⚠' : '')), el('em', '', String(p.score))); bd.appendChild(row); }); }
     const nx = el('button', 'qh-go', qi + 1 < Q.length ? 'Келесі сұрақ' : 'Қорытынды'); nx.type = 'button'; nx.onclick = primary;
     cols.append(left, bd); wrap.append(cols, nx); setBody(wrap);
   }
   function finish() {
     ph = 'end'; clearInterval(timer);
     ranking = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score);
-    const r = {}; ranking.forEach((p, i) => { r[p.id] = { rank: i + 1, score: p.score, ok: p.ok, dq: p.dq }; });
-    const ok = ranking.filter(p => !p.dq);
-    lastMsg = { ph: 'end', n: Q.length, total: ranking.length, top: ok.slice(0, 10).map(p => ({ n: p.name, s: p.score })), r }; push(); SFX.fan(); cnt.textContent = '';
-    const wrap = el('div', 'qh-end'); wrap.appendChild(el('h2', 'qh-h', 'Викторина аяқталды'));
+    const okp = ranking.filter(p => !p.dq), r = {}; ranking.forEach((p, i) => { r[p.id] = { rank: i + 1, score: p.score, ok: p.ok, dq: p.dq, t: p.team }; });
+    if (!screen) { lastMsg = { ph: 'end', n: Q.length, total: ranking.length, top: okp.slice(0, 10).map(p => ({ n: p.name, s: p.score })), r, nt: NT, ts: tscore.slice() }; push(); }
+    SFX.fan(); cnt.textContent = '';
+    const wrap = el('div', 'qh-end'); wrap.appendChild(el('h2', 'qh-h', team ? 'Жарыс аяқталды' : 'Викторина аяқталды'));
     const pod = el('div', 'qh-pod');
-    [1, 0, 2].forEach(i => { const p = ok[i]; if (!p) return; const c = el('div', 'qh-pc p' + (i + 1)); c.append(el('b', '', p.name), el('em', '', p.score + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
-    wrap.appendChild(pod);
-    const rest = el('div', 'qh-rest'); ok.slice(3, 10).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(i + 4)), el('span', '', p.name), el('em', '', String(p.score))); rest.appendChild(row); });
+    if (team) {
+      const order = [...Array(NT).keys()].sort((a, b) => tscore[b] - tscore[a]);
+      [1, 0, 2].forEach(i => { const t = order[i]; if (t === undefined) return; const c = el('div', 'qh-pc p' + (i + 1)); c.style.borderBottom = '6px solid ' + QCOL[t]; c.append(el('b', '', TNAME[t] + ' команда'), el('em', '', tscore[t] + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
+      wrap.append(pod, raceTrack(false));
+    } else {
+      [1, 0, 2].forEach(i => { const p = okp[i]; if (!p) return; const c = el('div', 'qh-pc p' + (i + 1)); c.append(el('b', '', p.name), el('em', '', p.score + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
+      wrap.appendChild(pod);
+    }
+    const rest = el('div', 'qh-rest'); (team ? okp.slice(0, 5) : okp.slice(3, 10)).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(team ? i + 1 : i + 4)), el('span', '', p.name + (team && p.team >= 0 ? ' · ' + TNAME[p.team] : '')), el('em', '', String(p.score))); rest.appendChild(row); });
     const fin = el('button', 'qh-go', 'Аяқтау'); fin.type = 'button'; fin.onclick = shutdown;
     wrap.append(rest, fin); setBody(wrap); saveRun();
   }
   function primary() {
-    if (ph === 'lobby') { if (players.size) { SFX.drum(); setTimeout(() => question(0), 700); } }
-    else if (ph === 'q') reveal();
+    if (ph === 'lobby') { const ok = screen ? (team || players.size > 0) : players.size > 0; if (ok) { SFX.drum(); setTimeout(() => question(0), 700); } }
+    else if (ph === 'q') { if (!screen) reveal(); }
     else if (ph === 'rev') { qi + 1 < Q.length ? question(qi + 1) : finish(); }
     else if (ph === 'end') shutdown();
   }
-  // байланыс
-  ch.on('presence', { event: 'sync' }, () => {
-    const st = ch.presenceState();
-    Object.entries(st).forEach(([id, metas]) => {
-      const nm = metas[0] && metas[0].name; if (!nm || id === 'host' || kicked.has(id)) return;
-      if (!players.has(id)) {
-        let u = String(nm).slice(0, 20), n = 2; const taken = () => [...players.values()].some(p => p.name === u);
-        while (taken()) u = String(nm).slice(0, 18) + ' ' + n++;
-        players.set(id, { id, name: u, score: 0, ok: 0, here: true, st: 0, dq: false }); SFX.pop();
-      }
-      players.get(id).here = true;
+
+  // байланыс (тек телефон режимінде)
+  if (!screen) {
+    ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: 'host' } } });
+    ch.on('presence', { event: 'sync' }, () => {
+      const st = ch.presenceState();
+      Object.entries(st).forEach(([id, metas]) => {
+        const nm = metas[0] && metas[0].name; if (!nm || id === 'host' || kicked.has(id)) return;
+        if (!players.has(id)) {
+          let u = String(nm).slice(0, 20), n = 2; const taken = () => [...players.values()].some(p => p.name === u);
+          while (taken()) u = String(nm).slice(0, 18) + ' ' + n++;
+          const p = addPlayer(id, u, true); if (team && ph !== 'lobby') { p.team = smallest(); tmap[id] = p.team; } SFX.pop();
+        }
+        players.get(id).here = true;
+      });
+      players.forEach(p => { if (!st[p.id]) { if (ph === 'lobby') players.delete(p.id); else p.here = false; } });
+      if (ph === 'lobby') drawLobby(); else { cnt.textContent = ph === 'end' ? '' : (qi + 1) + ' / ' + Q.length; drawAns(); }
     });
-    players.forEach(p => { if (!st[p.id]) { if (ph === 'lobby') players.delete(p.id); else p.here = false; } });
-    if (ph === 'lobby') drawLobby(); else { cnt.textContent = ph === 'end' ? '' : (qi + 1) + ' / ' + Q.length; drawAns(); }
-  });
-  ch.on('broadcast', { event: 'hello' }, ({ payload: m }) => { push(); const p = m && players.get(m.id); if (p && p.st) send('info', { id: p.id, st: p.st, dq: p.dq }); });
-  ch.on('broadcast', { event: 'away' }, ({ payload: m }) => {
-    const p = m && players.get(m.id); if (!p) return; p.st = Math.max(p.st, +m.n || 1);
-    if (p.st >= 2 && !p.dq) { p.dq = true; p.score = 0; p.ok = 0; }
-    SFX.bad(); if (ph === 'q') { drawAns(); if (answers.size >= active().length && active().length) setTimeout(() => { if (ph === 'q') reveal(); }, 700); } else if (ph === 'lobby') drawLobby();
-  });
-  ch.on('broadcast', { event: 'ans' }, ({ payload: m }) => {
-    if (ph !== 'q' || !m || m.qi !== qi) return; const p = players.get(m.id); if (!p || p.dq || answers.has(m.id)) return;
-    const c = +m.c; if (!(c >= 0 && c < 4) || !Q[qi].o[c]) return;
-    answers.set(m.id, { c, t: Date.now() - qStart }); drawAns(); SFX.pop();
-    if (answers.size >= active().length) setTimeout(() => { if (ph === 'q') reveal(); }, 700);
-  });
-  ch.subscribe(async s => {
-    if (s === 'SUBSCRIBED') { await ch.track({ host: true }); }
-    if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') setBody(el('p', 'qh-s', 'Байланыс орнамады. Интернетті тексеріп, қайта көр. Supabase Realtime қосулы болуы керек.'));
-  });
+    ch.on('broadcast', { event: 'hello' }, ({ payload: m }) => { push(); const p = m && players.get(m.id); if (p && p.st) send('info', { id: p.id, st: p.st, dq: p.dq }); });
+    ch.on('broadcast', { event: 'away' }, ({ payload: m }) => {
+      const p = m && players.get(m.id); if (!p) return; p.st = Math.max(p.st, +m.n || 1);
+      if (p.st >= 2 && !p.dq) { p.dq = true; p.score = 0; p.ok = 0; }
+      SFX.bad(); if (ph === 'q') { drawAns(); if (answers.size >= active().length && active().length) setTimeout(() => { if (ph === 'q') reveal(); }, 700); } else if (ph === 'lobby') drawLobby();
+    });
+    ch.on('broadcast', { event: 'ans' }, ({ payload: m }) => {
+      if (ph !== 'q' || !m || m.qi !== qi) return; const p = players.get(m.id); if (!p || p.dq || answers.has(m.id)) return;
+      const q = Q[qi];
+      if (isNumQ(q)) { const v = parseNum(m.v); if (!Number.isFinite(v)) return; answers.set(m.id, { v, t: Date.now() - qStart }); }
+      else { const c = +m.c; if (!(c >= 0 && c < 4) || !q.o[c]) return; answers.set(m.id, { c, t: Date.now() - qStart }); }
+      drawAns(); SFX.pop();
+      if (answers.size >= active().length) setTimeout(() => { if (ph === 'q') reveal(); }, 700);
+    });
+    ch.subscribe(async s => {
+      if (s === 'SUBSCRIBED') { await ch.track({ host: true }); }
+      if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') setBody(el('p', 'qh-s', 'Байланыс орнамады. Интернетті тексеріп, қайта көр. Supabase Realtime қосулы болуы керек.'));
+    });
+  }
   lobby();
+}
+function zoomQR(root, joinUrl, code) {
+  const z = el('div', 'qh-zoom'); z.innerHTML = '<div class="qh-zq">' + makeQR(joinUrl) + '</div>'; z.appendChild(el('div', 'qh-zc', code)); z.appendChild(el('div', 'qh-zh', 'Жабу үшін кез келген жерді бас'));
+  const closeZ = () => { z.remove(); document.removeEventListener('keydown', zk, true); };
+  const zk = e => { if (e.key === 'Escape') { e.stopPropagation(); closeZ(); } };
+  z.onclick = closeZ; document.addEventListener('keydown', zk, true); root.appendChild(z);
+}
+
+// ---- Сөз бұлты ----
+function openCloud() {
+  SFX.unlock();
+  let sv = {}; try { sv = JSON.parse(ls.get('ccfg') || '{}'); } catch {}
+  const cfg = { screen: !!sv.screen, max: sv.max || 3 };
+  const { box, close } = modal('Сөз бұлты');
+  const pr = document.createElement('input'); pr.maxLength = 120; pr.value = sv.prompt || 'Қозғалыс дегенде не есіңе түседі?'; pr.placeholder = 'Сұрақ немесе тақырып';
+  const mx = segment([{ v: 1, t: '1' }, { v: 2, t: '2' }, { v: 3, t: '3' }, { v: 5, t: '5' }], cfg.max, v => { cfg.max = v; });
+  const md = segment([{ v: 0, t: 'Телефонмен (QR)' }, { v: 1, t: 'Үлкен экранда (сенсорлы тақта)' }], cfg.screen ? 1 : 0, v => { cfg.screen = !!v; });
+  const go = el('button', 'go', 'Бастау'); go.type = 'button';
+  box.append(mrow('Сұрақ / тақырып', pr), mrow('Бір оқушы нешеу жібере алады', mx), mrow('Қалай ойнаймыз?', md), go);
+  go.onclick = () => { const t = pr.value.trim(); if (!t) { pr.focus(); return; } ls.set('ccfg', JSON.stringify({ screen: cfg.screen, max: cfg.max, prompt: t })); close(); runCloud({ prompt: t, max: cfg.max, screen: cfg.screen }); };
+  pr.onkeydown = e => { if (e.key === 'Enter') go.click(); };
+}
+function runCloud(cfg) {
+  const screen = !!cfg.screen, code = screen ? '' : String(100000 + Math.floor(Math.random() * 900000));
+  const joinUrl = screen ? '' : new URL('play.html?c=' + code, location.href).href;
+  const root = $('qzHost'); root.hidden = false; root.replaceChildren(); document.body.style.overflow = 'hidden';
+  const words = new Map(), per = new Map(); let ch = null, here = 0;
+  const lastMsg = { g: 'cloud', ph: 'open', t: cfg.prompt, max: cfg.max };
+  const send = (event, payload) => { if (ch) { try { ch.send({ type: 'broadcast', event, payload }); } catch {} } };
+  const top = el('div', 'qh-top'), codeChip = el('span', 'qh-code', screen ? 'Экран режимі' : 'Код: ' + code), cnt = el('span', 'qh-cnt', '');
+  const mute = el('button', 'qh-btn sfxToggle'); mute.type = 'button'; mute.innerHTML = sfxIcon; mute.onclick = () => SFX.setMuted(!SFX.muted);
+  const close = el('button', 'qh-btn', '✕'); close.type = 'button'; close.setAttribute('aria-label', 'Жабу');
+  top.append(codeChip, cnt, el('span', 'qh-sp'), mute, close);
+  const body = el('div', 'qh-body'); root.append(top, body); SFX.paint();
+  const lay = el('div', 'qh-cl'), side = el('div', 'qh-cside'), main = el('div', 'qh-cmain');
+  const title = el('h2', 'qh-h', cfg.prompt), cloud = el('div', 'qh-cloud'), ctl = el('div', 'qh-cctl');
+  main.append(title, cloud, ctl);
+  if (!screen) {
+    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code);
+    side.append(qrBox, el('div', 'qh-bigcode sm', code)); lay.append(side, main);
+  } else lay.appendChild(main);
+  body.appendChild(lay);
+  const PAL = ['#3B6BFF', '#E21B3C', '#D89E00', '#26890C', '#7C5CFF', '#F28C28', '#0EA5B7', '#D6409F'];
+  const hash = s => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
+  function draw() {
+    cloud.replaceChildren(); const list = [...words.values()].sort((a, b) => b.n - a.n), mx = list.length ? list[0].n : 1;
+    list.forEach(x => {
+      const b = el('button', 'qh-w', x.w); b.type = 'button'; b.title = 'Өшіру'; b.style.fontSize = (1.3 + 3.4 * Math.pow(x.n / mx, .7)) + 'rem'; b.style.color = PAL[hash(x.w) % PAL.length];
+      b.onclick = () => { words.delete(x.k); draw(); }; cloud.appendChild(b);
+    });
+    if (!list.length) cloud.appendChild(el('p', 'qh-wait', screen ? 'Сөзді төмендегі жолға жаз.' : 'Оқушылар сөз жібергенше күтіп тұрмыз…'));
+    cnt.textContent = (screen ? '' : here + ' оқушы · ') + list.reduce((s, x) => s + x.n, 0) + ' сөз';
+  }
+  function add(raw, id) {
+    const w = String(raw || '').replace(/\s+/g, ' ').trim().slice(0, 28); if (!w) return;
+    if (id) { const c = per.get(id) || 0; if (c >= cfg.max) return; per.set(id, c + 1); }
+    const k = w.toLocaleLowerCase('kk'), x = words.get(k); if (x) x.n++; else words.set(k, { k, w, n: 1 });
+    SFX.pop(); draw();
+  }
+  if (screen) {
+    const inp = document.createElement('input'); inp.placeholder = 'Сөз жаз (бірнешеуін үтірмен бөл)'; inp.maxLength = 120;
+    const ad = el('button', 'qh-go', 'Қосу'); ad.type = 'button';
+    ad.onclick = () => { inp.value.split(',').forEach(s => add(s)); inp.value = ''; inp.focus(); };
+    inp.onkeydown = e => { if (e.key === 'Enter') ad.click(); };
+    const row = el('div', 'qh-crow'); row.append(inp, ad); ctl.appendChild(row);
+  }
+  const clr = el('button', 'qh-btn2', 'Тазалау'); clr.type = 'button'; clr.onclick = () => { if (!words.size || confirm('Барлық сөз өшірілсін бе?')) { words.clear(); per.clear(); send('st', { ...lastMsg, reset: Date.now() }); draw(); } };
+  const fin = el('button', 'qh-btn2', 'Аяқтау'); fin.type = 'button';
+  ctl.append(clr, fin);
+  function shutdown() { send('st', { ph: 'closed' }); if (ch) setTimeout(() => { try { sb.removeChannel(ch); } catch {} }, 400); root.hidden = true; root.replaceChildren(); document.body.style.overflow = ''; }
+  close.onclick = fin.onclick = () => { if (!words.size || confirm('Сөз бұлты жабылсын ба?')) shutdown(); };
+  if (!screen) {
+    ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: 'host' } } });
+    ch.on('presence', { event: 'sync' }, () => { here = Object.keys(ch.presenceState()).filter(k => k !== 'host').length; draw(); });
+    ch.on('broadcast', { event: 'hello' }, () => send('st', lastMsg));
+    ch.on('broadcast', { event: 'word' }, ({ payload: m }) => { if (m && m.id) add(m.w, m.id); });
+    ch.subscribe(async s => { if (s === 'SUBSCRIBED') { await ch.track({ host: true }); } if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') cloud.replaceChildren(el('p', 'qh-s', 'Байланыс орнамады. Интернетті тексеріп, қайта көр.')); });
+  }
+  draw();
 }
 function makeQR(text) {
   const q = qrcode(0, 'M'); q.addData(text); q.make(); const n = q.getModuleCount(); let d = '';
