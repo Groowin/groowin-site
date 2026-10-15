@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Жағалау бөгеттері: 3D толқын науасы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&display=swap&subset=cyrillic-ext" rel="stylesheet">
+<style>
+:root{
+  --bg:#eaf2f1; --panel:#ffffff; --ink:#12303f; --muted:#4d6a77; --line:#cddcdb;
+  --sea:#1f8fb5; --sea-d:#0b3a55; --sand:#aeb5ba; --struct:#2f363c; --concrete:#9aa5ab; --warn:#d9482b; --ok:#16805a;
+  --accent:#0d6c91; --accent-ink:#ffffff; --row:#f3f8f8; --row-sel:#dff0f5;
+  --stage-top:#e7f4f6; --stage-bot:#b9dbe4; --chip:#0b3a55; --chip-ink:#ffffff; --label:#ffffffd9;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#08161e; --panel:#0f2330; --ink:#e4f0f3; --muted:#9bb5bf; --line:#23404e;
+    --sea:#38a9cf; --sea-d:#0b3a55; --sand:#8a9298; --struct:#1d2327; --concrete:#7f8a90; --warn:#ff7a5c; --ok:#3fcf97;
+    --accent:#4cb8dd; --accent-ink:#06202b; --row:#14303f; --row-sel:#1c4658;
+    --stage-top:#12303f; --stage-bot:#0a1c26; --chip:#e4f0f3; --chip-ink:#0a1c26; --label:#0f2330d9;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#08161e; --panel:#0f2330; --ink:#e4f0f3; --muted:#9bb5bf; --line:#23404e;
+  --sea:#38a9cf; --sea-d:#0b3a55; --sand:#8a9298; --struct:#1d2327; --concrete:#7f8a90; --warn:#ff7a5c; --ok:#3fcf97;
+  --accent:#4cb8dd; --accent-ink:#06202b; --row:#14303f; --row-sel:#1c4658;
+  --stage-top:#12303f; --stage-bot:#0a1c26; --chip:#e4f0f3; --chip-ink:#0a1c26; --label:#0f2330d9;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"PT Sans","Noto Sans",system-ui,sans-serif;font-size:16px;line-height:1.45}
+button{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 400px;min-height:100vh}
+.stage{position:relative;height:100vh;background:linear-gradient(var(--stage-top),var(--stage-bot));overflow:hidden}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;outline:none}
+#cv:active{cursor:grabbing}
+#cv:focus-visible{box-shadow:inset 0 0 0 3px var(--accent)}
+.hint{position:absolute;left:14px;top:14px;background:var(--label);padding:6px 10px;border-radius:8px;font-size:14px;color:var(--muted);pointer-events:none}
+.tools{position:absolute;left:14px;right:14px;bottom:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tools .sp{flex:1}
+.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:999px;cursor:pointer;min-height:40px}
+.btn:hover{border-color:var(--accent)}
+.btn.go{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn:focus-visible,.row:focus-visible,input[type=range]:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.tag3d{position:absolute;transform:translate(-50%,-100%);background:var(--label);padding:3px 9px;border-radius:7px;font-size:14px;white-space:nowrap;pointer-events:none;border:1px solid var(--line)}
+.tag3d b{color:var(--warn)}
+.panel{background:var(--panel);border-left:1px solid var(--line);padding:22px 20px 28px;overflow-y:auto;max-height:100vh}
+h1{font-family:"PT Serif",Georgia,serif;font-size:28px;line-height:1.15;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 18px}
+h2{font-family:"PT Serif",Georgia,serif;font-size:19px;margin:22px 0 10px}
+.list{display:grid;gap:6px}
+.row{display:grid;grid-template-columns:76px 1fr auto;gap:10px;align-items:center;text-align:left;width:100%;padding:6px 10px 6px 6px;border-radius:10px;border:2px solid transparent;background:var(--row);cursor:pointer}
+.row[aria-checked="true"]{border-color:var(--accent);background:var(--row-sel)}
+.row .nm{font-weight:700;line-height:1.2}
+.row .ml{font-size:14px;color:var(--muted);white-space:nowrap}
+.ico{width:76px;height:34px;border-radius:6px;background:var(--stage-top);display:block}
+.ico .w{fill:#5db8f0}.ico .a{fill:var(--sand)}.ico .b{fill:var(--struct)}
+.result{display:grid;grid-template-columns:78px 1fr;gap:16px;align-items:stretch}
+.tubewrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.tube{position:relative;width:46px;height:190px;border:2px solid var(--muted);border-top-color:transparent;border-radius:0 0 12px 12px;background:repeating-linear-gradient(to top,transparent 0,transparent 23px,var(--line) 23px,var(--line) 24px);overflow:hidden}
+.fill{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--sea);opacity:.9}
+.tubeval{font-family:"PT Serif",Georgia,serif;font-size:22px;font-weight:700;line-height:1}
+.tubeval small{font-family:"PT Sans",sans-serif;font-size:13px;font-weight:400;color:var(--muted)}
+.tubelbl{font-size:13px;color:var(--muted);text-align:center;line-height:1.2}
+.costs{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.cost{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.cost span:last-child{font-weight:700;white-space:nowrap}
+.cost.total{border-bottom:0;font-size:20px;font-family:"PT Serif",Georgia,serif}
+.cost.total span:last-child{color:var(--warn)}
+.why{margin:14px 0 0;padding:10px 12px;border-left:4px solid var(--sea);background:var(--row);border-radius:0 8px 8px 0}
+.eff{display:inline-block;margin-top:12px;padding:3px 12px;border-radius:999px;font-weight:700;font-size:14px}
+.eff.e0{background:var(--line);color:var(--ink)}.eff.e1{background:var(--warn);color:#fff}.eff.e2{background:#a86a0c;color:#fff}.eff.e3{background:var(--ok);color:#fff}
+#sec{width:100%;height:auto;display:block;margin-top:6px;border-radius:8px;background:#e8f3f6}
+.slider{margin-top:14px}
+.slider label{display:flex;justify-content:space-between;gap:8px;font-size:15px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.bars{display:grid;gap:6px}
+.bar{display:grid;grid-template-columns:118px 1fr 44px;gap:8px;align-items:center;font-size:14px;cursor:pointer;background:none;border:0;padding:3px 4px;border-radius:8px;text-align:left;width:100%}
+.bar[aria-current="true"]{background:var(--row-sel)}
+.track{height:16px;display:flex;border-radius:4px;overflow:hidden;background:var(--row)}
+.track i{display:block;height:100%}
+.track .bd{background:var(--concrete)}.track .dm{background:var(--warn)}
+.bar .t{text-align:right;font-weight:700}
+.legend{display:flex;gap:14px;font-size:14px;color:var(--muted);margin:2px 0 8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.best{display:inline-block;background:var(--ok);color:#fff;font-size:12px;padding:0 6px;border-radius:6px;margin-left:5px}
+.verdict{margin:10px 0 0;font-weight:700}
+.note{font-size:13px;color:var(--muted);margin-top:20px;border-top:1px solid var(--line);padding-top:12px}
+.err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:30px;text-align:center}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .stage{height:62vh;min-height:360px}
+  .panel{max-height:none;border-left:0;border-top:1px solid var(--line)}
+  .bar{grid-template-columns:104px 1fr 40px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="stage" aria-label="3D толқын науасы">
+    <canvas id="cv" tabindex="0" aria-label="3D модель. Көрсеткі пернелермен айналдырыңыз, плюс және минус пернелерімен үлкейтіңіз"></canvas>
+    <div class="hint">Сүйреп айналдырыңыз, дөңгелекпен үлкейтіңіз</div>
+    <div id="tagSea" class="tag3d">Қақпа</div>
+    <div id="tagPad" class="tag3d">Су қоймасы</div>
+    <div id="tagDef" class="tag3d">Бөгет</div>
+    <div id="tagHouse" class="tag3d">Үйлер</div>
+    <div class="tools">
+      <button class="btn" data-view="side" aria-pressed="false">Қырынан</button>
+      <button class="btn" data-view="persp" aria-pressed="true">Үш өлшемді</button>
+      <button class="btn" data-view="top" aria-pressed="false">Үстінен</button>
+      <span class="sp"></span>
+      <button class="btn go" id="gateBtn" aria-pressed="false">Қақпаны ашу</button>
+      <button class="btn" id="playBtn">Кідірту</button>
+    </div>
+    <div class="err" id="err">Бұл браузерде 3D көрсету мүмкін емес. Басқа браузерді немесе құрылғыны қолданып көріңіз.</div>
+  </section>
+
+  <aside class="panel">
+    <h1>Жағалау бөгеттері</h1>
+    <p class="sub">Қақпаны ашып, су ағынын бөгетке жіберіңіз: қай бөгет суды көбірек тоқтатады және ол қанша тұрады?</p>
+
+    <h2>Бөгетті таңдаңыз</h2>
+    <div class="list" id="list" role="radiogroup" aria-label="Бөгет түрі"></div>
+
+    <h2>Нәтиже</h2>
+    <div class="result">
+      <div class="tubewrap">
+        <div class="tube" aria-hidden="true"><div class="fill" id="fill"></div></div>
+        <div class="tubeval"><span id="mlv">0</span> <small>мл</small></div>
+        <div class="tubelbl">асып түскен су</div>
+      </div>
+      <div class="costs">
+        <div class="cost"><span>Бөгет салу құны</span><span id="cBuild">0 ш.б.</span></div>
+        <div class="cost"><span>Су басудан залал</span><span id="cDmg">0 ш.б.</span></div>
+        <div class="cost total"><span>Жалпы шығын</span><span id="cTot">0 ш.б.</span></div>
+      </div>
+    </div>
+    <div class="eff" id="eff"></div>
+    <p class="why" id="why"></p>
+    <h2>Қима: қырынан көрініс</h2>
+    <svg id="sec" viewBox="0 0 290 100" role="img" aria-label="Таңдалған бөгеттің көлденең қимасы"></svg>
+    <div class="slider">
+      <label for="k"><span>1 мл судың залалы</span><b id="kv">1,0 ш.б.</b></label>
+      <input id="k" type="range" min="0.5" max="3" step="0.1" value="1">
+    </div>
+
+    <h2>Шығынды салыстыру</h2>
+    <div class="legend"><span><i style="background:var(--concrete)"></i>салу құны</span><span><i style="background:var(--warn)"></i>су басудан залал</span></div>
+    <div class="bars" id="bars"></div>
+    <p class="verdict" id="verdict"></p>
+
+    <p class="note">Су ағыны мен оның бөгеттен өтуі есептеледі, ал әр бөгеттің су өткізуі видеодағы мл сандарына келтіріліп бапталған. Нақты құрылыс алты түрлі: тік қабырға, еңіс қаптама, баспалдақ қаптама, иілген қабырға, тас үйінді және суасты бөгеті. «Шайылған жағажай» жеке бөгет емес, қабырғаның жағдайы. Асып түскен су көлемі (мл) JBA Trust ұйымының толқын науасындағы тәжірибесінен алынған. ш.б. деген шартты бірлік: салу және залал бағалары оқу үшін ойлап табылған, нақты құн емес. *Жағажай үшін видеода сан көрсетілмеген, модельде 150 мл деп шартты түрде алынды.</p>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+var H0=1.0, A0=0.42, K=1.14, W=2.3, LAND=2.6;
+
+/* ---------- Деректер ---------- */
+function steps(){
+  var p=[[-1.6,0.1],[-1.6,0.3]], x0=-1.6,y0=0.3,dx=0.6,dy=0.3;
+  for(var i=0;i<7;i++){p.push([x0+i*dx,y0+(i+1)*dy]);p.push([x0+(i+1)*dx,y0+(i+1)*dy]);}
+  p.push([2.6,3.6],[3.2,3.6],[3.2,0.1]);
+  return p;
+}
+var T=[
+ {id:'beach',name:'Жағажай (қорғаныссыз)',short:'Жағажай',ml:150,est:true,build:0,mode:'over',crest:{x:3.0,y:2.65},
+  A:[[-10,.3],[-4,.3],[3.2,2.6],[10,2.6]],B:null,
+  text:'Дауыл кезінде толқын жағажайдан асып, жағалаудағы үйлерді су басады. Қорғаныс жоқ.'},
+ {id:'wall',name:'Тік қабырға + жағажай',short:'Тік қабырға',ml:50,build:40,mode:'over',crest:{x:2.9,y:3.6},
+  A:[[-10,.3],[-4,.3],[2.6,2.35],[3.2,2.6],[10,2.6]],B:[[2.6,.1],[2.6,3.6],[3.2,3.6],[3.2,.1]],
+  text:'Тік қабырға толқынды тоқтатады, бірақ ең биік толқындардың суы қабырғадан асып түседі.'},
+ {id:'eroded',name:'Тік қабырға + шайылған жағажай',short:'Шайылған жағажай',ml:70,build:40,mode:'over',crest:{x:2.9,y:3.6},
+  A:[[-10,.3],[-2,.3],[2.6,1.2],[3.2,2.6],[10,2.6]],B:[[2.6,.1],[2.6,3.6],[3.2,3.6],[3.2,.1]],
+  text:'Бұл жеке бөгет емес, қабырғаның алдындағы құм азайған жағдайы. Толқын қабырғаға толық күшімен соғады, су көбірек асады.'},
+ {id:'slope',name:'Тік қабырға + еңіс қаптама (1:2)',short:'Еңіс қаптама',ml:125,build:70,mode:'over',crest:{x:2.9,y:3.6},
+  A:[[-10,.3],[-1.6,.3],[2.6,2.4],[3.2,2.6],[10,2.6]],B:[[-1.6,.1],[-1.6,.3],[2.6,2.4],[2.6,3.6],[3.2,3.6],[3.2,.1]],
+  text:'Толқын еңіспен жоғары көтеріліп, қабырғаға соғылады да, көп су асып кетеді. Тегіс еңіс жалғыз өзі көмектеспейді.'},
+ {id:'step',name:'Тік қабырға + баспалдақ қаптама (1:2)',short:'Баспалдақ қаптама',ml:100,build:80,mode:'over',crest:{x:2.9,y:3.6},
+  A:[[-10,.3],[-1.6,.3],[2.6,2.4],[3.2,2.6],[10,2.6]],B:steps(),
+  text:'Баспалдақтар толқын күшін аздап сөндіреді, бірақ су әлі де қабырғадан асады.'},
+ {id:'recurve',name:'Иілген қабырға + еңіс қаптама (1:2)',short:'Иілген қабырға',ml:0,build:95,mode:'deflect',crest:{x:2.3,y:3.9},
+  A:[[-10,.3],[-1.6,.3],[2.6,2.4],[3.2,2.6],[10,2.6]],
+  B:[[-1.6,.1],[-1.6,.3],[2.6,2.4],[2.6,3.2],[2.45,3.7],[2.15,4.0],[2.2,4.3],[3.2,4.3],[3.2,.1]],
+  text:'Қабырға басындағы қайырма толқынды теңізге қарай кері бұрады. Су асып түспейді.'},
+ {id:'rock',name:'Тас үйінді',short:'Тас үйінді',ml:5,build:60,mode:'over',rocks:true,crest:{x:2.9,y:3.6},
+  A:[[-10,.3],[-2.6,.3],[3.2,2.6],[10,2.6]],B:[[-2.6,.1],[-2.6,.3],[2.4,3.6],[3.2,3.6],[3.2,.1]],
+  text:'Үлкен тастардың арасындағы қуыстар толқын күшін сіңіреді. Асқан су өте аз.'},
+ {id:'sub',name:'Суасты бөгеті (жағадан алыс)',short:'Суасты бөгеті',ml:0,build:150,mode:'sub',crest:{x:-3,y:1.6},
+  A:[[-10,.3],[-4,.3],[2.6,2.35],[3.2,2.6],[10,2.6]],B:[[2.6,.1],[2.6,3.6],[3.2,3.6],[3.2,.1]],
+  C:[[-4.6,.1],[-4.6,.3],[-3.6,1.55],[-2.0,1.55],[-1.0,.3],[-1.0,.1]],
+  text:'Су астындағы бөгет толқынды жағаға жеткізбей сындырады. Су асып түспейді, бірақ салу өте қымбат.'}
+];
+
+var EFF={beach:[0,'Қорғаныс жоқ'],wall:[2,'Орташа тиімді'],eroded:[1,'Жағдайы нашарлаған'],slope:[1,'Тиімсіз'],step:[1,'Тиімсіз'],recurve:[3,'Өте тиімді (0 мл)'],rock:[3,'Өте тиімді (5 мл)'],sub:[3,'Өте тиімді (0 мл), бірақ қымбат']};
+var HOW={beach:'Толқынды баяулататын ештеңе жоқ, су тікелей жағалауға шығады.',wall:'Қабырға толқынды кері қайтарады, бірақ биік толқынның шашырауы жоғарыдан асады.',eroded:'Құм азайған сайын қабырға тереңірек ашылып, толқын оған күшті соғады.',slope:'Еңіс толқынды жоғары алып шығады, ал қабырға оны тік жоғары лақтырады.',step:'Баспалдақ толқынды біраз бөлшектейді, бірақ жоғары көтерілуін тоқтатпайды.',recurve:'Қайырма көтерілген суды теңізге қарай кері бұрады, сондықтан су асып түспейді.',rock:'Тастар арасындағы қуыстарға су сіңіп, толқын күші сөнеді.',sub:'Толқын бөгеттің үстінен өткенде тереңдік кенет азайып, толқын жағаға жетпей сынады.'};
+function drawSection(t){
+  function poly(p,c){return '<polygon fill="'+c+'" points="'+p.map(function(q){return q.join(',');}).join(' ')+'"/>';}
+  var a=[[-10,0]].concat(t.A).concat([[10,0]]);
+  var s='<g transform="translate(0,98) scale(21.32,-22) translate(10,0)"><rect x="-10" y="0" width="14" height="4.5" fill="#e8f3f6"/><rect x="-10" y="0" width="13" height="'+H0+'" fill="#5db8f0"/>'+poly(a,'#aeb5ba');
+  if(t.B)s+=poly(t.B,t.rocks?'#454d53':'#2f363c');
+  if(t.C)s+=poly(t.C,'#59636a');
+  s+='</g><text x="8" y="14" font-size="12" fill="#12303f">Су қоймасы</text><text x="282" y="14" font-size="12" text-anchor="end" fill="#12303f">Жағалау</text><text x="14" y="32" font-size="11" fill="#12303f">ағын</text><line x1="14" y1="40" x2="60" y2="40" stroke="#0b3a55" stroke-width="2"/><path d="M54 35L61 40L54 45" fill="none" stroke="#0b3a55" stroke-width="2"/>';
+  document.getElementById('sec').innerHTML=s;
+}
+/* ---------- Геометрия көмекшілері ---------- */
+function lineY(p,x){
+  for(var i=0;i<p.length-1;i++){
+    var x1=p[i][0],y1=p[i][1],x2=p[i+1][0],y2=p[i+1][1];
+    if(x1===x2)continue;
+    if(x>=Math.min(x1,x2)&&x<=Math.max(x1,x2))return y1+(y2-y1)*(x-x1)/(x2-x1);
+  }
+  return 0;
+}
+function polyTop(p,x){
+  var m=-1;
+  for(var i=0;i<p.length;i++){
+    var a=p[i],b=p[(i+1)%p.length];
+    if(a[0]===b[0])continue;
+    if(x>=Math.min(a[0],b[0])&&x<=Math.max(a[0],b[0])){
+      var y=a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);
+      if(y>m)m=y;
+    }
+  }
+  return m;
+}
+function env(t,x){
+  var y=lineY(t.A,x);
+  if(t.B)y=Math.max(y,polyTop(t.B,x));
+  if(t.C)y=Math.max(y,polyTop(t.C,x));
+  if(x>=3.2)y+=0.06;
+  return y;
+}
+function smooth(a,b,x){var t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);}
+function atten(t,x){
+  if(t.id==='sub')return 1-0.68*smooth(-4.6,-1.4,x);
+  if(t.id==='rock')return 1-0.3*smooth(-3,1,x);
+  return 1;
+}
+var REFL={beach:0.1,wall:0.7,eroded:0.8,slope:0.45,step:0.3,recurve:0.45,rock:0.12,sub:0.55};
+var XR={beach:3.0,wall:2.5,eroded:2.5,slope:1.2,step:1.2,recurve:1.2,rock:0.5,sub:2.5};
+function surf(t,x,time,g){
+  var d=Math.max(H0-g,0.08);
+  var a=A0*Math.pow(1.6/Math.max(d,0.35),0.25);
+  a=Math.min(a,0.66)*atten(t,x);
+  var ramp=smooth(-10,-7.5,x);
+  var ph=K*(x+10)-W*time;
+  var eta=a*(Math.cos(ph)+0.18*Math.cos(2*ph));
+  var xr=XR[t.id],R=REFL[t.id];
+  if(x<xr){
+    var phr=K*(2*(xr+10)-(x+10))-W*time;
+    eta+=a*R*Math.exp(-(xr-x)*0.12)*(Math.cos(phr)+0.18*Math.cos(2*phr));
+  }
+  return H0+eta*ramp;
+}
+
+/* ---------- Күй ---------- */
+var sel=0,kdm=1,paused=false,time=1.2,floodV=0,tankV=0,gateOpen=false,filmLen=0;
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+
+/* ---------- Сахна ---------- */
+var cv=document.getElementById('cv'),renderer,scene,camera;
+try{
+  renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+}catch(e){
+  document.getElementById('err').style.display='flex';
+  renderer=null;
+}
+if(renderer){
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.setClearColor(0x000000,0);
+scene=new THREE.Scene();
+var FOV=36;
+camera=new THREE.PerspectiveCamera(FOV,1,0.1,200);
+scene.add(new THREE.HemisphereLight(0xffffff,0x7f98a2,0.9));
+var sun=new THREE.DirectionalLight(0xffffff,0.85);sun.position.set(6,12,10);scene.add(sun);
+
+var ZW=3.2;
+var matSand=new THREE.MeshLambertMaterial({color:0xaeb5ba});
+var matConc=new THREE.MeshLambertMaterial({color:0x2f363c,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+var matRockB=new THREE.MeshLambertMaterial({color:0x454d53,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+var matMound=new THREE.MeshLambertMaterial({color:0x59636a});
+
+/* бекітілген бөліктер: науа табаны, шыны, шеттері, шөп, үйлер */
+var base=new THREE.Mesh(new THREE.BoxGeometry(21,0.3,3.7),new THREE.MeshLambertMaterial({color:0x8a979d}));
+base.position.set(0,-0.16,0);scene.add(base);
+var tankFrame=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(20,5.4,ZW)),new THREE.LineBasicMaterial({color:0x6a8793}));
+tankFrame.position.set(0,2.7,0);scene.add(tankFrame);
+var glassMat=new THREE.MeshBasicMaterial({color:0xcfe9f0,transparent:true,opacity:0.09,side:THREE.DoubleSide,depthWrite:false});
+[1,-1].forEach(function(s){
+  var g=new THREE.Mesh(new THREE.PlaneGeometry(20,5.4),glassMat);
+  g.position.set(0,2.7,s*(ZW/2+0.05));g.renderOrder=10;scene.add(g);
+});
+var grass=new THREE.Mesh(new THREE.BoxGeometry(6.8,0.06,ZW),new THREE.MeshLambertMaterial({color:0x7aa65a}));
+grass.position.set(6.6,2.63,0);scene.add(grass);
+
+var houses=[];
+[7.4,8.5,9.5].forEach(function(hx,i){
+  var g=new THREE.Group();
+  var cols=[0xf1e3c6,0xdfe9f2,0xf0d2c4];
+  var body=new THREE.Mesh(new THREE.BoxGeometry(1.1,0.9,1.4),new THREE.MeshLambertMaterial({color:cols[i]}));
+  body.position.y=0.45;
+  var roof=new THREE.Mesh(new THREE.ConeGeometry(0.95,0.6,4),new THREE.MeshLambertMaterial({color:0xb4553b}));
+  roof.rotation.y=Math.PI/4;roof.position.y=1.2;roof.scale.z=1.05;
+  g.add(body);g.add(roof);g.position.set(hx,2.66,0);g.scale.set(0.85,0.85,0.85);
+  scene.add(g);houses.push({body:body,base:new THREE.Color(cols[i])});
+});
+var mud=new THREE.Color(0x7d6446);
+
+var TZ=ZW-0.15;
+var gate=new THREE.Mesh(new THREE.BoxGeometry(0.2,5.3,TZ),new THREE.MeshLambertMaterial({color:0x3a444b,transparent:true,opacity:0.92}));
+gate.position.set(-6.5,2.65,0);scene.add(gate);
+var endWall=new THREE.Mesh(new THREE.BoxGeometry(0.12,5.4,ZW),new THREE.MeshBasicMaterial({color:0xcfe9f0,transparent:true,opacity:0.12,depthWrite:false}));
+endWall.position.set(-10.06,2.7,0);scene.add(endWall);
+
+
+
+
+/* қорғаныс тобы (түр ауысқанда қайта құрылады) */
+var defGroup=new THREE.Group();scene.add(defGroup);
+function polyMesh(pts,depth,mat){
+  var sh=new THREE.Shape();
+  pts.forEach(function(p,i){if(i)sh.lineTo(p[0],p[1]);else sh.moveTo(p[0],p[1]);});
+  var g=new THREE.ExtrudeGeometry(sh,{depth:depth,bevelEnabled:false});
+  g.translate(0,0,-depth/2);
+  return new THREE.Mesh(g,mat);
+}
+function clearGroup(grp){
+  while(grp.children.length){
+    var c=grp.children.pop();
+    if(c.geometry)c.geometry.dispose();
+  }
+}
+function buildDefence(t){
+  clearGroup(defGroup);
+  var Apts=[[-10,0]].concat(t.A).concat([[10,0]]);
+  defGroup.add(polyMesh(Apts,ZW,matSand));
+  if(t.B)defGroup.add(polyMesh(t.B,ZW+0.04,t.rocks?matRockB:matConc));
+  if(t.C)defGroup.add(polyMesh(t.C,ZW+0.04,matMound));
+  if(t.rocks){
+    var n=300,im=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),new THREE.MeshLambertMaterial({flatShading:true}),n);
+    var m=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),pos=new THREE.Vector3(),sc=new THREE.Vector3(),col=new THREE.Color();
+    var x1=-2.6,y1=0.3,x2=2.4,y2=3.6,nx=-(y2-y1),ny=(x2-x1),nl=Math.hypot(nx,ny);nx/=nl;ny/=nl;
+    for(var i=0;i<n;i++){
+      var u=Math.random();
+      var r=0.14+Math.random()*0.17;
+      pos.set(x1+(x2-x1)*u+nx*(0.03+Math.random()*0.1),y1+(y2-y1)*u+ny*(0.03+Math.random()*0.1),(Math.random()-0.5)*(ZW-0.25));
+      e.set(Math.random()*3,Math.random()*3,Math.random()*3);q.setFromEuler(e);
+      sc.set(r*(1+Math.random()*0.4),r*(0.8+Math.random()*0.3),r*(1+Math.random()*0.4));
+      m.compose(pos,q,sc);im.setMatrixAt(i,m);
+      var g=0.32+Math.random()*0.3;col.setRGB(g,g*1.02,g*1.05);im.setColorAt(i,col);
+    }
+    im.instanceMatrix.needsUpdate=true;if(im.instanceColor)im.instanceColor.needsUpdate=true;
+    defGroup.add(im);
+  }
+}
+
+/* су */
+var NX=400,XEND=10,xs=[];
+for(var i=0;i<NX;i++)xs.push(-10+(XEND+10)*i/(NX-1));
+function mkStrip(){
+  var geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(NX*2*3),3));
+  geo.setAttribute('color',new THREE.BufferAttribute(new Float32Array(NX*2*3),3));
+  var idx=[];
+  for(var i=0;i<NX-1;i++){var a=2*i;idx.push(a,a+1,a+2,a+1,a+3,a+2);}
+  geo.setIndex(idx);
+  return geo;
+}
+var waterMat=new THREE.MeshPhongMaterial({vertexColors:true,transparent:true,opacity:0.9,side:THREE.DoubleSide,depthWrite:false,shininess:90,specular:0x88bbee});
+var gSurf=mkStrip(),gFront=mkStrip(),gBack=mkStrip();
+var mSurf=new THREE.Mesh(gSurf,waterMat),mFront=new THREE.Mesh(gFront,waterMat),mBack=new THREE.Mesh(gBack,waterMat);
+[mSurf,mFront,mBack].forEach(function(m){m.renderOrder=4;m.frustumCulled=false;scene.add(m);});
+var groundCache=[];
+function cacheGround(t){groundCache=xs.map(function(x){return env(t,x);});}
+function setColor(arr,i,r,g,b){arr[i*3]=r;arr[i*3+1]=g;arr[i*3+2]=b;}
+/* су ағынының физикасы: таяз су теңдеуі (қақпа бұзылған кездегі толқын) */
+var G9=9.8,SDX=(XEND+10)/(NX-1),HRES=4.8,GX0=-6.6,GX1=-6.4,CF=0.02,SK=100.34;
+var FR={beach:[18.6,-4.6,2.6],wall:[7.47,-4.6,2.6],eroded:[0.464,-4.6,2.6],slope:[1.279,-4.6,2.6],step:[0.343,-4.6,2.6],recurve:[60,-1.6,2.6],rock:[82.4,-2.6,2.4],sub:[100,-4.6,-1.0]};
+var JX=0;for(var jj=0;jj<NX;jj++){if(xs[jj]>=3.25){JX=jj;break;}}
+var swCum=0,swCfm=new Float64Array(NX);
+var swZ=new Float64Array(NX),swH=new Float64Array(NX),swQ=new Float64Array(NX);
+var sFH=new Float64Array(NX+1),sFQ=new Float64Array(NX+1),sHL=new Float64Array(NX+1),sHR=new Float64Array(NX+1);
+var swOpen=false,impactT=-1,swTime=0,sprayQ=[],subDone=false;
+function swVel(i){return swH[i]>1e-3?swQ[i]/swH[i]:0;}
+function initSim(){
+  swOpen=false;swTime=0;impactT=-1;sprayQ.length=0;subDone=false;swCum=0;
+  var fr=FR[T[sel].id];
+  for(var i=0;i<NX;i++){
+    swCfm[i]=(xs[i]>=fr[1]&&xs[i]<=fr[2])?fr[0]:1;
+    swZ[i]=groundCache[i];
+    if(xs[i]>=GX0&&xs[i]<=GX1)swZ[i]=8;
+    var eta=xs[i]<GX0?HRES:H0;
+    swH[i]=Math.max(0,eta-swZ[i]);swQ[i]=0;
+  }
+}
+function openSim(){
+  if(swOpen)return;swOpen=true;
+  for(var i=0;i<NX;i++){
+    swZ[i]=groundCache[i];
+    if(xs[i]>=GX0&&xs[i]<=GX1){swH[i]=Math.max(0,H0-swZ[i]);swQ[i]=0;}
+  }
+}
+function swFlux(j){
+  var zl,hl,ul,zr,hr,ur;
+  if(j===0){zl=zr=swZ[0];hl=hr=swH[0];ul=-swVel(0);ur=swVel(0);}
+  else if(j===NX){zl=zr=swZ[NX-1];hl=hr=swH[NX-1];ul=swVel(NX-1);ur=-ul;}
+  else{zl=swZ[j-1];hl=swH[j-1];ul=swVel(j-1);zr=swZ[j];hr=swH[j];ur=swVel(j);}
+  var zm=Math.max(zl,zr);
+  var hL=Math.max(0,hl+zl-zm),hR=Math.max(0,hr+zr-zm);
+  sHL[j]=hL;sHR[j]=hR;
+  if(hL<=1e-6&&hR<=1e-6){sFH[j]=0;sFQ[j]=0;return 0;}
+  var cL=Math.sqrt(G9*hL),cR=Math.sqrt(G9*hR),sa=Math.sqrt(hL),sb=Math.sqrt(hR);
+  var us=(sa*ul+sb*ur)/(sa+sb+1e-12),cs=Math.sqrt(G9*0.5*(hL+hR));
+  var sL=Math.min(ul-cL,us-cs),sR=Math.max(ur+cR,us+cs);
+  var fhL=hL*ul,fqL=hL*ul*ul+0.5*G9*hL*hL,fhR=hR*ur,fqR=hR*ur*ur+0.5*G9*hR*hR;
+  if(sL>=0){sFH[j]=fhL;sFQ[j]=fqL;}
+  else if(sR<=0){sFH[j]=fhR;sFQ[j]=fqR;}
+  else{
+    var d=sR-sL;
+    sFH[j]=(sR*fhL-sL*fhR+sL*sR*(hR-hL))/d;
+    sFQ[j]=(sR*fqL-sL*fqR+sL*sR*(hR*ur-hL*ul))/d;
+  }
+  return Math.max(Math.abs(sL),Math.abs(sR));
+}
+function stepSim(dtMax){
+  var tt=0,n=0;
+  while(tt<dtMax-1e-9&&n<60){
+    var smax=1e-3,j;
+    for(j=0;j<=NX;j++){var sp=swFlux(j);if(sp>smax)smax=sp;}
+    var dt=Math.min(dtMax-tt,0.45*SDX/smax);
+    if(sFH[JX]>0)swCum+=dt*sFH[JX];
+    for(var i=0;i<NX;i++){
+      var h=swH[i]-dt/SDX*(sFH[i+1]-sFH[i]);
+      var q=swQ[i]-dt/SDX*((sFQ[i+1]+0.5*G9*(swH[i]*swH[i]-sHL[i+1]*sHL[i+1]))-(sFQ[i]+0.5*G9*(swH[i]*swH[i]-sHR[i]*sHR[i])));
+      if(h<1e-4){h=0;q=0;}
+      else q=q/(1+dt*CF*swCfm[i]*Math.abs(q)/(h*h+0.02));
+      swH[i]=h;swQ[i]=q;
+    }
+    tt+=dt;n++;
+  }
+}
+var hArr=new Float32Array(NX);
+var lineGeoF=new THREE.BufferGeometry(),lineGeoB=new THREE.BufferGeometry();
+lineGeoF.setAttribute('position',new THREE.BufferAttribute(new Float32Array(NX*3),3));
+lineGeoB.setAttribute('position',new THREE.BufferAttribute(new Float32Array(NX*3),3));
+var lineMat=new THREE.LineBasicMaterial({color:0xd5f1ff,transparent:true,opacity:0.95});
+var lineF=new THREE.Line(lineGeoF,lineMat),lineB=new THREE.Line(lineGeoB,lineMat);
+lineF.frustumCulled=false;lineB.frustumCulled=false;lineF.renderOrder=7;lineB.renderOrder=7;
+scene.add(lineF);scene.add(lineB);
+function updateWater(t){
+  var ps=gSurf.attributes.position.array,cs=gSurf.attributes.color.array;
+  var pf=gFront.attributes.position.array,cf=gFront.attributes.color.array;
+  var pb=gBack.attributes.position.array,cb=gBack.attributes.color.array;
+  var lf=lineGeoF.attributes.position.array,lb=lineGeoB.attributes.position.array;
+  var z=ZW/2,dx=(XEND+10)/(NX-1),i;
+  for(i=0;i<NX;i++){var g0=groundCache[i];hArr[i]=swH[i]>1e-3?g0+swH[i]:g0;}
+  var lim=NX;
+  for(i=0;i<NX;i++){
+    var x=xs[i],g=groundCache[i],h=hArr[i],dd=h-g;
+    if(lim===NX&&x>GX1+0.1&&dd<0.015)lim=i;
+    ps[(2*i)*3]=x;ps[(2*i)*3+1]=h;ps[(2*i)*3+2]=z;
+    ps[(2*i+1)*3]=x;ps[(2*i+1)*3+1]=h;ps[(2*i+1)*3+2]=-z;
+    var sl=Math.abs((hArr[Math.min(NX-1,i+1)]-hArr[Math.max(0,i-1)])/(2*dx));
+    var sh=Math.max(0,Math.min(1,1-dd/2.2));
+    var r=0.30+0.28*sh,gg=0.66+0.18*sh,b=0.93+0.06*sh;
+    var f=0;
+    var crest=smooth(0.45,0.8,sl)*smooth(0,0.2,h-H0)*smooth(-8,-5,x)*0.75;
+    f=Math.max(f,crest);
+    var uu=smooth(0.4,1.4,Math.abs(swVel(i)));f=Math.max(f,uu*(0.35+0.55*smooth(0.9,0.2,dd)));
+    r+=(1-r)*f;gg+=(1-gg)*f;b+=(1-b)*f;
+    setColor(cs,2*i,r,gg,b);setColor(cs,2*i+1,r,gg,b);
+    pf[(2*i)*3]=x;pf[(2*i)*3+1]=g;pf[(2*i)*3+2]=z;
+    pf[(2*i+1)*3]=x;pf[(2*i+1)*3+1]=h;pf[(2*i+1)*3+2]=z;
+    pb[(2*i)*3]=x;pb[(2*i)*3+1]=g;pb[(2*i)*3+2]=-z;
+    pb[(2*i+1)*3]=x;pb[(2*i+1)*3+1]=h;pb[(2*i+1)*3+2]=-z;
+    setColor(cf,2*i,0.20,0.55,0.88);setColor(cf,2*i+1,0.42,0.76,0.97);
+    setColor(cb,2*i,0.20,0.55,0.88);setColor(cb,2*i+1,0.42,0.76,0.97);
+    lf[i*3]=x;lf[i*3+1]=h+0.012;lf[i*3+2]=z+0.012;
+    lb[i*3]=x;lb[i*3+1]=h+0.012;lb[i*3+2]=-z-0.012;
+  }
+  ['position','color'].forEach(function(n){gSurf.attributes[n].needsUpdate=true;gFront.attributes[n].needsUpdate=true;gBack.attributes[n].needsUpdate=true;});
+  lineGeoF.attributes.position.needsUpdate=true;lineGeoB.attributes.position.needsUpdate=true;
+  lineGeoF.setDrawRange(0,Math.max(2,lim));lineGeoB.setDrawRange(0,Math.max(2,lim));
+  gSurf.computeVertexNormals();
+}
+
+/* бөлшектер (шашыраған су) */
+var NP=420,pPos=new Float32Array(NP*3),pVel=new Float32Array(NP*3),pAct=new Uint8Array(NP);
+for(var q=0;q<NP;q++)pPos[q*3+1]=-100;
+var pGeo=new THREE.BufferGeometry();
+pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+var pts=new THREE.Points(pGeo,new THREE.PointsMaterial({color:0xeaf8ff,size:0.17,sizeAttenuation:true,transparent:true,opacity:0.95,depthWrite:false}));
+pts.frustumCulled=false;pts.renderOrder=6;scene.add(pts);
+var pCursor=0,lastWaveN=null,burstLeft=0,backLeft=0;
+function spawn(vx,vy,x,y){
+  for(var n=0;n<NP;n++){
+    var i=(pCursor+n)%NP;
+    if(!pAct[i]){
+      pCursor=(i+1)%NP;pAct[i]=1;
+      pPos[i*3]=x;pPos[i*3+1]=y;pPos[i*3+2]=(Math.random()-0.5)*(ZW-0.2);
+      pVel[i*3]=vx;pVel[i*3+1]=vy;pVel[i*3+2]=(Math.random()-0.5)*0.4;
+      return;
+    }
+  }
+}
+var XF={beach:2.2,wall:2.1,eroded:2.1,slope:2.1,step:2.1,recurve:1.9,rock:1.7,sub:2.1};
+function frontX(){for(var i=NX-1;i>=0;i--){if(swH[i]>0.06&&swQ[i]>0.5*swH[i])return xs[i];}return -99;}
+function schedule(d,n,kind){sprayQ.push({t:swTime+d,n:n,kind:kind});}
+function emit(t,n,kind){
+  var c=t.crest;
+  for(var j=0;j<n;j++){
+    if(kind==='over'){
+      var wall=(t.id!=='beach');
+      var vy=(t.id==='rock')?1.5+Math.random()*1.2:(wall?2.6+Math.random()*2.2:1.6+Math.random()*1.4);
+      spawn(0.8+Math.random()*1.8,vy,c.x-0.1+Math.random()*0.3,c.y+0.05);
+    }else if(kind==='deflect'){
+      spawn(-(0.5+Math.random()*1.7),2.0+Math.random()*2.2,c.x-0.3+Math.random()*0.4,c.y+0.1);
+    }else if(kind==='back'){
+      var xb=Math.min(c.x-0.4,2.2)-Math.random()*0.5;
+      var ib=Math.max(0,Math.min(NX-1,Math.round((xb+10)/SDX)));
+      spawn(-(0.3+Math.random()*1.5),1.6+Math.random()*2.2,xb,groundCache[ib]+(swH[ib]>1e-3?swH[ib]:0)+0.1);
+    }else{
+      spawn((Math.random()-0.4)*1.6,1.6+Math.random()*2.0,-3.7+Math.random()*1.8,1.65);
+    }
+  }
+}
+function stepParticles(t,dt){
+  if(swOpen){
+    swTime+=dt;
+    var xf=frontX();
+    if(impactT<0&&(xf>=XF[t.id]||swTime>7)){
+      impactT=swTime;
+      if(t.mode==='over'){
+        var tot=Math.round(t.ml*0.35);
+        schedule(0.15,Math.round(tot*0.6),'over');schedule(0.5,Math.round(tot*0.25),'over');schedule(1.1,Math.round(tot*0.15),'over');
+      }else if(t.mode==='deflect'){
+        schedule(0.15,30,'deflect');schedule(0.9,12,'deflect');
+      }
+      schedule(0.1,16,'back');
+    }
+    if(t.mode==='sub'&&!subDone&&xf>=-2.9){subDone=true;schedule(0,26,'sub');}
+    for(var q=sprayQ.length-1;q>=0;q--){
+      if(swTime>=sprayQ[q].t){emit(t,sprayQ[q].n,sprayQ[q].kind);sprayQ.splice(q,1);}
+    }
+  }
+  for(var i=0;i<NP;i++){
+    if(!pAct[i])continue;
+    pVel[i*3+1]-=9.8*dt;
+    pPos[i*3]+=pVel[i*3]*dt;pPos[i*3+1]+=pVel[i*3+1]*dt;pPos[i*3+2]+=pVel[i*3+2]*dt;
+    var x=pPos[i*3],y=pPos[i*3+1],dead=false;
+    if(x>10||x<-10||y<0)dead=true;
+    else if(pVel[i*3+1]<0){
+      var ix=Math.max(0,Math.min(NX-1,Math.round((x+10)/SDX)));
+      var hs=groundCache[ix]+(swH[ix]>1e-3?swH[ix]:0);
+      if(y<hs-0.02)dead=true;
+    }
+    if(dead){pAct[i]=0;pPos[i*3+1]=-100;}
+  }
+  pGeo.attributes.position.needsUpdate=true;
+}
+
+/* камера */
+var az=0.55,el=0.38,zoomK=1,target=new THREE.Vector3(0,2.3,0);
+var viewTo=null;
+var VIEWS={side:{az:0,el:0.04},persp:{az:0.55,el:0.38},top:{az:0,el:1.4}};
+function fitDist(){
+  var asp=camera.aspect;
+  return Math.max(24,11.8/(Math.tan(FOV*Math.PI/360)*asp));
+}
+function placeCamera(){
+  var d=fitDist()*zoomK;
+  camera.position.set(target.x+d*Math.sin(az)*Math.cos(el),target.y+d*Math.sin(el),target.z+d*Math.cos(az)*Math.cos(el));
+  camera.lookAt(target);
+}
+function setView(name){
+  viewTo=VIEWS[name];
+  document.querySelectorAll('[data-view]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.view===name));});
+}
+function freeView(){
+  viewTo=null;
+  document.querySelectorAll('[data-view]').forEach(function(b){b.setAttribute('aria-pressed','false');});
+}
+document.querySelectorAll('[data-view]').forEach(function(b){b.addEventListener('click',function(){setView(b.dataset.view);});});
+
+var ptrs={},lastPinch=0;
+cv.addEventListener('pointerdown',function(e){cv.setPointerCapture(e.pointerId);ptrs[e.pointerId]={x:e.clientX,y:e.clientY};lastPinch=0;});
+cv.addEventListener('pointermove',function(e){
+  var p=ptrs[e.pointerId];if(!p)return;
+  var ids=Object.keys(ptrs);
+  if(ids.length===1){
+    freeView();
+    az-=(e.clientX-p.x)*0.006;
+    el=Math.max(-0.05,Math.min(1.45,el+(e.clientY-p.y)*0.006));
+  }else if(ids.length>=2){
+    ptrs[e.pointerId]={x:e.clientX,y:e.clientY};
+    var a=ptrs[ids[0]],b=ptrs[ids[1]],d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(lastPinch)zoomK=Math.max(0.35,Math.min(1.8,zoomK*lastPinch/d));
+    lastPinch=d;return;
+  }
+  ptrs[e.pointerId]={x:e.clientX,y:e.clientY};
+});
+function endPtr(e){delete ptrs[e.pointerId];lastPinch=0;}
+cv.addEventListener('pointerup',endPtr);cv.addEventListener('pointercancel',endPtr);
+cv.addEventListener('wheel',function(e){e.preventDefault();zoomK=Math.max(0.35,Math.min(1.8,zoomK*Math.exp(e.deltaY*0.001)));},{passive:false});
+cv.addEventListener('keydown',function(e){
+  var h=true;
+  if(e.key==='ArrowLeft'){az+=0.08;freeView();}
+  else if(e.key==='ArrowRight'){az-=0.08;freeView();}
+  else if(e.key==='ArrowUp'){el=Math.min(1.45,el+0.06);freeView();}
+  else if(e.key==='ArrowDown'){el=Math.max(-0.05,el-0.06);freeView();}
+  else if(e.key==='+'||e.key==='='){zoomK=Math.max(0.35,zoomK*0.92);}
+  else if(e.key==='-'){zoomK=Math.min(1.8,zoomK*1.08);}
+  else h=false;
+  if(h)e.preventDefault();
+});
+
+function resize(){
+  var r=cv.parentElement.getBoundingClientRect();
+  var w=Math.max(10,r.width),h=Math.max(10,r.height);
+  renderer.setSize(w,h,false);
+  camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+if(window.ResizeObserver)new ResizeObserver(resize).observe(cv.parentElement);
+window.addEventListener('resize',resize);
+resize();
+
+/* 3D жазулар */
+var tagSea=document.getElementById('tagSea'),tagPad=document.getElementById('tagPad'),tagDef=document.getElementById('tagDef'),tagHouse=document.getElementById('tagHouse'),tagTank=document.getElementById('tagTank');
+var v3=new THREE.Vector3();
+function place(el,x,y,z){
+  v3.set(x,y,z).project(camera);
+  if(v3.z>1){el.style.display='none';return;}
+  el.style.display='block';
+  var r=cv.getBoundingClientRect();
+  el.style.left=((v3.x*0.5+0.5)*r.width)+'px';
+  el.style.top=((-v3.y*0.5+0.5)*r.height)+'px';
+}
+
+/* ---------- Негізгі цикл ---------- */
+var last=performance.now(),lastShownMl=-1,lastDamage=-1,lastTank=-1;
+function frame(now){
+  var dt=Math.min(0.05,(now-last)/1000);last=now;
+  var t=T[sel];
+  if(!paused){
+    time+=dt;
+    if(swOpen)stepSim(dt);
+    stepParticles(t,dt);
+    floodV=swCum*SK;
+  }
+  updateWater(t);
+  var gy=2.65+(swOpen?5.0:0);
+  gate.position.y+=(gy-gate.position.y)*Math.min(1,dt*12);
+  var dmgRatio=Math.min(1,floodV/150);
+  houses.forEach(function(h){h.body.material.color.copy(h.base).lerp(mud,dmgRatio*0.7);});
+  /* камера */
+  if(viewTo){
+    az+=(viewTo.az-az)*Math.min(1,dt*6);
+    el+=(viewTo.el-el)*Math.min(1,dt*6);
+    if(Math.abs(viewTo.az-az)<0.002&&Math.abs(viewTo.el-el)<0.002){az=viewTo.az;el=viewTo.el;}
+  }
+  placeCamera();
+  place(tagSea,-6.5,5.7,1.6);
+  place(tagPad,-8.3,5.2,1.6);
+  place(tagDef,2.9,Math.max(t.crest.y,3.4)+0.7,1.6);
+  place(tagHouse,8.5,3.9,0);
+  var rounded=Math.round(floodV);
+  if(rounded!==lastShownMl){lastShownMl=rounded;liveUI(floodV);}
+  renderer.render(scene,camera);
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Интерфейс ---------- */
+var listEl=document.getElementById('list'),barsEl=document.getElementById('bars');
+function fmt(n){return String(Math.round(n));}
+function fmt1(n){return n.toFixed(1).replace('.',',');}
+function iconSvg(t){
+  function poly(p,cls){return '<polygon class="'+cls+'" points="'+p.map(function(q){return q[0]+','+(4.3-q[1]);}).join(' ')+'"/>';}
+  var a=[[-10,0]].concat(t.A).concat([[10,0]]);
+  var s='<svg class="ico" viewBox="-10 0 20 4.3" preserveAspectRatio="none" aria-hidden="true"><rect class="w" x="-10" y="'+(4.3-H0)+'" width="13" height="'+H0+'"/>';
+  s+=poly(a,'a');
+  if(t.B)s+=poly(t.B,'b');
+  if(t.C)s+=poly(t.C,'b');
+  return s+'</svg>';
+}
+function buildList(){
+  listEl.innerHTML='';
+  T.forEach(function(t,i){
+    var b=document.createElement('button');
+    b.className='row';b.type='button';b.setAttribute('role','radio');
+    b.setAttribute('aria-checked',String(i===sel));
+    b.innerHTML=iconSvg(t)+'<span class="nm">'+t.name+'</span><span class="ml">'+t.ml+(t.est?'*':'')+' мл</span>';
+    b.addEventListener('click',function(){select(i);});
+    listEl.appendChild(b);
+  });
+}
+function totals(t){var d=t.ml*kdm;return {build:t.build,dmg:d,total:t.build+d};}
+function buildBars(){
+  var mx=0;T.forEach(function(t){mx=Math.max(mx,totals(t).total);});
+  var best=0;T.forEach(function(t,i){if(totals(t).total<totals(T[best]).total)best=i;});
+  barsEl.innerHTML='';
+  T.forEach(function(t,i){
+    var o=totals(t);
+    var b=document.createElement('button');
+    b.type='button';b.className='bar';b.setAttribute('aria-current',String(i===sel));
+    b.innerHTML='<span>'+t.short+(i===best?'<span class="best">тиімді</span>':'')+'</span><span class="track"><i class="bd" style="width:'+(o.build/mx*100)+'%"></i><i class="dm" style="width:'+(o.dmg/mx*100)+'%"></i></span><span class="t">'+fmt(o.total)+'</span>';
+    b.addEventListener('click',function(){select(i);});
+    barsEl.appendChild(b);
+  });
+  var bt=T[best];
+  document.getElementById('verdict').textContent='Ең аз жалпы шығын: «'+bt.short+'», '+fmt(totals(bt).total)+' ш.б.';
+}
+function liveUI(v){
+  var t=T[sel];
+  document.getElementById('mlv').textContent=fmt(v);
+  document.getElementById('fill').style.height=Math.min(100,v/160*100)+'%';
+  var d=v*kdm;
+  document.getElementById('cBuild').textContent=fmt(t.build)+' ш.б.';
+  document.getElementById('cDmg').textContent=fmt(d)+' ш.б.';
+  document.getElementById('cTot').textContent=fmt(t.build+d)+' ш.б.';
+  tagHouse.innerHTML='Үйлер'+(v>0.5?': залал <b>'+fmt(d)+' ш.б.</b>':'');
+}
+function select(i){
+  sel=i;var t=T[i];
+  buildDefence(t);cacheGround(t);
+  floodV=0;initSim();setGate(false);
+  for(var n=0;n<NP;n++){pAct[n]=0;pPos[n*3+1]=-100;}
+  tagDef.textContent=t.short;
+  document.getElementById('why').textContent=t.text+' '+HOW[t.id]+(t.est?' (Видеода сан көрсетілмеген, 150 мл шартты түрде алынды.)':'');
+  var ef=document.getElementById('eff');ef.textContent=EFF[t.id][1];ef.className='eff e'+EFF[t.id][0];
+  drawSection(t);
+  Array.prototype.forEach.call(listEl.children,function(c,n){c.setAttribute('aria-checked',String(n===i));});
+  buildBars();lastShownMl=-1;liveUI(floodV);
+}
+document.getElementById('k').addEventListener('input',function(e){
+  kdm=parseFloat(e.target.value);
+  document.getElementById('kv').textContent=fmt1(kdm)+' ш.б.';
+  buildBars();lastShownMl=-1;liveUI(floodV);
+});
+var playBtn=document.getElementById('playBtn');
+function playLabel(){playBtn.textContent=paused?'Жалғастыру':'Кідірту';}
+playBtn.addEventListener('click',function(){
+  paused=!paused;playLabel();
+  lastShownMl=-1;
+});
+playLabel();
+var gateBtn=document.getElementById('gateBtn');
+function setGate(v){gateOpen=v;gateBtn.setAttribute('aria-pressed',String(v));gateBtn.textContent=v?'Қайта бастау':'Қақпаны ашу';}
+gateBtn.addEventListener('click',function(){
+  if(swOpen){floodV=0;initSim();setGate(false);lastShownMl=-1;for(var n=0;n<NP;n++){pAct[n]=0;pPos[n*3+1]=-100;}}
+  else{openSim();setGate(true);}
+});
+buildList();
+select(0);
+requestAnimationFrame(frame);
+}
+})();
+</script>
+</body>
+</html>
