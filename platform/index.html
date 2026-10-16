@@ -2,7 +2,15 @@
 <html lang="kk">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070B1E">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Groowin">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Groowin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -342,6 +350,29 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
 #cdOv{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:rgba(0,0,0,.55);color:#fff;font-size:min(32vw,260px);font-weight:800}
 #cdOv span{animation:cdpop .8s ease both}
 #confetti{position:fixed;inset:0;width:100%;height:100%;z-index:90;pointer-events:none}
+
+/* ===== Таңдаулылар, сайттар, пульт ===== */
+.favbtn{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surf,var(--paper));color:var(--mute);font-size:1.15rem;line-height:1;cursor:pointer;z-index:2;display:grid;place-items:center;padding:0;transition:transform .15s}
+.favbtn.on{color:#F5B301;border-color:#F5B301}.favbtn:hover{transform:scale(1.12)}
+.gwrap{position:relative;display:flex}.gwrap>.game{flex:1;min-width:0}
+.qcard,.lpcard{position:relative}
+.qcard .favbtn,.lpcard .favbtn{top:10px;right:10px}
+.qcard .qct{padding-right:34px}
+.stbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 56px 10px 0}.stbar strong{font-size:1.25rem;margin-right:6px}
+.stbar a.out,.qrow a.out{display:inline-block;text-decoration:none;padding:4px 10px;border:1px solid var(--line);border-radius:10px;color:var(--ink);font:inherit;font-size:.9rem}
+#pultChip{position:fixed;right:14px;bottom:14px;z-index:73;display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surf,var(--paper));color:var(--ink);font-size:.9rem;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+#pultChip button{font:inherit;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:99px;padding:4px 10px}
+#pult{position:fixed;inset:0;z-index:95;background:var(--paper);color:var(--ink);display:flex;flex-direction:column;gap:12px;padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));overflow:auto}
+#pult .ph{display:flex;align-items:center;gap:10px}#pult .ph strong{font-size:1.2rem;flex:1}
+#pult .pdot{width:12px;height:12px;border-radius:50%;background:#E21B3C}#pult .pdot.on{background:#26C281}
+#pult .pst{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surf,var(--paper));min-height:64px}
+#pult .pst small{color:var(--mute);display:block}#pult .pst b{font-size:1.1rem}
+#pult .prow{display:grid;gap:10px}#pult .p2{grid-template-columns:1fr 1fr}#pult .p4{grid-template-columns:repeat(4,1fr)}
+#pult button.pb{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surf,var(--paper));color:var(--ink);border-radius:14px;padding:14px 8px;font-size:1rem;min-height:52px}
+#pult button.pb:active{transform:scale(.97)}
+#pult button.pb.big{min-height:92px;font-size:1.25rem;font-weight:700}
+#pult button.pb.pri{background:var(--accent);color:#fff;border-color:transparent}
+#pult button.pb:disabled{opacity:.4}
 </style>
 </head>
 <body>
@@ -410,6 +441,9 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
       <button data-v="news"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg><span class="nl">Хабарландыру</span><span id="badge" hidden></span></button>
       <button data-v="rosters" id="navRosters" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span class="nl">Менің сыныптарым</span></button>
       <button data-v="lessons" id="navLessons" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h16"/><path d="m17 10 3 2-3 2z"/></svg><span class="nl">Сабақ жоспары</span></button>
+      <button data-v="favs" id="navFavs" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span class="nl">Таңдаулылар</span></button>
+      <button data-v="sites" id="navSites" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span class="nl">Сайттар</span></button>
+      <button type="button" id="navPult" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2M10 6h4"/></svg><span class="nl">Пульт</span></button>
       <button data-v="mats" id="navMats" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="nl">Менің материалдарым</span></button>
       <button data-v="inbox" id="navInbox" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg><span class="nl">Хабарлар</span><span id="badge2" hidden></span></button>
       <button data-v="games" id="navGames" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.4 11.5 2 15.5 2 17a3 3 0 0 0 5 2.2L9 17h6l2 2.2A3 3 0 0 0 22 17c0-1.5-.4-5.5-.7-8.4A4 4 0 0 0 17.3 5z"/></svg><span class="nl">Ойындар</span></button>
@@ -446,6 +480,26 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
         <div class="mtools"><button class="go" id="lpSave">Сақтау</button><button class="out" id="lpCancel">Болдырмау</button></div>
       </div>
     </div>
+    <div id="v-favs" hidden>
+      <h2 style="margin:0 0 6px;font-size:1.2rem">Таңдаулылар</h2>
+      <p class="sub" style="font-size:.9rem">Жиі қолданатын ойындар, сайттар, құралдар, викториналар мен жоспарлар. Карточкадағы ☆ белгісін басып қос.</p>
+      <div id="favBox" class="qcards"></div>
+    </div>
+
+    <div id="v-sites" hidden>
+      <h2 style="margin:0 0 6px;font-size:1.2rem">Сайттар</h2>
+      <p class="sub" style="font-size:.9rem">Сабаққа пайдалы сыртқы сайттар. «Осында ашу» сайтты толық экранда көрсетеді.</p>
+      <div id="siteForm" hidden>
+        <label for="siteTitle">Атауы</label><input id="siteTitle" maxlength="80">
+        <label for="siteUrl">Сілтемесі</label><input id="siteUrl" placeholder="https://...">
+        <label for="siteDesc">Сипаттамасы (міндетті емес)</label><input id="siteDesc" maxlength="200">
+        <label for="siteIcon">Белгіше (эмодзи)</label><input id="siteIcon" maxlength="4" value="🌐" style="width:80px;text-align:center;font-size:1.3rem">
+        <div style="display:flex;gap:8px;margin-top:10px"><button class="go" id="siteAdd" style="width:auto;padding:10px 22px">Қосу</button><button class="out" id="siteCancel" hidden>Бас тарту</button></div>
+      </div>
+      <p class="msg" id="siteMsg" role="status" aria-live="polite"></p>
+      <div id="siteGrid" class="qcards"></div>
+    </div>
+
     <div id="v-mats" hidden>
       <h2 style="margin:0 0 6px;font-size:1.2rem">Менің материалдарым</h2>
       <p class="sub" style="font-size:.9rem">Жеке бетің: папка жасап, файл (сурет, бейне, слайд, құжат) жүктеп, интернеттен сілтеме қосасың. Оларды тек өзің көресің, сабақта проекторға шығарасың.</p>
@@ -597,6 +651,9 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
       <input id="accEdit" maxlength="80" autocomplete="name">
       <button class="go" id="accSave" style="width:auto;padding:10px 22px">Сақтау</button>
       <p class="msg" id="accMsg" role="status" aria-live="polite"></p>
+      <h3 style="margin:14px 0 0;font-size:1.05rem">Телефонға орнату</h3>
+      <p class="sub" style="font-size:.9rem" id="pwaHint">Сайтты қосымша сияқты орнат: басты экранда иконка болады, толық экранда ашылады.</p>
+      <button class="go" id="pwaBtn" style="width:auto;padding:10px 22px" hidden>Орнату</button>
       <h3 style="margin:14px 0 0;font-size:1.05rem">Құпия сөзді өзгерту</h3>
       <p class="sub" style="font-size:.9rem;margin:6px 0 0">Қазіргі құпия сөзді ешкім, тіпті админ де көре алмайды: ол құпиялап сақталады. Ұмытсаң, жаңасын орнатуға болады.</p>
       <label for="pw1">Жаңа құпия сөз</label>
@@ -726,7 +783,7 @@ async function showApp(session) {
   document.querySelector('.wrap').classList.toggle('wide', !!session);
   document.body.classList.toggle('in-app', !!session);
   if (!session) closeGame();
-  if (!session) { typedFor = null; clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
+  if (!session) { typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const lastA = +ls.get('lastActive');
   if (lastA && Date.now() - lastA > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; await sb.auth.signOut(); return; }
   touch();
@@ -748,7 +805,7 @@ async function showApp(session) {
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
-  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
+  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
@@ -944,7 +1001,9 @@ const gKey = g => { const n = parseInt(g.grade); return n > 0 ? String(n) : 'oth
 const gLabel = k => k === 'other' ? 'Басқа' : k + '-сынып';
 function gameCard(g) {
   const b = el('button', 'game'); b.append(el('span', 'gi', g.icon || '🎮'), el('strong', '', g.title), el('span', '', g.topic || ''), el('span', 'gm', [g.type, g.grade].filter(Boolean).join(', ')));
-  b.onclick = () => openGame(g); return b;
+  b.onclick = () => openGame(g);
+  if (!window.__staff || !g.id) return b;
+  const w = el('div', 'gwrap'); w.append(b, favBtn('game', g.id)); return w;
 }
 function renderGames() {
   const box = $('games'), cr = $('catCrumbs'), list = GAMES.filter(g => g.subj === subj);
@@ -980,7 +1039,7 @@ function closeGame() {
   $('frame').src = 'about:blank';
 }
 $('back').onclick = () => go(subj, true);
-const VIEWS = ['lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+const VIEWS = ['sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); }
 function go(key, keep) {
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
@@ -988,7 +1047,7 @@ function go(key, keep) {
   if (key === 'physics' || key === 'math') {
     subj = key; if (!keep) gradeSel = null;
     renderGames(); show('catalog');
-  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
+  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'sites') loadSites(); if (key === 'favs') loadFavsView(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
 }
 document.querySelectorAll('#nav button[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 $('subjHead').onclick = () => { const h = $('subjItems').hidden = !$('subjItems').hidden; $('subjHead').setAttribute('aria-expanded', String(!h)); $('subjArrow').textContent = h ? '▸' : '▾'; };
@@ -1320,6 +1379,7 @@ const MT = { left: 0, timer: null };
     const run = () => { SFX.pop(); const r = REFL[Math.floor(Math.random() * REFL.length)]; h.textContent = r[0]; p.textContent = r[1]; };
     nx.onclick = run; row.appendChild(nx); pop.append(h, p, row); run();
   };
+  MT.start = startT; MT.stop = () => { clearInterval(MT.timer); MT.left = 0; tickUI(); };
   bt.onclick = () => { if (mode === 't') { pop.hidden = true; mode = ''; } else { mode = 't'; drawTimer(); pop.hidden = false; } };
   lf.onclick = bt.onclick;
   br.onclick = () => { if (mode === 'r') { pop.hidden = true; mode = ''; } else { mode = 'r'; drawRefl(); pop.hidden = false; } };
@@ -1348,7 +1408,7 @@ async function loadLessons() {
     const row = el('div', 'qrow'), go2 = el('button', 'go', 'Бастау'); go2.onclick = () => st.length ? startLesson(z) : alert('Бұл жоспарда қадам жоқ.');
     row.append(go2, mini('Өзгерту', () => openLpEditor(z)), mini('Көшіру', async () => { const r = await sb.from('lesson_plans').insert({ title: (z.title + ' (көшірме)').slice(0, 120), steps: st }); if (r.error) alert(r.error.message); loadLessons(); }),
       mini('Жою', async () => { if (!confirm('«' + z.title + '» жойылсын ба?')) return; await sb.from('lesson_plans').delete().eq('id', z.id); loadLessons(); }));
-    c.append(top, chips, row); box.appendChild(c);
+    c.append(top, chips, row, favBtn('lesson', z.id)); box.appendChild(c);
   });
   if (!lessons.length) box.appendChild(el('p', 'sub', 'Әзірге жоспар жоқ. «Жаңа жоспар» немесе «45 минуттық үлгі» батырмасын бас.'));
 }
@@ -1496,7 +1556,7 @@ async function loadPlay() {
     PLAY_TOOLS.forEach(t => {
       const b = el('button', 'game plc'); b.type = 'button';
       const ic = el('span', 'gi'); ic.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + t.ic + '</svg>';
-      b.append(ic, el('strong', '', t.t), el('span', 'gm', t.d)); b.onclick = () => playTool(t); grid.appendChild(b);
+      b.append(ic, el('strong', '', t.t), el('span', 'gm', t.d)); b.onclick = () => playTool(t); const w = el('div', 'gwrap'); w.append(b, favBtn('tool', t.k)); grid.appendChild(w);
     });
   }
   const { data } = await sb.from('rosters').select('id,name').order('created_at');
@@ -1548,7 +1608,7 @@ async function loadQuizzes() {
     const st = el('button', 'go', 'Бастау'); st.onclick = () => n ? hostQuiz(z) : alert('Бұл викторинада сұрақ жоқ.');
     row.append(st, mini('Өзгерту', () => openEditor(z)), mini('Көшіру', async () => { const { error } = await sb.from('quizzes').insert({ title: (z.title + ' (көшірме)').slice(0, 120), questions: z.questions }); if (error) alert(error.message); else loadQuizzes(); }),
       mini('Жою', async () => { if (!confirm('«' + z.title + '» викторинасы жойылсын ба?')) return; await sb.from('quizzes').delete().eq('id', z.id); loadQuizzes(); }));
-    c.append(top, row); box.appendChild(c);
+    c.append(top, row, favBtn('quiz', z.id)); box.appendChild(c);
   });
   if (!quizzes.length) box.appendChild(el('p', 'sub', 'Әзірге викторина жоқ. «Жаңа викторина» батырмасын бас.'));
   const rb = $('qzRuns'); rb.replaceChildren();
@@ -2354,6 +2414,206 @@ $('impGo').onclick = async () => {
   $('impGo').disabled = false; $('impGo').hidden = true; $('impPrev').replaceChildren(); $('impFile').value = ''; impRows = [];
   note('impMsg', (n || 0) + ' адам қосылды немесе жаңартылды.' + (skipped ? ' Өткізілді: ' + skipped + ' (басқа мұғалімнің оқушысы не админ).' : ''), 'ok'); loadUsers();
 };
+
+
+// ===== Таңдаулылар =====
+let FAVS = new Set();
+async function loadFavs() {
+  const { data, error } = await sb.from('favorites').select('kind,ref'); if (error) return;
+  FAVS = new Set((data || []).map(x => x.kind + ':' + x.ref));
+  document.querySelectorAll('.favbtn').forEach(paintFav);
+}
+function paintFav(b) {
+  const on = FAVS.has(b.dataset.k); b.textContent = on ? '★' : '☆'; b.setAttribute('aria-pressed', String(on));
+  b.title = on ? 'Таңдаулылардан алу' : 'Таңдаулыларға қосу'; b.classList.toggle('on', on);
+}
+function favBtn(kind, ref, after) {
+  const b = el('button', 'favbtn'); b.type = 'button'; b.dataset.k = kind + ':' + ref; paintFav(b);
+  b.onclick = async e => {
+    e.stopPropagation(); const k = b.dataset.k, was = FAVS.has(k);
+    if (was) FAVS.delete(k); else FAVS.add(k);
+    document.querySelectorAll('.favbtn').forEach(x => { if (x.dataset.k === k) paintFav(x); });
+    const r = was ? await sb.from('favorites').delete().eq('kind', kind).eq('ref', String(ref)) : await sb.from('favorites').insert({ kind, ref: String(ref) });
+    if (r.error) { if (was) FAVS.add(k); else FAVS.delete(k); document.querySelectorAll('.favbtn').forEach(x => { if (x.dataset.k === k) paintFav(x); }); alert(r.error.message.includes('favorites') ? 'update-10.sql әлі іске қосылмаған. Оны Supabase → SQL Editor ішінде іске қос.' : 'Қате: ' + r.error.message); return; }
+    if (after) after();
+  };
+  return b;
+}
+async function loadFavsView() {
+  const box = $('favBox'); box.replaceChildren(el('p', 'sub', 'Жүктелуде…'));
+  const [f, s, q, l] = await Promise.all([
+    sb.from('favorites').select('kind,ref,created_at').order('created_at', { ascending: false }),
+    sb.from('sites').select('*'), sb.from('quizzes').select('id,title,questions'), sb.from('lesson_plans').select('id,title,steps')]);
+  box.replaceChildren();
+  if (f.error) { box.appendChild(el('p', 'msg err', f.error.message.includes('favorites') ? 'update-10.sql әлі іске қосылмаған. Оны Supabase → SQL Editor ішінде іске қос.' : 'Қате: ' + f.error.message)); return; }
+  FAVS = new Set(f.data.map(x => x.kind + ':' + x.ref));
+  const sites = s.data || [], qs = q.data || [], ls2 = l.data || [], items = [];
+  f.data.forEach(x => {
+    if (x.kind === 'game') { const g = GAMES.find(g => String(g.id) === x.ref); if (g) items.push({ ic: g.icon || '🎮', t: g.title, m: 'Ойын', open: () => openGame(g), x }); }
+    else if (x.kind === 'site') { const z = sites.find(z => z.id === x.ref); if (z) items.push({ ic: z.icon || '🌐', t: z.title, m: 'Сайт', open: () => openSite(z), x }); }
+    else if (x.kind === 'quiz') { const z = qs.find(z => z.id === x.ref); if (z) items.push({ ic: '❓', t: z.title, m: 'Викторина · ' + (z.questions || []).length + ' сұрақ', open: () => (z.questions || []).length ? hostQuiz(z) : alert('Бұл викторинада сұрақ жоқ.'), x }); }
+    else if (x.kind === 'lesson') { const z = ls2.find(z => z.id === x.ref); if (z) items.push({ ic: '📋', t: z.title, m: 'Сабақ жоспары · ' + (z.steps || []).length + ' қадам', open: () => (z.steps || []).length ? startLesson(z) : alert('Бұл жоспарда қадам жоқ.'), x }); }
+    else if (x.kind === 'tool') { const t = PLAY_TOOLS.find(t => t.k === x.ref); if (t) items.push({ ic: '🛠️', t: t.t, m: 'Құрал', open: async () => { await loadPlay(); playTool(t); }, x }); }
+  });
+  items.forEach(it => {
+    const c = el('div', 'qcard'), top = el('div', 'qct'), row = el('div', 'qrow'), go2 = el('button', 'go', 'Ашу');
+    const ic = el('span', '', it.ic); ic.style.fontSize = '1.8rem'; top.append(ic, el('strong', '', it.t), el('span', 'gm', it.m));
+    go2.onclick = it.open; row.appendChild(go2); c.append(top, row, favBtn(it.x.kind, it.x.ref, loadFavsView)); box.appendChild(c);
+  });
+  if (!items.length) box.appendChild(el('p', 'sub', 'Әзірге таңдаулы жоқ. Ойын, сайт, құрал, викторина не жоспар карточкасындағы ☆ белгісін бас.'));
+}
+
+// ===== Сайттар =====
+let SITES = [], siteEdit = null;
+const siteMsg = (t, c) => note('siteMsg', t, c || '');
+const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
+async function loadSites() {
+  $('siteForm').hidden = !isAdmin; siteMsg('');
+  const { data, error } = await sb.from('sites').select('*').order('sort').order('created_at');
+  const box = $('siteGrid'); box.replaceChildren();
+  if (error) { box.appendChild(el('p', 'msg err', error.message.includes('sites') ? 'update-10.sql әлі іске қосылмаған. Оны Supabase → SQL Editor ішінде іске қос.' : 'Қате: ' + error.message)); return; }
+  SITES = data || [];
+  SITES.forEach(s => {
+    const c = el('div', 'qcard'), top = el('div', 'qct'), ic = el('span', '', s.icon || '🌐'); ic.style.fontSize = '1.8rem';
+    top.append(ic, el('strong', '', s.title)); if (s.descr) top.appendChild(el('span', 'gm', s.descr)); top.appendChild(el('span', 'gm', hostOf(s.url)));
+    const row = el('div', 'qrow'), o = el('button', 'go', 'Осында ашу'); o.onclick = () => openSite(s);
+    const a = el('a', 'out', '↗ Жаңа қойындыда'); a.href = s.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    row.append(o, a);
+    if (isAdmin) row.append(mini('Өзгерту', () => fillSite(s)), mini('Жою', async () => { if (!confirm('«' + s.title + '» сайты жойылсын ба?')) return; await sb.from('sites').delete().eq('id', s.id); loadSites(); }));
+    c.append(top, row, favBtn('site', s.id)); box.appendChild(c);
+  });
+  if (!SITES.length) box.appendChild(el('p', 'sub', isAdmin ? 'Әзірге сайт жоқ. Жоғарыдағы форма арқылы қос.' : 'Әзірге сайт қосылмаған.'));
+}
+function fillSite(s) { siteEdit = s ? s.id : null; $('siteTitle').value = s ? s.title : ''; $('siteUrl').value = s ? s.url : ''; $('siteDesc').value = s ? (s.descr || '') : ''; $('siteIcon').value = s ? (s.icon || '🌐') : '🌐'; $('siteAdd').textContent = s ? 'Сақтау' : 'Қосу'; $('siteCancel').hidden = !s; if (s) $('siteTitle').focus(); }
+$('siteCancel').onclick = () => fillSite(null);
+$('siteAdd').onclick = async () => {
+  const title = $('siteTitle').value.trim(); let url = $('siteUrl').value.trim();
+  if (!title) return siteMsg('Атауын жаз', 'err');
+  if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+  try { new URL(url); } catch { return siteMsg('Сілтеме дұрыс емес', 'err'); }
+  const row = { title: title.slice(0, 80), url: url.slice(0, 500), descr: $('siteDesc').value.trim().slice(0, 200) || null, icon: $('siteIcon').value.trim() || '🌐' };
+  const r = siteEdit ? await sb.from('sites').update(row).eq('id', siteEdit) : await sb.from('sites').insert(row);
+  if (r.error) return siteMsg('Сақталмады: ' + r.error.message, 'err');
+  fillSite(null); await loadSites(); siteMsg('Сақталды', 'ok');
+};
+function openSite(s) {
+  SFX.unlock(); const b = stage(), bar = el('div', 'stbar');
+  const fs = el('button', 'out', '⛶ Толық экран'), tab = el('a', 'out', '↗ Жаңа қойындыда'); tab.href = s.url; tab.target = '_blank'; tab.rel = 'noopener noreferrer';
+  const f = document.createElement('iframe'); f.title = s.title; f.src = embedUrl(s.url); f.allow = 'fullscreen; autoplay; clipboard-write'; f.allowFullscreen = true; f.referrerPolicy = 'strict-origin-when-cross-origin';
+  f.style.cssText = 'width:100%;height:calc(100vh - 120px);border:0;border-radius:12px;background:#fff';
+  fs.onclick = () => { const fn = f.requestFullscreen || f.webkitRequestFullscreen; if (fn) fn.call(f); };
+  bar.append(el('strong', '', s.title), fs, tab, el('span', 'gm', 'Сайт ашылмаса, ол кірістіруге рұқсат бермейді: «Жаңа қойындыда» батырмасын бас.'));
+  b.append(bar, f);
+}
+
+// ===== Телефон-пульт =====
+let pultHost = null;
+const pultCh = role => sb.channel('pult:' + meId, { config: { broadcast: { self: false }, presence: { key: role === 'host' ? 'host' : 'p' + Math.random().toString(36).slice(2, 8) } } });
+function pultPush() {
+  if (!pultHost) return;
+  const qb = !$('qzHost').hidden ? [...$('qzHost').querySelectorAll('.qh-go')].find(b => !b.disabled && b.offsetParent) : null;
+  const cur = lessonRun && lessonRun.plan.steps[lessonRun.i];
+  const st = { lp: lessonRun ? { t: lessonRun.plan.title, i: lessonRun.i, n: lessonRun.plan.steps.length, s: cur ? (cur.t || STEP_TYPES[cur.k] || '') : '' } : null, qz: !$('qzHost').hidden, qb: qb ? qb.textContent : '', stage: !$('stage').hidden, left: MT.left, mute: SFX.muted };
+  try { pultHost.ch.send({ type: 'broadcast', event: 'state', payload: st }); } catch {}
+}
+function pultCmd(m) {
+  const qzOn = !$('qzHost').hidden;
+  switch (m.a) {
+    case 'lp': {
+      if (!lessonRun || qzOn) return;
+      const i = lessonRun.i, n = lessonRun.plan.steps.length;
+      if (m.v === 'prev' && i > 0) goStep(i - 1); else if (m.v === 'next') { if (i + 1 < n) goStep(i + 1); else endLesson(true); } else if (m.v === 'rerun') runStep(lessonRun.plan.steps[i]);
+      break;
+    }
+    case 'qz': if (qzOn) document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ' })); break;
+    case 'tool': if (!qzOn && ['random', 'groups', 'refl', 'timer'].includes(m.k)) playTool({ k: m.k, cls: m.k === 'random' || m.k === 'groups' }); break;
+    case 'again': { if (qzOn) break; const g = $('stageBody').querySelector('.go'); if (!$('stage').hidden && g) g.click(); break; }
+    case 'timer': {
+      const mins = Math.max(1, Math.min(+m.m || 5, 60));
+      if (qzOn || lessonRun && $('stage').hidden) { MT.start(mins * 60); break; }
+      $('tTimer').onclick(); const i = $('stageBody').querySelector('input');
+      if (i) { i.value = mins; i.onchange(); const g = $('stageBody').querySelector('.go'); if (g) g.click(); }
+      break;
+    }
+    case 'tstop': MT.stop && MT.stop(); clearInterval(tm); break;
+    case 'mute': SFX.setMuted(!SFX.muted); break;
+    case 'close': if (!qzOn) { $('stage').hidden = true; clearInterval(tm); } break;
+    case 'fun': confetti(); SFX.fan(); break;
+  }
+}
+function pultChip() {
+  let c = $('pultChip'); if (!c) { c = el('div', ''); c.id = 'pultChip'; document.body.appendChild(c); }
+  c.replaceChildren();
+  const q = el('button', '', 'QR'), x = el('button', '', '✕'); q.type = x.type = 'button'; q.onclick = pultQR; x.title = 'Пультті өшіру'; x.onclick = pultStop;
+  c.append(el('span', '', '📱 Пульт: ' + (pultHost.n ? pultHost.n + ' телефон қосылған' : 'телефонды күтуде')), q, x);
+}
+function pultQR() {
+  const m = modal('Телефон-пульт'), url = new URL('index.html?pult=1', location.href).href;
+  const qr = el('div', 'qh-zq'); qr.innerHTML = makeQR(url); qr.style.cssText = 'width:220px;margin:6px auto';
+  const ok = el('button', 'go', 'Дайын'); ok.onclick = m.close;
+  m.box.append(el('p', 'sub', 'Телефоннан осы QR-ды сканерле. Телефонда да осы аккаунтпен кірген болуың керек.'), qr, el('p', 'sub', 'Не телефонда сайтты ашып: мәзір → «Пульт» → «Бұл құрылғы — пульт».'), ok);
+}
+function pultHostStart() {
+  if (!pultHost) {
+    const ch = pultCh('host'); pultHost = { ch, n: 0, tm: null };
+    ch.on('broadcast', { event: 'cmd' }, ({ payload }) => { try { pultCmd(payload || {}); } catch (e) { console.error(e); } setTimeout(pultPush, 300); });
+    ch.on('broadcast', { event: 'hello' }, () => pultPush());
+    ch.on('presence', { event: 'sync' }, () => { if (!pultHost) return; pultHost.n = Object.keys(ch.presenceState()).filter(k => k !== 'host').length; pultChip(); pultPush(); });
+    ch.subscribe(s => { if (s === 'SUBSCRIBED') ch.track({ role: 'host' }); });
+    pultHost.tm = setInterval(pultPush, 2000);
+  }
+  pultChip(); pultQR();
+}
+function pultStop() {
+  if (!pultHost) return; clearInterval(pultHost.tm); try { sb.removeChannel(pultHost.ch); } catch {} pultHost = null;
+  const c = $('pultChip'); if (c) c.remove();
+}
+function pultOpen() {
+  if ($('pult')) return;
+  const ov = el('div', ''); ov.id = 'pult'; document.body.appendChild(ov);
+  const ch = pultCh('phone'); let wl = null;
+  const send = (a, o) => { try { navigator.vibrate && navigator.vibrate(15); } catch {} ch.send({ type: 'broadcast', event: 'cmd', payload: Object.assign({ a }, o || {}) }); };
+  const btn = (txt, cls, fn) => { const b = el('button', 'pb ' + (cls || ''), txt); b.type = 'button'; b.onclick = fn; return b; };
+  const dot = el('span', 'pdot'), exit = btn('✕ Шығу', '', () => { try { sb.removeChannel(ch); } catch {} try { wl && wl.release(); } catch {} ov.remove(); });
+  exit.style.cssText = 'min-height:0;padding:8px 14px';
+  const head = el('div', 'ph'); head.append(el('strong', '', 'Пульт'), dot, exit);
+  const st = el('div', 'pst'), conn = el('small', '', 'Ноутбукты іздеуде…'), info = el('b', '', '—'); st.append(conn, info);
+  const prev = btn('◀ Алдыңғы', 'big', () => send('lp', { v: 'prev' })), next = btn('Келесі ▶', 'big pri', () => send('lp', { v: 'next' }));
+  const r1 = el('div', 'prow p2'); r1.append(prev, next);
+  const qz = btn('Викторина: ашық емес', 'big', () => send('qz')); qz.disabled = true;
+  const r2 = el('div', 'prow p2'); r2.append(btn('Кездейсоқ оқушы', '', () => send('tool', { k: 'random' })), btn('Топқа бөлу', '', () => send('tool', { k: 'groups' })), btn('Рефлексия', '', () => send('tool', { k: 'refl' })), btn('Тағы бір рет ↻', '', () => send('again')));
+  const r3 = el('div', 'prow p4'); [1, 3, 5, 10].forEach(m => r3.appendChild(btn(m + ' мин', '', () => send('timer', { m }))));
+  const r4 = el('div', 'prow p2'); r4.append(btn('Таймерді тоқтату', '', () => send('tstop')), btn('Экрандағыны жабу', '', () => send('close')));
+  const r5 = el('div', 'prow p2'); r5.append(btn('🔊 Дыбыс қос/өшір', '', () => send('mute')), btn('🎉 Конфетти', '', () => send('fun')));
+  ov.append(head, st, r1, qz, el('small', 'gm', 'Құралдар'), r2, el('small', 'gm', 'Таймер'), r3, r4, r5);
+  const paintConn = on => { dot.classList.toggle('on', on); conn.textContent = on ? 'Ноутбук қосылған ✓' : 'Ноутбукты іздеуде… (ноутбукта «Пульт» → «экран» таңда)'; };
+  ch.on('broadcast', { event: 'state' }, ({ payload: s }) => {
+    if (!s) return;
+    info.textContent = s.lp ? s.lp.t + ' · ' + (s.lp.i + 1) + '/' + s.lp.n + ' · ' + s.lp.s : (s.qz ? 'Викторина жүріп жатыр' : s.stage ? 'Экранда құрал ашық' : 'Ешнәрсе ашық емес');
+    prev.disabled = !s.lp || s.lp.i === 0 || s.qz; next.disabled = !s.lp || s.qz; next.textContent = s.lp && s.lp.i + 1 >= s.lp.n ? 'Аяқтау ✓' : 'Келесі ▶';
+    qz.disabled = !s.qz; qz.textContent = s.qz ? (s.qb || 'Келесі') : 'Викторина: ашық емес';
+  });
+  ch.on('presence', { event: 'sync' }, () => { const on = !!ch.presenceState().host; paintConn(on); if (on) ch.send({ type: 'broadcast', event: 'hello', payload: {} }); });
+  ch.subscribe(s => { if (s === 'SUBSCRIBED') { ch.track({ role: 'pult' }); ch.send({ type: 'broadcast', event: 'hello', payload: {} }); } });
+  try { navigator.wakeLock && navigator.wakeLock.request('screen').then(l => { wl = l; }).catch(() => {}); } catch {}
+}
+function pultMenu() {
+  const m = modal('Пульт'), coarse = matchMedia('(pointer:coarse)').matches;
+  const a = el('button', 'go', '📺 Бұл құрылғы — экран (ноутбук)'), b = el('button', 'go', '📱 Бұл құрылғы — пульт (телефон)');
+  a.onclick = () => { m.close(); pultHostStart(); }; b.onclick = () => { m.close(); pultOpen(); };
+  [a, b].forEach(x => x.style.margin = '8px 0');
+  m.box.append(el('p', 'sub', 'Ноутбукте «экран», телефонда «пульт» таңда. Екеуінде де бір аккаунтпен кірген болуың керек.'), ...(coarse ? [b, a] : [a, b]));
+}
+$('navPult').onclick = pultMenu;
+
+// ===== PWA =====
+let pwaEvt = null;
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); pwaEvt = e; $('pwaBtn').hidden = false; });
+$('pwaBtn').onclick = async () => { if (!pwaEvt) return; pwaEvt.prompt(); try { await pwaEvt.userChoice; } catch {} pwaEvt = null; $('pwaBtn').hidden = true; };
+addEventListener('appinstalled', () => { $('pwaBtn').hidden = true; $('pwaHint').textContent = 'Қосымша орнатылды ✓'; });
+if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !matchMedia('(display-mode: standalone)').matches) $('pwaHint').textContent = 'iPhone/iPad: Safari-де «Бөлісу» батырмасын бас → «Басты экранға қосу».';
+if (matchMedia('(display-mode: standalone)').matches) $('pwaHint').textContent = 'Қосымша ретінде ашылған ✓';
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 
 // ===== Эмодзи таңдау =====
 const EMOJI = ['🎮','🧪','⚡','🍎','🔬','🚀','🌍','🔭','🧲','💡','🔥','💧','🌈','🧮','📐','📏','🔢','➗','🧠','🎯','🏆','🧩','🎲','⚖️','🔋','🌡️','🌌','🪐','☀️','🌙','🧬','⏱️','🎓','📚','🏹','🔊','📡','🌊','🏎️','✈️'];
