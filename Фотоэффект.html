@@ -1,0 +1,648 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Фотоэффект</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: lab bench. Left column = vacuum-tube stage + controls; right column = live readouts and two graphs; lessons (laws, uses, quiz) below. Accent colour follows the wavelength of the light. */
+:root{
+  --bg:#05070f; --panel:#0b1120; --panel2:#101830; --line:rgba(255,255,255,.1);
+  --fg:#e8edf7; --muted:#8c98b3; --ph:#6fd8ff; --e:#6fd8ff; --ok:#5be0a0; --bad:#ff8a80; --warn:#ffc46b;
+  --ui:'Manrope',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font:14.5px/1.55 var(--ui);padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit;color:inherit}
+#app{max-width:1260px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:4px;max-width:760px}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:0;font-size:clamp(1.9rem,5vw,2.8rem);line-height:1.05;font-weight:800;text-wrap:balance}
+h1 span{color:var(--ph);transition:color .2s}
+.lede{margin:6px 0 0;color:var(--muted);max-width:62ch}
+h3{margin:0 0 10px;font-size:15px;font-weight:700}
+#lab{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:16px;align-items:start}
+#stageCol,#sideCol{display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.stage{position:relative;background:radial-gradient(120% 90% at 30% 0%,#0f1830 0%,#070b17 70%);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+#cv{display:block;width:100%;height:auto;touch-action:manipulation}
+#banner{font-size:13px;line-height:1.45;padding:10px 14px;border-top:1px solid var(--line);background:rgba(5,8,16,.55)}
+#banner.ok{border-top-color:rgba(91,224,160,.6)}
+#banner.no{border-top-color:rgba(255,138,128,.6)}
+#banner b{font-weight:700}
+
+.ctl{display:grid;grid-template-columns:1fr;gap:14px}
+.row{display:flex;flex-direction:column;gap:6px}
+.row .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.row label{font-weight:600}
+.val{font:700 14px var(--mono);color:var(--ph);font-variant-numeric:tabular-nums}
+.sub{font-size:12px;color:var(--muted)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:5px;background:var(--trk,rgba(255,255,255,.12))}
+input[type=range]::-moz-range-track{height:8px;border-radius:5px;background:var(--trk,rgba(255,255,255,.12))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--ph);margin-top:-7px;box-shadow:0 0 0 4px rgba(255,255,255,.08)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--ph)}
+input[type=range]:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--ph);outline-offset:3px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip,.btn{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;font-weight:600;font-size:13px;transition:border-color .15s,background .15s}
+.chip:hover,.btn:hover{border-color:rgba(255,255,255,.35)}
+.chip.on{border-color:var(--ph);color:var(--ph)}
+.btn.pri{background:var(--ph);border-color:var(--ph);color:#04101a}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+select{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+
+dl.rd{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+.rd dt{color:var(--muted);font-size:13px}
+.rd dd{margin:0;text-align:right;font:600 14px var(--mono);font-variant-numeric:tabular-nums}
+.rd dd.hot{color:var(--ph)}
+#ebar{position:relative;height:30px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden;margin:4px 0 6px}
+#ebar i{position:absolute;top:0;bottom:0;display:block;transition:width .15s,left .15s}
+#ebar .a{left:0;background:repeating-linear-gradient(135deg,#5c6580 0 6px,#4a526b 6px 12px)}
+#ebar .k{background:var(--ph)}
+#ebar .t{position:absolute;top:0;bottom:0;display:flex;align-items:center;padding:0 8px;font:700 11px var(--mono);color:#fff;text-shadow:0 1px 3px #000;white-space:nowrap}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+canvas.g{display:block;width:100%;height:auto;border-radius:8px;background:#070c18}
+.gbtn{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.small{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+#hid{display:none;border:1px dashed rgba(255,196,107,.5);border-radius:12px;padding:12px;margin-top:14px;background:rgba(255,196,107,.05)}
+#hid.on{display:block}
+#hid .f{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+#hid input{width:110px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font:600 14px var(--mono)}
+#hidRes{margin-top:8px;font-weight:600}
+
+#learn .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tp{display:none}.tp.on{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card h4{margin:0 0 6px;font-size:14.5px}
+.card p{margin:0 0 10px;color:#c8d1e4;font-size:13.5px}
+.eq{font:600 15px var(--mono);background:rgba(255,255,255,.05);border-radius:10px;padding:10px 14px;display:inline-block;margin:4px 0 12px;max-width:100%;overflow-x:auto}
+ul.uses{margin:0;padding-left:18px;display:grid;gap:6px;color:#c8d1e4}
+#quiz .q{font-weight:700;font-size:15.5px;margin:0 0 12px}
+#quiz .opts{display:grid;gap:8px}
+#quiz .o{text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer}
+#quiz .o:hover{border-color:rgba(255,255,255,.35)}
+#quiz .o.good{border-color:var(--ok);background:rgba(91,224,160,.12)}
+#quiz .o.bad{border-color:var(--bad);background:rgba(255,138,128,.12)}
+#quiz .exp{margin:12px 0 0;color:#c8d1e4}
+#quiz .meta{display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;margin-bottom:8px}
+@media (max-width:900px){#lab{grid-template-columns:minmax(0,1fr)}.two{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div id="app">
+  <header>
+    <span class="eyebrow">Кванттық физика</span>
+    <h1>Фото<span>эффект</span></h1>
+    <p class="lede">Жарық металл бетінен электрон шығарады. Толқын ұзындығын, қарқындылықты, кернеуді және металды өзгертіп, Эйнштейн теңдеуін өз көзіңмен тексер.</p>
+  </header>
+
+  <section id="lab">
+    <div id="stageCol">
+      <div class="stage">
+        <canvas id="cv" aria-label="Фотоэлемент: жарық катодтан электрон шығарады"></canvas>
+        <div id="banner"></div>
+      </div>
+
+      <div class="panel ctl" id="ctl">
+        <div class="row">
+          <div class="top"><label for="lam">Толқын ұзындығы λ</label><span class="val" id="lamV"></span></div>
+          <input id="lam" type="range" min="150" max="800" step="1" value="400">
+          <div class="chips" id="presets"></div>
+        </div>
+        <div class="two">
+          <div class="row">
+            <div class="top"><label for="int">Жарық қарқындылығы</label><span class="val" id="intV"></span></div>
+            <input id="int" type="range" min="0" max="100" step="1" value="60">
+            <span class="sub">Фотондар саны (қуат), энергиясы емес</span>
+          </div>
+          <div class="row">
+            <div class="top"><label for="vol">Анод кернеуі U</label><span class="val" id="volV"></span></div>
+            <input id="vol" type="range" min="-6" max="6" step="0.05" value="1">
+            <span class="sub">Теріс кернеу электрондарды тежейді</span>
+          </div>
+        </div>
+        <div class="row">
+          <label for="met">Катод металы</label>
+          <select id="met"></select>
+        </div>
+        <div class="chips">
+          <button class="btn pri" id="rec" type="button">Нүкте қосу (U, I)</button>
+          <button class="btn" id="stopBtn" type="button">U = −Uт қою</button>
+          <button class="btn" id="clr" type="button">Нүктелерді тазалау</button>
+        </div>
+        <div id="hid">
+          <b>Тапсырма: белгісіз металдың жұмыс шығуын тап</b>
+          <p class="small" style="margin-top:4px">Жарықтың толқын ұзындығын таңдап, ток нөлге түскенше кернеуді теріс жаққа азайт. Сол кернеу Uт. Содан кейін hν = A + eUт теңдеуімен A-ны есепте.</p>
+          <div class="f"><label for="ans">A =</label><input id="ans" type="number" step="0.01" inputmode="decimal" placeholder="эВ"> <span>эВ</span>
+            <button class="btn pri" id="chk" type="button">Тексеру</button><button class="btn" id="newM" type="button">Жаңа металл</button></div>
+          <div id="hidRes" role="status"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sideCol">
+      <div class="panel">
+        <h3>Эйнштейн теңдеуі: hν = A + Eₖ</h3>
+        <div id="ebar"><i class="a"></i><i class="k"></i></div>
+        <div class="legend"><span><span class="sw" style="background:#5c6580"></span>A — жұмыс шығуы</span><span><span class="sw" style="background:var(--ph)"></span>Eₖ,max — электрон энергиясы</span></div>
+        <dl class="rd" style="margin-top:12px">
+          <dt>Жиілік ν</dt><dd id="rF"></dd>
+          <dt>Фотон энергиясы hν</dt><dd id="rE" class="hot"></dd>
+          <dt>Жұмыс шығуы A</dt><dd id="rA"></dd>
+          <dt>Қызыл шек λ₀</dt><dd id="rL0"></dd>
+          <dt>Eₖ,max</dt><dd id="rK" class="hot"></dd>
+          <dt>Тоқтатушы кернеу Uт</dt><dd id="rU"></dd>
+          <dt>Фототок I</dt><dd id="rI" class="hot"></dd>
+        </dl>
+      </div>
+      <div class="panel">
+        <h3>Вольт-амперлік сипаттама I(U)</h3>
+        <canvas class="g" id="g1"></canvas>
+        <p class="small" id="g1n">Ағымдағы жағдай нүкте түрінде көрінеді, ақ нүктелер сенің өлшемдерің.</p>
+      </div>
+      <div class="panel">
+        <h3>Eₖ,max мен жиілік</h3>
+        <canvas class="g" id="g2"></canvas>
+        <p class="small">Барлық металдың түзулері параллель: көлбеуі бірдей және h Планк тұрақтысына тең. Түзудің ν осімен қиылысуы қызыл шекті береді.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="learn" class="panel">
+    <div class="tabs" id="tabs">
+      <button class="chip on" type="button" data-t="laws">Столетов заңдары</button>
+      <button class="chip" type="button" data-t="uses">Қолданылуы</button>
+      <button class="chip" type="button" data-t="quiz">Викторина</button>
+    </div>
+    <div class="tp on" id="tp-laws">
+      <div class="eq">hν = A + Eₖ,max &nbsp;·&nbsp; Eₖ,max = eUт &nbsp;·&nbsp; λ₀ = hc / A</div>
+      <div class="cards" id="laws"></div>
+    </div>
+    <div class="tp" id="tp-uses">
+      <ul class="uses">
+        <li><b>Күн батареялары.</b> Жарық жартылай өткізгіште электрон-кемтік жұптарын тудырады (ішкі фотоэффект), нәтижесінде электр тогы пайда болады.</li>
+        <li><b>Фотоэлементтер мен датчиктер.</b> Автоматты есіктер, көше шамдарын қосатын жарық датчиктері, күзет сигнализациясы.</li>
+        <li><b>Цифрлық камералар.</b> Матрицадағы әр пиксель жарықты электр зарядына айналдырады.</li>
+        <li><b>Фотоэлектрондық көбейткіш.</b> Бір ғана фотонның әсерін байқауға мүмкіндік береді, ғылыми приборлар мен медицинада қолданылады.</li>
+        <li><b>Түнгі көру құралдары.</b> Әлсіз жарық электрондарға айналып, күшейтіліп, қайтадан көрінетін суретке түрленеді.</li>
+        <li><b>Экспонометр.</b> Фотоаппарат үшін жарық мөлшерін өлшейді.</li>
+      </ul>
+    </div>
+    <div class="tp" id="tp-quiz"><div id="quiz"></div></div>
+  </section>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+function fmt(n,d){return n.toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function clamp(v,a,b){return v<a?a:v>b?b:v}
+var HC=1239.84; /* эВ·нм */
+var SLOPE=0.4136; /* h/e: эВ / (10^14 Гц) */
+
+var METALS=[
+ {id:'cs',kk:'Цезий (Cs)',A:2.14,col:'#e8c97a'},
+ {id:'k',kk:'Калий (K)',A:2.30,col:'#c9b8e8'},
+ {id:'ca',kk:'Кальций (Ca)',A:2.87,col:'#d8d8d0'},
+ {id:'al',kk:'Алюминий (Al)',A:4.08,col:'#aab8c8'},
+ {id:'zn',kk:'Мырыш (Zn)',A:4.31,col:'#8fb4c4'},
+ {id:'cu',kk:'Мыс (Cu)',A:4.65,col:'#e08a5a'},
+ {id:'pt',kk:'Платина (Pt)',A:5.65,col:'#e6eaf0'},
+ {id:'x',kk:'Белгісіз металл (?)',A:3.6,col:'#9aa4b8',hidden:true}
+];
+var S={lam:400,inten:60,V:1,metal:METALS[0],hidA:3.6,rec:[],amm:0,noise:1};
+function curA(){return S.metal.hidden?S.hidA:S.metal.A}
+function calc(){var E=HC/S.lam,A=curA();return {E:E,A:A,K:Math.max(0,E-A),can:E>A,f:2997.92/S.lam}}
+
+/* ---------- түс ---------- */
+function wlRGB(w){
+  var r=0,g=0,b=0;
+  if(w<380)return [176,140,255];
+  if(w>750)return [200,70,70];
+  if(w<440){r=(440-w)/60;b=1}else if(w<490){g=(w-440)/50;b=1}else if(w<510){g=1;b=(510-w)/20}
+  else if(w<580){r=(w-510)/70;g=1}else if(w<645){r=1;g=(645-w)/65}else{r=1}
+  var f=w<420?.3+.7*(w-380)/40:w>700?.3+.7*(750-w)/50:1;
+  return [Math.round(255*Math.pow(r*f,.8)),Math.round(255*Math.pow(g*f,.8)),Math.round(255*Math.pow(b*f,.8))];
+}
+function lift(c){var m=Math.max(c[0],c[1],c[2])||1,k=m<170?170/m:1;return [Math.min(255,Math.round(c[0]*k)),Math.min(255,Math.round(c[1]*k)),Math.min(255,Math.round(c[2]*k))]}
+function rgb(c,a){return a===undefined?'rgb('+c[0]+','+c[1]+','+c[2]+')':'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'}
+function region(l){
+  if(l<380)return 'ультракүлгін (көрінбейді)';
+  if(l<450)return 'күлгін';if(l<495)return 'көк';if(l<570)return 'жасыл';if(l<590)return 'сары';if(l<620)return 'қызғылт сары';if(l<=750)return 'қызыл';
+  return 'инфрақызыл (көрінбейді)';
+}
+var ACC=[111,216,255];
+
+/* ---------- электрондардың үлестірімі (симуляция мен график бір үлгіні қолданады) ---------- */
+var NS=1500,R1=[],R2=[],seed=20261015;
+function rr(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}
+for(var i=0;i<NS;i++){R1.push(rr());R2.push(rr())}
+function keDraw(K,r){return K*(.1+.9*Math.pow(r,.7))}
+function angDraw(r){return (-45+45*(2*r-1))*Math.PI/180}
+var kx=[];
+function buildKx(){
+  var K=calc().K;kx=[];
+  for(var i=0;i<NS;i++){var c=Math.cos(angDraw(R2[i]));kx.push(keDraw(K,R1[i])*c*c)}
+  kx.sort(function(a,b){return a-b});
+}
+function frac(V){
+  if(V>=0)return 1;
+  var th=-V,lo=0,hi=NS;
+  while(lo<hi){var m=(lo+hi)>>1;if(kx[m]>th)hi=m;else lo=m+1}
+  return (NS-lo)/NS;
+}
+function Isat(){return calc().can?45*S.inten/100*.22:0}
+function Iread(){return Isat()*frac(S.V)}
+
+/* ---------- сурет ---------- */
+var W=1000,VX=175,VW=730,H=580,cv=$('cv'),ctx=cv.getContext('2d'),dpr=1;
+function sizeStage(){
+  dpr=Math.min(window.devicePixelRatio||1,2);
+  var w=cv.parentNode.clientWidth||600;
+  cv.width=Math.round(w*dpr);cv.height=Math.round(w*dpr*H/VW);
+}
+var SP=160,DD=420;
+var PL={cx:380,cy:330,hl:58};
+var ph=[],el=[],fl=[],acc=0;
+
+function emit(x,y){
+  var c=calc(),KE=keDraw(c.K,Math.random()),a=angDraw(Math.random()),v=SP*Math.sqrt(2*KE);
+  el.push({x:x+2.2,y:y-2.2,vx:v*Math.cos(a),vy:v*Math.sin(a)});
+}
+function step(dt){
+  var c=calc(),rate=45*S.inten/100,i;
+  acc+=rate*dt;
+  while(acc>=1){acc-=1;ph.push({x:362+Math.random()*36,y:92,p:Math.random()*6.28})}
+  for(i=ph.length-1;i>=0;i--){
+    var p=ph[i];p.y+=380*dt;
+    if(p.y>=p.x-50){
+      if(c.can)emit(p.x,p.y);
+      fl.push({x:p.x,y:p.y,t:0,c:c.can?'#ffffff':'#ffb070',r:c.can?7:5});
+      ph.splice(i,1);
+    }
+  }
+  var ax=S.V*SP*SP/DD;
+  for(i=el.length-1;i>=0;i--){
+    var e=el[i];
+    e.vx+=ax*dt;e.x+=e.vx*dt;e.y+=e.vy*dt;
+    if(e.y<168){e.y=168;e.vy=-e.vy}
+    if(e.y>402){e.y=402;e.vy=-e.vy}
+    if(e.x>=796){fl.push({x:796,y:e.y,t:0,c:'#6fd8ff',r:9});el.splice(i,1);continue}
+    var dx=e.x-PL.cx,dy=e.y-PL.cy,sd=.7071*dx-.7071*dy,tt=.7071*dx+.7071*dy;
+    if((sd<0&&Math.abs(tt)<PL.hl)||e.x<312){fl.push({x:e.x,y:e.y,t:0,c:'#ffffff',r:5});el.splice(i,1)}
+  }
+  for(i=fl.length-1;i>=0;i--){fl[i].t+=dt;if(fl[i].t>.35)fl.splice(i,1)}
+  if(el.length>600)el.splice(0,el.length-600);
+}
+
+function rrect(x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+function txt(s,x,y,size,color,align,weight,mono){
+  ctx.font=(weight||600)+' '+size+'px '+(mono?"'JetBrains Mono',ui-monospace,monospace":"'Manrope',system-ui,sans-serif");
+  ctx.fillStyle=color;ctx.textAlign=align||'left';ctx.fillText(s,x,y);
+}
+function wire(pts,col){
+  ctx.strokeStyle=col||'#7f8aa6';ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(var i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);ctx.stroke();
+}
+function dial(cx,cy,r,min,max,val,letter,ticks){
+  ctx.fillStyle='#0a0f1c';ctx.strokeStyle='#9aa6c2';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();ctx.stroke();
+  var a0=Math.PI*1.17,a1=Math.PI*1.83,i;
+  ctx.strokeStyle='#6b7694';ctx.lineWidth=1.5;
+  for(i=0;i<=ticks;i++){var a=a0+(a1-a0)*i/ticks;ctx.beginPath();ctx.moveTo(cx+Math.cos(a)*r*.72,cy+r*.5+Math.sin(a)*r*.72*1.0);ctx.lineTo(cx+Math.cos(a)*r*.86,cy+r*.5+Math.sin(a)*r*.86);ctx.stroke()}
+  var t=clamp((val-min)/(max-min),0,1),an=a0+(a1-a0)*t;
+  ctx.strokeStyle='#ff8a6b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy+r*.5);ctx.lineTo(cx+Math.cos(an)*r*.82,cy+r*.5+Math.sin(an)*r*.82);ctx.stroke();
+  ctx.fillStyle='#ff8a6b';ctx.beginPath();ctx.arc(cx,cy+r*.5,3,0,7);ctx.fill();
+  txt(letter,cx,cy+r*.18,r*.5,'#cfd6e8','center',700);
+}
+function arrow(x1,y,x2,col){
+  ctx.strokeStyle=col;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(x2,y);
+  var d=x2>x1?-1:1;ctx.moveTo(x2,y);ctx.lineTo(x2+d*8,y-4);ctx.moveTo(x2,y);ctx.lineTo(x2+d*8,y+4);ctx.stroke();
+}
+
+function draw(t){
+  var sc=cv.width/VW;ctx.setTransform(sc,0,0,sc,-VX*sc,0);
+  ctx.clearRect(0,0,W,H);
+  var c=calc(),col=lift(wlRGB(S.lam)),V=S.V,i;
+
+  /* жарық шоғы */
+  if(S.inten>0){
+    var g=ctx.createLinearGradient(0,80,0,350);
+    g.addColorStop(0,rgb(col,.05+.3*S.inten/100));g.addColorStop(1,rgb(col,.08+.1*S.inten/100));
+    ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(364,78);ctx.lineTo(396,78);ctx.lineTo(400,350);ctx.lineTo(360,310);ctx.closePath();ctx.fill();
+  }
+  /* лампа */
+  ctx.fillStyle='#161f38';ctx.strokeStyle='#3a4670';ctx.lineWidth=2;rrect(344,26,72,46,9);ctx.fill();ctx.stroke();
+  ctx.fillStyle=rgb(col,.25+.6*S.inten/100);ctx.beginPath();ctx.ellipse(380,74,26,7,0,0,7);ctx.fill();
+  txt('Жарық көзі',436,46,12,'#8c98b3','left',600);
+  txt('λ = '+S.lam+' нм',436,68,15,rgb(col),'left',700,true);
+  txt('hν = '+fmt(c.E,2)+' эВ',436,88,13,'#cfd6e8','left',600,true);
+
+  /* түтік */
+  rrect(300,150,560,270,44);
+  ctx.fillStyle='rgba(120,170,255,.05)';ctx.fill();
+  /* электр өрісі */
+  var al=Math.min(.38,.05+.33*Math.abs(V)/6);
+  if(Math.abs(V)>.04){
+    for(i=0;i<4;i++){var yy=205+i*60;if(V>0)arrow(740,yy,480,'rgba(255,138,128,'+al+')');else arrow(480,yy,740,'rgba(111,216,255,'+al+')')}
+    txt('электр өрісі E',610,192,11,'rgba(180,195,225,'+(al+.15)+')','center',600);
+  }
+  /* катод */
+  var mc=S.metal.col;
+  ctx.lineCap='round';ctx.strokeStyle=mc;ctx.lineWidth=11;ctx.beginPath();ctx.moveTo(340,290);ctx.lineTo(420,370);ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(343,285);ctx.lineTo(423,365);ctx.stroke();
+  txt('Катод',292,330,13,'#cfd6e8','right',700);
+  txt(S.metal.hidden?'(металл: ?)':'('+S.metal.kk.split(' ')[0]+')',292,348,12,'#8c98b3','right',600);
+  /* анод */
+  ctx.fillStyle='#c9d1e4';rrect(796,168,10,234,3);ctx.fill();
+  txt('Анод',801,138,13,'#cfd6e8','center',700);
+  txt(V>=0?'+':'−',826,290,26,V>=0?'#ff8a80':'#6fd8ff','center',700);
+  txt(V>=0?'−':'+',324,300,22,V>=0?'#6fd8ff':'#ff8a80','center',700);
+  /* түтік шыны */
+  ctx.strokeStyle='rgba(170,200,255,.5)';ctx.lineWidth=2.5;rrect(300,150,560,270,44);ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(330,172);ctx.lineTo(760,172);ctx.stroke();
+
+  /* сымдар */
+  wire([[420,370],[420,420],[420,490],[512,490]]);
+  wire([[526,490],[546,490]]);
+  wire([[560,490],[642,490]]);
+  wire([[718,490],[801,490],[801,420],[801,400]]);
+  wire([[420,490],[420,542],[582,542]]);wire([[638,542],[801,542],[801,490]]);
+  ctx.fillStyle='#7f8aa6';[[420,490],[801,490]].forEach(function(p){ctx.beginPath();ctx.arc(p[0],p[1],4.5,0,7);ctx.fill()});
+  /* батарея */
+  var plates=V>=0?[0,1,0,1]:[1,0,1,0],px=[512,526,546,560];
+  for(i=0;i<4;i++){
+    ctx.strokeStyle=plates[i]?'#ff8a80':'#6fd8ff';ctx.lineWidth=plates[i]?3:6;
+    var hh=plates[i]?24:13;ctx.beginPath();ctx.moveTo(px[i],490-hh);ctx.lineTo(px[i],490+hh);ctx.stroke();
+  }
+  txt('Кернеу көзі',536,528,11,'#8c98b3','center',600);
+  /* құралдар */
+  dial(680,490,38,0,12,S.amm,'A',6);
+  txt(fmt(S.amm,2)+' мкА',728,478,12,'#ffd9b0','left',700,true);
+  txt('микроамперметр',680,442,10.5,'#8c98b3','center',600);
+  dial(610,542,28,-6,6,V,'V',6);
+  txt((V>=0?'+':'−')+fmt(Math.abs(V),2)+' В',646,530,12,'#ffd9b0','left',700,true);
+
+  /* фотондар */
+  for(i=0;i<ph.length;i++){
+    var p=ph[i];
+    ctx.strokeStyle=rgb(col,.95);ctx.lineWidth=2;ctx.lineJoin='round';ctx.beginPath();
+    for(var k=0;k<9;k++){var qx=p.x+Math.sin(p.p+k*1.1)*3.2,qy=p.y-k*2.5;if(k)ctx.lineTo(qx,qy);else ctx.moveTo(qx,qy)}
+    ctx.stroke();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(p.x,p.y,2.2,0,7);ctx.fill();
+  }
+  /* электрондар */
+  for(i=0;i<el.length;i++){
+    var e=el[i];
+    ctx.fillStyle='rgba(111,216,255,.22)';ctx.beginPath();ctx.arc(e.x,e.y,7,0,7);ctx.fill();
+    ctx.fillStyle='#6fd8ff';ctx.beginPath();ctx.arc(e.x,e.y,3,0,7);ctx.fill();
+  }
+  for(i=0;i<fl.length;i++){
+    var f=fl[i],k2=f.t/.35;ctx.strokeStyle=f.c;ctx.globalAlpha=1-k2;ctx.lineWidth=2;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(.4+k2),0,7);ctx.stroke();ctx.globalAlpha=1;
+  }
+}
+
+/* ---------- графиктер ---------- */
+var g1=$('g1'),g2=$('g2');
+function sizeGraph(c,asp){
+  var d=Math.min(window.devicePixelRatio||1,2),w=c.parentNode.clientWidth-32||320;
+  c.width=Math.round(w*d);c.height=Math.round(w*asp*d);c._w=w;c._h=w*asp;c._d=d;
+}
+function gctx(c){var x=c.getContext('2d');x.setTransform(c._d,0,0,c._d,0,0);x.clearRect(0,0,c._w,c._h);return x}
+function gtxt(x,s,px,py,size,color,align){x.font='600 '+size+"px 'JetBrains Mono',ui-monospace,monospace";x.fillStyle=color;x.textAlign=align||'center';x.fillText(s,px,py)}
+
+function drawG1(){
+  var c=g1,x=gctx(c),w=c._w,h=c._h,L=40,R=12,T=14,Bm=34,pw=w-L-R,phh=h-T-Bm;
+  var X=function(v){return L+(v+6)/12*pw},Ymax=11,Y=function(v){return T+phh-(v/Ymax)*phh};
+  var cc=calc(),col=lift(wlRGB(S.lam)),hid=S.metal.hidden,i;
+  x.lineWidth=1;x.strokeStyle='rgba(255,255,255,.07)';
+  for(i=-6;i<=6;i+=2){x.beginPath();x.moveTo(X(i),T);x.lineTo(X(i),T+phh);x.stroke();gtxt(x,String(i).replace('-','−'),X(i),h-Bm+15,11,'#8c98b3')}
+  for(i=0;i<=10;i+=2){x.beginPath();x.moveTo(L,Y(i));x.lineTo(L+pw,Y(i));x.stroke();gtxt(x,String(i),L-6,Y(i)+4,11,'#8c98b3','right')}
+  x.strokeStyle='rgba(255,255,255,.35)';x.beginPath();x.moveTo(X(0),T);x.lineTo(X(0),T+phh);x.stroke();
+  x.beginPath();x.moveTo(L,T+phh);x.lineTo(L+pw,T+phh);x.stroke();
+  gtxt(x,'U, В',L+pw,h-6,11,'#8c98b3','right');gtxt(x,'I, мкА',L+4,T+10,11,'#8c98b3','left');
+  if(!hid){
+    x.beginPath();
+    for(var px=0;px<=pw;px+=2){var V=-6+px/pw*12,I=Isat()*frac(V),yy=Y(I);if(px)x.lineTo(L+px,yy);else x.moveTo(L+px,yy)}
+    x.strokeStyle=rgb(col);x.lineWidth=2.6;x.stroke();
+    x.lineTo(L+pw,T+phh);x.lineTo(L,T+phh);x.closePath();x.fillStyle=rgb(col,.12);x.fill();
+    if(cc.can&&cc.K>0.01){
+      x.setLineDash([4,4]);x.strokeStyle='rgba(255,196,107,.8)';x.lineWidth=1.5;x.beginPath();x.moveTo(X(-cc.K),T);x.lineTo(X(-cc.K),T+phh);x.stroke();x.setLineDash([]);
+      gtxt(x,'−Uт',X(-cc.K),T+12,11,'#ffc46b',cc.K>3?'right':'left');
+    }
+    if(!cc.can)gtxt(x,'hν < A: ток жоқ',L+pw/2,Y(5),13,'#ff8a80');
+  }
+  S.rec.forEach(function(r){x.fillStyle='#fff';x.strokeStyle='#05070f';x.lineWidth=1.5;x.beginPath();x.arc(X(r.V),Y(r.I),4.2,0,7);x.fill();x.stroke()});
+  var ox=X(S.V),oy=Y(S.amm);
+  x.strokeStyle=rgb(col);x.lineWidth=2;x.fillStyle='#05070f';x.beginPath();x.arc(ox,oy,6,0,7);x.fill();x.stroke();
+  x.fillStyle=rgb(col);x.beginPath();x.arc(ox,oy,2.5,0,7);x.fill();
+}
+function drawG2(){
+  var c=g2,x=gctx(c),w=c._w,h=c._h,L=36,R=12,T=14,Bm=34,pw=w-L-R,phh=h-T-Bm;
+  var X=function(v){return L+v/15*pw},Y=function(v){return T+phh-(v/6.5)*phh};
+  var cc=calc(),col=lift(wlRGB(S.lam)),hid=S.metal.hidden,i;
+  x.lineWidth=1;x.strokeStyle='rgba(255,255,255,.07)';
+  for(i=0;i<=15;i+=3){x.beginPath();x.moveTo(X(i),T);x.lineTo(X(i),T+phh);x.stroke();gtxt(x,String(i),X(i),h-Bm+15,11,'#8c98b3')}
+  for(i=0;i<=6;i+=2){x.beginPath();x.moveTo(L,Y(i));x.lineTo(L+pw,Y(i));x.stroke();gtxt(x,String(i),L-6,Y(i)+4,11,'#8c98b3','right')}
+  x.strokeStyle='rgba(255,255,255,.35)';x.beginPath();x.moveTo(L,T);x.lineTo(L,T+phh);x.lineTo(L+pw,T+phh);x.stroke();
+  gtxt(x,'ν, 10¹⁴ Гц',L+pw,h-6,11,'#8c98b3','right');gtxt(x,'Eₖ, эВ',L+4,T+10,11,'#8c98b3','left');
+  METALS.forEach(function(m){
+    if(m.hidden)return;
+    var f0=m.A/SLOPE,sel=m===S.metal;
+    x.strokeStyle=sel?rgb(col):'rgba(160,175,205,.38)';x.lineWidth=sel?3:1.6;x.beginPath();
+    x.moveTo(X(f0),Y(0));x.lineTo(X(15),Y(Math.min(6.5,SLOPE*15-m.A)));x.stroke();
+    if(sel){gtxt(x,'ν₀ = '+fmt(f0,1),X(f0),Y(0)-8,11,rgb(col),'center')}
+  });
+  if(!hid){
+    x.setLineDash([4,4]);x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=1.2;x.beginPath();x.moveTo(X(cc.f),T);x.lineTo(X(cc.f),T+phh);x.stroke();x.setLineDash([]);
+    var yy=Y(cc.K);
+    x.beginPath();x.arc(X(cc.f),yy,6.5,0,7);
+    if(cc.can){x.fillStyle=rgb(col);x.fill();x.strokeStyle='#05070f';x.lineWidth=2;x.stroke()}
+    else{x.fillStyle='#05070f';x.fill();x.strokeStyle=rgb(col);x.lineWidth=2;x.stroke()}
+  }else{
+    gtxt(x,'Белгісіз металдың түзуі жасырын',L+pw/2,T+18,11,'#ffc46b');
+  }
+}
+
+/* ---------- көрсеткіштер ---------- */
+function updateAll(){
+  var c=calc(),col=lift(wlRGB(S.lam)),hid=S.metal.hidden;
+  document.documentElement.style.setProperty('--ph',rgb(col));
+  $('lamV').textContent=S.lam+' нм · '+region(S.lam);
+  $('intV').textContent=S.inten+'%';
+  $('volV').textContent=(S.V<0?'−':S.V>0?'+':'')+fmt(Math.abs(S.V),2)+' В';
+  $('rF').textContent=fmt(c.f,2)+' ·10¹⁴ Гц';
+  $('rE').textContent=fmt(c.E,2)+' эВ';
+  $('rA').textContent=hid?'? эВ':fmt(c.A,2)+' эВ';
+  $('rL0').textContent=hid?'?':fmt(HC/c.A,0)+' нм';
+  $('rK').textContent=hid?'?':(c.can?fmt(c.K,2)+' эВ':'0 (электрон жоқ)');
+  $('rU').textContent=hid?'?':(c.can?fmt(c.K,2)+' В':'—');
+  var p=S.inten+'%';
+  $('int').style.setProperty('--trk','linear-gradient(90deg,'+rgb(col)+' '+p+',rgba(255,255,255,.12) '+p+')');
+  /* энергия сызығы */
+  var sc=8.4,a=$('ebar').querySelector('.a'),k=$('ebar').querySelector('.k');
+  $('ebar').querySelectorAll('.t').forEach(function(n){n.remove()});
+  function tag(s,l,wp,al){var d=document.createElement('span');d.className='t';d.style.left=l+'%';d.style.width=wp+'%';d.style.justifyContent=al||'flex-start';d.textContent=s;$('ebar').appendChild(d)}
+  if(hid){
+    a.style.width='0%';k.style.left='0%';k.style.width=(c.E/sc*100)+'%';tag('hν = '+fmt(c.E,2)+' эВ (A белгісіз)',0,Math.max(45,c.E/sc*100));
+  }else if(c.can){
+    a.style.width=(c.A/sc*100)+'%';k.style.left=(c.A/sc*100)+'%';k.style.width=(c.K/sc*100)+'%';
+    tag('A '+fmt(c.A,2),0,c.A/sc*100);if(c.K/sc>.12)tag('Eₖ '+fmt(c.K,2),c.A/sc*100,c.K/sc*100);
+  }else{
+    a.style.width=(c.E/sc*100)+'%';k.style.width='0%';tag('hν '+fmt(c.E,2)+' < A '+fmt(c.A,2),0,Math.max(c.E/sc*100,55));
+  }
+  /* баннер */
+  var b=$('banner'),h1;
+  if(S.inten===0){b.className='';b.innerHTML='<b>Жарық сөндірулі.</b> Қарқындылықты арттырып көр.'}
+  else if(c.can){
+    b.className='ok';
+    h1=hid?'<b>hν > A.</b> Электрондар шығып жатыр. Тоқтатушы кернеуді өлшеп, A-ны тап.'
+      :'<b>hν = '+fmt(c.E,2)+' эВ > A = '+fmt(c.A,2)+' эВ.</b> Фотондар электрондарды шығарады. Әр электронның ең үлкен энергиясы '+fmt(c.K,2)+' эВ.';
+    b.innerHTML=h1;
+  }else{
+    b.className='no';
+    b.innerHTML=hid?'<b>hν < A.</b> Электрон шықпайды. Толқын ұзындығын қысқарт.'
+      :'<b>hν = '+fmt(c.E,2)+' эВ < A = '+fmt(c.A,2)+' эВ.</b> Фотонның энергиясы жетпейді, электрон шықпайды. Қарқындылықты арттырсаң да өзгермейді, жиілікті арттыру керек.';
+  }
+  buildKx();
+  drawG1();drawG2();
+}
+
+/* ---------- басқару ---------- */
+function specTrack(){
+  var st=[],w;
+  for(w=150;w<=800;w+=10){var cc=w<380?[110+Math.round((w-150)/230*40),70,200]:wlRGB(w);var l=lift(cc);if(w>750)l=[140,50,50];st.push(rgb(l)+' '+((w-150)/650*100).toFixed(1)+'%')}
+  $('lam').style.setProperty('--trk','linear-gradient(90deg,'+st.join(',')+')');
+}
+function setLam(v){S.lam=clamp(Math.round(v),150,800);$('lam').value=S.lam;syncPresets();updateAll()}
+var PRE=[['УК 200',200],['Күлгін 400',400],['Көк 470',470],['Жасыл 530',530],['Сары 580',580],['Қызыл 650',650]];
+function syncPresets(){Array.prototype.forEach.call($('presets').children,function(b){b.classList.toggle('on',+b.dataset.l===S.lam)})}
+PRE.forEach(function(p){
+  var b=document.createElement('button');b.type='button';b.className='chip';b.dataset.l=p[1];b.textContent=p[0]+' нм';
+  b.onclick=function(){setLam(p[1])};$('presets').appendChild(b);
+});
+METALS.forEach(function(m,i){var o=document.createElement('option');o.value=i;o.textContent=m.hidden?m.kk:m.kk+' · A = '+fmt(m.A,2)+' эВ';$('met').appendChild(o)});
+$('lam').addEventListener('input',function(){setLam(+this.value)});
+$('int').addEventListener('input',function(){S.inten=+this.value;updateAll()});
+$('vol').addEventListener('input',function(){S.V=Math.round(+this.value*20)/20;updateAll()});
+function newHidden(){S.hidA=Math.round((2.0+Math.random()*3.0)*100)/100;S.rec=[];$('ans').value='';$('hidRes').textContent='';tries=0}
+var tries=0;
+function setMetal(i){
+  S.metal=METALS[i];$('met').value=i;
+  $('hid').classList.toggle('on',!!S.metal.hidden);
+  $('stopBtn').disabled=!!S.metal.hidden;
+  if(S.metal.hidden)newHidden();
+  updateAll();
+}
+$('met').addEventListener('change',function(){setMetal(+this.value)});
+$('rec').onclick=function(){
+  var I=Iread()*(1+(Math.random()-.5)*.02);if(I<.005)I=0;
+  S.rec.push({V:S.V,I:I});if(S.rec.length>40)S.rec.shift();drawG1();
+};
+$('clr').onclick=function(){S.rec=[];drawG1()};
+$('stopBtn').onclick=function(){var c=calc();if(c.can){S.V=-Math.min(6,Math.round(c.K*20)/20);$('vol').value=S.V;updateAll()}};
+$('newM').onclick=function(){newHidden();updateAll()};
+$('chk').onclick=function(){
+  var v=parseFloat($('ans').value),r=$('hidRes');
+  if(!(v>0)){r.style.color='var(--warn)';r.textContent='Жауабыңды эВ-пен енгіз.';return}
+  tries++;
+  if(Math.abs(v-S.hidA)<=.08){r.style.color='var(--ok)';r.textContent='Дұрыс! Жұмыс шығуы A = '+fmt(S.hidA,2)+' эВ. Тағы бір металл алып көр.'}
+  else if(tries>=3){r.style.color='var(--bad)';r.textContent='Дәл емес. Дұрыс жауап: A = '+fmt(S.hidA,2)+' эВ. «Жаңа металл» батырмасын бас.'}
+  else{r.style.color='var(--bad)';r.textContent='Әлі дәл емес ('+tries+'/3). Eₖ = eUт екенін ескер: A = hν − eUт, hν = 1239,84 / λ.'}
+};
+
+/* ---------- заңдар ---------- */
+var LAWS=[
+ {t:'1. Қанығу тогы қарқындылыққа пропорционал',p:'Жиілік тұрақты болғанда фототоктың қанығу мәні жарық қарқындылығына тура пропорционал: фотон көп болса, электрон да көп.',n:'Тәжірибе кезінде қарқындылықты 30%-дан 100%-ға дейін өзгертіп, амперметрді бақыла.',s:{m:0,l:450,i:30,v:3}},
+ {t:'2. Eₖ,max жиілікке тәуелді',p:'Электрондардың ең үлкен кинетикалық энергиясы жарық жиілігімен өседі де, қарқындылыққа тәуелді емес.',n:'Қарқындылықты өзгерт: Uт қозғалмайды. Содан кейін толқын ұзындығын азайт: Uт артады.',s:{m:0,l:450,i:40,v:-0.3}},
+ {t:'3. Қызыл шек бар',p:'Әр металл үшін ең кіші жиілік ν₀ = A/h бар. Одан төмен жиілікте жарық қанша күшті болса да, фотоэффект болмайды.',n:'Мырыш үшін λ₀ ≈ 288 нм. Толқын ұзындығын 320 нм-ден 270 нм-ге дейін азайтып көр.',s:{m:4,l:320,i:100,v:2}}
+];
+LAWS.forEach(function(L){
+  var d=document.createElement('div');d.className='card';
+  d.innerHTML='<h4>'+L.t+'</h4><p>'+L.p+'</p><p style="color:var(--muted);font-size:12.5px">'+L.n+'</p>';
+  var b=document.createElement('button');b.type='button';b.className='btn';b.textContent='Тәжірибені қою';
+  b.onclick=function(){
+    S.inten=L.s.i;$('int').value=S.inten;S.V=L.s.v;$('vol').value=S.V;
+    S.lam=L.s.l;$('lam').value=S.lam;syncPresets();setMetal(L.s.m);
+    try{$('lab').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}
+  };
+  d.appendChild(b);$('laws').appendChild(d);
+});
+
+/* ---------- қойындылар және викторина ---------- */
+Array.prototype.forEach.call($('tabs').children,function(b){
+  b.onclick=function(){
+    Array.prototype.forEach.call($('tabs').children,function(x){x.classList.toggle('on',x===b)});
+    ['laws','uses','quiz'].forEach(function(t){$('tp-'+t).classList.toggle('on',t===b.dataset.t)});
+  };
+});
+var QZ=[
+ {q:'Фотоэффект құбылысын 1887 жылы алғаш кім байқады?',o:['Генрих Герц','Альберт Эйнштейн','Макс Планк','Томас Юнг'],a:0,e:'Герц ультракүлгін жарық ұшқын разрядын жеңілдететінін байқады. Құбылысты кейін А. Г. Столетов жан-жақты зерттеді, ал түсіндірмесін 1905 жылы Эйнштейн берді.'},
+ {q:'Фотоэффект үшін Эйнштейн теңдеуі қандай?',o:['hν = A + Eₖ','hν = A − Eₖ','hν = Eₖ / A','Eₖ = A · ν'],a:0,e:'Фотонның энергиясы электронды металдан шығаруға (A) және оған кинетикалық энергия беруге (Eₖ) жұмсалады.'},
+ {q:'hν > A кезінде жарық қарқындылығын арттырса, не өзгереді?',o:['Электрондар саны артады, әрқайсысының энергиясы өзгермейді','Электрондардың энергиясы артады','Электрондар саны азаяды','Eₖ,max пен Uт артады'],a:0,e:'Қарқындылық фотондар санын өзгертеді. Бір фотонның энергиясы жиілікке тәуелді, сондықтан Eₖ,max өзгермейді.'},
+ {q:'hν < A болса және жарық өте күшті болса, не болады?',o:['Электрон шықпайды','Электрондар аз шығады','Электрондар баяу шығады','Металл балқиды, электрон шығады'],a:0,e:'Бір электрон бір фотонның энергиясын жұтады. Егер фотонның энергиясы A-дан аз болса, фотондар қанша көп болса да электрон шықпайды.'},
+ {q:'Тоқтатушы кернеу Uт нені өлшейді?',o:['Eₖ,max = eUт','Жұмыс шығуы A-ны тікелей','Фотондар санын','Қызыл шек жиілігін ν₀ тікелей'],a:0,e:'Uт кезінде ең жылдам электрон да анодқа жете алмай тоқтайды: eUт = Eₖ,max.'},
+ {q:'Цезий үшін A = 2,14 эВ. Қызыл шектің толқын ұзындығы λ₀ шамамен қанша? (hc ≈ 1240 эВ·нм)',o:['≈ 580 нм','≈ 290 нм','≈ 1160 нм','≈ 400 нм'],a:0,e:'λ₀ = hc / A = 1240 / 2,14 ≈ 579 нм. Бұл сары-жасыл жарық. Одан ұзын толқынды жарық цезийден электрон шығара алмайды.'},
+ {q:'Күн батареясы қандай құбылысқа негізделген?',o:['Ішкі фотоэффект','Дисперсия','Жарықтың дифракциясы','Жылулық сәулелену'],a:0,e:'Жартылай өткізгіште жарық электрондарды өткізгіштік зонаға лақтырады, осының нәтижесінде ток пайда болады.'}
+];
+var qi=0,qs=0,qdone=false;
+function drawQuiz(){
+  var box=$('quiz');box.innerHTML='';
+  if(qi>=QZ.length){
+    box.innerHTML='<p class="q">Нәтиже: '+qs+' / '+QZ.length+'</p><p class="exp">'+(qs>=6?'Керемет! Фотоэффектті жақсы түсінесің.':qs>=4?'Жақсы. Қателерің бар тақырыпты симуляциядан тексеріп көр.':'Тәжірибелерді қайта қарап шық: заңдар қойындысындағы «Тәжірибені қою» батырмасы көмектеседі.')+'</p>';
+    var r=document.createElement('button');r.type='button';r.className='btn pri';r.textContent='Қайта бастау';r.onclick=function(){qi=0;qs=0;drawQuiz()};box.appendChild(r);return;
+  }
+  var Q=QZ[qi];qdone=false;
+  var meta=document.createElement('div');meta.className='meta';meta.innerHTML='<span>Сұрақ '+(qi+1)+' / '+QZ.length+'</span><span>Ұпай: '+qs+'</span>';box.appendChild(meta);
+  var q=document.createElement('p');q.className='q';q.textContent=Q.q;box.appendChild(q);
+  var ops=document.createElement('div');ops.className='opts';box.appendChild(ops);
+  var sh=(qi*3+1)%Q.o.length,order=Q.o.map(function(t,i){return (i+sh)%Q.o.length});
+  var exp=document.createElement('p');exp.className='exp';exp.setAttribute('role','status');
+  order.forEach(function(oi){
+    var o=document.createElement('button');o.type='button';o.className='o';o.textContent=Q.o[oi];
+    o.onclick=function(){
+      if(qdone)return;qdone=true;
+      var ok=oi===Q.a;if(ok)qs++;
+      Array.prototype.forEach.call(ops.children,function(n,k){if(order[k]===Q.a)n.classList.add('good')});
+      if(!ok)o.classList.add('bad');
+      exp.innerHTML='<b style="color:var(--'+(ok?'ok':'bad')+')">'+(ok?'Дұрыс!':'Қате.')+'</b> '+Q.e;
+      var nx=document.createElement('button');nx.type='button';nx.className='btn pri';nx.style.marginTop='12px';nx.textContent=qi===QZ.length-1?'Нәтижені көру':'Келесі сұрақ';
+      nx.onclick=function(){qi++;drawQuiz()};exp.appendChild(document.createElement('br'));exp.appendChild(nx);
+    };
+    ops.appendChild(o);
+  });
+  box.appendChild(exp);
+}
+
+/* ---------- іске қосу ---------- */
+function layout(){sizeStage();sizeGraph(g1,.62);sizeGraph(g2,.62);drawG1();drawG2()}
+window.addEventListener('resize',layout);
+specTrack();drawQuiz();
+$('lam').value=S.lam;$('int').value=S.inten;$('vol').value=S.V;$('met').value=0;syncPresets();
+layout();updateAll();
+for(var w0=0;w0<90;w0++)step(1/30); /* алғашқы кадрда аспап толы болсын */
+S.amm=Iread();
+var last=0,nz=0;
+function frame(t){
+  requestAnimationFrame(frame);
+  var dt=Math.min(.05,(t-last)/1000||0);last=t;
+  step(dt);
+  nz-=dt;if(nz<=0){nz=.25;S.noise=1+(Math.random()-.5)*.03}
+  var tg=Iread()*S.noise;S.amm+=(tg-S.amm)*(1-Math.exp(-dt*9));if(S.amm<.004&&tg===0)S.amm=0;
+  $('rI').textContent=fmt(S.amm,2)+' мкА';
+  draw(t/1000);
+  drawG1Live();
+}
+var gl=0;
+function drawG1Live(){gl++;if(gl%6===0)drawG1()}
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
