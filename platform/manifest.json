@@ -1,0 +1,19 @@
+{
+  "name": "Groowin",
+  "short_name": "Groowin",
+  "description": "Физика мен математика: ойындар, зертханалар, сабақ құралдары",
+  "lang": "kk",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070B1E",
+  "theme_color": "#070B1E",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Пульт", "short_name": "Пульт", "url": "./?pult=1", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+  ]
+}
