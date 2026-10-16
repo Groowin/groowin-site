@@ -299,6 +299,49 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
 .qh-crow{display:flex;gap:10px;width:min(620px,100%)}.qh-crow input{flex:1;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;font-size:1.2rem}
 .qnum{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}.qn1 label{display:block;font-size:.85rem;color:var(--mute);margin:0 0 4px}.main .qn1 input{max-width:none;width:100%}
 @media (max-width:760px){.qh-cl{grid-template-columns:1fr}.qnum{grid-template-columns:1fr}.qh-lrow{grid-template-columns:70px 1fr 50px}}
+
+/* ===== Сабақ жоспары, мини-құралдар, анимация ===== */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes vfade{from{opacity:0}to{opacity:1}}
+@keyframes cdpop{0%{transform:scale(.4);opacity:0}30%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:.9}}
+.gi{transition:transform .25s}
+.plc:hover .gi,.game:hover .gi{transform:rotate(-8deg) scale(1.12)}
+.plc:nth-child(4n+2) .gi{color:#1FA971}.plc:nth-child(4n+3) .gi{color:#F28C28}.plc:nth-child(4n+4) .gi{color:#7C5CFF}
+@media (prefers-reduced-motion:no-preference){
+ [id^="v-"]:not([hidden]){animation:vfade .3s ease}
+ .game,.qcard,.gradeBtn,.plc,.lpcard{animation:rise .45s ease both}
+ :is(.grid,.gradegrid,#plGrid,#qzCards,#lpCards)>:nth-child(2){animation-delay:.04s}
+ :is(.grid,.gradegrid,#plGrid,#qzCards,#lpCards)>:nth-child(3){animation-delay:.08s}
+ :is(.grid,.gradegrid,#plGrid,#qzCards,#lpCards)>:nth-child(4){animation-delay:.12s}
+ :is(.grid,.gradegrid,#plGrid,#qzCards,#lpCards)>:nth-child(5){animation-delay:.16s}
+ :is(.grid,.gradegrid,#plGrid,#qzCards,#lpCards)>:nth-child(6){animation-delay:.2s}
+ :is(.grid,.gradegrid,#plGrid,#qzCards,#lpCards)>:nth-child(n+7){animation-delay:.24s}
+}
+.lpcard{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--surf,var(--paper));display:flex;flex-direction:column;gap:10px}
+.lpsteps{display:flex;flex-wrap:wrap;gap:6px}.lpsteps span{font-size:.78rem;padding:3px 9px;border-radius:99px;background:var(--accent-soft)}
+.lprow{display:grid;grid-template-columns:28px 150px 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.lprow b{color:var(--accent);text-align:center}
+.lprow .ctl{display:flex;gap:4px}
+@media (max-width:760px){.lprow{grid-template-columns:28px 1fr auto}.lprow>:nth-child(3),.lprow>:nth-child(4){grid-column:2/4}}
+#lessonDock{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:70;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 24px);padding:10px 14px;border-radius:16px;background:var(--surf,var(--paper));color:var(--ink);border:1px solid var(--line);box-shadow:0 10px 36px rgba(0,0,0,.28);animation:rise .3s ease}
+#lessonDock[hidden]{display:none}
+#lessonDock .ld-t{display:flex;flex-direction:column;min-width:120px;max-width:34vw}#lessonDock .ld-t small{opacity:.65}#lessonDock .ld-t strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#lessonDock button{font:inherit;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:8px 12px}
+#lessonDock .ld-go{background:var(--accent);color:#fff;border-color:transparent;font-weight:700}
+#lessonDock .ld-dots{display:flex;gap:4px}#lessonDock .ld-dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}#lessonDock .ld-dots i.on{background:var(--accent);transform:scale(1.3)}#lessonDock .ld-dots i.done{background:var(--accent);opacity:.45}
+#miniTools{position:fixed;left:14px;bottom:14px;z-index:72;display:flex;gap:8px;align-items:center}
+#miniTools[hidden]{display:none}
+#miniTools>button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surf,var(--paper));color:var(--accent);cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 16px rgba(0,0,0,.22);font:inherit;font-weight:700}
+#miniTools .mt-left{width:auto;padding:0 12px;border-radius:99px;font-variant-numeric:tabular-nums;color:var(--ink)}
+#miniPop{position:fixed;left:14px;bottom:68px;z-index:73;width:min(320px,calc(100vw - 28px));padding:14px;border-radius:16px;background:var(--surf,var(--paper));color:var(--ink);border:1px solid var(--line);box-shadow:0 10px 36px rgba(0,0,0,.3);animation:rise .2s ease}
+#miniPop[hidden]{display:none}
+#miniPop .mp-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#miniPop button{font:inherit;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:7px 12px}
+#miniPop button.go{background:var(--accent);color:#fff;border-color:transparent}
+#miniPop h4{margin:0 0 6px}#miniPop p{margin:0;font-size:.95rem}
+#cdOv{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:rgba(0,0,0,.55);color:#fff;font-size:min(32vw,260px);font-weight:800}
+#cdOv span{animation:cdpop .8s ease both}
+#confetti{position:fixed;inset:0;width:100%;height:100%;z-index:90;pointer-events:none}
 </style>
 </head>
 <body>
@@ -366,6 +409,7 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
       <button data-v="rank" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20V11M12 20V4M18 20v-6"/></svg><span class="nl">Рейтинг</span></button>
       <button data-v="news"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg><span class="nl">Хабарландыру</span><span id="badge" hidden></span></button>
       <button data-v="rosters" id="navRosters" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span class="nl">Менің сыныптарым</span></button>
+      <button data-v="lessons" id="navLessons" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h16"/><path d="m17 10 3 2-3 2z"/></svg><span class="nl">Сабақ жоспары</span></button>
       <button data-v="mats" id="navMats" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="nl">Менің материалдарым</span></button>
       <button data-v="inbox" id="navInbox" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg><span class="nl">Хабарлар</span><span id="badge2" hidden></span></button>
       <button data-v="games" id="navGames" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.4 11.5 2 15.5 2 17a3 3 0 0 0 5 2.2L9 17h6l2 2.2A3 3 0 0 0 22 17c0-1.5-.4-5.5-.7-8.4A4 4 0 0 0 17.3 5z"/></svg><span class="nl">Ойындар</span></button>
@@ -391,6 +435,17 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
       <iframe id="frame" title="Ойын" allow="fullscreen"></iframe>
     </div>
 
+    <div id="v-lessons" hidden>
+      <h2 style="margin:0 0 6px;font-size:1.2rem">Сабақ жоспары</h2>
+      <p class="sub" style="font-size:.9rem">Сабақты қадамдарға бөл: кіріспе, викторина, топқа бөлу, рефлексия, үй тапсырмасы. «Бастау» басқан соң төменгі панельдегі «Келесі» арқылы бір басумен жүресің.</p>
+      <div id="lpList"><div class="mtools"><button class="go" id="lpNew">Жаңа жоспар</button></div><p class="msg" id="lpMsg"></p><div class="grid" id="lpCards"></div></div>
+      <div id="lpEdit" hidden>
+        <div class="mtools"><input id="lpTitle" maxlength="120" placeholder="Жоспар атауы (мысалы, 8-сынып: Қысым)"></div>
+        <div id="lpSteps"></div>
+        <div class="mtools"><button class="out" id="lpAdd">Қадам қосу</button><button class="out" id="lpTpl">45 минуттық үлгі</button></div>
+        <div class="mtools"><button class="go" id="lpSave">Сақтау</button><button class="out" id="lpCancel">Болдырмау</button></div>
+      </div>
+    </div>
     <div id="v-mats" hidden>
       <h2 style="margin:0 0 6px;font-size:1.2rem">Менің материалдарым</h2>
       <p class="sub" style="font-size:.9rem">Жеке бетің: папка жасап, файл (сурет, бейне, слайд, құжат) жүктеп, интернеттен сілтеме қосасың. Оларды тек өзің көресің, сабақта проекторға шығарасың.</p>
@@ -693,7 +748,7 @@ async function showApp(session) {
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
-  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
+  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
@@ -925,7 +980,7 @@ function closeGame() {
   $('frame').src = 'about:blank';
 }
 $('back').onclick = () => go(subj, true);
-const VIEWS = ['play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+const VIEWS = ['lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); }
 function go(key, keep) {
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
@@ -933,7 +988,7 @@ function go(key, keep) {
   if (key === 'physics' || key === 'math') {
     subj = key; if (!keep) gradeSel = null;
     renderGames(); show('catalog');
-  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
+  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
 }
 document.querySelectorAll('#nav button[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 $('subjHead').onclick = () => { const h = $('subjItems').hidden = !$('subjItems').hidden; $('subjHead').setAttribute('aria-expanded', String(!h)); $('subjArrow').textContent = h ? '▸' : '▾'; };
@@ -1055,7 +1110,7 @@ function touch() { const n = Date.now(); if (n - lastTouch > 15000) { lastTouch 
 ['pointermove', 'pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(e => addEventListener(e, touch, { passive: true }));
 setInterval(() => {
   if (!typedFor) return;
-  if (document.visibilityState === 'visible' && !$('v-viewer').hidden) touch();   // ойын ашық тұрса, белсенді деп саналады
+  if (document.visibilityState === 'visible' && (!$('v-viewer').hidden || !$('qzHost').hidden || !$('stage').hidden)) touch();   // ойын ашық тұрса, белсенді деп саналады
   const last = +ls.get('lastActive') || Date.now();
   if (Date.now() - last > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; sb.auth.signOut(); }
 }, 60000);
@@ -1221,6 +1276,167 @@ $('tRefl').onclick = () => {
   go.onclick = run; bar.append(go); b.append(h, p, bar); run();
 };
 
+// ===== Конфетти, санау, мини-құралдар =====
+function confetti() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const c = document.createElement('canvas'); c.id = 'confetti'; c.width = innerWidth; c.height = innerHeight; document.body.appendChild(c);
+  const g = c.getContext('2d'), cols = ['#E21B3C', '#1368CE', '#D89E00', '#26890C', '#7C5CFF', '#F28C28'];
+  const ps = Array.from({ length: 140 }, () => ({ x: Math.random() * c.width, y: -20 - Math.random() * c.height * .4, vx: (Math.random() - .5) * 4, vy: 2 + Math.random() * 4, w: 6 + Math.random() * 6, h: 4 + Math.random() * 5, r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: cols[Math.floor(Math.random() * cols.length)] }));
+  const t0 = performance.now();
+  (function f(t) {
+    g.clearRect(0, 0, c.width, c.height);
+    ps.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .05; p.r += p.vr; g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c; g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); g.restore(); });
+    if (t - t0 < 3200) requestAnimationFrame(f); else c.remove();
+  })(t0);
+}
+function countdown(cb) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return setTimeout(cb, 400);
+  const ov = el('div', ''); ov.id = 'cdOv'; document.body.appendChild(ov);
+  let n = 3; const step = () => { ov.replaceChildren(el('span', '', String(n))); SFX.tick(); if (--n < 0) { ov.remove(); cb(); } else setTimeout(step, 800); };
+  step();
+}
+const MT = { left: 0, timer: null };
+(function initMini() {
+  const box = el('div', ''); box.id = 'miniTools'; box.hidden = true;
+  const bt = el('button', ''); bt.type = 'button'; bt.title = 'Таймер'; bt.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>';
+  const br = el('button', ''); br.type = 'button'; br.title = 'Рефлексия'; br.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>';
+  const lf = el('button', 'mt-left', ''); lf.type = 'button'; lf.hidden = true; lf.title = 'Таймер';
+  box.append(bt, br, lf);
+  const pop = el('div', ''); pop.id = 'miniPop'; pop.hidden = true;
+  document.body.append(box, pop);
+  const fmt = n => String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
+  let mode = '';
+  const tickUI = () => { lf.hidden = MT.left <= 0; lf.textContent = fmt(MT.left); };
+  const startT = sec => { clearInterval(MT.timer); MT.left = sec; tickUI(); MT.timer = setInterval(() => { if (--MT.left <= 0) { MT.left = 0; clearInterval(MT.timer); SFX.bell(); lf.hidden = false; lf.textContent = '00:00'; setTimeout(() => { if (MT.left === 0) lf.hidden = true; }, 5000); } else tickUI(); }, 1000); };
+  const drawTimer = () => {
+    pop.replaceChildren(el('h4', '', 'Таймер'));
+    const row = el('div', 'mp-row');
+    [1, 3, 5, 10, 15].forEach(m => { const b = el('button', '', m + ' мин'); b.onclick = () => { SFX.pop(); startT(m * 60); pop.hidden = true; mode = ''; }; row.appendChild(b); });
+    const stop = el('button', '', 'Тоқтату'); stop.onclick = () => { clearInterval(MT.timer); MT.left = 0; tickUI(); pop.hidden = true; mode = ''; }; row.appendChild(stop);
+    pop.appendChild(row);
+  };
+  const drawRefl = () => {
+    pop.replaceChildren(); const h = el('h4', ''), p = el('p', ''), row = el('div', 'mp-row'), nx = el('button', 'go', 'Басқа тәсіл');
+    const run = () => { SFX.pop(); const r = REFL[Math.floor(Math.random() * REFL.length)]; h.textContent = r[0]; p.textContent = r[1]; };
+    nx.onclick = run; row.appendChild(nx); pop.append(h, p, row); run();
+  };
+  bt.onclick = () => { if (mode === 't') { pop.hidden = true; mode = ''; } else { mode = 't'; drawTimer(); pop.hidden = false; } };
+  lf.onclick = bt.onclick;
+  br.onclick = () => { if (mode === 'r') { pop.hidden = true; mode = ''; } else { mode = 'r'; drawRefl(); pop.hidden = false; } };
+  setInterval(() => {
+    const on = !$('qzHost').hidden || !$('stage').hidden || !!lessonRun;
+    box.hidden = !on; if (!on) { pop.hidden = true; mode = ''; }
+    const hasQ = !$('qzHost').hidden; box.style.bottom = lessonRun && innerWidth < 760 ? '78px' : '14px'; pop.style.bottom = lessonRun && innerWidth < 760 ? '132px' : '68px';
+    void hasQ;
+  }, 400);
+})();
+
+// ===== Сабақ жоспары =====
+const STEP_TYPES = { text: 'Мәтін / слайд', quiz: 'Викторина', cloud: 'Сөз бұлты', random: 'Кездейсоқ оқушы', groups: 'Топқа бөлу', timer: 'Таймер', refl: 'Рефлексия', game: 'Ойын / зертхана', link: 'Сілтеме / бейне', hw: 'Үй тапсырмасы' };
+let lessons = [], lpEditing = null, lessonRun = null, lpQuizzes = [];
+const lpmsg = (t, c) => note('lpMsg', t, c || '');
+async function loadLessons() {
+  $('lpEdit').hidden = true; $('lpList').hidden = false; lpmsg('');
+  const { data, error } = await sb.from('lesson_plans').select('id,title,steps,updated_at').order('updated_at', { ascending: false });
+  const box = $('lpCards'); box.replaceChildren();
+  if (error) { box.appendChild(el('p', 'msg err', error.message.includes('lesson_plans') ? 'update-9.sql әлі іске қосылмаған. Оны Supabase → SQL Editor ішінде іске қос.' : 'Қате: ' + error.message)); return; }
+  lessons = data || [];
+  lessons.forEach(z => {
+    const c = el('div', 'lpcard'), st = z.steps || [];
+    const top = el('div', 'qct'); top.append(el('strong', '', z.title), el('span', 'gm', st.length + ' қадам · ' + new Date(z.updated_at).toLocaleDateString('kk-KZ')));
+    const chips = el('div', 'lpsteps'); st.slice(0, 12).forEach((x, i) => chips.appendChild(el('span', '', (i + 1) + '. ' + (x.t || STEP_TYPES[x.k] || ''))));
+    const row = el('div', 'qrow'), go2 = el('button', 'go', 'Бастау'); go2.onclick = () => st.length ? startLesson(z) : alert('Бұл жоспарда қадам жоқ.');
+    row.append(go2, mini('Өзгерту', () => openLpEditor(z)), mini('Көшіру', async () => { const r = await sb.from('lesson_plans').insert({ title: (z.title + ' (көшірме)').slice(0, 120), steps: st }); if (r.error) alert(r.error.message); loadLessons(); }),
+      mini('Жою', async () => { if (!confirm('«' + z.title + '» жойылсын ба?')) return; await sb.from('lesson_plans').delete().eq('id', z.id); loadLessons(); }));
+    c.append(top, chips, row); box.appendChild(c);
+  });
+  if (!lessons.length) box.appendChild(el('p', 'sub', 'Әзірге жоспар жоқ. «Жаңа жоспар» немесе «45 минуттық үлгі» батырмасын бас.'));
+}
+async function fetchLpQuizzes() { const r = await sb.from('quizzes').select('id,title,questions').order('updated_at', { ascending: false }); lpQuizzes = r.data || []; }
+async function openLpEditor(z) {
+  await fetchLpQuizzes();
+  lpEditing = z ? { id: z.id, title: z.title, steps: JSON.parse(JSON.stringify(z.steps || [])) } : { id: null, title: '', steps: [] };
+  $('lpTitle').value = lpEditing.title; $('lpList').hidden = true; $('lpEdit').hidden = false; drawLpSteps();
+}
+function drawLpSteps() {
+  const box = $('lpSteps'); box.replaceChildren();
+  lpEditing.steps.forEach((x, i) => {
+    const r = el('div', 'lprow'), sel = document.createElement('select');
+    Object.keys(STEP_TYPES).forEach(k => sel.appendChild(new Option(STEP_TYPES[k], k))); sel.value = x.k; sel.onchange = () => { x.k = sel.value; drawLpSteps(); };
+    const ti = document.createElement('input'); ti.maxLength = 80; ti.placeholder = 'Қадам атауы'; ti.value = x.t || ''; ti.oninput = () => { x.t = ti.value; };
+    let ex;
+    if (x.k === 'text' || x.k === 'hw' || x.k === 'cloud') { ex = document.createElement('input'); ex.maxLength = 300; ex.placeholder = x.k === 'cloud' ? 'Сөз бұлты сұрағы' : 'Экранға шығатын мәтін'; ex.value = x.x || ''; ex.oninput = () => { x.x = ex.value; }; }
+    else if (x.k === 'quiz') { ex = document.createElement('select'); ex.appendChild(new Option('— викторина таңда —', '')); lpQuizzes.forEach(q => ex.appendChild(new Option(q.title, q.id))); ex.value = x.q || ''; ex.onchange = () => { x.q = ex.value; if (!ti.value) { const q = lpQuizzes.find(v => v.id === ex.value); if (q) { x.t = q.title; ti.value = q.title; } } }; }
+    else if (x.k === 'game') { ex = document.createElement('select'); ex.appendChild(new Option('— ойын таңда —', '')); GAMES.forEach(g => ex.appendChild(new Option(g.title, g.url))); ex.value = x.u || ''; ex.onchange = () => { x.u = ex.value; if (!ti.value) { const g = GAMES.find(v => v.url === ex.value); if (g) { x.t = g.title; ti.value = g.title; } } }; }
+    else if (x.k === 'link') { ex = document.createElement('input'); ex.placeholder = 'https://...'; ex.value = x.u || ''; ex.oninput = () => { x.u = ex.value; }; }
+    else { ex = el('span', 'gm', 'Қосымша баптау керек емес'); }
+    const ctl = el('div', 'ctl'), up = mini('↑', () => { if (i) { [lpEditing.steps[i - 1], lpEditing.steps[i]] = [lpEditing.steps[i], lpEditing.steps[i - 1]]; drawLpSteps(); } }), dn = mini('↓', () => { if (i < lpEditing.steps.length - 1) { [lpEditing.steps[i + 1], lpEditing.steps[i]] = [lpEditing.steps[i], lpEditing.steps[i + 1]]; drawLpSteps(); } }), rm = mini('✕', () => { lpEditing.steps.splice(i, 1); drawLpSteps(); });
+    [up, dn, rm].forEach(b => b.style.margin = '0'); ctl.append(up, dn, rm);
+    r.append(el('b', '', String(i + 1)), sel, ti, ex, ctl); box.appendChild(r);
+  });
+  if (!lpEditing.steps.length) box.appendChild(el('p', 'sub', 'Қадам жоқ. «Қадам қосу» не «45 минуттық үлгі» батырмасын бас.'));
+}
+$('lpNew').onclick = () => openLpEditor(null);
+$('lpAdd').onclick = () => { lpEditing.steps.push({ k: 'text', t: '' }); drawLpSteps(); };
+$('lpTpl').onclick = () => {
+  if (lpEditing.steps.length && !confirm('Қазіргі қадамдар үлгімен ауыстырылсын ба?')) return;
+  lpEditing.steps = [{ k: 'text', t: 'Кіріспе: бүгінгі мақсат', x: 'Бүгін не үйренеміз?' }, { k: 'cloud', t: 'Ойлану: не білемін?', x: 'Тақырып бойынша не білесің?' }, { k: 'text', t: 'Жаңа тақырып', x: '' }, { k: 'groups', t: 'Топтық жұмыс' }, { k: 'timer', t: 'Тапсырма уақыты' }, { k: 'quiz', t: 'Бекіту: викторина', q: '' }, { k: 'refl', t: 'Рефлексия' }, { k: 'hw', t: 'Үй тапсырмасы', x: '' }];
+  if (!$('lpTitle').value.trim()) $('lpTitle').value = '45 минуттық сабақ'; drawLpSteps();
+};
+$('lpCancel').onclick = () => loadLessons();
+$('lpSave').onclick = async () => {
+  const title = $('lpTitle').value.trim(); if (!title) { $('lpTitle').focus(); return; }
+  const row = { title: title.slice(0, 120), steps: lpEditing.steps, updated_at: new Date().toISOString() };
+  const r = lpEditing.id ? await sb.from('lesson_plans').update(row).eq('id', lpEditing.id) : await sb.from('lesson_plans').insert(row);
+  if (r.error) { alert('Сақталмады: ' + r.error.message); return; }
+  loadLessons(); lpmsg('Сақталды', 'ok');
+};
+
+function lessonDock() {
+  let d = $('lessonDock');
+  if (!d) { d = el('div', ''); d.id = 'lessonDock'; document.body.appendChild(d); }
+  return d;
+}
+function drawDock() {
+  const d = lessonDock(); if (!lessonRun) { d.hidden = true; return; }
+  d.hidden = false; d.replaceChildren();
+  const { plan, i } = lessonRun, st = plan.steps, cur = st[i];
+  const dots = el('div', 'ld-dots'); st.forEach((_, j) => dots.appendChild(el('i', j === i ? 'on' : j < i ? 'done' : '')));
+  const t = el('div', 'ld-t'); t.append(el('small', '', plan.title + ' · ' + (i + 1) + '/' + st.length), el('strong', '', cur.t || STEP_TYPES[cur.k]));
+  const prev = el('button', '', '◀'); prev.title = 'Алдыңғы'; prev.disabled = i === 0; prev.onclick = () => goStep(i - 1);
+  const rerun = el('button', '', '↻'); rerun.title = 'Қадамды қайта іске қосу'; rerun.onclick = () => runStep(cur);
+  const last = i === st.length - 1, next = el('button', 'ld-go', last ? 'Аяқтау' : 'Келесі ▶'); next.onclick = () => last ? endLesson(true) : goStep(i + 1);
+  const x = el('button', '', '✕'); x.title = 'Жоспардан шығу'; x.onclick = () => { if (confirm('Сабақ жоспарынан шығасың ба?')) endLesson(false); };
+  d.append(dots, t, prev, rerun, next, x);
+}
+function startLesson(plan) { SFX.unlock(); lessonRun = { plan, i: 0 }; go('lessons'); drawDock(); runStep(plan.steps[0]); }
+function goStep(n) { if (!lessonRun) return; if (!$('qzHost').hidden) { alert('Алдымен ағымдағы ойынды жап (жоғарғы оң жақтағы ✕), сосын келесі қадамға өт.'); return; } lessonRun.i = n; drawDock(); runStep(lessonRun.plan.steps[n]); }
+function endLesson(done) { lessonRun = null; drawDock(); $('stage').hidden = true; clearInterval(tm); if (done) { SFX.fan(); confetti(); } }
+async function runStep(s) {
+  if (!$('qzHost').hidden) { alert('Алдымен ағымдағы ойынды жап (✕).'); return; }
+  SFX.pop();
+  if (s.k === 'text' || s.k === 'hw') {
+    const b = stage(), h = el('div', 'big', s.t || ''), p = el('p', '', s.x || '');
+    if (s.k === 'hw') h.textContent = 'Үй тапсырмасы' + (s.t && s.t !== 'Үй тапсырмасы' ? ': ' + s.t : '');
+    p.style.cssText = 'text-align:center;font-size:clamp(1.3rem,3.4vw,2.4rem);max-width:1000px;margin:0 auto;white-space:pre-wrap'; b.append(h, p); return;
+  }
+  if (s.k === 'quiz') {
+    if (!s.q) return alert('Бұл қадамға викторина таңдалмаған. Жоспарды өзгертіп, викторина таңда.');
+    const r = await sb.from('quizzes').select('id,title,questions').eq('id', s.q).maybeSingle();
+    if (!r.data) return alert('Викторина табылмады (жойылған болуы мүмкін).');
+    $('stage').hidden = true; return hostQuiz(r.data);
+  }
+  if (s.k === 'cloud') { $('stage').hidden = true; return runCloud({ prompt: s.x || s.t || 'Сөз жаз', max: 3, screen: false }); }
+  if (s.k === 'game' || s.k === 'link') {
+    if (!s.u) return alert('Сілтеме көрсетілмеген.');
+    const b = stage(), h = el('div', 'big', s.t || ''); h.style.cssText = 'font-size:1.3rem;margin:0 0 10px';
+    const f = document.createElement('iframe'); f.src = /^https?:/.test(s.u) ? embedUrl(s.u) : '../' + encodeURIComponent(s.u); f.style.cssText = 'width:100%;height:calc(100vh - 170px);border:0;border-radius:12px;background:#000'; f.allow = 'fullscreen; autoplay'; f.allowFullscreen = true;
+    b.append(h, f); return;
+  }
+  const map = { random: 'random', groups: 'groups', timer: 'timer', refl: 'refl' };
+  if (map[s.k]) { $('stage').hidden = true; return playTool({ k: s.k, cls: s.k === 'random' || s.k === 'groups' }); }
+}
+
 // ===== Дыбыс (Web Audio, файл керек емес) =====
 const SFX = (() => {
   let ctx = null, muted = false;
@@ -1262,6 +1478,7 @@ SFX.paint();
 document.addEventListener('pointerdown', () => SFX.unlock(), { once: true });
 
 const PLAY_TOOLS = [
+  { k: 'lessons', t: 'Сабақ жоспары', d: 'Сабақты қадамдарға бөліп, бір басумен ретімен жүргіз.', cls: false, ic: '<path d="M4 5h16M4 12h10M4 19h16"/><path d="m17 10 3 2-3 2z"/>' },
   { k: 'quiz', t: 'Викторина', d: 'Өз сұрақтарыңмен: 4 нұсқа не сан жауабы. Телефонмен (QR) не үлкен экранда.', cls: false, ic: '<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 18h.01"/><circle cx="12" cy="12" r="10"/>' },
   { k: 'race', t: 'Ракета жарысы', d: 'Командалар жарысады: дұрыс жауап ракетаны алға жылжытады.', cls: false, ic: '<path d="M12 2c3 2.5 5 6 5 10l-2 3H9l-2-3c0-4 2-7.5 5-10z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M7 12.5 4 15l1 3 3-1.5M17 12.5l3 2.5-1 3-3-1.5M10 18.5 12 22l2-3.5"/>' },
   { k: 'cloud', t: 'Сөз бұлты', d: 'Барлығы сөз жазады, ең көп айтылғаны үлкен болып шығады.', cls: false, ic: '<path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.7 1.5A4 4 0 0 0 6.5 19z"/>' },
@@ -1294,6 +1511,7 @@ $('plClass').onchange = () => ls.set('plClass', $('plClass').value);
 $('plNoClass').onclick = () => go('rosters');
 async function playTool(t) {
   SFX.unlock();
+  if (t.k === 'lessons') return go('lessons');
   if (t.k === 'quiz') { quizPreset = null; return go('quiz'); }
   if (t.k === 'race') { quizPreset = { team: true }; return go('quiz'); }
   if (t.k === 'cloud') return openCloud();
@@ -1730,7 +1948,7 @@ function runQuiz(quiz, cfg) {
     ranking = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score);
     const okp = ranking.filter(p => !p.dq), r = {}; ranking.forEach((p, i) => { r[p.id] = { rank: i + 1, score: p.score, ok: p.ok, dq: p.dq, t: p.team }; });
     if (!screen) { lastMsg = { ph: 'end', n: Q.length, total: ranking.length, top: okp.slice(0, 10).map(p => ({ n: p.name, s: p.score })), r, nt: NT, ts: tscore.slice() }; push(); }
-    SFX.fan(); cnt.textContent = '';
+    SFX.fan(); confetti(); cnt.textContent = '';
     const wrap = el('div', 'qh-end'); wrap.appendChild(el('h2', 'qh-h', team ? 'Жарыс аяқталды' : 'Викторина аяқталды'));
     const pod = el('div', 'qh-pod');
     if (team) {
@@ -1746,7 +1964,7 @@ function runQuiz(quiz, cfg) {
     wrap.append(rest, fin); setBody(wrap); saveRun();
   }
   function primary() {
-    if (ph === 'lobby') { const ok = screen ? (team || players.size > 0) : players.size > 0; if (ok) { SFX.drum(); setTimeout(() => question(0), 700); } }
+    if (ph === 'lobby') { const ok = screen ? (team || players.size > 0) : players.size > 0; if (ok) { SFX.drum(); countdown(() => question(0)); } }
     else if (ph === 'q') { if (!screen) reveal(); }
     else if (ph === 'rev') { qi + 1 < Q.length ? question(qi + 1) : finish(); }
     else if (ph === 'end') shutdown();
