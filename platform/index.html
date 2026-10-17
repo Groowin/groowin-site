@@ -373,12 +373,25 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
 #pult button.pb.big{min-height:92px;font-size:1.25rem;font-weight:700}
 #pult button.pb.pri{background:var(--accent);color:#fff;border-color:transparent}
 #pult button.pb:disabled{opacity:.4}
+
+#srchBtn{position:fixed;top:14px;right:110px;z-index:40}
+body:not(.in-app) #srchBtn{display:none}
+#srch{position:fixed;inset:0;z-index:85;background:rgba(3,6,18,.55);backdrop-filter:blur(3px);display:flex;justify-content:center;align-items:flex-start;padding:10vh 12px 0}
+#srch .sb{width:min(620px,100%);background:var(--surf,var(--paper));color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.45);overflow:hidden;animation:rise .18s ease both}
+#srch input{width:100%;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:var(--ink);font:inherit;font-size:1.1rem;padding:16px 18px;outline:none}
+#srch .sl{max-height:56vh;overflow:auto;padding:6px}
+#srch .si{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);font:inherit;padding:10px 12px;border-radius:10px;cursor:pointer}
+#srch .si.on,#srch .si:hover{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+#srch .si .ic{width:28px;text-align:center;font-size:1.2rem}#srch .si .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#srch .si .k{color:var(--mute);font-size:.8rem}
+#srch .sh{padding:8px 14px;color:var(--mute);font-size:.82rem}
 </style>
 </head>
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
 <button class="icon-btn" id="fsBtn" aria-label="Толық экран"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
 <button class="icon-btn sfxToggle" id="sndBtn" type="button" aria-label="Дыбыс" aria-pressed="true"></button>
+<button class="icon-btn" id="srchBtn" type="button" aria-label="Іздеу" title="Іздеу (Ctrl+K)" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
 <div id="qzHost" hidden></div>
 <div id="stage" hidden><button class="icon-btn" id="stClose" aria-label="Жабу" style="position:fixed;top:14px;right:14px;font-size:1.2rem">✕</button><div id="stageBody"></div></div>
 <main class="wrap">
@@ -805,7 +818,7 @@ async function showApp(session) {
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
-  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
+  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('srchBtn').hidden = !isStaff; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
@@ -2614,6 +2627,58 @@ addEventListener('appinstalled', () => { $('pwaBtn').hidden = true; $('pwaHint')
 if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !matchMedia('(display-mode: standalone)').matches) $('pwaHint').textContent = 'iPhone/iPad: Safari-де «Бөлісу» батырмасын бас → «Басты экранға қосу».';
 if (matchMedia('(display-mode: standalone)').matches) $('pwaHint').textContent = 'Қосымша ретінде ашылған ✓';
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+
+
+// ===== Жылдам іздеу =====
+const SRCH = { t: 0, sites: [], q: [], l: [] };
+async function srchLoad() {
+  if (Date.now() - SRCH.t < 60000) return;
+  const [s, q, l] = await Promise.all([sb.from('sites').select('*'), sb.from('quizzes').select('id,title,questions'), sb.from('lesson_plans').select('id,title,steps')]);
+  SRCH.sites = s.data || []; SRCH.q = q.data || []; SRCH.l = l.data || []; SRCH.t = Date.now();
+}
+function srchItems() {
+  const it = [];
+  document.querySelectorAll('#nav button:not([hidden])').forEach(b => { const n = b.querySelector('.nl'); if (n && (b.dataset.v || b.id === 'navPult')) it.push({ ic: '▸', k: 'Бөлім', t: n.textContent, f: 0, run: () => b.click() }); });
+  GAMES.forEach(g => it.push({ ic: g.icon || '🎮', k: 'Ойын', t: g.title, x: g.topic || '', f: FAVS.has('game:' + g.id), run: () => openGame(g) }));
+  PLAY_TOOLS.forEach(t => it.push({ ic: '🛠️', k: 'Құрал', t: t.t, x: t.d, f: FAVS.has('tool:' + t.k), run: async () => { await loadPlay(); playTool(t); } }));
+  SRCH.sites.forEach(s => it.push({ ic: s.icon || '🌐', k: 'Сайт', t: s.title, x: (s.descr || '') + ' ' + s.url, f: FAVS.has('site:' + s.id), run: () => openSite(s) }));
+  SRCH.q.forEach(z => it.push({ ic: '❓', k: 'Викторина', t: z.title, f: FAVS.has('quiz:' + z.id), run: () => (z.questions || []).length ? hostQuiz(z) : alert('Бұл викторинада сұрақ жоқ.') }));
+  SRCH.l.forEach(z => it.push({ ic: '📋', k: 'Жоспар', t: z.title, f: FAVS.has('lesson:' + z.id), run: () => (z.steps || []).length ? startLesson(z) : alert('Бұл жоспарда қадам жоқ.') }));
+  return it;
+}
+async function openSearch() {
+  if ($('srch')) return; SFX.unlock();
+  const ov = el('div', ''); ov.id = 'srch'; const box = el('div', 'sb'), inp = document.createElement('input'), list = el('div', 'sl');
+  inp.placeholder = 'Ойын, сайт, викторина, жоспар, бөлім іздеу…'; inp.setAttribute('aria-label', 'Іздеу'); inp.autocomplete = 'off';
+  box.append(inp, list); ov.appendChild(box); document.body.appendChild(ov); inp.focus();
+  let all = srchItems(), sel = 0, shown = [];
+  const norm = s => String(s || '').toLocaleLowerCase('kk');
+  const close = () => { ov.remove(); document.removeEventListener('keydown', onKey, true); };
+  const draw = () => {
+    const q = norm(inp.value).trim().split(/\s+/).filter(Boolean);
+    let r = all.map(i => { const hay = norm(i.t + ' ' + (i.x || '') + ' ' + i.k); if (!q.every(w => hay.includes(w))) return null; const tt = norm(i.t); return { i, s: (tt.startsWith(q[0] || '') ? 3 : tt.includes(q[0] || '') ? 2 : 1) + (i.f ? 1.5 : 0) }; }).filter(Boolean);
+    if (!q.length) r = r.filter(x => x.i.f || x.i.k === 'Бөлім');
+    r.sort((a, b) => b.s - a.s); shown = r.slice(0, 40).map(x => x.i); sel = Math.min(sel, Math.max(0, shown.length - 1));
+    list.replaceChildren();
+    if (!q.length) list.appendChild(el('div', 'sh', shown.some(x => x.f) ? 'Таңдаулылар және бөлімдер' : 'Бөлімдер. Іздеу үшін жаза бастаңыз'));
+    if (!shown.length) list.appendChild(el('div', 'sh', 'Ештеңе табылмады'));
+    shown.forEach((i, n) => { const b = el('button', 'si' + (n === sel ? ' on' : '')); b.type = 'button'; b.append(el('span', 'ic', i.ic), el('span', 't', (i.f ? '★ ' : '') + i.t), el('span', 'k', i.k)); b.onclick = () => go2(i); b.onmouseenter = () => { sel = n; list.querySelectorAll('.si').forEach((x, m) => x.classList.toggle('on', m === n)); }; list.appendChild(b); });
+    const on = list.querySelector('.si.on'); if (on) on.scrollIntoView({ block: 'nearest' });
+  };
+  const go2 = i => { close(); i.run(); };
+  function onKey(e) {
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); sel = Math.min(sel + 1, shown.length - 1); draw(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(sel - 1, 0); draw(); }
+    else if (e.key === 'Enter' && shown[sel]) { e.preventDefault(); go2(shown[sel]); }
+  }
+  document.addEventListener('keydown', onKey, true);
+  ov.onclick = e => { if (e.target === ov) close(); };
+  inp.oninput = () => { sel = 0; draw(); }; draw();
+  await srchLoad(); if ($('srch')) { all = srchItems(); draw(); }
+}
+$('srchBtn').onclick = openSearch;
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && window.__staff) { e.preventDefault(); $('srch') ? $('srch').remove() : openSearch(); } });
 
 // ===== Эмодзи таңдау =====
 const EMOJI = ['🎮','🧪','⚡','🍎','🔬','🚀','🌍','🔭','🧲','💡','🔥','💧','🌈','🧮','📐','📏','🔢','➗','🧠','🎯','🏆','🧩','🎲','⚖️','🔋','🌡️','🌌','🪐','☀️','🌙','🧬','⏱️','🎓','📚','🏹','🔊','📡','🌊','🏎️','✈️'];
