@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Онлайн тест</title>
+<style>
+:root{--bg:#eef3f6;--card:#fff;--tx:#10222b;--mu:#5b6f78;--ac:#0e7c86;--on:#fff;--bd:#d3dee3;--bad:#d62839;--ok:#1b8a4b;--okbg:#dff3e7;--badbg:#fde4e6}
+:root[data-theme=dark]{--bg:#0b181d;--card:#13262d;--tx:#e6f0f2;--mu:#8fa7af;--ac:#3cc3cf;--on:#06232a;--bd:#25414a;--bad:#ff6b78;--ok:#4fd187;--okbg:#12382a;--badbg:#42202a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-user-select:none;user-select:none;padding-top:calc(56px + env(safe-area-inset-top,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
+input{-webkit-user-select:text;user-select:text}
+[hidden]{display:none!important}
+#bar{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:var(--card);border-bottom:1px solid var(--bd)}
+#bar .sp{flex:1;font-weight:600;color:var(--mu);font-size:14px}
+#tm{font-variant-numeric:tabular-nums;font-weight:700;font-size:18px}
+#tm.low{color:var(--bad)}
+.ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:18px}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;margin-bottom:14px}
+h1,h2{margin:0 0 8px;line-height:1.25}
+.mu{color:var(--mu)}
+input[type=text],input[type=password],input[type=number]{width:100%;padding:13px 14px;margin:6px 0 12px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:12px;background:var(--ac);color:var(--on);font-size:16px;font-weight:700}
+.btn.sm{display:inline-block;width:auto;padding:8px 12px;font-size:14px;margin:4px 4px 0 0}
+.btn.alt{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.btn.red{background:var(--bad);color:#fff}
+#splash{min-height:70vh;display:flex;align-items:center;justify-content:center}
+#type{font-size:26px;font-weight:700;letter-spacing:.02em}
+#type::after{content:"";display:inline-block;width:2px;height:1em;background:var(--ac);margin-left:3px;vertical-align:-2px;animation:b 1s steps(1) infinite}
+@keyframes b{50%{opacity:0}}
+.q{padding:18px}
+.qh{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.qh b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ac);color:var(--on)}
+.tag{font-size:13px;color:var(--mu)}
+.q p{margin:0 0 12px;font-size:17px}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;margin-top:8px;border-radius:12px;border:1.5px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px}
+.opt.sel{border-color:var(--ac);box-shadow:inset 0 0 0 1px var(--ac)}
+.opt.ok{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
+.opt.no{border-color:var(--bad);background:var(--badbg);color:var(--bad)}
+#pct{font-size:64px;font-weight:800;line-height:1}
+#ov{position:fixed;inset:0;z-index:50;background:rgba(160,10,25,.96);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+#ov h1{font-size:30px}
+#ov .btn{max-width:320px;margin-top:20px;background:#fff;color:#a00a19}
+#cf{position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;width:52px;height:52px;border-radius:50%;border:0;background:var(--ac);color:var(--on);font-size:22px;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+#calc{position:fixed;right:14px;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:30;width:268px;padding:12px;border-radius:22px;background:#111;box-shadow:0 8px 28px rgba(0,0,0,.45)}
+#cd{color:#fff;text-align:right;font-size:36px;min-height:54px;padding:4px 8px;overflow:hidden;white-space:nowrap}
+#ck{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+#ck button{height:52px;border-radius:26px;border:0;font-size:22px;background:#333;color:#fff}
+#ck .f{background:#a5a5a5;color:#000}#ck .o{background:#ff9f0a}#ck .z{grid-column:span 2}
+.bd{display:inline-block;padding:2px 9px;border-radius:99px;font-size:13px;border:1px solid var(--bd)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{padding:3px 9px;border-radius:8px;font-size:13px;background:var(--bg);border:1px solid var(--bd)}
+.chip.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
+.chip.no{background:var(--badbg);color:var(--bad);border-color:var(--bad)}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:60;background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:12px;max-width:88%}
+#toast.bad{background:var(--bad);color:#fff}
+.foot{text-align:center;color:var(--mu);font-size:13px;padding:12px}
+</style>
+</head>
+<body>
+<div id="bar"><span class="sp" id="who">By Magzomova Aruzhan</span><span id="tm" hidden></span><button class="ib" id="bt" title="Тема">◐</button><button class="ib" id="bf" title="Толық экран">⛶</button></div>
+
+<div class="wrap">
+<div class="scr" id="sSplash"><div id="splash"><span id="type"></span></div></div>
+
+<div class="scr" id="sLogin" hidden><div class="card">
+<h1>Тестке кіру</h1><p class="mu">Логин мен құпиясөзді мұғалім береді.</p>
+<label>Логин<input type="text" id="lg" autocomplete="username" autocapitalize="none"></label>
+<label>Құпиясөз<input type="password" id="pw" autocomplete="current-password"></label>
+<button class="btn" id="lgb">Кіру</button></div></div>
+
+<div class="scr" id="sIntro" hidden><div class="card">
+<h1 id="hi">Сәлем</h1>
+<p>Тест басталмас бұрын ережемен танысыңыз:</p>
+<p>• Тест <b>толық экранда</b> өтеді. Толық экран болмаса тест басталмайды.<br>• Басқа қосымшаға, бетке немесе вкладкаға өтуге болмайды.<br>• 2 ескертуден кейін келесі шығуда тест автоматты аяқталады.<br>• Тек бір рет тапсырасыз. Таймер бастағаннан кейін тоқтамайды.</p>
+<p id="ios" class="mu" hidden><b>iPhone:</b> Safari-де «Бөлісу» → «Басты экранға қосу» басып, сайтты сол белгіше арқылы ашыңыз.</p>
+<button class="btn" id="go">Толық экранға өтіп бастау</button>
+<button class="btn alt" style="margin-top:10px" onclick="logout()">Шығу</button></div></div>
+
+<div class="scr" id="sTest" hidden><div id="qs"></div>
+<div id="fin"><button class="btn" id="fb">Аяқтау</button></div>
+<div class="card" id="res" hidden></div></div>
+
+<div class="scr" id="sAdmin" hidden>
+<div class="card"><h2>Студент қосу</h2>
+<input type="text" id="nn" placeholder="Аты-жөні"><input type="text" id="nl" placeholder="Логин" autocapitalize="none"><input type="text" id="np" placeholder="Құпиясөз">
+<button class="btn" id="nb">Қосу</button></div>
+<div class="card"><h2>Тест уақыты (минут)</h2><input type="number" id="dur" value="30" min="1"><button class="btn" id="db">Сақтау</button>
+<h2 style="margin-top:18px">Ескерту жүйесі</h2><p class="mu" style="margin:0 0 8px">Өшірулі болса ескерту берілмейді және тест аяқталмайды, бірақ шығулар журналға жазылады.</p>
+<button class="btn alt" id="wb">...</button></div>
+<div id="al"></div>
+<button class="btn alt" onclick="logout()">Шығу</button></div>
+<div class="foot">By Magzomova Aruzhan</div>
+</div>
+
+<div id="ov" hidden><h1 id="ovt"></h1><p id="ovm"></p><button class="btn" id="ovb">Тестке оралу</button></div>
+<button id="cf" hidden title="Калькулятор">🖩</button>
+<div id="calc" hidden><div id="cd">0</div><div id="ck"></div></div>
+<div id="toast" hidden></div>
+
+<script>
+const U='https://okgphzubuldtdzsfqkap.supabase.co/rest/v1/rpc/',K='sb_publishable_CBDoPUc9BgLT_4jW-FgqsQ_wBwvezvf',TEST=1;
+const $=s=>document.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ERR={bad_credentials:'Логин немесе құпиясөз қате',blocked:'Аккаунт бұғатталған. Мұғалімге хабарласыңыз',other_device:'Бұл басқа құрылғы. Тек тіркелген телефоннан кіруге болады',auth:'Сессия аяқталды, қайта кіріңіз',forbidden:'Рұқсат жоқ',no_test:'Тест қазір ашық емес',network:'Байланыс қатесі'};
+let S=JSON.parse(localStorage.getItem('S')||'null'),T={on:false,lock:false,last:0,ans:{},off:0,dl:0,iv:0},AO=null,ai=0,Q=[];
+const de=document.documentElement,standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+const canFS=()=>!!(de.requestFullscreen||de.webkitRequestFullscreen);
+const isFS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+const enterFS=async()=>{try{await(de.requestFullscreen||de.webkitRequestFullscreen).call(de)}catch(e){}};
+const exitFS=()=>{try{(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}};
+const did=()=>localStorage.getItem('did')||(localStorage.setItem('did',crypto.randomUUID()),localStorage.getItem('did'));
+
+async function api(fn,body){
+  let r;try{r=await fetch(U+fn,{method:'POST',headers:{'Content-Type':'application/json',apikey:K},body:JSON.stringify(body)})}catch(e){throw new Error('network')}
+  const j=await r.json().catch(()=>null);
+  if(!r.ok)throw new Error((j&&j.message)||'network');
+  return j;
+}
+function toast(m,bad){const t=$('#toast');t.textContent=m;t.className=bad?'bad':'';t.hidden=false;clearTimeout(t.h);t.h=setTimeout(()=>t.hidden=true,3500)}
+function fail(e){const m=e.message;toast(ERR[m]||m,1);if(m==='auth'||m==='blocked')setTimeout(logout,1500)}
+function show(id){$$('.scr').forEach(e=>e.hidden=e.id!==id)}
+function logout(){localStorage.removeItem('S');location.reload()}
+
+/* тема */
+const th=localStorage.getItem('th')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+de.dataset.theme=th;
+$('#bt').onclick=()=>{const n=de.dataset.theme==='dark'?'light':'dark';de.dataset.theme=n;localStorage.setItem('th',n)};
+$('#bf').onclick=()=>isFS()?exitFS():enterFS();
+
+/* қорғаныс: көшіру, мәзір */
+['contextmenu','copy','cut','dragstart'].forEach(ev=>document.addEventListener(ev,e=>{if(e.target.tagName!=='INPUT')e.preventDefault()}));
+
+/* кіру */
+$('#lgb').onclick=async()=>{
+  try{const r=await api('login',{p_login:$('#lg').value.trim(),p_password:$('#pw').value,p_device:did()});
+    S={token:r.token,role:r.role,name:r.name};localStorage.setItem('S',JSON.stringify(S));enter();
+  }catch(e){fail(e)}
+};
+$('#pw').onkeydown=e=>{if(e.key==='Enter')$('#lgb').click()};
+function enter(){
+  $('#who').textContent=S.name||'';
+  if(S.role==='admin'){show('sAdmin');loadSet();loadA();ai=setInterval(loadA,5000)}
+  else{$('#hi').textContent='Сәлем, '+(S.name||'');show('sIntro')}
+}
+
+/* тест */
+$('#go').onclick=async()=>{
+  if(!canFS()&&!standalone){$('#ios').hidden=false;toast('Толық экран қажет',1);return}
+  if(canFS()){await enterFS();if(!isFS()){toast('Толық экранға рұқсат беріңіз',1);return}}
+  let r;try{r=await api('start_attempt',{p_token:S.token,p_test:TEST})}catch(e){return fail(e)}
+  if(r.done){Q=[];$('#qs').innerHTML='';showResult(r.result);return}
+  const rnd=seed(String(r.attempt));
+  Q=shuf(r.questions||[],rnd).map(q=>({...q,ord:shuf(q.options.map((o,j)=>j),rnd)}));T.ans=r.answers||{};T.dl=new Date(r.deadline).getTime();T.off=new Date(r.server_now).getTime()-Date.now();
+  $('#qs').innerHTML=Q.map((q,i)=>`<section class="card q" data-id="${q.id}"><div class="qh"><b>${i+1}</b><span class="tag">${q.kind==='theory'?'Теория':'Есеп'}</span></div><p>${esc(q.body)}</p>${q.ord.map(j=>`<button class="opt${T.ans[q.id]==j?' sel':''}" data-q="${q.id}" data-j="${j}">${esc(q.options[j])}</button>`).join('')}</section>`).join('');
+  $('#fin').hidden=false;$('#res').hidden=true;$('#fb').textContent='Аяқтау';
+  show('sTest');$('#tm').hidden=false;$('#cf').hidden=false;
+  T.on=true;T.lock=false;T.last=Date.now();
+  clearInterval(T.iv);T.iv=setInterval(tick,500);tick();
+};
+function tick(){
+  const left=Math.max(0,T.dl-(Date.now()+T.off)),m=Math.floor(left/60000),s=Math.floor(left/1000)%60;
+  $('#tm').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  $('#tm').className=left<300000?'low':'';
+  if(left<=0&&T.on){T.on=false;finish()}
+}
+$('#qs').onclick=async e=>{
+  const b=e.target.closest('.opt');if(!b||!T.on)return;
+  const q=b.dataset.q,j=+b.dataset.j;T.ans[q]=j;
+  $$('.opt[data-q="'+q+'"]').forEach(x=>x.classList.toggle('sel',x===b));
+  try{const r=await api('save_answer',{p_token:S.token,p_q:+q,p_choice:j});if(r.status&&r.status!=='active'&&r.status!=='none')showResult(r)}catch(er){fail(er)}
+};
+let armed=0;
+$('#fb').onclick=()=>{
+  const left=Q.length-Object.keys(T.ans).length;
+  if(!armed&&left>0){armed=1;$('#fb').textContent='Растау: '+left+' сұраққа жауап жоқ. Аяқтау?';return}
+  armed=0;finish();
+};
+async function finish(){
+  try{showResult(await api('finish_attempt',{p_token:S.token}))}catch(e){fail(e)}
+}
+function showResult(r){
+  T.on=false;clearInterval(T.iv);$('#ov').hidden=true;exitFS();
+  show('sTest');$('#tm').hidden=true;$('#cf').hidden=true;$('#calc').hidden=true;$('#fin').hidden=true;
+  (r.items||[]).forEach(it=>{
+    const sec=$('.q[data-id="'+it.id+'"]');if(!sec)return;
+    $$('.opt',sec).forEach(o=>{
+      const j=+o.dataset.j;o.disabled=true;o.classList.remove('sel');
+      if(j===it.correct)o.classList.add('ok');
+      else if(it.chosen!==null&&+it.chosen===j)o.classList.add('no');
+    });
+  });
+  const res=$('#res');res.hidden=false;
+  res.innerHTML=`<h2>Нәтиже</h2><div id="pct">${r.percent==null?0:r.percent}%</div><p>${r.score||0} / ${r.total||0} дұрыс жауап</p>${r.status==='kicked'?'<p style="color:var(--bad)"><b>Ережені бұзғандықтан тест автоматты аяқталды.</b></p>':''}<p class="mu">Жасыл: дұрыс жауап. Қызыл: сіз таңдаған қате жауап.</p><button class="btn alt" onclick="logout()">Шығу</button>`;
+  res.scrollIntoView({behavior:'smooth',block:'end'});
+}
+
+/* ескерту жүйесі */
+function viol(kind){
+  if(!T.on||T.lock)return;const n=Date.now();if(n-T.last<2000)return;T.last=n;T.lock=true;
+  api('report_violation',{p_token:S.token,p_kind:kind}).then(r=>{
+    if(r.status==='active'&&r.off){T.lock=false}
+    else if(r.status==='active'){
+      $('#ovt').textContent='Ескерту '+r.warnings+' / 2';
+      $('#ovm').textContent=r.warnings>=2?'Соңғы ескерту! Келесі шығуда тест автоматты аяқталады.':'Тест кезінде басқа бетке, қосымшаға немесе ЖИ-ға өтуге болмайды.';
+      $('#ov').hidden=false;
+    }else if(r.status==='none'){T.lock=false}
+    else showResult(r);
+  }).catch(e=>{T.lock=false;fail(e)});
+}
+$('#ovb').onclick=async()=>{if(canFS())await enterFS();$('#ov').hidden=true;T.lock=false;T.last=Date.now()};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)viol('hidden')});
+addEventListener('blur',()=>viol('blur'));
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{if(T.on&&canFS()&&!isFS())viol('fs_exit')}));
+
+/* калькулятор */
+let ex='';
+const keys=[['AC','f'],['±','f'],['%','f'],['/','o','÷'],['7'],['8'],['9'],['*','o','×'],['4'],['5'],['6'],['-','o','−'],['1'],['2'],['3'],['+','o','+'],['0','z'],['.'],['=','o']];
+$('#ck').innerHTML=keys.map(k=>`<button data-k="${k[0]}" class="${k[1]||''}">${k[2]||k[0]}</button>`).join('');
+$('#cf').onclick=()=>{$('#calc').hidden=!$('#calc').hidden};
+$('#ck').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;const v=b.dataset.k;
+  if(ex==='Қате')ex='';
+  if(v==='AC')ex='';
+  else if(v==='±')ex=ex.startsWith('-')?ex.slice(1):'-'+ex;
+  else if(v==='='){try{const s=ex.replace(/%/g,'/100');if(!/^[0-9+\-*/.() ]*$/.test(s))throw 0;ex=String(+Number(Function('return '+s)()).toFixed(10))}catch(er){ex='Қате'}}
+  else ex+=v;
+  $('#cd').textContent=ex.replace(/\*/g,'×').replace(/\//g,'÷')||'0';
+};
+
+/* админ */
+const SL={active:'Тапсыруда',finished:'Аяқтады',kicked:'Шығарылды'};
+const EV={hidden:'бетті жапты немесе ауыстырды',blur:'терезеден шықты',fs_exit:'толық экраннан шықты'};
+function card(u){
+  const left=u.deadline&&u.status==='active'?Math.max(0,Math.round((new Date(u.deadline)-Date.now())/60000))+' мин қалды':'';
+  return `<div class="card"><b>${esc(u.name||'')}</b> <span class="mu">(${esc(u.login)})</span><br>
+  <span class="bd">${u.blocked?'Бұғатталған':(SL[u.status]||'Бастамаған')}</span>
+  <span class="bd">Ескерту: ${u.warnings||0}/2</span> <span class="bd">Жауап: ${u.answered||0}</span>
+  ${u.percent!=null?`<span class="bd">${u.percent}%</span>`:''} ${left?`<span class="bd">${left}</span>`:''} <span class="bd">${u.has_device?'Құрылғы байланған':'Құрылғы бос'}</span><br>
+  <button class="btn sm ${u.blocked?'':'red'}" data-a="blk" data-id="${u.id}" data-v="${u.blocked}">${u.blocked?'Бұғаттан шығару':'Бұғаттау'}</button>
+  <button class="btn sm alt" data-a="dev" data-id="${u.id}">Құрылғыны тазарту</button>
+  <button class="btn sm alt" data-a="rt" data-id="${u.id}">Қайта тапсыру</button>
+  <button class="btn sm alt" data-a="det" data-id="${u.id}">Жауаптар</button>
+  <div id="d-${u.id}"></div></div>`;
+}
+async function loadA(){
+  try{const l=await api('admin_list',{p_token:S.token});$('#al').innerHTML=l.map(card).join('')||'<p class="mu">Студент жоқ</p>';if(AO)detail(AO)}catch(e){fail(e);clearInterval(ai)}
+}
+async function detail(id){
+  const box=$('#d-'+id);if(!box)return;
+  try{const r=await api('admin_attempt',{p_token:S.token,p_user:id});
+    if(!r){box.innerHTML='<p class="mu">Әлі бастаған жоқ</p>';return}
+    box.innerHTML='<div class="chips">'+r.items.map(i=>`<span class="chip ${i.chosen==null?'':(+i.chosen===i.correct?'ok':'no')}">${i.pos}: ${i.chosen==null?'–':(+i.chosen===i.correct?'дұрыс':'қате')}</span>`).join('')+'</div>'+
+      (r.events.length?'<p class="mu" style="font-size:13px">'+r.events.map(e=>new Date(e.at).toLocaleTimeString()+' '+(EV[e.kind]||e.kind)).join('<br>')+'</p>':'');
+  }catch(e){fail(e)}
+}
+$('#al').onclick=async e=>{
+  const b=e.target.closest('button');if(!b)return;const id=b.dataset.id,a=b.dataset.a;
+  try{
+    if(a==='det'){AO=AO===id?null:id;$$('[id^=d-]').forEach(x=>x.innerHTML='');if(AO)detail(AO);return}
+    if(a==='blk')await api('admin_set_blocked',{p_token:S.token,p_user:id,p_blocked:b.dataset.v!=='true'});
+    if(a==='dev')await api('admin_reset_device',{p_token:S.token,p_user:id});
+    if(a==='rt')await api('admin_allow_retake',{p_token:S.token,p_user:id});
+    toast('Дайын');loadA();
+  }catch(er){fail(er)}
+};
+$('#nb').onclick=async()=>{
+  try{await api('admin_create_user',{p_token:S.token,p_login:$('#nl').value.trim(),p_password:$('#np').value,p_name:$('#nn').value.trim()});
+    ['#nn','#nl','#np'].forEach(s=>$(s).value='');toast('Студент қосылды');loadA()}catch(e){fail(e.message.includes('duplicate')?{message:'Бұл логин бар'}:e)}
+};
+$('#db').onclick=async()=>{try{await api('admin_set_duration',{p_token:S.token,p_test:TEST,p_min:+$('#dur').value});toast('Уақыт сақталды')}catch(e){fail(e)}};
+
+/* араластыру */
+function seed(s){let h=1779033703;for(const c of s){h=Math.imul(h^c.charCodeAt(0),3432918353);h=h<<13|h>>>19}let a=h;return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuf(arr,r){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+/* админ баптаулары */
+let WARN=true;
+function warnLabel(){$('#wb').textContent=WARN?'Ескерту жүйесі: ҚОСУЛЫ (өшіру)':'Ескерту жүйесі: ӨШІРУЛІ (қосу)'}
+async function loadSet(){
+  try{const s=await api('admin_settings',{p_token:S.token,p_test:TEST});$('#dur').value=s.duration;WARN=s.warn;warnLabel()}catch(e){fail(e)}
+}
+$('#wb').onclick=async()=>{
+  try{await api('admin_set_warn',{p_token:S.token,p_test:TEST,p_on:!WARN});WARN=!WARN;warnLabel();toast(WARN?'Ескерту қосылды':'Ескерту өшірілді')}catch(e){fail(e)}
+};
+
+/* басы */
+(async()=>{
+  const t='By Magzomova Aruzhan';
+  for(const c of t){$('#type').textContent+=c;await sleep(75)}
+  await sleep(900);
+  if(S&&S.token)enter();else show('sLogin');
+})();
+</script>
+</body>
+</html>
