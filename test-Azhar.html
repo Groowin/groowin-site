@@ -58,6 +58,19 @@ input[type=text],input[type=password],input[type=number]{width:100%;padding:13px
 .chip.no{background:var(--badbg);color:var(--bad);border-color:var(--bad)}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:60;background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:12px;max-width:88%}
 #toast.bad{background:var(--bad);color:#fff}
+#ck button{transition:transform .08s,filter .08s}
+#ck button:active,#ck button.p{filter:brightness(1.6);transform:scale(.92)}
+#cf{display:grid;place-items:center;width:56px;height:56px}
+#cf:active{transform:scale(.92)}
+#fin{padding-bottom:84px}
+#lv{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 40px}
+.lvh{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1200px;margin:0 auto 14px}
+.lvh b{font-size:24px}.lvh span{flex:1;color:var(--mu);font-size:16px}
+#lvq{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px}
+.lo{padding:10px 14px;margin-top:8px;border-radius:12px;border:1.5px solid var(--bd);background:var(--bg);font-size:17px}
+.lo.ok{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
+.lo.no{border-color:var(--bad);background:var(--badbg);color:var(--bad);font-weight:700}
+.lo.cor{border:1.5px dashed var(--ok)}
 .foot{text-align:center;color:var(--mu);font-size:13px;padding:12px}
 </style>
 </head>
@@ -98,7 +111,8 @@ input[type=text],input[type=password],input[type=number]{width:100%;padding:13px
 </div>
 
 <div id="ov" hidden><h1 id="ovt"></h1><p id="ovm"></p><button class="btn" id="ovb">Тестке оралу</button></div>
-<button id="cf" hidden title="Калькулятор">🖩</button>
+<button id="cf" hidden title="Калькулятор" aria-label="Калькулятор"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"/></svg></button>
+<div id="lv" hidden><div class="lvh"><b id="lvn"></b><span id="lvi"></span><button class="btn sm alt" id="lvx">Жабу</button></div><div id="lvq"></div></div>
 <div id="calc" hidden><div id="cd">0</div><div id="ck"></div></div>
 <div id="toast" hidden></div>
 
@@ -155,7 +169,7 @@ $('#go').onclick=async()=>{
   let r;try{r=await api('start_attempt',{p_token:S.token,p_test:TEST})}catch(e){return fail(e)}
   if(r.done){Q=[];$('#qs').innerHTML='';showResult(r.result);return}
   const rnd=seed(String(r.attempt));
-  Q=shuf(r.questions||[],rnd).map(q=>({...q,ord:shuf(q.options.map((o,j)=>j),rnd)}));T.ans=r.answers||{};T.dl=new Date(r.deadline).getTime();T.off=new Date(r.server_now).getTime()-Date.now();
+  Q=(r.questions||[]).map(q=>({...q,ord:shuf(q.options.map((o,j)=>j),rnd)}));T.ans=r.answers||{};T.dl=new Date(r.deadline).getTime();T.off=new Date(r.server_now).getTime()-Date.now();
   $('#qs').innerHTML=Q.map((q,i)=>`<section class="card q" data-id="${q.id}"><div class="qh"><b>${i+1}</b><span class="tag">${q.kind==='theory'?'Теория':'Есеп'}</span></div><p>${esc(q.body)}</p>${q.ord.map(j=>`<button class="opt${T.ans[q.id]==j?' sel':''}" data-q="${q.id}" data-j="${j}">${esc(q.options[j])}</button>`).join('')}</section>`).join('');
   $('#fin').hidden=false;$('#res').hidden=true;$('#fb').textContent='Аяқтау';
   show('sTest');$('#tm').hidden=false;$('#cf').hidden=false;
@@ -218,12 +232,14 @@ addEventListener('blur',()=>viol('blur'));
 ['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{if(T.on&&canFS()&&!isFS())viol('fs_exit')}));
 
 /* калькулятор */
+document.addEventListener('touchstart',()=>{},{passive:true});
 let ex='';
 const keys=[['AC','f'],['±','f'],['%','f'],['/','o','÷'],['7'],['8'],['9'],['*','o','×'],['4'],['5'],['6'],['-','o','−'],['1'],['2'],['3'],['+','o','+'],['0','z'],['.'],['=','o']];
 $('#ck').innerHTML=keys.map(k=>`<button data-k="${k[0]}" class="${k[1]||''}">${k[2]||k[0]}</button>`).join('');
 $('#cf').onclick=()=>{$('#calc').hidden=!$('#calc').hidden};
 $('#ck').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;const v=b.dataset.k;
+  b.classList.add('p');setTimeout(()=>b.classList.remove('p'),140);
   if(ex==='Қате')ex='';
   if(v==='AC')ex='';
   else if(v==='±')ex=ex.startsWith('-')?ex.slice(1):'-'+ex;
@@ -244,6 +260,7 @@ function card(u){
   <button class="btn sm ${u.blocked?'':'red'}" data-a="blk" data-id="${u.id}" data-v="${u.blocked}">${u.blocked?'Бұғаттан шығару':'Бұғаттау'}</button>
   <button class="btn sm alt" data-a="dev" data-id="${u.id}">Құрылғыны тазарту</button>
   <button class="btn sm alt" data-a="rt" data-id="${u.id}">Қайта тапсыру</button>
+  <button class="btn sm" data-a="live" data-id="${u.id}">Үлкен экран</button>
   <button class="btn sm alt" data-a="det" data-id="${u.id}">Жауаптар</button>
   <div id="d-${u.id}"></div></div>`;
 }
@@ -253,7 +270,7 @@ async function loadA(){
 async function detail(id){
   const box=$('#d-'+id);if(!box)return;
   try{const r=await api('admin_attempt',{p_token:S.token,p_user:id});
-    if(!r){box.innerHTML='<p class="mu">Әлі бастаған жоқ</p>';return}
+    if(!r||!r.started){box.innerHTML='<p class="mu">Әлі бастаған жоқ</p>';return}
     box.innerHTML='<div class="chips">'+r.items.map(i=>`<span class="chip ${i.chosen==null?'':(+i.chosen===i.correct?'ok':'no')}">${i.pos}: ${i.chosen==null?'–':(+i.chosen===i.correct?'дұрыс':'қате')}</span>`).join('')+'</div>'+
       (r.events.length?'<p class="mu" style="font-size:13px">'+r.events.map(e=>new Date(e.at).toLocaleTimeString()+' '+(EV[e.kind]||e.kind)).join('<br>')+'</p>':'');
   }catch(e){fail(e)}
@@ -261,6 +278,7 @@ async function detail(id){
 $('#al').onclick=async e=>{
   const b=e.target.closest('button');if(!b)return;const id=b.dataset.id,a=b.dataset.a;
   try{
+    if(a==='live'){openLive(id);return}
     if(a==='det'){AO=AO===id?null:id;$$('[id^=d-]').forEach(x=>x.innerHTML='');if(AO)detail(AO);return}
     if(a==='blk')await api('admin_set_blocked',{p_token:S.token,p_user:id,p_blocked:b.dataset.v!=='true'});
     if(a==='dev')await api('admin_reset_device',{p_token:S.token,p_user:id});
@@ -273,6 +291,23 @@ $('#nb').onclick=async()=>{
     ['#nn','#nl','#np'].forEach(s=>$(s).value='');toast('Студент қосылды');loadA()}catch(e){fail(e.message.includes('duplicate')?{message:'Бұл логин бар'}:e)}
 };
 $('#db').onclick=async()=>{try{await api('admin_set_duration',{p_token:S.token,p_test:TEST,p_min:+$('#dur').value});toast('Уақыт сақталды')}catch(e){fail(e)}};
+
+/* үлкен экран: студенттің жауаптарын тікелей көру */
+let LV=null,lt=0;
+function openLive(id){LV=id;$('#lv').hidden=false;liveLoad();clearInterval(lt);lt=setInterval(liveLoad,2000)}
+$('#lvx').onclick=()=>{LV=null;clearInterval(lt);$('#lv').hidden=true};
+async function liveLoad(){
+  if(!LV)return;
+  try{
+    const r=await api('admin_attempt',{p_token:S.token,p_user:LV});
+    $('#lvn').textContent=r.name||'';
+    if(!r.started){$('#lvi').textContent='Әлі бастаған жоқ';$('#lvq').innerHTML='';return}
+    const done=r.items.filter(i=>i.chosen!=null).length;
+    const left=r.status==='active'?', '+Math.max(0,Math.round((new Date(r.deadline)-Date.now())/60000))+' мин қалды':'';
+    $('#lvi').textContent=(SL[r.status]||'')+', жауап: '+done+'/'+r.items.length+', ескерту: '+r.warnings+(r.percent!=null?', нәтиже: '+r.percent+'%':'')+left;
+    $('#lvq').innerHTML=r.items.map(i=>`<div class="card"><div class="qh"><b>${i.pos}</b><span class="tag">${i.kind==='theory'?'Теория':'Есеп'}</span></div><p style="font-size:18px">${esc(i.body)}</p>${i.options.map((o,j)=>{const ch=i.chosen!=null&&+i.chosen===j;const c=ch?(j===i.correct?'ok':'no'):(j===i.correct?'cor':'');return `<div class="lo ${c}">${ch?'● ':''}${esc(o)}</div>`}).join('')}</div>`).join('');
+  }catch(e){fail(e)}
+}
 
 /* араластыру */
 function seed(s){let h=1779033703;for(const c of s){h=Math.imul(h^c.charCodeAt(0),3432918353);h=h<<13|h>>>19}let a=h;return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
