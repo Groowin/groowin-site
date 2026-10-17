@@ -249,6 +249,7 @@ $('#ck').onclick=e=>{
 };
 
 /* админ */
+let DEL=null;
 const SL={active:'Тапсыруда',finished:'Аяқтады',kicked:'Шығарылды'};
 const EV={hidden:'бетті жапты немесе ауыстырды',blur:'терезеден шықты',fs_exit:'толық экраннан шықты'};
 function card(u){
@@ -260,6 +261,7 @@ function card(u){
   <button class="btn sm ${u.blocked?'':'red'}" data-a="blk" data-id="${u.id}" data-v="${u.blocked}">${u.blocked?'Бұғаттан шығару':'Бұғаттау'}</button>
   <button class="btn sm alt" data-a="dev" data-id="${u.id}">Құрылғыны тазарту</button>
   <button class="btn sm alt" data-a="rt" data-id="${u.id}">Қайта тапсыру</button>
+  <button class="btn sm red" data-a="del" data-id="${u.id}">${DEL===u.id?'Растау: өшіру':'Өшіру'}</button>
   <button class="btn sm" data-a="live" data-id="${u.id}">Үлкен экран</button>
   <button class="btn sm alt" data-a="det" data-id="${u.id}">Жауаптар</button>
   <div id="d-${u.id}"></div></div>`;
@@ -279,6 +281,10 @@ $('#al').onclick=async e=>{
   const b=e.target.closest('button');if(!b)return;const id=b.dataset.id,a=b.dataset.a;
   try{
     if(a==='live'){openLive(id);return}
+    if(a==='del'){
+      if(DEL!==id){DEL=id;setTimeout(()=>{if(DEL===id){DEL=null;loadA()}},4000);loadA();return}
+      DEL=null;await api('admin_delete_user',{p_token:S.token,p_user:id});if(AO===id)AO=null;toast('Студент өшірілді');loadA();return;
+    }
     if(a==='det'){AO=AO===id?null:id;$$('[id^=d-]').forEach(x=>x.innerHTML='');if(AO)detail(AO);return}
     if(a==='blk')await api('admin_set_blocked',{p_token:S.token,p_user:id,p_blocked:b.dataset.v!=='true'});
     if(a==='dev')await api('admin_reset_device',{p_token:S.token,p_user:id});
