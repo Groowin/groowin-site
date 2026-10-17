@@ -385,6 +385,12 @@ body:not(.in-app) #srchBtn{display:none}
 #srch .si .ic{width:28px;text-align:center;font-size:1.2rem}#srch .si .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #srch .si .k{color:var(--mute);font-size:.8rem}
 #srch .sh{padding:8px 14px;color:var(--mute);font-size:.82rem}
+
+.qan{margin:10px 0 4px}.qan h4{margin:0 0 6px;font-size:.95rem}
+.qan .qnr{color:var(--ink);display:grid;grid-template-columns:minmax(0,1.4fr) minmax(80px,1fr) auto;gap:10px;align-items:center;margin:5px 0;font-size:.88rem}
+.qan .qnr span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qan .bar2{height:10px;border-radius:99px;background:var(--line);overflow:hidden}.qan .bar2 i{display:block;height:100%;border-radius:99px}
+.qan .hint{margin:8px 0 0;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,#E21B3C 12%,transparent);font-size:.88rem}
 </style>
 </head>
 <body>
@@ -664,6 +670,12 @@ body:not(.in-app) #srchBtn{display:none}
       <input id="accEdit" maxlength="80" autocomplete="name">
       <button class="go" id="accSave" style="width:auto;padding:10px 22px">Сақтау</button>
       <p class="msg" id="accMsg" role="status" aria-live="polite"></p>
+      <div id="bkBox" hidden>
+        <h3 style="margin:14px 0 0;font-size:1.05rem">Резервтік көшірме</h3>
+        <p class="sub" style="font-size:.9rem">Викториналар, сабақ жоспарлары, сыныптар тізімі (админде сайттар мен ойындар да) бір файлға сақталады. Материалдардың файлдары кірмейді.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="go" id="bkSave" style="width:auto;padding:10px 22px">Көшірмені жүктеу</button><button class="out" id="bkLoad">Файлдан қалпына келтіру</button><input type="file" id="bkFile" accept=".json,application/json" hidden></div>
+        <p class="msg" id="bkMsg" role="status" aria-live="polite"></p>
+      </div>
       <h3 style="margin:14px 0 0;font-size:1.05rem">Телефонға орнату</h3>
       <p class="sub" style="font-size:.9rem" id="pwaHint">Сайтты қосымша сияқты орнат: басты экранда иконка болады, толық экранда ашылады.</p>
       <button class="go" id="pwaBtn" style="width:auto;padding:10px 22px" hidden>Орнату</button>
@@ -818,7 +830,7 @@ async function showApp(session) {
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
-  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('srchBtn').hidden = !isStaff; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
+  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
@@ -1630,7 +1642,8 @@ async function loadQuizzes() {
     s.textContent = new Date(x.created_at).toLocaleString('kk-KZ', { dateStyle: 'short', timeStyle: 'short' }) + ' · ' + (x.title || 'Викторина') + ' · ' + x.players + ' оқушы' + (res[0] ? ' · 1-орын: ' + res[0].n : '');
     const ol = document.createElement('ol'); res.forEach(p => ol.appendChild(el('li', '', p.n + (p.t ? ' (' + p.t + ')' : '') + ' — ' + p.s + ' ұпай' + (p.ok ? ', ' + p.ok + ' дұрыс жауап' : ''))));
     const del = mini('Жою', async () => { if (!confirm('Бұл ойынның нәтижесі жойылсын ба?')) return; await sb.from('quiz_runs').delete().eq('id', x.id); loadQuizzes(); });
-    del.style.marginTop = '8px'; d.append(s, ol, del); rb.appendChild(d);
+    del.style.marginTop = '8px'; const csv = mini('Excel (CSV)', () => exportRunCsv(x)); csv.style.marginTop = '8px';
+    d.append(s, ol, runAnalysis(x), csv, del); rb.appendChild(d);
   });
   if ((r.data || []).length > 1) { const all = mini('Барлығын тазалау', async () => { if (!confirm('Барлық соңғы ойындар жойылсын ба?')) return; await sb.from('quiz_runs').delete().in('id', r.data.map(z => z.id)); loadQuizzes(); }); all.style.margin = '0 0 10px'; rb.prepend(all); }
   $('qzRunsHead').hidden = !(r.data || []).length;
@@ -1808,7 +1821,7 @@ function runQuiz(quiz, cfg) {
   const joinUrl = screen ? '' : new URL('play.html?c=' + code, location.href).href;
   const root = $('qzHost'); root.hidden = false; root.replaceChildren(); document.body.style.overflow = 'hidden';
   const players = new Map(), kicked = new Set();
-  let ph = 'lobby', qi = -1, qStart = 0, qEnd = 0, answers = new Map(), timer = null, beat = 0, lastMsg = { ph: 'lobby' }, saved = false, ranking = [];
+  let ph = 'lobby', qi = -1, qStart = 0, qEnd = 0, answers = new Map(), timer = null, beat = 0, lastMsg = { ph: 'lobby' }, saved = false, ranking = [], qst = [];
   let tscore = Array(NT).fill(0), tmap = {}, prevProg = Array(NT).fill(0), turn = null, asked = new Set(), screenRes = null, typed = '';
   const maxPer = screen ? 1000 * Math.ceil(Q.length / Math.max(1, NT)) : 1000 * Q.length;
   let ch = null;
@@ -1837,10 +1850,13 @@ function runQuiz(quiz, cfg) {
   close.onclick = () => { if (ph === 'lobby' || ph === 'end' || confirm('Ойынды тоқтатасың ба?')) shutdown(); };
   async function saveRun() {
     saved = true; if (qi < 0) return;
-    let res = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score).map(p => ({ n: p.name + (p.dq ? ' (нәтижесі өшірілді)' : p.st ? ' (ескерту)' : ''), s: p.score, ok: p.ok, t: p.team >= 0 ? TNAME[p.team] : undefined }));
+    let res = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score).map(p => ({ n: p.name + (p.dq ? ' (нәтижесі өшірілді)' : p.st ? ' (ескерту)' : ''), s: p.score, ok: p.ok, t: p.team >= 0 ? TNAME[p.team] : undefined, q: p.q ? Array.from(p.q, v => v === undefined ? -1 : v) : undefined }));
     if (team && (!players.size || screen)) res = tscore.map((s, t) => ({ n: TNAME[t] + ' команда', s, ok: 0 })).sort((a, b) => b.s - a.s).concat(res);
     if (!res.length) return;
-    await sb.from('quiz_runs').insert({ quiz_id: quiz.id || null, title: quiz.title + (team ? ' (ракета жарысы)' : ''), players: players.size || NT, results: res });
+    const row = { quiz_id: quiz.id || null, title: quiz.title + (team ? ' (ракета жарысы)' : ''), players: players.size || NT, results: res };
+    if (qst.some(Boolean)) row.qstats = Array.from(qst, x => x || null);
+    const ins = await sb.from('quiz_runs').insert(row);
+    if (ins.error && row.qstats) { delete row.qstats; await sb.from('quiz_runs').insert(row); }
   }
 
   // командалар
@@ -1993,6 +2009,8 @@ function runQuiz(quiz, cfg) {
       });
       if (team) for (let t = 0; t < NT; t++) tscore[t] += tn[t] ? Math.round(tp[t] / tn[t]) : 0;
     } else if (screenRes) { okc = screenRes.ok ? 1 : 0; if (!isNumQ(q) && screenRes.val >= 0) counts[screenRes.val]++; }
+    qst[qi] = { t: q.t, ok: okc, ans: screen ? (screenRes ? 1 : 0) : answers.size, tot: screen ? 1 : active().length };
+    if (!screen) players.forEach(p => { if (!p.q) p.q = []; p.q[qi] = p.dq || !r[p.id] || r[p.id].na ? -1 : (r[p.id].ok ? 1 : 0); });
     ranking = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score);
     ranking.forEach((p, i) => { if (r[p.id]) { r[p.id].rank = i + 1; r[p.id].score = p.score; } });
     if (!screen) { lastMsg = { ph: 'rev', qi, n: Q.length, k: isNumQ(q) ? 'num' : 'c', c: q.c, a: q.a, u: q.u || '', counts, okc, r, nt: NT, ts: tscore.slice() }; push(); }
@@ -2679,6 +2697,81 @@ async function openSearch() {
 }
 $('srchBtn').onclick = openSearch;
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && window.__staff) { e.preventDefault(); $('srch') ? $('srch').remove() : openSearch(); } });
+
+
+// ===== Викторина талдауы және Excel =====
+function runAnalysis(x) {
+  const box = el('div', 'qan'), qs = x.qstats || [], res = (x.results || []).filter(r => r.q);
+  if (!qs.some(Boolean)) { box.appendChild(el('p', 'gm', 'Сұрақ бойынша талдау жоқ (ескі ойын немесе update-11.sql іске қосылмаған).')); return box; }
+  box.appendChild(el('h4', '', 'Сұрақтар талдауы'));
+  const hard = [];
+  qs.forEach((s, i) => {
+    if (!s) return; const pct = s.tot ? Math.round(100 * s.ok / s.tot) : 0, col = pct >= 70 ? '#26890C' : pct >= 40 ? '#D89E00' : '#E21B3C';
+    const row = el('div', 'qnr'), bar = el('div', 'bar2'), fill = el('i'); fill.style.cssText = 'width:' + pct + '%;background:' + col; bar.appendChild(fill);
+    const lab = el('span', '', (i + 1) + '. ' + s.t); lab.title = s.t;
+    row.append(lab, bar, el('span', '', s.ok + '/' + s.tot + ' · ' + pct + '%')); box.appendChild(row);
+    if (s.tot >= 2 && pct < 60) hard.push([pct, i + 1]);
+  });
+  if (hard.length) { hard.sort((a, b) => a[0] - b[0]); box.appendChild(el('div', 'hint', 'Қайталауға ұсыныс: ' + hard.slice(0, 4).map(h => h[1] + '-сұрақ (' + h[0] + '%)').join(', '))); }
+  const weak = res.map(r => { const a = r.q.filter(v => v >= 0).length, ok = r.q.filter(v => v === 1).length; return { n: r.n, a, ok, tot: r.q.length }; }).filter(r => r.tot && r.ok / r.tot < .5).sort((a, b) => a.ok - b.ok);
+  if (weak.length) box.appendChild(el('div', 'hint', 'Көмек керек оқушылар: ' + weak.slice(0, 8).map(w => w.n.replace(/ \(.*\)$/, '') + ' (' + w.ok + '/' + w.tot + ')').join(', ')));
+  return box;
+}
+function download(name, text, mime) {
+  const a = document.createElement('a'), u = URL.createObjectURL(new Blob([text], { type: mime || 'text/plain;charset=utf-8' }));
+  a.href = u; a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { a.remove(); URL.revokeObjectURL(u); }, 500);
+}
+function exportRunCsv(x) {
+  const qs = x.qstats || [], res = x.results || [], n = Math.max(qs.length, ...res.map(r => (r.q || []).length), 0);
+  const esc = v => { v = String(v == null ? '' : v); return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const rows = [['Оқушы', 'Команда', 'Ұпай', 'Дұрыс саны'].concat(Array.from({ length: n }, (_, i) => (i + 1) + '-сұрақ'))];
+  res.forEach(r => rows.push([r.n, r.t || '', r.s, r.ok == null ? '' : r.ok].concat(Array.from({ length: n }, (_, i) => { const v = r.q && r.q[i]; return v === 1 ? 1 : v === 0 ? 0 : ''; }))));
+  if (qs.some(Boolean)) rows.push(['Дұрыс жауап %', '', '', ''].concat(Array.from({ length: n }, (_, i) => qs[i] && qs[i].tot ? Math.round(100 * qs[i].ok / qs[i].tot) + '%' : '')));
+  download('viktorina-' + new Date(x.created_at).toISOString().slice(0, 10) + '.csv', '﻿' + rows.map(r => r.map(esc).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+}
+
+// ===== Резервтік көшірме =====
+const bkMsg = (t, c) => note('bkMsg', t, c || '');
+$('bkSave').onclick = async () => {
+  bkMsg('Жиналуда…');
+  const get = async (t, sel) => { const r = await sb.from(t).select(sel || '*'); return r.error ? null : r.data; };
+  const out = { app: 'groowin', v: 1, at: new Date().toISOString(), by: meName };
+  for (const t of ['quizzes', 'lesson_plans', 'rosters', 'roster_students', 'quiz_runs', 'mat_folders', 'mat_items', 'favorites']) { const d = await get(t); if (d) out[t] = d; }
+  if (isAdmin) {
+    for (const t of ['sites', 'games', 'classes', 'allowed_phones']) { const d = await get(t); if (d) out[t] = d; }
+    const pr = await get('profiles', 'id,full_name,phone,role,class_id,active'); if (pr) out.profiles = pr;
+  }
+  const n = k => (out[k] || []).length;
+  download('groowin-backup-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(out), 'application/json');
+  bkMsg('Сақталды: ' + n('quizzes') + ' викторина, ' + n('lesson_plans') + ' жоспар, ' + n('rosters') + ' сынып тізімі' + (isAdmin ? ', ' + n('games') + ' ойын, ' + n('sites') + ' сайт' : '') + '. Файлды қауіпсіз жерде сақта.', 'ok');
+};
+$('bkLoad').onclick = () => $('bkFile').click();
+$('bkFile').onchange = async () => {
+  const f = $('bkFile').files[0]; $('bkFile').value = ''; if (!f) return;
+  let d; try { d = JSON.parse(await f.text()); } catch { return bkMsg('Файл дұрыс емес', 'err'); }
+  if (!d || d.app !== 'groowin') return bkMsg('Бұл Groowin көшірмесі емес', 'err');
+  const c = k => (d[k] || []).length;
+  if (!confirm('Қалпына келтіру: ' + c('quizzes') + ' викторина, ' + c('lesson_plans') + ' жоспар, ' + c('rosters') + ' сынып тізімі' + (isAdmin ? ', ' + c('games') + ' ойын, ' + c('sites') + ' сайт' : '') + '.\nАты бірдей бар жазбалар өткізіліп жіберіледі. Жалғастырамыз ба?')) return;
+  bkMsg('Қалпына келтірілуде…'); let added = 0, skipped = 0, fail = 0;
+  const have = async (t, col) => new Set(((await sb.from(t).select(col)).data || []).map(x => x[col]));
+  const ins = async (t, rows) => { const r = await sb.from(t).insert(rows); if (r.error) { fail += [].concat(rows).length; return null; } added += [].concat(rows).length; return r; };
+  try {
+    const hq = await have('quizzes', 'title'); for (const z of d.quizzes || []) { if (hq.has(z.title)) { skipped++; continue; } await ins('quizzes', { title: z.title, questions: z.questions }); }
+    const hl = await have('lesson_plans', 'title'); for (const z of d.lesson_plans || []) { if (hl.has(z.title)) { skipped++; continue; } await ins('lesson_plans', { title: z.title, steps: z.steps }); }
+    const hr = await have('rosters', 'name');
+    for (const r of d.rosters || []) {
+      if (hr.has(r.name)) { skipped++; continue; }
+      const nr = await sb.from('rosters').insert({ name: r.name }).select().single(); if (nr.error || !nr.data) { fail++; continue; } added++;
+      const st = (d.roster_students || []).filter(s => s.roster_id === r.id).map(s => ({ roster_id: nr.data.id, name: s.name }));
+      if (st.length) await ins('roster_students', st);
+    }
+    if (isAdmin) {
+      const hs = await have('sites', 'url'); for (const s of d.sites || []) { if (hs.has(s.url)) { skipped++; continue; } await ins('sites', { title: s.title, url: s.url, icon: s.icon, descr: s.descr, sort: s.sort || 0 }); }
+      const hg = await have('games', 'id'); for (const g of d.games || []) { if (hg.has(g.id)) { skipped++; continue; } const { created_at, ...row } = g; await ins('games', row); }
+    }
+  } catch (e) { return bkMsg('Қате: ' + e.message, 'err'); }
+  bkMsg('Дайын: ' + added + ' қосылды, ' + skipped + ' өткізілді (бар еді)' + (fail ? ', ' + fail + ' қосылмады' : '') + '.', fail ? 'err' : 'ok');
+};
 
 // ===== Эмодзи таңдау =====
 const EMOJI = ['🎮','🧪','⚡','🍎','🔬','🚀','🌍','🔭','🧲','💡','🔥','💧','🌈','🧮','📐','📏','🔢','➗','🧠','🎯','🏆','🧩','🎲','⚖️','🔋','🌡️','🌌','🪐','☀️','🌙','🧬','⏱️','🎓','📚','🏹','🔊','📡','🌊','🏎️','✈️'];
