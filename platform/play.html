@@ -47,6 +47,17 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 #fsb{border:1px solid var(--line);background:var(--surf);color:var(--ink);border-radius:10px;width:36px;height:36px;font-size:1.1rem;cursor:pointer}
 #warn{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:28px;background:var(--bg)}
 #warn[hidden]{display:none}#warn h1{color:var(--bad)}#warn .go{max-width:340px}
+.pv{display:grid;gap:12px;margin-top:10px}
+.pvb{display:flex;align-items:center;gap:14px;width:100%;min-height:84px;padding:16px 18px;border:0;border-radius:18px;background:var(--c);color:#fff;font:inherit;font-size:1.25rem;font-weight:700;text-align:left;cursor:pointer;transition:transform .12s,opacity .2s}
+.pvb:active{transform:scale(.97)}.pvb .em{font-size:2rem;line-height:1}.pvb.dim{opacity:.4}.pvb.pick{box-shadow:0 0 0 4px var(--ink)}
+.ak{display:flex;gap:8px}.ak textarea{flex:1;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surf);color:var(--ink);font:inherit;font-size:1rem;resize:none;min-height:56px}
+.ak .go{width:auto;margin:0;padding:0 20px}
+.ql{display:grid;gap:8px;margin-top:14px}.qi{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surf)}
+.qi.done{opacity:.45;text-decoration:line-through}.qi span{flex:1;overflow-wrap:anywhere}
+.up{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer;white-space:nowrap}.up.on{background:var(--accent);color:#fff;border-color:transparent}
+.acc{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surf);margin-top:14px}
+.acc b{font-size:1.1rem}.acc small{color:var(--ok);font-weight:600}
+.lnk{background:none;border:0;color:var(--accent);font:inherit;cursor:pointer;padding:6px 0;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -69,6 +80,16 @@ const draw = (...n) => { m.replaceChildren(...n); };
 
 let myId = store.get('qid'); if (!myId) { myId = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()); store.set('qid', myId); }
 let strikes = 0, dq = false, away = false, wantFS = false;
+let acct = null, guest = false;
+async function detectAcct() {
+  try {
+    const k = Object.keys(localStorage).find(x => /^sb-.*-auth-token$/.test(x)); if (!k) return;
+    const s = JSON.parse(localStorage.getItem(k) || 'null'), tok = s && s.access_token, uid = s && s.user && s.user.id; if (!tok || !uid) return;
+    const c = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: 'Bearer ' + tok } } });
+    const { data } = await c.from('profiles').select('full_name,role').eq('id', uid).single();
+    if (data && data.role === 'student' && data.full_name) acct = { uid, name: String(data.full_name).trim().slice(0, 20) };
+  } catch {}
+}
 let sb = null, ch = null, code = '', name = '', gotState = false, curQ = -1, picked = -1, endAt = 0, tmr = null, helloTimer = null, lastPh = '', done = false;
 
 // ===== Толық экран және басқа бетке өтуді бақылау =====
@@ -111,17 +132,22 @@ function joinScreen(msg) {
   const qs = new URLSearchParams(location.search), pre = (qs.get('c') || '').replace(/\D/g, '').slice(0, 6);
   const h = el('h1', '', 'Квизге қосыл'), sub = el('p', 'mute', 'Кодты және атыңды жаз.');
   const lc = el('label', '', 'Код'), ic = document.createElement('input'); ic.id = 'code'; ic.inputMode = 'numeric'; ic.maxLength = 6; ic.placeholder = '123456'; ic.autocomplete = 'off'; ic.value = pre || code;
+  const useAcct = !!acct && !guest;
   const ln = el('label', '', 'Атың'), inn = document.createElement('input'); inn.id = 'nm'; inn.maxLength = 20; inn.placeholder = 'Мысалы: Айдос'; inn.autocomplete = 'nickname'; inn.value = name || store.get('qname') || '';
   const go = el('button', 'go', 'Кіру'), er = el('div', 'err'); er.setAttribute('role', 'alert'); er.textContent = msg || '';
   lc.htmlFor = 'code'; ln.htmlFor = 'nm';
   go.onclick = () => {
     const c = ic.value.replace(/\D/g, ''), n = inn.value.trim();
     if (c.length !== 6) { er.textContent = 'Код 6 саннан тұрады.'; return; }
-    if (!n) { er.textContent = 'Атыңды жаз.'; inn.focus(); return; }
-    code = c; name = n.slice(0, 20); store.set('qname', name); strikes = 0; dq = false; away = false; enterFS(); connect();
+    if (!n && !useAcct) { er.textContent = 'Атыңды жаз.'; inn.focus(); return; }
+    code = c; name = useAcct ? acct.name : n.slice(0, 20); if (!useAcct) store.set('qname', name); strikes = 0; dq = false; away = false; enterFS(); connect();
   };
   inn.onkeydown = ic.onkeydown = e => { if (e.key === 'Enter') go.click(); };
-  draw(h, sub, lc, ic, ln, inn, go, er); (pre ? inn : ic).focus();
+  if (useAcct) {
+    const box = el('div', 'acc'), tx = el('div'); tx.append(el('b', '', acct.name), el('br'), el('small', '', 'Аккаунтпен кірдің: нәтижең «Менің жолым» бөліміне сақталады')); box.appendChild(tx);
+    const gl = el('button', 'lnk', 'Қонақ ретінде кіру (нәтиже сақталмайды)'); gl.type = 'button'; gl.onclick = () => { guest = true; joinScreen(''); };
+    draw(h, el('p', 'mute', 'Кодты жаз.'), lc, ic, box, go, er, gl); ic.focus();
+  } else draw(h, sub, lc, ic, ln, inn, go, er); if (!useAcct) (pre ? inn : ic).focus();
 }
 
 function waitScreen(title, text) { draw(Object.assign(el('div', 'center'), {})); const c = m.firstChild; c.append(el('div', 'dot'), el('h1', '', title), el('p', 'mute', text || '')); }
@@ -138,7 +164,7 @@ function connect() {
   ch.on('broadcast', { event: 'kick' }, ({ payload }) => { if (payload && payload.id === myId) end('Бөлмеден шығарылдың', 'Қайта кіргің келсе, мұғалімнен сұра.', true); });
   ch.subscribe(async s => {
     if (s === 'SUBSCRIBED') {
-      await ch.track({ name });
+      await ch.track(acct && !guest ? { name, uid: acct.uid } : { name });
       const ask = () => ch.send({ type: 'broadcast', event: 'hello', payload: { id: myId } });
       ask(); let tries = 0; clearInterval(helloTimer);
       helloTimer = setInterval(() => {
@@ -163,6 +189,8 @@ function onState(s) {
   if (!s || done) return; gotState = true; paintFS();
   if (s.tm && s.tm[myId] !== undefined) myTeam = s.tm[myId]; else if (s.r && s.r[myId] && s.r[myId].t !== undefined && s.r[myId].t >= 0) myTeam = s.r[myId].t;
   if (s.g === 'cloud') return cloudScreen(s);
+  if (s.g === 'poll') return pollScreen(s);
+  if (s.g === 'ask') return askScreen(s);
   if (s.ph === 'closed') return end('Квиз аяқталды', 'Мұғалім бөлмені жапты.');
   if (s.ph === 'lobby') { if (lastPh !== 'lobby') { lastPh = 'lobby'; curQ = -1; waitScreen('Сен кірдің!', 'Мұғалім квизді бастағанша күт. Атың экранда көрінеді.'); } return; }
   if (dq && s.ph !== 'lobby') { lastPh = s.ph; if (!$('warn').hidden) return; showDq(); return; }
@@ -235,6 +263,7 @@ function final(s) {
   const r = (s.r || {})[myId], c = el('div', 'center');
   c.append(el('h1', '', 'Квиз аяқталды'));
   if (s.ts && myTeam >= 0) { const order = s.ts.map((v, i) => i).sort((a, b) => s.ts[b] - s.ts[a]); c.append(el('p', 'pts', 'Командаң (' + TNAME[myTeam] + '): ' + (order.indexOf(myTeam) + 1) + '-орын')); }
+  if (acct && !guest) c.append(el('p', 'mute', 'Нәтижең «Менің жолым» бөлімінде сақталады ✓'));
   if (r) { c.append(el('p', 'big', r.rank + '-орын'), el('p', 'pts', r.score + ' ұпай'), el('p', 'mute', r.ok + ' / ' + s.n + ' дұрыс жауап')); }
   const top = (s.top || []).slice(0, 3);
   if (top.length) { const d = el('div'); d.style.cssText = 'margin-top:18px;text-align:left;min-width:220px'; top.forEach((p, i) => { const row = el('div'); row.style.cssText = 'display:flex;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)'; row.append(el('b', '', String(i + 1)), Object.assign(el('span', '', p.n), { style: 'flex:1' }), el('b', '', String(p.s))); d.appendChild(row); }); c.appendChild(d); }
@@ -258,7 +287,49 @@ function cloudScreen(s) {
   box.append(inp, b); c.append(el('h1', '', s.t), box, msg, mine); paint(); draw(c); inp.focus();
 }
 
-joinScreen('');
+// ===== Жылдам дауыс / «Түсінікті ме?» =====
+let pollKey = '', pollPick = -1;
+function pollScreen(s) {
+  if (s.ph === 'closed') return end('Дауыс беру аяқталды', 'Рақмет!');
+  const key = s.t + '|' + (s.reset || 0) + '|' + s.o.map(x => x.t).join('|');
+  if (key === pollKey && lastPh === 'poll') return;
+  if (key !== pollKey) pollPick = -1; pollKey = key; lastPh = 'poll';
+  const c = el('div'); c.append(el('h1', '', s.t));
+  const list = el('div', 'pv'), st = el('p', 'mute', pollPick >= 0 ? 'Жауабың қабылданды. Қаласаң өзгерте аласың.' : 'Бірін таңда.'); st.style.textAlign = 'center';
+  s.o.forEach((o, i) => {
+    const b = el('button', 'pvb' + (pollPick >= 0 ? (pollPick === i ? ' pick' : ' dim') : '')); b.type = 'button'; b.style.setProperty('--c', o.c);
+    b.append(el('span', 'em', o.e || ''), el('span', '', o.t));
+    b.onclick = () => {
+      pollPick = i; ch.send({ type: 'broadcast', event: 'vote', payload: { id: myId, v: i } }); if (navigator.vibrate) navigator.vibrate(25);
+      list.querySelectorAll('.pvb').forEach((x, k) => { x.classList.toggle('pick', k === i); x.classList.toggle('dim', k !== i); }); st.textContent = 'Жауабың қабылданды. Қаласаң өзгерте аласың.';
+    };
+    list.appendChild(b);
+  });
+  c.append(list, st); draw(c);
+}
+
+// ===== Сұрақ қорапшасы =====
+let askKey = 0, askUp = new Set(), askSent = 0;
+function askScreen(s) {
+  if (s.ph === 'closed') return end('Сұрақ қорапшасы жабылды', 'Рақмет!');
+  if (s.reset && s.reset !== askKey) { askKey = s.reset; askUp = new Set(); askSent = 0; }
+  lastPh = 'ask';
+  const c = el('div'); c.append(el('h1', '', s.t), el('p', 'mute', 'Сұрағың анонимді: мұғалімге аты көрінбейді. Басқалардың сұрағына дауыс бере аласың.'));
+  const box = el('div', 'ak'), ta = document.createElement('textarea'), b = el('button', 'go', 'Жіберу'), msg = el('p', 'mute', '');
+  ta.maxLength = 160; ta.placeholder = 'Сұрағыңды жаз…'; ta.setAttribute('aria-label', 'Сұрақ'); const left = () => (s.max || 3) - askSent;
+  const paint = () => { msg.textContent = left() > 0 ? 'Тағы ' + left() + ' сұрақ жібере аласың.' : 'Сұрақ лимиті бітті.'; ta.disabled = b.disabled = left() <= 0; };
+  b.onclick = () => { const t = ta.value.trim(); if (!t || left() <= 0) return; ch.send({ type: 'broadcast', event: 'q', payload: { id: myId, t } }); askSent++; ta.value = ''; paint(); if (navigator.vibrate) navigator.vibrate(25); };
+  box.append(ta, b); const ql = el('div', 'ql');
+  (s.l || []).forEach(q => {
+    const row = el('div', 'qi' + (q.d ? ' done' : '')), up = el('button', 'up' + (askUp.has(q.i) ? ' on' : ''), '👍 ' + q.v); up.type = 'button';
+    up.onclick = () => { if (askUp.has(q.i)) return; askUp.add(q.i); ch.send({ type: 'broadcast', event: 'up', payload: { id: myId, i: q.i } }); up.classList.add('on'); up.textContent = '👍 ' + (q.v + 1); };
+    row.append(el('span', '', q.t), up); ql.appendChild(row);
+  });
+  c.append(box, msg, ql); const keep = document.activeElement && document.activeElement.tagName === 'TEXTAREA' ? ta.value : '';
+  draw(c); paint(); if (keep) { ta.value = keep; ta.focus(); }
+}
+
+detectAcct().finally(() => joinScreen(''));
 </script>
 </body>
 </html>
