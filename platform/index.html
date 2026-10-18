@@ -150,6 +150,14 @@ html[data-theme=light] #app .side.card{border-right:2px solid var(--ink);backgro
 .bt-pick button{font:inherit;font-weight:800;font-size:1.05rem;margin:0;min-width:min(300px,80%);padding:10px 16px;border-radius:14px;border:4px solid var(--tc,#fff);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
 .bt-pick button:hover{background:rgba(255,255,255,.2)}
 @media (prefers-reduced-motion:reduce){.bt-c .in{transition:none}.bt-team.hit,.bt-team.heal,.bt-toast>div{animation:none}}
+.upbar{margin:10px 0;max-width:560px}.upbar .ut{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.92rem;margin-bottom:5px}.upbar .ub{height:12px;border-radius:8px;background:rgba(160,190,255,.22);overflow:hidden}.upbar .ub i{display:block;height:100%;width:0;background:var(--accent);border-radius:8px;transition:width .15s linear}
+#dlg{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+#dlg .dbox{background:var(--surf,var(--paper));color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:20px 22px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:14px}
+#dlg .dbox p{margin:0;font-size:1.05rem;line-height:1.45}
+#dlg .drow{display:flex;gap:10px;justify-content:flex-end}#dlg .drow button{margin:0;width:auto;padding:10px 22px}
+#toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:310;display:flex;flex-direction:column;gap:8px;width:min(520px,94vw);pointer-events:none}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:12px;justify-content:space-between;background:var(--surf,var(--paper));color:var(--ink);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:12px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.35);animation:rise .25s ease both}
+.toast.err{border-left-color:#E21B3C}.toast button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:1rem;opacity:.7}
 .stgbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .stgbar button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:99px;padding:7px 14px;font:inherit;font-size:.9rem;cursor:pointer}
 .stgbar button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -533,9 +541,9 @@ body:not(.in-app) #srchBtn{display:none}
       <input id="name" autocomplete="name">
     </div>
     <label for="phone">Телефон нөмірі</label>
-    <input id="phone" type="tel" inputmode="tel" placeholder="+7 700 123 45 67" autocomplete="tel">
+    <input id="phone" type="tel" inputmode="tel" placeholder="+7 700 123 45 67" autocomplete="off" name="gw-phone" data-lpignore="true">
     <label for="pass">Құпия сөз</label>
-    <input id="pass" type="password" autocomplete="current-password">
+    <input id="pass" type="password" autocomplete="new-password" name="gw-pass" data-lpignore="true">
     <p class="hint" id="passHint" hidden>Кемінде 6 таңба.</p>
     <button class="go" id="submit">Кіру</button>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
@@ -904,7 +912,7 @@ function setMode(m) {
   $('nameRow').hidden = m === 'in';
   $('passHint').hidden = m === 'in';
   $('submit').textContent = m === 'in' ? 'Кіру' : 'Тіркелу';
-  $('pass').autocomplete = m === 'in' ? 'current-password' : 'new-password';
+  $('pass').autocomplete = 'new-password';
   say('');
 }
 $('t-in').onclick = () => setMode('in');
@@ -948,7 +956,7 @@ async function showApp(session) {
   document.querySelector('.wrap').classList.toggle('wide', !!session);
   document.body.classList.toggle('in-app', !!session);
   if (!session) closeGame();
-  if (!session) { typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
+  if (!session) { typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; $('phone').value = ''; $('pass').value = ''; try { $('name').value = ''; } catch {} say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const lastA = +ls.get('lastActive');
   if (lastA && Date.now() - lastA > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; await sb.auth.signOut(); return; }
   touch();
@@ -1020,7 +1028,7 @@ async function loadUsers() {
       if (p && a.role === 'student') td.appendChild(mini('Прогресс', () => showStudentPath(p.id, a.full_name || 'Оқушы')));
       if (p && a.role !== 'admin') td.appendChild(mini('Құпия сөз', () => resetPw(a.phone)));
       td.appendChild(mini('Жою', async () => {
-        if (!confirm('Бұл адамды тізімнен жою керек пе?')) return;
+        if (!(await ask('Бұл адамды тізімнен жою керек пе?'))) return;
         if (p) await sb.from('profiles').update({ active: false }).eq('id', p.id);
         await sb.from('allowed_phones').delete().eq('phone', a.phone);
         loadUsers();
@@ -1254,7 +1262,7 @@ function renderNews() {
     d.append(el('small', '', meta.join(' · ') + ' · ' + new Date(n.created_at).toLocaleDateString('kk-KZ') + (n.author ? ', ' + n.author : '')));
     if (isAdmin || (n.author_id && n.author_id === meId)) {
       const b = el('button', 'out', 'Жою'); b.style.cssText = 'margin:8px 0 0 12px;padding:4px 10px';
-      b.onclick = async () => { if (!confirm('Жою керек пе?')) return; await sb.from('announcements').delete().eq('id', n.id); loadNews(); };
+      b.onclick = async () => { if (!(await ask('Жою керек пе?'))) return; await sb.from('announcements').delete().eq('id', n.id); loadNews(); };
       d.appendChild(b);
     }
     box.appendChild(d);
@@ -1306,7 +1314,11 @@ if (ls.get('sideCollapsed')) { $('app').classList.add('collapsed'); $('sideBtn')
 const fs = $('fsBtn'), FS_IN = fs.innerHTML;
 const FS_OUT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg>';
 if (!document.documentElement.requestFullscreen) fs.hidden = true;
-fs.onclick = () => { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => {}); };
+const fsAuto = () => ls.get('fsAuto') !== '0';
+function enterFS() { const d = document.documentElement; if (document.fullscreenElement || !d.requestFullscreen || !fsAuto()) return; try { const r = d.requestFullscreen({ navigationUI: 'hide' }); r && r.catch && r.catch(() => {}); } catch {} }
+fs.onclick = () => { if (document.fullscreenElement) { ls.set('fsAuto', '0'); document.exitFullscreen().catch(() => {}); } else { ls.set('fsAuto', '1'); document.documentElement.requestFullscreen().catch(() => {}); } };
+// Кез келген басу/перне басу кезінде (браузер тек осыған рұқсат береді) толық экранға автоматты өтеді
+['pointerdown', 'keydown', 'touchend'].forEach(ev => document.addEventListener(ev, () => { if (!document.fullscreenElement) enterFS(); }, { capture: true }));
 document.addEventListener('fullscreenchange', () => {
   const on = !!document.fullscreenElement;
   fs.innerHTML = on ? FS_OUT : FS_IN; fs.setAttribute('aria-label', on ? 'Толық экраннан шығу' : 'Толық экран');
@@ -1379,7 +1391,7 @@ async function loadClasses() {
     sel.onchange = async () => { if (sel.value) { await sb.from('teacher_classes').insert({ teacher_id: sel.value, class_id: c.id }); loadClasses(); } };
     d.append(h, p, sel);
     mine.forEach(x => d.append(mini('× ' + tn(x.teacher_id), async () => { await sb.from('teacher_classes').delete().match({ teacher_id: x.teacher_id, class_id: c.id }); loadClasses(); })));
-    d.append(mini('Сыныпты жою', async () => { if (confirm(c.name + ' сыныбын жою керек пе?')) { await sb.from('classes').delete().eq('id', c.id); loadClasses(); } }));
+    d.append(mini('Сыныпты жою', async () => { if ((await ask(c.name + ' сыныбын жою керек пе?'))) { await sb.from('classes').delete().eq('id', c.id); loadClasses(); } }));
     box.appendChild(d);
   });
 }
@@ -1438,8 +1450,8 @@ async function addStudents(text) {
 $('stName').onkeydown = e => { if (e.key === 'Enter') { addStudents($('stName').value); $('stName').value = ''; } };
 $('stName').onpaste = e => { const t = e.clipboardData.getData('text'); if (t.includes('\n')) { e.preventDefault(); addStudents(t); } };
 $('rsBack').onclick = showRosterHome;
-$('stClear').onclick = async () => { if (!confirm('Сыныптағы барлық оқушыны өшіру керек пе?')) return; await sb.from('roster_students').delete().eq('roster_id', curRoster.id); rsStudents = []; renderStudents(); };
-$('rsDel').onclick = async () => { if (!confirm(curRoster.name + ' сыныбын толық жою керек пе?')) return; await sb.from('rosters').delete().eq('id', curRoster.id); showRosterHome(); };
+$('stClear').onclick = async () => { if (!(await ask('Сыныптағы барлық оқушыны өшіру керек пе?'))) return; await sb.from('roster_students').delete().eq('roster_id', curRoster.id); rsStudents = []; renderStudents(); };
+$('rsDel').onclick = async () => { if (!(await ask(curRoster.name + ' сыныбын толық жою керек пе?'))) return; await sb.from('rosters').delete().eq('id', curRoster.id); showRosterHome(); };
 
 // ===== Сабақ құралдары (проекторға арналған үлкен экран) =====
 function stage() { $('stage').hidden = false; const b = $('stageBody'); b.replaceChildren(); return b; }
@@ -1573,7 +1585,7 @@ async function loadLessons() {
     const chips = el('div', 'lpsteps'); st.slice(0, 12).forEach((x, i) => chips.appendChild(el('span', '', (i + 1) + '. ' + (x.t || STEP_TYPES[x.k] || ''))));
     const row = el('div', 'qrow'), go2 = el('button', 'go', 'Бастау'); go2.onclick = () => st.length ? startLesson(z) : alert('Бұл жоспарда қадам жоқ.');
     row.append(go2, mini('Өзгерту', () => openLpEditor(z)), mini('Көшіру', async () => { const r = await sb.from('lesson_plans').insert({ title: (z.title + ' (көшірме)').slice(0, 120), steps: st }); if (r.error) alert(r.error.message); loadLessons(); }),
-      mini('Жою', async () => { if (!confirm('«' + z.title + '» жойылсын ба?')) return; await sb.from('lesson_plans').delete().eq('id', z.id); loadLessons(); }));
+      mini('Жою', async () => { if (!(await ask('«' + z.title + '» жойылсын ба?'))) return; await sb.from('lesson_plans').delete().eq('id', z.id); loadLessons(); }));
     c.append(top, chips, row, favBtn('lesson', z.id)); box.appendChild(c);
   });
   if (!lessons.length) box.appendChild(el('p', 'sub', 'Әзірге жоспар жоқ. «Жаңа жоспар» немесе «45 минуттық үлгі» батырмасын бас.'));
@@ -1605,8 +1617,8 @@ function drawLpSteps() {
 }
 $('lpNew').onclick = () => openLpEditor(null);
 $('lpAdd').onclick = () => { lpEditing.steps.push({ k: 'text', t: '' }); drawLpSteps(); };
-$('lpTpl').onclick = () => {
-  if (lpEditing.steps.length && !confirm('Қазіргі қадамдар үлгімен ауыстырылсын ба?')) return;
+$('lpTpl').onclick = async () => {
+  if (lpEditing.steps.length && !(await ask('Қазіргі қадамдар үлгімен ауыстырылсын ба?'))) return;
   lpEditing.steps = [{ k: 'text', t: 'Кіріспе: бүгінгі мақсат', x: 'Бүгін не үйренеміз?' }, { k: 'cloud', t: 'Ойлану: не білемін?', x: 'Тақырып бойынша не білесің?' }, { k: 'text', t: 'Жаңа тақырып', x: '' }, { k: 'groups', t: 'Топтық жұмыс' }, { k: 'timer', t: 'Тапсырма уақыты' }, { k: 'quiz', t: 'Бекіту: викторина', q: '' }, { k: 'refl', t: 'Рефлексия' }, { k: 'hw', t: 'Үй тапсырмасы', x: '' }];
   if (!$('lpTitle').value.trim()) $('lpTitle').value = '45 минуттық сабақ'; drawLpSteps();
 };
@@ -1633,7 +1645,7 @@ function drawDock() {
   const prev = el('button', '', '◀'); prev.title = 'Алдыңғы'; prev.disabled = i === 0; prev.onclick = () => goStep(i - 1);
   const rerun = el('button', '', '↻'); rerun.title = 'Қадамды қайта іске қосу'; rerun.onclick = () => runStep(cur);
   const last = i === st.length - 1, next = el('button', 'ld-go', last ? 'Аяқтау' : 'Келесі ▶'); next.onclick = () => last ? endLesson(true) : goStep(i + 1);
-  const x = el('button', '', '✕'); x.title = 'Жоспардан шығу'; x.onclick = () => { if (confirm('Сабақ жоспарынан шығасың ба?')) endLesson(false); };
+  const x = el('button', '', '✕'); x.title = 'Жоспардан шығу'; x.onclick = async () => { if ((await ask('Сабақ жоспарынан шығасың ба?'))) endLesson(false); };
   d.append(dots, t, prev, rerun, next, x);
 }
 function startLesson(plan) { SFX.unlock(); lessonRun = { plan, i: 0 }; go('lessons'); drawDock(); runStep(plan.steps[0]); }
@@ -1804,7 +1816,7 @@ async function loadQuizzes() {
     const row = el('div', 'qrow');
     const st = el('button', 'go', 'Бастау'); st.onclick = () => n ? hostQuiz(z) : alert('Бұл викторинада сұрақ жоқ.');
     row.append(st, mini('Өзгерту', () => openEditor(z)), mini('Көшіру', async () => { const { error } = await sb.from('quizzes').insert({ title: (z.title + ' (көшірме)').slice(0, 120), questions: z.questions }); if (error) alert(error.message); else loadQuizzes(); }),
-      mini('Жою', async () => { if (!confirm('«' + z.title + '» викторинасы жойылсын ба?')) return; await sb.from('quizzes').delete().eq('id', z.id); loadQuizzes(); }));
+      mini('Жою', async () => { if (!(await ask('«' + z.title + '» викторинасы жойылсын ба?'))) return; await sb.from('quizzes').delete().eq('id', z.id); loadQuizzes(); }));
     c.append(top, row, favBtn('quiz', z.id)); box.appendChild(c);
   });
   if (!quizzes.length) box.appendChild(el('p', 'sub', 'Әзірге викторина жоқ. «Жаңа викторина» батырмасын бас.'));
@@ -1813,11 +1825,11 @@ async function loadQuizzes() {
     const d = document.createElement('details'), s = document.createElement('summary'), res = x.results || [];
     s.textContent = new Date(x.created_at).toLocaleString('kk-KZ', { dateStyle: 'short', timeStyle: 'short' }) + ' · ' + (x.title || 'Викторина') + ' · ' + x.players + ' оқушы' + (res[0] ? ' · 1-орын: ' + res[0].n : '');
     const ol = document.createElement('ol'); res.forEach(p => ol.appendChild(el('li', '', p.n + (p.t ? ' (' + p.t + ')' : '') + ' — ' + p.s + ' ұпай' + (p.ok ? ', ' + p.ok + ' дұрыс жауап' : ''))));
-    const del = mini('Жою', async () => { if (!confirm('Бұл ойынның нәтижесі жойылсын ба?')) return; await sb.from('quiz_runs').delete().eq('id', x.id); loadQuizzes(); });
+    const del = mini('Жою', async () => { if (!(await ask('Бұл ойынның нәтижесі жойылсын ба?'))) return; await sb.from('quiz_runs').delete().eq('id', x.id); loadQuizzes(); });
     del.style.marginTop = '8px'; const csv = mini('Excel (CSV)', () => exportRunCsv(x)); csv.style.marginTop = '8px';
     d.append(s, ol, runAnalysis(x), csv, del); rb.appendChild(d);
   });
-  if ((r.data || []).length > 1) { const all = mini('Барлығын тазалау', async () => { if (!confirm('Барлық соңғы ойындар жойылсын ба?')) return; await sb.from('quiz_runs').delete().in('id', r.data.map(z => z.id)); loadQuizzes(); }); all.style.margin = '0 0 10px'; rb.prepend(all); }
+  if ((r.data || []).length > 1) { const all = mini('Барлығын тазалау', async () => { if (!(await ask('Барлық соңғы ойындар жойылсын ба?'))) return; await sb.from('quiz_runs').delete().in('id', r.data.map(z => z.id)); loadQuizzes(); }); all.style.margin = '0 0 10px'; rb.prepend(all); }
   $('qzRunsHead').hidden = !(r.data || []).length;
 }
 $('qzNew').onclick = () => openEditor(null);
@@ -1893,7 +1905,7 @@ function qCard(q, i) {
   c.append(h, ta, im, tseg, og, tr); return c;
 }
 $('qzAddQ').onclick = () => { const last = qz.questions[qz.questions.length - 1]; const q = newQ(); if (last) q.s = last.s; qz.questions.push(q); renderEditor(); const cs = $('qzQs').children; cs[cs.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); cs[cs.length - 1].querySelector('textarea').focus(); };
-$('qzBack').onclick = () => { if (confirm('Сақталмаған өзгерістер жоғалады. Шығасың ба?')) loadQuizzes(); };
+$('qzBack').onclick = async () => { if ((await ask('Сақталмаған өзгерістер жоғалады. Шығасың ба?'))) loadQuizzes(); };
 function validateQuiz() {
   if (!$('qzTitle').value.trim()) return 'Викторинаға атау жаз.';
   for (let i = 0; i < qz.questions.length; i++) {
@@ -2019,7 +2031,7 @@ function runQuiz(quiz, cfg) {
     root.hidden = true; root.replaceChildren(); document.body.style.overflow = '';
     if (!saved) saveRun(); if ($('qzList') && !$('v-quiz').hidden) loadQuizzes();
   }
-  close.onclick = () => { if (ph === 'lobby' || ph === 'end' || confirm('Ойынды тоқтатасың ба?')) shutdown(); };
+  close.onclick = async () => { if (ph === 'lobby' || ph === 'end' || (await ask('Ойынды тоқтатасың ба?'))) shutdown(); };
   async function saveRun() {
     saved = true; if (qi < 0) return;
     let res = [...players.values()].sort((a, b) => (a.dq - b.dq) || b.score - a.score).map(p => ({ n: p.name + (p.dq ? ' (нәтижесі өшірілді)' : p.st ? ' (ескерту)' : ''), s: p.score, ok: p.ok, t: p.team >= 0 ? TNAME[p.team] : undefined, q: p.q ? Array.from(p.q, v => v === undefined ? -1 : v) : undefined }));
@@ -2341,11 +2353,11 @@ function runCloud(cfg) {
     inp.onkeydown = e => { if (e.key === 'Enter') ad.click(); };
     const row = el('div', 'qh-crow'); row.append(inp, ad); ctl.appendChild(row);
   }
-  const clr = el('button', 'qh-btn2', 'Тазалау'); clr.type = 'button'; clr.onclick = () => { if (!words.size || confirm('Барлық сөз өшірілсін бе?')) { words.clear(); per.clear(); send('st', { ...lastMsg, reset: Date.now() }); draw(); } };
+  const clr = el('button', 'qh-btn2', 'Тазалау'); clr.type = 'button'; clr.onclick = async () => { if (!words.size || (await ask('Барлық сөз өшірілсін бе?'))) { words.clear(); per.clear(); send('st', { ...lastMsg, reset: Date.now() }); draw(); } };
   const fin = el('button', 'qh-btn2', 'Аяқтау'); fin.type = 'button';
   ctl.append(clr, fin);
   function shutdown() { send('st', { ph: 'closed' }); if (ch) setTimeout(() => { try { sb.removeChannel(ch); } catch {} }, 400); root.hidden = true; root.replaceChildren(); document.body.style.overflow = ''; }
-  close.onclick = fin.onclick = () => { if (!words.size || confirm('Сөз бұлты жабылсын ба?')) shutdown(); };
+  close.onclick = fin.onclick = async () => { if (!words.size || (await ask('Сөз бұлты жабылсын ба?'))) shutdown(); };
   if (!screen) {
     ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: 'host' } } });
     ch.on('presence', { event: 'sync' }, () => { here = Object.keys(ch.presenceState()).filter(k => k !== 'host').length; draw(); });
@@ -2417,13 +2429,13 @@ function renderMats() {
     const k = matKind(it), r = el('div', 'mrow'), n = el('span', 'nm', (k === 'link' ? '🔗 ' : (ICON_BY[k] || '📄') + ' ') + it.title); n.onclick = () => showMat(it);
     r.append(n, mini('Көрсету', () => showMat(it)));
     if (it.kind === 'file') r.append(mini('Жүктеп алу', async () => { const { data } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 300, { download: it.title }); if (data) location.href = data.signedUrl; }));
-    r.append(mini('Жою', async () => { if (!confirm('«' + it.title + '» жойылсын ба?')) return; if (it.storage_path) await sb.storage.from('materials').remove([it.storage_path]); await sb.from('mat_items').delete().eq('id', it.id); loadMats(); }));
+    r.append(mini('Жою', async () => { if (!(await ask('«' + it.title + '» жойылсын ба?'))) return; if (it.storage_path) await sb.storage.from('materials').remove([it.storage_path]); await sb.from('mat_items').delete().eq('id', it.id); loadMats(); }));
     box.appendChild(r);
   });
   if (!box.children.length) box.appendChild(el('p', 'sub', 'Бұл папка бос.'));
 }
 async function delFolder(f) {
-  if (!confirm('«' + f.name + '» папкасы және ішіндегі бәрі жойылсын ба?')) return;
+  if (!(await ask('«' + f.name + '» папкасы және ішіндегі бәрі жойылсын ба?'))) return;
   const desc = id => [id, ...mFolders.filter(x => x.parent_id === id).flatMap(x => desc(x.id))], ids = desc(f.id);
   const paths = mItems.filter(i => ids.includes(i.folder_id) && i.storage_path).map(i => i.storage_path);
   for (let i = 0; i < paths.length; i += 100) await sb.storage.from('materials').remove(paths.slice(i, i + 100));
@@ -2439,8 +2451,10 @@ $('mFile').onchange = async e => {
   const files = [...e.target.files]; e.target.value = '';
   for (const f of files) {
     if (f.size > 50 * 1024 * 1024) { mnote(f.name + ': 50 МБ-тан үлкен, жүктелмеді.', 'err'); continue; }
-    const path = meId + '/' + crypto.randomUUID() + (extOf(f.name) ? '.' + extOf(f.name) : ''); mnote('Жүктелуде: ' + f.name);
-    const up = await sb.storage.from('materials').upload(path, f, { contentType: f.type || 'application/octet-stream' });
+    const path = meId + '/' + crypto.randomUUID() + (extOf(f.name) ? '.' + extOf(f.name) : ''); mnote('');
+    const bar = el('div', 'upbar'), tt = el('div', 'ut'), lab = el('span', '', f.name + ' · 0%'), cn = el('button', 'out', 'Бас тарту'), ub = el('div', 'ub'), fi = el('i'); cn.type = 'button'; cn.style.cssText = 'margin:0;padding:2px 10px'; ub.appendChild(fi); tt.append(lab, cn); bar.append(tt, ub); $('mMsg').before(bar);
+    const t0 = Date.now(), job = uploadP('materials', path, f, (r, l, t) => { const pc = Math.round(100 * r); fi.style.width = pc + '%'; const sp = l / Math.max(1, (Date.now() - t0) / 1000); lab.textContent = f.name + ' · ' + pc + '% (' + fmtMb(l) + ' / ' + fmtMb(t) + (sp > 1e4 ? ', ' + fmtMb(sp) + '/с' : '') + ')'; });
+    cn.onclick = () => job.cancel(); const up = await job.promise; bar.remove();
     if (up.error) { mnote('Қате: ' + up.error.message, 'err'); return; }
     const ins = await sb.from('mat_items').insert({ kind: 'file', title: f.name.slice(0, 120), storage_path: path, mime: f.type, size: f.size, folder_id: mCur });
     if (ins.error) { await sb.storage.from('materials').remove([path]); mnote('Қате: ' + ins.error.message, 'err'); return; }
@@ -2556,14 +2570,14 @@ function genPw() {
   return [...r].map(x => a[x % a.length]).join('');
 }
 async function resetPw(phone) {
-  if (!confirm('+' + phone + ' үшін жаңа құпия сөз орнатылсын ба?')) return;
+  if (!(await ask('+' + phone + ' үшін жаңа құпия сөз орнатылсын ба?'))) return;
   const pw = genPw();
   const { error } = await sb.rpc('set_user_password', { p_phone: phone, p_password: pw });
   if (error) {
     const m = error.message || '';
     return alert(m.includes('forbidden') ? 'Бұл адамның құпия сөзін өзгертуге рұқсатың жоқ.' : m.includes('not registered') ? 'Бұл адам әлі тіркелмеген.' : m.includes('function') ? 'update-7.sql әлі іске қосылмаған сияқты.' : 'Қате: ' + m);
   }
-  prompt('Құпия сөз өзгертілді. Оны көшіріп алып, пайдаланушыға жеткіз:', pw);
+  showSecret('Құпия сөз өзгертілді. Оны көшіріп алып, пайдаланушыға жеткіз:', pw);
   return true;
 }
 
@@ -2688,7 +2702,7 @@ async function loadSites() {
     const row = el('div', 'qrow'), o = el('button', 'go', 'Осында ашу'); o.onclick = () => openSite(s);
     const a = el('a', 'out', '↗ Жаңа қойындыда'); a.href = s.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     row.append(o, a);
-    if (isAdmin) row.append(mini('Өзгерту', () => fillSite(s)), mini('Жою', async () => { if (!confirm('«' + s.title + '» сайты жойылсын ба?')) return; await sb.from('sites').delete().eq('id', s.id); loadSites(); }));
+    if (isAdmin) row.append(mini('Өзгерту', () => fillSite(s)), mini('Жою', async () => { if (!(await ask('«' + s.title + '» сайты жойылсын ба?'))) return; await sb.from('sites').delete().eq('id', s.id); loadSites(); }));
     c.append(top, row, favBtn('site', s.id)); box.appendChild(c);
   });
   if (!SITES.length) box.appendChild(el('p', 'sub', isAdmin ? 'Әзірге сайт жоқ. Жоғарыдағы форма арқылы қос.' : 'Әзірге сайт қосылмаған.'));
@@ -2726,7 +2740,7 @@ function closeSlides() {
   if (!SL) return; const o = SL; SL = null;
   document.removeEventListener('keydown', o.key, true); removeEventListener('resize', o.rs); clearTimeout(o.idle);
   try { o.pdf.destroy(); } catch {} o.ov.remove();
-  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  if (fsAuto()) setTimeout(enterFS, 60); else if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   try { pultPush(); } catch {}
 }
 async function openSlides(it, startAt) {
@@ -2766,6 +2780,49 @@ async function openSlides(it, startAt) {
   document.addEventListener('fullscreenchange', function f() { if (!document.fullscreenElement) { document.removeEventListener('fullscreenchange', f); if (SL === o) closeSlides(); } });
   await render();
 }
+
+// ===== Беттің ішіндегі хабарлар (толық экраннан шығармайды) =====
+function ask(msg, okText, noText) {
+  return new Promise(res => {
+    const ov = document.createElement('div'); ov.id = 'dlg'; ov.setAttribute('role', 'alertdialog'); ov.setAttribute('aria-modal', 'true');
+    const bx = el('div', 'dbox'), p = el('p', '', String(msg)), row = el('div', 'drow'), ok = el('button', 'go', okText || 'Иә'), no = el('button', 'out', noText || 'Жоқ');
+    ok.type = no.type = 'button'; row.append(no, ok); bx.append(p, row); ov.appendChild(bx);
+    const done = v => { document.removeEventListener('keydown', key, true); ov.remove(); res(v); };
+    const key = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done(false); } else if (e.key === 'Enter' && document.activeElement !== no) { e.preventDefault(); e.stopPropagation(); done(true); } };
+    ok.onclick = () => done(true); no.onclick = () => done(false); ov.onclick = e => { if (e.target === ov) done(false); };
+    document.addEventListener('keydown', key, true); (document.fullscreenElement && document.fullscreenElement !== document.documentElement ? document.fullscreenElement : document.body).appendChild(ov); ok.focus();
+  });
+}
+function notify(msg, kind) {
+  let box = $('toasts'); if (!box) { box = document.createElement('div'); box.id = 'toasts'; box.setAttribute('role', 'status'); box.setAttribute('aria-live', 'polite'); document.body.appendChild(box); }
+  const t = el('div', 'toast' + (kind ? ' ' + kind : '')), x = el('button', '', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'Жабу'); t.append(el('span', '', String(msg)), x);
+  const kill = () => { clearTimeout(tm2); t.remove(); }; const tm2 = setTimeout(kill, Math.min(12000, 3500 + String(msg).length * 60)); x.onclick = kill; box.appendChild(t); while (box.children.length > 4) box.firstChild.remove();
+}
+window.alert = m => notify(m, /^(Қате|Сақталмады|Ашылмады|Презентация ашылмады|.*қате)/i.test(String(m)) ? 'err' : '');
+function showSecret(msg, secret) {
+  const ov = document.createElement('div'); ov.id = 'dlg'; const bx = el('div', 'dbox'), code = el('input', ''), row = el('div', 'drow'), cp = el('button', 'out', 'Көшіру'), ok = el('button', 'go', 'Дайын');
+  code.value = secret; code.readOnly = true; code.style.cssText = 'width:100%;font-size:1.3rem;font-weight:700;text-align:center;letter-spacing:1px'; cp.type = ok.type = 'button';
+  cp.onclick = async () => { try { await navigator.clipboard.writeText(secret); cp.textContent = 'Көшірілді ✓'; } catch { code.select(); cp.textContent = 'Белгіленді, Ctrl+C бас'; } };
+  ok.onclick = () => ov.remove(); row.append(cp, ok); bx.append(el('p', '', msg), code, row); ov.appendChild(bx); document.body.appendChild(ov); code.select();
+}
+
+// ===== Файл жүктеу (пайызбен) =====
+function uploadP(bucket, path, file, onp) {
+  let xhr = null, dead = false;
+  const promise = new Promise(async res => {
+    const { data } = await sb.auth.getSession(), tok = data && data.session && data.session.access_token; if (!tok) return res({ error: { message: 'Қайта кір.' } });
+    xhr = new XMLHttpRequest(); xhr.open('POST', SUPABASE_URL + '/storage/v1/object/' + bucket + '/' + path.split('/').map(encodeURIComponent).join('/'));
+    xhr.setRequestHeader('Authorization', 'Bearer ' + tok); xhr.setRequestHeader('apikey', SUPABASE_KEY); xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream'); xhr.setRequestHeader('x-upsert', 'false');
+    let last = Date.now(); const wd = setInterval(() => { if (Date.now() - last > 30000) { dead = true; xhr.abort(); } }, 3000);
+    xhr.upload.onprogress = e => { last = Date.now(); if (e.lengthComputable) onp(e.loaded / e.total, e.loaded, e.total); };
+    xhr.onload = () => { clearInterval(wd); let m = ''; try { m = JSON.parse(xhr.responseText).message || ''; } catch {} res(xhr.status < 300 ? {} : { error: { message: m || 'HTTP ' + xhr.status } }); };
+    xhr.onerror = () => { clearInterval(wd); res({ error: { message: 'Желі қатесі. Интернетті тексер.' } }); };
+    xhr.onabort = () => { clearInterval(wd); res({ error: { message: dead ? 'Жүктеу тоқтап қалды (30 секунд жауап жоқ). Қайта көр.' : 'Жүктеу тоқтатылды.' } }); };
+    xhr.send(file);
+  });
+  return { promise, cancel: () => { try { xhr && xhr.abort(); } catch {} } };
+}
+const fmtMb = b => (b / 1048576).toFixed(b < 1048576 * 10 ? 1 : 0) + ' МБ';
 
 // ===== Телефон-пульт =====
 let pultHost = null;
@@ -2997,7 +3054,7 @@ $('bkFile').onchange = async () => {
   let d; try { d = JSON.parse(await f.text()); } catch { return bkMsg('Файл дұрыс емес', 'err'); }
   if (!d || d.app !== 'groowin') return bkMsg('Бұл Groowin көшірмесі емес', 'err');
   const c = k => (d[k] || []).length;
-  if (!confirm('Қалпына келтіру: ' + c('quizzes') + ' викторина, ' + c('lesson_plans') + ' жоспар, ' + c('rosters') + ' сынып тізімі' + (isAdmin ? ', ' + c('games') + ' ойын, ' + c('sites') + ' сайт' : '') + '.\nАты бірдей бар жазбалар өткізіліп жіберіледі. Жалғастырамыз ба?')) return;
+  if (!(await ask('Қалпына келтіру: ' + c('quizzes') + ' викторина, ' + c('lesson_plans') + ' жоспар, ' + c('rosters') + ' сынып тізімі' + (isAdmin ? ', ' + c('games') + ' ойын, ' + c('sites') + ' сайт' : '') + '.\nАты бірдей бар жазбалар өткізіліп жіберіледі. Жалғастырамыз ба?'))) return;
   bkMsg('Қалпына келтірілуде…'); let added = 0, skipped = 0, fail = 0;
   const have = async (t, col) => new Set(((await sb.from(t).select(col)).data || []).map(x => x[col]));
   const ins = async (t, rows) => { const r = await sb.from(t).insert(rows); if (r.error) { fail += [].concat(rows).length; return null; } added += [].concat(rows).length; return r; };
@@ -3151,7 +3208,7 @@ async function loadHw() {
       const nCheck = ss.filter(s => s.status === 'sent').length;
       top.appendChild(el('span', 'gm', 'Тапсырғандар: ' + ss.length + (tot ? ' / ' + tot : '') + (nCheck ? ' · тексеру керек: ' + nCheck : '')));
       const row = el('div', 'qrow'), go2 = el('button', 'go', nCheck ? 'Тексеру (' + nCheck + ')' : 'Қарау'); go2.onclick = () => reviewHw(x, studs.filter(s => s.class_id === x.class_id), ss);
-      row.append(go2, mini('Жою', async () => { if (!confirm('«' + x.title + '» тапсырмасы және оның жауаптары жойылсын ба?')) return; await sb.from('homeworks').delete().eq('id', x.id); loadHw(); }));
+      row.append(go2, mini('Жою', async () => { if (!(await ask('«' + x.title + '» тапсырмасы және оның жауаптары жойылсын ба?'))) return; await sb.from('homeworks').delete().eq('id', x.id); loadHw(); }));
       c.append(top, row); box.appendChild(c);
     });
     if (!list.length) box.appendChild(el('p', 'sub', 'Әзірге тапсырма жоқ. Жоғарыдағы форма арқылы қой.'));
@@ -3321,9 +3378,9 @@ function runAsk(cfg) {
     if (!qs.length) list.appendChild(el('p', 'qh-wait', 'Оқушылар сұрақ жібергенше күтіп тұрмыз…'));
     F.cnt.textContent = here + ' оқушы · ' + qs.length + ' сұрақ' + (qs.some(q => q.d) ? ' · жауап берілген: ' + qs.filter(q => q.d).length : '');
   }
-  const clr = el('button', 'qh-btn2', 'Тазалау'); clr.type = 'button'; clr.onclick = () => { if (!qs.length || confirm('Барлық сұрақ өшірілсін бе?')) { qs.length = 0; per.clear(); resetT = Date.now(); send('st', msg()); draw(); } };
+  const clr = el('button', 'qh-btn2', 'Тазалау'); clr.type = 'button'; clr.onclick = async () => { if (!qs.length || (await ask('Барлық сұрақ өшірілсін бе?'))) { qs.length = 0; per.clear(); resetT = Date.now(); send('st', msg()); draw(); } };
   const fin = el('button', 'qh-btn2', 'Аяқтау'); fin.type = 'button'; ctl.append(clr, fin);
-  F.close.onclick = fin.onclick = () => { if (!qs.length || confirm('Сұрақ қорапшасы жабылсын ба?')) F.shutdown(ch, send); };
+  F.close.onclick = fin.onclick = async () => { if (!qs.length || (await ask('Сұрақ қорапшасы жабылсын ба?'))) F.shutdown(ch, send); };
   ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: 'host' } } });
   ch.on('presence', { event: 'sync' }, () => { here = Object.keys(ch.presenceState()).filter(k => k !== 'host').length; draw(); });
   ch.on('broadcast', { event: 'hello' }, () => send('st', msg()));
@@ -3485,7 +3542,7 @@ function openBattle() {
     const bUndo = el('button', 'out', '↶ Кері'), bSkip = el('button', 'out', '⏭ Жүрісті өткізу'), bNew = el('button', 'out', '⚙ Баптау');
     bUndo.onclick = () => { if (busy || !g.hist.length) return; const o = JSON.parse(g.hist.pop()); g.teams = o.teams; g.cells = o.cells; g.turn = o.turn; g.log = o.log; g.over = false; dl = Date.now() + cfg.sec * 1000; bw.querySelectorAll('.bt-pick').forEach(x => x.remove()); paint(); };
     bSkip.onclick = () => { if (busy || g.over) return; snap(); say(g.teams[g.turn].n + ': жүріс өткізілді'); nextTurn(); paint(); };
-    bNew.onclick = () => { if (confirm('Ойын тоқтатылып, баптауға қайтасың ба?')) setup(); };
+    bNew.onclick = async () => { if ((await ask('Ойын тоқтатылып, баптауға қайтасың ба?'))) setup(); };
     ctl.append(bUndo, bSkip, bNew);
     bw.appendChild(board); side.append(turnEl, timeEl, teamsEl, legEl, logEl, ctl); wrap.append(bw, side); b.appendChild(wrap); paint();
     tmr = setInterval(() => {
@@ -3549,7 +3606,7 @@ async function loadGameAdmin() {
     const act = document.createElement('div'); act.style.marginTop = '10px';
     act.append(
       mini(g.active ? 'Жасыру' : 'Көрсету', async () => { await sb.from('games').update({ active: !g.active }).eq('id', g.id); loadGameAdmin(); loadGames(); }),
-      mini('Жою', async () => { if (confirm('Ойынды жою керек пе?')) { await sb.from('games').delete().eq('id', g.id); loadGameAdmin(); loadGames(); } }));
+      mini('Жою', async () => { if ((await ask('Ойынды жою керек пе?'))) { await sb.from('games').delete().eq('id', g.id); loadGameAdmin(); loadGames(); } }));
     d.append(h, p, det, act); wrap(g).appendChild(d);
   });
   [...Object.values(sub), ...Object.values(gr)].forEach(d => { d.querySelector('summary').textContent += ' (' + d.querySelectorAll('.news').length + ')'; });
