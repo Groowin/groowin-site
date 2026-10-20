@@ -367,6 +367,35 @@ html[data-theme=dark]{--bg:#0E1117;--surf:#151A23;--paper:#1B212C;--card:#151A23
 html[data-theme=light]{--bg:#F6F7F9;--surf:#fff;--paper:#F1F3F6;--card:#fff;--line:#E5E7EB;--grid:#E5E7EB;--ink:#14171F;--mute:#6B7280;--err:#C62828;--hover:rgba(20,23,31,.05)}
 html[data-theme=milk]{--bg:#FAF5EC;--surf:#FFFDF8;--paper:#F4EDE0;--card:#FFFDF8;--line:#E9E0D0;--grid:#E9E0D0;--ink:#2B2620;--mute:#8A7F70;--err:#C0392B;--hover:rgba(43,38,32,.05)}
 html[data-theme=milk] body.in-app .ni{color:#F28C28}
+
+html[data-theme=ocean]{--bg:#06161F;--surf:#0C2330;--paper:#112C3B;--card:#0C2330;--line:rgba(120,220,255,.15);--grid:rgba(120,220,255,.08);--ink:#E3F4FA;--mute:#80A5B5;--err:#FF8A80;--hover:rgba(120,220,255,.07)}
+html[data-theme=sunset]{--bg:#1A0F1F;--surf:#251529;--paper:#2F1B35;--card:#251529;--line:rgba(255,170,140,.16);--grid:rgba(255,170,140,.08);--ink:#FCEBE6;--mute:#B99CA8;--err:#FF9A8A;--hover:rgba(255,170,140,.07)}
+html[data-theme=forest]{--bg:#0A1510;--surf:#112019;--paper:#172B21;--card:#112019;--line:rgba(140,230,170,.15);--grid:rgba(140,230,170,.08);--ink:#E6F3EA;--mute:#8AAB97;--err:#FF8A80;--hover:rgba(140,230,170,.07)}
+html[data-theme=amoled]{--bg:#000;--surf:#0A0A0A;--paper:#131313;--card:#0A0A0A;--line:rgba(255,255,255,.13);--grid:rgba(255,255,255,.07);--ink:#F2F2F2;--mute:#8E8E93;--err:#FF8A80;--hover:rgba(255,255,255,.07)}
+html[data-theme=ocean] body.in-app{background:radial-gradient(1100px 560px at 85% -8%,rgba(25,181,214,.20),transparent 60%),radial-gradient(800px 500px at 0% 100%,rgba(59,107,255,.12),transparent 60%),var(--bg)!important}
+html[data-theme=sunset] body.in-app{background:radial-gradient(1100px 560px at 90% -8%,rgba(255,120,90,.22),transparent 60%),radial-gradient(900px 500px at 0% 100%,rgba(232,85,154,.14),transparent 60%),var(--bg)!important}
+html[data-theme=forest] body.in-app{background:radial-gradient(1100px 560px at 85% -8%,rgba(31,169,113,.20),transparent 60%),radial-gradient(800px 500px at 0% 100%,rgba(190,220,90,.08),transparent 60%),var(--bg)!important}
+html[data-accent=cyan]{--accent:#19B5D6}html[data-accent=pink]{--accent:#E8559A}
+.thm{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;max-width:600px}
+.thm button{border:2px solid var(--line);border-radius:14px;padding:8px;background:var(--surf);color:var(--ink);cursor:pointer;font:inherit;font-size:.86rem;font-weight:600;text-align:left;transition:transform .15s,border-color .15s}
+.thm button:hover{transform:translateY(-2px)}.thm button[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)}
+.thm .pv{display:block;height:56px;border-radius:9px;background:var(--tb);position:relative;margin-bottom:7px;overflow:hidden;border:1px solid rgba(128,128,128,.25)}
+.thm .pv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:26%;background:var(--ts)}
+.thm .pv::after{content:"";position:absolute;left:34%;top:12px;width:48%;height:8px;border-radius:4px;background:var(--ta);box-shadow:0 15px 0 var(--ts),0 28px 0 var(--ts)}
+.wn-list{display:flex;flex-direction:column;gap:10px;margin:6px 0 14px;max-height:60vh;overflow:auto}
+.wn-ver{display:flex;align-items:baseline;gap:10px;margin:8px 0 2px}.wn-ver b{font-size:1.05rem}.wn-ver small{color:var(--mute)}
+.wn-it{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.wn-it .ic{font-size:1.5rem;line-height:1.2}.wn-it b{display:block}.wn-it span{color:var(--mute);font-size:.92rem}
+.wn-new{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:var(--accent);color:#fff;font-size:.7rem;font-weight:700;vertical-align:middle}
+@keyframes viewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes wnIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes gwob{0%,100%{transform:rotate(0)}30%{transform:rotate(-8deg) scale(1.1)}60%{transform:rotate(6deg) scale(1.1)}}
+@media (prefers-reduced-motion:no-preference){
+.main [id^=v-]:not([hidden]){animation:viewIn .32s both}
+.wn-it{animation:wnIn .4s both}.wn-it:nth-child(2){animation-delay:.07s}.wn-it:nth-child(3){animation-delay:.14s}.wn-it:nth-child(4){animation-delay:.21s}.wn-it:nth-child(5){animation-delay:.28s}.wn-it:nth-child(6){animation-delay:.35s}
+.gwrap{transition:transform .18s}.gwrap:hover{transform:translateY(-4px)}.gwrap:hover .gic,.gwrap:hover svg{animation:gwob .6s}
+.go:active,.out:active{transform:scale(.96)}.go,.out{transition:transform .12s,filter .15s}.go:hover{filter:brightness(1.1)}
+}
 body.in-app{background:var(--bg)!important;font-size:15px}
 html[data-theme] #app .side.card{background:var(--surf);border:0;border-right:1px solid var(--line);box-shadow:none;border-radius:0}
 html[data-theme] #app .main.card{background:transparent}
@@ -990,10 +1019,11 @@ body:not(.in-app) #srchBtn{display:none}
       <button class="go" id="pwSave" style="width:auto;padding:10px 22px">Өзгерту</button>
       <p class="msg" id="pwMsg" role="status" aria-live="polite"></p>
       <h3 style="margin:22px 0 8px;font-size:1.05rem">Көрініс</h3>
-      <div class="seg" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="dark">Қараңғы</button><button type="button" data-t="light">Жарық</button><button type="button" data-t="milk">Сүтті</button></div>
+      <div class="thm" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="dark" style="--tb:#0E1117;--ts:#151A23;--ta:#3B6BFF"><span class="pv"></span>Қараңғы</button><button type="button" data-t="light" style="--tb:#F6F7F9;--ts:#FFFFFF;--ta:#3B6BFF"><span class="pv"></span>Жарық</button><button type="button" data-t="milk" style="--tb:#FAF5EC;--ts:#FFFDF8;--ta:#F28C28"><span class="pv"></span>Сүтті</button><button type="button" data-t="ocean" style="--tb:#06161F;--ts:#0C2330;--ta:#19B5D6"><span class="pv"></span>Теңіз</button><button type="button" data-t="sunset" style="--tb:#1A0F1F;--ts:#251529;--ta:#FF7A5A"><span class="pv"></span>Күннің батуы</button><button type="button" data-t="forest" style="--tb:#0A1510;--ts:#112019;--ta:#1FA971"><span class="pv"></span>Орман</button><button type="button" data-t="amoled" style="--tb:#000000;--ts:#0A0A0A;--ta:#7C5CFF"><span class="pv"></span>Қара</button></div>
       <p class="hint" style="margin:14px 0 8px">Акцент түсі</p>
-      <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button></div>
+      <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button><button type="button" data-a="cyan" style="--c:#19B5D6" aria-label="Көгілдір"></button><button type="button" data-a="pink" style="--c:#E8559A" aria-label="Қызғылт"></button></div>
       <hr style="border:0;border-top:1px solid var(--line);margin:22px 0 6px;max-width:460px">
+      <button class="out" id="wnBtn" type="button" style="margin-right:8px">✨ Не жаңа?</button>
       <button class="out" id="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:8px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Шығу</button>
     </div>
 
@@ -1124,7 +1154,7 @@ async function showApp(session) {
   meId = session.user.id;
   const roles = { admin: 'Админ', teacher: 'Мұғалім', student: 'Оқушы' };
   const hi = 'Сәлем, ' + (me?.full_name || 'қонақ') + '!';
-  if (typedFor !== session.user.id) { typedFor = session.user.id; typeText($('hello'), hi); window.skyWarp && window.skyWarp(); go('physics'); }
+  if (typedFor !== session.user.id) { typedFor = session.user.id; typeText($('hello'), hi); window.skyWarp && window.skyWarp(); go('physics'); setTimeout(maybeWhatsNew, 2800); }
   else $('hello').textContent = hi;
   $('role').textContent = roles[me?.role] || 'Оқушы';
   $('accName').textContent = me?.full_name || '';
@@ -1384,7 +1414,7 @@ renderGames();
 
 // ===== Тема =====
 const ls = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
-const THEMES = ['dark', 'light', 'milk'], ACCENTS = ['blue', 'green', 'violet', 'orange'];
+const THEMES = ['dark', 'light', 'milk', 'ocean', 'sunset', 'forest', 'amoled'], ACCENTS = ['blue', 'green', 'violet', 'orange', 'cyan', 'pink'];
 let pref = ls.get('theme'); if (!THEMES.includes(pref)) pref = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
 let acc = ls.get('accent'); if (!ACCENTS.includes(acc)) acc = pref === 'milk' ? 'orange' : 'blue';
 function applyTheme(inApp) {
@@ -1392,6 +1422,34 @@ function applyTheme(inApp) {
   document.documentElement.dataset.accent = acc;
   document.querySelectorAll('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === pref)));
   document.querySelectorAll('#accSw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.a === acc)));
+
+// ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
+// Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
+const CHANGELOG = [
+  { ver: '2.1', date: '21.10.2026', items: [
+    ['🕵️', 'Лаборатория-детектив', 'Жаңа тақта ойыны: физика есептерімен күдіктілерді ақтап, кінәліні табыңдар.'],
+    ['📝', 'Ойын жинақтарының жаңа редакторы', 'Енді арнайы белгі жазбайсың: сұрақ, жауап, қате бөлек өріс, дұрысын дөңгелекпен белгілейсің.'],
+    ['🎨', '4 жаңа тема', 'Теңіз, Күннің батуы, Орман, Қара (AMOLED) және 2 жаңа акцент түсі. Аккаунт → Көрініс.'],
+    ['✨', 'Анимациялар', 'Бөлімдер, ойын карточкалары мен түймелер жайлы қозғалады.'],
+    ['🔔', '«Не жаңа?» терезесі', 'Жаңа функция қосылғанда осылай хабарлаймыз. Кейін Аккаунт бетінен қайта ашуға болады.']
+  ] },
+  { ver: '2.0', date: '20.10.2026', items: [
+    ['🧩', 'Телефонсыз тақта ойындары', 'Қателікті тап, Тізбек, Эстафета, Бәс. Жинақтарды сабақ жоспарына қадам етіп қосуға болады.'],
+    ['📑', 'PDF презентация', 'Слайдтарды телефонмен басқару, лазер көрсеткіш.'],
+    ['📚', 'Сабақ жоспары мен үй тапсырмасы', 'Сабақты қадамдарға бөліп жүргізу, тапсырма беру және бағалау.']
+  ] }
+];
+const WN_VER = CHANGELOG[0].ver;
+function showWhatsNew(all) {
+  const { box, close } = modal('✨ Не жаңа?'); const list = el('div', 'wn-list');
+  (all ? CHANGELOG : CHANGELOG.slice(0, 1)).forEach((v, vi) => {
+    const hd = el('div', 'wn-ver'); hd.append(el('b', '', 'Нұсқа ' + v.ver), el('small', '', v.date)); if (vi === 0) hd.firstChild.appendChild(el('span', 'wn-new', 'ЖАҢА')); list.appendChild(hd);
+    v.items.forEach(([ic, t, d]) => { const r = el('div', 'wn-it'), tx = el('div', ''); tx.append(el('b', '', t), el('span', '', d)); r.append(el('span', 'ic', ic), tx); list.appendChild(r); });
+  });
+  const ok = el('button', 'go', 'Түсінікті'); ok.type = 'button'; ok.style.cssText = 'width:auto;padding:10px 26px;margin:0'; ok.onclick = close; box.append(list, ok); ls.set('seenVer', WN_VER); SFX.pop();
+}
+function maybeWhatsNew() { if (ls.get('seenVer') !== WN_VER && !$('app').hidden && !document.querySelector('.qh-modal')) showWhatsNew(false); }
+$('wnBtn').onclick = () => showWhatsNew(true);
 }
 function setTheme(t) { pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'orange'; applyTheme(true); }
 $('themeBtn').onclick = () => setTheme(THEMES[(THEMES.indexOf(pref) + 1) % THEMES.length]);
