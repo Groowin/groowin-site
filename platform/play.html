@@ -81,6 +81,11 @@ const draw = (...n) => { m.replaceChildren(...n); };
 let myId = store.get('qid'); if (!myId) { myId = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()); store.set('qid', myId); }
 let strikes = 0, dq = false, away = false, wantFS = false;
 let acct = null, guest = false;
+const AVE = ['🦊','🐼','🐯','🦁','🐸','🐵','🐧','🦉','🐙','🦄','🐲','🐬','🦋','🐢','🐰','🐨','🦖','🚀','👽','🤖','🧙','🥷','🦸','⚡','🔥','🌟','🎧','🎮','🧠','🍉','🌈','🪐'], AVC = ['#E5484D','#F76B15','#E0A100','#30A46C','#12A594','#3E63DD','#8E4EC6','#D6409F'];
+const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } }, lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+const avOk = s => { const m = String(s || '').match(/^(.+)\|(\d)$/); return m && AVC[+m[2]] ? { e: m[1], c: +m[2] } : null; };
+let myAv = ''; const avCur = () => (acct && !guest && avOk(acct.av) ? acct.av : (avOk(myAv) ? myAv : (avOk(lsGet('avatar')) ? lsGet('avatar') : '')));
+function avSpan(av, size) { const a = avOk(av), s = document.createElement('span'); s.textContent = a ? a.e : '🙂'; s.style.cssText = 'display:inline-grid;place-items:center;border-radius:50%;flex:none;width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size * .55) + 'px;background:' + (a ? AVC[a.c] : '#667') ; return s; }
 async function detectAcct() {
   try {
     const k = Object.keys(localStorage).find(x => /^sb-.*-auth-token$/.test(x)); if (!k) return;
@@ -88,6 +93,7 @@ async function detectAcct() {
     const c = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: 'Bearer ' + tok } } });
     const { data } = await c.from('profiles').select('full_name,role').eq('id', uid).single();
     if (data && data.role === 'student' && data.full_name) acct = { uid, name: String(data.full_name).trim().slice(0, 20) };
+    if (acct) { try { const r2 = await c.from('profiles').select('avatar').eq('id', uid).single(); if (r2.data && r2.data.avatar) acct.av = r2.data.avatar; } catch {} }
   } catch {}
 }
 let sb = null, ch = null, code = '', name = '', gotState = false, curQ = -1, picked = -1, endAt = 0, tmr = null, helloTimer = null, lastPh = '', done = false;
@@ -142,19 +148,22 @@ function joinScreen(msg) {
     if (!n && !useAcct) { er.textContent = 'Атыңды жаз.'; inn.focus(); return; }
     code = c; name = useAcct ? acct.name : n.slice(0, 20); if (!useAcct) store.set('qname', name); strikes = 0; dq = false; away = false; enterFS(); connect();
   };
+  const avRow = el('div'); avRow.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 2px';
+  const pickAv = () => { avRow.replaceChildren(); const cur = avCur(); const lb = el('span', 'mute', 'Аватар:'); avRow.append(lb, avSpan(cur, 34)); AVE.slice(0, 10).forEach((e, i) => { const b = el('button', 'lnk', e); b.type = 'button'; b.style.cssText = 'font-size:1.3rem;padding:2px 4px;text-decoration:none'; b.onclick = () => { myAv = e + '|' + (i % 8); lsSet('avatar', myAv); if (acct) acct.av = myAv; pickAv(); }; avRow.appendChild(b); }); };
+  if (!avOk(avCur())) { const i = Math.floor(Math.random() * AVE.length); myAv = AVE[i] + '|' + (i % 8); } pickAv();
   inn.onkeydown = ic.onkeydown = e => { if (e.key === 'Enter') go.click(); };
   if (useAcct) {
     const box = el('div', 'acc'), tx = el('div'); tx.append(el('b', '', acct.name), el('br'), el('small', '', 'Аккаунтпен кірдің: нәтижең «Менің жолым» бөліміне сақталады')); box.appendChild(tx);
     const gl = el('button', 'lnk', 'Қонақ ретінде кіру (нәтиже сақталмайды)'); gl.type = 'button'; gl.onclick = () => { guest = true; joinScreen(''); };
-    draw(h, el('p', 'mute', 'Кодты жаз.'), lc, ic, box, go, er, gl); ic.focus();
-  } else draw(h, sub, lc, ic, ln, inn, go, er); if (!useAcct) (pre ? inn : ic).focus();
+    draw(h, el('p', 'mute', 'Кодты жаз.'), lc, ic, box, avRow, go, er, gl); ic.focus();
+  } else draw(h, sub, lc, ic, ln, inn, avRow, go, er); if (!useAcct) (pre ? inn : ic).focus();
 }
 
 function waitScreen(title, text) { draw(Object.assign(el('div', 'center'), {})); const c = m.firstChild; c.append(el('div', 'dot'), el('h1', '', title), el('p', 'mute', text || '')); }
 
 function connect() {
   waitScreen('Қосылуда…', 'Бөлме іздеп жатырмыз');
-  $('who').textContent = name;
+  { const a = avOk(avCur()); $('who').textContent = (a ? a.e + ' ' : '') + name; }
   gotState = false; done = false; curQ = -1; picked = -1; lastPh = '';
   try { if (ch) sb.removeChannel(ch); } catch {}
   if (!sb) sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -164,7 +173,7 @@ function connect() {
   ch.on('broadcast', { event: 'kick' }, ({ payload }) => { if (payload && payload.id === myId) end('Бөлмеден шығарылдың', 'Қайта кіргің келсе, мұғалімнен сұра.', true); });
   ch.subscribe(async s => {
     if (s === 'SUBSCRIBED') {
-      await ch.track(acct && !guest ? { name, uid: acct.uid } : { name });
+      await ch.track(acct && !guest ? { name, uid: acct.uid, av: avCur() } : { name, av: avCur() });
       const ask = () => ch.send({ type: 'broadcast', event: 'hello', payload: { id: myId } });
       ask(); let tries = 0; clearInterval(helloTimer);
       helloTimer = setInterval(() => {
