@@ -387,6 +387,44 @@ html[data-accent=cyan]{--accent:#19B5D6}html[data-accent=pink]{--accent:#E8559A}
 .wn-it{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
 .wn-it .ic{font-size:1.5rem;line-height:1.2}.wn-it b{display:block}.wn-it span{color:var(--mute);font-size:.92rem}
 .wn-new{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:var(--accent);color:#fff;font-size:.7rem;font-weight:700;vertical-align:middle}
+.av-c{--s:40px;display:inline-grid;place-items:center;width:var(--s);height:var(--s);border-radius:50%;font-size:calc(var(--s)*.55);line-height:1;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
+.av-pv{display:grid;place-items:center;margin:4px 0 12px}
+.av-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-bottom:12px}
+.av-grid button{font-size:1.5rem;padding:6px 0;border:2px solid transparent;border-radius:12px;background:var(--paper);cursor:pointer;transition:transform .12s}
+.av-grid button:hover{transform:scale(1.12)}.av-grid button[aria-pressed=true]{border-color:var(--accent);background:var(--hover)}
+.av-cols{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.av-cols button{width:32px;height:32px;border-radius:50%;border:0;cursor:pointer}
+.av-cols button[aria-pressed=true]{outline:3px solid var(--ink);outline-offset:2px}
+.av-acts{display:flex;gap:8px;flex-wrap:wrap}
+#meAv{cursor:pointer}#meAv.has{font-size:1.25rem;box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
+.qh-chip{display:inline-flex;align-items:center;gap:8px}.qh-chip .av-c{margin-left:-6px}
+@media (max-width:480px){.av-grid{grid-template-columns:repeat(6,1fr)}}
+.sp-wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.sp-topic{display:inline-flex;gap:8px;align-items:center;padding:6px 16px;border-radius:99px;background:var(--hover);border:1px solid var(--line);font-weight:700}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.sp-card{position:relative;border:2px solid var(--line);border-radius:18px;padding:14px 10px;background:var(--surf,var(--paper));text-align:center;font:inherit;color:inherit;display:flex;flex-direction:column;gap:8px;align-items:center;transition:transform .15s,border-color .2s,box-shadow .2s}
+button.sp-card{cursor:pointer}button.sp-card:hover{transform:translateY(-3px);border-color:var(--accent)}
+.sp-card .nm{font-weight:800;word-break:break-word}.sp-card .vt{font-weight:900;font-size:1.8rem}
+.sp-card.seen{opacity:.6}.sp-card.seen::after{content:"✓";position:absolute;top:8px;right:12px;color:#30A46C;font-weight:900;font-size:1.2rem}
+.sp-card.cur{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 30%,transparent)}
+.sp-card.tgt{border-color:#F5B800;box-shadow:0 0 0 4px rgba(245,184,0,.28)}
+.sp-card.top{border-color:#E5484D;box-shadow:0 0 0 4px rgba(229,72,77,.3)}
+.sp-card.isspy{border-color:#E5484D;background:rgba(229,72,77,.12)}
+.sp-stamp{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%) rotate(-12deg);padding:0 10px;border:4px solid #E5484D;border-radius:8px;color:#E5484D;font-weight:900;letter-spacing:.08em;background:rgba(0,0,0,.45);white-space:nowrap}
+.sp-d{font-weight:900;font-size:1.3rem;color:#30A46C}.sp-sc{font-weight:700;color:var(--mute)}
+.sp-ov{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;background:rgba(5,8,18,.94);padding:20px}
+.sp-face{width:min(540px,94vw);border-radius:24px;padding:28px 24px;text-align:center;background:var(--surf,#151A23);color:var(--ink);border:2px solid var(--line);display:flex;flex-direction:column;gap:14px;align-items:center}
+.sp-face h2{margin:0}.sp-word{font-size:clamp(2rem,7vw,3.4rem);font-weight:900;color:var(--accent);line-height:1.15}
+.sp-spy{font-size:clamp(2rem,7vw,3.2rem);font-weight:900;color:#E5484D;border:5px solid #E5484D;border-radius:14px;padding:2px 22px;transform:rotate(-4deg);letter-spacing:.08em}
+.sp-bar{height:6px;border-radius:3px;background:var(--line);width:100%;overflow:hidden}.sp-bar i{display:block;height:100%;background:var(--accent);animation:spBar 8s linear forwards}
+.sp-ask{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;font-weight:800;font-size:clamp(1.1rem,2.6vw,1.7rem);padding:10px;border:1px dashed var(--line);border-radius:16px}
+.sp-arrow{font-size:2rem;color:var(--accent)}
+.sp-res{padding:16px 20px;border-radius:16px;font-weight:900;font-size:clamp(1.2rem,3vw,2rem);text-align:center}
+.sp-res.civ{background:rgba(48,164,108,.18);color:#30A46C}.sp-res.spy{background:rgba(229,72,77,.18);color:#E5484D}.sp-res.half{background:rgba(245,184,0,.18);color:#E0A100}
+@keyframes spBar{from{width:100%}to{width:0}}
+@keyframes spFlip{from{opacity:0;transform:rotateY(90deg) scale(.9)}to{opacity:1;transform:none}}
+@keyframes spStamp{0%{opacity:0;transform:translate(-50%,-50%) rotate(-12deg) scale(3)}70%{opacity:1;transform:translate(-50%,-50%) rotate(-12deg) scale(.9)}100%{transform:translate(-50%,-50%) rotate(-12deg) scale(1)}}
+@media (prefers-reduced-motion:no-preference){.sp-card.flip{animation:spFlip .5s both;animation-delay:calc(var(--i,0)*90ms)}.sp-stamp{animation:spStamp .5s .6s both}.sp-res{animation:spFlip .5s both}.sp-wrap.fresh>*{animation:bgUp .35s both}}
+@media (prefers-reduced-motion:reduce){.sp-bar i{animation:none;width:100%}}
 @keyframes viewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes wnIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes gwob{0%,100%{transform:rotate(0)}30%{transform:rotate(-8deg) scale(1.1)}60%{transform:rotate(6deg) scale(1.1)}}
@@ -1018,6 +1056,8 @@ body:not(.in-app) #srchBtn{display:none}
       <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin:8px 0 0"><input type="checkbox" id="pwShow" style="width:auto"> Жазғанда көрсету</label>
       <button class="go" id="pwSave" style="width:auto;padding:10px 22px">Өзгерту</button>
       <p class="msg" id="pwMsg" role="status" aria-live="polite"></p>
+      <h3 style="margin:22px 0 8px;font-size:1.05rem">Аватар</h3>
+      <div id="accAv" style="display:flex;align-items:center;gap:14px;margin:0 0 4px"></div>
       <h3 style="margin:22px 0 8px;font-size:1.05rem">Көрініс</h3>
       <div class="thm" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="dark" style="--tb:#0E1117;--ts:#151A23;--ta:#3B6BFF"><span class="pv"></span>Қараңғы</button><button type="button" data-t="light" style="--tb:#F6F7F9;--ts:#FFFFFF;--ta:#3B6BFF"><span class="pv"></span>Жарық</button><button type="button" data-t="milk" style="--tb:#FAF5EC;--ts:#FFFDF8;--ta:#F28C28"><span class="pv"></span>Сүтті</button><button type="button" data-t="ocean" style="--tb:#06161F;--ts:#0C2330;--ta:#19B5D6"><span class="pv"></span>Теңіз</button><button type="button" data-t="sunset" style="--tb:#1A0F1F;--ts:#251529;--ta:#FF7A5A"><span class="pv"></span>Күннің батуы</button><button type="button" data-t="forest" style="--tb:#0A1510;--ts:#112019;--ta:#1FA971"><span class="pv"></span>Орман</button><button type="button" data-t="amoled" style="--tb:#000000;--ts:#0A0A0A;--ta:#7C5CFF"><span class="pv"></span>Қара</button></div>
       <p class="hint" style="margin:14px 0 8px">Акцент түсі</p>
@@ -1154,11 +1194,11 @@ async function showApp(session) {
   meId = session.user.id;
   const roles = { admin: 'Админ', teacher: 'Мұғалім', student: 'Оқушы' };
   const hi = 'Сәлем, ' + (me?.full_name || 'қонақ') + '!';
-  if (typedFor !== session.user.id) { typedFor = session.user.id; typeText($('hello'), hi); window.skyWarp && window.skyWarp(); go('physics'); setTimeout(maybeWhatsNew, 2800); }
+  if (typedFor !== session.user.id) { typedFor = session.user.id; typeText($('hello'), hi); window.skyWarp && window.skyWarp(); go('physics'); setTimeout(() => { if (!avParse(myAvatar) && !ls.get('avAsked')) { ls.set('avAsked', '1'); openAvatarPicker(() => setTimeout(maybeWhatsNew, 400)); } else maybeWhatsNew(); }, 2400); }
   else $('hello').textContent = hi;
   $('role').textContent = roles[me?.role] || 'Оқушы';
   $('accName').textContent = me?.full_name || '';
-  $('meNm').textContent = me?.full_name || 'Қонақ'; $('meRl').textContent = roles[me?.role] || 'Оқушы'; $('meAv').textContent = (me?.full_name || '?').trim().charAt(0).toUpperCase();
+  $('meNm').textContent = me?.full_name || 'Қонақ'; $('meRl').textContent = roles[me?.role] || 'Оқушы'; meName = me?.full_name || ''; if (me && avParse(me.avatar)) { myAvatar = me.avatar; ls.set('avatar', me.avatar); } else if (avParse(myAvatar)) { try { sb.rpc('set_my_avatar', { p: myAvatar }); } catch {} } paintMeAv();
   if (document.activeElement !== $('accEdit')) $('accEdit').value = me?.full_name || '';
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
@@ -1422,10 +1462,19 @@ function applyTheme(inApp) {
   document.documentElement.dataset.accent = acc;
   document.querySelectorAll('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === pref)));
   document.querySelectorAll('#accSw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.a === acc)));
+}
+function setTheme(t) { pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'orange'; applyTheme(true); }
+$('themeBtn').onclick = () => setTheme(THEMES[(THEMES.indexOf(pref) + 1) % THEMES.length]);
+document.querySelectorAll('#themeSeg button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
+document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc = b.dataset.a; ls.set('accent', acc); applyTheme(true); });
 
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '2.2', date: '21.10.2026', items: [
+    ['🕵️', 'Шпион ойыны', 'Құпия карточкалар, сұрақ-жауап талқылауы, дауыс беру. Тақырыптарды өзің жинақ етіп жаса, сабақ жоспарына қос.'],
+    ['🦊', 'Аватар', 'Эмодзи мен түсті таңдап, өз аватарыңды жаса: бүйір панельде, квиз лоббиінде және нәтижелерде көрінеді.']
+  ] },
   { ver: '2.1', date: '21.10.2026', items: [
     ['🕵️', 'Лаборатория-детектив', 'Жаңа тақта ойыны: физика есептерімен күдіктілерді ақтап, кінәліні табыңдар.'],
     ['📝', 'Ойын жинақтарының жаңа редакторы', 'Енді арнайы белгі жазбайсың: сұрақ, жауап, қате бөлек өріс, дұрысын дөңгелекпен белгілейсің.'],
@@ -1450,11 +1499,31 @@ function showWhatsNew(all) {
 }
 function maybeWhatsNew() { if (ls.get('seenVer') !== WN_VER && !$('app').hidden && !document.querySelector('.qh-modal')) showWhatsNew(false); }
 $('wnBtn').onclick = () => showWhatsNew(true);
+
+// ===== Аватар: эмодзи + түс. Серверде profiles.avatar (update-15.sql), қосымша осы құрылғыда сақталады =====
+const AV_E = ['🦊','🐼','🐯','🦁','🐸','🐵','🐧','🦉','🐙','🦄','🐲','🐬','🦋','🐢','🐰','🐨','🦖','🚀','👽','🤖','🧙','🥷','🦸','⚡','🔥','🌟','🎧','🎮','🧠','🍉','🌈','🪐'];
+const AV_C = ['#E5484D', '#F76B15', '#E0A100', '#30A46C', '#12A594', '#3E63DD', '#8E4EC6', '#D6409F'];
+const avParse = s => { const m = String(s || '').match(/^(.+)\|(\d)$/); return m && AV_C[+m[2]] ? { e: m[1], c: +m[2] } : null; };
+const avMake = (e, c) => e + '|' + c;
+const avTxt = av => { const a = avParse(av); return a ? a.e + ' ' : ''; };
+function avEl(av, size, fb) { const a = avParse(av), s = el('span', 'av-c', a ? a.e : (fb || '?')); s.style.setProperty('--s', (size || 40) + 'px'); s.style.background = a ? AV_C[a.c] : 'var(--accent)'; if (!a) s.style.color = '#fff'; return s; }
+let myAvatar = avParse(ls.get('avatar')) ? ls.get('avatar') : '';
+function paintMeAv() {
+  const a = avParse(myAvatar), m = $('meAv'); if (m) { m.classList.toggle('has', !!a); m.style.background = a ? AV_C[a.c] : ''; if (a) m.textContent = a.e; else m.textContent = (meName || '?').trim().charAt(0).toUpperCase() || '?'; }
+  const box = $('accAv'); if (box) { box.replaceChildren(); const b = el('button', 'out', a ? 'Аватарды өзгерту' : 'Аватар таңдау'); b.type = 'button'; b.style.margin = '0'; b.onclick = () => openAvatarPicker(); box.append(avEl(myAvatar, 56, (meName || '?').trim().charAt(0).toUpperCase()), b); }
 }
-function setTheme(t) { pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'orange'; applyTheme(true); }
-$('themeBtn').onclick = () => setTheme(THEMES[(THEMES.indexOf(pref) + 1) % THEMES.length]);
-document.querySelectorAll('#themeSeg button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
-document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc = b.dataset.a; ls.set('accent', acc); applyTheme(true); });
+async function saveAvatar(v) { myAvatar = v; ls.set('avatar', v); paintMeAv(); try { await sb.rpc('set_my_avatar', { p: v }); } catch {} }
+function openAvatarPicker(after) {
+  const { box, close } = modal('Аватарыңды таңда'); const a0 = avParse(myAvatar), cur = { e: a0 ? a0.e : AV_E[Math.floor(Math.random() * AV_E.length)], c: a0 ? a0.c : Math.floor(Math.random() * AV_C.length) };
+  const pv = el('div', 'av-pv'), grid = el('div', 'av-grid'), cols = el('div', 'av-cols');
+  const paint = () => { pv.replaceChildren(avEl(avMake(cur.e, cur.c), 88)); grid.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.e === cur.e))); cols.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.c === cur.c))); };
+  AV_E.forEach(e => { const b = el('button', '', e); b.type = 'button'; b.dataset.e = e; b.setAttribute('aria-label', e); b.onclick = () => { cur.e = e; SFX.tick(); paint(); }; grid.appendChild(b); });
+  AV_C.forEach((c, i) => { const b = el('button', ''); b.type = 'button'; b.dataset.c = i; b.style.background = c; b.setAttribute('aria-label', 'Түс ' + (i + 1)); b.onclick = () => { cur.c = i; SFX.tick(); paint(); }; cols.appendChild(b); });
+  const acts = el('div', 'av-acts'), ok = el('button', 'go', 'Сақтау'), rnd = el('button', 'out', '🎲 Кездейсоқ'), no = el('button', 'out', 'Кейін'); [ok, rnd, no].forEach(x => { x.type = 'button'; x.style.cssText = 'width:auto;margin:0;padding:10px 22px'; });
+  ok.onclick = () => { saveAvatar(avMake(cur.e, cur.c)); SFX.ok(); close(); after && after(); }; no.onclick = () => { close(); after && after(); };
+  rnd.onclick = () => { cur.e = AV_E[Math.floor(Math.random() * AV_E.length)]; cur.c = Math.floor(Math.random() * AV_C.length); SFX.pop(); paint(); }; acts.append(ok, rnd, no); box.append(pv, grid, cols, acts); paint();
+}
+if ($('meAv')) $('meAv').onclick = e => { e.stopPropagation(); openAvatarPicker(); };
 
 // ===== Хабарландырулар =====
 let meRole = '', isAdmin = false, isStaff = false, meName = '', newsTimer = null, newsCache = [], nKindTab = 'all', stuCache = [];
@@ -1544,7 +1613,7 @@ $('accSave').onclick = async () => {
   if (!v) return note('accMsg', 'Атыңды жаз.', 'err');
   const { error } = await sb.rpc('update_my_name', { new_name: v });
   if (error) return note('accMsg', 'Қате: ' + error.message, 'err');
-  meName = v; $('accName').textContent = v; $('meNm').textContent = v; $('meAv').textContent = v.charAt(0).toUpperCase(); $('hello').textContent = 'Сәлем, ' + v + '!'; note('accMsg', 'Сақталды.', 'ok');
+  meName = v; $('accName').textContent = v; $('meNm').textContent = v; paintMeAv(); $('hello').textContent = 'Сәлем, ' + v + '!'; note('accMsg', 'Сақталды.', 'ok');
 };
 $('pwSave').onclick = async () => {
   const v = $('pw1').value;
@@ -1954,6 +2023,7 @@ const PLAY_TOOLS = [
   { k: 'chain', t: 'Тізбек', d: 'Бір команданың жауабы келесі команданың есебіне бастапқы мән болады. Бір қате бәрін бұзады.', cls: false, ic: '<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>' },
   { k: 'relay', t: 'Эстафета «Тақтаға шық»', d: 'Командалар тапсырмаларды кезекпен шешеді, бірінші бітірген жеңеді.', cls: false, ic: '<circle cx="13" cy="4" r="2"/><path d="m5 22 4-9 3 2 3-6 4 4M9 13l-2-3 5-2"/>' },
   { k: 'detective', t: 'Лаборатория-детектив', d: 'Жұмбақ іс: физика есептерін шешіп, күдіктілерді ақтап, кінәліні табыңдар. Телефонсыз, тақтамен.', cls: false, ic: '<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6M8 10h4M10 8v4"/>' },
+  { k: 'spy', t: 'Шпион', d: 'Біреуі шпион: құпия сөзді білмейді. Қалғандары сұрақ қойып, оны тауып, тақырыпты қайталайды. Бір құрылғымен, телефонсыз.', cls: false, ic: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>' },
   { k: 'bet', t: 'Бәс (болжам)', d: 'Тәжірибеге дейін команда болжам жасап, ұпай тігеді. Дұрыс болса ұпай көбейеді.', cls: false, ic: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h.01M16 8h.01M8 16h.01M16 16h.01M12 12h.01"/>' },
   { k: 'battle', t: 'Тапанша мен сапер', d: '4×4 тақта: командалар ұяшық ашады. Мина, тапанша, өмір. Соңғы қалған команда жеңеді.', cls: false, ic: '<circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="1.5"/>' },
   { k: 'wheel', t: 'Бақыт дөңгелегі', d: 'Атаулар дөңгелекте айналады, тоқтағанда таңдалған адам не тақырып шығады.', cls: false, ic: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>' },
@@ -1966,7 +2036,7 @@ const PLAY_TOOLS = [
   { k: 'games', t: 'Геймификация', d: 'Пәндер бөліміндегі ойындар мен виртуалды зертханалар.', cls: false, ic: '<path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.4 11.5 2 15.5 2 17a3 3 0 0 0 5 2.2L9 17h6l2 2.2A3 3 0 0 0 22 17c0-1.5-.4-5.5-.7-8.4A4 4 0 0 0 17.3 5z"/>' }
 ];
 const PL_STAGES = [['all', 'Барлығы'], ['start', '🚀 Сабақ басы'], ['teach', '📖 Түсіндіру'], ['fix', '🎯 Бекіту'], ['team', '👥 Топпен'], ['end', '🌙 Сабақ соңы']];
-const PL_MAP = { quiz: 'fix,end', error: 'teach,fix', chain: 'team,fix', relay: 'team,fix,start', bet: 'start,teach', detective: 'fix,team', battle: 'team,fix,start', race: 'fix,team', cloud: 'start,end', poll: 'teach,end', ask: 'teach,end', wheel: 'start,fix', potato: 'start,fix', random: 'start,fix', groups: 'team', timer: 'teach,team', refl: 'end', team: 'team,fix', lessons: 'teach', games: 'fix' };
+const PL_MAP = { quiz: 'fix,end', error: 'teach,fix', chain: 'team,fix', relay: 'team,fix,start', bet: 'start,teach', detective: 'fix,team', spy: 'start,team', battle: 'team,fix,start', race: 'fix,team', cloud: 'start,end', poll: 'teach,end', ask: 'teach,end', wheel: 'start,fix', potato: 'start,fix', random: 'start,fix', groups: 'team', timer: 'teach,team', refl: 'end', team: 'team,fix', lessons: 'teach', games: 'fix' };
 let plStage = 'all';
 function plFilter() {
   $('plStages').querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', b.dataset.k === plStage));
@@ -2315,7 +2385,7 @@ function runQuiz(quiz, cfg) {
     if (ph !== 'lobby') return;
     cnt.textContent = players.size ? players.size + ' оқушы' : ''; chips.replaceChildren();
     if (!players.size) chips.appendChild(el('span', 'qh-wait', screen ? 'Оқушылар жоқ: командалар ғана ойнайды.' : 'Оқушылар қосылуын күтіп тұрмыз…'));
-    players.forEach(p => { const c = el('button', 'qh-chip', p.name); c.type = 'button'; c.title = screen ? 'Алып тастау' : 'Шығару'; c.onclick = () => { if (!screen) { kicked.add(p.id); send('kick', { id: p.id }); } players.delete(p.id); drawLobby(); }; chips.appendChild(c); });
+    players.forEach(p => { const c = el('button', 'qh-chip'); if (avParse(p.av)) c.appendChild(avEl(p.av, 30)); c.appendChild(document.createTextNode(p.name)); c.type = 'button'; c.title = screen ? 'Алып тастау' : 'Шығару'; c.onclick = () => { if (!screen) { kicked.add(p.id); send('kick', { id: p.id }); } players.delete(p.id); drawLobby(); }; chips.appendChild(c); });
     const ok = screen ? (team || players.size > 0) : players.size > 0;
     startBtn.disabled = !ok; startBtn.textContent = players.size ? 'Бастау (' + players.size + ' оқушы)' : 'Бастау';
   }
@@ -2332,7 +2402,7 @@ function runQuiz(quiz, cfg) {
   function drawTurn() {
     if (!turnBox) return; turnBox.replaceChildren();
     const p = turn && turn.pid ? players.get(turn.pid) : null, tt = p ? p.team : (turn ? turn.team : -1);
-    const who = el('div', 'qh-who'); who.append(el('span', 'qh-wl', 'Жауап береді:'), el('b', '', p ? p.name : (tt >= 0 ? TNAME[tt] + ' команда' : '')));
+    const who = el('div', 'qh-who'); who.append(el('span', 'qh-wl', 'Жауап береді:'), el('b', '', p ? avTxt(p.av) + p.name : (tt >= 0 ? TNAME[tt] + ' команда' : '')));
     if (tt >= 0) { const tg = el('span', 'qh-tg', TNAME[tt]); tg.style.background = QCOL[tt]; who.appendChild(tg); }
     turnBox.appendChild(who);
     if (players.size) {
@@ -2432,7 +2502,7 @@ function runQuiz(quiz, cfg) {
     if (screen) { screenRes && screenRes.ok ? SFX.ok() : SFX.bad(); } else SFX.bell();
     const wrap = el('div', 'qh-q'), head = el('div', 'qh-qhead'); head.append(el('div', 'qh-qt', q.t)); wrap.appendChild(head);
     if (screen) {
-      const p = turn && turn.pid ? players.get(turn.pid) : null, who = p ? p.name : (turn && turn.team >= 0 ? TNAME[turn.team] + ' команда' : '');
+      const p = turn && turn.pid ? players.get(turn.pid) : null, who = p ? avTxt(p.av) + p.name : (turn && turn.team >= 0 ? TNAME[turn.team] + ' команда' : '');
       const bn = el('div', 'qh-banner ' + (screenRes ? (screenRes.ok ? 'ok' : 'bad') : 'bad'), screenRes ? (screenRes.ok ? 'Дұрыс! +' + screenRes.pts : 'Қате') : 'Уақыт бітті');
       bn.appendChild(el('small', '', who)); wrap.appendChild(bn);
     }
@@ -2462,7 +2532,7 @@ function runQuiz(quiz, cfg) {
       [1, 0, 2].forEach(i => { const t = order[i]; if (t === undefined) return; const c = el('div', 'qh-pc p' + (i + 1)); c.style.borderBottom = '6px solid ' + QCOL[t]; c.append(el('b', '', TNAME[t] + ' команда'), el('em', '', tscore[t] + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
       wrap.append(pod, raceTrack(false));
     } else {
-      [1, 0, 2].forEach(i => { const p = okp[i]; if (!p) return; const c = el('div', 'qh-pc p' + (i + 1)); c.append(el('b', '', p.name), el('em', '', p.score + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
+      [1, 0, 2].forEach(i => { const p = okp[i]; if (!p) return; const c = el('div', 'qh-pc p' + (i + 1)); c.append(el('b', '', avTxt(p.av) + p.name), el('em', '', p.score + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
       wrap.appendChild(pod);
     }
     const rest = el('div', 'qh-rest'); (team ? okp.slice(0, 5) : okp.slice(3, 10)).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(team ? i + 1 : i + 4)), el('span', '', p.name + (team && p.team >= 0 ? ' · ' + TNAME[p.team] : '')), el('em', '', String(p.score))); rest.appendChild(row); });
@@ -2486,7 +2556,7 @@ function runQuiz(quiz, cfg) {
         if (!players.has(id)) {
           let u = String(nm).slice(0, 20), n = 2; const taken = () => [...players.values()].some(p => p.name === u);
           while (taken()) u = String(nm).slice(0, 18) + ' ' + n++;
-          const p = addPlayer(id, u, true); p.uid = (metas[0] && metas[0].uid) || null; if (team && ph !== 'lobby') { p.team = smallest(); tmap[id] = p.team; } SFX.pop();
+          const p = addPlayer(id, u, true); p.uid = (metas[0] && metas[0].uid) || null; p.av = (metas[0] && metas[0].av) || ''; if (team && ph !== 'lobby') { p.team = smallest(); tmap[id] = p.team; } SFX.pop();
         }
         players.get(id).here = true;
       });
@@ -3834,6 +3904,7 @@ function bgFinish(b, K, teams, sc, note, again) {
 const bgUid = () => Math.random().toString(36).slice(2, 8);
 const bgS = v => String(v == null ? '' : v).trim();
 const bgJoinErr = (K, D) => { const e = []; const n = D.list.length; if (n < K.min) e.push('Кемінде ' + K.min + ' ' + K.item.toLowerCase() + ' керек.'); (K.headProbs ? K.headProbs(D) : []).forEach(p => { if (!p.w) e.push(p.m); }); D.list.forEach((it, i) => { const p = K.itemProbs(it, D); if (p && !p.w) e.push((i + 1) + '-' + K.item.toLowerCase() + ': ' + p.m); }); return e; };
+const spyShuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const BG = {
   error: {
     k: 'error', ic: '🔎', t: 'Қателікті тап', item: 'Есеп', min: 1, d: 'Слайдта шешімде бір қате бар. Командалар қай қадам қате екенін тауып, дәлелдейді.',
@@ -3999,6 +4070,99 @@ const BG = {
       draw();
     }
   },
+  spy: {
+    k: 'spy', ic: '🕵️', t: 'Шпион', item: 'Сөз', items: 'Сөздер', min: 3, sampleTitle: 'Физика шпионы',
+    d: 'Бір ойыншы шпион: ол құпия сөзді білмейді. Қалғандары сұрақ қойып, шпионды тауып, сонымен бірге тақырыпты қайталайды.',
+    rules: 'Бәріне тақырып көрінеді. Әр ойыншы құпия карточкасын кезекпен көреді: біреуінде сөздің орнына «ШПИОН» жазылған. Ойыншылар бір-біріне сөзді тікелей айтпай сұрақ қояды, шпион сөзді табуға тырысады. Уақыт біткен соң дауыс беріп, шпионды іздейді. Ұсталған шпион сөзді тапса, ол ұпай алады.',
+    howto: 'Әр жолға тақырып пен жасырын сөз (термин, формула, құбылыс) жаз. Тақырып барлығына көрінеді, ал сөзді шпионнан басқасы біледі.',
+    blank: () => ({ v: 2, list: [BG.spy.newItem(), BG.spy.newItem(), BG.spy.newItem()] }), newItem: () => ({ t: '', w: '', n: '' }),
+    empty: it => !bgS(it.t) && !bgS(it.w) && !bgS(it.n),
+    itemProbs(it) { if (!bgS(it.t)) return { m: 'Тақырыпты жаз.' }; if (!bgS(it.w)) return { m: 'Жасырын сөзді жаз.' }; return null; },
+    clean(D) { D.list = D.list.map(it => ({ t: bgS(it.t), w: bgS(it.w), n: bgS(it.n) })).filter(it => !BG.spy.empty(it)); },
+    meta: D => D.list.length + ' сөз',
+    sampleD: () => ({ v: 2, list: [
+      ['Механика', 'Үйкеліс күші', 'Ол қайда пайдалы, қайда зиян?'], ['Механика', 'Импульс', 'Соқтығысқанда не сақталады?'], ['Механика', 'Ауырлық күші', 'Ол қай бағытқа бағытталған?'],
+      ['Жылу', 'Конвекция', 'Қай заттарда болады?'], ['Жылу', 'Меншікті жылу сыйымдылығы', ''], ['Электр', 'Кедергі', 'Қандай өлшем бірлігі бар?'], ['Электр', 'Ток күші', ''],
+      ['Оптика', 'Линза', 'Қандай түрлері бар?'], ['Дыбыс', 'Резонанс', ''], ['Космос', 'Қара тесік', ''], ['Математика', 'Гипотенуза', ''], ['Математика', 'Квадрат теңдеу', 'Дискриминант не үшін керек?']
+    ].map(([t, w, n]) => ({ t, w, n })) }),
+    card: (it, c) => [bgLab('Тақырып', 'барлығына көрінеді'), bgInp('Мысалы: Механика', it.t, v => { it.t = v; c.chg(); }, 60), bgLab('Жасырын сөз немесе ұғым', 'шпионнан басқасы көреді'), bgInp('Мысалы: Үйкеліс күші', it.w, v => { it.w = v; c.chg(); }, 60), bgLab('Талқылау идеясы', 'міндетті емес, тек мұғалімге'), bgTa('Мысалы: Ол қайда пайдалы, қайда зиян?', it.n, 2, v => { it.n = v; c.chg(); })],
+    setup(b, K, cb) {
+      bgHot = null; const cfg = { n: +ls.get('spyN') || 6, min: +ls.get('spyMin') || 3 }; let names = []; try { names = JSON.parse(ls.get('spyNames') || '[]'); } catch {}
+      const draw = () => {
+        b.replaceChildren(); const w = el('div', 'bt-set'), h = el('div', 'big', K.ic + ' ' + K.t); h.style.margin = '0'; const grid = el('div', ''); grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;width:100%';
+        for (let i = 0; i < cfg.n; i++) { const inp = bgInp('Оқушы ' + (i + 1), names[i] || '', v => { names[i] = v; }, 20); inp.className = 'bt-nm'; inp.setAttribute('aria-label', (i + 1) + '-ойыншы аты'); grid.appendChild(inp); }
+        const go = bgB('go', 'Ойынды бастау', () => { ls.set('spyN', cfg.n); ls.set('spyMin', cfg.min); ls.set('spyNames', JSON.stringify(names.slice(0, 12))); cb({ n: cfg.n, names: names.slice(0, cfg.n), min: cfg.min }); }, 'padding:14px 36px;font-size:1.2rem;margin-top:10px');
+        w.append(h, el('p', 'bt-rules', K.rules), el('label', '', 'Ойыншы саны'), bgSeg([4, 5, 6, 7, 8, 10, 12], cfg.n, v => { cfg.n = v; draw(); }), el('label', '', 'Талқылау уақыты (минут)'), bgSeg([2, 3, 5], cfg.min, v => { cfg.min = v; draw(); }), el('label', '', 'Ойыншылар аттары (міндетті емес)'), grid, go); b.appendChild(w);
+      };
+      draw();
+    },
+    run(b, D, _t, K, again, ex) {
+      const N = ex.n, perm = spyShuf(AV_E.map((_, i) => i)), P = Array.from({ length: N }, (_, i) => ({ n: bgS(ex.names[i]) || 'Оқушы ' + (i + 1), av: avMake(AV_E[perm[i]], i % AV_C.length) }));
+      const sc = P.map(() => 0); let order = spyShuf(D.list.map((_, i) => i)), pos = 0, lastSpy = -1, no = 0, R = null;
+      const wrap = () => { b.replaceChildren(); bgHot = null; const w = el('div', 'sp-wrap fresh'); b.appendChild(w); return w; };
+      const head = (w, txt, extra) => { const hd = el('div', 'bg-head'); hd.append(el('h2', '', K.ic + ' ' + txt), el('span', 'sp-topic', 'Тақырып: ' + R.it.t)); if (extra) hd.appendChild(extra); w.appendChild(hd); };
+      const pcard = (i, cls) => { const c = el(cls === 'btn' ? 'button' : 'div', 'sp-card'), p = P[i]; if (cls === 'btn') c.type = 'button'; c.append(avEl(p.av, 64), el('div', 'nm', p.n)); return c; };
+      const finish = () => bgFinish(b, K, P.map(p => ({ n: avTxt(p.av) + p.n, c: AV_C[avParse(p.av).c] })), sc, no + ' раундтан кейінгі нәтиже.', again);
+      const newRound = () => {
+        no++; if (pos >= order.length) { order = spyShuf(order); pos = 0; } const it = D.list[order[pos++]]; let spy; do { spy = Math.floor(Math.random() * N); } while (N > 1 && spy === lastSpy); lastSpy = spy;
+        R = { it, spy, seen: P.map(() => false), votes: P.map(() => 0), ord: spyShuf(P.map((_, i) => i)), ai: 0 }; deal();
+      };
+      const deal = () => {
+        const w = wrap(); head(w, 'Раунд ' + no + ': карточкалар'); w.appendChild(el('p', 'bt-rules', 'Әр ойыншы кезекпен өз карточкасын басып, құпия сөзін көреді. Басқалар қарамасын! Көрген соң «Жасыру» басады.'));
+        const grid = el('div', 'sp-grid'), cards = [], go = bgB('go', '', () => discuss(), 'padding:12px 28px');
+        const upd = () => { const n = R.seen.filter(Boolean).length; go.disabled = n < N; go.textContent = n < N ? 'Талқылау ▶ (' + n + ' / ' + N + ' көрді)' : 'Талқылауды бастау ▶'; };
+        P.forEach((p, i) => { const c = pcard(i, 'btn'); if (R.seen[i]) c.classList.add('seen'); c.style.setProperty('--i', i); c.onclick = () => peek(i, () => { R.seen[i] = true; c.classList.add('seen'); upd(); }); cards.push(c); grid.appendChild(c); });
+        const sk = bgB('out', 'Басқа сөз', () => newRound(), 'padding:12px 20px'), ctl = el('div', 'bg-ctl'); ctl.append(go, sk); w.append(grid, ctl); upd();
+      };
+      const peek = (i, done) => {
+        const ov = el('div', 'sp-ov'), f = el('div', 'sp-face'), p = P[i]; let tm = null; const close = () => { clearTimeout(tm); ov.remove(); done(); };
+        const show = bgB('go', '👁 Көрсету', null, 'padding:14px 34px;font-size:1.2rem'), back = bgB('out', 'Болдырмау', () => { ov.remove(); }, 'padding:10px 22px');
+        f.append(avEl(p.av, 96), el('h2', '', p.n), el('p', 'bt-rules', 'Басқалар қарамасын. Дайын болсаң, «Көрсету» бас.'), show, back);
+        show.onclick = () => {
+          f.replaceChildren(avEl(p.av, 72), el('h2', '', p.n));
+          if (i === R.spy) f.append(el('div', 'sp-spy', 'ШПИОН'), el('p', '', 'Сен сөзді білмейсің. Тақырып: ' + R.it.t + '. Сұрақтардан сөзді тап, бірақ әшкереленбе!'));
+          else f.append(el('div', 'bt-rules', 'Құпия сөз'), el('div', 'sp-word', R.it.w), el('p', '', 'Сөзді тікелей айтпай, шпионды тап.'));
+          const bar = el('div', 'sp-bar'); bar.appendChild(el('i')); f.append(bar, bgB('go', 'Жасыру ✓', close, 'padding:12px 30px')); tm = setTimeout(close, 8000); SFX.pop();
+        };
+        ov.appendChild(f); document.body.appendChild(ov);
+      };
+      const discuss = () => {
+        const w = wrap(), tm = bgTimer(ex.min * 60); head(w, 'Раунд ' + no + ': талқылау', tm); SFX.start && SFX.start();
+        const grid = el('div', 'sp-grid'), cards = P.map((_, i) => { const c = pcard(i); grid.appendChild(c); return c; }), ask = el('div', 'sp-ask');
+        const paint = () => { const a = R.ord[R.ai % N], t = R.ord[(R.ai + 1) % N]; ask.replaceChildren(avEl(P[a].av, 56), el('b', '', P[a].n), el('span', 'sp-arrow', '➜'), avEl(P[t].av, 56), el('b', '', P[t].n), el('span', 'bt-rules', 'сұрақ қояды')); cards.forEach((c, i) => { c.classList.toggle('cur', i === a); c.classList.toggle('tgt', i === t); }); };
+        const nx = bgB('go', 'Келесі сұрақ ▶', () => { R.ai++; SFX.tick(); paint(); }, 'padding:12px 24px');
+        w.append(el('p', 'bt-rules', 'Кезекпен сұрақ қойыңдар: сөзді тікелей атамаңдар. Шпион жалпы жауап беріп, әшкереленбеуге тырысады.'), ask, grid);
+        const ctl = el('div', 'bg-ctl'), gs = bgB('out', '🕵️ Шпион сөзді айтты', () => guess(false), 'padding:12px 20px'), vt = bgB('go', '🗳 Дауыс беру', () => vote(), 'padding:12px 24px'); ctl.append(nx, gs, vt); w.appendChild(ctl);
+        if (bgS(R.it.n)) { const d = document.createElement('details'); d.append(el('summary', '', '💡 Мұғалімге: талқылау идеясы'), el('p', 'bt-rules', R.it.n)); w.appendChild(d); }
+        paint(); setTimeout(() => { if (tm.isConnected && tm.children[1]) tm.children[1].click(); }, 400);
+      };
+      const guess = (afterCatch) => {
+        const w = wrap(); head(w, 'Шпион сөзді атайды'); w.append(el('p', 'bt-rules', afterCatch ? 'Шпион ұсталды! Соңғы мүмкіндік: ол құпия сөзді дұрыс атай ала ма?' : 'Шпион сөзді айтты. Мұғалім тексереді.'));
+        const spy = P[R.spy]; const row = el('div', 'sp-ask'); row.append(avEl(spy.av, 72), el('b', '', spy.n)); const wd = el('div', 'bg-exp', 'Дұрыс сөз (тек мұғалімге): ' + R.it.w); const ctl = el('div', 'bg-ctl');
+        ctl.append(bgB('go', '✔ Дұрыс атады', () => result({ kind: afterCatch ? 'caught-guess' : 'guess-ok' }), 'padding:12px 24px'), bgB('out', '✖ Қате', () => result({ kind: afterCatch ? 'caught' : 'guess-bad' }), 'padding:12px 24px')); w.append(row, wd, ctl);
+      };
+      const vote = () => {
+        const w = wrap(); head(w, 'Раунд ' + no + ': дауыс беру'); w.appendChild(el('p', 'bt-rules', 'Әр ойыншы кімді шпион деп санайтынын айтады. Мұғалім дауыстарды санайды (+ басып).'));
+        const grid = el('div', 'sp-grid'); P.forEach((p, i) => { const c = pcard(i), vt = el('div', 'vt', String(R.votes[i])), r = el('div', 'bg-lc'); r.style.justifyContent = 'center';
+          const mk = (t, d) => { const x = bgB('out', t, () => { R.votes[i] = Math.max(0, R.votes[i] + d); vt.textContent = R.votes[i]; SFX.tick(); mark(); }, 'padding:6px 16px'); return x; }; r.append(mk('−', -1), mk('+', 1)); c.append(vt, r); c._v = vt; grid.appendChild(c); });
+        const mark = () => { const m = Math.max(...R.votes); [...grid.children].forEach((c, i) => c.classList.toggle('top', m > 0 && R.votes[i] === m)); };
+        const ctl = el('div', 'bg-ctl'), go = bgB('go', 'Нәтижені ашу ▶', () => { const m = Math.max(...R.votes), top = R.votes.map((v, i) => v === m ? i : -1).filter(i => i >= 0); if (m === 0) { notify('Алдымен дауыстарды санап қой.', 'err'); return; } if (top.length > 1) { notify('Дауыс тең: ' + top.map(i => P[i].n).join(', ') + '. Талқылап, қайта дауыс беріңдер.', 'err'); return; } accuse(top[0]); }, 'padding:12px 28px'); ctl.append(go, bgB('out', '← Талқылауға', () => discuss(), 'padding:12px 20px')); w.append(grid, ctl); mark();
+      };
+      const accuse = idx => { if (idx === R.spy) { SFX.ok(); guess(true); } else { SFX.bad(); result({ kind: 'wrong', acc: idx }); } };
+      const result = o => {
+        const w = wrap(); head(w, 'Раунд ' + no + ': қорытынды'); const d = P.map(() => 0); let msg, win;
+        if (o.kind === 'wrong') { d[R.spy] = 3; msg = P[o.acc].n + ' шпион емес еді. Шпион жасырынып қалды!'; win = 'spy'; }
+        else if (o.kind === 'caught-guess') { d[R.spy] = 2; msg = 'Шпион ұсталды, бірақ құпия сөзді тапты!'; win = 'half'; }
+        else if (o.kind === 'guess-ok') { d[R.spy] = 3; msg = 'Шпион сөзді дәл тапты!'; win = 'spy'; }
+        else { P.forEach((_, i) => { if (i !== R.spy) d[i] = 2; }); msg = o.kind === 'guess-bad' ? 'Шпион сөзді таба алмады: әшкереленді!' : 'Шпион ұсталды, сөзді тапқан жоқ!'; win = 'civ'; }
+        d.forEach((x, i) => { sc[i] += x; }); win === 'civ' ? (SFX.fan(), confetti()) : win === 'spy' ? SFX.bad() : SFX.bell();
+        const ban = el('div', 'sp-res ' + win, msg); w.appendChild(ban); w.appendChild(el('div', 'bg-exp', 'Құпия сөз: ' + R.it.w));
+        const grid = el('div', 'sp-grid'); P.forEach((p, i) => { const c = pcard(i); c.style.setProperty('--i', i); c.classList.add('flip'); if (i === R.spy) { c.classList.add('isspy'); c.appendChild(el('div', 'sp-stamp', 'ШПИОН')); } if (d[i]) c.appendChild(el('div', 'sp-d', '+' + d[i])); c.appendChild(el('div', 'sp-sc', '⭐ ' + sc[i])); grid.appendChild(c); });
+        const ctl = el('div', 'bg-ctl'); ctl.append(bgB('go', 'Келесі раунд ▶', () => newRound(), 'padding:12px 28px'), bgB('out', '🏁 Аяқтау', finish, 'padding:12px 22px')); w.append(grid, ctl);
+      };
+      newRound();
+    }
+  },
   detective: {
     k: 'detective', ic: '🕵️', t: 'Лаборатория-детектив', item: 'Дәлел', items: 'Дәлелдер', min: 2, titlePh: 'Іс атауы (мысалы: Жоғалған лазер)',
     d: 'Лабораториядағы жұмбақ іс: дәлелдердің физикалық есептерін шешіп, күдіктілерді ақтап, кінәліні табыңдар.',
@@ -4151,13 +4315,13 @@ function bgNorm(kind, d) {
 async function bgStart(kind, data, title) {
   const K = BG[kind], b = stage(); bgHot = null; const D = bgNorm(kind, data); K.clean(D); const errs = bgJoinErr(K, D);
   if (errs.length) { const w = el('div', 'bg-wrap'); w.append(el('h2', '', K.ic + ' ' + K.t), el('p', 'msg err', 'Жинақта толықтыруды қажет ететін жерлер бар:'), ...errs.slice(0, 8).map(x => el('p', '', '• ' + x))); w.appendChild(bgB('out', '← Түзету', () => bgHome(kind))); b.appendChild(w); return; }
-  const go = () => bgTeamSetup(b, K, (teams, ex) => K.run(b, D, teams, K, go, ex, title), K.extra); go();
+  const go = () => K.setup ? K.setup(b, K, ex => K.run(b, D, null, K, go, ex, title)) : bgTeamSetup(b, K, (teams, ex) => K.run(b, D, teams, K, go, ex, title), K.extra); go();
 }
 async function bgHome(kind) {
   const K = BG[kind], b = stage(), w = el('div', 'bg-wrap fresh'); b.appendChild(w); bgHot = null;
   const hero = el('div', 'bg-hero'), tx = el('div', ''); tx.append(el('h2', '', K.t), el('p', '', K.d)); hero.append(el('div', 'ic', K.ic), tx); w.appendChild(hero);
   const rl = el('p', 'bt-rules', K.rules); w.appendChild(rl);
-  const bar = el('div', 'bg-ctl'), nw = bgB('go', '+ Жаңа жинақ', () => bgEdit(kind, null), 'padding:12px 24px'), sm = bgB('out', 'Үлгімен бастау', () => bgStart(kind, K.sampleD ? K.sampleD() : K.sample, kind === 'detective' ? 'Жоғалған лазер' : 'Үлгі'), 'padding:12px 24px'); bar.append(nw, sm); w.appendChild(bar);
+  const bar = el('div', 'bg-ctl'), nw = bgB('go', '+ Жаңа жинақ', () => bgEdit(kind, null), 'padding:12px 24px'), sm = bgB('out', 'Үлгімен бастау', () => bgStart(kind, K.sampleD ? K.sampleD() : K.sample, K.sampleTitle || (kind === 'detective' ? 'Жоғалған лазер' : 'Үлгі')), 'padding:12px 24px'); bar.append(nw, sm); w.appendChild(bar);
   const list = el('div', 'bg-list'); w.appendChild(list); list.appendChild(el('p', 'sub', 'Жүктелуде…'));
   const { data, error } = await sb.from('board_sets').select('id,title,data,updated_at').eq('kind', kind).order('updated_at', { ascending: false });
   list.replaceChildren();
@@ -4217,7 +4381,7 @@ function bgEdit(kind, s, pre, preTitle) {
   };
   rn.onclick = () => { const R = pack(), errs = bgJoinErr(K, R); if (errs.length) { notify(errs[0], 'err'); firstBad(); return; } bgStart(kind, R, ti.value.trim() || 'Жинақ'); };
   ex.onclick = async () => {
-    if (kind === 'detective') { if (L.some(x => !K.empty(x)) && !(await ask('Қазіргі мазмұн үлгімен ауыстырылсын ба?'))) return; bgEdit(kind, s, K.sampleD(), ti.value || 'Жоғалған лазер'); return; }
+    if (K.sampleD) { if (L.some(x => !K.empty(x)) && !(await ask('Қазіргі мазмұн үлгімен ауыстырылсын ба?'))) return; bgEdit(kind, s, K.sampleD(), ti.value || K.sampleTitle || 'Жоғалған лазер'); return; }
     const r = K.parse(K.sample); r.D.list.forEach(x => L.push(x)); if (K.head && !bgS(D.start)) D.start = r.D.start || ''; for (let k = L.length - 1; k >= 0; k--) { if (K.empty(L[k]) && L.length > 1) L.splice(k, 1); } bgEdit(kind, s, D, ti.value);
   };
   renderAll(); ready = true;
