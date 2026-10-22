@@ -58,6 +58,13 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .acc{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surf);margin-top:14px}
 .acc b{font-size:1.1rem}.acc small{color:var(--ok);font-weight:600}
 .lnk{background:none;border:0;color:var(--accent);font:inherit;cursor:pointer;padding:6px 0;text-decoration:underline}
+.sy-s{display:flex;flex-direction:column;gap:12px}.sy-wchip{align-self:center;display:inline-flex;gap:8px;align-items:center;padding:6px 16px;border-radius:99px;background:var(--surf);border:1px solid var(--line)}.sy-wchip b{color:var(--accent)}
+.sy-sword{font-size:clamp(2.2rem,11vw,3.6rem);font-weight:900;color:var(--accent);line-height:1.1;word-break:break-word;margin:4px 0;animation:syp .5s both}
+.sy-stm{text-align:center;font-weight:900;font-size:1.6rem;font-variant-numeric:tabular-nums}.sy-me{display:flex;flex-direction:column;gap:10px;padding:14px;border:2px solid var(--accent);border-radius:18px;background:var(--surf)}.sy-me h1{margin:0}
+.sy-now{display:flex;gap:14px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surf)}
+.sy-hist{display:grid;gap:6px}.sy-hr{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surf)}
+.sy-vg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sy-vb{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border:2px solid var(--line);border-radius:16px;background:var(--surf);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;transition:transform .12s,border-color .2s}.sy-vb:active{transform:scale(.96)}.sy-vb.pick{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,107,255,.3)}.sy-vb:disabled{opacity:.5}
+@keyframes syp{0%{opacity:0;transform:scale(.7)}60%{transform:scale(1.08)}100%{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -197,6 +204,7 @@ function end(title, text, kicked) {
 function onState(s) {
   if (!s || done) return; gotState = true; paintFS();
   if (s.tm && s.tm[myId] !== undefined) myTeam = s.tm[myId]; else if (s.r && s.r[myId] && s.r[myId].t !== undefined && s.r[myId].t >= 0) myTeam = s.r[myId].t;
+  if (s.g === 'spy') return spyScreen(s);
   if (s.g === 'cloud') return cloudScreen(s);
   if (s.g === 'poll') return pollScreen(s);
   if (s.g === 'ask') return askScreen(s);
@@ -336,6 +344,53 @@ function askScreen(s) {
   });
   c.append(box, msg, ql); const keep = document.activeElement && document.activeElement.tagName === 'TEXTAREA' ? ta.value : '';
   draw(c); paint(); if (keep) { ta.value = keep; ta.focus(); }
+}
+
+// ===== Шпион =====
+const spyDec = s => { try { return decodeURIComponent(escape(atob(String(s).split('').reverse().join('')))); } catch { return ''; } };
+let spyG = { ph: '', rd: 0, rdy: false, agreed: false, voted: '', vk: '', tk: '', draft: '' };
+function spyScreen(s) {
+  if (s.ph === 'closed') return end('Ойын аяқталды', 'Рақмет!');
+  gotState = true; lastPh = 'spy'; clearInterval(tmr); paintFS();
+  if (s.ph === 'lobby') { spyG = { ph: 'lobby', rd: 0, rdy: false, agreed: false, voted: '', vk: '', tk: '', draft: '' }; const c = el('div', 'center'); c.append(avSpan(avCur(), 92), el('h1', '', 'Сен кірдің!'), el('p', 'mute', 'Мұғалім ойынды бастағанша күт. Шпион ойыны: кімнің сөзі басқа екенін тап.')); draw(c); return; }
+  const me = (s.pl || []).find(p => p.i === myId); if (!me) { waitScreen('Ойын басталып кетті', 'Келесі ойынға қосыл. Бұл ойынды қарап күт.'); return; }
+  const word = s.wd && s.wd[myId] ? spyDec(s.wd[myId]) : '', dead = !me.x, byId = id => (s.pl || []).find(p => p.i === id) || { n: '?', a: '' };
+  if (spyG.ph !== s.ph && s.ph === 'deal') spyG.rdy = false; if (spyG.rd !== s.rd) { spyG.rd = s.rd; spyG.agreed = false; spyG.voted = ''; spyG.vk = ''; spyG.tk = ''; spyG.draft = ''; } spyG.ph = s.ph;
+  const wrap = el('div', 'sy-s'), chip = () => { const t = el('div', 'sy-wchip'); t.append(el('span', '', 'Сенің сөзің:'), el('b', '', word)); return t; };
+  if (s.ph === 'deal') {
+    const c = el('div', 'center'); c.append(avSpan(avCur(), 64), el('p', 'mute', 'Сенің сөзің'), el('div', 'sy-sword', word), el('p', 'mute', 'Сөзді басқаларға көрсетпе. Оны тікелей атамай, сипаттайтын бір сөз айтатын боласың. Кім сенің сөзіңе ұқсамайтын сөз айтады, соны байқа.'));
+    const b = el('button', 'go', spyG.rdy ? 'Басқаларды күтіп тұрмыз… (' + s.rdy + ' / ' + s.tot + ')' : 'Түсіндім ✓'); b.disabled = spyG.rdy; b.onclick = () => { spyG.rdy = true; ch.send({ type: 'broadcast', event: 'sready', payload: { id: myId } }); b.disabled = true; b.textContent = 'Басқаларды күтіп тұрмыз…'; if (navigator.vibrate) navigator.vibrate(30); }; c.appendChild(b); draw(c); return;
+  }
+  if (s.ph === 'clue') {
+    const tk = s.turn + '|' + s.circ + '|' + s.cl.length, mine = s.turn === myId && !dead, sp = byId(s.turn); const keep = document.activeElement && document.activeElement.tagName === 'INPUT' ? document.activeElement.value : null;
+    if (spyG.tk !== tk) { spyG.tk = tk; spyG.end = Date.now() + (s.left || 0) * 1000; spyG.draft = ''; }
+    wrap.appendChild(chip()); wrap.appendChild(el('p', 'mute', 'Раунд ' + s.rd + ' · Айналым ' + s.circ + ' / ' + s.cn)); const tmEl = el('div', 'sy-stm', ''), bar = el('div', 'bar'), fill = el('i'); bar.appendChild(fill);
+    if (mine) {
+      const box = el('div', 'sy-me'); box.append(el('h1', '', 'Сенің кезегің!'), el('p', 'mute', 'Сөзіңді сипаттайтын бір сөз немесе қысқа тіркес жаз. Сөздің өзін жазба.'));
+      const inp = document.createElement('input'), st = el('p', 'err'), send = el('button', 'go', 'Жіберу'); inp.maxLength = 24; inp.placeholder = 'Бір сөз…'; inp.autocomplete = 'off'; inp.setAttribute('aria-label', 'Сипаттама сөзі'); inp.value = keep != null ? keep : spyG.draft;
+      const go = () => { const v = inp.value.trim(); if (!v) return; if (v.toLowerCase() === word.toLowerCase()) { st.textContent = 'Сөздің өзін жазуға болмайды.'; return; } inp.disabled = send.disabled = true; ch.send({ type: 'broadcast', event: 'sclue', payload: { id: myId, w: v } }); if (navigator.vibrate) navigator.vibrate(30); };
+      inp.oninput = () => { spyG.draft = inp.value; }; send.onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go(); }; box.append(inp, send, st); wrap.append(tmEl, bar, box); setTimeout(() => { if (inp.isConnected && keep == null) inp.focus(); }, 50);
+    } else { const row = el('div', 'sy-now'); row.append(avSpan(sp.a, 56), el('div', '', '')); row.lastChild.append(el('b', '', sp.n), el('p', 'mute', dead ? 'Сен ойыннан шықтың, қарап отыр.' : 'сипаттама сөзін жазып жатыр…')); wrap.append(row, tmEl, bar); }
+    const hist = el('div', 'sy-hist'); (s.cl || []).forEach(x => { const r = el('div', 'sy-hr'); r.append(el('span', 'mute', byId(x.i).n), el('b', '', x.w)); hist.appendChild(r); }); if (!(s.cl || []).length) hist.appendChild(el('p', 'mute', 'Әзірге сипаттамалар жоқ.')); wrap.appendChild(hist);
+    if (!dead) { const ag = el('button', 'up' + (spyG.agreed ? ' on' : ''), spyG.agreed ? '🗳 Ұсындың (' + s.ag + ' / ' + s.need + ')' : '🗳 Дауыс беруді ұсыну (' + s.ag + ' / ' + s.need + ')'); ag.disabled = spyG.agreed; ag.onclick = () => { spyG.agreed = true; ch.send({ type: 'broadcast', event: 'sagree', payload: { id: myId } }); ag.classList.add('on'); ag.disabled = true; ag.textContent = '🗳 Ұсындың'; }; wrap.appendChild(ag); }
+    draw(wrap); const upd = () => { const left = Math.max(0, (spyG.end - Date.now()) / 1000); tmEl.textContent = Math.ceil(left) + ' с'; fill.style.transform = 'scaleX(' + Math.max(0, Math.min(1, left / (s.sec || 30))) + ')'; }; upd(); tmr = setInterval(upd, 200); return;
+  }
+  if (s.ph === 'vote') {
+    const vk = s.rd + '|' + (s.only || []).join(','); if (spyG.vk !== vk) { spyG.vk = vk; spyG.voted = ''; }
+    wrap.appendChild(chip()); wrap.append(el('h1', '', 'Кім шпион?'), el('p', 'mute', dead ? 'Сен ойыннан шықтың, қарап отыр.' : 'Сөзі басқаларға ұқсамайтынын тап да, дауыс бер.' + (s.only ? ' Тек тең түскен ойыншылар қалды.' : '')));
+    const g = el('div', 'sy-vg'), st = el('p', 'mute', spyG.voted ? 'Дауысың қабылданды. Қаласаң өзгерте аласың.' : ''); st.style.textAlign = 'center';
+    (s.pl || []).filter(p => p.x && p.i !== myId && (!s.only || s.only.includes(p.i))).forEach(p => { const b = el('button', 'sy-vb' + (spyG.voted === p.i ? ' pick' : '')); b.type = 'button'; b.disabled = dead; b.append(avSpan(p.a, 48), el('span', '', p.n)); b.onclick = () => { spyG.voted = p.i; ch.send({ type: 'broadcast', event: 'svote', payload: { id: myId, v: p.i } }); g.querySelectorAll('.sy-vb').forEach(x => x.classList.toggle('pick', x === b)); st.textContent = 'Дауысың қабылданды. Қаласаң өзгерте аласың.'; if (navigator.vibrate) navigator.vibrate(30); }; g.appendChild(b); });
+    wrap.append(g, st, el('p', 'mute', 'Дауыс берді: ' + s.vt + ' / ' + s.vn)); draw(wrap); return;
+  }
+  if (s.ph === 'result') {
+    const r = s.res || {}, c = el('div', 'center'); if (r.kind === 'out') {
+      const p = byId(r.out); c.append(avSpan(p.a, 88), el('h1', '', p.n + ' шықты'), el('p', r.role === 'spy' ? 'res ok' : 'res bad', r.role === 'spy' ? 'Ол шпион болды! 🎯' : 'Ол бейбіт ойыншы еді…'));
+      if (r.out === myId) c.append(el('p', 'mute', 'Сен ойыннан шықтың. Қарап отыр.'));
+    } else c.append(el('h1', '', 'Дауыс тең'), el('p', 'mute', 'Ешкім шықпады.'));
+    if (r.win) { const mineSpy = r.roles && r.roles[myId] === 'spy'; c.append(el('p', 'pts', r.win === 'civ' ? '🎉 Бейбіт ойыншылар жеңді!' : '🕵️ Шпион жеңді!'), el('p', 'mute', 'Көпшілік сөзі: «' + r.wc + '» · Шпион сөзі: «' + r.ws + '»'), el('p', '', 'Сенің рөлің: ' + (mineSpy ? 'шпион 🕵️' : 'бейбіт 😇'))); }
+    else c.append(el('p', 'mute', 'Ойын жалғасады. Келесі раундты күт…'));
+    draw(c); if (navigator.vibrate) navigator.vibrate([40, 30, 40]); return;
+  }
 }
 
 detectAcct().finally(() => joinScreen(''));
