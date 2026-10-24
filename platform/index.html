@@ -856,6 +856,45 @@ td .od{margin-right:8px}
 @keyframes bsPop{0%{transform:translateY(20px) scale(.5);opacity:0}25%{transform:translateY(-6px) scale(1.2);opacity:1}100%{transform:translateY(-70px) scale(1);opacity:0}}
 @media (prefers-reduced-motion:reduce){.bs-boss,.bs-lbe,.bs-arena.hit .bs-boss,.bs-arena.hurt,.bs-pop{animation:none}}
 
+/* ===== Таймер / рефлексия: анимациялы стильдер ===== */
+.tm2,.rf2{display:flex;flex-direction:column;align-items:center;gap:22px;width:100%;max-width:980px;margin:0 auto;padding:6px 0}
+.tm2-pick{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tm2-pick button,.tm2-pre button{padding:8px 16px;border-radius:99px;border:1px solid var(--line,rgba(255,255,255,.2));background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer;transition:background .2s,transform .15s}
+.tm2-pick button:hover,.tm2-pre button:hover{transform:translateY(-2px)}
+.tm2-pick button.on,.tm2-pre button.on{background:var(--accent,#3B6BFF);border-color:var(--accent,#3B6BFF);color:#fff}
+.tm2-pre{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}.tm2-pre input{width:170px;padding:8px 12px;border-radius:99px;text-align:center}
+.tm2-ctl{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.tm2-ctl .go{min-width:170px}
+.tm2-vis{width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;min-height:300px;justify-content:center;transition:filter .3s}
+.tm2-n{font-variant-numeric:tabular-nums;font-weight:800;font-size:clamp(3.4rem,13vw,8rem);line-height:1;letter-spacing:-.03em}
+.tm2-n.pulse{animation:tm2p .9s ease-out}@keyframes tm2p{0%{transform:scale(1.07)}100%{transform:scale(1)}}
+.tm2-vis.low .tm2-n{color:#E5484D;animation:tm2low 1s infinite}@keyframes tm2low{50%{transform:scale(1.06)}}
+.tm2-rw{position:relative;width:min(70vw,360px);aspect-ratio:1}.tm2-rw .tm2-n{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(2.6rem,10vw,5rem)}
+.tm2-ring{width:100%;height:100%}.tm2-ring circle{fill:none;stroke-width:16;stroke-linecap:round}.tm2-ring .bg{stroke:rgba(128,128,128,.22)}.tm2-ring .fg{stroke:var(--accent,#3B6BFF);transition:stroke-dashoffset .25s linear,stroke .3s;filter:drop-shadow(0 0 10px var(--accent,#3B6BFF))}
+.tm2-vis.low .tm2-ring .fg{stroke:#E5484D;filter:drop-shadow(0 0 12px #E5484D)}
+.tm2-sky{position:relative;width:100%;height:190px;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#0B1030,#1B2A6B);border:1px solid rgba(255,255,255,.12)}
+.tm2-star{position:absolute;color:#fff;font-size:1.6rem;opacity:.7;animation:tm2tw 2s infinite}@keyframes tm2tw{50%{opacity:.1;transform:scale(.6)}}
+.tm2-track{position:absolute;left:28px;right:70px;bottom:36px;height:8px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}.tm2-track i{display:block;height:100%;background:linear-gradient(90deg,#FFB347,#FF5E62);transition:width .25s linear}
+.tm2-rk{position:absolute;bottom:48px;left:0;font-size:3.2rem;transform:rotate(45deg);transition:left .25s linear}.tm2-rk.fly{animation:tm2rk .5s infinite alternate}@keyframes tm2rk{to{transform:rotate(45deg) translate(2px,-5px)}}
+.tm2-flag{position:absolute;right:20px;bottom:30px;font-size:2.4rem}
+.tm2-bw{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:30px}.tm2-bomb{font-size:8rem;line-height:1}
+.tm2-fuse{position:relative;width:min(70vw,360px);height:8px;border-radius:9px;background:rgba(128,128,128,.25);margin-bottom:-6px}.tm2-fuse i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#8B5E3C,#F5A524)}.tm2-spark{position:absolute;top:-16px;transform:translateX(-50%);font-size:1.8rem;animation:tm2tw .3s infinite}
+.tm2-bw.shake .tm2-bomb{animation:tm2sh .18s infinite}@keyframes tm2sh{25%{transform:translate(-4px,2px) rotate(-5deg)}75%{transform:translate(4px,-2px) rotate(5deg)}}
+.tm2.done .tm2-vis{animation:tm2done .6s 3}@keyframes tm2done{50%{transform:scale(1.08);filter:brightness(1.4)}}
+.tm2.done .tm2-n{color:#1FA971}
+.rf2-card{width:100%;max-width:760px;min-height:340px;padding:34px 30px;border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;background:linear-gradient(145deg,rgba(124,92,255,.22),rgba(59,107,255,.12));border:1px solid rgba(255,255,255,.16);box-shadow:0 24px 50px -24px rgba(0,0,0,.6);perspective:900px}
+.rf2-card.in{animation:rfin .6s cubic-bezier(.2,.9,.3,1.2)}@keyframes rfin{0%{transform:rotateY(90deg) scale(.9);opacity:0}100%{transform:none;opacity:1}}
+.rf2-card.spin .rf2-e{animation:rfsp .18s infinite}@keyframes rfsp{50%{transform:translateY(-8px) scale(1.15)}}
+.rf2-e{font-size:5.5rem;line-height:1}.rf2-h{font-size:clamp(1.8rem,5vw,3rem);font-weight:800;letter-spacing:-.02em}.rf2-p{font-size:clamp(1.1rem,2.6vw,1.7rem);max-width:640px;margin:0;opacity:.9}.rf2-t{font-size:.85rem;font-weight:700;opacity:.7;min-height:1.2em}
+@media (prefers-reduced-motion:reduce){.tm2 *,.rf2 *{animation:none!important;transition:none!important}}
+
+/* ===== Иконка стилі: минимал / эмодзи / түсті ===== */
+.ne{display:none}
+html[data-icons=emoji] svg.ni,html[data-icons=emoji] .plc .gi svg{display:none}
+html[data-icons=emoji] .ne{display:inline-grid;place-items:center;width:20px;font-size:1.1rem;line-height:1;flex:none;font-style:normal}
+html[data-icons=emoji] .plc .gi .ne{width:auto;font-size:1.7rem}
+html[data-icons=color] #nav button .ni{color:var(--ic,var(--accent))}
+html[data-icons=color] .plc .gi{color:var(--ic,var(--accent));background:color-mix(in srgb,var(--ic,var(--accent)) 16%,transparent);border-radius:12px}
+#icSeg{display:flex;gap:8px;flex-wrap:wrap}#icSeg button{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}#icSeg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
 </style>
 </head>
 <body>
@@ -1181,6 +1220,8 @@ td .od{margin-right:8px}
       <div class="thm" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="dark" style="--tb:#0E1117;--ts:#151A23;--ta:#3B6BFF"><span class="pv"></span>Қараңғы</button><button type="button" data-t="light" style="--tb:#F6F7F9;--ts:#FFFFFF;--ta:#3B6BFF"><span class="pv"></span>Жарық</button><button type="button" data-t="milk" style="--tb:#FAF5EC;--ts:#FFFDF8;--ta:#F28C28"><span class="pv"></span>Сүтті</button><button type="button" data-t="ocean" style="--tb:#06161F;--ts:#0C2330;--ta:#19B5D6"><span class="pv"></span>Теңіз</button><button type="button" data-t="sunset" style="--tb:#1A0F1F;--ts:#251529;--ta:#FF7A5A"><span class="pv"></span>Күннің батуы</button><button type="button" data-t="forest" style="--tb:#0A1510;--ts:#112019;--ta:#1FA971"><span class="pv"></span>Орман</button><button type="button" data-t="amoled" style="--tb:#000000;--ts:#0A0A0A;--ta:#7C5CFF"><span class="pv"></span>Қара</button></div>
       <p class="hint" style="margin:14px 0 8px">Акцент түсі</p>
       <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button><button type="button" data-a="cyan" style="--c:#19B5D6" aria-label="Көгілдір"></button><button type="button" data-a="pink" style="--c:#E8559A" aria-label="Қызғылт"></button></div>
+      <p class="hint" style="margin:14px 0 8px">Иконка стилі</p>
+      <div id="icSeg" role="group" aria-label="Иконка стилі"><button type="button" data-i="line">▫️ Минимал</button><button type="button" data-i="emoji">😀 Эмодзи</button><button type="button" data-i="color">🎨 Түсті</button></div>
       <hr style="border:0;border-top:1px solid var(--line);margin:22px 0 6px;max-width:460px">
       <button class="out" id="wnBtn" type="button" style="margin-right:8px">✨ Не жаңа?</button>
       <button class="out" id="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:8px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Шығу</button>
@@ -1609,6 +1650,11 @@ document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc 
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '2.4', date: '24.10.2026', items: [
+    ['⏱️', 'Таймер: 4 стиль', 'Сақина, ракета, бомба және үлкен сандар. Соңғы 10 секундта экран ескертеді, аяқталғанда салют.'],
+    ['🪞', 'Рефлексия жаңарды', '24 тәсіл, санат сүзгісі (көңіл-күй, түсіну, жазбаша, қозғалыс) және карта аударылу анимациясы.'],
+    ['🎨', 'Иконка стилі', 'Баптауда бір басумен: минимал сызықтар, эмодзи немесе түрлі-түсті иконкалар.']
+  ] },
   { ver: '2.3', date: '24.10.2026', items: [
     ['🔤', 'Сөз табу', 'Торда жасырылған терминдерді командалар сызып табады. Анықтама берсең, оқушы сөзді өзі тауып сызады.'],
     ['🃏', 'Жұптарды тап', 'Термин мен формуланы (не анықтаманы) карточкаларды аударып жұптайды.'],
@@ -1912,35 +1958,89 @@ $('tGroups').onclick = () => {
   };
   const go = el('button', 'go', 'Бөлу / қайта араластыру'); go.onclick = run; bar.append(lab, inp, go); b.append(bar, grid); run();
 };
+// ===== Таймер: 4 стиль (сақина, ракета, бомба, сандар) =====
+const TM_ST = [['ring', '⭕ Сақина'], ['rocket', '🚀 Ракета'], ['bomb', '💣 Бомба'], ['digits', '🔢 Сандар']];
 $('tTimer').onclick = () => {
-  const b = stage(), disp = el('div', 'big', '05:00'), inp = document.createElement('input'), bar = el('div', 'bar');
-  inp.type = 'number'; inp.min = 1; inp.max = 120; inp.value = 5; let left = 300;
-  const draw = () => { disp.textContent = String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0'); };
-  const set = () => { clearInterval(tm); left = Math.max(1, Math.min(+inp.value || 5, 120)) * 60; disp.classList.remove('flash'); draw(); };
-  const start = el('button', 'go', 'Бастау'), stop = el('button', 'go', 'Тоқтату'), reset = el('button', 'go', 'Қайта қою');
-  start.onclick = () => { clearInterval(tm); tm = setInterval(() => { if (--left <= 0) { left = 0; clearInterval(tm); disp.classList.add('flash'); SFX.bell(); } draw(); }, 1000); };
-  stop.onclick = () => clearInterval(tm); reset.onclick = set; inp.onchange = set;
-  bar.append(el('label', '', 'Минут'), inp, start, stop, reset); bar.firstChild.style.margin = '0'; b.append(disp, bar);
+  const b = stage(); clearInterval(tm); let style = ls.get('tmStyle'); if (!TM_ST.some(x => x[0] === style)) style = 'ring';
+  let total = 300, endAt = 0, run = false, left = 300, fired = false, pausedLeft = 300;
+  const root = el('div', 'tm2'), vis = el('div', 'tm2-vis'), ctl = el('div', 'tm2-ctl'), pick = el('div', 'tm2-pick'), pre = el('div', 'tm2-pre');
+  const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  let U = null;
+  const build = () => {
+    vis.replaceChildren(); vis.className = 'tm2-vis ' + style; const num = el('div', 'tm2-n', fmt(left));
+    if (style === 'ring') {
+      const C = 2 * Math.PI * 130, s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 300 300'); s.setAttribute('class', 'tm2-ring');
+      s.innerHTML = '<circle cx="150" cy="150" r="130" class="bg"/><circle cx="150" cy="150" r="130" class="fg" stroke-dasharray="' + C + '" stroke-dashoffset="0" transform="rotate(-90 150 150)"/>';
+      const wrap = el('div', 'tm2-rw'); wrap.append(s, num); vis.appendChild(wrap); const fg = s.querySelector('.fg');
+      U = (f, l) => { fg.style.strokeDashoffset = String(C * (1 - f)); num.textContent = fmt(l); vis.classList.toggle('low', run && l <= 10 && l > 0); };
+    } else if (style === 'rocket') {
+      const sc = el('div', 'tm2-sky'), tr = el('div', 'tm2-track'), rk = el('div', 'tm2-rk', '🚀'), fl = el('div', 'tm2-flag', '🏁'), fillb = el('i');
+      for (let i = 0; i < 14; i++) { const st = el('span', 'tm2-star', '·'); st.style.cssText = 'left:' + Math.random() * 100 + '%;top:' + Math.random() * 100 + '%;animation-delay:' + Math.random() * 2 + 's'; sc.appendChild(st); }
+      tr.appendChild(fillb); sc.append(tr, rk, fl); vis.append(sc, num);
+      U = (f, l) => { const p = 1 - f; rk.style.left = 'calc(' + (p * 100) + '% * 1 - ' + (p * 56) + 'px)'; fillb.style.width = (p * 100) + '%'; num.textContent = fmt(l); rk.classList.toggle('fly', run); vis.classList.toggle('low', run && l <= 10 && l > 0); if (l === 0 && fired) rk.textContent = '💥'; else rk.textContent = '🚀'; };
+    } else if (style === 'bomb') {
+      const sc = el('div', 'tm2-bw'), bomb = el('div', 'tm2-bomb', '💣'), fuse = el('div', 'tm2-fuse'), fi = el('i'), sp = el('span', 'tm2-spark', '✨'); fuse.append(fi, sp); sc.append(fuse, bomb); vis.append(sc, num);
+      U = (f, l) => { fi.style.width = (f * 100) + '%'; sp.style.left = (f * 100) + '%'; num.textContent = fmt(l); bomb.textContent = (l === 0 && fired) ? '💥' : '💣'; sc.classList.toggle('shake', run && l <= 10 && l > 0); vis.classList.toggle('low', run && l <= 10 && l > 0); };
+    } else {
+      vis.appendChild(num); U = (f, l) => { num.textContent = fmt(l); vis.classList.toggle('low', run && l <= 10 && l > 0); if (run) { num.classList.remove('pulse'); void num.offsetWidth; num.classList.add('pulse'); } };
+    }
+    U(total ? Math.max(0, left / total) : 0, left);
+  };
+  const tick = () => {
+    if (!run) return; left = Math.max(0, Math.ceil((endAt - Date.now()) / 1000)); const f = Math.max(0, (endAt - Date.now()) / 1000 / total);
+    if (left > 0 && left <= 5 && U._l !== left) { SFX.tick(); } U._l = left;
+    if (left <= 0) { run = false; clearInterval(tm); fired = true; root.classList.add('done'); SFX.bell(); if (style !== 'bomb') confetti(); U(0, 0); toggle.textContent = '▶ Бастау'; return; } U(f, left);
+  };
+  const setT = sec => { clearInterval(tm); run = false; fired = false; root.classList.remove('done'); total = sec; left = sec; build(); toggle.textContent = '▶ Бастау'; pre.querySelectorAll('button').forEach(x => x.classList.toggle('on', +x.dataset.s === sec)); };
+  const toggle = el('button', 'go', '▶ Бастау'); toggle.type = 'button';
+  toggle.onclick = () => { if (run) { run = false; clearInterval(tm); left = Math.max(1, Math.ceil((endAt - Date.now()) / 1000)); toggle.textContent = '▶ Жалғастыру'; build(); return; } if (left <= 0) setT(total); SFX.unlock && SFX.unlock(); fired = false; root.classList.remove('done'); run = true; endAt = Date.now() + left * 1000; clearInterval(tm); tm = setInterval(tick, 200); toggle.textContent = '⏸ Тоқтату'; SFX.pop(); build(); };
+  const rst = el('button', 'out', '↺ Қайта қою'); rst.type = 'button'; rst.onclick = () => setT(total);
+  [1, 2, 3, 5, 10, 15].forEach(m => { const x = el('button', '', m + ' мин'); x.type = 'button'; x.dataset.s = m * 60; x.onclick = () => setT(m * 60); pre.appendChild(x); });
+  const inp = document.createElement('input'); inp.type = 'number'; inp.min = 1; inp.max = 180; inp.placeholder = 'өз уақытың (мин)'; inp.setAttribute('aria-label', 'Минут'); inp.onchange = () => { const v = Math.max(1, Math.min(180, +inp.value || 5)); inp.value = v; setT(v * 60); }; pre.appendChild(inp);
+  TM_ST.forEach(([k, t]) => { const x = el('button', k === style ? 'on' : '', t); x.type = 'button'; x.onclick = () => { style = k; ls.set('tmStyle', k); pick.querySelectorAll('button').forEach(y => y.classList.toggle('on', y === x)); build(); }; pick.appendChild(x); });
+  ctl.append(toggle, rst); root.append(pick, vis, ctl, pre); b.appendChild(root); setT(300);
 };
+
+// ===== Рефлексия: 24 тәсіл, санат сүзгісі, карта аударылу анимациясы =====
 const REFL = [
-  ['Бағдаршам', 'Әр оқушы сабақты түсінгенін түспен көрсетеді: жасыл — бәрін түсіндім, сары — жартылай, қызыл — көмек керек.'],
-  ['Бір сөзбен', 'Сабақты бір сөзбен сипатта және сол сөзді неге таңдағаныңды айт.'],
-  ['Білдім, түсінбедім, білгім келеді', 'Үш сөйлем жаз: не білдім, нені түсінбедім, нені әлі білгім келеді.'],
-  ['Шығу билеті', 'Сыныптан шығар алдында қағазға бір жаңа білгенің немесе бір сұрағың жазылады.'],
-  ['Бес саусақ', 'Қолыңды көтер: бес саусақ — бәрі түсінікті, бір саусақ — ештеңе түсінбедім.'],
-  ['Жұппен айту', 'Көршіңе 30 секундта сабақта не үйренгеніңді айт, содан кейін көршің қайталайды.'],
-  ['Ең пайдалы сұрақ', 'Сабақ туралы ең пайдалы сұрақты ойлап тап. Сыныптастарың жауап береді.'],
-  ['Мақал-мәтел', 'Сабақты бір мақал немесе мәтелмен сипатта.'],
-  ['Алға қадам', 'Сабақ мазмұнына байланысты тұжырым оқылады, келіскендер бір қадам алға шығады.'],
-  ['Үш сөйлем', 'Бүгін білдім... Маған ұнады... Келесі сабақта қалаймын...'],
-  ['Тақтаға сурет', 'Сабақтың мәнін бір сурет немесе схема етіп тақтаға сал.'],
-  ['Эмоция бағалау', 'Сабақтан кейінгі көңіл-күйіңді бір эмодзимен көрсетіп, неге екенін түсіндір.']
+  ['Бағдаршам', 'Әр оқушы сабақты түсінгенін түспен көрсетеді: жасыл — бәрін түсіндім, сары — жартылай, қызыл — көмек керек.', 'feel', '🚦'],
+  ['Бір сөзбен', 'Сабақты бір сөзбен сипатта және сол сөзді неге таңдағаныңды айт.', 'know', '💬'],
+  ['Білдім, түсінбедім, білгім келеді', 'Үш сөйлем жаз: не білдім, нені түсінбедім, нені әлі білгім келеді.', 'write', '📝'],
+  ['Шығу билеті', 'Сыныптан шығар алдында қағазға бір жаңа білгенің немесе бір сұрағың жазылады.', 'write', '🎫'],
+  ['Бес саусақ', 'Қолыңды көтер: бес саусақ — бәрі түсінікті, бір саусақ — ештеңе түсінбедім.', 'move', '✋'],
+  ['Жұппен айту', 'Көршіңе 30 секундта сабақта не үйренгеніңді айт, содан кейін көршің қайталайды.', 'know', '🗣️'],
+  ['Ең пайдалы сұрақ', 'Сабақ туралы ең пайдалы сұрақты ойлап тап. Сыныптастарың жауап береді.', 'know', '❓'],
+  ['Мақал-мәтел', 'Сабақты бір мақал немесе мәтелмен сипатта.', 'know', '📜'],
+  ['Алға қадам', 'Сабақ мазмұнына байланысты тұжырым оқылады, келіскендер бір қадам алға шығады.', 'move', '👣'],
+  ['Үш сөйлем', 'Бүгін білдім... Маған ұнады... Келесі сабақта қалаймын...', 'write', '✍️'],
+  ['Тақтаға сурет', 'Сабақтың мәнін бір сурет немесе схема етіп тақтаға сал.', 'write', '🎨'],
+  ['Эмоция бағалау', 'Сабақтан кейінгі көңіл-күйіңді бір эмодзимен көрсетіп, неге екенін түсіндір.', 'feel', '😊'],
+  ['Хэштег', 'Сабақты үш хэштегпен сипатта. Мысалы: #үдеу #күш #Ньютон.', 'write', '#️⃣'],
+  ['Твит', 'Бүгінгі сабақты бір сөйлемге сыйдыр (ең көбі 140 таңба).', 'write', '🐦'],
+  ['Мен мұғаліммін', 'Бүгінгі ең маңызды ойды 30 секундта сыныптастарыңа өзің түсіндір.', 'know', '🎓'],
+  ['Термометр', 'Көңіл-күйіңді де, сабаққа қызығушылығыңды да 1-ден 10-ға дейін бағала.', 'feel', '🌡️'],
+  ['Төрт бұрыш', 'Төрт бұрышқа төрт жауап: бәрін түсіндім, көбін, аздап, көмек керек. Оқушылар өз бұрышына барады.', 'move', '📐'],
+  ['Лифт питчі', '15 секундта сабақтың мәнін айтып бер, лифт келгенше үлгер.', 'know', '🛗'],
+  ['Жұлдыз және өсу', 'Бір жұлдыз: бүгін жақсы шыққаны. Бір өсу нүктесі: нені жақсартамын.', 'feel', '⭐'],
+  ['Доп лақтыру', 'Допты лақтыр: ұстаған адам сабақтан бір сұрақ қояды, ары қарай жалғасады.', 'move', '🏐'],
+  ['Дұрыс па, бұрыс па?', 'Тұжырым оқылады: қолды көтер — дұрыс, түсір — бұрыс. Неге екенін түсіндір.', 'move', '✅'],
+  ['Заң және өмір', 'Бүгінгі заңды немесе формуланы күнделікті өмірден бір мысалмен байланыстыр.', 'know', '🧪'],
+  ['Ең қиын сәт', 'Сабақтағы ең қиын сәтті тап: не қиын болды және қалай жеңдің?', 'know', '🧗'],
+  ['Алғыс хаты', 'Бүгін көмектескен сыныптасыңа бір сөйлеммен алғыс айт.', 'feel', '💌']
 ];
+const REFL_CATS = [['all', 'Барлығы'], ['feel', '😊 Көңіл-күй'], ['know', '🧠 Түсіну'], ['write', '✍️ Жазбаша'], ['move', '🏃 Қозғалыс']];
 $('tRefl').onclick = () => {
-  const b = stage(), h = el('div', 'big', ''), p = el('p', '', ''), bar = el('div', 'bar'), go = el('button', 'go', 'Басқа тәсіл');
-  p.style.cssText = 'text-align:center;font-size:clamp(1.2rem,3vw,2rem);max-width:900px;margin:0 auto 24px';
-  const run = () => { SFX.pop(); const [t, d] = REFL[Math.floor(Math.random() * REFL.length)]; h.textContent = t; p.textContent = d; };
-  go.onclick = run; bar.append(go); b.append(h, p, bar); run();
+  const b = stage(); let cat = 'all', last = -1, busy = false; const root = el('div', 'rf2'), chips = el('div', 'tm2-pick'), card = el('div', 'rf2-card'), em = el('div', 'rf2-e', '🪞'), h = el('div', 'rf2-h', ''), p = el('p', 'rf2-p', ''), tag = el('div', 'rf2-t', ''), go = el('button', 'go', '🎲 Басқа тәсіл'), ctl = el('div', 'tm2-ctl');
+  card.append(tag, em, h, p); ctl.appendChild(go);
+  const pool = () => REFL.map((r, i) => i).filter(i => cat === 'all' || REFL[i][2] === cat);
+  const show = i => { const r = REFL[i]; last = i; em.textContent = r[3]; h.textContent = r[0]; p.textContent = r[1]; tag.textContent = (REFL_CATS.find(c => c[0] === r[2]) || [0, ''])[1]; };
+  const run = () => {
+    if (busy) return; const ids = pool().filter(i => i !== last); if (!ids.length) return; SFX.pop(); busy = true; card.classList.remove('in'); card.classList.add('spin');
+    const fin = ids[Math.floor(Math.random() * ids.length)]; let n = 0;
+    const iv = setInterval(() => { const r = REFL[ids[Math.floor(Math.random() * ids.length)]]; em.textContent = r[3]; h.textContent = r[0]; p.textContent = ''; tag.textContent = ''; SFX.tick && n % 2 && SFX.tick(); if (++n >= 9) { clearInterval(iv); card.classList.remove('spin'); void card.offsetWidth; show(fin); card.classList.add('in'); busy = false; SFX.ok(); } }, 90);
+  };
+  REFL_CATS.forEach(([k, t]) => { const x = el('button', k === cat ? 'on' : '', t); x.type = 'button'; x.onclick = () => { cat = k; chips.querySelectorAll('button').forEach(y => y.classList.toggle('on', y === x)); last = -1; run(); }; chips.appendChild(x); });
+  go.onclick = run; root.append(chips, card, ctl); b.appendChild(root); run();
 };
 
 // ===== Конфетти, санау, мини-құралдар =====
@@ -5231,6 +5331,22 @@ addEventListener('message', async e => {
 });
 
 // Supabase-тің ішкі callback-інде басқа сұраныс жіберуге болмайды (қатып қалады), сондықтан setTimeout
+// ===== Иконка стилі: бір басумен «минимал / эмодзи / түсті» =====
+const ICON_ST = ['line', 'emoji', 'color'];
+const NAV_EMO = { physics: '⚛️', math: '📐', play: '🎮', rank: '🏆', news: '🔔', favs: '⭐', lessons: '📚', mats: '📁', sites: '🌐', students: '🎓', rosters: '📋', classes: '🏫', teachers: '👩‍🏫', games: '🕹️', hw: '📝', path: '🧭', inbox: '📥' };
+const TOOL_EMO = { lessons: '🗓️', quiz: '❓', race: '🚀', cloud: '☁️', poll: '📊', ask: '💬', wheel: '🎡', potato: '🥔', random: '🎲', groups: '👥', timer: '⏱️', refl: '🪞', team: '🏅', games: '🎮', spy: '🕵️', detective: '🕵️', bet: '🎲' };
+const IC_PAL = ['#3B6BFF', '#1FA971', '#F28C28', '#E8559A', '#7C5CFF', '#19B5D6', '#E5484D', '#D89E00'];
+function applyIcons() {
+  let st = ls.get('icons'); if (!ICON_ST.includes(st)) st = 'line'; document.documentElement.dataset.icons = st;
+  let n = 0;
+  document.querySelectorAll('#nav button').forEach(btn => { const sv = btn.querySelector('svg.ni'); if (!sv) return; if (!btn.querySelector('.ne')) { const e = document.createElement('i'); e.className = 'ne'; e.textContent = NAV_EMO[btn.dataset.v] || (btn.id === 'navPult' ? '📱' : '•'); sv.after(e); } btn.style.setProperty('--ic', IC_PAL[n++ % IC_PAL.length]); });
+  n = 0; document.querySelectorAll('#plGrid .gwrap').forEach(w => { const gi = w.querySelector('.gi'); if (!gi) return; const k = w.dataset.k; if (!gi.querySelector('.ne')) { const e = document.createElement('i'); e.className = 'ne'; e.textContent = TOOL_EMO[k] || (typeof BG !== 'undefined' && BG[k] ? BG[k].ic : '') || (typeof PLAY_TOOLS !== 'undefined' && k === 'croc' ? '🐊' : '✨'); gi.appendChild(e); } gi.style.setProperty('--ic', IC_PAL[n++ % IC_PAL.length]); });
+  document.querySelectorAll('#icSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.i === st)));
+}
+document.querySelectorAll('#icSeg button').forEach(b => b.onclick = () => { ls.set('icons', b.dataset.i); applyIcons(); });
+applyIcons();
+
+{ const g = $('plGrid'); if (g) new MutationObserver(() => applyIcons()).observe(g, { childList: true }); }
 sb.auth.onAuthStateChange((_e, session) => { setTimeout(() => showApp(session), 0); });
 </script>
 </body>
