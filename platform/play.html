@@ -65,6 +65,17 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .sy-hist{display:grid;gap:6px}.sy-hr{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surf)}
 .sy-vg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sy-vb{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border:2px solid var(--line);border-radius:16px;background:var(--surf);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;transition:transform .12s,border-color .2s}.sy-vb:active{transform:scale(.96)}.sy-vb.pick{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,107,255,.3)}.sy-vb:disabled{opacity:.5}
 @keyframes syp{0%{opacity:0;transform:scale(.7)}60%{transform:scale(1.08)}100%{opacity:1;transform:none}}
+.cr-ph{display:flex;flex-direction:column;gap:10px}.cr-wd{text-align:center;font-weight:800;font-size:1.4rem;padding:8px;border-radius:12px;background:var(--surf);border:1px solid var(--line)}
+.cr-cv{width:100%;aspect-ratio:4/3;border-radius:14px;background:#fff;touch-action:none;border:1px solid var(--line);cursor:crosshair}
+.cr-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}.cr-cols{display:flex;gap:6px}
+.cr-c{width:32px;height:32px;border-radius:50%;border:2px solid var(--line);cursor:pointer}.cr-c.on{box-shadow:0 0 0 3px var(--accent)}
+.cr-w{min-width:40px;height:36px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:var(--surf);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}.cr-w.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.cr-mk{text-align:center;font-size:1.7rem;font-weight:800;letter-spacing:.08em;margin:8px 0;word-break:break-word}
+.bs-big{font-size:5rem;line-height:1;animation:bsfl 2.4s ease-in-out infinite}.bs-big.hit{animation:bshit .5s}
+@keyframes bsfl{50%{transform:translateY(-8px) scale(1.04)}}@keyframes bshit{30%{transform:scale(1.3) rotate(-8deg)}}
+.bs-bars{display:grid;gap:8px;margin-bottom:12px}.bs-bw span{font-size:.85rem;font-weight:700}.bs-bt{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:3px}
+.bs-bt i{display:block;height:100%;transition:width .6s}.bs-bw.boss i{background:var(--bad)}.bs-bw.cls i{background:var(--ok)}
+.cr-ph .res{font-size:1.1rem;text-align:center}
 </style>
 </head>
 <body>
@@ -205,6 +216,8 @@ function onState(s) {
   if (!s || done) return; gotState = true; paintFS();
   if (s.tm && s.tm[myId] !== undefined) myTeam = s.tm[myId]; else if (s.r && s.r[myId] && s.r[myId].t !== undefined && s.r[myId].t >= 0) myTeam = s.r[myId].t;
   if (s.g === 'spy') return spyScreen(s);
+  if (s.g === 'croc') return crocScreen(s);
+  if (s.g === 'boss') return bossScreen(s);
   if (s.g === 'cloud') return cloudScreen(s);
   if (s.g === 'poll') return pollScreen(s);
   if (s.g === 'ask') return askScreen(s);
@@ -390,6 +403,95 @@ function spyScreen(s) {
     if (r.win) { const mineSpy = r.roles && r.roles[myId] === 'spy'; c.append(el('p', 'pts', r.win === 'civ' ? '🎉 Бейбіт ойыншылар жеңді!' : '🕵️ Шпион жеңді!'), el('p', 'mute', 'Көпшілік сөзі: «' + r.wc + '» · Шпион сөзі: «' + r.ws + '»'), el('p', '', 'Сенің рөлің: ' + (mineSpy ? 'шпион 🕵️' : 'бейбіт 😇'))); }
     else c.append(el('p', 'mute', 'Ойын жалғасады. Келесі раундты күт…'));
     draw(c); if (navigator.vibrate) navigator.vibrate([40, 30, 40]); return;
+  }
+}
+
+// ===== Крокодил (телефон) =====
+const CR_COLS = ['#16181D', '#E5484D', '#2B6CFF', '#1FA971', '#F5A524', '#8B5CF6', '#8B5E3C'];
+let crG = { key: '', strokes: [], color: CR_COLS[0], w: 8, mounted: false, upd: null, sent: false, guessed: '' };
+function crPaint(ctx, s) {
+  const p = s.p; if (!p || p.length < 2) return; ctx.strokeStyle = s.c; ctx.fillStyle = s.c; ctx.lineWidth = s.w; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (p.length === 2 || (p.length === 4 && p[0] === p[2] && p[1] === p[3])) { ctx.beginPath(); ctx.arc(p[0], p[1], s.w / 2, 0, 6.2832); ctx.fill(); return; }
+  ctx.beginPath(); ctx.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) ctx.lineTo(p[i], p[i + 1]); ctx.stroke();
+}
+function crocScreen(s) {
+  if (s.ph === 'closed') return end('Ойын аяқталды', 'Рақмет!');
+  gotState = true; lastPh = 'croc'; clearInterval(tmr); paintFS();
+  if (s.ph === 'lobby') { crG = { key: '', strokes: [], color: CR_COLS[0], w: 8, mounted: false, upd: null, sent: false, guessed: '' }; const c = el('div', 'center'); c.append(avSpan(avCur(), 92), el('h1', '', 'Сен кірдің!'), el('p', 'mute', 'Мұғалім ойынды бастағанша күт. Кезегің келгенде сөзді көріп, сурет саласың.')); draw(c); return; }
+  const me = (s.pl || []).find(p => p.i === myId); if (!me) { waitScreen('Ойын басталып кетті', 'Келесі ойынға қосыл.'); return; }
+  const key = s.rd + '|' + s.ph; const isDr = s.dr === myId, byId = id => (s.pl || []).find(p => p.i === id) || { n: '?', a: '' };
+  if (s.ph === 'draw' && crG.mounted && crG.key === key && crG.upd) { crG.upd(s); return; }
+  if (!crG.key.startsWith(s.rd + '|')) { crG.strokes = []; crG.sent = false; crG.guessed = ''; }
+  crG.key = key; crG.mounted = false; crG.upd = null;
+  const word = s.wd && s.wd[myId] ? spyDec(s.wd[myId]) : '';
+  if (s.ph === 'ready') {
+    const c = el('div', 'center');
+    if (isDr) { c.append(avSpan(avCur(), 64), el('p', 'mute', 'Сенің сөзің'), el('div', 'sy-sword', word), s.hn ? el('p', 'mute', '💡 Ишара: ' + s.hn) : el('span'), el('p', 'mute', 'Сөзді айтпа. Сурет салып түсіндір. Дайын болсаң, басыңыз.'));
+      const b = el('button', 'go', 'Дайынмын, бастау'); b.onclick = () => { b.disabled = true; ch.send({ type: 'broadcast', event: 'cready', payload: { id: myId } }); }; c.appendChild(b); }
+    else { const d = byId(s.dr); c.append(avSpan(d.a, 72), el('h1', '', d.n + ' сурет салады'), el('p', 'mute', 'Сурет тақтада көрінеді. Сөзді тауып, осы жерге жазасың. Дайын бол!')); }
+    draw(c); if (navigator.vibrate) navigator.vibrate(30); return;
+  }
+  if (s.ph === 'draw') {
+    let endAt = Date.now() + (s.left || 0) * 1000; const wrap = el('div', 'cr-ph'), tmEl = el('div', 'sy-stm', ''), bar = el('div', 'bar'), fill = el('i'); bar.appendChild(fill);
+    const upd = n => { if (n) { endAt = Date.now() + (n.left || 0) * 1000; if (mask) mask.textContent = (n.mask || '').split('').join(' '); if (!isDr && n.sv && n.sv.includes(myId)) { crG.guessed = 'ok'; if (stat) { stat.textContent = '✓ Дұрыс! Басқалар жауап бергенше күт.'; stat.className = 'res ok'; } if (inp) inp.disabled = sb2.disabled = true; } } };
+    let mask = null, stat = null, inp = null, sb2 = null; crG.upd = upd; crG.mounted = true;
+    wrap.append(tmEl, bar);
+    if (isDr) {
+      wrap.appendChild(el('div', 'cr-wd', word)); const cv = document.createElement('canvas'); cv.width = 1000; cv.height = 750; cv.className = 'cr-cv'; const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, 1000, 750); crG.strokes.forEach(x => crPaint(cx, x)); wrap.appendChild(cv);
+      const tb = el('div', 'cr-tools'); const cols = el('div', 'cr-cols'); CR_COLS.forEach(c => { const b = el('button', 'cr-c' + (crG.color === c ? ' on' : ''), ''); b.type = 'button'; b.style.background = c; b.setAttribute('aria-label', 'Түс'); b.onclick = () => { crG.color = c; cols.querySelectorAll('.cr-c').forEach(x => x.classList.toggle('on', x === b)); }; cols.appendChild(b); });
+      const sz = el('div', 'cr-cols'); [[4, 'S'], [8, 'M'], [18, 'L']].forEach(([w, t]) => { const b = el('button', 'cr-w' + (crG.w === w ? ' on' : ''), t); b.type = 'button'; b.onclick = () => { crG.w = w; sz.querySelectorAll('.cr-w').forEach(x => x.classList.toggle('on', x === b)); }; sz.appendChild(b); });
+      const er = el('button', 'cr-w', '🗑'); er.type = 'button'; er.setAttribute('aria-label', 'Тазалау'); er.onclick = () => { crG.strokes = []; cx.fillStyle = '#fff'; cx.fillRect(0, 0, 1000, 750); ch.send({ type: 'broadcast', event: 'cclr', payload: { id: myId } }); };
+      const wh = el('button', 'cr-w', '⬜'); wh.type = 'button'; wh.setAttribute('aria-label', 'Өшіргіш'); wh.onclick = () => { crG.color = '#FFFFFF'; cols.querySelectorAll('.cr-c').forEach(x => x.classList.remove('on')); };
+      tb.append(cols, sz, wh, er); wrap.appendChild(tb);
+      let cur = null, last = 0; const pt = e => { const r = cv.getBoundingClientRect(); return [Math.round((e.clientX - r.left) * 1000 / r.width), Math.round((e.clientY - r.top) * 750 / r.height)]; };
+      const flush = () => { if (!cur || cur.p.length < 2) return; const part = { c: cur.c, w: cur.w, p: cur.p.slice() }; ch.send({ type: 'broadcast', event: 'cs', payload: { id: myId, c: part.c, w: part.w, p: part.p } }); crG.strokes.push(part); if (crG.strokes.length > 600) crG.strokes.shift(); cur.p = cur.p.slice(-2); };
+      cv.onpointerdown = e => { e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch { } const [x, y] = pt(e); cur = { c: crG.color, w: crG.w, p: [x, y, x, y] }; crPaint(cx, { c: cur.c, w: cur.w, p: cur.p }); last = Date.now(); };
+      cv.onpointermove = e => { if (!cur) return; e.preventDefault(); const [x, y] = pt(e), n = cur.p.length; crPaint(cx, { c: cur.c, w: cur.w, p: [cur.p[n - 2], cur.p[n - 1], x, y] }); cur.p.push(x, y); if (cur.p.length >= 60 || Date.now() - last > 120) { flush(); last = Date.now(); } };
+      cv.onpointerup = cv.onpointercancel = e => { if (!cur) return; flush(); cur = null; };
+    } else {
+      mask = el('div', 'cr-mk', (s.mask || '').split('').join(' ')); wrap.append(el('p', 'mute', byId(s.dr).n + ' сурет салып жатыр. Тақтаға қара!'), mask); if (s.hn) wrap.appendChild(el('p', 'mute', '💡 Ишара: ' + s.hn));
+      inp = document.createElement('input'); inp.maxLength = 40; inp.placeholder = 'Жауабың…'; inp.autocomplete = 'off'; inp.setAttribute('aria-label', 'Жауап'); sb2 = el('button', 'go', 'Жіберу'); stat = el('p', 'mute', ''); stat.style.textAlign = 'center';
+      const go = () => { const v = inp.value.trim(); if (!v || crG.guessed === 'ok') return; ch.send({ type: 'broadcast', event: 'cguess', payload: { id: myId, w: v } }); inp.value = ''; stat.textContent = 'Жіберілді: ' + v; stat.className = 'mute'; if (navigator.vibrate) navigator.vibrate(20); inp.focus(); };
+      sb2.onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go(); };
+      if (s.sv && s.sv.includes(myId)) { crG.guessed = 'ok'; inp.disabled = sb2.disabled = true; stat.textContent = '✓ Дұрыс! Басқалар жауап бергенше күт.'; stat.className = 'res ok'; }
+      wrap.append(inp, sb2, stat);
+    }
+    draw(wrap); const tk = () => { const left = Math.max(0, (endAt - Date.now()) / 1000); tmEl.textContent = Math.ceil(left) + ' с'; fill.style.transform = 'scaleX(' + Math.max(0, Math.min(1, left / (s.sec || 75))) + ')'; }; tk(); tmr = setInterval(tk, 250); return;
+  }
+  if (s.ph === 'reveal') {
+    const c = el('div', 'center'), g = s.gain && s.gain[myId]; c.append(el('p', 'mute', 'Жасырылған сөз'), el('div', 'sy-sword', s.w || ''));
+    if (isDr) c.append(el('p', 'mute', 'Суретші ұпайы: сөзді тапқандар санына қарай.')); else c.append(el('p', g ? 'res ok' : 'res bad', g ? '+' + g + ' ұпай 🎉' : 'Бұл жолы таппадың'));
+    c.append(el('p', 'mute', 'Ұпайың: ' + (me.s || 0))); draw(c); if (navigator.vibrate && g) navigator.vibrate([40, 30, 40]); return;
+  }
+  if (s.ph === 'end') {
+    const sorted = [...(s.pl || [])].sort((a, b) => b.s - a.s), pos = sorted.findIndex(p => p.i === myId) + 1, c = el('div', 'center');
+    c.append(avSpan(avCur(), 88), el('h1', '', pos === 1 ? '🥇 Жеңімпаз!' : pos + '-орын'), el('p', 'pts', (me.s || 0) + ' ұпай')); const l = el('div', 'sy-hist'); sorted.slice(0, 5).forEach((p, i) => { const r = el('div', 'sy-hr'); r.append(el('span', 'mute', (i + 1) + '. ' + p.n), el('b', '', String(p.s))); l.appendChild(r); }); c.appendChild(l); draw(c);
+  }
+}
+
+// ===== Босс (телефон) =====
+let bsG = { qi: -1, picked: -1 };
+function bossScreen(s) {
+  if (s.ph === 'closed') return end('Ойын аяқталды', 'Рақмет!');
+  gotState = true; lastPh = 'boss'; clearInterval(tmr); paintFS();
+  if (s.ph === 'lobby') { bsG = { qi: -1, picked: -1 }; const c = el('div', 'center'); c.append(el('div', 'bs-big', s.be || '👹'), el('h1', '', (s.bn || 'Босс') + ' келе жатыр!'), el('p', 'mute', 'Сен кірдің. Мұғалім шайқасты бастағанша күт. Бәріміз бірге жеңеміз.')); draw(c); return; }
+  const me = (s.pl || []).find(p => p.i === myId); if (!me) { waitScreen('Шайқас басталып кетті', 'Келесі ойынға қосыл.'); return; }
+  const bars = () => { const b = el('div', 'bs-bars'); [['boss', (s.be || '') + ' ' + (s.bn || 'Босс'), s.bh, s.bm], ['cls', '🛡 Сынып', s.ch, 100]].forEach(([cl, t, v, m]) => { const w = el('div', 'bs-bw ' + cl), f = el('i'), tr = el('div', 'bs-bt'); f.style.width = (100 * Math.max(0, v) / m) + '%'; tr.appendChild(f); w.append(el('span', '', t + ': ' + v + ' / ' + m), tr); b.appendChild(w); }); return b; };
+  if (s.ph === 'q') {
+    if (bsG.qi !== s.qi) { bsG = { qi: s.qi, picked: -1 }; } let endAt = Date.now() + (s.left || 0) * 1000;
+    const top = el('div', 'top'), tm = el('div', 'tm', String(s.left || 0)), bar = el('div', 'bar'), fill = el('i'); bar.appendChild(fill); top.append(tm, bar, el('span', 'mute', (s.qi + 1) + '/' + s.qn));
+    const opts = el('div', 'opts'), st = el('p', 'mute', bsG.picked >= 0 ? 'Жауап қабылданды. Қалғандарын күт.' : ''); st.style.textAlign = 'center';
+    (s.o || []).forEach((v, k) => { if (!v) return; const b = el('button', 'opt' + (bsG.picked === k ? ' pick' : (bsG.picked >= 0 ? ' dim' : ''))); b.type = 'button'; b.style.setProperty('--c', COL[k]); b.disabled = bsG.picked >= 0; b.append(el('span', '', ['▲', '◆', '●', '■'][k]), el('span', '', v));
+      b.onclick = () => { if (bsG.picked >= 0 || Date.now() > endAt + 500) return; bsG.picked = k; opts.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (x !== b) x.classList.add('dim'); else x.classList.add('pick'); }); ch.send({ type: 'broadcast', event: 'bans', payload: { id: myId, qi: s.qi, k } }); st.textContent = 'Жауап қабылданды. Қалғандарын күт.'; if (navigator.vibrate) navigator.vibrate(30); }; opts.appendChild(b); });
+    draw(bars(), top, el('div', 'q', s.q), opts, st); const tk = () => { const left = endAt - Date.now(), sec = Math.max(0, Math.ceil(left / 1000)); tm.textContent = sec; fill.style.transform = 'scaleX(' + Math.max(0, Math.min(1, left / 1000 / (s.sec || 20))) + ')'; if (left <= 0) { clearInterval(tmr); opts.querySelectorAll('.opt').forEach(x => x.disabled = true); if (bsG.picked < 0) st.textContent = 'Уақыт бітті.'; } }; tk(); tmr = setInterval(tk, 250); return;
+  }
+  if (s.ph === 'rev') {
+    const r = s.r || {}, mine = r.who && r.who[myId], c = el('div', 'center'); c.append(el('div', 'bs-big ' + (mine === 'ok' ? 'hit' : ''), mine === 'ok' ? '💥' : (s.be || '👹')), el('h1', '', mine === 'ok' ? 'Дұрыс! Соққы тиді' : mine === 'bad' ? 'Қате жауап' : 'Үлгермедің'),
+      el('p', mine === 'ok' ? 'res ok' : 'res bad', mine === 'ok' ? 'Боссқа −1 HP' : 'Босс сыныпқа шабуыл жасады'), el('p', 'mute', 'Барлығы: ✓ ' + (r.ok || 0) + ' · ✗ ' + ((r.bad || 0) + (r.none || 0)) + ' · Боссқа −' + (r.dmg || 0) + ', сыныпқа −' + (r.hit || 0)));
+    if (r.exp) c.appendChild(el('p', 'mute', r.exp)); draw(bars(), c); if (navigator.vibrate) navigator.vibrate(mine === 'ok' ? [40, 30, 40] : 120); return;
+  }
+  if (s.ph === 'end') {
+    const c = el('div', 'center'), mine = (s.top || []).find(x => x.i === myId); c.append(el('div', 'bs-big', s.win ? '🏆' : '💀'), el('h1', '', s.win ? 'Сынып жеңді!' : (s.bn || 'Босс') + ' жеңді'), el('p', 'mute', s.win ? 'Бәріңе рақмет, командалық жұмыс керемет болды.' : 'Келесі жолы жеңеміз!'), el('p', 'pts', 'Сенің соққың: ' + (me.d || 0))); draw(c);
   }
 }
 
