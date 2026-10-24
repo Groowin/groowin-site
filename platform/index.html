@@ -895,6 +895,36 @@ html[data-icons=emoji] .plc .gi .ne{width:auto;font-size:1.7rem}
 html[data-icons=color] #nav button .ni{color:var(--ic,var(--accent))}
 html[data-icons=color] .plc .gi{color:var(--ic,var(--accent));background:color-mix(in srgb,var(--ic,var(--accent)) 16%,transparent);border-radius:12px}
 #icSeg{display:flex;gap:8px;flex-wrap:wrap}#icSeg button{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}#icSeg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+/* ===== Ойын стилі: ойын экрандарына (quiz, тақта ойындары, құралдар) ортақ дизайн ===== */
+#stage::before,#qzHost::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none}
+#stage::before{position:fixed}
+html[data-gs=space] :is(#qzHost,#stage){--bg:#070B1A;--paper:#070B1A;--surf:#101A38;--card:#101A38;--ink:#EAF0FF;--mute:#93A3C8;--line:rgba(160,190,255,.18);--accent:#6C8BFF;background:#070B1A}
+html[data-gs=space] :is(#qzHost,#stage)::before{background:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 90px 80px,#cfe0ff,transparent),radial-gradient(2px 2px at 160px 20px,#fff,transparent),radial-gradient(1px 1px at 60px 140px,#fff,transparent),radial-gradient(900px 500px at 80% -10%,rgba(108,139,255,.28),transparent 60%),radial-gradient(700px 500px at 0% 100%,rgba(176,92,255,.2),transparent 60%);background-size:200px 200px,200px 200px,200px 200px,200px 200px,auto,auto;animation:gsdrift 60s linear infinite}
+@keyframes gsdrift{to{background-position:200px 400px,-200px 200px,200px 600px,-200px 300px,0 0,0 0}}
+html[data-gs=neon] :is(#qzHost,#stage){--bg:#0A0414;--paper:#0A0414;--surf:#150826;--card:#150826;--ink:#F6E9FF;--mute:#B79ADB;--line:rgba(255,64,200,.35);--accent:#FF3DCB;background:#0A0414}
+html[data-gs=neon] :is(#qzHost,#stage)::before{background:linear-gradient(rgba(255,61,203,.16) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(0,229,255,.14) 1px,transparent 1px) 0 0/48px 48px,radial-gradient(800px 420px at 50% 120%,rgba(255,61,203,.3),transparent 65%);animation:gsgrid 6s linear infinite}
+@keyframes gsgrid{to{background-position:0 48px,48px 0,0 0}}
+html[data-gs=neon] :is(#qzHost,#stage) :is(.bg-card,.qh-chip,.bg-team,.bg-opt,.game,.cr-sr,.bs-pl,.out,.go,.qh-go){box-shadow:0 0 0 1px var(--line),0 0 18px -4px var(--accent)}
+html[data-gs=neon] :is(#qzHost,#stage) :is(h1,h2,.big,.qh-h,.tm2-n,.rf2-h){text-shadow:0 0 18px rgba(255,61,203,.7),0 0 4px #00E5FF}
+html[data-gs=paper] :is(#qzHost,#stage){--bg:#F5EFE0;--paper:#F5EFE0;--surf:#FFFDF6;--card:#FFFDF6;--ink:#1F2433;--mute:#6B6556;--line:#1F2433;--accent:#E8590C;background:#F5EFE0}
+html[data-gs=paper] :is(#qzHost,#stage)::before{background:radial-gradient(rgba(31,36,51,.18) 1.2px,transparent 1.4px) 0 0/22px 22px}
+html[data-gs=paper] :is(#qzHost,#stage) :is(.bg-card,.qh-chip,.bg-team,.bg-opt,.game,.cr-sr,.bs-pl,.out,.rf2-card,.tm2-sky){border:2px solid #1F2433!important;box-shadow:5px 5px 0 #1F2433;border-radius:14px}
+html[data-gs=paper] :is(#qzHost,#stage) :is(.go,.qh-go){border:2px solid #1F2433;box-shadow:4px 4px 0 #1F2433;color:#fff}
+html[data-gs=candy] :is(#qzHost,#stage){--bg:#FFE9F3;--paper:#FFE9F3;--surf:#FFFFFF;--card:#FFFFFF;--ink:#3A1F4D;--mute:#8A6FA0;--line:rgba(160,80,200,.25);--accent:#FF4FA3;background:#FFE9F3}
+html[data-gs=candy] :is(#qzHost,#stage)::before{background:linear-gradient(120deg,#FFE0F0,#FFF2C9,#D9F5FF,#E7DBFF,#FFE0F0);background-size:400% 400%;animation:gscandy 16s ease infinite}
+@keyframes gscandy{50%{background-position:100% 50%}}
+html[data-gs=candy] :is(#qzHost,#stage) :is(.bg-card,.qh-chip,.bg-team,.game,.cr-sr,.bs-pl,.out,.rf2-card){border-radius:24px!important;box-shadow:0 10px 0 -2px rgba(255,79,163,.28)}
+html[data-gs=candy] :is(#qzHost,#stage) :is(.go,.qh-go){border-radius:99px;box-shadow:0 6px 0 #C93A82}
+html[data-gs=retro] :is(#qzHost,#stage){--bg:#0B1A10;--paper:#0B1A10;--surf:#12301C;--card:#12301C;--ink:#C8FFD4;--mute:#6FB682;--line:#2E7A47;--accent:#39FF7A;background:#0B1A10;font-family:ui-monospace,Menlo,Consolas,monospace}
+html[data-gs=retro] :is(#qzHost,#stage)::before{background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 2px,transparent 2px 4px),radial-gradient(900px 500px at 50% 0%,rgba(57,255,122,.14),transparent 70%);animation:gsscan 8s linear infinite}
+@keyframes gsscan{to{background-position:0 40px,0 0}}
+html[data-gs=retro] :is(#qzHost,#stage) :is(.bg-card,.qh-chip,.bg-team,.bg-opt,.game,.cr-sr,.bs-pl,.out,.go,.qh-go,.rf2-card){border-radius:2px!important;border:2px solid var(--accent)!important;box-shadow:4px 4px 0 rgba(57,255,122,.35)}
+html[data-gs=retro] :is(#qzHost,#stage) :is(h1,h2,.big,.qh-h,.tm2-n){text-shadow:0 0 10px rgba(57,255,122,.6)}
+html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background:var(--accent)}
+@media (prefers-reduced-motion:reduce){#stage::before,#qzHost::before{animation:none!important}}
+#gsSeg,#sfxSeg{display:flex;gap:8px;flex-wrap:wrap}
+#gsSeg button,#sfxSeg button,#musBtn{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+#gsSeg button[aria-pressed=true],#sfxSeg button[aria-pressed=true],#musBtn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
 </style>
 </head>
 <body>
@@ -1222,6 +1252,11 @@ html[data-icons=color] .plc .gi{color:var(--ic,var(--accent));background:color-m
       <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button><button type="button" data-a="cyan" style="--c:#19B5D6" aria-label="Көгілдір"></button><button type="button" data-a="pink" style="--c:#E8559A" aria-label="Қызғылт"></button></div>
       <p class="hint" style="margin:14px 0 8px">Иконка стилі</p>
       <div id="icSeg" role="group" aria-label="Иконка стилі"><button type="button" data-i="line">▫️ Минимал</button><button type="button" data-i="emoji">😀 Эмодзи</button><button type="button" data-i="color">🎨 Түсті</button></div>
+      <p class="hint" style="margin:14px 0 8px">Ойын стилі (викторина, тақта ойындары, таймер)</p>
+      <div id="gsSeg" role="group" aria-label="Ойын стилі"><button type="button" data-g="space">🌌 Ғарыш</button><button type="button" data-g="neon">🌆 Неон</button><button type="button" data-g="paper">📄 Қағаз</button><button type="button" data-g="candy">🍬 Кәмпит</button><button type="button" data-g="retro">👾 Ретро</button><button type="button" data-g="auto">🔄 Тақырыпқа сай</button></div>
+      <p class="hint" style="margin:14px 0 8px">Дыбыс режимі</p>
+      <div id="sfxSeg" role="group" aria-label="Дыбыс режимі"><button type="button" data-m="classic">🔔 Қалыпты</button><button type="button" data-m="arcade">🕹️ Аркада</button><button type="button" data-m="soft">🌿 Жұмсақ</button><button type="button" data-m="off">🔇 Үнсіз</button></div>
+      <button type="button" id="musBtn" style="margin-top:10px">🎵 Фондық музыка: өшірулі</button>
       <hr style="border:0;border-top:1px solid var(--line);margin:22px 0 6px;max-width:460px">
       <button class="out" id="wnBtn" type="button" style="margin-right:8px">✨ Не жаңа?</button>
       <button class="out" id="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:8px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Шығу</button>
@@ -1650,6 +1685,10 @@ document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc 
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '2.5', date: '25.10.2026', items: [
+    ['🌌', 'Ойын стилі', 'Баптауда 5 стиль: Ғарыш, Неон, Қағаз, Кәмпит, Ретро. Викторина, тақта ойындары, таймер, рефлексия бәрі таңдаған стильде, анимациялы фонмен.'],
+    ['🔊', 'Дыбыс режимі', 'Қалыпты, Аркада (8-бит), Жұмсақ немесе Үнсіз. Қаласаң, ойын кезінде фондық музыка қосылады.']
+  ] },
   { ver: '2.4', date: '24.10.2026', items: [
     ['⏱️', 'Таймер: 4 стиль', 'Сақина, ракета, бомба және үлкен сандар. Соңғы 10 секундта экран ескертеді, аяқталғанда салют.'],
     ['🪞', 'Рефлексия жаңарды', '24 тәсіл, санат сүзгісі (көңіл-күй, түсіну, жазбаша, қозғалыс) және карта аударылу анимациясы.'],
@@ -2237,18 +2276,49 @@ const SFX = (() => {
     o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + d + .05);
   };
   const paint = () => document.querySelectorAll('.sfxToggle').forEach(b => { b.setAttribute('aria-pressed', String(!muted)); b.title = muted ? 'Дыбысты қосу' : 'Дыбысты өшіру'; b.classList.toggle('off', muted); });
+  let mode = 'classic', music = false, mIv = null, mStep = 0;
+  try { const m = localStorage.getItem('sfxMode'); if (['classic', 'arcade', 'soft'].includes(m)) mode = m; music = localStorage.getItem('sfxMusic') === '1'; } catch {}
+  const PK = {
+    classic: {
+      tick: () => tone(900, 0, .05, 'square', .05), pop: () => tone(520, 0, .09, 'sine', .15, 780),
+      bell: () => { tone(880, 0, 1.2, 'sine', .14); tone(1320, 0, .9, 'sine', .07); tone(1760, 0, .6, 'sine', .04); },
+      ok: () => { tone(660, 0, .12, 'triangle', .2); tone(880, .1, .12, 'triangle', .2); tone(1320, .2, .3, 'triangle', .2); },
+      bad: () => { tone(220, 0, .25, 'sawtooth', .12, 150); tone(165, .18, .35, 'sawtooth', .12, 110); },
+      start: () => { tone(392, 0, .18, 'triangle', .18); tone(523, .1, .18, 'triangle', .18); tone(784, .2, .3, 'triangle', .18); },
+      drum: () => { for (let i = 0; i < 9; i++) tone(170, i * .085, .12, 'sine', .3, 55); },
+      fan: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .14, .35, 'triangle', .2)); tone(1047, .6, .9, 'triangle', .2); }
+    },
+    arcade: {
+      tick: () => tone(1500, 0, .035, 'square', .05), pop: () => { tone(660, 0, .05, 'square', .07); tone(990, .05, .06, 'square', .07); },
+      bell: () => [988, 1319, 1568, 1976, 1568, 1976].forEach((f, i) => tone(f, i * .09, .1, 'square', .07)),
+      ok: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .06, .09, 'square', .08)),
+      bad: () => { tone(300, 0, .12, 'square', .08, 100); tone(150, .12, .25, 'square', .08, 60); },
+      start: () => [262, 330, 392, 523].forEach((f, i) => tone(f, i * .08, .1, 'square', .08)),
+      drum: () => { for (let i = 0; i < 9; i++) tone(120 + i * 35, i * .07, .07, 'square', .07); },
+      fan: () => [523, 523, 523, 659, 784, 659, 784, 1047].forEach((f, i) => tone(f, i * .1, .12, 'square', .08))
+    },
+    soft: {
+      tick: () => tone(700, 0, .06, 'sine', .05), pop: () => tone(440, 0, .25, 'sine', .1, 520),
+      bell: () => { tone(660, 0, 1.6, 'sine', .09); tone(990, 0, 1.2, 'sine', .05); },
+      ok: () => { tone(523, 0, .4, 'sine', .12); tone(659, .12, .4, 'sine', .12); tone(784, .24, .6, 'sine', .12); },
+      bad: () => { tone(260, 0, .5, 'sine', .1, 200); },
+      start: () => { tone(392, 0, .4, 'sine', .1); tone(587, .15, .5, 'sine', .1); },
+      drum: () => { for (let i = 0; i < 6; i++) tone(150, i * .12, .2, 'sine', .15, 70); },
+      fan: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .18, .7, 'sine', .11)); }
+    }
+  };
+  const mf = m => 440 * Math.pow(2, (m - 69) / 12), PROG = [[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 56, 59]], ARP = [0, 1, 2, 1, 2, 1, 0, 1];
+  const mStop = () => { clearInterval(mIv); mIv = null; };
+  const mStart = () => { if (!music || muted || mIv || !A()) return; mStep = 0; const w = mode === 'arcade' ? 'square' : mode === 'soft' ? 'sine' : 'triangle', v = mode === 'arcade' ? .022 : .035;
+    mIv = setInterval(() => { if (muted) return; const ch = PROG[Math.floor(mStep / 8) % 4], n = ch[ARP[mStep % 8]]; tone(mf(n + 12), 0, .5, w, v); if (mStep % 8 === 0) tone(mf(ch[0] - 12), 0, 2, 'sine', .05); if (mStep % 4 === 2 && mode === 'arcade') tone(mf(n + 24), 0, .1, 'square', .015); mStep++; }, 300); };
   const api = {
-    get muted() { return muted; },
-    setMuted(m) { muted = !!m; try { localStorage.setItem('sfxMuted', muted ? '1' : '0'); } catch {} paint(); if (!muted) api.pop(); },
+    get muted() { return muted; }, get mode() { return mode; }, get music() { return music; },
+    setMuted(m) { muted = !!m; try { localStorage.setItem('sfxMuted', muted ? '1' : '0'); } catch {} paint(); if (muted) mStop(); else api.pop(); },
+    setMode(m) { if (!PK[m]) return; mode = m; try { localStorage.setItem('sfxMode', m); } catch {} mStop(); api.ok(); },
+    setMusic(v) { music = !!v; try { localStorage.setItem('sfxMusic', music ? '1' : '0'); } catch {} if (!music) mStop(); },
+    musicStart: mStart, musicStop: mStop,
     unlock: A, paint,
-    tick: () => tone(900, 0, .05, 'square', .05),
-    pop: () => tone(520, 0, .09, 'sine', .15, 780),
-    bell: () => { tone(880, 0, 1.2, 'sine', .14); tone(1320, 0, .9, 'sine', .07); tone(1760, 0, .6, 'sine', .04); },
-    ok: () => { tone(660, 0, .12, 'triangle', .2); tone(880, .1, .12, 'triangle', .2); tone(1320, .2, .3, 'triangle', .2); },
-    bad: () => { tone(220, 0, .25, 'sawtooth', .12, 150); tone(165, .18, .35, 'sawtooth', .12, 110); },
-    start: () => { tone(392, 0, .18, 'triangle', .18); tone(523, .1, .18, 'triangle', .18); tone(784, .2, .3, 'triangle', .18); },
-    drum: () => { for (let i = 0; i < 9; i++) tone(170, i * .085, .12, 'sine', .3, 55); },
-    fan: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .14, .35, 'triangle', .2)); tone(1047, .6, .9, 'triangle', .2); }
+    tick: () => PK[mode].tick(), pop: () => PK[mode].pop(), bell: () => PK[mode].bell(), ok: () => PK[mode].ok(), bad: () => PK[mode].bad(), start: () => PK[mode].start(), drum: () => PK[mode].drum(), fan: () => PK[mode].fan()
   };
   return api;
 })();
@@ -4969,7 +5039,7 @@ function openCroc(list, title) {
   const updStart = () => { if (!startBtn) return; const n = live().length, ok = cfg.mode === 'board' || n >= 2; startBtn.disabled = !ok; startBtn.textContent = cfg.mode === 'board' ? 'Бастау ▶' : (ok ? 'Ойынды бастау (' + n + ' ойыншы)' : 'Ойынды бастау'); hintEl.textContent = !ok ? 'Кемінде 2 ойыншы керек.' : ''; };
   const renderLobby = () => {
     stopTick(); body.replaceChildren(); const wrap = el('div', 'qh-lobby'), right = el('div', 'qh-lr');
-    right.append(el('h2', 'qh-h cr-title', '🐊 Крокодил'), el('p', 'qh-s', (title ? '«' + title + '» · ' : '') + WORDS.length + ' сөз'));
+    right.append(el('h2', 'qh-h cr-title', 'Крокодил'), el('p', 'qh-s', (title ? '«' + title + '» · ' : '') + WORDS.length + ' сөз'));
     right.appendChild(mrow('Нұсқа', segment([{ v: 'phone', t: '📱 Телефонмен (сурет салу)' }, { v: 'board', t: '🖥 Тақтада (түсіндіру)' }], cfg.mode, v => { cfg.mode = v; renderLobby(); })));
     if (cfg.mode === 'phone') {
       right.append(el('p', 'qh-s', 'Оқушылар QR-ды сканерлеп кіреді. Кезекпен біреу сөзді көріп, телефонында сурет салады, қалғандары жауабын жазады.'),
@@ -5047,7 +5117,7 @@ function openCroc(list, title) {
     c.appendChild(btn('qh-go', G.turn + 1 >= G.order.length ? 'Нәтижені көру ▶' : 'Келесі сурет ▶', nextTurn)); w.appendChild(c); body.appendChild(w);
   };
   const renderEnd = () => {
-    stopTick(); body.replaceChildren(); const w = el('div', 'cr-wrap'), c = el('div', 'cr-ready'); const s = [...P.values()].sort((a, b) => b.sc - a.sc); c.appendChild(el('h2', 'qh-h cr-title', '🏆 Ойын аяқталды'));
+    stopTick(); body.replaceChildren(); const w = el('div', 'cr-wrap'), c = el('div', 'cr-ready'); const s = [...P.values()].sort((a, b) => b.sc - a.sc); c.appendChild(el('h2', 'qh-h cr-title', 'Ойын аяқталды'));
     const pod = el('div', 'cr-pod'); s.slice(0, 3).forEach((p, i) => { const x = el('div', 'cr-pd p' + i); x.append(face(p, i ? 64 : 88), el('b', '', p.n), el('span', '', p.sc + ' ұпай'), el('i', '', ['🥇', '🥈', '🥉'][i])); pod.appendChild(x); }); c.appendChild(pod);
     if (s.length > 3) { const l = el('div', 'cr-sc'); s.slice(3).forEach((p, i) => { const r = el('div', 'cr-sr'); r.append(el('span', 'n', (i + 4) + '. ' + p.n), el('span'), el('b', '', String(p.sc))); l.appendChild(r); }); c.appendChild(l); }
     const ctl = el('div', 'bg-ctl'); ctl.append(btn('qh-go', 'Қайта ойнау ▶', () => { ph = 'lobby'; G = null; push(); renderLobby(); }), btn('sy-pair', 'Аяқтау', shutdown)); c.appendChild(ctl); w.appendChild(c); body.appendChild(w);
@@ -5165,7 +5235,7 @@ function openBoss(D, title) {
   const renderLobby = () => {
     stopTick(); body.replaceChildren(); const wrap = el('div', 'qh-lobby'), right = el('div', 'qh-lr');
     const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code);
-    const bs = el('div', 'bs-lb'); bs.append(el('span', 'bs-lbe', BE), el('b', '', BN)); right.append(el('h2', 'qh-h cr-title', '👹 Босс шайқасы'), bs, el('p', 'qh-s', (title ? '«' + title + '» · ' : '') + Q.length + ' сұрақ. Бүкіл сынып босқа қарсы: дұрыс жауап соққы болады, қате жауап үшін босс шабуыл жасайды.'),
+    const bs = el('div', 'bs-lb'); bs.append(el('span', 'bs-lbe', BE), el('b', '', BN)); right.append(el('h2', 'qh-h cr-title', 'Босс шайқасы'), bs, el('p', 'qh-s', (title ? '«' + title + '» · ' : '') + Q.length + ' сұрақ. Бүкіл сынып босқа қарсы: дұрыс жауап соққы болады, қате жауап үшін босс шабуыл жасайды.'),
       mrow('Сұраққа уақыт (сек.)', segment([10, 15, 20, 30, 45].map(v => ({ v, t: String(v) })), cfg.sec, v => { cfg.sec = v; })), mrow('Қиындық', segment([{ v: 0, t: 'Жеңіл' }, { v: 1, t: 'Орта' }, { v: 2, t: 'Қиын' }], cfg.lvl, v => { cfg.lvl = v; })));
     chipsEl = el('div', 'qh-chips'); startBtn = btn('qh-go', 'Шайқасты бастау', () => start()); hintEl = el('p', 'qh-s sy-hint', ''); right.append(chipsEl, startBtn, hintEl); wrap.append(qrBox, right); body.appendChild(wrap); drawChips(); updStart();
   };
@@ -5347,6 +5417,23 @@ document.querySelectorAll('#icSeg button').forEach(b => b.onclick = () => { ls.s
 applyIcons();
 
 { const g = $('plGrid'); if (g) new MutationObserver(() => applyIcons()).observe(g, { childList: true }); }
+// ===== Ойын стилі (дизайн) =====
+const GS_ST = ['auto', 'space', 'neon', 'paper', 'candy', 'retro'];
+function applyGS() {
+  let g = ls.get('gstyle'); if (!GS_ST.includes(g)) g = 'space'; if (g === 'auto') delete document.documentElement.dataset.gs; else document.documentElement.dataset.gs = g;
+  document.querySelectorAll('#gsSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.g === g)));
+}
+document.querySelectorAll('#gsSeg button').forEach(b => b.onclick = () => { ls.set('gstyle', b.dataset.g); applyGS(); });
+applyGS();
+// ===== Дыбыс режимі + фондық музыка =====
+function applySfxUI() { const m = SFX.muted ? 'off' : SFX.mode; document.querySelectorAll('#sfxSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === m))); const mb = $('musBtn'); if (mb) { mb.setAttribute('aria-pressed', String(SFX.music)); mb.textContent = SFX.music ? '🎵 Фондық музыка: қосулы' : '🎵 Фондық музыка: өшірулі'; } }
+document.querySelectorAll('#sfxSeg button').forEach(b => b.onclick = () => { if (b.dataset.m === 'off') SFX.setMuted(true); else { SFX.setMuted(false); SFX.setMode(b.dataset.m); } applySfxUI(); });
+if ($('musBtn')) $('musBtn').onclick = () => { SFX.setMusic(!SFX.music); applySfxUI(); musicSync(); };
+function musicSync() { const on = (!$('qzHost').hidden || !$('stage').hidden); if (on) SFX.musicStart(); else SFX.musicStop(); }
+new MutationObserver(musicSync).observe($('qzHost'), { attributes: true, attributeFilter: ['hidden'] });
+new MutationObserver(musicSync).observe($('stage'), { attributes: true, attributeFilter: ['hidden'] });
+document.querySelectorAll('.sfxToggle').forEach(b => b.addEventListener('click', () => setTimeout(() => { applySfxUI(); musicSync(); }, 0)));
+applySfxUI();
 sb.auth.onAuthStateChange((_e, session) => { setTimeout(() => showApp(session), 0); });
 </script>
 </body>
