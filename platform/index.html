@@ -741,6 +741,121 @@ body:not(.in-app) #srchBtn{display:none}
 .pt-task{font-size:clamp(1.4rem,4vw,2.6rem);font-weight:800;max-width:900px;min-height:1.4em}
 .pt-flash{position:fixed;inset:0;z-index:60;background:#fff;pointer-events:none;animation:ptf .5s ease-out both}@keyframes ptf{from{opacity:.9}to{opacity:0}}
 @media (prefers-reduced-motion:reduce){.pt-bomb.pulse,.pt-bomb.boom,.pt-flash{animation:none}}
+/* ---- Сөз табу / Жұптар / Сұрыптау / Миллионер / Қашу бөлмесі ---- */
+.wd-tm{font-weight:800;font-variant-numeric:tabular-nums;font-size:1.3rem;padding:4px 14px;border-radius:999px;background:var(--hover,rgba(127,127,127,.15));transition:color .2s,background .2s}.wd-tm.low{color:#fff;background:#E21B3C;animation:bgPulse 1s infinite;--pc:rgba(226,27,60,.5)}
+.wd-turn{display:flex;align-items:center;gap:10px;font-weight:800;font-size:clamp(1.05rem,2.4vw,1.5rem);padding:10px 16px;border-radius:14px;border:2px solid var(--tc,var(--accent));background:color-mix(in srgb,var(--tc,var(--accent)) 14%,transparent);animation:bgPop .35s both}
+.wd-turn i{width:14px;height:14px;border-radius:50%;background:var(--tc);box-shadow:0 0 0 0 var(--tc);animation:bgPulse 1.4s infinite;--pc:color-mix(in srgb,var(--tc) 55%,transparent);flex:none}
+.wd-turn .ml-pr{margin-left:auto;color:#fff;background:linear-gradient(135deg,#f2a900,#ff7a18);border-radius:999px;padding:3px 14px;font-size:1rem;box-shadow:0 4px 14px -4px rgba(255,140,0,.7)}
+.wd-lay{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,1fr);gap:18px;align-items:start}@media (max-width:860px){.wd-lay{grid-template-columns:1fr}}
+.wd-side{display:flex;flex-direction:column;gap:12px}
+.wd-g{--n:10;display:grid;grid-template-columns:repeat(var(--n),1fr);gap:3px;padding:10px;border-radius:18px;background:var(--surf,var(--paper));border:1.5px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 18px 40px -22px rgba(0,0,0,.6)}
+.wd-c{aspect-ratio:1;display:grid;place-items:center;font-weight:800;font-size:clamp(.8rem,2.6vw,1.6rem);border-radius:8px;background:color-mix(in srgb,var(--ink,#fff) 6%,transparent);cursor:pointer;transition:background .15s,transform .15s,color .15s}
+.wd-c.sel{background:var(--accent);color:#fff;transform:scale(1.12);z-index:1;box-shadow:0 6px 16px -4px color-mix(in srgb,var(--accent) 70%,transparent)}
+.wd-c.fnd{background:var(--tc,#26C281);color:#fff;animation:bgPop .45s both}
+.wd-c.bad{background:#E21B3C;color:#fff;animation:bgShake .4s}
+.wd-list{display:flex;flex-direction:column;gap:7px;max-height:44vh;overflow:auto;padding-right:2px}
+.wd-w{display:flex;flex-direction:column;gap:2px;padding:9px 13px;border-radius:12px;border:1.5px solid var(--line);background:var(--surf,var(--paper));transition:all .3s}
+.wd-w b{font-size:1.05rem;letter-spacing:.04em}.wd-w span{font-size:.85rem;color:var(--mute)}
+.wd-w:not(.done) b{color:var(--mute);filter:blur(0)}
+.wd-w.done{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 18%,transparent);animation:bgPop .45s both}.wd-w.done b{color:var(--ink);text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--tc)}
+/* жұптар */
+.pr-g{--cols:4;display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:12px}
+.pr-c{perspective:900px;border:0;background:none;padding:0;margin:0;cursor:pointer;aspect-ratio:4/3;font:inherit;color:inherit;min-height:0;width:auto}
+.pr-c .in{display:block;position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,1.2,.5,1)}
+.pr-c.open .in,.pr-c.ok .in{transform:rotateY(180deg)}
+.pr-c .fa,.pr-c .bk{position:absolute;inset:0;display:grid;place-items:center;border-radius:16px;backface-visibility:hidden;-webkit-backface-visibility:hidden;padding:8px;text-align:center}
+.pr-c .fa{font-size:2.2rem;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--accent),#7c5cff);box-shadow:0 8px 0 -3px rgba(0,0,0,.25),inset 0 0 0 3px rgba(255,255,255,.22)}
+.pr-c:hover:not(.open):not(.ok) .in{transform:translateY(-4px) rotate(-1.5deg)}
+.pr-c .bk{transform:rotateY(180deg);background:var(--surf,var(--paper));border:3px solid var(--accent);font-weight:700;line-height:1.25;overflow:hidden;word-break:break-word}
+.pr-c.ok .bk{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 22%,var(--surf,var(--paper)));animation:bgPop .5s both}
+.pr-c.ok{cursor:default}
+/* сұрыптау */
+.so-cur{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;min-height:92px}
+.so-chip{display:inline-block;padding:16px 34px;border-radius:16px;font-size:clamp(1.3rem,3.4vw,2.4rem);font-weight:800;color:#fff;background:linear-gradient(135deg,var(--accent),#7c5cff);box-shadow:0 10px 0 -4px rgba(0,0,0,.3);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;animation:bgPop .4s both}
+.so-chip.dragging{opacity:.25}.so-ghost{position:fixed;z-index:9999;pointer-events:none;transform:rotate(-4deg) scale(1.06);box-shadow:0 24px 40px -10px rgba(0,0,0,.6);display:inline-block;padding:16px 34px;border-radius:16px;font-weight:800;font-size:1.5rem;color:#fff;background:linear-gradient(135deg,var(--accent),#7c5cff);box-sizing:border-box;text-align:center}
+.so-zones{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.so-z{--zc:var(--accent);border:3px dashed var(--zc);border-radius:20px;padding:12px;min-height:150px;background:color-mix(in srgb,var(--zc) 9%,transparent);cursor:pointer;transition:transform .15s,background .2s,box-shadow .2s;display:flex;flex-direction:column;gap:8px}
+.so-z>b{font-size:clamp(1rem,2.2vw,1.35rem);color:var(--zc);text-align:center;filter:brightness(1.1)}
+.so-z.hov{transform:scale(1.035);background:color-mix(in srgb,var(--zc) 24%,transparent);box-shadow:0 0 0 5px color-mix(in srgb,var(--zc) 35%,transparent)}
+.so-z.good{animation:bgPop .5s both;border-style:solid}.so-z.wrong{animation:bgShake .45s;border-color:#E21B3C}
+.so-in{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.so-tag{padding:5px 11px;border-radius:999px;font-weight:700;font-size:.9rem;background:var(--tc);color:#fff;animation:bgPop .4s both}
+/* миллионер */
+.ml-o.pick{outline:5px solid #fff;transform:scale(1.015)}.ml-o.pick.lock{animation:bgPulse .7s infinite;--pc:rgba(255,255,255,.55);outline-color:#ffd24d}
+.ml-o.gone{visibility:hidden}.ml-o.dim{opacity:.35}.ml-o.lose{animation:bgShake .45s}
+.ml-o{cursor:pointer;border:0;text-align:left}.ml-o:disabled{cursor:default;opacity:1}.ml-o.gone:disabled{opacity:0}
+/* қашу бөлмесі */
+.es-story{padding:14px 18px;border-radius:14px;border-left:6px solid #ffb347;background:rgba(255,179,71,.12);font-size:clamp(1rem,2.2vw,1.35rem);line-height:1.5;font-style:italic;white-space:pre-wrap}
+.es-lanes{display:flex;flex-direction:column;gap:14px}
+.es-lane{border:3px solid var(--tc);border-radius:18px;padding:14px 16px;background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 12%,transparent),transparent 70%),var(--surf,var(--paper));display:flex;flex-direction:column;gap:10px;transition:box-shadow .3s}
+.es-lane.out{box-shadow:0 0 0 4px color-mix(in srgb,var(--tc) 40%,transparent)}.es-lane.shake{animation:bgShake .45s}
+.es-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.es-top>b{font-size:1.25rem;color:var(--tc);flex:1;min-width:110px}
+.es-doors{display:flex;gap:6px;flex-wrap:wrap}.es-door{width:38px;height:44px;border-radius:9px 9px 5px 5px;display:grid;place-items:center;font-size:1.1rem;background:color-mix(in srgb,var(--ink,#fff) 10%,transparent);border:2px solid var(--line);transition:all .3s}
+.es-door.cur{border-color:var(--tc);box-shadow:0 0 0 3px color-mix(in srgb,var(--tc) 35%,transparent);animation:bgPulse 1.6s infinite;--pc:color-mix(in srgb,var(--tc) 50%,transparent)}.es-door.open{background:var(--tc);border-color:var(--tc);animation:bgPop .5s both}
+.es-q{font-size:clamp(1.05rem,2.4vw,1.6rem);font-weight:700;line-height:1.4;white-space:pre-wrap}
+.es-in{display:flex;gap:8px;flex-wrap:wrap}.es-in input{flex:1;min-width:140px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;font-size:1.15rem;font-weight:700;margin:0}.es-in input:focus{outline:0;border-color:var(--tc)}
+
+/* ---- онлайн нүкте ---- */
+.od{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none;vertical-align:middle;background:#9AA3B2;transition:background .3s,box-shadow .3s}
+.od.on{background:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,.22)}.od.off{background:#EF4444;box-shadow:0 0 0 3px rgba(239,68,68,.2)}
+.mecard .od{margin-left:auto;margin-right:4px}
+td .od{margin-right:8px}
+.bg-opt{overflow-wrap:anywhere;min-width:0}
+/* ---- Крокодил ---- */
+#qzHost.cr{--bg:#0B1510;--paper:#0B1510;--surf:#12201A;--ink:#E8F6EC;--line:rgba(110,220,150,.22);--mute:#9DBBA8;--accent:#2FBF71;--accent-soft:rgba(47,191,113,.22);background:radial-gradient(900px 520px at 90% -10%,rgba(47,191,113,.2),transparent 60%),radial-gradient(700px 500px at 0% 110%,rgba(240,200,60,.1),transparent 60%),var(--bg)}
+.cr-title{background:linear-gradient(90deg,#7CF3A8,#F5D547);-webkit-background-clip:text;background-clip:text;color:transparent}
+.qh-lobby.one{grid-template-columns:1fr;max-width:760px}
+.cr-names{display:grid;gap:8px;margin:8px 0}.cr-nm{display:flex;align-items:center;gap:10px}.cr-nm i{width:16px;height:16px;border-radius:50%;flex:none}.cr-nm input{flex:1}
+.cr-wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:14px;animation:bgPop .35s both}
+.cr-wrap.cr-draw{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(260px,1fr);gap:20px;align-items:start}@media (max-width:900px){.cr-wrap.cr-draw{grid-template-columns:1fr}}
+.cr-no{text-align:center;margin:0}
+.cr-ready{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding:12px}
+.cr-who{font-size:clamp(1.8rem,5vw,3.2rem);font-weight:900}
+.cr-word{font-size:clamp(2.2rem,7vw,4.6rem);font-weight:900;letter-spacing:.02em;color:#7CF3A8;animation:bgPop .5s both;overflow-wrap:anywhere}
+.cr-got{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.cr-got span{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:rgba(47,191,113,.22);font-weight:700}
+.cr-pic{max-width:min(520px,90%);border-radius:14px;overflow:hidden;border:2px solid var(--line)}.cr-pic img{display:block;width:100%;height:auto}
+.cr-main{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cr-hd{display:flex;align-items:center;gap:12px}.cr-hd>div{flex:1;display:flex;flex-direction:column}.cr-hd b{font-size:1.2rem}
+.cr-tn{min-width:2.4em;text-align:center;font-size:1.8rem;font-weight:900;font-variant-numeric:tabular-nums}.cr-tn.low{color:#EF4444;animation:bgPulse 1s infinite}
+.cr-tb{height:10px;border-radius:99px;background:var(--line);overflow:hidden;flex:1}.cr-tb i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#2FBF71,#F5D547);transition:width .25s linear}
+.cr-cv{border-radius:18px;overflow:hidden;background:#fff;border:3px solid var(--line);box-shadow:0 18px 40px -20px rgba(0,0,0,.7)}.cr-cv canvas{display:block;width:100%;height:auto;aspect-ratio:4/3;background:#fff;max-height:calc(100vh - 360px);margin:0 auto;object-fit:contain}.cr-cv{max-width:100%}
+.cr-mask{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:clamp(1.6rem,4.2vw,3rem);font-weight:800;text-align:center;letter-spacing:.1em;color:#7CF3A8;min-height:1.3em;overflow-wrap:anywhere}
+.cr-hint{text-align:center;color:var(--mute);font-size:1.05rem}
+.cr-right{display:flex;flex-direction:column;gap:12px;min-width:0}.cr-side{display:flex;flex-direction:column;gap:12px}
+.cr-sc{display:flex;flex-direction:column;gap:6px}
+.cr-sr{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surf);transition:all .3s}.cr-sr .n{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cr-sr b{font-variant-numeric:tabular-nums;font-size:1.1rem}.cr-sr em{font-style:normal;font-weight:800;color:#7CF3A8}
+.cr-sr.ok{border-color:#2FBF71;background:rgba(47,191,113,.2);animation:bgPop .4s both}.cr-sr.dr{border-color:#F5D547}.cr-sr .pen{font-style:normal}
+.cr-feed{display:flex;flex-direction:column;gap:4px;color:var(--mute);font-size:.95rem;min-height:2em}.cr-feed div{padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.04);animation:bgPop .25s both;overflow-wrap:anywhere}
+.cr-pod{display:flex;gap:18px;align-items:flex-end;justify-content:center;flex-wrap:wrap}.cr-pd{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 22px;border-radius:18px;background:var(--surf);border:2px solid var(--line);animation:bgPop .5s both;position:relative}.cr-pd.p0{border-color:#F5D547;transform:translateY(-14px)}.cr-pd i{font-style:normal;font-size:1.8rem}.cr-pd b{font-size:1.1rem}
+.cr-bt{font-size:clamp(2.6rem,9vw,5rem);font-weight:900;font-variant-numeric:tabular-nums}.cr-bt.low{color:#EF4444;animation:bgPulse 1s infinite}
+.cr-secret{min-height:2.2em;display:grid;place-items:center;padding:18px 24px;border-radius:18px;border:3px dashed var(--line);font-size:clamp(1.4rem,5vw,3.4rem);font-weight:900;color:var(--mute);width:min(100%,780px);overflow-wrap:anywhere;transition:all .2s}.cr-secret.on{color:#0B1510;background:linear-gradient(135deg,#7CF3A8,#F5D547);border-style:solid;border-color:transparent;animation:bgPop .25s both}
+.cr-hold{padding:18px 40px;border:0;border-radius:16px;background:var(--accent);color:#fff;font:inherit;font-size:1.3rem;font-weight:800;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 8px 24px -8px var(--accent)}.cr-hold:active{transform:scale(.97)}
+.qh-go.ok{background:#1FA971}
+/* ---- Босс ---- */
+#qzHost.bs{--bg:#12070B;--paper:#12070B;--surf:#1F0E14;--ink:#FFE9E9;--line:rgba(255,110,110,.24);--mute:#C9A3A3;--accent:#FF5C5C;--accent-soft:rgba(255,92,92,.22);background:radial-gradient(900px 520px at 50% -10%,rgba(255,60,60,.26),transparent 62%),radial-gradient(700px 500px at 0% 110%,rgba(155,107,255,.14),transparent 60%),var(--bg)}
+.bs-lb{display:flex;align-items:center;gap:14px;font-size:1.4rem;font-weight:800;margin:0 0 10px}.bs-lbe{font-size:3.4rem;animation:bsFloat 3s ease-in-out infinite}
+.bs-em{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}.bs-eb{width:52px;height:52px;border-radius:14px;border:2px solid var(--line);background:var(--surf,#fff);font-size:1.7rem;cursor:pointer;transition:transform .15s,border-color .2s}.bs-eb:hover{transform:scale(1.08)}.bs-eb.on{border-color:var(--accent,#3B6BFF);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#3B6BFF) 30%,transparent)}
+.bs-wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:12px;animation:bgPop .35s both}
+.bs-bars{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media (max-width:700px){.bs-bars{grid-template-columns:1fr}}
+.bs-bw{display:flex;flex-direction:column;gap:5px;font-weight:800}.bs-bt{height:18px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}.bs-bt i{display:block;height:100%;border-radius:99px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.bs-bw.boss .bs-bt i{background:linear-gradient(90deg,#FF3B3B,#FF9A3B)}.bs-bw.cls .bs-bt i{background:linear-gradient(90deg,#1FA971,#7CF3A8)}
+.bs-arena{position:relative;display:grid;place-items:center;min-height:200px;border-radius:22px;background:radial-gradient(closest-side,rgba(255,80,80,.22),transparent 75%);overflow:hidden}
+.bs-boss{font-size:clamp(5rem,16vw,9rem);line-height:1.1;animation:bsFloat 3s ease-in-out infinite;filter:drop-shadow(0 10px 30px rgba(255,60,60,.5))}.bs-boss.big{font-size:9rem}
+.bs-arena.hit .bs-boss{animation:bsHit .7s both}.bs-arena.hurt{animation:bsHurt .7s both}
+.bs-boss.dead{animation:bsDie 1.2s both}.bs-boss.win{animation:bsFloat 1.2s ease-in-out infinite;filter:drop-shadow(0 10px 40px rgba(255,60,60,.9))}
+.bs-pop{position:absolute;font-weight:900;font-size:clamp(2rem,6vw,3.6rem);animation:bsPop 1.3s both;pointer-events:none}.bs-pop.dm{color:#FFD23B;top:18%;right:30%}.bs-pop.ht{color:#FF6B6B;bottom:12%;left:28%}
+.bs-trow{display:flex;align-items:center;gap:12px}
+.bs-st{text-align:center;font-weight:800;font-size:1.2rem;margin:0}
+.bs-crowd{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.bs-pl{display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;border-radius:999px;background:var(--surf);border:1.5px solid var(--line);font-weight:600;font-size:.95rem;transition:all .25s}
+.bs-pl.ans{border-color:#7CF3A8;background:rgba(47,191,113,.22)}.bs-pl.ok{border-color:#2FBF71;background:rgba(47,191,113,.28);animation:bgPop .4s both}.bs-pl.bad,.bs-pl.no{border-color:#FF6B6B;background:rgba(255,80,80,.2)}.bs-pl.off{opacity:.45}.bs-pl .mk{font-style:normal;font-weight:900}
+@keyframes bsFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+@keyframes bsHit{0%{transform:translateX(0) scale(1);filter:brightness(1)}15%{transform:translateX(-18px) scale(.92);filter:brightness(2.2) saturate(0)}30%{transform:translateX(16px) scale(.95)}45%{transform:translateX(-12px)}60%{transform:translateX(8px)}100%{transform:translateX(0) scale(1);filter:brightness(1)}}
+@keyframes bsHurt{0%,100%{box-shadow:inset 0 0 0 0 rgba(255,50,50,0)}25%{box-shadow:inset 0 0 120px 20px rgba(255,50,50,.6)}}
+@keyframes bsDie{0%{transform:scale(1) rotate(0)}40%{transform:scale(1.15) rotate(-8deg)}100%{transform:scale(.2) rotate(540deg);opacity:0}}
+@keyframes bsPop{0%{transform:translateY(20px) scale(.5);opacity:0}25%{transform:translateY(-6px) scale(1.2);opacity:1}100%{transform:translateY(-70px) scale(1);opacity:0}}
+@media (prefers-reduced-motion:reduce){.bs-boss,.bs-lbe,.bs-arena.hit .bs-boss,.bs-arena.hurt,.bs-pop{animation:none}}
+
 </style>
 </head>
 <body>
@@ -823,7 +938,7 @@ body:not(.in-app) #srchBtn{display:none}
       <button data-v="students" id="navStudents" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg><span class="nl">Оқушылар</span></button>
     </nav>
     <div class="me"><button class="icon-btn" id="themeBtn" type="button" aria-label="Тема ауыстыру" title="Тема ауыстыру"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
-      <button class="mecard" id="meCard" type="button" aria-label="Менің аккаунтым"><span class="av" id="meAv">?</span><span class="mt"><strong id="meNm"></strong><small id="meRl"></small></span></button>
+      <button class="mecard" id="meCard" type="button" aria-label="Менің аккаунтым"><span class="av" id="meAv">?</span><span class="mt"><strong id="meNm"></strong><small id="meRl"></small></span><i class="od off" id="meDot" title="Байланыс"></i></button>
       
     </div>
   </aside>
@@ -1185,7 +1300,7 @@ async function showApp(session) {
   document.querySelector('.wrap').classList.toggle('wide', !!session);
   document.body.classList.toggle('in-app', !!session);
   if (!session) closeGame();
-  if (!session) { typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; $('phone').value = ''; $('pass').value = ''; try { $('name').value = ''; } catch {} say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
+  if (!session) { try { onlineStop(); } catch { } typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; $('phone').value = ''; $('pass').value = ''; try { $('name').value = ''; } catch {} say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const lastA = +ls.get('lastActive');
   if (lastA && Date.now() - lastA > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; await sb.auth.signOut(); return; }
   touch();
@@ -1195,7 +1310,7 @@ async function showApp(session) {
     await sb.auth.signOut();
     return;
   }
-  meId = session.user.id;
+  meId = session.user.id; onlineStart();
   const roles = { admin: 'Админ', teacher: 'Мұғалім', student: 'Оқушы' };
   const hi = 'Сәлем, ' + (me?.full_name || 'қонақ') + '!';
   if (typedFor !== session.user.id) { typedFor = session.user.id; typeText($('hello'), hi); window.skyWarp && window.skyWarp(); go('physics'); setTimeout(() => { if (!avParse(myAvatar) && !ls.get('avAsked')) { ls.set('avAsked', '1'); openAvatarPicker(() => setTimeout(maybeWhatsNew, 400)); } else maybeWhatsNew(); }, 2400); }
@@ -1219,6 +1334,22 @@ const el = (t, c, x) => { const e = document.createElement(t); if (c) e.classNam
 const ROLE_KK = { student: 'Оқушы', teacher: 'Мұғалім', admin: 'Админ' };
 const mini = (text, fn) => { const b = document.createElement('button'); b.textContent = text; b.className = 'out'; b.style.margin = '0 6px 0 0'; b.style.padding = '4px 10px'; b.onclick = fn; return b; };
 
+// ===== Онлайн / офлайн: бір ортақ presence арнасы. Нүктені тек мұғалім мен админ көреді (кестеде); оқушы тек өз байланысын көреді =====
+let onl = new Set(), onlCh = null, onlOk = false;
+function paintOnline() {
+  const d = $('meDot'); if (d) { const ok = onlOk && navigator.onLine !== false; d.className = 'od ' + (ok ? 'on' : 'off'); d.title = ok ? 'Байланыс бар' : 'Байланыс жоқ'; }
+  let n = 0; document.querySelectorAll('#users [data-uid]').forEach(x => { const on = onl.has(x.dataset.uid); if (on) n++; x.className = 'od ' + (on ? 'on' : 'off'); x.title = on ? 'Онлайн' : 'Офлайн'; });
+  const sm = $('onlSum'); if (sm) sm.textContent = '● Онлайн: ' + n;
+}
+function onlineStart() {
+  if (onlCh || !meId) return;
+  onlCh = sb.channel('groowin-online', { config: { presence: { key: meId + '_' + Math.random().toString(36).slice(2, 8) } } });
+  onlCh.on('presence', { event: 'sync' }, () => { onl = new Set(Object.values(onlCh.presenceState()).flat().map(m => m && m.uid).filter(Boolean)); paintOnline(); });
+  onlCh.subscribe(async st => { onlOk = st === 'SUBSCRIBED'; if (onlOk) { try { await onlCh.track({ uid: meId }); } catch { } } paintOnline(); });
+}
+function onlineStop() { if (onlCh) { try { sb.removeChannel(onlCh); } catch { } onlCh = null; } onl = new Set(); onlOk = false; paintOnline(); }
+addEventListener('online', paintOnline); addEventListener('offline', paintOnline);
+
 async function loadUsers() {
   const [{ data: allowed }, { data: profs }] = await Promise.all([
     sb.from('allowed_phones').select('*').order('created_at', { ascending: false }),
@@ -1238,8 +1369,10 @@ async function loadUsers() {
     const p = byPhone[a.phone];
     const status = !p ? 'Тіркелмеген' : p.active ? 'Белсенді' : 'Бұғатталған';
     const tr = document.createElement('tr');
-    [a.full_name, '+' + a.phone, ROLE_KK[a.role], status].forEach(t => {
-      const td = document.createElement('td'); td.textContent = t || ''; tr.appendChild(td);
+    [a.full_name, '+' + a.phone, ROLE_KK[a.role], status].forEach((t, i) => {
+      const td = document.createElement('td'); td.textContent = t || '';
+      if (i === 0 && p) { const dt = document.createElement('i'); dt.className = 'od off'; dt.dataset.uid = p.id; td.prepend(dt); }
+      tr.appendChild(td);
     });
     const ctd = document.createElement('td'), csel = classSelect(p ? p.class_id : a.class_id);
     csel.onchange = async () => {
@@ -1266,6 +1399,7 @@ async function loadUsers() {
     tr.appendChild(td); frag.appendChild(tr);
   });
   body.replaceChildren(frag);
+  { const tb = body.closest('table'); let sm = $('onlSum'); if (!sm && tb) { sm = el('span', 'sub', ''); sm.id = 'onlSum'; sm.style.cssText = 'display:block;margin:0 0 8px;font-weight:600'; tb.before(sm); } paintOnline(); }
 }
 
 $('aAdd').onclick = async () => {
@@ -1475,6 +1609,16 @@ document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc 
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '2.3', date: '24.10.2026', items: [
+    ['🔤', 'Сөз табу', 'Торда жасырылған терминдерді командалар сызып табады. Анықтама берсең, оқушы сөзді өзі тауып сызады.'],
+    ['🃏', 'Жұптарды тап', 'Термин мен формуланы (не анықтаманы) карточкаларды аударып жұптайды.'],
+    ['🗂️', 'Сұрыптау', 'Карточкаларды сүйреп дұрыс топқа салады. Тақтада да, телефонда да жұмыс істейді.'],
+    ['💰', 'Кім миллионер', 'Баспалдақпен өсетін сұрақтар, 50/50 және көмек түймелері.'],
+    ['🔐', 'Қашу бөлмесі', 'Есіктер құлыпталған: әр құлыпты есеп жауабымен ашасың.'],
+    ['🐊', 'Крокодил', 'Бір оқушы телефонда сөзді көреді де, сурет салады. Қалғандары тақтадан көріп болжайды.'],
+    ['👹', 'Босс', 'Бүкіл сынып бір боссқа қарсы: дұрыс жауап бересің, босс әлсірейді; қате болса, ол соққы береді.'],
+    ['🟢', 'Онлайн / офлайн', 'Мұғалім мен админ оқушылардың желіде екенін жасыл нүктемен көреді. Лоббиде үзілген ойыншы қызыл болады.']
+  ] },
   { ver: '2.2', date: '21.10.2026', items: [
     ['🕵️', 'Шпион ойыны', 'QR арқылы кіріп, әр оқушы өз телефонынан сөзін көреді. Көпшілікке бір сөз, шпионға басқа сөз. Сипаттау айналымдары мен дауыс беру бар.'],
     ['🦊', 'Аватар', 'Эмодзи мен түсті таңдап, өз аватарыңды жаса: бүйір панельде, квиз лоббиінде және нәтижелерде көрінеді.']
@@ -2029,6 +2173,13 @@ const PLAY_TOOLS = [
   { k: 'detective', t: 'Лаборатория-детектив', d: 'Жұмбақ іс: физика есептерін шешіп, күдіктілерді ақтап, кінәліні табыңдар. Телефонсыз, тақтамен.', cls: false, ic: '<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6M8 10h4M10 8v4"/>' },
   { k: 'spy', t: 'Шпион', d: 'QR арқылы: әр оқушы өз телефонында сөз алады, біреуінің сөзі басқа. Сипаттап, дауыс беріп, шпионды табады.', cls: false, ic: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>' },
   { k: 'bet', t: 'Бәс (болжам)', d: 'Тәжірибеге дейін команда болжам жасап, ұпай тігеді. Дұрыс болса ұпай көбейеді.', cls: false, ic: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h.01M16 8h.01M8 16h.01M16 16h.01M12 12h.01"/>' },
+  { k: 'words', t: 'Сөз табу', d: 'Торда жасырылған терминдерді командалар кезекпен сызып табады. Анықтама берсең, сөзді өзі табады.', cls: false, ic: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4M8 11h6"/>' },
+  { k: 'pairs', t: 'Жұптарды тап', d: 'Карточкаларды аударып, термин мен оның формуласын (анықтамасын) жұптайды. Жад пен зейін.', cls: false, ic: '<rect x="3" y="5" width="8" height="14" rx="2"/><rect x="13" y="5" width="8" height="14" rx="2"/>' },
+  { k: 'sort', t: 'Сұрыптау', d: 'Карточкаларды дұрыс топқа сүйреп апарады: өткізгіш/оқшаулағыш, векторлық/скаляр шама т.б.', cls: false, ic: '<path d="M4 6h16M4 12h10M4 18h6"/><path d="m17 15 3 3 3-3"/>' },
+  { k: 'mill', t: 'Кім миллионер', d: 'Сұрақтар баспалдағы, 50/50, команда көмегі және сынып көмегі. Қате жауап ұпайды сақтап қалуға әкеледі.', cls: false, ic: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1 1-1.7 2.5-1.7s2.5.7 2.5 1.7-1 1.6-2.5 1.9-2.5.9-2.5 1.9 1 1.7 2.5 1.7 2.5-.7 2.5-1.7"/>' },
+  { k: 'escape', t: 'Қашу бөлмесі', d: 'Есіктер ретімен ашылады: әр құлыпты есеп жауабымен ашасың. Бірінші қашқан команда жеңеді.', cls: false, ic: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>' },
+  { k: 'croc', t: 'Крокодил', d: 'Біреу телефонында сурет салады, сурет тақтада тірідей шығады, қалғандары жауабын жазады. Не тақтада түсіндіру нұсқасы.', cls: false, ic: '<path d="M3 15c3-5 8-6 13-3l5 2-3 3H8z"/><path d="M6 15v-2M9 15v-2M12 15v-2"/>' },
+  { k: 'boss', t: 'Босс', d: 'Бүкіл сынып бір боссқа қарсы: дұрыс жауап боссты әлсіретеді, қате жауап үшін ол шабуыл жасайды. Телефонмен.', cls: false, ic: '<path d="M5 20V9a7 7 0 0 1 14 0v11l-3-2-2 2-2-2-2 2-2-2z"/><path d="M9.5 10h.01M14.5 10h.01"/>' },
   { k: 'battle', t: 'Тапанша мен сапер', d: '4×4 тақта: командалар ұяшық ашады. Мина, тапанша, өмір. Соңғы қалған команда жеңеді.', cls: false, ic: '<circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="1.5"/>' },
   { k: 'wheel', t: 'Бақыт дөңгелегі', d: 'Атаулар дөңгелекте айналады, тоқтағанда таңдалған адам не тақырып шығады.', cls: false, ic: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>' },
   { k: 'potato', t: 'Қызу картошка', d: 'Бомба тиктейді, кімде жарылса, сол тапсырманы орындайды.', cls: false, ic: '<circle cx="11" cy="14" r="7"/><path d="M15 8l3-3M18 3v2h2"/>' },
@@ -2040,7 +2191,7 @@ const PLAY_TOOLS = [
   { k: 'games', t: 'Геймификация', d: 'Пәндер бөліміндегі ойындар мен виртуалды зертханалар.', cls: false, ic: '<path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.4 11.5 2 15.5 2 17a3 3 0 0 0 5 2.2L9 17h6l2 2.2A3 3 0 0 0 22 17c0-1.5-.4-5.5-.7-8.4A4 4 0 0 0 17.3 5z"/>' }
 ];
 const PL_STAGES = [['all', 'Барлығы'], ['start', '🚀 Сабақ басы'], ['teach', '📖 Түсіндіру'], ['fix', '🎯 Бекіту'], ['team', '👥 Топпен'], ['end', '🌙 Сабақ соңы']];
-const PL_MAP = { quiz: 'fix,end', error: 'teach,fix', chain: 'team,fix', relay: 'team,fix,start', bet: 'start,teach', detective: 'fix,team', spy: 'start,team', battle: 'team,fix,start', race: 'fix,team', cloud: 'start,end', poll: 'teach,end', ask: 'teach,end', wheel: 'start,fix', potato: 'start,fix', random: 'start,fix', groups: 'team', timer: 'teach,team', refl: 'end', team: 'team,fix', lessons: 'teach', games: 'fix' };
+const PL_MAP = { quiz: 'fix,end', error: 'teach,fix', chain: 'team,fix', relay: 'team,fix,start', bet: 'start,teach', detective: 'fix,team', spy: 'start,team', battle: 'team,fix,start', words: 'start,fix,team', croc: 'start,team,end', boss: 'fix,team,end', pairs: 'start,fix,team', sort: 'teach,fix', mill: 'fix,end', escape: 'team,fix,end', race: 'fix,team', cloud: 'start,end', poll: 'teach,end', ask: 'teach,end', wheel: 'start,fix', potato: 'start,fix', random: 'start,fix', groups: 'team', timer: 'teach,team', refl: 'end', team: 'team,fix', lessons: 'teach', games: 'fix' };
 let plStage = 'all';
 function plFilter() {
   $('plStages').querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', b.dataset.k === plStage));
@@ -4054,6 +4205,34 @@ const bgUid = () => Math.random().toString(36).slice(2, 8);
 const bgS = v => String(v == null ? '' : v).trim();
 const bgJoinErr = (K, D) => { const e = []; const n = D.list.length; if (n < K.min) e.push('Кемінде ' + K.min + ' ' + K.item.toLowerCase() + ' керек.'); (K.headProbs ? K.headProbs(D) : []).forEach(p => { if (!p.w) e.push(p.m); }); D.list.forEach((it, i) => { const p = K.itemProbs(it, D); if (p && !p.w) e.push((i + 1) + '-' + K.item.toLowerCase() + ': ' + p.m); }); return e; };
 const spyShuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+// ===== Сөз табу торын құрастыру =====
+const bgWN = s => String(s || '').toUpperCase().replace(/[^A-ZА-ЯЁӘІҢҒҮҰҚӨҺ0-9]/g, '');
+const BG_ALPHA = 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЫЭЮЯӘІҢҒҮҰҚӨҺ';
+function bgGrid(ws, level) {
+  const dirs = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [-1, -1], [1, -1], [-1, 1]].slice(0, level === 0 ? 2 : level === 1 ? 3 : 8);
+  const long = Math.max(...ws.map(w => w.length)), tot = ws.reduce((s, w) => s + w.length, 0); let n = Math.min(18, Math.max(9, long + 1, Math.ceil(Math.sqrt(tot * 2.4))));
+  for (let at = 0; at < 120; at++) {
+    const g = Array.from({ length: n }, () => Array(n).fill('')), pl = []; let ok = true;
+    for (const w of [...ws].sort((a, b) => b.length - a.length)) {
+      let done = false;
+      for (let t = 0; t < 300 && !done; t++) {
+        const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)], r = Math.floor(Math.random() * n), c = Math.floor(Math.random() * n), er = r + dr * (w.length - 1), ec = c + dc * (w.length - 1);
+        if (er < 0 || er >= n || ec < 0 || ec >= n) continue; let fit = true; for (let k = 0; k < w.length; k++) { const ch = g[r + dr * k][c + dc * k]; if (ch && ch !== w[k]) { fit = false; break; } } if (!fit) continue;
+        for (let k = 0; k < w.length; k++) g[r + dr * k][c + dc * k] = w[k]; pl.push({ w, r, c, dr, dc }); done = true;
+      }
+      if (!done) { ok = false; break; }
+    }
+    if (ok) { const pool = BG_ALPHA + ws.join(''); for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (!g[r][c]) g[r][c] = pool[Math.floor(Math.random() * pool.length)]; return { n, g, pl }; }
+    if (at % 8 === 7 && n < 18) n++;
+  }
+  return null;
+}
+const bgCmp = s => String(s || '').toLowerCase().replace(/,/g, '.').replace(/\s+/g, '').replace(/[«»"'.!]+$/g, '');
+function bgSame(inp, ans, alt) {
+  const list = [ans, ...String(alt || '').split(/[;|]/)].map(bgCmp).filter(Boolean), v = bgCmp(inp); if (!v) return false;
+  return list.some(a => { if (a === v) return true; const x = parseFloat(a), y = parseFloat(v); return Number.isFinite(x) && Number.isFinite(y) && /^[-+]?[\d.]+$/.test(a) && /^[-+]?[\d.]+$/.test(v) && Math.abs(x - y) <= Math.max(1e-9, Math.abs(x) * 1e-6); });
+}
+const BG_ZC = ['#E21B3C', '#1368CE', '#D89E00', '#26890C', '#7C5CFF', '#F28C28'];
 const BG = {
   error: {
     k: 'error', ic: '🔎', t: 'Қателікті тап', item: 'Есеп', min: 1, d: 'Слайдта шешімде бір қате бар. Командалар қай қадам қате екенін тауып, дәлелдейді.',
@@ -4217,6 +4396,181 @@ const BG = {
         ctl.appendChild(nx); w.appendChild(ctl); b.appendChild(w); bgHotSet(w, () => nx.click());
       };
       draw();
+    }
+  },
+  words: {
+    k: 'words', ic: '🔤', t: 'Сөз табу', item: 'Сөз', items: 'Сөздер', min: 3, sampleTitle: 'Механика сөздері', titlePh: 'Жинақ атауы (мысалы: Механика терминдері)',
+    d: 'Торда сөздер жасырылған: командалар кезекпен сызып табады. Анықтама берсең, оқушы сөзді анықтама бойынша табады.',
+    rules: 'Тақтада әріптер торы мен сөздер тізімі шығады. Команда кезегі келгенде торда сөзді саусақпен (не тышқанмен) бастапқы әріптен соңғы әріпке дейін сызады. Дұрыс болса, сөз команда түсімен боялады, +1 ұпай және кезек сонда қалады. Қате болса не уақыт біткен соң, кезек келесі командаға өтеді.',
+    howto: 'Әр жолға бір сөз жаз. Анықтама міндетті емес: жазсаң, тізімде сөздің орнына анықтама көрінеді, оқушылар сөзді өзі тауып сызады. Торды мен құрастырамын.',
+    blank: () => ({ v: 2, list: [BG.words.newItem(), BG.words.newItem(), BG.words.newItem()] }), newItem: () => ({ w: '', h: '' }),
+    empty: it => !bgS(it.w) && !bgS(it.h),
+    itemProbs(it) { const n = bgWN(it.w).length; if (!bgS(it.w)) return { m: 'Сөзді жаз.' }; if (n < 3) return { m: 'Сөз кемінде 3 әріптен тұруы керек.' }; if (n > 16) return { m: 'Сөз тым ұзын (16 әріптен аспасын).' }; return null; },
+    clean(D) { const seen = new Set(); D.list = D.list.map(it => ({ w: bgS(it.w), h: bgS(it.h) })).filter(it => !BG.words.empty(it)).filter(it => { const k = bgWN(it.w); if (seen.has(k)) return false; seen.add(k); return true; }); },
+    meta: D => D.list.length + ' сөз',
+    sampleD: () => ({ v: 2, list: [['Үдеу', 'Жылдамдықтың өзгеру шапшаңдығы'], ['Импульс', 'Дене массасы мен жылдамдығының көбейтіндісі'], ['Инерция', 'Дененің жылдамдығын сақтау құбылысы'], ['Энергия', 'Жұмыс істей алу қабілеті'], ['Қысым', 'Бірлік ауданға түсетін күш'], ['Тығыздық', 'Массаның көлемге қатынасы'], ['Үйкеліс', 'Жанасқан денелердің қозғалысына кедергі келтіретін күш'], ['Қуат', 'Жұмыстың уақытқа қатынасы']].map(([w, h]) => ({ w, h })) }),
+    card: (it, c) => [bgLab('Сөз'), bgInp('Мысалы: Үдеу', it.w, v => { it.w = v; c.chg(); }, 24), bgLab('Анықтама', 'міндетті емес'), bgTa('Мысалы: Жылдамдықтың өзгеру шапшаңдығы', it.h, 2, v => { it.h = v; c.chg(); })],
+    extra(w, ex, redraw) { if (ex.level === undefined) ex.level = 1; w.append(el('label', '', 'Қиындық деңгейі'), bgSeg([0, 1, 2], ex.level, v => { ex.level = v; redraw(); }, v => ['Жеңіл (→ ↓)', 'Орта (+ диагональ)', 'Қиын (барлық бағыт)'][v])); },
+    run(b, D, teams, K, again, ex) {
+      const words = D.list.map(x => ({ w: bgWN(x.w), raw: x.w, h: x.h, by: -1 })), G = bgGrid(words.map(x => x.w), ex.level === undefined ? 1 : ex.level), T = teams.length;
+      if (!G) { b.replaceChildren(el('p', 'msg err', 'Торды құрастыру мүмкін болмады: сөздерді қысқартып көр.')); return; }
+      const sc = teams.map(() => 0), TURN = 40; let turn = 0, left = TURN, iv = null, anchor = null, down = null, sel = [], fresh = true;
+      const found = {}; const w = el('div', 'bg-wrap fresh'); b.replaceChildren(w); bgHot = null;
+      const hd = el('div', 'bg-head'), pr = el('div', 'wd-turn'), tmEl = el('span', 'wd-tm', ''); hd.append(el('h2', '', K.ic + ' Сөз табу'), tmEl); const boardBox = el('div', 'wd-lay'), left2 = el('div', ''), right = el('div', 'wd-side');
+      const grid = el('div', 'wd-g'); grid.style.setProperty('--n', G.n); const cells = []; for (let r = 0; r < G.n; r++) for (let c = 0; c < G.n; c++) { const x = el('div', 'wd-c', G.g[r][c]); x.dataset.r = r; x.dataset.c = c; cells.push(x); grid.appendChild(x); } const at = (r, c) => cells[r * G.n + c];
+      const scoreBox = el('div', ''), list = el('div', 'wd-list'); const paintScore = () => { scoreBox.replaceChildren(bgScoreRow(teams, sc, null, false, turn)); };
+      const paintTurn = () => { pr.replaceChildren(); pr.style.setProperty('--tc', teams[turn].c); pr.append(el('i', ''), el('span', '', teams[turn].n + ' іздейді')); };
+      const paintList = () => { list.replaceChildren(); words.forEach(x => { const r = el('div', 'wd-w' + (x.by >= 0 ? ' done' : '')); if (x.by >= 0) r.style.setProperty('--tc', teams[x.by].c); r.append(el('b', '', x.by >= 0 ? x.raw : (x.h ? '?' : '•'.repeat(Math.min(x.w.length, 10)))), el('span', '', x.h ? x.h : (x.by >= 0 ? '' : x.w.length + ' әріп'))); if (!x.h && x.by < 0) { r.firstChild.textContent = x.raw; } list.appendChild(r); }); };
+      const clearSel = () => { sel.forEach(([r, c]) => at(r, c).classList.remove('sel')); sel = []; };
+      const line = (a, bb) => { const dr = bb[0] - a[0], dc = bb[1] - a[1], L = Math.max(Math.abs(dr), Math.abs(dc)); if (!L) return [a]; const k = Math.round(Math.atan2(dr, dc) / (Math.PI / 4)), D8 = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]][((k % 8) + 8) % 8], out = []; for (let i = 0; i <= L; i++) { const r = a[0] + D8[0] * i, c = a[1] + D8[1] * i; if (r < 0 || c < 0 || r >= G.n || c >= G.n) break; out.push([r, c]); } return out; };
+      const nextTeam = () => { turn = (turn + 1) % T; left = TURN; paintTurn(); paintScore(); };
+      const finish = () => { clearInterval(iv); bgFinish(b, K, teams, sc, words.filter(x => x.by >= 0).length + ' / ' + words.length + ' сөз табылды.', again); };
+      const check = () => {
+        const s = sel.map(([r, c]) => G.g[r][c]).join(''), rv = [...s].reverse().join(''), i = words.findIndex(x => x.by < 0 && (x.w === s || x.w === rv));
+        if (i >= 0) { words[i].by = turn; sel.forEach(([r, c]) => { const e = at(r, c); e.classList.remove('sel'); e.classList.add('fnd'); e.style.setProperty('--tc', teams[turn].c); }); sc[turn]++; SFX.ok(); sel = []; left = TURN; paintScore(); paintList(); if (words.every(x => x.by >= 0)) { SFX.fan(); confetti(); setTimeout(finish, 1200); } }
+        else { sel.forEach(([r, c]) => at(r, c).classList.add('bad')); const old = sel; sel = []; SFX.bad(); setTimeout(() => old.forEach(([r, c]) => at(r, c).classList.remove('bad', 'sel')), 500); nextTeam(); }
+      };
+      const cellAt = ev => { const e = document.elementFromPoint(ev.clientX, ev.clientY); return e && e.dataset && e.dataset.r !== undefined ? [+e.dataset.r, +e.dataset.c] : null; };
+      const showSel = to => { clearSel(); if (!down) return; sel = line(down, to); sel.forEach(([r, c]) => at(r, c).classList.add('sel')); };
+      grid.addEventListener('pointerdown', ev => { const p = cellAt(ev); if (!p) return; ev.preventDefault(); down = anchor || p; if (anchor) { showSel(p); anchor = null; down = null; check(); return; } showSel(p); grid.setPointerCapture && grid.setPointerCapture(ev.pointerId); });
+      grid.addEventListener('pointermove', ev => { if (!down) return; const p = cellAt(ev); if (p) showSel(p); });
+      grid.addEventListener('pointerup', ev => { if (!down) return; const p = cellAt(ev) || down; if (p[0] === down[0] && p[1] === down[1]) { anchor = down; down = null; return; } showSel(p); down = null; check(); });
+      grid.addEventListener('pointercancel', () => { down = null; clearSel(); });
+      const ctl = el('div', 'bg-ctl'); ctl.append(bgB('out', 'Кезекті өткізу', () => { clearSel(); anchor = null; nextTeam(); }, 'padding:10px 20px'), bgB('out', 'Аяқтау', finish, 'padding:10px 20px'));
+      right.append(pr, scoreBox, list, el('small', 'gm', 'Сөзді бастапқы әріптен соңғысына дейін сыз. Не бір рет бастапқы, содан кейін соңғы әріпті бас.'), ctl); left2.appendChild(grid); boardBox.append(left2, right); w.append(hd, boardBox);
+      paintTurn(); paintScore(); paintList(); iv = setInterval(() => { if (!w.isConnected || $('stage').hidden) return clearInterval(iv); left--; tmEl.textContent = left + ' с'; tmEl.classList.toggle('low', left <= 8); if (left <= 0) { clearSel(); anchor = null; down = null; SFX.bad(); nextTeam(); } }, 1000); tmEl.textContent = left + ' с';
+    }
+  },
+  pairs: {
+    k: 'pairs', ic: '🃏', t: 'Жұптарды тап', item: 'Жұп', items: 'Жұптар', min: 3, sampleTitle: 'Формулалар мен атаулар', titlePh: 'Жинақ атауы (мысалы: Формулалар)',
+    d: 'Карталарды аударып, жұптарын тап: термин мен анықтама, формула мен атауы, құбылыс пен мысал.',
+    rules: 'Тақтада төңкерілген карталар тұр. Команда кезегі келгенде екі карта аударады. Егер олар бір жұп болса (мысалы, формула мен оның атауы), команда +1 алып, тағы бір рет аударады. Әйтпесе карталар қайта жабылады да, кезек келесі командаға өтеді. Ең көп жұп тапқан команда жеңеді.',
+    howto: 'Әр жұпқа екі өріс толтырылады: сол жағына термин не сұрақ, оң жағына оның жұбы не жауабы. Тақтада бұлар екі бөлек карта болады.',
+    blank: () => ({ v: 2, list: [BG.pairs.newItem(), BG.pairs.newItem(), BG.pairs.newItem()] }), newItem: () => ({ a: '', b: '' }),
+    empty: it => !bgS(it.a) && !bgS(it.b),
+    itemProbs(it) { if (!bgS(it.a)) return { m: 'Бірінші картаның мәтінін жаз.' }; if (!bgS(it.b)) return { m: 'Жұбын (екінші картаны) жаз.' }; return null; },
+    clean(D) { D.list = D.list.map(it => ({ a: bgS(it.a), b: bgS(it.b) })).filter(it => !BG.pairs.empty(it)).slice(0, 15); },
+    meta: D => D.list.length + ' жұп',
+    sampleD: () => ({ v: 2, list: [['F = m · a', 'Ньютонның 2-заңы'], ['p = m · v', 'Дене импульсі'], ['A = F · s', 'Механикалық жұмыс'], ['N = A / t', 'Қуат'], ['p = F / S', 'Қысым'], ['ρ = m / V', 'Тығыздық']].map(([a, b]) => ({ a, b })) }),
+    card: (it, c) => [bgLab('1-карта', 'термин не сұрақ'), bgInp('Мысалы: F = m · a', it.a, v => { it.a = v; c.chg(); }, 60), bgLab('2-карта', 'оның жұбы не жауабы'), bgInp('Мысалы: Ньютонның 2-заңы', it.b, v => { it.b = v; c.chg(); }, 60)],
+    run(b, D, teams, K, again) {
+      const cards = spyShuf(D.list.flatMap((p, i) => [{ id: i, t: p.a, s: 0 }, { id: i, t: p.b, s: 1 }])), T = teams.length, sc = teams.map(() => 0), N = D.list.length; let turn = 0, open = [], lock = false, pairs = 0;
+      b.replaceChildren(); bgHot = null; const w = el('div', 'bg-wrap fresh'); b.appendChild(w); const cols = cards.length <= 12 ? 4 : cards.length <= 20 ? 5 : 6;
+      const hd = el('div', 'bg-head'); hd.append(el('h2', '', K.ic + ' Жұптарды тап'), el('span', 'wd-tm', '')); const turnEl = el('div', 'wd-turn'), scoreBox = el('div', ''), grid = el('div', 'pr-g'); grid.style.setProperty('--cols', cols);
+      const paint = () => { turnEl.style.setProperty('--tc', teams[turn].c); turnEl.replaceChildren(el('i', ''), el('span', '', teams[turn].n + ' аударады')); scoreBox.replaceChildren(bgScoreRow(teams, sc, null, false, turn)); }; hd.lastChild.textContent = N + ' жұп';
+      const els = cards.map((cd, i) => { const x = el('button', 'pr-c'); x.type = 'button'; const inn = el('span', 'in'), fa = el('span', 'fa', '?'), bk = el('span', 'bk'); const t = el('span', 'tx', cd.t); t.style.fontSize = cd.t.length > 28 ? '.8rem' : cd.t.length > 14 ? '1rem' : '1.25rem'; bk.appendChild(t); inn.append(fa, bk); x.appendChild(inn); x.setAttribute('aria-label', 'Карта ' + (i + 1));
+        x.onclick = () => { if (lock || x.classList.contains('open') || x.classList.contains('ok')) return; x.classList.add('open'); open.push(i); SFX.tick(); if (open.length < 2) return; lock = true; const [p, q] = open; open = [];
+          if (cards[p].id === cards[q].id && cards[p].s !== cards[q].s) { setTimeout(() => { [p, q].forEach(k => { els[k].classList.add('ok'); els[k].style.setProperty('--tc', teams[turn].c); }); sc[turn]++; pairs++; SFX.ok(); paint(); lock = false; if (pairs >= N) { SFX.fan(); confetti(); setTimeout(() => bgFinish(b, K, teams, sc, 'Барлық ' + N + ' жұп табылды.', again), 1100); } }, 650); }
+          else { SFX.bad(); setTimeout(() => { [p, q].forEach(k => els[k].classList.remove('open')); turn = (turn + 1) % T; paint(); lock = false; }, 1300); } };
+        grid.appendChild(x); return x; });
+      const ctl = el('div', 'bg-ctl'); ctl.appendChild(bgB('out', 'Аяқтау', () => bgFinish(b, K, teams, sc, pairs + ' / ' + N + ' жұп табылды.', again), 'padding:10px 20px')); w.append(hd, turnEl, grid, scoreBox, ctl); paint();
+    }
+  },
+  sort: {
+    k: 'sort', ic: '🗂️', t: 'Сұрыптау', item: 'Топ', items: 'Топтар', min: 2, sampleTitle: 'Өткізгіштер мен оқшаулағыштар', titlePh: 'Жинақ атауы (мысалы: Заттардың түрлері)',
+    d: 'Заттарды (ұғымдарды) дұрыс топқа бөл: сүйреп не топтың атын басып.',
+    rules: 'Тақтада бір зат (ұғым) шығады. Команда кезегі келгенде оны жататын тобына сүйрейді не топтың атын басады. Дұрыс болса +1 ұпай, зат топқа орналасады. Қате болса зат кезек соңына қайта қойылады да, кезек келесі командаға өтеді.',
+    howto: 'Әр топқа атау жаз да, оған жататын заттарды (ұғымдарды) енгіз. 2–6 топ, әр топта кемінде бір зат.',
+    blank: () => ({ v: 2, list: [BG.sort.newItem(), BG.sort.newItem()] }), newItem: () => ({ n: '', it: ['', ''] }),
+    empty: it => !bgS(it.n) && !it.it.some(bgS),
+    itemProbs(it) { if (!bgS(it.n)) return { m: 'Топтың атауын жаз.' }; if (!it.it.some(bgS)) return { m: 'Кемінде бір зат енгіз.' }; return null; },
+    clean(D) { D.list = D.list.map(it => ({ n: bgS(it.n), it: it.it.map(bgS).filter(Boolean) })).filter(it => !BG.sort.empty(it)).slice(0, 6); },
+    meta: D => D.list.length + ' топ · ' + D.list.reduce((s, x) => s + x.it.length, 0) + ' зат',
+    sampleD: () => ({ v: 2, list: [{ n: 'Өткізгіштер', it: ['Мыс', 'Алюминий', 'Темір', 'Тұзды су'] }, { n: 'Оқшаулағыштар', it: ['Резеңке', 'Шыны', 'Пластик', 'Құрғақ ағаш'] }, { n: 'Жартылай өткізгіштер', it: ['Кремний', 'Германий'] }] }),
+    card(it, c) {
+      const out = [bgLab('Топ атауы'), bgInp('Мысалы: Өткізгіштер', it.n, v => { it.n = v; c.chg(); }, 40), bgLab('Осы топқа жататын заттар')], rows = el('div', ''); rows.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+      it.it.forEach((s, k) => { const r = el('div', 'bge-row'); r.append(el('span', 'bge-let', String(k + 1)), bgInp('Зат ' + (k + 1), s, v => { it.it[k] = v; c.chg(); }, 40), bgX(it.it.length > 1, () => { it.it.splice(k, 1); c.again(); })); rows.appendChild(r); });
+      out.push(rows); if (it.it.length < 10) { const add = el('button', 'bge-mini', '+ Зат қосу'); add.type = 'button'; add.onclick = () => { it.it.push(''); c.again('.bge-row:last-of-type input[type=text]'); }; out.push(add); } return out;
+    },
+    run(b, D, teams, K, again) {
+      const cats = D.list, T = teams.length, sc = teams.map(() => 0); let pool = spyShuf(cats.flatMap((c, ci) => c.it.map(t => ({ t, ci })))), turn = 0, got = 0; const total = pool.length, put = cats.map(() => []);
+      b.replaceChildren(); bgHot = null; const w = el('div', 'bg-wrap fresh'); b.appendChild(w); const hd = el('div', 'bg-head'); hd.append(el('h2', '', K.ic + ' Сұрыптау'), el('span', 'wd-tm', '')); const turnEl = el('div', 'wd-turn'), chipBox = el('div', 'so-cur'), zones = el('div', 'so-zones'), scoreBox = el('div', '');
+      const zEls = cats.map((c, ci) => { const z = el('div', 'so-z'); z.style.setProperty('--zc', BG_ZC[ci % 6]); z.dataset.z = ci; z.setAttribute('role', 'button'); z.tabIndex = 0; z.append(el('b', '', c.n), el('div', 'so-in')); zones.appendChild(z); return z; });
+      const paint = () => { hd.lastChild.textContent = got + ' / ' + total; turnEl.style.setProperty('--tc', teams[turn].c); turnEl.replaceChildren(el('i', ''), el('span', '', teams[turn].n + ' сұрыптайды')); scoreBox.replaceChildren(bgScoreRow(teams, sc, null, false, turn)); chipBox.replaceChildren(); if (!pool.length) return;
+        const chip = el('div', 'so-chip', pool[0].t); chip.style.touchAction = 'none'; chipBox.appendChild(chip); chipBox.appendChild(el('small', 'gm', 'Сүйреп топқа сал, не топтың атын бас.'));
+        let ghost = null, ox = 0, oy = 0; chip.onpointerdown = ev => { ev.preventDefault(); const r = chip.getBoundingClientRect(); ox = ev.clientX - r.left; oy = ev.clientY - r.top; ghost = chip.cloneNode(true); ghost.classList.add('so-ghost'); ghost.style.width = r.width + 'px'; document.body.appendChild(ghost); chip.classList.add('dragging'); chip.setPointerCapture(ev.pointerId); mv(ev); };
+        const mv = ev => { if (!ghost) return; ghost.style.left = (ev.clientX - ox) + 'px'; ghost.style.top = (ev.clientY - oy) + 'px'; const z = document.elementFromPoint(ev.clientX, ev.clientY); const zz = z && z.closest && z.closest('.so-z'); zEls.forEach(e => e.classList.toggle('hov', e === zz)); };
+        chip.onpointermove = mv; chip.onpointerup = ev => { if (!ghost) return; const z = document.elementFromPoint(ev.clientX, ev.clientY), zz = z && z.closest && z.closest('.so-z'); ghost.remove(); ghost = null; chip.classList.remove('dragging'); zEls.forEach(e => e.classList.remove('hov')); if (zz) choose(+zz.dataset.z); };
+        chip.onpointercancel = () => { if (ghost) ghost.remove(); ghost = null; chip.classList.remove('dragging'); };
+      };
+      const finish = () => bgFinish(b, K, teams, sc, got + ' / ' + total + ' зат дұрыс орналасты.', again);
+      const choose = ci => { if (!pool.length) return; const it = pool[0], z = zEls[ci];
+        if (it.ci === ci) { pool.shift(); put[ci].push(it.t); got++; sc[turn]++; SFX.ok(); const tag = el('span', 'so-tag', it.t); tag.style.setProperty('--tc', teams[turn].c); z.querySelector('.so-in').appendChild(tag); z.classList.add('good'); setTimeout(() => z.classList.remove('good'), 500); if (!pool.length) { paint(); SFX.fan(); confetti(); setTimeout(finish, 1100); return; } }
+        else { pool.push(pool.shift()); SFX.bad(); z.classList.add('wrong'); setTimeout(() => z.classList.remove('wrong'), 500); }
+        turn = (turn + 1) % T; paint(); };
+      zEls.forEach((z, ci) => { z.onclick = () => choose(ci); z.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(ci); } }; });
+      const ctl = el('div', 'bg-ctl'); ctl.appendChild(bgB('out', 'Аяқтау', finish, 'padding:10px 20px')); w.append(hd, turnEl, chipBox, zones, scoreBox, ctl); paint();
+    }
+  },
+  mill: {
+    k: 'mill', ic: '💰', t: 'Кім миллионер', item: 'Сұрақ', items: 'Сұрақтар', min: 3, sampleTitle: 'Физика миллионері', titlePh: 'Жинақ атауы (мысалы: Механика, 7-сынып)',
+    d: 'Командалар кезекпен сұраққа жауап береді. Көмек түймелері бар: 50/50 және көмекші. Сұрақ қиындаған сайын ұпай өседі.',
+    rules: 'Әр команда кезегімен сұрақ алады. Жауапты таңдап, «Түпкілікті жауап» басады. Дұрыс болса, деңгейге сай ұпай алады (раундтар өткен сайын ұпай өседі). Әр командада 2 көмек бар: 50/50 (екі қате жауап өшеді) және «Көмекші» (30 секунд кеңесуге).',
+    howto: 'Әр сұраққа: сұрақ мәтінін жаз, 2–4 нұсқа енгіз де, дұрыс нұсқаның жанындағы дөңгелекті бас. Қиын сұрақтарды соңына қой.',
+    blank: () => ({ v: 2, list: [BG.mill.newItem()] }), newItem: () => ({ q: '', opts: ['', '', '', ''], c: -1, exp: '' }),
+    empty: it => !bgS(it.q) && !it.opts.some(bgS) && !bgS(it.exp),
+    itemProbs: it => BG.bet.itemProbs(it), meta: D => D.list.length + ' сұрақ',
+    clean(D) { BG.bet.clean(D); },
+    sampleD: () => ({ v: 2, list: [
+      { q: 'Ньютонның қай заңы инерция заңы деп аталады?', opts: ['Бірінші', 'Екінші', 'Үшінші', 'Бүкіләлемдік тартылыс'], c: 0, exp: 'Бірінші заң: күш әсер етпесе, дене тыныштықта не бірқалыпты қозғалыста болады.' },
+      { q: 'Қысымның өлшем бірлігі қандай?', opts: ['Ньютон', 'Паскаль', 'Джоуль', 'Ватт'], c: 1, exp: '1 Па = 1 Н/м².' },
+      { q: 'Вакуумда жарық жылдамдығы шамамен қанша?', opts: ['3 · 10⁶ м/с', '3 · 10⁸ м/с', '3 · 10¹⁰ м/с', '300 м/с'], c: 1, exp: 'c ≈ 3 · 10⁸ м/с.' },
+      { q: 'Жұмыс 60 Дж, уақыт 6 с. Қуат қанша?', opts: ['10 Вт', '66 Вт', '360 Вт', '0,1 Вт'], c: 0, exp: 'N = A / t = 60 / 6 = 10 Вт.' },
+      { q: 'Қай құбылыс дыбыстың қайталануы (жаңғырық) деп аталады?', opts: ['Дифракция', 'Дыбыстың шағылуы', 'Резонанс', 'Интерференция'], c: 1, exp: 'Жаңғырық: дыбыс толқынының кедергіден шағылуы.' }
+    ] }),
+    card: (it, c) => BG.bet.card(it, c),
+    run(b, D, teams, K, again) {
+      const Q = D.list, T = teams.length, sc = teams.map(() => 0), life = teams.map(() => ({ f: true, h: true })), PR = r => [100, 200, 300, 500, 1000, 1500, 2000, 3000, 5000, 7500, 10000][Math.min(r, 10)];
+      let i = 0, sel = -1, ph = 'ask', hid = [], fresh = true, helpOn = false;
+      const draw = () => {
+        b.replaceChildren(); bgHot = null; const it = Q[i], t = i % T, r = Math.floor(i / T), prize = PR(r), w = el('div', 'bg-wrap' + (fresh ? ' fresh' : '')); fresh = false; b.appendChild(w);
+        const hd = el('div', 'bg-head'); hd.append(el('h2', '', K.ic + ' Кім миллионер'), bgProg(i, Q.length)); const turn = el('div', 'wd-turn'); turn.style.setProperty('--tc', teams[t].c); turn.append(el('i', ''), el('span', '', teams[t].n + ' жауап береді'), el('b', 'ml-pr', prize + ' ұпай'));
+        const q = el('div', 'bg-card bg-q', it.q), op = el('div', 'bg-opts'); const lockd = ph !== 'ask';
+        it.opts.forEach((o, k) => { const hidden = hid.includes(k); const x = el('button', 'bg-opt ml-o' + (hidden ? ' gone' : '') + (sel === k ? (ph === 'ask' ? ' pick' : ph === 'lock' ? ' pick lock' : '') : '') + (ph === 'rev' ? (k === it.c ? ' win' : sel === k ? ' lose' : ' dim') : '')); x.type = 'button'; x.style.background = QCOL[k]; const sh = el('span', ''); sh.innerHTML = shapeSvg(k, 28); x.append(sh, el('b', '', 'ABCD'[k] + ':'), el('span', '', hidden ? '' : o)); x.disabled = hidden || lockd; x.onclick = () => { sel = sel === k ? -1 : k; SFX.tick(); draw(); }; op.appendChild(x); });
+        w.append(hd, turn, q, op); if (ph === 'rev' && it.exp) w.appendChild(el('div', 'bg-exp', it.exp));
+        const lf = el('div', 'bg-ctl'), L = life[t]; const f5 = bgB('out', '50/50', () => { const wrong = it.opts.map((_, k) => k).filter(k => k !== it.c && !hid.includes(k)); spyShuf(wrong).slice(0, Math.min(2, wrong.length - 0)).forEach(k => hid.push(k)); if (hid.includes(sel)) sel = -1; L.f = false; SFX.pop(); draw(); }, 'padding:10px 18px'), hp = bgB('out', '🧑‍🤝‍🧑 Көмекші (30 с)', () => { L.h = false; helpOn = true; SFX.pop(); draw(); }, 'padding:10px 18px');
+        f5.disabled = !L.f || ph !== 'ask' || it.opts.length < 3; hp.disabled = !L.h || ph !== 'ask'; lf.append(el('small', 'gm', 'Көмек:'), f5, hp); if (helpOn && ph === 'ask') { const tm = bgTimer(30); lf.appendChild(tm); setTimeout(() => { if (tm.isConnected && tm.children[1]) tm.children[1].click(); }, 300); }
+        const ctl = el('div', 'bg-ctl'); const go = bgB('go', ph === 'ask' ? '🔒 Түпкілікті жауап' : ph === 'lock' ? 'Тексерілуде…' : (i + 1 < Q.length ? 'Келесі сұрақ ▶' : 'Аяқтау 🏁'), null, 'padding:12px 28px');
+        go.disabled = (ph === 'ask' && sel < 0) || ph === 'lock'; go.onclick = () => { if (ph === 'ask') { ph = 'lock'; SFX.drum(); draw(); setTimeout(() => { ph = 'rev'; if (sel === it.c) { sc[t] += prize; SFX.ok(); SFX.bell(); confetti(); } else SFX.bad(); draw(); }, 1700); } else if (ph === 'rev') { if (i + 1 < Q.length) { i++; sel = -1; ph = 'ask'; hid = []; helpOn = false; fresh = true; draw(); } else bgFinish(b, K, teams, sc, '', again); } };
+        ctl.appendChild(go); w.append(lf, ctl, bgScoreRow(teams, sc, null, false, t)); bgHotSet(w, () => { if (!go.disabled) go.click(); });
+      };
+      draw();
+    }
+  },
+  escape: {
+    k: 'escape', ic: '🔐', t: 'Қашу бөлмесі', item: 'Есік', items: 'Есіктер', min: 3, sampleTitle: 'Зертханадан қашу', titlePh: 'Жинақ атауы (мысалы: Зертханадан қашу)',
+    d: 'Командалар жабық бөлмеде: әр есікті физика есебінің жауабын енгізіп ашады. Бірінші болып шыққан команда жеңеді.',
+    rules: 'Әр команданың жолағында ағымдағы есік пен есеп көрінеді. Команда жауапты енгізіп «Ашу 🔑» басады. Дұрыс болса, есік ашылады және келесісіне өтеді. Қате жауаптан кейін 8 секунд құлып жабылып тұрады. «Кеңес» басса, кеңес көрінеді, бірақ команда 1 ұпайын жоғалтады. Барлық есікті бірінші ашқан команда жеңеді.',
+    howto: 'Әр есікке: есеп (құлып), дұрыс жауап, қаласаң кеңес пен сюжеттік сөйлем жаз. Сан жауабы дәл жазылса да, үтір не нүктемен жазылса да қабылданады.',
+    blank: () => ({ v: 2, story: '', list: [BG.escape.newItem(), BG.escape.newItem(), BG.escape.newItem()] }), newItem: () => ({ q: '', a: '', alt: '', h: '', s: '' }),
+    fix(D) { D.story = D.story || ''; D.list.forEach(it => { ['q', 'a', 'alt', 'h', 's'].forEach(k => { it[k] = it[k] || ''; }); }); },
+    empty: it => !bgS(it.q) && !bgS(it.a) && !bgS(it.h) && !bgS(it.s),
+    itemProbs(it) { if (!bgS(it.q)) return { m: 'Есептің (құлыптың) мәтінін жаз.' }; if (!bgS(it.a)) return { m: 'Дұрыс жауапты жаз.' }; return null; },
+    clean(D) { D.story = bgS(D.story); D.list = D.list.map(it => ({ q: bgS(it.q), a: bgS(it.a), alt: bgS(it.alt), h: bgS(it.h), s: bgS(it.s) })).filter(it => !BG.escape.empty(it)); },
+    meta: D => D.list.length + ' есік',
+    head(w, D, c) { w.append(bgLab('Сюжет', 'міндетті емес: бөлмеде не болғаны'), bgTa('Мысалы: Сендер физика зертханасында қамалып қалдыңдар. Есіктерді ашатын кодтар есептердің жауаптарында…', D.story, 3, v => { D.story = v; c.chg(); }), el('div', 'bge-sec', 'Есіктер')); },
+    sampleD: () => ({ v: 2, story: 'Түнде физика зертханасының есігі сыртынан құлыпталып қалды. Шығу үшін үш есікті физика есептерінің жауабымен ашу керек. Кім бірінші шықса, жеңеді!', list: [
+      { q: 'Дене 5 м/с жылдамдықпен 12 с қозғалды. Жүрген жолы қанша метр?', a: '60', alt: '60 м', h: 's = v · t', s: 'Бірінші есік: қоймаға апаратын есік.' },
+      { q: 'Массасы 3 кг денеге 12 Н күш әсер етеді. Үдеуі қанша м/с²?', a: '4', alt: '', h: 'a = F / m', s: 'Екінші есік: дәліздегі қауіпсіздік есігі.' },
+      { q: '20 Н күш денені 3 м жолға жылжытты. Істелген жұмыс қанша Дж?', a: '60', alt: '', h: 'A = F · s', s: 'Соңғы есік: сыртқа шығатын есік!' }
+    ] }),
+    card: (it, c) => [bgLab('Есеп (құлыптың мәтіні)'), bgTa('Мысалы: Дене 5 м/с жылдамдықпен 12 с қозғалды. Жолы қанша метр?', it.q, 2, v => { it.q = v; c.chg(); }), bgLab('Дұрыс жауап'), bgInp('Мысалы: 60', it.a, v => { it.a = v; c.chg(); }, 60), bgLab('Басқа дұрыс жауаптар', 'міндетті емес, үтірмен бөл: 60 м; 60м'), bgInp('Мысалы: 60 м', it.alt, v => { it.alt = v; c.chg(); }, 120), bgLab('Кеңес', 'міндетті емес'), bgInp('Мысалы: s = v · t', it.h, v => { it.h = v; c.chg(); }, 160), bgLab('Есік сипаттамасы', 'міндетті емес'), bgInp('Мысалы: Қоймаға апаратын есік', it.s, v => { it.s = v; c.chg(); }, 160)],
+    run(b, D, teams, K, again) {
+      const N = D.list.length, T = teams.length, st = teams.map(() => ({ p: 0, lockT: 0, hint: false, hints: 0 })), place = []; let t0 = 0, started = false, iv = null; const sc = () => { const s = teams.map(() => 0); const ord = teams.map((_, i) => i).sort((a, c) => { const pa = place.indexOf(a), pc = place.indexOf(c); if (pa >= 0 && pc >= 0) return pa - pc; if (pa >= 0) return -1; if (pc >= 0) return 1; return st[c].p - st[a].p; }); ord.forEach((i, k) => { s[i] = Math.max(0, T - k + (place.includes(i) ? 2 : 0) - st[i].hints); }); return { s, ord }; };
+      b.replaceChildren(); bgHot = null; const w = el('div', 'bg-wrap fresh es'); b.appendChild(w); const hd = el('div', 'bg-head'), tm = el('span', 'wd-tm', '0:00'); hd.append(el('h2', '', K.ic + ' Қашу бөлмесі'), tm); const lanes = el('div', 'es-lanes');
+      if (D.story) w.appendChild(el('div', 'es-story', D.story));
+      const finish = () => { clearInterval(iv); const r = sc(); bgFinish(b, K, teams, r.s, 'Орындар: ' + r.ord.map((i, k) => (k + 1) + '. ' + teams[i].n + (place.includes(i) ? ' 🔓' : ' (' + st[i].p + '/' + N + ')')).join('  '), again); };
+      const draw = () => { lanes.replaceChildren(); teams.forEach((tm2, ti) => { const S = st[ti], done = S.p >= N, cur = D.list[S.p], lane = el('div', 'es-lane' + (done ? ' out' : '')); lane.style.setProperty('--tc', tm2.c);
+          const doors = el('div', 'es-doors'); for (let k = 0; k < N; k++) doors.appendChild(el('span', 'es-door' + (k < S.p ? ' open' : k === S.p ? ' cur' : ''), k < S.p ? '🔓' : '🔒'));
+          const top = el('div', 'es-top'); top.append(el('b', '', (done ? ['🥇', '🥈', '🥉'][place.indexOf(ti)] || '🏁' : '') + ' ' + tm2.n), doors); lane.appendChild(top);
+          if (done) lane.appendChild(el('div', 'es-q', '🎉 Бөлмеден шықты!')); else if (!started) lane.appendChild(el('div', 'es-q', 'Дайын бол…')); else {
+            if (cur.s) lane.appendChild(el('small', 'gm', cur.s)); lane.appendChild(el('div', 'es-q', (S.p + 1) + '. ' + cur.q)); if (S.hint && cur.h) lane.appendChild(el('div', 'bg-exp', '💡 ' + cur.h));
+            const row = el('div', 'es-in'), inp = document.createElement('input'), go = bgB('go', 'Ашу 🔑', null, 'padding:10px 18px'), hb = bgB('out', '💡 Кеңес', null, 'padding:10px 14px'), msg = el('small', 'gm', ''); inp.type = 'text'; inp.placeholder = 'Жауап…'; inp.autocomplete = 'off'; inp.setAttribute('aria-label', tm2.n + ' жауабы');
+            const locked = () => Date.now() < S.lockT; const upl = () => { if (locked()) { msg.textContent = '🔒 Құлып ' + Math.ceil((S.lockT - Date.now()) / 1000) + ' с жабық'; inp.disabled = go.disabled = true; setTimeout(() => { if (lane.isConnected) upl(); }, 500); } else { inp.disabled = go.disabled = false; if (msg.dataset.l) { msg.textContent = ''; delete msg.dataset.l; } } }; if (locked()) { msg.dataset.l = '1'; upl(); }
+            const tryA = () => { if (locked() || !inp.value.trim()) return; if (bgSame(inp.value, cur.a, cur.alt)) { S.p++; S.hint = false; SFX.ok(); if (S.p >= N) { place.push(ti); if (place.length === 1) { SFX.fan(); confetti(); } if (place.length === T) return setTimeout(finish, 900); } draw(); } else { SFX.bad(); lane.classList.add('shake'); S.lockT = Date.now() + 8000; msg.dataset.l = '1'; upl(); setTimeout(() => lane.classList.remove('shake'), 500); } };
+            go.onclick = tryA; inp.onkeydown = e => { if (e.key === 'Enter') tryA(); }; hb.disabled = !cur.h || S.hint; hb.onclick = () => { S.hint = true; S.hints++; SFX.pop(); draw(); }; row.append(inp, go, hb); lane.append(row, msg); }
+          lanes.appendChild(lane); }); };
+      const st2 = bgB('go', '▶ Старт', null, 'padding:10px 22px'), fn = bgB('out', 'Аяқтау', finish, 'padding:10px 22px'); st2.onclick = () => { countdown(() => { started = true; t0 = Date.now(); SFX.start && SFX.start(); st2.hidden = true; clearInterval(iv); iv = setInterval(() => { if (!w.isConnected || $('stage').hidden) return clearInterval(iv); const s = Math.floor((Date.now() - t0) / 1000); tm.textContent = bgFmt(s); }, 1000); draw(); }); }; hd.append(st2, fn); w.append(hd, lanes); draw();
     }
   },
   detective: {
@@ -4441,6 +4795,347 @@ function bgEdit(kind, s, pre, preTitle) {
     const r = K.parse(K.sample); r.D.list.forEach(x => L.push(x)); if (K.head && !bgS(D.start)) D.start = r.D.start || ''; for (let k = L.length - 1; k >= 0; k--) { if (K.empty(L[k]) && L.length > 1) L.splice(k, 1); } bgEdit(kind, s, D, ti.value);
   };
   renderAll(); ready = true;
+}
+
+// ===== Онлайн / офлайн нүкте =====
+const odot = on => { const i = document.createElement('i'); i.className = 'od ' + (on ? 'on' : 'off'); i.title = on ? 'Онлайн' : 'Офлайн'; return i; };
+const crSame = (inp, w, alt) => { const v = bgWN(inp); if (!v) return false; return [w, ...String(alt || '').split(/[;|]/)].map(bgWN).filter(Boolean).includes(v); };
+const CR_COL = ['#16181D', '#E5484D', '#2B6CFF', '#1FA971', '#F5A524', '#8B5CF6', '#8B5E3C'];
+function crSeg(ctx, s, W, H) {
+  // s: {c, w, p:[x,y,...]} координаттар 0..1000 × 0..750
+  const p = s.p; if (!p || p.length < 2) return; ctx.strokeStyle = s.c; ctx.fillStyle = s.c; ctx.lineWidth = s.w; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (p.length === 2 || (p.length === 4 && p[0] === p[2] && p[1] === p[3])) { ctx.beginPath(); ctx.arc(p[0], p[1], s.w / 2, 0, 6.2832); ctx.fill(); return; }
+  ctx.beginPath(); ctx.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) ctx.lineTo(p[i], p[i + 1]); ctx.stroke();
+}
+
+// ---- Жинақ: сөздер ----
+BG.croc = {
+  k: 'croc', ic: '🐊', t: 'Крокодил', item: 'Сөз', items: 'Сөздер', min: 3, sampleTitle: 'Физика крокодилі', titlePh: 'Жинақ атауы (мысалы: Механика, 7-сынып)',
+  d: 'Бір оқушы телефонында құпия сөзді көріп, сурет салады. Қалғандары тақтадан көріп, жауабын өз телефонына жазады. Не тақтада түсіндіріп көрсету нұсқасы.',
+  rules: 'Телефонмен: оқушылар QR арқылы кіреді. Кезекпен біреу суретші болады: тек ол сөзді көреді де, телефонында сурет салады, сурет тақтада тірідей шығады. Қалғандары жауабын жазады, дұрыс тапқан тез болған сайын көп ұпай алады. Тақтада нұсқасы: командалар сөзді қимылмен не сөзбен түсіндіреді.',
+  howto: 'Әр сөзге: сөзді жаз. Қаласаң ишара (тақырып) жаз: ол жауап беретіндерге көрінеді. Балама жауап керек болса, оны да қос (бірнеше болса ; арқылы бөл).',
+  blank: () => ({ v: 2, list: [BG.croc.newItem(), BG.croc.newItem(), BG.croc.newItem()] }), newItem: () => ({ w: '', h: '', a: '' }),
+  empty: it => !bgS(it.w) && !bgS(it.h) && !bgS(it.a),
+  itemProbs(it) { const n = bgWN(it.w).length; if (!bgS(it.w)) return { m: 'Сөзді жаз.' }; if (n < 2) return { m: 'Сөз кемінде 2 әріптен тұруы керек.' }; if (bgS(it.w).length > 40) return { m: 'Сөз тым ұзын (40 таңбадан аспасын).' }; return null; },
+  clean(D) { const seen = new Set(); D.list = D.list.map(it => ({ w: bgS(it.w), h: bgS(it.h), a: bgS(it.a) })).filter(it => !BG.croc.empty(it)).filter(it => { const k = bgWN(it.w); if (seen.has(k)) return false; seen.add(k); return true; }); },
+  meta: D => D.list.length + ' сөз',
+  parse(raw) { return { D: { v: 2, list: bgLines(raw).map(l => { const p = l.split('|'); return { w: (p[0] || '').trim(), h: (p[1] || '').trim(), a: (p[2] || '').trim() }; }) }, errs: [] }; },
+  fmt: 'Әр жолға бір сөз. Ишара мен балама жауап керек болса: сөз | ишара | балама жауап',
+  sampleD: () => ({ v: 2, list: [['Үдеу', 'Механика'], ['Маятник', 'Тербеліс'], ['Магнит', 'Электр және магнетизм'], ['Линза', 'Оптика'], ['Ғарыш кемесі', 'Астрономия'], ['Термометр', 'Жылу'], ['Батарея', 'Электр'], ['Үйкеліс күші', 'Механика'], ['Көрсеткіш', 'Математика']].map(x => ({ w: x[0], h: x[1], a: '' })) }),
+  card: (it, c) => [bgLab('Сөз'), bgInp('Мысалы: Маятник', it.w, v => { it.w = v; c.chg(); }, 40), bgLab('Ишара (тақырып)', 'міндетті емес, жауап беретіндерге көрінеді'), bgInp('Мысалы: Тербеліс', it.h, v => { it.h = v; c.chg(); }, 60), bgLab('Балама жауап', 'міндетті емес, бірнеше болса ; арқылы бөл'), bgInp('Мысалы: Тербелмелі жүйе', it.a, v => { it.a = v; c.chg(); }, 100)],
+  setup: (b, K, cb) => cb({}),
+  run(b, D, teams, K, again, ex, title) { bgHome(K.k); openCroc(D.list, title); }
+};
+BG.croc.items = 'Сөздер';
+
+// ---- Ойын: хост ----
+function openCroc(list, title) {
+  SFX.unlock();
+  const code = String(100000 + Math.floor(Math.random() * 900000)), joinUrl = new URL('play.html?c=' + code, location.href).href;
+  const root = $('qzHost'); root.hidden = false; root.replaceChildren(); root.classList.add('cr'); document.body.style.overflow = 'hidden';
+  let sv = {}; try { sv = JSON.parse(ls.get('crcfg') || '{}'); } catch { }
+  const cfg = { mode: sv.mode || 'phone', rounds: sv.rounds || 1, sec: sv.sec || 75, teams: sv.teams || 2 };
+  const WORDS = list.map(x => ({ w: x.w, h: x.h || '', a: x.a || '' })), P = new Map();
+  let ph = 'lobby', G = null, ch = null, tick = null, tickFn = null, hostCv = null, hostCx = null, queue = [], names = ['', '', '', ''];
+  const send = (event, payload) => { if (ch) { try { ch.send({ type: 'broadcast', event, payload }); } catch { } } };
+  const top = el('div', 'qh-top'), codeChip = el('span', 'qh-code', 'Код: ' + code), cnt = el('span', 'qh-cnt', '');
+  const mute = el('button', 'qh-btn sfxToggle'); mute.type = 'button'; mute.innerHTML = sfxIcon; mute.onclick = () => SFX.setMuted(!SFX.muted);
+  const close = el('button', 'qh-btn', '✕'); close.type = 'button'; close.setAttribute('aria-label', 'Жабу');
+  top.append(codeChip, cnt, el('span', 'qh-sp'), mute, close); const body = el('div', 'qh-body cr-body'); root.append(top, body); SFX.paint();
+  const btn = (cls, t, fn) => { const b = el('button', cls, t); b.type = 'button'; b.onclick = fn; return b; };
+  const face = (p, s) => avEl(p.av, s || 48, (p.n || '?').charAt(0).toUpperCase());
+  const stopTick = () => { clearInterval(tick); tick = null; tickFn = null; };
+  const nextWord = () => { if (!queue.length) queue = spyShuf(WORDS.map((_, i) => i)); return WORDS[queue.pop()]; };
+  const live = () => [...P.values()].filter(p => !p.off);
+  const maskOf = () => { const w = G.cur.w; return [...w].map((c, i) => (/[\s\-.,:;!?()/+]/.test(c) ? c : (G.rev.includes(i) ? c : '_'))).join(''); };
+
+  const msg = () => {
+    const m = { g: 'croc', ph }; if (ph === 'lobby') return m;
+    m.pl = [...P.values()].map(p => ({ i: p.id, n: p.n, a: p.av, s: p.sc, x: p.off ? 0 : 1 }));
+    m.rd = G.turn + 1; m.tot = G.order.length; m.dr = G.drawer; m.hn = G.cur ? G.cur.h : ''; m.sec = cfg.sec; m.sv = [...G.solved.keys()];
+    if (ph === 'ready' || ph === 'draw') { m.wd = { [G.drawer]: spyEnc(G.cur.w) }; m.mask = maskOf(); if (ph === 'draw') m.left = Math.max(0, Math.ceil((G.tEnd - Date.now()) / 1000)); }
+    if (ph === 'reveal') { m.w = G.cur.w; m.gain = Object.fromEntries(G.solved); }
+    return m;
+  };
+  const push = () => send('st', msg());
+
+  // ---------- лобби ----------
+  let chipsEl = null, startBtn = null, hintEl = null;
+  const upCnt = () => { cnt.textContent = cfg.mode === 'phone' && P.size ? P.size + ' ойыншы' : ''; };
+  const drawChips = () => {
+    upCnt(); if (!chipsEl) return; chipsEl.replaceChildren(); if (!P.size) chipsEl.appendChild(el('span', 'qh-wait', 'Оқушылар қосылуын күтіп тұрмыз…'));
+    P.forEach(p => { const c = el('button', 'qh-chip'); c.type = 'button'; c.title = 'Шығару'; c.append(odot(!p.off), face(p, 30), document.createTextNode(p.n)); c.onclick = () => { P.delete(p.id); send('kick', { id: p.id }); drawChips(); updStart(); }; chipsEl.appendChild(c); });
+  };
+  const updStart = () => { if (!startBtn) return; const n = live().length, ok = cfg.mode === 'board' || n >= 2; startBtn.disabled = !ok; startBtn.textContent = cfg.mode === 'board' ? 'Бастау ▶' : (ok ? 'Ойынды бастау (' + n + ' ойыншы)' : 'Ойынды бастау'); hintEl.textContent = !ok ? 'Кемінде 2 ойыншы керек.' : ''; };
+  const renderLobby = () => {
+    stopTick(); body.replaceChildren(); const wrap = el('div', 'qh-lobby'), right = el('div', 'qh-lr');
+    right.append(el('h2', 'qh-h cr-title', '🐊 Крокодил'), el('p', 'qh-s', (title ? '«' + title + '» · ' : '') + WORDS.length + ' сөз'));
+    right.appendChild(mrow('Нұсқа', segment([{ v: 'phone', t: '📱 Телефонмен (сурет салу)' }, { v: 'board', t: '🖥 Тақтада (түсіндіру)' }], cfg.mode, v => { cfg.mode = v; renderLobby(); })));
+    if (cfg.mode === 'phone') {
+      right.append(el('p', 'qh-s', 'Оқушылар QR-ды сканерлеп кіреді. Кезекпен біреу сөзді көріп, телефонында сурет салады, қалғандары жауабын жазады.'),
+        mrow('Әр оқушы неше рет салады', segment([1, 2, 3].map(v => ({ v, t: String(v) })), cfg.rounds, v => { cfg.rounds = v; })), mrow('Бір сурет уақыты (сек.)', segment([45, 60, 75, 90, 120].map(v => ({ v, t: String(v) })), cfg.sec, v => { cfg.sec = v; })));
+      chipsEl = el('div', 'qh-chips');
+    } else {
+      right.append(el('p', 'qh-s', 'Командалар кезекпен сөзді қимылмен не сөзбен (сөздің өзін айтпай) түсіндіреді. Сөзді тек түсіндіруші көреді: батырманы басып тұрғанда сөз көрінеді.'),
+        mrow('Команда саны', segment([2, 3, 4].map(v => ({ v, t: String(v) })), cfg.teams, v => { cfg.teams = v; renderLobby(); })), mrow('Әр команда неше рет', segment([1, 2, 3].map(v => ({ v, t: String(v) })), cfg.rounds, v => { cfg.rounds = v; })), mrow('Уақыт (сек.)', segment([45, 60, 90, 120].map(v => ({ v, t: String(v) })), cfg.sec, v => { cfg.sec = v; })));
+      const nm = el('div', 'cr-names'); for (let i = 0; i < cfg.teams; i++) { const r = el('div', 'cr-nm'), d = el('i'); d.style.background = BG_COLS[i]; const inp = document.createElement('input'); inp.className = 'sy-in'; inp.maxLength = 24; inp.placeholder = 'Команда ' + (i + 1); inp.value = names[i]; inp.setAttribute('aria-label', 'Команда ' + (i + 1)); inp.oninput = () => { names[i] = inp.value; }; r.append(d, inp); nm.appendChild(r); } right.appendChild(nm);
+      chipsEl = null;
+    }
+    startBtn = btn('qh-go', 'Бастау', () => start()); hintEl = el('p', 'qh-s sy-hint', ''); if (chipsEl) right.appendChild(chipsEl); right.append(startBtn, hintEl);
+    if (cfg.mode === 'phone') { const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code); wrap.append(qrBox, right); } else { wrap.classList.add('one'); wrap.appendChild(right); }
+    body.appendChild(wrap); drawChips(); updStart();
+  };
+
+  // ---------- телефонмен ----------
+  const start = () => {
+    ls.set('crcfg', JSON.stringify(cfg)); SFX.drum();
+    if (cfg.mode === 'board') return startBoard();
+    const ids = live().map(p => p.id); if (ids.length < 2) return; P.forEach(p => { p.sc = 0; });
+    let order = []; for (let r = 0; r < cfg.rounds; r++) order = order.concat(spyShuf(ids));
+    G = { order, turn: -1, drawer: '', cur: null, rev: [], solved: new Map(), wrong: [], strokes: [], tEnd: 0, hl: 0 }; nextTurn();
+  };
+  const nextTurn = () => {
+    stopTick(); do { G.turn++; } while (G.turn < G.order.length && (!P.has(G.order[G.turn]) || P.get(G.order[G.turn]).off));
+    if (G.turn >= G.order.length) return endGame();
+    G.drawer = G.order[G.turn]; G.cur = nextWord(); G.rev = []; G.hl = 0; G.solved = new Map(); G.wrong = []; G.strokes = []; hostCv = null; ph = 'ready'; push(); render(); SFX.pop();
+  };
+  const startDraw = () => {
+    if (ph !== 'ready') return; ph = 'draw'; G.tEnd = Date.now() + cfg.sec * 1000; push(); render(); SFX.start && SFX.start();
+    stopTick(); tick = setInterval(() => {
+      if (!root.isConnected || root.hidden) return stopTick(); const left = (G.tEnd - Date.now()) / 1000, el2 = 1 - left / cfg.sec;
+      if (left <= 0) return endTurn();
+      const w = G.cur.w, idx = [...w].map((c, i) => i).filter(i => !/[\s\-.,:;!?()/+]/.test(w[i]));
+      if (el2 >= .4 && G.hl < 1 && idx.length > 3) { G.hl = 1; G.rev.push(idx[0]); push(); } if (el2 >= .7 && G.hl < 2 && idx.length > 5) { G.hl = 2; const rest = idx.filter(i => !G.rev.includes(i)); G.rev.push(rest[Math.floor(rest.length / 2)]); push(); }
+      if (tickFn) tickFn(left);
+    }, 250);
+  };
+  const endTurn = () => { if (ph !== 'draw') return; stopTick(); ph = 'reveal'; push(); render(); if (G.solved.size) { SFX.fan(); confetti(); } else SFX.bad(); };
+  const endGame = () => { stopTick(); ph = 'end'; push(); render(); SFX.fan(); confetti(); };
+  const guess = (id, w) => {
+    if (ph !== 'draw' || id === G.drawer || G.solved.has(id) || !P.has(id)) return; const p = P.get(id), t = String(w || '').trim().slice(0, 40); if (!t) return;
+    if (crSame(t, G.cur.w, G.cur.a)) {
+      const left = Math.max(0, (G.tEnd - Date.now()) / 1000), pts = 50 + Math.round(50 * left / cfg.sec); G.solved.set(id, pts); p.sc += pts; const d = P.get(G.drawer); if (d) d.sc += 30; SFX.ok(); push();
+      if (G.solved.size >= live().filter(x => x.id !== G.drawer).length) return setTimeout(endTurn, 700);
+      paintSide();
+    } else { G.wrong.push({ i: id, w: t }); if (G.wrong.length > 7) G.wrong.shift(); SFX.tick(); paintSide(); }
+  };
+
+  let sideEl = null, maskEl = null, tmFill = null, tmNum = null;
+  const paintSide = () => {
+    if (!sideEl) return; sideEl.replaceChildren(); const sorted = [...P.values()].sort((a, b) => b.sc - a.sc);
+    const sc = el('div', 'cr-sc'); sorted.forEach(p => { const r = el('div', 'cr-sr' + (p.id === G.drawer ? ' dr' : '') + (G.solved.has(p.id) ? ' ok' : '')); r.append(odot(!p.off), face(p, 28), el('span', 'n', p.n), G.solved.has(p.id) ? el('em', '', '+' + G.solved.get(p.id)) : el('span'), el('b', '', String(p.sc))); if (p.id === G.drawer) r.appendChild(el('i', 'pen', '✏️')); sc.appendChild(r); });
+    const fd = el('div', 'cr-feed'); G.wrong.forEach(x => { const p = P.get(x.i); fd.appendChild(el('div', '', (p ? p.n : '?') + ': ' + x.w)); }); sideEl.append(sc, fd);
+    if (maskEl) maskEl.textContent = maskOf().split('').join(' ');
+  };
+  const renderReady = () => {
+    stopTick(); body.replaceChildren(); const w = el('div', 'cr-wrap'), d = P.get(G.drawer);
+    w.append(el('p', 'qh-s cr-no', 'Сурет ' + (G.turn + 1) + ' / ' + G.order.length)); const c = el('div', 'cr-ready'); c.append(d ? face(d, 120) : el('span'), el('div', 'cr-who', d ? d.n : '?'), el('p', 'qh-s', 'телефонына қарасын: сөз соған көрінеді. Дайын болғанда «Бастау» басады.'), btn('qh-go', 'Бастау ▶ (суретшінің орнына)', startDraw)); w.appendChild(c); body.appendChild(w);
+  };
+  const renderDraw = () => {
+    body.replaceChildren(); const w = el('div', 'cr-wrap cr-draw'), d = P.get(G.drawer), main = el('div', 'cr-main'), card = el('div', 'cr-cv');
+    const cv = document.createElement('canvas'); cv.width = 1000; cv.height = 750; hostCv = cv; hostCx = cv.getContext('2d'); hostCx.fillStyle = '#fff'; hostCx.fillRect(0, 0, 1000, 750); G.strokes.forEach(s => crSeg(hostCx, s)); card.appendChild(cv);
+    const bar = el('div', 'cr-tb'); tmFill = el('i'); bar.appendChild(tmFill); tmNum = el('b', 'cr-tn', '');
+    const hd = el('div', 'cr-hd'); hd.append(d ? face(d, 44) : el('span'), el('div', '', ''), tmNum); hd.children[1].append(el('b', '', (d ? d.n : '?') + ' салып жатыр'), el('small', 'qh-s', 'Сурет ' + (G.turn + 1) + ' / ' + G.order.length));
+    maskEl = el('div', 'cr-mask', ''); const ex = [maskEl]; if (G.cur.h) ex.push(el('div', 'cr-hint', '💡 Ишара: ' + G.cur.h));
+    main.append(hd, bar, ...ex, card); sideEl = el('div', 'cr-side'); const ctl = el('div', 'bg-ctl'); ctl.append(btn('sy-pair', '⏭ Өткізу', endTurn)); w.append(main, el('div', 'cr-right')); w.lastChild.append(sideEl, ctl); body.appendChild(w);
+    tickFn = left => { tmFill.style.width = (100 * left / cfg.sec) + '%'; tmNum.textContent = Math.ceil(left); tmNum.classList.toggle('low', left <= 10); }; tickFn(Math.max(0, (G.tEnd - Date.now()) / 1000)); paintSide();
+  };
+  const renderReveal = () => {
+    stopTick(); body.replaceChildren(); const w = el('div', 'cr-wrap'), c = el('div', 'cr-ready'), d = P.get(G.drawer);
+    c.append(el('p', 'qh-s', 'Жасырылған сөз'), el('div', 'cr-word', G.cur.w)); if (G.solved.size) { const l = el('div', 'cr-got'); G.solved.forEach((pts, id) => { const p = P.get(id); if (p) { const r = el('span', '', ''); r.append(face(p, 28), document.createTextNode(p.n + ' +' + pts)); l.appendChild(r); } }); c.appendChild(l); } else c.appendChild(el('p', 'qh-s', 'Ешкім таппады.'));
+    if (hostCv) { const pic = el('div', 'cr-pic'), im = new Image(); im.src = hostCv.toDataURL('image/png'); pic.appendChild(im); c.appendChild(pic); }
+    c.appendChild(btn('qh-go', G.turn + 1 >= G.order.length ? 'Нәтижені көру ▶' : 'Келесі сурет ▶', nextTurn)); w.appendChild(c); body.appendChild(w);
+  };
+  const renderEnd = () => {
+    stopTick(); body.replaceChildren(); const w = el('div', 'cr-wrap'), c = el('div', 'cr-ready'); const s = [...P.values()].sort((a, b) => b.sc - a.sc); c.appendChild(el('h2', 'qh-h cr-title', '🏆 Ойын аяқталды'));
+    const pod = el('div', 'cr-pod'); s.slice(0, 3).forEach((p, i) => { const x = el('div', 'cr-pd p' + i); x.append(face(p, i ? 64 : 88), el('b', '', p.n), el('span', '', p.sc + ' ұпай'), el('i', '', ['🥇', '🥈', '🥉'][i])); pod.appendChild(x); }); c.appendChild(pod);
+    if (s.length > 3) { const l = el('div', 'cr-sc'); s.slice(3).forEach((p, i) => { const r = el('div', 'cr-sr'); r.append(el('span', 'n', (i + 4) + '. ' + p.n), el('span'), el('b', '', String(p.sc))); l.appendChild(r); }); c.appendChild(l); }
+    const ctl = el('div', 'bg-ctl'); ctl.append(btn('qh-go', 'Қайта ойнау ▶', () => { ph = 'lobby'; G = null; push(); renderLobby(); }), btn('sy-pair', 'Аяқтау', shutdown)); c.appendChild(ctl); w.appendChild(c); body.appendChild(w);
+  };
+
+  // ---------- тақтада ----------
+  let B = null;
+  const startBoard = () => {
+    const teams = bgTeamsOf(cfg.teams).map((t, i) => ({ n: (names[i] || '').trim() || 'Команда ' + (i + 1), c: t.c })); B = { teams, sc: teams.map(() => 0), turn: 0, total: teams.length * cfg.rounds, cur: nextWord(), shown: false, run: false, left: cfg.sec, done: 0, skipped: 0 }; ph = 'bplay'; renderBoard();
+  };
+  const bNext = () => { B.cur = nextWord(); B.shown = false; renderBoard(); };
+  const bEndTurn = () => { stopTick(); B.run = false; B.done++; B.turn++; if (B.turn >= B.total) return renderBoardEnd(); B.cur = nextWord(); B.left = cfg.sec; B.shown = false; renderBoard(); SFX.bell(); };
+  const renderBoard = () => {
+    body.replaceChildren(); const w = el('div', 'cr-wrap'), t = B.teams[B.turn % B.teams.length], c = el('div', 'cr-ready'); w.style.setProperty('--tc', t.c);
+    const turn = el('div', 'bg-turn'); turn.style.setProperty('--tc', t.c); turn.append(el('i', ''), el('span', '', t.n + ' түсіндіреді · ' + (B.turn + 1) + ' / ' + B.total)); c.appendChild(turn);
+    const tm = el('div', 'cr-bt' + (B.left <= 10 && B.run ? ' low' : ''), bgFmt(B.left)); c.appendChild(tm);
+    const sec = el('div', 'cr-secret'); sec.textContent = B.shown ? B.cur.w : 'Сөзді көру үшін батырманы басып тұр'; sec.classList.toggle('on', B.shown); c.appendChild(sec); if (B.cur.h) c.appendChild(el('p', 'qh-s', B.shown ? '💡 Ишара: ' + B.cur.h : ''));
+    const hold = btn('cr-hold', '👁 Сөзді көру (басып тұр)', null); const show = v => { B.shown = v; sec.textContent = v ? B.cur.w : 'Сөзді көру үшін батырманы басып тұр'; sec.classList.toggle('on', v); };
+    hold.onpointerdown = e => { e.preventDefault(); try { hold.setPointerCapture(e.pointerId); } catch { } show(true); }; hold.onpointerup = hold.onpointercancel = () => show(false); hold.oncontextmenu = e => e.preventDefault(); c.appendChild(hold);
+    const ctl = el('div', 'bg-ctl'), go = btn('qh-go', B.run ? '⏸ Тоқтату' : '▶ Старт', () => { if (B.run) { stopTick(); B.run = false; } else { B.run = true; tick = setInterval(() => { if (!root.isConnected) return stopTick(); B.left--; if (B.left > 0 && B.left <= 5) SFX.tick(); tm.textContent = bgFmt(Math.max(0, B.left)); tm.classList.toggle('low', B.left <= 10); if (B.left <= 0) { stopTick(); B.run = false; SFX.bell(); bEndTurn(); } }, 1000); } renderBoard(); });
+    ctl.append(go, btn('qh-go ok', '✔ Тапты (+1)', () => { B.sc[B.turn % B.teams.length]++; SFX.ok(); bNext(); }), btn('sy-pair', '⏭ Басқа сөз', () => { B.skipped++; bNext(); }), btn('sy-pair', 'Келесі команда ▶', bEndTurn)); c.appendChild(ctl); c.appendChild(bgScoreRow(B.teams, B.sc, renderBoard, true, B.turn % B.teams.length)); w.appendChild(c); body.appendChild(w);
+  };
+  const renderBoardEnd = () => {
+    stopTick(); body.replaceChildren(); const w = el('div', 'cr-wrap'), c = el('div', 'cr-ready'), ord = B.teams.map((t, i) => i).sort((a, b) => B.sc[b] - B.sc[a]), top = B.sc[ord[0]], win = ord.filter(i => B.sc[i] === top);
+    c.append(el('h2', 'qh-h cr-title', win.length > 1 ? '🤝 Тең нәтиже' : '🏆 Жеңімпаз'), el('div', 'cr-word', win.map(i => B.teams[i].n).join(' және '))); const tl = el('div', 'bg-teams'); ord.forEach((i, k) => { const x = el('div', 'bg-team'); x.style.setProperty('--tc', B.teams[i].c); x.append(el('div', 'nm', (['🥇', '🥈', '🥉'][k] || (k + 1) + '.') + ' ' + B.teams[i].n), el('div', 'sc', String(B.sc[i]))); tl.appendChild(x); }); c.appendChild(tl);
+    const ctl = el('div', 'bg-ctl'); ctl.append(btn('qh-go', 'Қайта ойнау ▶', () => { ph = 'lobby'; renderLobby(); }), btn('sy-pair', 'Аяқтау', shutdown)); c.appendChild(ctl); w.appendChild(c); body.appendChild(w); SFX.fan(); confetti();
+  };
+
+  function render() { if (ph === 'lobby') renderLobby(); else if (ph === 'ready') renderReady(); else if (ph === 'draw') renderDraw(); else if (ph === 'reveal') renderReveal(); else if (ph === 'end') renderEnd(); else if (ph === 'bplay') renderBoard(); }
+  function shutdown() { stopTick(); send('st', { g: 'croc', ph: 'closed' }); if (ch) setTimeout(() => { try { sb.removeChannel(ch); } catch { } }, 400); root.hidden = true; root.replaceChildren(); root.classList.remove('cr'); document.body.style.overflow = ''; }
+  close.onclick = async () => { if (ph === 'lobby' || (await ask('Ойын жабылсын ба?'))) shutdown(); };
+
+  ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: 'host' } } });
+  ch.on('presence', { event: 'sync' }, () => {
+    const st = ch.presenceState(); Object.entries(st).forEach(([id, metas]) => {
+      const nm = metas[0] && metas[0].name; if (!nm || id === 'host') return;
+      if (!P.has(id)) { if (ph !== 'lobby' || cfg.mode !== 'phone') return; let u = String(nm).slice(0, 20), n = 2; while ([...P.values()].some(p => p.n === u)) u = String(nm).slice(0, 18) + ' ' + n++; P.set(id, { id, n: u, av: (metas[0] && metas[0].av) || '', sc: 0, off: false }); SFX.pop(); }
+      const p = P.get(id); p.off = false; if (p.offT) { clearTimeout(p.offT); p.offT = null; }
+    });
+    P.forEach(p => { if (!st[p.id]) { p.off = true; if (ph === 'lobby' && !p.offT) p.offT = setTimeout(() => { const q = P.get(p.id); if (q && q.off && ph === 'lobby') { P.delete(p.id); drawChips(); updStart(); } }, 20000); } });
+    if (ph === 'lobby') { drawChips(); updStart(); } else paintSide();
+  });
+  ch.on('broadcast', { event: 'hello' }, () => { push(); if (ph === 'draw' && G.strokes.length) send('csnap', { s: G.strokes.slice(-500) }); });
+  ch.on('broadcast', { event: 'cready' }, ({ payload: m }) => { if (ph === 'ready' && m && m.id === G.drawer) startDraw(); });
+  ch.on('broadcast', { event: 'cs' }, ({ payload: m }) => { if (ph !== 'draw' || !m || m.id !== G.drawer || !Array.isArray(m.p)) return; const s = { c: String(m.c).slice(0, 9), w: Math.max(2, Math.min(40, +m.w || 8)), p: m.p.slice(0, 400).map(Number) }; G.strokes.push(s); if (hostCx) crSeg(hostCx, s); });
+  ch.on('broadcast', { event: 'cclr' }, ({ payload: m }) => { if (ph !== 'draw' || !m || m.id !== G.drawer) return; G.strokes = []; if (hostCx) { hostCx.fillStyle = '#fff'; hostCx.fillRect(0, 0, 1000, 750); } });
+  ch.on('broadcast', { event: 'cguess' }, ({ payload: m }) => { if (m) guess(m.id, m.w); });
+  ch.subscribe(async s => { if (s === 'SUBSCRIBED') await ch.track({ host: true }); if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') body.replaceChildren(el('p', 'qh-s', 'Байланыс орнамады. Интернетті тексеріп, қайта көр.')); });
+  render();
+}
+
+// ===== Босс: сынып біреуге қарсы =====
+const BOSS_EM = ['👹', '👾', '🐉', '🦖', '🧟', '👻', '🤖', '🦑', '🕷️', '☠️', '🧌', '🦂'];
+BG.boss = {
+  k: 'boss', ic: '👹', t: 'Босс', item: 'Сұрақ', items: 'Сұрақтар', min: 3, sampleTitle: 'Инерция желісіне қарсы', titlePh: 'Жинақ атауы (мысалы: Күш пен қозғалыс, 8-сынып)',
+  d: 'Бүкіл сынып бір боссқа қарсы шығады. Әр оқушы телефонынан жауап береді: дұрыс жауап боссты әлсіретеді, қате жауап босстың шабуылын күшейтеді.',
+  rules: 'Оқушылар QR арқылы кіреді. Әр сұраққа бәрі өз телефонынан жауап береді. Әр дұрыс жауап боссқа соққы болады. Қате жауап берген (не үлгермеген) оқушылар үшін босс сыныпқа шабуыл жасайды. Босс жеңілсе, сынып жеңеді. Сыныптың өмірі біткенше босс өлмесе, жеңіледі.',
+  howto: 'Алдымен босстың атын таңда. Әр сұраққа: сұрақты жаз, 2–4 жауап нұсқасын енгіз де, дұрыс нұсқаның жанындағы дөңгелекті бас.',
+  blank: () => ({ v: 2, boss: '', em: '👹', list: [BG.bet.newItem(), BG.bet.newItem(), BG.bet.newItem()] }), newItem: () => BG.bet.newItem(),
+  empty: it => BG.bet.empty(it), itemProbs: it => BG.bet.itemProbs(it),
+  clean(D) { BG.bet.clean(D); D.boss = bgS(D.boss).slice(0, 30); D.em = BOSS_EM.includes(D.em) ? D.em : '👹'; },
+  meta: D => (D.em || '👹') + ' ' + (D.boss || 'Босс') + ' · ' + D.list.length + ' сұрақ',
+  parse(raw) { const r = BG.bet.parse(raw); r.D.boss = ''; r.D.em = '👹'; return r; }, fmt: BG.bet.fmt,
+  head(w, D, c) {
+    w.append(bgLab('Босстың аты', 'міндетті емес'), bgInp('Мысалы: Инерция желісі', D.boss, v => { D.boss = v; c.chg(); }, 30), bgLab('Босстың түрі'));
+    const row = el('div', 'bs-em'); BOSS_EM.forEach(e => { const b = el('button', 'bs-eb' + ((D.em || '👹') === e ? ' on' : ''), e); b.type = 'button'; b.onclick = () => { D.em = e; row.querySelectorAll('.bs-eb').forEach(x => x.classList.toggle('on', x === b)); c.chg(); }; row.appendChild(b); }); w.append(row, el('div', 'bge-sec', 'Сұрақтар'));
+  },
+  card: (it, c) => BG.bet.card(it, c),
+  sampleD: () => ({ v: 2, boss: 'Инерция желісі', em: '👹', list: [
+    { q: 'Бастапқы жылдамдығы 10 м/с дене күш әсер етпесе, қалай қозғалады?', opts: ['Баяулайды', 'Тұрақты жылдамдықпен', 'Үдей түседі', 'Тоқтайды'], c: 1, exp: 'Инерция заңы: күш әсер етпесе, жылдамдық өзгермейді.' },
+    { q: 'Күш өлшем бірлігі қандай?', opts: ['Джоуль', 'Ватт', 'Ньютон', 'Паскаль'], c: 2, exp: '1 Н = 1 кг · м/с².' },
+    { q: 'Массасы 2 кг денеге 10 Н күш әсер етсе, үдеуі қанша?', opts: ['5 м/с²', '20 м/с²', '0,2 м/с²', '12 м/с²'], c: 0, exp: 'a = F / m = 10 / 2 = 5 м/с².' },
+    { q: 'Ньютонның үшінші заңы бойынша әсер мен қарсы әсер…', opts: ['Бірдей денеге түседі', 'Модулі тең, бағыты қарама-қарсы', 'Әрдайым бір-бірін жояды', 'Бағыты бірдей'], c: 1, exp: 'Олар әртүрлі денелерге түседі, сондықтан бір-бірін жоймайды.' },
+    { q: 'Ауырлық күші формуласы қандай?', opts: ['F = m / g', 'F = m · g', 'F = g / m', 'F = m + g'], c: 1, exp: 'F = m · g, мұнда g ≈ 10 м/с².' },
+    { q: 'Жылдамдық 20 м/с, уақыт 5 с болса, жол қанша (бірқалыпты қозғалыс)?', opts: ['4 м', '25 м', '100 м', '15 м'], c: 2, exp: 's = v · t = 20 · 5 = 100 м.' }
+  ].map(x => ({ ...x, exp: x.exp })) }),
+  setup: (b, K, cb) => cb({}),
+  run(b, D, teams, K, again, ex, title) { bgHome(K.k); openBoss(D, title); }
+};
+
+function openBoss(D, title) {
+  SFX.unlock();
+  const code = String(100000 + Math.floor(Math.random() * 900000)), joinUrl = new URL('play.html?c=' + code, location.href).href;
+  const root = $('qzHost'); root.hidden = false; root.replaceChildren(); root.classList.add('bs'); document.body.style.overflow = 'hidden';
+  let sv = {}; try { sv = JSON.parse(ls.get('bscfg') || '{}'); } catch { }
+  const cfg = { sec: sv.sec || 20, lvl: sv.lvl || 1 }, FAC = [0.45, 0.6, 0.75], Q = D.list, BE = D.em || '👹', BN = D.boss || 'Босс';
+  const P = new Map(); let ph = 'lobby', G = null, ch = null, tick = null, tickFn = null;
+  const send = (event, payload) => { if (ch) { try { ch.send({ type: 'broadcast', event, payload }); } catch { } } };
+  const top = el('div', 'qh-top'), codeChip = el('span', 'qh-code', 'Код: ' + code), cnt = el('span', 'qh-cnt', '');
+  const mute = el('button', 'qh-btn sfxToggle'); mute.type = 'button'; mute.innerHTML = sfxIcon; mute.onclick = () => SFX.setMuted(!SFX.muted);
+  const close = el('button', 'qh-btn', '✕'); close.type = 'button'; close.setAttribute('aria-label', 'Жабу');
+  top.append(codeChip, cnt, el('span', 'qh-sp'), mute, close); const body = el('div', 'qh-body bs-body'); root.append(top, body); SFX.paint();
+  const btn = (cls, t, fn) => { const b = el('button', cls, t); b.type = 'button'; b.onclick = fn; return b; };
+  const face = (p, s) => avEl(p.av, s || 48, (p.n || '?').charAt(0).toUpperCase());
+  const stopTick = () => { clearInterval(tick); tick = null; tickFn = null; };
+  const live = () => [...P.values()].filter(p => !p.off);
+  const msg = () => {
+    const m = { g: 'boss', ph, bn: BN, be: BE }; if (ph === 'lobby') return m;
+    m.pl = [...P.values()].map(p => ({ i: p.id, n: p.n, a: p.av, d: p.d, x: p.off ? 0 : 1 })); m.bm = G.bm; m.bh = G.bh; m.ch = G.ch; m.qi = G.qi; m.qn = Q.length; m.sec = cfg.sec;
+    if (ph === 'q' || ph === 'rev') { const it = Q[G.qi]; m.q = it.q; m.o = it.opts; m.an = G.ans.size; }
+    if (ph === 'q') m.left = Math.max(0, Math.ceil((G.tEnd - Date.now()) / 1000));
+    if (ph === 'rev') m.r = G.res;
+    if (ph === 'end') { m.win = G.win; m.top = [...P.values()].sort((a, b) => b.d - a.d).slice(0, 5).map(p => ({ i: p.id, d: p.d })); }
+    return m;
+  };
+  const push = () => send('st', msg());
+
+  // ---------- лобби ----------
+  let chipsEl = null, startBtn = null, hintEl = null;
+  const drawChips = () => {
+    cnt.textContent = P.size ? P.size + ' ойыншы' : ''; if (!chipsEl) return; chipsEl.replaceChildren(); if (!P.size) chipsEl.appendChild(el('span', 'qh-wait', 'Оқушылар қосылуын күтіп тұрмыз…'));
+    P.forEach(p => { const c = el('button', 'qh-chip'); c.type = 'button'; c.title = 'Шығару'; c.append(odot(!p.off), face(p, 30), document.createTextNode(p.n)); c.onclick = () => { P.delete(p.id); send('kick', { id: p.id }); drawChips(); updStart(); }; chipsEl.appendChild(c); });
+  };
+  const updStart = () => { if (!startBtn) return; const n = live().length; startBtn.disabled = n < 1; startBtn.textContent = n ? 'Шайқасты бастау (' + n + ' ойыншы)' : 'Шайқасты бастау'; hintEl.textContent = n < 1 ? 'Кемінде 1 ойыншы керек.' : ''; };
+  const renderLobby = () => {
+    stopTick(); body.replaceChildren(); const wrap = el('div', 'qh-lobby'), right = el('div', 'qh-lr');
+    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code);
+    const bs = el('div', 'bs-lb'); bs.append(el('span', 'bs-lbe', BE), el('b', '', BN)); right.append(el('h2', 'qh-h cr-title', '👹 Босс шайқасы'), bs, el('p', 'qh-s', (title ? '«' + title + '» · ' : '') + Q.length + ' сұрақ. Бүкіл сынып босқа қарсы: дұрыс жауап соққы болады, қате жауап үшін босс шабуыл жасайды.'),
+      mrow('Сұраққа уақыт (сек.)', segment([10, 15, 20, 30, 45].map(v => ({ v, t: String(v) })), cfg.sec, v => { cfg.sec = v; })), mrow('Қиындық', segment([{ v: 0, t: 'Жеңіл' }, { v: 1, t: 'Орта' }, { v: 2, t: 'Қиын' }], cfg.lvl, v => { cfg.lvl = v; })));
+    chipsEl = el('div', 'qh-chips'); startBtn = btn('qh-go', 'Шайқасты бастау', () => start()); hintEl = el('p', 'qh-s sy-hint', ''); right.append(chipsEl, startBtn, hintEl); wrap.append(qrBox, right); body.appendChild(wrap); drawChips(); updStart();
+  };
+
+  // ---------- шайқас ----------
+  const start = () => {
+    const n = live().length; if (!n) return; ls.set('bscfg', JSON.stringify(cfg)); P.forEach(p => { p.d = 0; });
+    const bm = Math.max(3, Math.round(n * Q.length * FAC[cfg.lvl])); G = { qi: -1, bm, bh: bm, ch: 100, ans: new Map(), tEnd: 0, res: null, win: null }; SFX.drum(); nextQ();
+  };
+  const nextQ = () => { G.qi++; if (G.qi >= Q.length) return finish(G.bh <= 0); G.ans = new Map(); G.res = null; ph = 'q'; G.tEnd = Date.now() + cfg.sec * 1000; push(); render(); SFX.pop(); stopTick(); tick = setInterval(() => { if (!root.isConnected || root.hidden) return stopTick(); const left = (G.tEnd - Date.now()) / 1000; if (left <= 0) return reveal(); if (tickFn) tickFn(left); }, 250); };
+  const reveal = () => {
+    if (ph !== 'q') return; stopTick(); const it = Q[G.qi], who = {}; let ok = 0, bad = 0, none = 0; const lv = live();
+    P.forEach(p => { const k = G.ans.get(p.id); if (k === undefined) { who[p.id] = 'no'; if (!p.off) none++; } else if (k === it.c) { who[p.id] = 'ok'; ok++; p.d++; } else { who[p.id] = 'bad'; bad++; } });
+    const wrong = bad + none, denom = Math.max(1, lv.length), hit = Math.min(G.ch, Math.round(18 * wrong / denom)), dmg = Math.min(G.bh, ok);
+    G.bh -= dmg; G.ch -= hit; G.res = { c: it.c, ok, bad, none, dmg, hit, exp: it.exp || '', who }; ph = 'rev'; push(); render(); if (dmg) SFX.ok(); if (hit) setTimeout(SFX.bad, 350);
+  };
+  const finish = win => { stopTick(); G.win = win; ph = 'end'; push(); render(); SFX.fan(); if (win) confetti(); else SFX.bad(); };
+  const after = () => { if (G.bh <= 0) return finish(true); if (G.ch <= 0) return finish(false); nextQ(); };
+
+  const bars = () => {
+    const b = el('div', 'bs-bars'); const mk = (cls, label, cur, max) => { const w = el('div', 'bs-bw ' + cls), f = el('i'), t = el('span', '', label + ': ' + cur + ' / ' + max); f.style.width = (100 * Math.max(0, cur) / max) + '%'; const tr = el('div', 'bs-bt'); tr.appendChild(f); w.append(t, tr); return w; };
+    b.append(mk('boss', BE + ' ' + BN, G.bh, G.bm), mk('cls', '🛡 Сынып', G.ch, 100)); return b;
+  };
+  const arena = res => {
+    const a = el('div', 'bs-arena' + (res && res.dmg ? ' hit' : '') + (res && res.hit ? ' hurt' : '')), bo = el('div', 'bs-boss' + (G.bh <= 0 ? ' dead' : ''), BE); a.appendChild(bo);
+    if (res && res.dmg) a.appendChild(el('div', 'bs-pop dm', '−' + res.dmg)); if (res && res.hit) a.appendChild(el('div', 'bs-pop ht', '🛡 −' + res.hit)); return a;
+  };
+  const crowd = res => {
+    const c = el('div', 'bs-crowd'); P.forEach(p => { const st = res ? res.who[p.id] : (G.ans.has(p.id) ? 'ans' : ''), x = el('div', 'bs-pl ' + (st || '') + (p.off ? ' off' : '')); x.append(face(p, 40), el('span', '', p.n)); if (res) x.appendChild(el('i', 'mk', st === 'ok' ? '✓' : st === 'bad' ? '✗' : '·')); else if (st === 'ans') x.appendChild(el('i', 'mk', '✓')); c.appendChild(x); }); return c;
+  };
+  const renderQ = () => {
+    body.replaceChildren(); const w = el('div', 'bs-wrap'), it = Q[G.qi]; w.append(bars(), arena(null)); const q = el('div', 'bg-card bg-q', it.q), op = el('div', 'bg-opts');
+    it.opts.forEach((o, k) => { const x = el('div', 'bg-opt'); x.style.background = QCOL[k]; x.style.setProperty('--k', k); const sh = el('span', ''); sh.innerHTML = shapeSvg(k, 28); x.append(sh, el('span', '', o)); op.appendChild(x); });
+    const bar = el('div', 'cr-tb'), fill = el('i'), num = el('b', 'cr-tn', ''); bar.appendChild(fill); const row = el('div', 'bs-trow'); row.append(el('span', 'qh-s', 'Сұрақ ' + (G.qi + 1) + ' / ' + Q.length), bar, num);
+    tickFn = left => { fill.style.width = (100 * left / cfg.sec) + '%'; num.textContent = Math.ceil(left); num.classList.toggle('low', left <= 5); }; tickFn(Math.max(0, (G.tEnd - Date.now()) / 1000));
+    const ctl = el('div', 'bg-ctl'); ctl.append(btn('qh-go', 'Жауапты ашу ▶', reveal), el('span', 'qh-s', G.ans.size + ' / ' + live().length + ' жауап берді')); w.append(row, q, op, crowd(null), ctl); body.appendChild(w);
+  };
+  const renderRev = () => {
+    stopTick(); body.replaceChildren(); const w = el('div', 'bs-wrap'), it = Q[G.qi], r = G.res; w.append(bars(), arena(r)); const q = el('div', 'bg-card bg-q', it.q), op = el('div', 'bg-opts');
+    it.opts.forEach((o, k) => { const x = el('div', 'bg-opt ' + (k === it.c ? 'win' : 'lose')); x.style.background = QCOL[k]; x.style.setProperty('--k', k); const sh = el('span', ''); sh.innerHTML = shapeSvg(k, 28); x.append(sh, el('span', '', o)); op.appendChild(x); });
+    const st = el('p', 'bs-st', '✓ ' + r.ok + ' дұрыс · ✗ ' + (r.bad + r.none) + ' қате'); w.append(q, op, st); if (r.exp) w.appendChild(el('div', 'bg-exp', r.exp)); w.appendChild(crowd(r));
+    const ctl = el('div', 'bg-ctl'); ctl.append(btn('qh-go', G.bh <= 0 ? '🏆 Жеңіс! ▶' : G.ch <= 0 ? 'Нәтиже ▶' : (G.qi + 1 >= Q.length ? 'Нәтиже ▶' : 'Келесі сұрақ ▶'), after)); w.appendChild(ctl); body.appendChild(w);
+  };
+  const renderEnd = () => {
+    stopTick(); body.replaceChildren(); const w = el('div', 'bs-wrap'), c = el('div', 'cr-ready'), s = [...P.values()].sort((a, b) => b.d - a.d);
+    const bo = el('div', 'bs-boss big' + (G.win ? ' dead' : ' win'), BE); c.append(el('h2', 'qh-h cr-title', G.win ? '🏆 Сынып жеңді!' : '💀 Босс жеңді'), bo, el('p', 'qh-s', G.win ? BN + ' жеңілді. Бәріңе рақмет!' : BN + ' сыныпты жеңді. Қайта көріңдер!'));
+    const l = el('div', 'cr-sc'); s.slice(0, 8).forEach((p, i) => { const r = el('div', 'cr-sr'); r.append(odot(!p.off), face(p, 28), el('span', 'n', (['🥇', '🥈', '🥉'][i] || (i + 1) + '.') + ' ' + p.n), el('span'), el('b', '', p.d + ' соққы')); l.appendChild(r); }); c.appendChild(l);
+    const ctl = el('div', 'bg-ctl'); ctl.append(btn('qh-go', 'Қайта шайқас ▶', () => { ph = 'lobby'; G = null; push(); renderLobby(); }), btn('sy-pair', 'Аяқтау', shutdown)); c.appendChild(ctl); w.appendChild(c); body.appendChild(w);
+  };
+  function render() { if (ph === 'lobby') renderLobby(); else if (ph === 'q') renderQ(); else if (ph === 'rev') renderRev(); else if (ph === 'end') renderEnd(); }
+  function shutdown() { stopTick(); send('st', { g: 'boss', ph: 'closed' }); if (ch) setTimeout(() => { try { sb.removeChannel(ch); } catch { } }, 400); root.hidden = true; root.replaceChildren(); root.classList.remove('bs'); document.body.style.overflow = ''; }
+  close.onclick = async () => { if (ph === 'lobby' || (await ask('Шайқас жабылсын ба?'))) shutdown(); };
+
+  ch = sb.channel('quiz:' + code, { config: { broadcast: { self: false }, presence: { key: 'host' } } });
+  ch.on('presence', { event: 'sync' }, () => {
+    const st = ch.presenceState(); Object.entries(st).forEach(([id, metas]) => {
+      const nm = metas[0] && metas[0].name; if (!nm || id === 'host') return;
+      if (!P.has(id)) { if (ph !== 'lobby') return; let u = String(nm).slice(0, 20), n = 2; while ([...P.values()].some(p => p.n === u)) u = String(nm).slice(0, 18) + ' ' + n++; P.set(id, { id, n: u, av: (metas[0] && metas[0].av) || '', d: 0, off: false }); SFX.pop(); }
+      const p = P.get(id); p.off = false; if (p.offT) { clearTimeout(p.offT); p.offT = null; }
+    });
+    P.forEach(p => { if (!st[p.id]) { p.off = true; if (ph === 'lobby' && !p.offT) p.offT = setTimeout(() => { const q = P.get(p.id); if (q && q.off && ph === 'lobby') { P.delete(p.id); drawChips(); updStart(); } }, 20000); } });
+    if (ph === 'lobby') { drawChips(); updStart(); }
+  });
+  ch.on('broadcast', { event: 'hello' }, () => push());
+  ch.on('broadcast', { event: 'bans' }, ({ payload: m }) => {
+    if (ph !== 'q' || !m || m.qi !== G.qi || !P.has(m.id) || G.ans.has(m.id) || !(m.k >= 0 && m.k < Q[G.qi].opts.length)) return; G.ans.set(m.id, m.k); SFX.tick(); push(); renderQ();
+    if (G.ans.size >= live().length) setTimeout(() => { if (ph === 'q' && G.ans.size >= live().length) reveal(); }, 700);
+  });
+  ch.subscribe(async s => { if (s === 'SUBSCRIBED') await ch.track({ host: true }); if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') body.replaceChildren(el('p', 'qh-s', 'Байланыс орнамады. Интернетті тексеріп, қайта көр.')); });
+  render();
 }
 
 // ===== Эмодзи таңдау =====
