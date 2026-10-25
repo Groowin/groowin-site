@@ -76,10 +76,46 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .bs-bars{display:grid;gap:8px;margin-bottom:12px}.bs-bw span{font-size:.85rem;font-weight:700}.bs-bt{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:3px}
 .bs-bt i{display:block;height:100%;transition:width .6s}.bs-bw.boss i{background:var(--bad)}.bs-bw.cls i{background:var(--ok)}
 .cr-ph .res{font-size:1.1rem;text-align:center}
+
+/* ===== Оқушы: тема мен стиль ===== */
+html[data-pt=dark]{--bg:#0E1117;--surf:#151A23;--line:rgba(255,255,255,.1);--ink:#E6E9EF;--mute:#8B93A3}
+html[data-pt=light]{--bg:#F6F7F9;--surf:#fff;--line:#E5E7EB;--ink:#14171F;--mute:#6B7280}
+html[data-pt=milk]{--bg:#FAF5EC;--surf:#FFFDF8;--line:#E9E0D0;--ink:#2B2620;--mute:#8A7F70}
+html[data-pt=ocean]{--bg:#06161F;--surf:#0C2330;--line:rgba(120,220,255,.15);--ink:#E3F4FA;--mute:#80A5B5}
+html[data-pt=sunset]{--bg:#1A0F1F;--surf:#251529;--line:rgba(255,170,140,.16);--ink:#FCEBE6;--mute:#B99CA8}
+html[data-pt=forest]{--bg:#0A1510;--surf:#112019;--line:rgba(140,230,170,.15);--ink:#E6F3EA;--mute:#8AAB97}
+html[data-pt=amoled]{--bg:#000;--surf:#0A0A0A;--line:rgba(255,255,255,.13);--ink:#F2F2F2;--mute:#8E8E93}
+html[data-pa=blue]{--accent:#3B6BFF}html[data-pa=green]{--accent:#1FA971}html[data-pa=violet]{--accent:#7C5CFF}html[data-pa=orange]{--accent:#F28C28}html[data-pa=cyan]{--accent:#19B5D6}html[data-pa=pink]{--accent:#E8559A}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none}
+html[data-ps=space]{--bg:#070B1A;--surf:#101A38;--ink:#EAF0FF;--mute:#93A3C8;--line:rgba(160,190,255,.18)}
+html[data-ps=space] body::before{background:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 90px 80px,#cfe0ff,transparent),radial-gradient(2px 2px at 160px 20px,#fff,transparent),radial-gradient(900px 500px at 80% -10%,rgba(108,139,255,.28),transparent 60%);background-size:200px 200px,200px 200px,200px 200px,auto;animation:psd 60s linear infinite}
+@keyframes psd{to{background-position:200px 400px,-200px 200px,200px 600px,0 0}}
+html[data-ps=neon]{--bg:#0A0414;--surf:#150826;--ink:#F6E9FF;--mute:#B79ADB;--line:rgba(255,64,200,.35);--accent:#FF3DCB}
+html[data-ps=neon] body::before{background:linear-gradient(rgba(255,61,203,.16) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(0,229,255,.14) 1px,transparent 1px) 0 0/48px 48px;animation:psg 6s linear infinite}
+@keyframes psg{to{background-position:0 48px,48px 0}}
+html[data-ps=neon] :is(.q,.opt,.go,input){box-shadow:0 0 0 1px var(--line),0 0 16px -4px var(--accent)}
+html[data-ps=paper]{--bg:#F5EFE0;--surf:#FFFDF6;--ink:#1F2433;--mute:#6B6556;--line:#1F2433;--accent:#E8590C}
+html[data-ps=paper] body::before{background:radial-gradient(rgba(31,36,51,.18) 1.2px,transparent 1.4px) 0 0/22px 22px}
+html[data-ps=paper] :is(.opt,.go,input,.q){border:2px solid #1F2433;box-shadow:4px 4px 0 #1F2433;border-radius:12px}
+html[data-ps=candy]{--bg:#FFE9F3;--surf:#fff;--ink:#3A1F4D;--mute:#8A6FA0;--line:rgba(160,80,200,.25);--accent:#FF4FA3}
+html[data-ps=candy] body::before{background:linear-gradient(120deg,#FFE0F0,#FFF2C9,#D9F5FF,#E7DBFF,#FFE0F0);background-size:400% 400%;animation:psc 16s ease infinite}
+@keyframes psc{50%{background-position:100% 50%}}
+html[data-ps=candy] :is(.opt,.go,input){border-radius:22px;box-shadow:0 6px 0 rgba(0,0,0,.18)}
+html[data-ps=retro]{--bg:#0B1A10;--surf:#12301C;--ink:#C8FFD4;--mute:#6FB682;--line:#2E7A47;--accent:#39FF7A;font-family:ui-monospace,Menlo,Consolas,monospace}
+html[data-ps=retro] body::before{background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 2px,transparent 2px 4px)}
+html[data-ps=retro] :is(.opt,.go,input,.q){border:2px solid var(--accent);border-radius:2px;box-shadow:4px 4px 0 rgba(57,255,122,.35)}
+html[data-ps=retro] .go{color:#04210E}
+@media (prefers-reduced-motion:reduce){body::before{animation:none!important}}
+#pset{position:fixed;right:12px;top:52px;z-index:40;width:min(340px,calc(100vw - 24px));max-height:80vh;overflow:auto;padding:14px;border-radius:16px;background:var(--surf);border:1px solid var(--line);box-shadow:0 20px 50px -20px rgba(0,0,0,.6)}
+#pset h4{margin:10px 0 6px;font-size:.9rem;color:var(--mute)}#pset h4:first-child{margin-top:0}
+#pset .ch{display:flex;flex-wrap:wrap;gap:6px}#pset .ch button{padding:7px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:.9rem;cursor:pointer}
+#pset .ch button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+#pset .sw button{width:30px;height:30px;padding:0;border-radius:50%;background:var(--c)}#pset .sw button[aria-pressed=true]{box-shadow:0 0 0 3px var(--ink)}
+#psb{background:none;border:0;color:var(--mute);font-size:1.2rem;cursor:pointer;margin-left:8px}
 </style>
 </head>
 <body>
-<header><div>Groowin</div><span id="who"></span><button id="fsb" type="button" hidden aria-label="Толық экран">⛶</button></header>
+<header><div>Groowin</div><span id="who"></span><button id="psb" type="button" aria-label="Тема мен стиль" title="Тема мен стиль">🎨</button><button id="fsb" type="button" hidden aria-label="Толық экран">⛶</button></header>
 <div id="warn" hidden></div>
 <main id="m"></main>
 <script>
@@ -494,6 +530,27 @@ function bossScreen(s) {
     const c = el('div', 'center'), mine = (s.top || []).find(x => x.i === myId); c.append(el('div', 'bs-big', s.win ? '🏆' : '💀'), el('h1', '', s.win ? 'Сынып жеңді!' : (s.bn || 'Босс') + ' жеңді'), el('p', 'mute', s.win ? 'Бәріңе рақмет, командалық жұмыс керемет болды.' : 'Келесі жолы жеңеміз!'), el('p', 'pts', 'Сенің соққың: ' + (me.d || 0))); draw(c);
   }
 }
+
+// ===== Тема мен стиль (оқушы өзі таңдайды; негізгі сайттағы таңдауды да оқиды) =====
+(function () {
+  const g = k => { try { return localStorage.getItem(k); } catch { return null; } }, st = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+  const TH = [['auto', 'Автомат'], ['dark', 'Қараңғы'], ['light', 'Жарық'], ['milk', 'Сүт'], ['ocean', 'Мұхит'], ['sunset', 'Күн батуы'], ['forest', 'Орман'], ['amoled', 'AMOLED']];
+  const AC = [['blue', '#3B6BFF'], ['green', '#1FA971'], ['violet', '#7C5CFF'], ['orange', '#F28C28'], ['cyan', '#19B5D6'], ['pink', '#E8559A']];
+  const ST = [['none', 'Қарапайым'], ['space', '🌌 Ғарыш'], ['neon', '🌆 Неон'], ['paper', '📄 Қағаз'], ['candy', '🍬 Кәмпит'], ['retro', '👾 Ретро']];
+  const R = document.documentElement;
+  const apply = () => {
+    const th = g('ptheme') || g('theme') || 'auto', ac = g('paccent') || g('accent'), sty = g('pstyle') || 'none';
+    if (th === 'auto' || !TH.some(x => x[0] === th)) delete R.dataset.pt; else R.dataset.pt = th;
+    if (ac && AC.some(x => x[0] === ac)) R.dataset.pa = ac; else delete R.dataset.pa;
+    if (sty === 'none' || !ST.some(x => x[0] === sty)) delete R.dataset.ps; else R.dataset.ps = sty;
+  };
+  apply();
+  const box = document.createElement('div'); box.id = 'pset'; box.hidden = true;
+  const sec = (title, items, key, cur, col) => { const h = document.createElement('h4'); h.textContent = title; const w = document.createElement('div'); w.className = 'ch' + (col ? ' sw' : ''); items.forEach(it => { const b = document.createElement('button'); b.type = 'button'; if (col) { b.style.setProperty('--c', it[1]); b.setAttribute('aria-label', it[0]); } else b.textContent = it[1]; b.setAttribute('aria-pressed', String(cur === it[0])); b.onclick = e => { e.stopPropagation(); st(key, it[0]); apply(); paint(); }; w.appendChild(b); }); box.append(h, w); };
+  const paint = () => { box.replaceChildren(); sec('Тема', TH, 'ptheme', g('ptheme') || g('theme') || 'auto'); sec('Акцент түсі', AC, 'paccent', g('paccent') || g('accent') || 'blue', true); sec('Стиль', ST, 'pstyle', g('pstyle') || 'none'); };
+  document.body.appendChild(box); document.getElementById('psb').onclick = e => { e.stopPropagation(); box.hidden = !box.hidden; if (!box.hidden) paint(); };
+  document.addEventListener('click', e => { if (!box.hidden && !box.contains(e.target) && e.target.id !== 'psb') box.hidden = true; });
+})();
 
 detectAcct().finally(() => joinScreen(''));
 </script>
