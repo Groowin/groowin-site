@@ -1,0 +1,534 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Моторлы толқын жасағыш</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: wide 3D stage on the left, control panel on the right; stacks on phones. Palette follows the dam project (deep blue, blue, light ground, amber accent). */
+:root {
+  --bg: #F3F6F8;
+  --surface: #FFFFFF;
+  --stage: #E3EBF1;
+  --fg: #12263A;
+  --muted: #55687A;
+  --line: #C9D5DE;
+  --accent: #1565A8;
+  --accent-fg: #FFFFFF;
+  --amber: #F2B64B;
+  --amber-fg: #12263A;
+  --font: "Noto Sans", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1824;
+    --surface: #152333;
+    --stage: #0A121B;
+    --fg: #E6EEF5;
+    --muted: #93A6B8;
+    --line: #26394C;
+    --accent: #5DB0F0;
+    --accent-fg: #0E1824;
+    --amber: #F2B64B;
+    --amber-fg: #12263A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1824;
+  --surface: #152333;
+  --stage: #0A121B;
+  --fg: #E6EEF5;
+  --muted: #93A6B8;
+  --line: #26394C;
+  --accent: #5DB0F0;
+  --accent-fg: #0E1824;
+  --amber: #F2B64B;
+  --amber-fg: #12263A;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-block: 20px 32px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+h1 { font-size: 26px; line-height: 1.2; margin: 0 0 4px; text-wrap: balance; }
+h2 { font-size: 17px; margin: 0 0 10px; }
+.lead { margin: 0; color: var(--muted); max-width: 70ch; }
+.stage-row { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.view {
+  position: relative;
+  background: var(--stage);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  min-width: 0;
+}
+.view canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.view canvas:active { cursor: grabbing; }
+#labels { position: absolute; inset: 0; pointer-events: none; }
+.badge {
+  position: absolute; width: 24px; height: 24px; margin: -12px 0 0 -12px;
+  border-radius: 50%; background: var(--amber); color: var(--amber-fg);
+  border: 2px solid var(--fg); font-size: 13px; font-weight: 700;
+  display: grid; place-items: center;
+}
+.hint {
+  position: absolute; left: 10px; bottom: 8px; font-size: 12px; color: var(--muted);
+  background: color-mix(in srgb, var(--surface) 82%, transparent); padding: 2px 8px; border-radius: 6px;
+}
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.ctl label { display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.ctl output { font-variant-numeric: tabular-nums; color: var(--accent); }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.checks { display: flex; flex-direction: column; gap: 8px; }
+.checks label { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+.checks input { width: 18px; height: 18px; accent-color: var(--accent); }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+button, select {
+  font: inherit; font-size: 14px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--fg); padding: 8px 12px; cursor: pointer;
+}
+button.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); font-weight: 600; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+.read { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid var(--line); padding-top: 14px; }
+.read div { display: flex; flex-direction: column; }
+.read span { font-size: 12px; color: var(--muted); }
+.read b { font-size: 20px; font-variant-numeric: tabular-nums; }
+.read small { font-size: 12px; font-weight: 400; color: var(--muted); }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.legend li { display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
+.legend i {
+  flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--amber); color: var(--amber-fg);
+  border: 2px solid var(--fg); font-style: normal; font-size: 12px; font-weight: 700; display: grid; place-items: center;
+}
+.small { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
+#nogl { display: none; padding: 24px; }
+@media (max-width: 900px) {
+  .stage-row { grid-template-columns: minmax(0, 1fr); }
+  .view { aspect-ratio: 4 / 3; }
+  h1 { font-size: 22px; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Моторлы толқын жасағыш</h1>
+    <p class="lead">Мотор дискіні айналдырады, шатун пластинаны алға-артқа жүргізеді, ал пластина суда толқын туғызады. Жүгіргілерді жылжытып, толқын қалай өзгеретінін қара.</p>
+  </header>
+
+  <div class="stage-row">
+    <div class="view" id="view">
+      <canvas id="c" aria-label="Толқын жасағыштың 3D моделі"></canvas>
+      <div id="labels"></div>
+      <div id="nogl">3D көрсету үшін WebGL қажет, бірақ бұл құрылғыда ол қосылмаған.</div>
+      <div class="hint">Айналдыру: сүйреу · Жақындату: дөңгелек немесе екі саусақ</div>
+    </div>
+
+    <div class="panel">
+      <div class="ctl">
+        <label for="rpm">Мотордың айналымы <output id="rpmO"></output></label>
+        <input id="rpm" type="range" min="20" max="120" step="5" value="60">
+      </div>
+      <div class="ctl">
+        <label for="rad">Диск тесігі, r <output id="radO"></output></label>
+        <input id="rad" type="range" min="1" max="3" step="0.5" value="2">
+      </div>
+      <div class="ctl">
+        <label for="dep">Су тереңдігі <output id="depO"></output></label>
+        <input id="dep" type="range" min="6" max="14" step="1" value="10">
+      </div>
+      <div class="ctl">
+        <label for="spd">Уақыт жылдамдығы</label>
+        <select id="spd">
+          <option value="1">1× (нақты уақыт)</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.25">0,25× (баяу)</option>
+        </select>
+      </div>
+      <div class="checks">
+        <label><input id="abs" type="checkbox" checked> Толқын сөндіргіш қою</label>
+        <label><input id="mag" type="checkbox" checked> Толқын биіктігін 3 есе үлкейту</label>
+        <label><input id="lab" type="checkbox" checked> Нөмір белгілері</label>
+      </div>
+      <div class="btns">
+        <button id="play" class="primary" type="button">Тоқтату</button>
+        <button id="reset" type="button">Көріністі қайтару</button>
+      </div>
+      <div class="read" aria-live="off">
+        <div><span>Период T</span><b id="rT"></b></div>
+        <div><span>Толқын ұзындығы λ</span><b id="rL"></b></div>
+        <div><span>Толқын жылдамдығы v = λ/T</span><b id="rV"></b></div>
+        <div><span>Толқын биіктігі H</span><b id="rH"></b></div>
+      </div>
+      <p class="small" style="margin:0">Сандар шамамен есептелген: тік қабырғалы науа, су тереңдігі мен пластина қозғалысына байланысты. Нақты макетте өлшеп тексер.</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div>
+      <h2>Бөліктері (сызбадағы нөмірлер)</h2>
+      <ul class="legend">
+        <li><i>1</i><span>Мотор: редукторлы, 6–12 В</span></li>
+        <li><i>2</i><span>Кривошип (диск): тесік центрден r қашықтықта, пластина жүрісі шамамен 2r</span></li>
+        <li><i>3</i><span>Шатун: диск тесігін пластинаның жоғарғы ұшымен жалғайды</span></li>
+        <li><i>4</i><span>Ырғалғыш пластина: су бетінен жоғары шығып тұрады</span></li>
+        <li><i>5</i><span>Топса: пластинаның төменгі жағы түбіне бекітілген</span></li>
+        <li><i>6</i><span>Су</span></li>
+        <li><i>7</i><span>Толқын сөндіргіш: еңіс губка, шағылған толқынды басады</span></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Не байқауға болады</h2>
+      <ul class="legend" style="gap:6px">
+        <li><span>Айналымды арттырсаң, период азаяды, толқындар жиірек және қысқарақ болады.</span></li>
+        <li><span>r үлкейсе, пластина көбірек жүреді, толқын биіктейді.</span></li>
+        <li><span>Су тереңдігі өссе, толқын жылдамырақ жүреді.</span></li>
+        <li><span>Сөндіргішті алсаң, толқын қабырғадан шағылып қайтады да, су бетінде қозғалмайтын «төбешіктер» пайда болады.</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  var view = document.getElementById('view');
+  var canvas = document.getElementById('c');
+  if (!window.THREE) { document.getElementById('nogl').style.display = 'block'; return; }
+  var THREE = window.THREE;
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  } catch (e) { document.getElementById('nogl').style.display = 'block'; return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+  // ---- geometry constants (cm) ----
+  var WIDTH = 20, LT = 120, WALLH = 18, H_PIN = 22, PADH = 25, L_ROD = 30, WI = 19.4, G = 981;
+  var TWO_PI = Math.PI * 2;
+
+  var state = { rpm: 60, r: 2, d: 10, absorber: true, mag: true, labels: true, playing: true, scale: 1 };
+  var phi = 0, tw = 20, theta = 0, phys = null;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(35, 1.6, 1, 2000);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 0.75));
+  var sun = new THREE.DirectionalLight(0xffffff, 0.8);
+  sun.position.set(60, 140, 120);
+  scene.add(sun);
+
+  function box(w, h, d, color, x, y, z) {
+    var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshPhongMaterial({ color: color }));
+    m.position.set(x, y, z);
+    scene.add(m);
+    return m;
+  }
+
+  // table, base plate
+  box(230, 2, 70, 0xB08A5B, 42, -2, 0);
+  box(135, 1, WIDTH + 2, 0x8A9BAA, 54, -0.5, 0);
+
+  // glass flume
+  var glass = new THREE.MeshPhysicalMaterial({ color: 0xcfe8ff, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide });
+  function pane(w, h, d, x, y, z) {
+    var g = new THREE.BoxGeometry(w, h, d);
+    var m = new THREE.Mesh(g, glass);
+    m.position.set(x, y, z);
+    scene.add(m);
+    var e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: 0x4F6B85 }));
+    e.position.copy(m.position);
+    scene.add(e);
+  }
+  var x0 = -6, flumeLen = LT + 1 - x0;
+  pane(flumeLen, WALLH, 0.3, x0 + flumeLen / 2, WALLH / 2, WIDTH / 2 + 0.15);
+  pane(flumeLen, WALLH, 0.3, x0 + flumeLen / 2, WALLH / 2, -WIDTH / 2 - 0.15);
+  pane(0.3, WALLH, WIDTH, x0, WALLH / 2, 0);
+  pane(0.3, WALLH, WIDTH, LT + 0.15, WALLH / 2, 0);
+
+  // absorber (sloped sponge)
+  var shape = new THREE.Shape();
+  shape.moveTo(0, 0); shape.lineTo(30, 0); shape.lineTo(30, 8); shape.closePath();
+  var spGeo = new THREE.ExtrudeGeometry(shape, { depth: WI, bevelEnabled: false });
+  spGeo.translate(0, 0, -WI / 2);
+  var sponge = new THREE.Mesh(spGeo, new THREE.MeshPhongMaterial({ color: 0xC9B79C }));
+  sponge.position.set(LT - 30, 0, 0);
+  scene.add(sponge);
+
+  // motor stand, motor, crank disk
+  var CX = -L_ROD, CY = H_PIN;
+  box(8, CY - 2, 6, 0x5B6B7A, CX, (CY - 2) / 2, -5);
+  box(14, 12, 8, 0x12263A, CX - 2, CY, -5.5);
+  var disk = new THREE.Mesh(
+    new THREE.CylinderGeometry(5.5, 5.5, 1.2, 40).rotateX(Math.PI / 2),
+    new THREE.MeshPhongMaterial({ color: 0xDDE6EE })
+  );
+  disk.position.set(CX, CY, -0.8);
+  scene.add(disk);
+  var arm = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 0.5), new THREE.MeshPhongMaterial({ color: 0xC0392B }));
+  scene.add(arm);
+  var hub = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 2, 16).rotateX(Math.PI / 2), new THREE.MeshPhongMaterial({ color: 0x12263A }));
+  hub.position.set(CX, CY, -0.8);
+  scene.add(hub);
+  var pin = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 2.4, 16).rotateX(Math.PI / 2), new THREE.MeshPhongMaterial({ color: 0xC0392B }));
+  scene.add(pin);
+
+  // rod
+  var rod = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1, 12), new THREE.MeshPhongMaterial({ color: 0x1B2D40 }));
+  scene.add(rod);
+
+  // paddle on hinge
+  var paddle = new THREE.Group();
+  var blade = new THREE.Mesh(new THREE.BoxGeometry(1, PADH, WI + 0.4), new THREE.MeshPhongMaterial({ color: 0xF2B64B }));
+  blade.position.y = PADH / 2;
+  paddle.add(blade);
+  var lug = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 2.4, 16).rotateX(Math.PI / 2), new THREE.MeshPhongMaterial({ color: 0xffffff }));
+  lug.position.set(0, H_PIN, 1.6);
+  paddle.add(lug);
+  var hinge = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, WI + 1, 16).rotateX(Math.PI / 2), new THREE.MeshPhongMaterial({ color: 0xffffff }));
+  hinge.position.set(0, 0.6, 0);
+  paddle.add(hinge);
+  scene.add(paddle);
+
+  // ---- water: three strips sharing one material ----
+  var N = 240;
+  var waterMat = new THREE.MeshPhongMaterial({ color: 0x3AA6EA, transparent: true, opacity: 0.72, side: THREE.DoubleSide, shininess: 80, specular: 0x88ccff, depthWrite: false });
+  function strip() {
+    var pos = new Float32Array((N + 1) * 2 * 3);
+    var idx = [];
+    for (var i = 0; i < N; i++) {
+      var a = i * 2, b = a + 1, c = a + 2, d = a + 3;
+      idx.push(a, b, c, b, d, c);
+    }
+    var g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setIndex(idx);
+    var m = new THREE.Mesh(g, waterMat);
+    m.frustumCulled = false;
+    scene.add(m);
+    return g;
+  }
+  var gTop = strip(), gFront = strip(), gBack = strip();
+
+  // ---- physics ----
+  function solveK(omega, d) {
+    var lo = 1e-4, hi = 3;
+    for (var i = 0; i < 60; i++) {
+      var m = (lo + hi) / 2;
+      if (G * m * Math.tanh(m * d) - omega * omega < 0) lo = m; else hi = m;
+    }
+    return (lo + hi) / 2;
+  }
+  function computePhysics() {
+    var f = state.rpm / 60, w = TWO_PI * f, d = state.d, r = state.r;
+    var k = solveK(w, d), lam = TWO_PI / k, c = w / k, kd = k * d;
+    var sh = Math.sinh(kd), ch = Math.cosh(kd);
+    var ratio = 4 * (sh / kd) * ((kd * sh - ch + 1) / (Math.sinh(2 * kd) + 2 * kd));
+    var S = 2 * r * d / H_PIN;
+    var H = Math.min(ratio * S, 0.14 * lam, 0.5 * d);
+    var cg = 0.5 * c * (1 + 2 * kd / Math.sinh(2 * kd));
+    phys = { f: f, w: w, k: k, lam: lam, c: c, H: H, cg: cg, T: 1 / f };
+  }
+  function fmt(x, n) { return x.toFixed(n).replace('.', ','); }
+  function smooth(u) { u = Math.max(0, Math.min(1, u)); return u * u * (3 - 2 * u); }
+
+  function eta(x) {
+    var A = phys.H / 2 * (state.mag ? 3 : 1);
+    var xf = phys.cg * tw, k = phys.k, lam = phys.lam;
+    var inc = A * Math.sin(k * x - phi) * smooth((xf - x) / (lam * 0.6));
+    var R = state.absorber ? 0.1 : 0.9;
+    var ref = R * A * Math.sin(k * (2 * LT - x) - phi) * smooth((x - (2 * LT - xf)) / (lam * 0.6));
+    return (inc + ref) * Math.exp(-x / 700);
+  }
+
+  function updateWater(xp) {
+    var pt = gTop.attributes.position.array, pf = gFront.attributes.position.array, pb = gBack.attributes.position.array;
+    var hz = WI / 2;
+    for (var i = 0; i <= N; i++) {
+      var x = xp + (LT - xp) * i / N;
+      var y = state.d + eta(Math.max(0, x));
+      var o = i * 6;
+      pt[o] = x; pt[o + 1] = y; pt[o + 2] = hz; pt[o + 3] = x; pt[o + 4] = y; pt[o + 5] = -hz;
+      pf[o] = x; pf[o + 1] = y; pf[o + 2] = hz; pf[o + 3] = x; pf[o + 4] = 0; pf[o + 5] = hz;
+      pb[o] = x; pb[o + 1] = y; pb[o + 2] = -hz; pb[o + 3] = x; pb[o + 4] = 0; pb[o + 5] = -hz;
+    }
+    gTop.attributes.position.needsUpdate = true;
+    gFront.attributes.position.needsUpdate = true;
+    gBack.attributes.position.needsUpdate = true;
+    gTop.computeVertexNormals();
+    gFront.computeVertexNormals();
+    gBack.computeVertexNormals();
+  }
+
+  function solveTheta(Px, Py, th) {
+    for (var i = 0; i < 8; i++) {
+      var Qx = H_PIN * Math.sin(th), Qy = H_PIN * Math.cos(th);
+      var dx = Px - Qx, dy = Py - Qy, dist = Math.hypot(dx, dy);
+      var f = dist - L_ROD;
+      var dd = -(dx * H_PIN * Math.cos(th) + dy * (-H_PIN * Math.sin(th))) / dist;
+      if (Math.abs(dd) < 1e-6) break;
+      th -= f / dd;
+      th = Math.max(-0.6, Math.min(0.6, th));
+    }
+    return th;
+  }
+
+  function poseMechanism() {
+    var r = state.r;
+    var Px = CX + r * Math.cos(phi), Py = CY + r * Math.sin(phi);
+    theta = solveTheta(Px, Py, theta);
+    var Qx = H_PIN * Math.sin(theta), Qy = H_PIN * Math.cos(theta);
+    paddle.rotation.z = -theta;
+    disk.rotation.z = phi;
+    pin.position.set(Px, Py, 0.2);
+    arm.position.set((CX + Px) / 2, (CY + Py) / 2, -0.1);
+    arm.scale.set(r, 0.7, 1);
+    arm.rotation.z = phi;
+    var dx = Qx - Px, dy = Qy - Py, len = Math.hypot(dx, dy);
+    rod.scale.set(1, len, 1);
+    rod.position.set((Px + Qx) / 2, (Py + Qy) / 2, 0.9);
+    rod.rotation.z = Math.atan2(dy, dx) - Math.PI / 2;
+    return Qx; // not used
+  }
+
+  function updateReadouts() {
+    document.getElementById('rpmO').textContent = state.rpm + ' айн/мин';
+    document.getElementById('radO').textContent = fmt(state.r, 1) + ' см';
+    document.getElementById('depO').textContent = state.d + ' см';
+    document.getElementById('rT').innerHTML = fmt(phys.T, 2) + ' <small>с</small>';
+    document.getElementById('rL').innerHTML = fmt(phys.lam, 0) + ' <small>см</small>';
+    document.getElementById('rV').innerHTML = fmt(phys.c, 0) + ' <small>см/с</small>';
+    document.getElementById('rH').innerHTML = fmt(phys.H, 1) + ' <small>см</small>';
+  }
+
+  // ---- camera orbit ----
+  var target = new THREE.Vector3(42, 9, 0);
+  var cam = { az: -0.32, el: 0.36, zoom: 1 };
+  function placeCamera() {
+    var aspect = camera.aspect;
+    var rad = 178 * Math.max(1, 1.6 / aspect) * cam.zoom;
+    camera.position.set(
+      target.x + rad * Math.sin(cam.az) * Math.cos(cam.el),
+      target.y + rad * Math.sin(cam.el),
+      target.z + rad * Math.cos(cam.az) * Math.cos(cam.el)
+    );
+    camera.lookAt(target);
+  }
+  var pointers = {}, lastDist = 0;
+  canvas.addEventListener('pointerdown', function (e) {
+    canvas.setPointerCapture(e.pointerId);
+    pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+    lastDist = 0;
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    var p = pointers[e.pointerId];
+    if (!p) return;
+    var ids = Object.keys(pointers);
+    if (ids.length === 1) {
+      cam.az -= (e.clientX - p.x) * 0.006;
+      cam.el = Math.max(0.05, Math.min(1.4, cam.el + (e.clientY - p.y) * 0.006));
+    }
+    p.x = e.clientX; p.y = e.clientY;
+    if (ids.length === 2) {
+      var a = pointers[ids[0]], b = pointers[ids[1]];
+      var dist = Math.hypot(a.x - b.x, a.y - b.y);
+      if (lastDist) cam.zoom = Math.max(0.35, Math.min(1.8, cam.zoom * lastDist / dist));
+      lastDist = dist;
+    }
+  });
+  function endPtr(e) { delete pointers[e.pointerId]; lastDist = 0; }
+  canvas.addEventListener('pointerup', endPtr);
+  canvas.addEventListener('pointercancel', endPtr);
+  canvas.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    cam.zoom = Math.max(0.35, Math.min(1.8, cam.zoom * (e.deltaY > 0 ? 1.08 : 0.92)));
+  }, { passive: false });
+
+  // ---- number badges ----
+  var labelDefs = [
+    [1, new THREE.Vector3(CX - 2, CY + 9, -5.5)],
+    [2, new THREE.Vector3(CX + 5, CY + 7, 0)],
+    [3, new THREE.Vector3(-14, CY + 5, 1)],
+    [4, new THREE.Vector3(4, 14, 3)],
+    [5, new THREE.Vector3(0, -4, 12)],
+    [6, new THREE.Vector3(62, 3, 12)],
+    [7, new THREE.Vector3(LT - 14, 5, 12)]
+  ];
+  var labelBox = document.getElementById('labels');
+  var badgeEls = labelDefs.map(function (d) {
+    var el = document.createElement('div');
+    el.className = 'badge';
+    el.textContent = d[0];
+    labelBox.appendChild(el);
+    return el;
+  });
+  function placeBadges() {
+    labelBox.style.display = state.labels ? 'block' : 'none';
+    if (!state.labels) return;
+    var w = view.clientWidth, h = view.clientHeight, v = new THREE.Vector3();
+    labelDefs.forEach(function (d, i) {
+      v.copy(d[1]).project(camera);
+      badgeEls[i].style.left = ((v.x * 0.5 + 0.5) * w) + 'px';
+      badgeEls[i].style.top = ((-v.y * 0.5 + 0.5) * h) + 'px';
+    });
+  }
+
+  // ---- UI wiring ----
+  function restartWave() { tw = state.playing ? 0 : 20; }
+  function onParam() { computePhysics(); updateReadouts(); restartWave(); }
+  document.getElementById('rpm').addEventListener('input', function (e) { state.rpm = +e.target.value; onParam(); });
+  document.getElementById('rad').addEventListener('input', function (e) { state.r = +e.target.value; onParam(); });
+  document.getElementById('dep').addEventListener('input', function (e) { state.d = +e.target.value; onParam(); });
+  document.getElementById('spd').addEventListener('change', function (e) { state.scale = +e.target.value; });
+  document.getElementById('abs').addEventListener('change', function (e) { state.absorber = e.target.checked; sponge.visible = state.absorber; });
+  document.getElementById('mag').addEventListener('change', function (e) { state.mag = e.target.checked; });
+  document.getElementById('lab').addEventListener('change', function (e) { state.labels = e.target.checked; });
+  var playBtn = document.getElementById('play');
+  function setPlaying(p) { state.playing = p; playBtn.textContent = p ? 'Тоқтату' : 'Жалғастыру'; }
+  playBtn.addEventListener('click', function () { setPlaying(!state.playing); });
+  document.getElementById('reset').addEventListener('click', function () { cam.az = -0.32; cam.el = 0.36; cam.zoom = 1; });
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) setPlaying(false);
+
+  function resize() {
+    var w = view.clientWidth, h = view.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(view); else window.addEventListener('resize', resize);
+
+  computePhysics();
+  updateReadouts();
+  sponge.visible = state.absorber;
+  resize();
+
+  var last = performance.now();
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (state.playing) {
+      var s = dt * state.scale;
+      phi += phys.w * s;
+      tw += s;
+    }
+    poseMechanism();
+    var xp = state.d * Math.sin(theta);
+    updateWater(xp + 0.5);
+    placeCamera();
+    renderer.render(scene, camera);
+    placeBadges();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
