@@ -925,6 +925,32 @@ html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background
 #gsSeg,#sfxSeg{display:flex;gap:8px;flex-wrap:wrap}
 #gsSeg button,#sfxSeg button,#musBtn{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
 #gsSeg button[aria-pressed=true],#sfxSeg button[aria-pressed=true],#musBtn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+/* ===== Сабақ жоспары 2.0 ===== */
+.lp-sum{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 14px;padding:12px 14px;border-radius:14px;background:var(--accent-soft);font-weight:600}
+.lp-sum select{width:auto;padding:4px 8px}.lp-bar{flex-basis:100%;height:8px;border-radius:9px;background:rgba(128,128,128,.25);overflow:hidden}.lp-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#1FA971);border-radius:9px;transition:width .3s}.lp-bar i.over{background:linear-gradient(90deg,#F28C28,#E5484D)}
+.lpc2{border:1px solid var(--line);border-left:5px solid var(--sc,#3B6BFF);border-radius:16px;padding:12px 14px;margin-bottom:12px;background:var(--surf,var(--paper));display:flex;flex-direction:column;gap:10px;animation:rise .35s ease both;transition:box-shadow .2s,transform .2s}
+.lpc2:hover{box-shadow:0 10px 26px -14px var(--sc);transform:translateY(-1px)}
+.lpc2-h{display:grid;grid-template-columns:auto 200px 1fr auto;gap:10px;align-items:center}
+.lpc2-bd{display:flex;align-items:center;gap:6px;min-width:56px}.lpc2-bd span{font-size:1.5rem}.lpc2-bd b{color:var(--sc);font-size:1.1rem}
+.lpc2-b{display:grid;grid-template-columns:1fr 110px;gap:10px;align-items:center}.lpc2-d{display:flex;align-items:center;gap:6px;margin:0;font-weight:500}.lpc2-d input{width:70px;text-align:center}
+.lpc2-rg{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:var(--accent-soft)}.lpc2-rg input{width:84px;text-align:center}.lpc2-rg small{flex-basis:100%;opacity:.7}
+.lpc2-n{min-height:0;font-size:.9rem;opacity:.9;resize:none}
+@media (max-width:760px){.lpc2-h{grid-template-columns:auto 1fr auto}.lpc2-h>:nth-child(3){grid-column:1/4}.lpc2-b{grid-template-columns:1fr 100px}}
+#lessonDock{flex-direction:column;align-items:stretch;gap:8px;width:min(920px,calc(100vw - 24px));padding:10px 14px 12px;background:color-mix(in srgb,var(--surf,var(--paper)) 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:color-mix(in srgb,var(--sc,#3B6BFF) 45%,var(--line))}
+#lessonDock .ld-track{display:flex;gap:4px;height:26px}#lessonDock .ld-seg{flex:1 1 0;min-width:22px;padding:0;border-radius:8px;border:0;background:rgba(128,128,128,.22);font-size:.85rem;line-height:1;cursor:pointer;transition:background .3s,transform .2s;opacity:.85}
+#lessonDock .ld-seg:hover{transform:translateY(-2px);opacity:1}#lessonDock .ld-seg.done{background:color-mix(in srgb,var(--accent) 55%,transparent)}#lessonDock .ld-seg.on{background:var(--sc);box-shadow:0 0 14px -2px var(--sc);animation:ldp 2s ease-in-out infinite}
+@keyframes ldp{50%{filter:brightness(1.25)}}
+#lessonDock .ld-row{display:flex;align-items:center;gap:10px}#lessonDock .ld-ic{font-size:1.7rem;animation:gwob .8s}#lessonDock .ld-sp{flex:1}
+#lessonDock .ld-tm{font-variant-numeric:tabular-nums;font-weight:800;font-size:1.25rem}#lessonDock .ld-tm.low{color:#F28C28}#lessonDock .ld-tm.over{color:#E5484D;animation:ldp 1s infinite}#lessonDock .ld-all{font-variant-numeric:tabular-nums;opacity:.6;font-size:.85rem}
+.ls-splash{position:fixed;inset:0;z-index:120;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#fff;background:radial-gradient(circle at center,color-mix(in srgb,var(--sc) 70%,#000),rgba(0,0,0,.85));animation:lsin 1.5s ease both}
+@keyframes lsin{0%{opacity:0}15%{opacity:1}75%{opacity:1}100%{opacity:0;transform:scale(1.04)}}
+.ls-splash .ls-e{font-size:6rem;animation:lspop .6s cubic-bezier(.2,.9,.3,1.4)}@keyframes lspop{from{transform:scale(.2) rotate(-25deg)}}
+.ls-splash .ls-n{opacity:.8;font-weight:600;letter-spacing:.08em;text-transform:uppercase}.ls-splash .ls-t{font-size:clamp(1.8rem,5vw,3.4rem);font-weight:800;text-align:center;padding:0 20px}.ls-splash .ls-d{opacity:.85}
+.ls-end{max-width:640px;margin:0 auto;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}.ls-eb{font-size:5rem;animation:lspop .7s cubic-bezier(.2,.9,.3,1.4)}.ls-end h2{margin:0;font-size:2.2rem}.ls-end p{margin:0;opacity:.7}
+.ls-st{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%}.ls-st div{padding:14px;border-radius:16px;background:var(--accent-soft);display:flex;flex-direction:column;gap:2px}.ls-st span{font-size:1.5rem}.ls-st b{font-size:1.5rem}.ls-st small{opacity:.7}
+.ls-l{width:100%;display:grid;gap:6px;text-align:left}.ls-l div{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:10px;background:var(--hover,rgba(128,128,128,.1))}.ls-l b.over{color:#E5484D}
+#pult .pnote{padding:10px 12px;border-radius:12px;background:rgba(242,140,40,.18);border:1px solid rgba(242,140,40,.45);white-space:pre-wrap;font-size:.95rem}#pult .pnx{opacity:.7;font-size:.85rem}
+@media (prefers-reduced-motion:reduce){.ls-splash{display:none}#lessonDock .ld-seg.on,.lpc2{animation:none}}
 </style>
 </head>
 <body>
@@ -1031,7 +1057,7 @@ html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background
       <div id="lpEdit" hidden>
         <div class="mtools"><input id="lpTitle" maxlength="120" placeholder="Жоспар атауы (мысалы, 8-сынып: Қысым)"></div>
         <div id="lpSteps"></div>
-        <div class="mtools"><button class="out" id="lpAdd">Қадам қосу</button><button class="out" id="lpTpl">45 минуттық үлгі</button></div>
+        <div class="mtools"><button class="out" id="lpAdd">+ Қадам қосу</button></div>
         <div class="mtools"><button class="go" id="lpSave">Сақтау</button><button class="out" id="lpCancel">Болдырмау</button></div>
       </div>
     </div>
@@ -1429,7 +1455,7 @@ addEventListener('online', paintOnline); addEventListener('offline', paintOnline
 async function loadUsers() {
   const [{ data: allowed }, { data: profs }] = await Promise.all([
     sb.from('allowed_phones').select('*').order('created_at', { ascending: false }),
-    sb.from('profiles').select('id,phone,active,class_id,full_name')
+    sb.from('profiles').select('id,phone,active,class_id,full_name,role')
   ]);
   const byPhone = Object.fromEntries((profs || []).map(p => [p.phone, p]));
   $('thBy').hidden = !isAdmin;
@@ -1441,7 +1467,7 @@ async function loadUsers() {
   }
   const flt = fsel.hidden ? 'all' : fsel.value;
   const body = $('users'); const frag = document.createDocumentFragment();
-  (allowed || []).filter(a => (a.role === 'student') === (userRole === 'student')).filter(a => flt === 'all' || (flt === 'none' ? !a.added_by : a.added_by === flt)).forEach(a => {
+  (allowed || []).map(a => { const q = byPhone[a.phone]; return q && q.role ? { ...a, role: q.role } : a; }).filter(a => (a.role === 'student') === (userRole === 'student')).filter(a => flt === 'all' || (flt === 'none' ? !a.added_by : a.added_by === flt)).forEach(a => {
     const p = byPhone[a.phone];
     const status = !p ? 'Тіркелмеген' : p.active ? 'Белсенді' : 'Бұғатталған';
     const tr = document.createElement('tr');
@@ -1685,6 +1711,13 @@ document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc 
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '2.7', date: '26.10.2026', items: [
+    ['📋', 'Сабақ жоспары жаңарды', 'Әр қадамға уақыт (минут), мұғалімге жеке ескертпе (телефон пультте шығады), қадамды көшіру. Жоғарыда жоспар уақыты мен сабақ ұзақтығы көрінеді.'],
+    ['📽️', 'Презентацияның беттері', 'PDF-тің қай беттерін көрсету керегін таңда (мысалы 1–5), сосын ойын, кейін қалған беттер. Бір PDF-ті бірнеше қадамға қоюға болады.'],
+    ['🎮', 'Жоспарға көбірек ойын', 'Ойын-сауық жинақтары түріне қарай топталды. Енді дауыс, сұрақ қорапшасы, дөңгелек, картошка және ұпай тақтасын да қадам ретінде қосасың.'],
+    ['✨', 'Жүргізу панелі', 'Қадамдар түсті сызық болып көрінеді, басып секіресің. Қадам уақыты кері санайды, асып кетсе ескертеді. Қадам ауысқанда анимация, соңында сабақ қорытындысы.'],
+    ['🧩', 'Төрт жаңа үлгі', 'Жаңа тақырып, Қайталау, Зертханалық жұмыс, Шығу билеті.']
+  ] },
   { ver: '2.6', date: '25.10.2026', items: [
     ['🎨', 'Оқушы телефонында тема мен стиль', 'Оқушы ойын кезінде 🎨 түймесін басып, тема, акцент түсі және стильді (Ғарыш, Неон, Қағаз, Кәмпит, Ретро) өзі таңдайды.']
   ] },
@@ -2142,7 +2175,9 @@ const MT = { left: 0, timer: null };
 })();
 
 // ===== Сабақ жоспары =====
-const STEP_TYPES = { text: 'Мәтін / слайд', quiz: 'Викторина', cloud: 'Сөз бұлты', random: 'Кездейсоқ оқушы', groups: 'Топқа бөлу', timer: 'Таймер', refl: 'Рефлексия', game: 'Ойын / зертхана', link: 'Сілтеме / бейне', hw: 'Үй тапсырмасы', slides: 'Презентация (PDF)', bgame: 'Тақта ойыны' };
+const STEP_TYPES = { text: 'Мәтін / слайд', slides: 'Презентация (PDF)', quiz: 'Викторина', bgame: 'Ойын-сауық ойыны (жинақ)', cloud: 'Сөз бұлты', poll: 'Жылдам дауыс', ask: 'Сұрақ қорапшасы', random: 'Кездейсоқ оқушы', groups: 'Топқа бөлу', timer: 'Таймер', refl: 'Рефлексия', wheel: 'Бақыт дөңгелегі', potato: 'Қызу картошка', team: 'Командалық ұпай', game: 'Ойын / зертхана', link: 'Сілтеме / бейне', hw: 'Үй тапсырмасы' };
+const STEP_META = { text: ['📝', '#3B6BFF'], quiz: ['❓', '#7C5CFF'], cloud: ['☁️', '#19B5D6'], random: ['🎲', '#F28C28'], groups: ['👥', '#1FA971'], timer: ['⏱️', '#E5484D'], refl: ['🪞', '#E8559A'], game: ['🧪', '#19B5D6'], link: ['🔗', '#3B6BFF'], hw: ['🏠', '#D89E00'], slides: ['📽️', '#F28C28'], bgame: ['🎮', '#7C5CFF'], poll: ['📊', '#1FA971'], ask: ['💬', '#19B5D6'], wheel: ['🎡', '#E8590C'], potato: ['🥔', '#8B5E3C'], team: ['🏅', '#D89E00'] };
+const stepDur = s => Math.max(0, +s.d || 0);
 let lessons = [], lpEditing = null, lessonRun = null, lpQuizzes = [], lpDecks = [], lpSets = [];
 const lpmsg = (t, c) => note('lpMsg', t, c || '');
 async function loadLessons() {
@@ -2153,8 +2188,8 @@ async function loadLessons() {
   lessons = data || [];
   lessons.forEach(z => {
     const c = el('div', 'lpcard'), st = z.steps || [];
-    const top = el('div', 'qct'); top.append(el('strong', '', z.title), el('span', 'gm', st.length + ' қадам · ' + new Date(z.updated_at).toLocaleDateString('kk-KZ')));
-    const chips = el('div', 'lpsteps'); st.slice(0, 12).forEach((x, i) => chips.appendChild(el('span', '', (i + 1) + '. ' + (x.t || STEP_TYPES[x.k] || ''))));
+    const top = el('div', 'qct'); top.append(el('strong', '', z.title), el('span', 'gm', st.length + ' қадам' + (st.reduce((a, x) => a + stepDur(x), 0) ? ' · ' + st.reduce((a, x) => a + stepDur(x), 0) + ' мин' : '') + ' · ' + new Date(z.updated_at).toLocaleDateString('kk-KZ')));
+    const chips = el('div', 'lpsteps'); st.slice(0, 12).forEach((x, i) => chips.appendChild(el('span', '', ((STEP_META[x.k] || [''])[0]) + ' ' + (x.t || STEP_TYPES[x.k] || ''))));
     const row = el('div', 'qrow'), go2 = el('button', 'go', 'Бастау'); go2.onclick = () => st.length ? startLesson(z) : alert('Бұл жоспарда қадам жоқ.');
     row.append(go2, mini('Өзгерту', () => openLpEditor(z)), mini('Көшіру', async () => { const r = await sb.from('lesson_plans').insert({ title: (z.title + ' (көшірме)').slice(0, 120), steps: st }); if (r.error) alert(r.error.message); loadLessons(); }),
       mini('Жою', async () => { if (!(await ask('«' + z.title + '» жойылсын ба?'))) return; await sb.from('lesson_plans').delete().eq('id', z.id); loadLessons(); }));
@@ -2170,31 +2205,54 @@ async function openLpEditor(z) {
 }
 function drawLpSteps() {
   const box = $('lpSteps'); box.replaceChildren();
+  let sum = $('lpSum'); if (!sum) { sum = el('div', ''); sum.id = 'lpSum'; box.before(sum); }
+  const tot = lpEditing.steps.reduce((a, s) => a + stepDur(s), 0); let len = +ls.get('lpLen') || 45; if (![30, 40, 45, 60, 80, 90].includes(len)) len = 45;
+  sum.className = 'lp-sum'; sum.replaceChildren();
+  const diff = len - tot, bar = el('div', 'lp-bar'), fill = el('i'); fill.style.width = Math.min(100, tot / len * 100) + '%'; fill.className = diff < 0 ? 'over' : ''; bar.appendChild(fill);
+  const sel = document.createElement('select'); [30, 40, 45, 60, 80, 90].forEach(v => sel.appendChild(new Option(v + ' мин', v))); sel.value = len; sel.onchange = () => { ls.set('lpLen', sel.value); drawLpSteps(); };
+  const tx = el('span', '', 'Жоспар: ' + tot + ' мин · сабақ ' + len + ' мин' + (tot ? (diff >= 0 ? ' · ' + diff + ' мин бос' : ' · ' + (-diff) + ' мин артық') : ''));
+  sum.append(el('b', '', '⏱'), tx, sel, bar);
   lpEditing.steps.forEach((x, i) => {
-    const r = el('div', 'lprow'), sel = document.createElement('select');
-    Object.keys(STEP_TYPES).forEach(k => sel.appendChild(new Option(STEP_TYPES[k], k))); sel.value = x.k; sel.onchange = () => { x.k = sel.value; drawLpSteps(); };
+    const m = STEP_META[x.k] || ['•', '#3B6BFF'], r = el('div', 'lpc2'); r.style.setProperty('--sc', m[1]);
+    const sel = document.createElement('select');
+    Object.keys(STEP_TYPES).forEach(k => sel.appendChild(new Option((STEP_META[k] ? STEP_META[k][0] + ' ' : '') + STEP_TYPES[k], k))); sel.value = x.k; sel.onchange = () => { x.k = sel.value; drawLpSteps(); };
     const ti = document.createElement('input'); ti.maxLength = 80; ti.placeholder = 'Қадам атауы'; ti.value = x.t || ''; ti.oninput = () => { x.t = ti.value; };
-    let ex;
+    let ex; const extra = [];
     if (x.k === 'text' || x.k === 'hw' || x.k === 'cloud') { ex = document.createElement('input'); ex.maxLength = 300; ex.placeholder = x.k === 'cloud' ? 'Сөз бұлты сұрағы' : 'Экранға шығатын мәтін'; ex.value = x.x || ''; ex.oninput = () => { x.x = ex.value; }; }
     else if (x.k === 'quiz') { ex = document.createElement('select'); ex.appendChild(new Option('— викторина таңда —', '')); lpQuizzes.forEach(q => ex.appendChild(new Option(q.title, q.id))); ex.value = x.q || ''; ex.onchange = () => { x.q = ex.value; if (!ti.value) { const q = lpQuizzes.find(v => v.id === ex.value); if (q) { x.t = q.title; ti.value = q.title; } } }; }
     else if (x.k === 'game') { ex = document.createElement('select'); ex.appendChild(new Option('— ойын таңда —', '')); GAMES.forEach(g => ex.appendChild(new Option(g.title, g.url))); ex.value = x.u || ''; ex.onchange = () => { x.u = ex.value; if (!ti.value) { const g = GAMES.find(v => v.url === ex.value); if (g) { x.t = g.title; ti.value = g.title; } } }; }
-    else if (x.k === 'bgame') { ex = document.createElement('select'); ex.appendChild(new Option(lpSets.length ? '— жинақ таңда —' : 'Жинақ жоқ: Ойын-сауықта жаса', '')); lpSets.forEach(d => ex.appendChild(new Option((BG[d.kind] ? BG[d.kind].t : d.kind) + ': ' + d.title, d.id))); ex.value = x.b || ''; ex.onchange = () => { x.b = ex.value; if (!ti.value) { const d = lpSets.find(v => v.id === ex.value); if (d) { ti.value = d.title; x.t = d.title; } } }; }
-    else if (x.k === 'slides') { ex = document.createElement('select'); ex.appendChild(new Option(lpDecks.length ? '— PDF таңда —' : 'PDF жоқ: «Менің материалдарым» бөліміне жүкте', '')); lpDecks.forEach(d => ex.appendChild(new Option(d.title, d.id))); ex.value = x.m || ''; ex.onchange = () => { x.m = ex.value; if (!ti.value) { const d = lpDecks.find(v => v.id === ex.value); if (d) { ti.value = d.title.replace(/\.pdf$/i, ''); x.t = ti.value; } } }; }
+    else if (x.k === 'bgame') {
+      ex = document.createElement('select'); ex.appendChild(new Option(lpSets.length ? '— Ойын-сауықтан жинақ таңда —' : 'Жинақ жоқ: Ойын-сауықта жаса', ''));
+      const kinds = [...new Set(lpSets.map(d => d.kind))]; kinds.forEach(k => { const og = document.createElement('optgroup'); og.label = (BG[k] ? BG[k].ic + ' ' + BG[k].t : k); lpSets.filter(d => d.kind === k).forEach(d => og.appendChild(new Option(d.title, d.id))); ex.appendChild(og); });
+      ex.value = x.b || ''; ex.onchange = () => { x.b = ex.value; if (!ti.value) { const d = lpSets.find(v => v.id === ex.value); if (d) { ti.value = d.title; x.t = d.title; } } };
+    }
+    else if (x.k === 'slides') {
+      ex = document.createElement('select'); ex.appendChild(new Option(lpDecks.length ? '— PDF таңда —' : 'PDF жоқ: «Менің материалдарым» бөліміне жүкте', '')); lpDecks.forEach(d => ex.appendChild(new Option(d.title, d.id))); ex.value = x.m || ''; ex.onchange = () => { x.m = ex.value; if (!ti.value) { const d = lpDecks.find(v => v.id === ex.value); if (d) { ti.value = d.title.replace(/\.pdf$/i, ''); x.t = ti.value; } } };
+      const rg = el('div', 'lpc2-rg'), a = document.createElement('input'), b = document.createElement('input'); [a, b].forEach(n => { n.type = 'number'; n.min = 1; n.max = 999; }); a.placeholder = '1'; b.placeholder = 'соңы'; a.value = x.pf || ''; b.value = x.pt || ''; a.oninput = () => { x.pf = +a.value || 0; }; b.oninput = () => { x.pt = +b.value || 0; };
+      rg.append(el('span', '', '📄 Беттер:'), a, el('span', '', '–'), b, el('small', '', 'Мысалы 1–5. Бос қалса, бүкіл PDF. Сол PDF-ті басқа қадамға қайта қойып, келесі беттерді көрсетуге болады.')); extra.push(rg);
+    }
     else if (x.k === 'link') { ex = document.createElement('input'); ex.placeholder = 'https://...'; ex.value = x.u || ''; ex.oninput = () => { x.u = ex.value; }; }
     else { ex = el('span', 'gm', 'Қосымша баптау керек емес'); }
-    const ctl = el('div', 'ctl'), up = mini('↑', () => { if (i) { [lpEditing.steps[i - 1], lpEditing.steps[i]] = [lpEditing.steps[i], lpEditing.steps[i - 1]]; drawLpSteps(); } }), dn = mini('↓', () => { if (i < lpEditing.steps.length - 1) { [lpEditing.steps[i + 1], lpEditing.steps[i]] = [lpEditing.steps[i], lpEditing.steps[i + 1]]; drawLpSteps(); } }), rm = mini('✕', () => { lpEditing.steps.splice(i, 1); drawLpSteps(); });
-    [up, dn, rm].forEach(b => b.style.margin = '0'); ctl.append(up, dn, rm);
-    r.append(el('b', '', String(i + 1)), sel, ti, ex, ctl); box.appendChild(r);
+    const dur = document.createElement('input'); dur.type = 'number'; dur.min = 0; dur.max = 90; dur.placeholder = '0'; dur.value = x.d || ''; dur.title = 'Қадамға берілген уақыт (минут)'; dur.setAttribute('aria-label', 'Минут'); dur.oninput = () => { x.d = Math.max(0, Math.min(90, +dur.value || 0)); const t2 = lpEditing.steps.reduce((a, s) => a + stepDur(s), 0); const sm = $('lpSum'); if (sm) { sm.querySelector('span').textContent = 'Жоспар: ' + t2 + ' мин · сабақ ' + len + ' мин' + (t2 ? (len - t2 >= 0 ? ' · ' + (len - t2) + ' мин бос' : ' · ' + (t2 - len) + ' мин артық') : ''); const f = sm.querySelector('.lp-bar i'); f.style.width = Math.min(100, t2 / len * 100) + '%'; f.className = t2 > len ? 'over' : ''; } };
+    const dw = el('label', 'lpc2-d'); dw.append(dur, el('span', '', 'мин'));
+    const note = bgTa('📝 Мұғалімге ескертпе: оқушыларға көрінбейді, телефон пультте шығады', x.n || '', 1, v => { x.n = v; }); note.className = 'lpc2-n';
+    const ctl = el('div', 'ctl'), up = mini('↑', () => { if (i) { [lpEditing.steps[i - 1], lpEditing.steps[i]] = [lpEditing.steps[i], lpEditing.steps[i - 1]]; drawLpSteps(); } }), dn = mini('↓', () => { if (i < lpEditing.steps.length - 1) { [lpEditing.steps[i + 1], lpEditing.steps[i]] = [lpEditing.steps[i], lpEditing.steps[i + 1]]; drawLpSteps(); } }),
+      cp = mini('⧉', () => { lpEditing.steps.splice(i + 1, 0, JSON.parse(JSON.stringify(x))); drawLpSteps(); }), rm = mini('✕', () => { lpEditing.steps.splice(i, 1); drawLpSteps(); });
+    cp.title = 'Көшіру'; [up, dn, cp, rm].forEach(b => b.style.margin = '0'); ctl.append(up, dn, cp, rm);
+    const hd = el('div', 'lpc2-h'), bd = el('div', 'lpc2-b'); const bdg = el('div', 'lpc2-bd'); bdg.append(el('span', '', m[0]), el('b', '', String(i + 1)));
+    hd.append(bdg, sel, ti, ctl); bd.append(ex, dw); r.append(hd, bd, ...extra, note); box.appendChild(r);
   });
-  if (!lpEditing.steps.length) box.appendChild(el('p', 'sub', 'Қадам жоқ. «Қадам қосу» не «45 минуттық үлгі» батырмасын бас.'));
+  if (!lpEditing.steps.length) box.appendChild(el('p', 'sub', 'Қадам жоқ. «Қадам қосу» не төмендегі үлгілердің бірін бас.'));
 }
 $('lpNew').onclick = () => openLpEditor(null);
-$('lpAdd').onclick = () => { lpEditing.steps.push({ k: 'text', t: '' }); drawLpSteps(); };
-$('lpTpl').onclick = async () => {
-  if (lpEditing.steps.length && !(await ask('Қазіргі қадамдар үлгімен ауыстырылсын ба?'))) return;
-  lpEditing.steps = [{ k: 'text', t: 'Кіріспе: бүгінгі мақсат', x: 'Бүгін не үйренеміз?' }, { k: 'cloud', t: 'Ойлану: не білемін?', x: 'Тақырып бойынша не білесің?' }, { k: 'text', t: 'Жаңа тақырып', x: '' }, { k: 'groups', t: 'Топтық жұмыс' }, { k: 'timer', t: 'Тапсырма уақыты' }, { k: 'quiz', t: 'Бекіту: викторина', q: '' }, { k: 'refl', t: 'Рефлексия' }, { k: 'hw', t: 'Үй тапсырмасы', x: '' }];
-  if (!$('lpTitle').value.trim()) $('lpTitle').value = '45 минуттық сабақ'; drawLpSteps();
-};
+$('lpAdd').onclick = () => { lpEditing.steps.push({ k: 'text', t: '', d: 0 }); drawLpSteps(); };
+const LP_TPLS = [
+  ['new', '🆕 Жаңа тақырып (45)', 'Жаңа тақырып', [{ k: 'text', t: 'Кіріспе: бүгінгі мақсат', x: 'Бүгін не үйренеміз?', d: 3 }, { k: 'cloud', t: 'Ойлану: не білемін?', x: 'Тақырып бойынша не білесің?', d: 3 }, { k: 'slides', t: 'Жаңа тақырып (презентация)', d: 12 }, { k: 'groups', t: 'Топқа бөлу', d: 2 }, { k: 'timer', t: 'Топтық жұмыс', d: 7 }, { k: 'bgame', t: 'Ойын-сауық: бекіту', d: 7 }, { k: 'quiz', t: 'Бекіту: викторина', d: 5 }, { k: 'refl', t: 'Рефлексия', d: 3 }, { k: 'hw', t: 'Үй тапсырмасы', x: '', d: 2 }]],
+  ['rev', '🔁 Қайталау (45)', 'Қайталау сабағы', [{ k: 'text', t: 'Бүгінгі мақсат', x: 'Өткенді қайталаймыз', d: 2 }, { k: 'poll', t: 'Не түсінікті?', d: 3 }, { k: 'quiz', t: 'Қайталау: викторина', d: 10 }, { k: 'groups', t: 'Топқа бөлу', d: 2 }, { k: 'bgame', t: 'Командалық ойын', d: 12 }, { k: 'timer', t: 'Жұппен есеп шығару', d: 8 }, { k: 'refl', t: 'Рефлексия', d: 4 }, { k: 'hw', t: 'Үй тапсырмасы', x: '', d: 2 }]],
+  ['lab', '🔬 Зертханалық жұмыс (45)', 'Зертханалық жұмыс', [{ k: 'text', t: 'Мақсат және қауіпсіздік', x: '', d: 4 }, { k: 'slides', t: 'Жұмыс нұсқаулығы', d: 6 }, { k: 'groups', t: 'Топқа бөлу', d: 3 }, { k: 'game', t: 'Виртуалды зертхана', d: 15 }, { k: 'timer', t: 'Нәтижені есептеу', d: 8 }, { k: 'ask', t: 'Сұрақтар', d: 4 }, { k: 'refl', t: 'Рефлексия', d: 3 }, { k: 'hw', t: 'Есеп жазу', x: '', d: 2 }]],
+  ['short', '⚡ Шығу билеті (15)', 'Қысқа бекіту', [{ k: 'poll', t: 'Түсіндім бе?', d: 3 }, { k: 'quiz', t: 'Жылдам викторина', d: 8 }, { k: 'refl', t: 'Рефлексия', d: 4 }]]
+];
+{ const row = $('lpAdd').parentElement; LP_TPLS.forEach(([id, label, name, steps]) => { const b = el('button', 'out', label); b.type = 'button'; b.onclick = async () => { if (lpEditing.steps.length && !(await ask('Қазіргі қадамдар үлгімен ауыстырылсын ба?'))) return; lpEditing.steps = JSON.parse(JSON.stringify(steps)); if (!$('lpTitle').value.trim()) $('lpTitle').value = name; drawLpSteps(); }; row.appendChild(b); }); }
 $('lpCancel').onclick = () => loadLessons();
 $('lpSave').onclick = async () => {
   const title = $('lpTitle').value.trim(); if (!title) { $('lpTitle').focus(); return; }
@@ -2209,24 +2267,47 @@ function lessonDock() {
   if (!d) { d = el('div', ''); d.id = 'lessonDock'; document.body.appendChild(d); }
   return d;
 }
+function fmtMin(s) { s = Math.max(0, Math.round(s)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+function stepSplash(i) {
+  if (!lessonRun || matchMedia('(prefers-reduced-motion: reduce)').matches) return; const s = lessonRun.plan.steps[i], m = STEP_META[s.k] || ['•', '#3B6BFF'];
+  document.querySelectorAll('.ls-splash').forEach(x => x.remove()); const o = el('div', 'ls-splash'); o.style.setProperty('--sc', m[1]);
+  o.append(el('div', 'ls-e', m[0]), el('div', 'ls-n', 'Қадам ' + (i + 1) + ' / ' + lessonRun.plan.steps.length), el('div', 'ls-t', s.t || STEP_TYPES[s.k] || ''), el('div', 'ls-d', stepDur(s) ? stepDur(s) + ' минут' : '')); document.body.appendChild(o); setTimeout(() => o.remove(), 1500);
+}
 function drawDock() {
-  const d = lessonDock(); if (!lessonRun) { d.hidden = true; return; }
+  const d = lessonDock(); if (!lessonRun) { d.hidden = true; clearInterval(lessonDock.iv); try { pultPush(); } catch { } return; }
   d.hidden = false; d.replaceChildren();
-  const { plan, i } = lessonRun, st = plan.steps, cur = st[i];
-  const dots = el('div', 'ld-dots'); st.forEach((_, j) => dots.appendChild(el('i', j === i ? 'on' : j < i ? 'done' : '')));
-  const t = el('div', 'ld-t'); t.append(el('small', '', plan.title + ' · ' + (i + 1) + '/' + st.length), el('strong', '', cur.t || STEP_TYPES[cur.k]));
+  const { plan, i } = lessonRun, st = plan.steps, cur = st[i], m = STEP_META[cur.k] || ['•', '#3B6BFF'];
+  d.style.setProperty('--sc', m[1]);
+  const track = el('div', 'ld-track'); st.forEach((s, j) => { const c = el('button', 'ld-seg' + (j === i ? ' on' : j < i ? ' done' : '')); c.type = 'button'; c.style.flexGrow = String(Math.max(1, stepDur(s))); const mm = STEP_META[s.k] || ['•']; c.title = (j + 1) + '. ' + (s.t || STEP_TYPES[s.k]) + (stepDur(s) ? ' · ' + stepDur(s) + ' мин' : ''); c.appendChild(el('span', '', mm[0])); c.onclick = () => { if (j !== lessonRun.i) goStep(j); }; track.appendChild(c); });
+  const ic = el('div', 'ld-ic', m[0]), t = el('div', 'ld-t'); t.append(el('small', '', plan.title + ' · ' + (i + 1) + '/' + st.length), el('strong', '', cur.t || STEP_TYPES[cur.k]));
+  const tm = el('div', 'ld-tm', ''), all = el('div', 'ld-all', '');
   const prev = el('button', '', '◀'); prev.title = 'Алдыңғы'; prev.disabled = i === 0; prev.onclick = () => goStep(i - 1);
   const rerun = el('button', '', '↻'); rerun.title = 'Қадамды қайта іске қосу'; rerun.onclick = () => runStep(cur);
   const last = i === st.length - 1, next = el('button', 'ld-go', last ? 'Аяқтау' : 'Келесі ▶'); next.onclick = () => last ? endLesson(true) : goStep(i + 1);
   const x = el('button', '', '✕'); x.title = 'Жоспардан шығу'; x.onclick = async () => { if ((await ask('Сабақ жоспарынан шығасың ба?'))) endLesson(false); };
-  d.append(dots, t, prev, rerun, next, x);
+  const row = el('div', 'ld-row'); row.append(ic, t, el('span', 'ld-sp'), tm, all, prev, rerun, next, x); d.append(track, row);
+  const plan0 = st.reduce((a, s) => a + stepDur(s), 0);
+  const tick = () => { if (!lessonRun) return; const el1 = (Date.now() - lessonRun.stepT0) / 1000, dd = stepDur(cur) * 60; if (dd) { const left = dd - el1; tm.textContent = left >= 0 ? fmtMin(left) : '+' + fmtMin(-left); tm.className = 'ld-tm' + (left < 0 ? ' over' : left < 60 ? ' low' : ''); if (left < 0 && !lessonRun.bell) { lessonRun.bell = true; SFX.bell(); } } else { tm.textContent = fmtMin(el1); tm.className = 'ld-tm'; } all.textContent = fmtMin((Date.now() - lessonRun.t0) / 1000) + (plan0 ? ' / ' + plan0 + ':00' : ''); };
+  tick(); clearInterval(lessonDock.iv); lessonDock.iv = setInterval(tick, 1000); try { pultPush(); } catch { }
 }
-function startLesson(plan) { SFX.unlock(); lessonRun = { plan, i: 0 }; go('lessons'); drawDock(); runStep(plan.steps[0]); }
-function goStep(n) { if (!lessonRun) return; closeSlides(); if (!$('qzHost').hidden) { alert('Алдымен ағымдағы ойынды жап (жоғарғы оң жақтағы ✕), сосын келесі қадамға өт.'); return; } lessonRun.i = n; drawDock(); runStep(lessonRun.plan.steps[n]); }
+function startLesson(plan) { SFX.unlock(); lessonRun = { plan, i: 0, t0: Date.now(), stepT0: Date.now(), bell: false, spent: [] }; go('lessons'); drawDock(); stepSplash(0); runStep(plan.steps[0]); }
+function goStep(n) {
+  if (!lessonRun) return; if (!$('qzHost').hidden) { notify('Алдымен ағымдағы ойынды жап (жоғарғы оң жақтағы ✕), сосын келесі қадамға өт.'); return; }
+  closeSlides(); lessonRun.spent[lessonRun.i] = (lessonRun.spent[lessonRun.i] || 0) + (Date.now() - lessonRun.stepT0) / 1000; lessonRun.i = n; lessonRun.stepT0 = Date.now(); lessonRun.bell = false; drawDock(); stepSplash(n); runStep(lessonRun.plan.steps[n]);
+}
 function lessonStepBy(d) { if (!lessonRun) return; const n = lessonRun.i + d; if (n >= lessonRun.plan.steps.length) endLesson(true); else if (n >= 0) goStep(n); }
-function endLesson(done) { closeSlides(); lessonRun = null; drawDock(); $('stage').hidden = true; clearInterval(tm); if (done) { SFX.fan(); confetti(); } }
+function endLesson(done) {
+  closeSlides(); const L = lessonRun; if (L) L.spent[L.i] = (L.spent[L.i] || 0) + (Date.now() - L.stepT0) / 1000; lessonRun = null; clearInterval(lessonDock.iv); drawDock(); $('stage').hidden = true; clearInterval(tm);
+  if (done && L) {
+    const b = stage(), total = (Date.now() - L.t0) / 1000, planned = L.plan.steps.reduce((a, s) => a + stepDur(s), 0), c = el('div', 'ls-end');
+    c.append(el('div', 'ls-eb', '🎉'), el('h2', '', 'Сабақ аяқталды'), el('p', '', L.plan.title));
+    const stats = el('div', 'ls-st'); [['⏱', fmtMin(total), 'жалпы уақыт'], ['🧩', String(L.plan.steps.length), 'қадам'], ['📋', planned ? planned + ' мин' : '—', 'жоспар бойынша']].forEach(([e, v, l]) => { const x = el('div', ''); x.append(el('span', '', e), el('b', '', v), el('small', '', l)); stats.appendChild(x); }); c.appendChild(stats);
+    const list = el('div', 'ls-l'); L.plan.steps.forEach((s, j) => { const sp = L.spent[j]; if (sp === undefined) return; const r = el('div', ''); r.append(el('span', '', (STEP_META[s.k] || ['•'])[0] + ' ' + (s.t || STEP_TYPES[s.k])), el('b', stepDur(s) && sp > stepDur(s) * 60 + 30 ? 'over' : '', fmtMin(sp) + (stepDur(s) ? ' / ' + stepDur(s) + ':00' : ''))); list.appendChild(r); }); c.appendChild(list);
+    const ok = el('button', 'go', 'Жабу'); ok.type = 'button'; ok.onclick = () => { $('stage').hidden = true; }; c.appendChild(ok); b.appendChild(c); SFX.fan(); confetti();
+  }
+}
 async function runStep(s) {
-  if (!$('qzHost').hidden) { alert('Алдымен ағымдағы ойынды жап (✕).'); return; }
+  if (!$('qzHost').hidden) { notify('Алдымен ағымдағы ойынды жап (✕).'); return; }
   SFX.pop();
   if (s.k === 'text' || s.k === 'hw') {
     const b = stage(), h = el('div', 'big', s.t || ''), p = el('p', '', s.x || '');
@@ -2249,7 +2330,7 @@ async function runStep(s) {
     if (!s.m) return alert('Бұл қадамға презентация таңдалмаған. Жоспарды өзгертіп, PDF таңда.');
     const r = await sb.from('mat_items').select('id,title,storage_path,kind,mime').eq('id', s.m).maybeSingle();
     if (!r.data) return alert('Презентация табылмады (жойылған болуы мүмкін).');
-    $('stage').hidden = true; return openSlides(r.data);
+    $('stage').hidden = true; await openSlides(r.data, +s.pf || 1); if (SL) { SL.startAt = +s.pf || 1; if (+s.pt) SL.endAt = Math.min(Math.max(+s.pt, SL.startAt), SL.n); } return;
   }
   if (s.k === 'cloud') { $('stage').hidden = true; return runCloud({ prompt: s.x || s.t || 'Сөз жаз', max: 3, screen: false }); }
   if (s.k === 'game' || s.k === 'link') {
@@ -2258,7 +2339,7 @@ async function runStep(s) {
     const f = document.createElement('iframe'); f.src = /^https?:/.test(s.u) ? embedUrl(s.u) : '../' + encodeURIComponent(s.u); f.style.cssText = 'width:100%;height:calc(100vh - 170px);border:0;border-radius:12px;background:#000'; f.allow = 'fullscreen; autoplay'; f.allowFullscreen = true;
     b.append(h, f); return;
   }
-  const map = { random: 'random', groups: 'groups', timer: 'timer', refl: 'refl' };
+  const map = { random: 1, groups: 1, timer: 1, refl: 1, poll: 1, ask: 1, wheel: 1, potato: 1, team: 1 };
   if (map[s.k]) { $('stage').hidden = true; return playTool({ k: s.k, cls: s.k === 'random' || s.k === 'groups' }); }
 }
 
@@ -3532,8 +3613,8 @@ async function openSlides(it, startAt) {
     cv.width = tmp.width; cv.height = tmp.height; cv.style.width = Math.floor(vp.width / dpr) + 'px'; cv.style.height = Math.floor(vp.height / dpr) + 'px'; cv.getContext('2d').drawImage(tmp, 0, 0);
     nn.textContent = o.i + ' / ' + o.n; try { pultPush(); } catch {}
   };
-  o.next = () => { if (o.i < o.n) o.go(1); else if (lessonRun) { closeSlides(); lessonStepBy(1); } };
-  o.prev = () => { if (o.i > 1) o.go(-1); else if (lessonRun && lessonRun.i > 0) { closeSlides(); lessonStepBy(-1); } };
+  o.next = () => { if (o.i < (o.endAt || o.n)) o.go(1); else if (lessonRun) { closeSlides(); lessonStepBy(1); } };
+  o.prev = () => { if (o.i > (o.startAt || 1)) o.go(-1); else if (lessonRun && lessonRun.i > 0) { closeSlides(); lessonStepBy(-1); } };
   o.go = d => { const n = Math.min(Math.max(o.i + d, 1), o.n); if (n === o.i) return; o.i = n; render(); };
   o.black = f => { blk.hidden = f === undefined ? !blk.hidden : !f; };
   o.laser = (px, py, on) => { const r = cv.getBoundingClientRect(); dot.style.left = (r.left + px * r.width) + 'px'; dot.style.top = (r.top + py * r.height) + 'px'; dot.classList.toggle('on', !!on); };
@@ -3600,7 +3681,7 @@ function pultPush() {
   if (!pultHost) return;
   const qb = !$('qzHost').hidden ? [...$('qzHost').querySelectorAll('.qh-go')].find(b => !b.disabled && b.offsetParent) : null;
   const cur = lessonRun && lessonRun.plan.steps[lessonRun.i];
-  const st = { lp: lessonRun ? { t: lessonRun.plan.title, i: lessonRun.i, n: lessonRun.plan.steps.length, s: cur ? (cur.t || STEP_TYPES[cur.k] || '') : '' } : null, qz: !$('qzHost').hidden, qb: qb ? qb.textContent : '', stage: !$('stage').hidden, left: MT.left, mute: SFX.muted, sl: SL ? { t: SL.t, i: SL.i, n: SL.n } : null, dk: SL ? [] : (pultHost.decks || []).map(d => ({ id: d.id, t: d.title })) };
+  const st = { lp: lessonRun ? { t: lessonRun.plan.title, i: lessonRun.i, n: lessonRun.plan.steps.length, s: cur ? (cur.t || STEP_TYPES[cur.k] || '') : '' } : null, nt: cur && cur.n ? cur.n : '', nx: lessonRun && lessonRun.plan.steps[lessonRun.i + 1] ? (lessonRun.plan.steps[lessonRun.i + 1].t || STEP_TYPES[lessonRun.plan.steps[lessonRun.i + 1].k]) : '', qz: !$('qzHost').hidden, qb: qb ? qb.textContent : '', stage: !$('stage').hidden, left: MT.left, mute: SFX.muted, sl: SL ? { t: SL.t, i: SL.i, n: SL.endAt || SL.n } : null, dk: SL ? [] : (pultHost.decks || []).map(d => ({ id: d.id, t: d.title })) };
   try { pultHost.ch.send({ type: 'broadcast', event: 'state', payload: st }); } catch {}
 }
 function pultCmd(m) {
@@ -3684,10 +3765,12 @@ function pultOpen() {
   const r3 = el('div', 'prow p4'); [1, 3, 5, 10].forEach(m => r3.appendChild(btn(m + ' мин', '', () => send('timer', { m }))));
   const r4 = el('div', 'prow p2'); r4.append(btn('Таймерді тоқтату', '', () => send('tstop')), btn('Экрандағыны жабу', '', () => send('close')));
   const r5 = el('div', 'prow p2'); r5.append(btn('🔊 Дыбыс қос/өшір', '', () => send('mute')), btn('🎉 Конфетти', '', () => send('fun')));
-  ov.append(head, st, r1, slr, pad, dkh, dk, qz, el('small', 'gm', 'Құралдар'), r2, el('small', 'gm', 'Таймер'), r3, r4, r5);
+  const ntEl = el('div', 'pnote'), nxEl = el('div', 'pnx'); ntEl.hidden = nxEl.hidden = true;
+  ov.append(head, st, ntEl, nxEl, r1, slr, pad, dkh, dk, qz, el('small', 'gm', 'Құралдар'), r2, el('small', 'gm', 'Таймер'), r3, r4, r5);
   const paintConn = on => { dot.classList.toggle('on', on); conn.textContent = on ? 'Ноутбук қосылған ✓' : 'Ноутбукты іздеуде… (ноутбукта «Пульт» → «экран» таңда)'; };
   ch.on('broadcast', { event: 'state' }, ({ payload: s }) => {
     if (!s) return;
+    ntEl.hidden = !s.nt; ntEl.textContent = s.nt ? '📝 ' + s.nt : ''; nxEl.hidden = !s.nx; nxEl.textContent = s.nx ? 'Келесі қадам: ' + s.nx : '';
     hasSl = !!s.sl; slr.hidden = pad.hidden = !hasSl; const dkey = JSON.stringify(s.dk || []);
     if (dk.dataset.k !== dkey) { dk.dataset.k = dkey; dk.replaceChildren(); (s.dk || []).forEach(d => dk.appendChild(btn('▶ ' + d.t, '', () => send('deck', { id: d.id })))); }
     dkh.hidden = dk.hidden = !(s.dk || []).length;
