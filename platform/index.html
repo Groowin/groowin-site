@@ -951,6 +951,47 @@ html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background
 .ls-l{width:100%;display:grid;gap:6px;text-align:left}.ls-l div{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:10px;background:var(--hover,rgba(128,128,128,.1))}.ls-l b.over{color:#E5484D}
 #pult .pnote{padding:10px 12px;border-radius:12px;background:rgba(242,140,40,.18);border:1px solid rgba(242,140,40,.45);white-space:pre-wrap;font-size:.95rem}#pult .pnx{opacity:.7;font-size:.85rem}
 @media (prefers-reduced-motion:reduce){.ls-splash{display:none}#lessonDock .ld-seg.on,.lpc2{animation:none}}
+/* ===== Менің материалдарым ===== */
+#v-mats .mt-add{display:flex;flex-direction:column;gap:2px;padding:6px 14px;border:1px dashed var(--line);border-radius:16px;margin:12px 0;transition:border-color .2s,background .2s}
+#v-mats.drag .mt-add{border-color:var(--accent);background:var(--accent-soft)}
+#mBar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 8px}.mt-q{flex:1 1 200px;min-width:160px;padding:9px 14px;border-radius:99px}.mt-so{width:auto;padding:8px 12px;border-radius:99px}
+.mt-seg{display:inline-flex;border:1px solid var(--line);border-radius:99px;overflow:hidden}.mt-seg button{padding:8px 13px;border:0;background:transparent;color:var(--ink);font:inherit;cursor:pointer;transition:background .2s}.mt-seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+#mCrumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:6px 0 10px}.mt-cr{padding:6px 12px;border-radius:99px;border:0;background:var(--accent-soft);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}.mt-sep{opacity:.5}
+.mt-g{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}.mt-g.small{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}.mt-g.list{grid-template-columns:1fr;gap:6px}
+.mt-fold,.mt-it{position:relative;cursor:pointer;animation:rise .35s ease both;transition:transform .2s,box-shadow .2s;outline:none}.mt-fold:hover,.mt-it:hover{transform:translateY(-4px)}.mt-fold:focus-visible,.mt-it:focus-visible{box-shadow:0 0 0 3px var(--accent)}
+.mt-ft{font-weight:700;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}.mt-fm{opacity:.65;display:block}
+.mt-dots{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(0,0,0,.28);color:#fff;font-size:1.1rem;line-height:1;cursor:pointer;opacity:0;transition:opacity .2s;z-index:2}.mt-fold:hover .mt-dots,.mt-it:hover .mt-dots,.mt-dots:focus-visible{opacity:1}
+@media (hover:none){.mt-dots{opacity:.85}}
+/* классик папка */
+.f-classic .mt-fold{min-height:132px;padding:34px 14px 12px;border-radius:6px 16px 16px 16px;background:linear-gradient(160deg,color-mix(in srgb,var(--fc) 92%,#fff),var(--fc));color:#fff;margin-top:12px;box-shadow:0 10px 22px -12px var(--fc)}
+.f-classic .mt-fold::before{content:'';position:absolute;left:0;top:-12px;width:46%;height:16px;border-radius:10px 10px 0 0;background:color-mix(in srgb,var(--fc) 80%,#000)}
+.f-classic .mt-fe{position:absolute;top:8px;left:12px;font-size:1.7rem}.f-classic .mt-ft{margin-top:12px}.f-classic .mt-fm{color:#fff}
+/* тақташа */
+.f-tile .mt-fold{padding:16px;border-radius:22px;background:color-mix(in srgb,var(--fc) 16%,var(--surf,var(--paper)));border:2px solid color-mix(in srgb,var(--fc) 55%,transparent);display:flex;flex-direction:column;gap:4px;min-height:132px}
+.f-tile .mt-fe{font-size:2.4rem;width:56px;height:56px;display:grid;place-items:center;border-radius:16px;background:var(--fc);box-shadow:0 8px 16px -8px var(--fc)}
+/* қарапайым */
+.f-flat .mt-fold{padding:12px 14px 12px 18px;border-radius:12px;border:1px solid var(--line);border-left:5px solid var(--fc);background:var(--surf,var(--paper));display:flex;flex-direction:column;gap:2px;min-height:76px}.f-flat .mt-fe{font-size:1.2rem}
+/* тек белгі */
+.f-emoji .mt-fold{padding:12px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:132px;border-radius:18px}.f-emoji .mt-fold:hover{background:color-mix(in srgb,var(--fc) 14%,transparent)}.f-emoji .mt-fe{font-size:3.6rem;filter:drop-shadow(0 8px 10px color-mix(in srgb,var(--fc) 55%,transparent))}
+.mt-g.small .mt-fold{min-height:92px!important;padding:26px 8px 8px!important}.mt-g.small .mt-fe{font-size:1.3rem!important;width:auto!important;height:auto!important}.mt-g.small .mt-ft{font-size:.82rem}.f-tile.small .mt-fold,.mt-g.small.f-tile .mt-fold{padding:10px!important}.mt-g.small.f-emoji .mt-fe{font-size:2.4rem!important}.mt-g.small .mt-fm{display:none}
+.mt-g.list .mt-fold{min-height:0!important;flex-direction:row!important;align-items:center;gap:12px;padding:10px 14px!important;margin-top:0!important;border-radius:12px!important}.mt-g.list .mt-fold::before{display:none}.mt-g.list .mt-fe{position:static!important;width:auto!important;height:auto!important;font-size:1.4rem!important;background:none!important;box-shadow:none!important;filter:none!important}.mt-g.list .mt-ft{flex:1;margin:0!important}
+/* файл */
+.mt-it{border:1px solid var(--line);border-radius:18px;background:var(--surf,var(--paper));overflow:hidden;display:flex;flex-direction:column}.mt-it:hover{box-shadow:0 14px 26px -16px var(--ic)}
+.mt-th{height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(145deg,color-mix(in srgb,var(--ic) 34%,transparent),color-mix(in srgb,var(--ic) 10%,transparent))}.mt-th span{font-size:2.3rem}.mt-th em{font-style:normal;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ic)}
+.mt-it .mt-ft,.mt-it .mt-fm{padding:0 12px}.mt-it .mt-ft{padding-top:10px;font-size:.95rem}.mt-it .mt-fm{padding-bottom:12px;margin-top:2px}
+.mt-g.small .mt-th{height:62px}.mt-g.small .mt-th span{font-size:1.6rem}.mt-g.small .mt-th em{display:none}.mt-g.small .mt-ft{font-size:.8rem;padding:6px 8px 8px}
+.mt-g.list .mt-it{flex-direction:row;align-items:center;border-radius:12px}.mt-g.list .mt-th{height:auto;width:56px;align-self:stretch;flex:none}.mt-g.list .mt-th span{font-size:1.4rem}.mt-g.list .mt-th em{display:none}.mt-g.list .mt-ft{flex:1;padding:10px 12px;-webkit-line-clamp:1}.mt-g.list .mt-fm{padding:0 44px 0 0;white-space:nowrap}
+.mt-g.list .mt-dots{opacity:1;top:50%;transform:translateY(-50%);background:var(--accent-soft);color:var(--ink)}
+.mt-empty{grid-column:1/-1;text-align:center;padding:40px 10px;opacity:.8}.mt-eb{font-size:4rem;animation:gwob 1.2s}
+.ctxm{position:fixed;z-index:200;min-width:210px;padding:6px;border-radius:14px;background:var(--surf,var(--paper));border:1px solid var(--line);box-shadow:0 18px 40px -12px rgba(0,0,0,.5);animation:rise .15s ease}.ctxm button{display:block;width:100%;text-align:left;padding:10px 12px;border:0;border-radius:9px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}.ctxm button:hover{background:var(--accent-soft)}.ctxm .dg{color:#E5484D}
+.mt-sw,.mt-eg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}.mt-sw button{width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer}.mt-sw button[aria-pressed=true]{box-shadow:0 0 0 3px var(--ink)}.mt-eg button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:transparent;font-size:1.3rem;cursor:pointer}.mt-eg button[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent)}
+.mt-mv{display:flex;flex-direction:column;gap:4px;max-height:50vh;overflow:auto;margin-bottom:10px}.mt-mv button{text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;cursor:pointer}.mt-mv button.on{background:var(--accent-soft);border-color:var(--accent)}
+@media (prefers-reduced-motion:reduce){.mt-fold,.mt-it{animation:none}}
+
+.hw-fc{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:var(--accent-soft);color:var(--ink);text-decoration:none;max-width:100%}.hw-fc b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.hw-att{margin:8px 0 12px}
+.del-warn{padding:12px 14px;border-radius:12px;background:rgba(229,72,77,.14);border:1px solid rgba(229,72,77,.45);margin:8px 0 12px}
+.dgr{color:#E5484D!important;border-color:rgba(229,72,77,.5)!important}.dgb{background:#E5484D!important}.dgb:disabled{opacity:.45}
 </style>
 </head>
 <body>
@@ -1095,6 +1136,8 @@ html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background
         <label for="hwBody">Түсіндірме (міндетті емес)</label><textarea id="hwBody" rows="3" maxlength="2000" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:transparent;color:inherit;font:inherit"></textarea>
         <label for="hwClass">Сынып</label><select id="hwClass" style="width:100%;padding:11px 12px"></select>
         <label for="hwDue">Мерзімі</label><input id="hwDue" type="date" style="width:auto">
+        <label for="hwFiles">Файл не сурет қосу (міндетті емес)</label><input id="hwFiles" type="file" multiple accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip">
+        <div id="hwFPrev" class="hw-th"></div><small class="gm">5 файлға дейін, әрқайсысы 10 МБ-қа дейін. Оқушылар көреді және жүктеп алады.</small>
         <div style="margin-top:12px"><button class="go" id="hwAdd" style="width:auto;padding:10px 22px">Тапсырма қою</button></div>
       </div>
       <p class="msg" id="hwMsg" role="status" aria-live="polite"></p>
@@ -1105,10 +1148,13 @@ html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background
       <h2 style="margin:0 0 6px;font-size:1.2rem">Менің материалдарым</h2>
       <p class="sub" style="font-size:.9rem">Жеке бетің: папка жасап, файл (сурет, бейне, слайд, құжат) жүктеп, интернеттен сілтеме қосасың. Оларды тек өзің көресің, сабақта проекторға шығарасың.</p>
       <div class="crumbs" id="mCrumbs"></div>
-      <div class="mtools"><input id="mFolder" placeholder="Жаңа папка атауы"><button class="out" id="mFolderAdd">Папка жасау</button></div>
-      <div class="mtools"><label class="out upl">Файл жүктеу<input type="file" id="mFile" multiple hidden></label><span class="sub" style="margin:0;font-size:.85rem">Бір файл 50 МБ-қа дейін</span></div>
-      <div class="mtools"><input id="mLTitle" placeholder="Сілтеме атауы (мысалы, PhET маятник)"><input id="mLUrl" placeholder="https://..."><button class="out" id="mLinkAdd">Сілтеме қосу</button></div>
+      <div class="mt-add">
+        <div class="mtools"><input id="mFolder" placeholder="Жаңа папка атауы"><button class="out" id="mFolderAdd">Папка жасау</button><button class="out" id="mFolderPro" type="button">🎨 Түсімен, белгісімен</button></div>
+        <div class="mtools"><label class="out upl">⬆ Файл жүктеу<input type="file" id="mFile" multiple hidden></label><span class="sub" style="margin:0;font-size:.85rem">Бір файл 50 МБ-қа дейін. Файлды осы бетке сүйреп әкелуге де болады.</span></div>
+        <div class="mtools"><input id="mLTitle" placeholder="Сілтеме атауы (мысалы, PhET маятник)"><input id="mLUrl" placeholder="https://..."><button class="out" id="mLinkAdd">🔗 Сілтеме қосу</button></div>
+      </div>
       <p class="msg" id="mMsg" role="status" aria-live="polite"></p>
+      <div id="mBar"></div>
       <div id="mList"></div>
     </div>
 
@@ -1452,6 +1498,21 @@ function onlineStart() {
 function onlineStop() { if (onlCh) { try { sb.removeChannel(onlCh); } catch { } onlCh = null; } onl = new Set(); onlOk = false; paintOnline(); }
 addEventListener('online', paintOnline); addEventListener('offline', paintOnline);
 
+function deleteAccount(a, p) {
+  const m = modal('Аккаунтты жою'), b = m.box, reg = !!p, isT = a.role === 'teacher';
+  b.append(el('p', '', (a.full_name || 'Атсыз') + ' · +' + a.phone + ' · ' + (ROLE_KK[a.role] || '')));
+  const wn = el('div', 'del-warn'); wn.textContent = reg ? (isT ? 'Мұғалімнің аккаунты, викториналары, сабақ жоспарлары, материалдары және қойған тапсырмалары жойылады.' : 'Оқушының аккаунты, нәтижелері, прогресі және жауаптары жойылады.') + ' Мұны қайтару мүмкін емес. Егер тек уақытша тоқтату керек болса, «Бұғаттау» түймесін қолдан.' : 'Бұл нөмір тіркелу тізімінен өшіріледі. Ол әлі тіркелмеген.';
+  b.appendChild(wn); let inp = null;
+  if (reg) { inp = document.createElement('input'); inp.placeholder = 'Растау үшін «ЖОЮ» деп жаз'; inp.autocomplete = 'off'; inp.setAttribute('aria-label', 'Растау'); b.appendChild(inp); }
+  const ok = el('button', 'go dgb', 'Аккаунтты жою'), cn = el('button', 'out', 'Болдырмау'), msg = el('p', 'msg', ''), row = el('div', 'mtools'); ok.type = cn.type = 'button'; row.append(ok, cn); b.append(row, msg); cn.onclick = m.close;
+  const upd = () => { ok.disabled = reg && inp.value.trim().toUpperCase() !== 'ЖОЮ'; }; if (inp) { inp.oninput = upd; } upd();
+  ok.onclick = async () => {
+    ok.disabled = true; msg.textContent = 'Жойылып жатыр…'; msg.className = 'msg';
+    const r = await sb.rpc('delete_account', { p_phone: a.phone });
+    if (r.error) { const t = r.error.message || ''; msg.className = 'msg err'; msg.textContent = t.includes('admin protected') ? 'Админ аккаунтын жоюға болмайды.' : t.includes('forbidden') ? 'Бұл адамды жоюға құқығың жоқ.' : t.includes('self') ? 'Өз аккаунтыңды осы жерден жоя алмайсың.' : t.includes('function') || t.includes('delete_account') ? 'update-17.sql әлі іске қосылмаған (Supabase → SQL Editor).' : 'Қате: ' + t; upd(); return; }
+    SFX.ok(); m.close(); notify('Аккаунт жойылды.'); loadUsers();
+  };
+}
 async function loadUsers() {
   const [{ data: allowed }, { data: profs }] = await Promise.all([
     sb.from('allowed_phones').select('*').order('created_at', { ascending: false }),
@@ -1491,12 +1552,7 @@ async function loadUsers() {
       }));
       if (p && a.role === 'student') td.appendChild(mini('Прогресс', () => showStudentPath(p.id, a.full_name || 'Оқушы')));
       if (p && a.role !== 'admin') td.appendChild(mini('Құпия сөз', () => resetPw(a.phone)));
-      td.appendChild(mini('Жою', async () => {
-        if (!(await ask('Бұл адамды тізімнен жою керек пе?'))) return;
-        if (p) await sb.from('profiles').update({ active: false }).eq('id', p.id);
-        await sb.from('allowed_phones').delete().eq('phone', a.phone);
-        loadUsers();
-      }));
+      if (a.role !== 'admin') { const dl = mini('Жою', () => deleteAccount(a, p)); dl.classList.add('dgr'); td.appendChild(dl); }
     }
     tr.appendChild(td); frag.appendChild(tr);
   });
@@ -1711,6 +1767,11 @@ document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc 
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '2.8', date: '27.10.2026', items: [
+    ['📁', 'Материалдар жаңа дизайнмен', 'Үлкен, кіші немесе тізім көрінісі. Папка стилі төртеу: классик, тақташа, қарапайым, тек белгі. Әр папканың түсі мен белгісін өзің таңдайсың. Іздеу, сұрыптау, файлды сүйреп жүктеу, атын өзгерту, папкаға ауыстыру.'],
+    ['📎', 'Үй тапсырмасына файл', 'Мұғалім тапсырмаға сурет пен құжат (PDF, Word, Excel, PowerPoint) қосады. Оқушы да жауабына сурет не құжат жібереді.'],
+    ['🗑️', 'Аккаунтты жою', 'Админ мұғалім мен оқушы аккаунтын толық жояды, мұғалім өз оқушысын жояды. Админ аккаунтын ешкім жоя алмайды. Жою журналы сақталады.']
+  ] },
   { ver: '2.7', date: '26.10.2026', items: [
     ['📋', 'Сабақ жоспары жаңарды', 'Әр қадамға уақыт (минут), мұғалімге жеке ескертпе (телефон пультте шығады), қадамды көшіру. Жоғарыда жоспар уақыты мен сабақ ұзақтығы көрінеді.'],
     ['📽️', 'Презентацияның беттері', 'PDF-тің қай беттерін көрсету керегін таңда (мысалы 1–5), сосын ойын, кейін қалған беттер. Бір PDF-ті бірнеше қадамға қоюға болады.'],
@@ -3265,24 +3326,81 @@ async function loadMats() {
   const [f, i] = await Promise.all([sb.from('mat_folders').select('*').order('name'), sb.from('mat_items').select('*').order('created_at')]);
   mFolders = f.data || []; mItems = i.data || []; renderMats();
 }
-function renderMats() {
+// ===== Менің материалдарым: түрлі көрініс, папка стилі, түс, іздеу, сұрыптау =====
+const FOLD_COL = ['#F5A524', '#3B6BFF', '#1FA971', '#E8559A', '#7C5CFF', '#19B5D6', '#E5484D', '#8B5E3C'];
+const FOLD_EMO = ['📁', '📚', '🧪', '🔬', '📐', '⚡', '🚀', '🎮', '📝', '🎓', '🧲', '🌌', '💡', '📊', '🎯', '⭐'];
+const KIND_COL = { image: '#E8559A', video: '#F28C28', audio: '#7C5CFF', pdf: '#E5484D', office: '#3B6BFF', link: '#19B5D6', other: '#8B93A3' };
+const KIND_EMO = { image: '🖼️', video: '🎬', audio: '🎵', pdf: '📕', office: '📊', link: '🔗', other: '📄' };
+let matView = ls.get('matView') || 'big', matFold = ls.get('matFold') || 'classic', matQ = '', matSort = ls.get('matSort') || 'name';
+if (!['big', 'small', 'list'].includes(matView)) matView = 'big'; if (!['classic', 'tile', 'flat', 'emoji'].includes(matFold)) matFold = 'classic'; if (!['name', 'new', 'type'].includes(matSort)) matSort = 'name';
+const fcol = f => f.color || FOLD_COL[[...String(f.id)].reduce((a, c) => a + c.charCodeAt(0), 0) % FOLD_COL.length];
+function ctxMenu(anchor, items) {
+  document.querySelectorAll('.ctxm').forEach(x => x.remove()); const m = el('div', 'ctxm'); m.setAttribute('role', 'menu');
+  items.forEach(([t, fn, danger]) => { const b = el('button', danger ? 'dg' : '', t); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.onclick = e => { e.stopPropagation(); m.remove(); fn(); }; m.appendChild(b); });
+  document.body.appendChild(m); const r = anchor.getBoundingClientRect(); const w = m.offsetWidth, h = m.offsetHeight;
+  m.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + 'px'; m.style.top = Math.max(8, Math.min(innerHeight - h - 8, r.bottom + 4)) + 'px';
+  setTimeout(() => document.addEventListener('click', function cl() { m.remove(); document.removeEventListener('click', cl); }, { once: true }), 0);
+}
+const dotBtn = fn => { const b = el('button', 'mt-dots', '⋯'); b.type = 'button'; b.setAttribute('aria-label', 'Әрекеттер'); b.onclick = e => { e.stopPropagation(); fn(b); }; return b; };
+function folderModal(f) {
+  const m = modal(f ? 'Папканы өзгерту' : 'Жаңа папка'), b = m.box; let col = f ? fcol(f) : FOLD_COL[0], emo = (f && f.emoji) || '📁';
+  const nm = document.createElement('input'); nm.maxLength = 60; nm.placeholder = 'Папка атауы'; nm.value = f ? f.name : '';
+  const sw = el('div', 'mt-sw'), eg = el('div', 'mt-eg');
+  const paintS = () => { sw.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.c === col))); eg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x.textContent === emo))); prev.style.setProperty('--fc', col); prev.querySelector('.mt-fe').textContent = emo; };
+  FOLD_COL.forEach(c => { const x = el('button', ''); x.type = 'button'; x.dataset.c = c; x.style.background = c; x.setAttribute('aria-label', 'Түс'); x.onclick = () => { col = c; paintS(); }; sw.appendChild(x); });
+  FOLD_EMO.forEach(e => { const x = el('button', '', e); x.type = 'button'; x.onclick = () => { emo = e; paintS(); }; eg.appendChild(x); });
+  const pw = el('div', 'f-classic'), prev = el('div', 'mt-fold classic'); prev.append(el('span', 'mt-fe', emo)); prev.style.cssText = 'width:120px;min-height:90px;margin:14px auto 6px;cursor:default'; pw.appendChild(prev);
+  const ok = el('button', 'go', 'Сақтау'), cn = el('button', 'out', 'Болдырмау'), row = el('div', 'mtools'); ok.type = cn.type = 'button'; row.append(ok, cn); cn.onclick = m.close;
+  ok.onclick = async () => {
+    const name = nm.value.trim(); if (!name) { nm.focus(); return; }
+    const r = f ? await sb.from('mat_folders').update({ name, color: col, emoji: emo }).eq('id', f.id) : await sb.from('mat_folders').insert({ name, parent_id: mCur, color: col, emoji: emo });
+    if (r.error) { notify(r.error.message.includes('color') || r.error.message.includes('emoji') ? 'Түс пен эмодзи үшін update-17.sql әлі іске қосылмаған.' : 'Қате: ' + r.error.message); return; } m.close(); loadMats();
+  };
+  nm.onkeydown = e => { if (e.key === 'Enter') ok.click(); }; b.append(nm, el('p', 'sub', 'Түсі'), sw, el('p', 'sub', 'Белгісі'), eg, pw, row); paintS(); setTimeout(() => nm.focus(), 50);
+}
+function moveModal(it) {
+  const m = modal('Қай папкаға ауыстырамыз?'), b = m.box, list = el('div', 'mt-mv');
+  const add = (id, label, depth) => { const x = el('button', (it.folder_id || null) === id ? 'on' : '', '　'.repeat(depth) + label); x.type = 'button'; x.onclick = async () => { const r = await sb.from('mat_items').update({ folder_id: id }).eq('id', it.id); if (r.error) return notify('Қате: ' + r.error.message); m.close(); loadMats(); }; list.appendChild(x); };
+  add(null, '🏠 Басты бет', 0); const walk = (pid, d) => mFolders.filter(f => (f.parent_id || null) === pid).forEach(f => { add(f.id, (f.emoji || '📁') + ' ' + f.name, d); walk(f.id, d + 1); }); walk(null, 1);
+  const cn = el('button', 'out', 'Жабу'); cn.type = 'button'; cn.onclick = m.close; b.append(list, cn);
+}
+async function renameItem(it) { const m = modal('Атын өзгерту'), b = m.box, i = document.createElement('input'); i.maxLength = 120; i.value = it.title; const ok = el('button', 'go', 'Сақтау'); ok.type = 'button'; ok.onclick = async () => { const v = i.value.trim(); if (!v) return; const r = await sb.from('mat_items').update({ title: v }).eq('id', it.id); if (r.error) return notify('Қате: ' + r.error.message); m.close(); loadMats(); }; i.onkeydown = e => { if (e.key === 'Enter') ok.click(); }; b.append(i, ok); setTimeout(() => i.select(), 50); }
+const fmtSize = n => !n ? '' : n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' КБ' : (n / 1048576).toFixed(1) + ' МБ';
+function matBar() {
+  const bar = $('mBar'); bar.replaceChildren();
+  const seg = (items, cur, fn) => { const s = el('div', 'mt-seg'); items.forEach(([v, t, ti]) => { const b = el('button', '', t); b.type = 'button'; b.title = ti || ''; b.setAttribute('aria-pressed', String(cur === v)); b.onclick = () => fn(v); s.appendChild(b); }); return s; };
+  const q = document.createElement('input'); q.type = 'search'; q.placeholder = '🔍 Іздеу: файл не папка'; q.value = matQ; q.className = 'mt-q'; q.oninput = () => { matQ = q.value.trim().toLowerCase(); renderMats(true); }; q.setAttribute('aria-label', 'Іздеу');
+  const so = document.createElement('select'); [['name', 'Аты бойынша'], ['new', 'Жаңасы жоғарыда'], ['type', 'Түрі бойынша']].forEach(([v, t]) => so.appendChild(new Option(t, v))); so.value = matSort; so.className = 'mt-so'; so.onchange = () => { matSort = so.value; ls.set('matSort', matSort); renderMats(); }; so.setAttribute('aria-label', 'Сұрыптау');
+  bar.append(q, so, seg([['big', '▦', 'Үлкен'], ['small', '▪▪', 'Кіші'], ['list', '☰', 'Тізім']], matView, v => { matView = v; ls.set('matView', v); renderMats(); matBar(); }),
+    seg([['classic', '📁', 'Классик папка'], ['tile', '🟦', 'Тақташа'], ['flat', '▭', 'Қарапайым'], ['emoji', '😀', 'Тек белгі']], matFold, v => { matFold = v; ls.set('matFold', v); renderMats(); matBar(); }));
+}
+function renderMats(keepBar) {
+  if (!keepBar) matBar();
   const cr = $('mCrumbs'); cr.replaceChildren(); const path = [];
   for (let id = mCur; id;) { const f = mFolders.find(x => x.id === id); if (!f) break; path.unshift(f); id = f.parent_id; }
-  cr.append(mini('Басты бет', () => { mCur = null; renderMats(); }));
-  path.forEach(f => cr.append(el('span', '', '› '), mini(f.name, () => { mCur = f.id; renderMats(); })));
-  const box = $('mList'); box.replaceChildren();
-  mFolders.filter(f => (f.parent_id || null) === mCur).forEach(f => {
-    const r = el('div', 'mrow'), n = el('span', 'nm', '📁 ' + f.name); n.onclick = () => { mCur = f.id; renderMats(); };
-    r.append(n, mini('Жою', () => delFolder(f))); box.appendChild(r);
+  const home = el('button', 'mt-cr', '🏠 Басты бет'); home.type = 'button'; home.onclick = () => { mCur = null; renderMats(); }; cr.append(home);
+  path.forEach(f => { cr.append(el('span', 'mt-sep', '›')); const b = el('button', 'mt-cr', (f.emoji || '📁') + ' ' + f.name); b.type = 'button'; b.onclick = () => { mCur = f.id; renderMats(); }; cr.append(b); });
+  const box = $('mList'); box.replaceChildren(); box.className = 'mt-g ' + matView + ' f-' + matFold;
+  const searching = !!matQ; let fs = mFolders.filter(f => searching ? f.name.toLowerCase().includes(matQ) : (f.parent_id || null) === mCur), its = mItems.filter(it => searching ? it.title.toLowerCase().includes(matQ) : (it.folder_id || null) === mCur);
+  const cmp = { name: (a, b2) => (a.name || a.title).localeCompare(b2.name || b2.title, 'kk'), new: (a, b2) => String(b2.created_at || '').localeCompare(String(a.created_at || '')), type: (a, b2) => matKind(a).localeCompare(matKind(b2)) || a.title.localeCompare(b2.title, 'kk') };
+  fs = fs.slice().sort(matSort === 'new' ? cmp.new : (a, b2) => a.name.localeCompare(b2.name, 'kk')); its = its.slice().sort(cmp[matSort]);
+  const where = it => { if (!searching || !it.folder_id) return ''; const f = mFolders.find(x => x.id === it.folder_id); return f ? ' · ' + f.name : ''; };
+  fs.forEach((f, i) => {
+    const n = mItems.filter(x => x.folder_id === f.id).length + mFolders.filter(x => x.parent_id === f.id).length, c = el('div', 'mt-fold ' + matFold); c.style.setProperty('--fc', fcol(f)); c.style.animationDelay = (i * 25) + 'ms'; c.tabIndex = 0; c.setAttribute('role', 'button'); c.setAttribute('aria-label', 'Папка: ' + f.name);
+    const open = () => { mCur = f.id; matQ = ''; renderMats(); }; c.onclick = open; c.onkeydown = e => { if (e.key === 'Enter') open(); };
+    c.append(el('span', 'mt-fe', f.emoji || '📁'), el('div', 'mt-ft', f.name), el('small', 'mt-fm', n ? n + ' элемент' : 'бос'), dotBtn(b => ctxMenu(b, [['Ашу', open], ['Өзгерту (ат, түс, белгі)', () => folderModal(f)], ['Жою', () => delFolder(f), true]])));
+    box.appendChild(c);
   });
-  mItems.filter(it => (it.folder_id || null) === mCur).forEach(it => {
-    const k = matKind(it), r = el('div', 'mrow'), n = el('span', 'nm', (k === 'link' ? '🔗 ' : (ICON_BY[k] || '📄') + ' ') + it.title); n.onclick = () => showMat(it);
-    r.append(n, mini('Көрсету', () => showMat(it)));
-    if (it.kind === 'file') r.append(mini('Жүктеп алу', async () => { const { data } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 300, { download: it.title }); if (data) location.href = data.signedUrl; }));
-    r.append(mini('Жою', async () => { if (!(await ask('«' + it.title + '» жойылсын ба?'))) return; if (it.storage_path) await sb.storage.from('materials').remove([it.storage_path]); await sb.from('mat_items').delete().eq('id', it.id); loadMats(); }));
-    box.appendChild(r);
+  its.forEach((it, i) => {
+    const k = matKind(it), c = el('div', 'mt-it'); c.style.setProperty('--ic', KIND_COL[k] || KIND_COL.other); c.style.animationDelay = ((fs.length + i) * 25) + 'ms'; c.tabIndex = 0; c.setAttribute('role', 'button'); c.setAttribute('aria-label', it.title);
+    const th = el('div', 'mt-th'); th.append(el('span', '', KIND_EMO[k] || '📄'), el('em', '', k === 'link' ? 'сілтеме' : (extOf(it.title) || k)));
+    const open = () => showMat(it); c.onclick = open; c.onkeydown = e => { if (e.key === 'Enter') open(); };
+    const mt = [fmtSize(it.size), it.created_at ? new Date(it.created_at).toLocaleDateString('kk-KZ') : ''].filter(Boolean).join(' · ') + where(it);
+    const acts = [['Көрсету', open], ...(it.kind === 'file' ? [['Жүктеп алу', async () => { const { data } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 300, { download: it.title }); if (data) location.href = data.signedUrl; }]] : []), ['Атын өзгерту', () => renameItem(it)], ['Папкаға ауыстыру', () => moveModal(it)],
+      ['Жою', async () => { if (!(await ask('«' + it.title + '» жойылсын ба?'))) return; if (it.storage_path) await sb.storage.from('materials').remove([it.storage_path]); await sb.from('mat_items').delete().eq('id', it.id); loadMats(); }, true]];
+    c.append(th, el('div', 'mt-ft', it.title), el('small', 'mt-fm', mt), dotBtn(b => ctxMenu(b, acts))); box.appendChild(c);
   });
-  if (!box.children.length) box.appendChild(el('p', 'sub', 'Бұл папка бос.'));
+  if (!box.children.length) { const e = el('div', 'mt-empty'); e.append(el('div', 'mt-eb', searching ? '🔎' : '📂'), el('p', '', searching ? 'Ештеңе табылмады.' : 'Бұл папка бос. Файлды осы жерге сүйреп әкел не жоғарыдан қос.')); box.appendChild(e); }
 }
 async function delFolder(f) {
   if (!(await ask('«' + f.name + '» папкасы және ішіндегі бәрі жойылсын ба?'))) return;
@@ -3297,8 +3415,7 @@ $('mFolderAdd').onclick = async () => {
   if (error) return mnote('Қате: ' + error.message, 'err'); $('mFolder').value = ''; loadMats();
 };
 $('mFolder').onkeydown = e => { if (e.key === 'Enter') $('mFolderAdd').click(); };
-$('mFile').onchange = async e => {
-  const files = [...e.target.files]; e.target.value = '';
+async function uploadMats(files) {
   for (const f of files) {
     if (f.size > 50 * 1024 * 1024) { mnote(f.name + ': 50 МБ-тан үлкен, жүктелмеді.', 'err'); continue; }
     const path = meId + '/' + crypto.randomUUID() + (extOf(f.name) ? '.' + extOf(f.name) : ''); mnote('');
@@ -3310,7 +3427,10 @@ $('mFile').onchange = async e => {
     if (ins.error) { await sb.storage.from('materials').remove([path]); mnote('Қате: ' + ins.error.message, 'err'); return; }
   }
   mnote('Дайын.', 'ok'); loadMats();
-};
+}
+$('mFile').onchange = e => { const f = [...e.target.files]; e.target.value = ''; uploadMats(f); };
+$('mFolderPro').onclick = () => folderModal(null);
+{ const v = $('v-mats'); let dc = 0; v.addEventListener('dragenter', e => { if ([...(e.dataTransfer && e.dataTransfer.types || [])].includes('Files')) { dc++; v.classList.add('drag'); } }); v.addEventListener('dragleave', () => { if (--dc <= 0) { dc = 0; v.classList.remove('drag'); } }); v.addEventListener('dragover', e => { if ([...(e.dataTransfer && e.dataTransfer.types || [])].includes('Files')) e.preventDefault(); }); v.addEventListener('drop', e => { e.preventDefault(); dc = 0; v.classList.remove('drag'); const f = [...(e.dataTransfer && e.dataTransfer.files || [])]; if (f.length) uploadMats(f); }); }
 $('mLinkAdd').onclick = async () => {
   let u = $('mLUrl').value.trim(), t = $('mLTitle').value.trim(); if (!u) return;
   if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
@@ -4039,6 +4159,13 @@ async function shrinkImg(file, max) {
   c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
   return await new Promise(r => c.toBlob(b => r(b || file), 'image/jpeg', .82));
 }
+const IMG_EXT = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+async function fileEl(items, bucket) {
+  bucket = bucket || 'homework'; const w = el('div', 'hw-th');
+  const rows = await Promise.all((items || []).map(async it => { const p = typeof it === 'string' ? it : it.p, n = typeof it === 'string' ? '' : (it.n || ''), isI = IMG_EXT.includes(extOf(p)); const r = await sb.storage.from(bucket).createSignedUrl(p, 3600, !isI ? { download: n || true } : undefined); return { u: r.data && r.data.signedUrl, n, p, isI }; }));
+  rows.filter(r => r.u).forEach(r => { const a = document.createElement('a'); a.href = r.u; a.target = '_blank'; a.rel = 'noopener'; if (r.isI) { const i = document.createElement('img'); i.src = r.u; i.alt = r.n || 'Сурет'; i.loading = 'lazy'; a.appendChild(i); } else { a.className = 'hw-fc'; a.append(el('span', '', '📎'), el('b', '', r.n || ('Файл (' + (extOf(r.p) || 'файл') + ')'))); } w.appendChild(a); });
+  return w;
+}
 async function signedUrls(paths) { const out = []; for (const p of paths || []) { const r = await sb.storage.from('homework').createSignedUrl(p, 3600); out.push(r.data ? r.data.signedUrl : null); } return out; }
 function thumbs(urls) { const w = el('div', 'hw-th'); urls.filter(Boolean).forEach(u => { const a = document.createElement('a'); a.href = u; a.target = '_blank'; a.rel = 'noopener'; const i = document.createElement('img'); i.src = u; i.alt = 'Фото'; i.loading = 'lazy'; a.appendChild(i); w.appendChild(a); }); return w; }
 async function loadHw() {
@@ -4058,6 +4185,7 @@ async function loadHw() {
       const c = el('div', 'qcard'), top = el('div', 'qct'), cls = classesCache.find(k => k.id === x.class_id), ss = subs.filter(s => s.hw_id === x.id), tot = studs.filter(s => s.class_id === x.class_id).length;
       const di = dueInfo(x.due_date); top.append(el('strong', '', x.title), el('span', 'gm', (cls ? cls.name : '') + (x.due_date ? ' · мерзімі: ' + fmtD(x.due_date) : '') + (di && di.c === 'late' ? ' (өтті)' : '')));
       const nCheck = ss.filter(s => s.status === 'sent').length;
+      if ((x.attachments || []).length) top.appendChild(el('span', 'gm', '📎 ' + x.attachments.length + ' файл'));
       top.appendChild(el('span', 'gm', 'Тапсырғандар: ' + ss.length + (tot ? ' / ' + tot : '') + (nCheck ? ' · тексеру керек: ' + nCheck : '')));
       const row = el('div', 'qrow'), go2 = el('button', 'go', nCheck ? 'Тексеру (' + nCheck + ')' : 'Қарау'); go2.onclick = () => reviewHw(x, studs.filter(s => s.class_id === x.class_id), ss);
       row.append(go2, mini('Жою', async () => { if (!(await ask('«' + x.title + '» тапсырмасы және оның жауаптары жойылсын ба?'))) return; await sb.from('homeworks').delete().eq('id', x.id); loadHw(); }));
@@ -4078,49 +4206,62 @@ async function loadHw() {
   }
   hwBadge();
 }
+let hwPick = [];
+$('hwFiles').onchange = e => { hwPick = [...e.target.files].slice(0, 5); $('hwFPrev').replaceChildren(...hwPick.map(f => { const c = el('span', 'hw-fc', ''); c.append(el('span', '', f.type.startsWith('image/') ? '🖼️' : '📎'), el('b', '', f.name)); return c; })); };
 $('hwAdd').onclick = async () => {
   const title = $('hwTitle').value.trim(), cid = $('hwClass').value;
   if (!title) return hwMsg('Тапсырма атауын жаз', 'err'); if (!cid) return hwMsg('Сыныпты таңда (сыныбың жоқ болса, алдымен «Оқушылар» бөлімінде сынып жаса)', 'err');
-  const r = await sb.from('homeworks').insert({ title: title.slice(0, 120), body: $('hwBody').value.trim().slice(0, 2000) || null, class_id: cid, due_date: $('hwDue').value || null });
-  if (r.error) return hwMsg('Сақталмады: ' + r.error.message, 'err');
-  $('hwTitle').value = ''; $('hwBody').value = ''; $('hwDue').value = ''; await loadHw(); hwMsg('Тапсырма қойылды', 'ok');
+  const big = hwPick.find(f => f.size > 10 * 1048576); if (big) return hwMsg(big.name + ': 10 МБ-тан үлкен', 'err');
+  $('hwAdd').disabled = true; hwMsg('Жіберіліп жатыр…'); const att = [];
+  try {
+    for (const f of hwPick) {
+      const isI = f.type.startsWith('image/'), blob = isI ? await shrinkImg(f) : f, path = meId + '/' + crypto.randomUUID() + '.' + (isI ? 'jpg' : (extOf(f.name) || 'bin'));
+      const up = await sb.storage.from('hw-attach').upload(path, blob, { contentType: isI ? 'image/jpeg' : (f.type || 'application/octet-stream') }); if (up.error) throw up.error;
+      att.push({ p: path, n: f.name.slice(0, 80), m: isI ? 'image/jpeg' : (f.type || ''), s: blob.size });
+    }
+    const r = await sb.from('homeworks').insert({ title: title.slice(0, 120), body: $('hwBody').value.trim().slice(0, 2000) || null, class_id: cid, due_date: $('hwDue').value || null, attachments: att });
+    if (r.error) { if (att.length) await sb.storage.from('hw-attach').remove(att.map(a => a.p)); throw r.error; }
+  } catch (e) { $('hwAdd').disabled = false; const t = String(e.message || e); return hwMsg(t.includes('attachments') || t.includes('hw-attach') || t.includes('Bucket') || t.includes('bucket') ? 'Файл қосу үшін update-17.sql әлі іске қосылмаған (Supabase → SQL Editor).' : 'Сақталмады: ' + t, 'err'); }
+  $('hwAdd').disabled = false; $('hwTitle').value = ''; $('hwBody').value = ''; $('hwDue').value = ''; $('hwFiles').value = ''; hwPick = []; $('hwFPrev').replaceChildren(); await loadHw(); hwMsg('Тапсырма қойылды', 'ok');
 };
 function openHw(x, s) {
   const m = modal(x.title), b = m.box; b.style.width = 'min(640px,100%)';
   const di = dueInfo(x.due_date); b.append(el('p', 'sub', x.due_date ? 'Мерзімі: ' + fmtD(x.due_date) + (di ? ' · ' + di.t : '') : 'Мерзімі жоқ'));
   if (x.body) { const p = el('p', '', x.body); p.style.whiteSpace = 'pre-wrap'; b.appendChild(p); }
+  if ((x.attachments || []).length) { const ae = el('div', 'hw-att'); ae.appendChild(el('small', 'gm', 'Мұғалім қосқан файлдар:')); b.appendChild(ae); fileEl(x.attachments, 'hw-attach').then(e2 => ae.appendChild(e2)); }
   if (s && s.status === 'checked') { const g = el('div', 'hw-grade'); g.append(el('b', '', (s.grade || '—') + '/10'), el('span', '', s.comment || 'Тексерілді')); b.appendChild(g); }
   if (s && s.status === 'redo') { const g = el('div', 'hw-grade redo'); g.append(el('b', '', '↻'), el('span', '', s.comment || 'Қайта жасау керек')); b.appendChild(g); }
-  if (s && s.status === 'checked') { const full = (async () => { const r = await sb.from('homework_subs').select('answer,files').eq('id', s.id).single(); return r.data; })(); full.then(async d => { if (!d) return; if (d.answer) { const a = el('p', 'hw-ans', d.answer); b.appendChild(a); } if ((d.files || []).length) b.appendChild(thumbs(await signedUrls(d.files))); }); const ok = el('button', 'out', 'Жабу'); ok.onclick = m.close; b.appendChild(ok); return; }
-  const ta = document.createElement('textarea'); ta.rows = 4; ta.maxLength = 3000; ta.placeholder = 'Жауабың (міндетті емес, егер фото жүктесең)…'; ta.className = 'hw-ta';
-  const fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.multiple = true; fi.className = 'hw-file';
+  if (s && s.status === 'checked') { const full = (async () => { const r = await sb.from('homework_subs').select('answer,files').eq('id', s.id).single(); return r.data; })(); full.then(async d => { if (!d) return; if (d.answer) { const a = el('p', 'hw-ans', d.answer); b.appendChild(a); } if ((d.files || []).length) b.appendChild(await fileEl(d.files)); }); const ok = el('button', 'out', 'Жабу'); ok.onclick = m.close; b.appendChild(ok); return; }
+  const ta = document.createElement('textarea'); ta.rows = 4; ta.maxLength = 3000; ta.placeholder = 'Жауабың (міндетті емес, егер сурет не файл жүктесең)…'; ta.className = 'hw-ta';
+  const fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip'; fi.multiple = true; fi.className = 'hw-file';
   const prev = el('div', 'hw-th'), old = []; let picked = [];
-  if (s) sb.from('homework_subs').select('answer,files').eq('id', s.id).single().then(async r => { if (!r.data) return; ta.value = r.data.answer || ''; (r.data.files || []).forEach(f => old.push(f)); const u = await signedUrls(old); prev.replaceChildren(...thumbs(u).children); });
-  fi.onchange = () => { picked = [...fi.files].slice(0, 5 - old.length); prev.replaceChildren(...picked.map(f => { const i = document.createElement('img'); i.src = URL.createObjectURL(f); i.alt = 'Фото'; return i; })); };
+  if (s) sb.from('homework_subs').select('answer,files').eq('id', s.id).single().then(async r => { if (!r.data) return; ta.value = r.data.answer || ''; (r.data.files || []).forEach(f => old.push(f)); prev.replaceChildren(...(await fileEl(old)).children); });
+  fi.onchange = () => { picked = [...fi.files].slice(0, 5 - old.length); prev.replaceChildren(...picked.map(f => { if (f.type.startsWith('image/')) { const i = document.createElement('img'); i.src = URL.createObjectURL(f); i.alt = 'Сурет'; return i; } const c = el('span', 'hw-fc', ''); c.append(el('span', '', '📎'), el('b', '', f.name)); return c; })); };
   const go2 = el('button', 'go', s ? 'Қайта жіберу' : 'Тапсыру'), msg = el('p', 'msg', '');
   go2.onclick = async () => {
     const txt = ta.value.trim(); if (!txt && !picked.length && !old.length) { msg.textContent = 'Жауап жаз не фото жүкте.'; msg.className = 'msg err'; return; }
     go2.disabled = true; msg.textContent = 'Жіберіліп жатыр…'; msg.className = 'msg';
     try {
       const paths = picked.length ? [] : old.slice();
-      for (let i = 0; i < picked.length; i++) { const blob = await shrinkImg(picked[i]), path = meId + '/' + x.id + '/' + Date.now() + '-' + i + '.jpg'; const up = await sb.storage.from('homework').upload(path, blob, { contentType: 'image/jpeg' }); if (up.error) throw up.error; paths.push(path); }
+      for (let i = 0; i < picked.length; i++) { const f0 = picked[i], isI = f0.type.startsWith('image/'); if (f0.size > 10 * 1048576) throw new Error(f0.name + ': 10 МБ-тан үлкен'); const blob = isI ? await shrinkImg(f0) : f0, path = meId + '/' + x.id + '/' + Date.now() + '-' + i + '.' + (isI ? 'jpg' : (extOf(f0.name) || 'bin')); const up = await sb.storage.from('homework').upload(path, blob, { contentType: isI ? 'image/jpeg' : (f0.type || 'application/octet-stream') }); if (up.error) throw up.error; paths.push(path); }
       const r = await sb.rpc('submit_homework', { p_hw: x.id, p_answer: txt, p_files: paths });
       if (r.error) throw r.error; SFX.ok(); m.close(); loadHw();
     } catch (e) { go2.disabled = false; msg.textContent = 'Қате: ' + (e.message || e); msg.className = 'msg err'; }
   };
-  b.append(ta, el('label', '', 'Фото (дәптер беті, шешім)'), fi, prev, go2, msg);
+  b.append(ta, el('label', '', 'Сурет не файл (дәптер беті, шешім, құжат)'), fi, prev, go2, msg);
 }
 async function reviewHw(x, studs, subs) {
   const m = modal(x.title), b = m.box; b.style.width = 'min(760px,100%)'; b.append(el('p', 'sub', 'Жүктелуде…'));
   const full = (await sb.from('homework_subs').select('*').eq('hw_id', x.id)).data || []; b.replaceChildren();
   b.append(el('p', 'sub', (x.due_date ? 'Мерзімі: ' + fmtD(x.due_date) + '. ' : '') + 'Тапсырғандар: ' + full.length + (studs.length ? ' / ' + studs.length : '')));
+  if ((x.attachments || []).length) { const ae = el('div', 'hw-att'); b.appendChild(ae); fileEl(x.attachments, 'hw-attach').then(e2 => ae.appendChild(e2)); }
   const nm = id => (studs.find(s => s.id === id) || {}).full_name || 'Оқушы';
   full.sort((a, b2) => (a.status === 'sent' ? -1 : 1) - (b2.status === 'sent' ? -1 : 1));
   for (const s of full) {
     const card = el('details', 'hw-sub'); card.open = s.status === 'sent';
     const sm = document.createElement('summary'), late = x.due_date && dayKey(s.submitted_at) > x.due_date; sm.append(el('b', '', nm(s.student_id)), el('span', 'hw-chip ' + s.status, HW_ST[s.status] + (s.grade ? ' · ' + s.grade + '/10' : '') + (late ? ' · кешіккен' : ''))); card.appendChild(sm);
     if (s.answer) { const a = el('p', 'hw-ans', s.answer); card.appendChild(a); }
-    if ((s.files || []).length) signedUrls(s.files).then(u => card.insertBefore(thumbs(u), card.querySelector('.hw-ctl')));
+    if ((s.files || []).length) fileEl(s.files).then(e2 => card.insertBefore(e2, card.querySelector('.hw-ctl')));
     const ctl = el('div', 'hw-ctl'), gr = document.createElement('select'); gr.appendChild(new Option('Баға', '')); for (let i = 10; i >= 1; i--) gr.appendChild(new Option(String(i), String(i))); gr.value = s.grade ? String(s.grade) : '';
     const cm = document.createElement('input'); cm.maxLength = 500; cm.placeholder = 'Пікір (міндетті емес)'; cm.value = s.comment || '';
     const ok = el('button', 'go', '✓ Қабылдау'), rd = el('button', 'out', '↻ Қайта жасасын');
