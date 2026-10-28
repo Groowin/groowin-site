@@ -564,6 +564,7 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
 .qhint{margin:8px 0 0}
 .qh-qr{display:block;border:0;cursor:zoom-in}
 .qh-zoom{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#fff;cursor:zoom-out;padding:20px}
+.qh-zoom.qt{background:#FBF7EF;cursor:default;gap:6px}.qh-zt{width:min(66vmin,700px)}.qh-zn{color:#6B7280;font-size:clamp(1rem,2.6vmin,1.4rem);min-height:1.4em}.qh-zx{position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#fff;color:#222;font-size:1.1rem;cursor:pointer;z-index:2}
 .qh-zq{width:min(78vmin,860px)}.qh-zq svg{display:block;width:100%;height:auto}
 .qh-zc{font-size:clamp(2rem,8vmin,5rem);font-weight:800;letter-spacing:.12em;color:#14171F}.qh-zh{color:#6B7280}
 
@@ -933,9 +934,9 @@ html[data-gs=retro] :is(#qzHost,#stage) :is(.bg-card,.qh-chip,.bg-team,.bg-opt,.
 html[data-gs=retro] :is(#qzHost,#stage) :is(h1,h2,.big,.qh-h,.tm2-n){text-shadow:0 0 10px rgba(57,255,122,.6)}
 html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background:var(--accent)}
 @media (prefers-reduced-motion:reduce){#stage::before,#qzHost::before{animation:none!important}}
-#gsSeg,#sfxSeg{display:flex;gap:8px;flex-wrap:wrap}
-#gsSeg button,#sfxSeg button,#musBtn{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
-#gsSeg button[aria-pressed=true],#sfxSeg button[aria-pressed=true],#musBtn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+#gsSeg,#sfxSeg,#qtSeg{display:flex;gap:8px;flex-wrap:wrap}
+#gsSeg button,#sfxSeg button,#qtSeg button,#musBtn{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+#gsSeg button[aria-pressed=true],#sfxSeg button[aria-pressed=true],#qtSeg button[aria-pressed=true],#musBtn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
 /* ===== Сабақ жоспары 2.0 ===== */
 .lp-sum{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 14px;padding:12px 14px;border-radius:14px;background:var(--accent-soft);font-weight:600}
 .lp-sum select{width:auto;padding:4px 8px}.lp-bar{flex-basis:100%;height:8px;border-radius:9px;background:rgba(128,128,128,.25);overflow:hidden}.lp-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#1FA971);border-radius:9px;transition:width .3s}.lp-bar i.over{background:linear-gradient(90deg,#F28C28,#E5484D)}
@@ -1337,6 +1338,9 @@ html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background
       <div id="icSeg" role="group" aria-label="Иконка стилі"><button type="button" data-i="line">▫️ Минимал</button><button type="button" data-i="emoji">😀 Эмодзи</button><button type="button" data-i="color">🎨 Түсті</button></div>
       <p class="hint" style="margin:14px 0 8px">Ойын стилі (викторина, тақта ойындары, таймер)</p>
       <div id="gsSeg" role="group" aria-label="Ойын стилі"><button type="button" data-g="space">🌌 Ғарыш</button><button type="button" data-g="neon">🌆 Неон</button><button type="button" data-g="paper">📄 Қағаз</button><button type="button" data-g="candy">🍬 Кәмпит</button><button type="button" data-g="retro">👾 Ретро</button><button type="button" data-g="auto">🔄 Тақырыпқа сай</button></div>
+      <p class="hint" style="margin:14px 0 8px">QR ағашы (маусым және жапырақ түсі)</p>
+      <div id="qtSeg" role="group" aria-label="Ағаш маусымы"><button type="button" data-s="auto">🗓️ Авто</button><button type="button" data-s="spring">🌸 Көктем</button><button type="button" data-s="summer">☀️ Жаз</button><button type="button" data-s="autumn">🍂 Күз</button><button type="button" data-s="winter">❄️ Қыс</button></div>
+      <div id="qtCol" role="group" aria-label="Жапырақ түсі" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center"></div>
       <p class="hint" style="margin:14px 0 8px">Дыбыс режимі</p>
       <div id="sfxSeg" role="group" aria-label="Дыбыс режимі"><button type="button" data-m="classic">🔔 Қалыпты</button><button type="button" data-m="arcade">🕹️ Аркада</button><button type="button" data-m="soft">🌿 Жұмсақ</button><button type="button" data-m="off">🔇 Үнсіз</button></div>
       <button type="button" id="musBtn" style="margin-top:10px">🎵 Фондық музыка: өшірулі</button>
@@ -1778,6 +1782,10 @@ document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc 
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '2.9', date: '28.10.2026', items: [
+    ['🌳', 'QR ағашы', 'QR-ды үлкейткенде ағаш көрінеді. Қосылған оқушы көбейген сайын ағаш өсіп, жапырағы көбейеді. Ағашты басқанда камера бұрылып, ол QR-ға айналады. Бірнеше секундтан кейін өзі де QR-ға ауысады.'],
+    ['🎨', 'Маусым мен түс', 'Баптауда төрт маусымды (көктем, жаз, күз, қыс) және жапырақ түсін таңдайсың. «Авто» болса, маусым ай бойынша өзі таңдалады.']
+  ] },
   { ver: '2.8', date: '27.10.2026', items: [
     ['📁', 'Материалдар жаңа дизайнмен', 'Үлкен, кіші немесе тізім көрінісі. Папка стилі төртеу: классик, тақташа, қарапайым, тек белгі. Әр папканың түсі мен белгісін өзің таңдайсың. Іздеу, сұрыптау, файлды сүйреп жүктеу, атын өзгерту, папкаға ауыстыру.'],
     ['📎', 'Үй тапсырмасына файл', 'Мұғалім тапсырмаға сурет пен құжат (PDF, Word, Excel, PowerPoint) қосады. Оқушы да жауабына сурет не құжат жібереді.'],
@@ -2853,7 +2861,7 @@ function runQuiz(quiz, cfg) {
     const wrap = el('div', 'qh-lobby');
     if (!screen) {
       const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl);
-      qrBox.onclick = () => zoomQR(root, joinUrl, code);
+      qrBox.onclick = () => zoomQR(root, joinUrl, code, () => P.size);
       const s = el('p', 'qh-s', 'Телефонмен QR-ды сканерле. QR-ды басып үлкейтуге болады.');
       right.append(t, s, el('div', 'qh-bigcode', code), chips, startBtn); wrap.append(qrBox, right);
     } else {
@@ -3066,11 +3074,17 @@ function runQuiz(quiz, cfg) {
   }
   lobby();
 }
-function zoomQR(root, joinUrl, code) {
-  const z = el('div', 'qh-zoom'); z.innerHTML = '<div class="qh-zq">' + makeQR(joinUrl) + '</div>'; z.appendChild(el('div', 'qh-zc', code)); z.appendChild(el('div', 'qh-zh', 'Жабу үшін кез келген жерді бас'));
-  const closeZ = () => { z.remove(); document.removeEventListener('keydown', zk, true); };
+function qtSeason() { const v = ls.get('qtseason'); if (['spring', 'summer', 'autumn', 'winter'].includes(v)) return v; const m = new Date().getMonth(); return m >= 2 && m <= 4 ? 'spring' : m <= 7 && m >= 5 ? 'summer' : m >= 8 && m <= 10 ? 'autumn' : 'winter'; }
+function qtColor() { const c = ls.get('qtcolor'); return /^#[0-9a-f]{6}$/i.test(c || '') ? c : null; }
+function zoomQR(root, joinUrl, code, getN) {
+  const z = el('div', 'qh-zoom qt'), box = el('div', 'qh-zt'), cn = el('div', 'qh-zn'), x = el('button', 'qh-zx', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'Жабу');
+  const num = () => { try { return Math.max(0, getN ? getN() | 0 : 0); } catch { return 0; } };
+  z.append(x, box, el('div', 'qh-zc', code), cn); root.appendChild(z);
+  const T = QrTree(box, { url: joinUrl, count: num(), season: qtSeason(), color: qtColor(), size: 760, autoFlip: 2400 });
+  let last = -1; const tick = () => { const n = num(); if (n !== last) { last = n; T.setCount(n); cn.textContent = n ? n + ' оқушы қосылды' : 'Оқушылар қосылуын күтіп тұрмыз'; } }; tick(); const iv = setInterval(tick, 1000);
+  const closeZ = () => { clearInterval(iv); T.destroy(); z.remove(); document.removeEventListener('keydown', zk, true); };
   const zk = e => { if (e.key === 'Escape') { e.stopPropagation(); closeZ(); } };
-  z.onclick = closeZ; document.addEventListener('keydown', zk, true); root.appendChild(z);
+  z.onclick = e => { if (e.target === z || e.target === x) closeZ(); }; document.addEventListener('keydown', zk, true);
 }
 
 // ---- Сөз бұлты ----
@@ -3103,7 +3117,7 @@ function runCloud(cfg) {
   const title = el('h2', 'qh-h', cfg.prompt), cloud = el('div', 'qh-cloud'), ctl = el('div', 'qh-cctl');
   main.append(title, cloud, ctl);
   if (!screen) {
-    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code);
+    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code, () => P.size);
     side.append(qrBox, el('div', 'qh-bigcode sm', code)); lay.append(side, main);
   } else lay.appendChild(main);
   body.appendChild(lay);
@@ -3189,7 +3203,7 @@ function openSpy() {
   };
   const renderLobby = () => {
     stopTick(); body.replaceChildren(); const wrap = el('div', 'qh-lobby sy-lobby');
-    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code);
+    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code, () => P.size);
     const right = el('div', 'qh-lr'); right.append(el('h2', 'qh-h sy-glitch', '🕵️ Шпион'), el('p', 'qh-s', 'Телефонмен QR-ды сканерле. Әр оқушы өз сөзін өз телефонынан көреді. Көпшілікке бір сөз, шпионға басқа сөз беріледі, бірақ ешкім өз рөлін білмейді.'));
     const mk = (cls, ph2, key, label) => { const i = document.createElement('input'); i.type = 'text'; i.className = 'sy-in ' + cls; i.maxLength = 40; i.placeholder = ph2; i.value = W[key]; i.autocomplete = 'off'; i.oninput = () => { W[key] = i.value; updStart(); }; i.setAttribute('aria-label', label); return i; };
     const wc = mk('c', 'Мысалы: Ом заңы', 'c', 'Бейбіт ойыншылар сөзі'), ws = mk('s', 'Мысалы: Джоуль заңы', 's', 'Шпион сөзі');
@@ -3287,6 +3301,144 @@ function openSpy() {
   });
   ch.subscribe(async s => { if (s === 'SUBSCRIBED') await ch.track({ host: true }); if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') body.replaceChildren(el('p', 'qh-s', 'Байланыс орнамады. Интернетті тексеріп, қайта көр.')); });
   render();
+}
+
+/* QrTree: изометриялық ағаш + QR тақтасы. Ағашты бас: QR шығады. Жапырақ саны = қосылған оқушы саны */
+const QT_PAL = {
+  spring: { leaf: ['#F9B6CD', '#F4C2D7', '#FFD9E6', '#EE95B6', '#C9E8A8'], mod: ['#B83B6B', '#8E2D5A', '#A3335F'], grass: ['#7BC96F', '#5FB35A', '#F29CBB'], sky: '#FFF6F8' },
+  summer: { leaf: ['#6FCF6B', '#4DB85A', '#8BDB7E', '#3FA34D', '#A6E58D'], mod: ['#1F7A3A', '#176B33', '#2A8A44'], grass: ['#5FB35A', '#49A04E', '#8BDB7E'], sky: '#F4FBF1' },
+  autumn: { leaf: ['#F5A623', '#E8791E', '#F2C14E', '#D9531E', '#C9402A'], mod: ['#B5471A', '#8F3A12', '#A03F16'], grass: ['#E3A92C', '#D69226', '#C77B1E'], sky: '#FFF8EC' },
+  winter: { leaf: ['#FFFFFF', '#E8F2FC', '#CFE3F5', '#F4F9FE', '#B8D4EE'], mod: ['#2B5C8E', '#1F4A78', '#26527F'], grass: ['#E8F2FC', '#CFE3F5', '#FFFFFF'], sky: '#F3F8FD' }
+};
+function qtHsl(hex) {
+  const n = parseInt(hex.slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let h = 0;
+  if (d) { if (mx === r) h = ((g - b) / d) % 6; else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; h *= 60; if (h < 0) h += 360; }
+  const l = (mx + mn) / 2, s = d ? d / (1 - Math.abs(2 * l - 1)) : 0; return [h, s, l];
+}
+function qtCol(h, s, l) { return 'hsl(' + Math.round(h) + ',' + Math.round(s * 100) + '%,' + Math.round(l * 100) + '%)'; }
+function QrTree(host, o) {
+  o = Object.assign({ url: 'https://example.com', count: 0, season: 'autumn', color: null, size: 520, autoFlip: 0, capTree: 'Ағашты бас: QR көрінеді', capQr: 'QR көрсетілді. Ағашты көру үшін бас' }, o || {});
+  const cv = document.createElement('canvas'), cx = cv.getContext('2d'), cap = document.createElement('div');
+  cv.style.cssText = 'display:block;margin:0 auto;cursor:pointer;touch-action:manipulation;max-width:100%'; cv.setAttribute('role', 'button'); cv.tabIndex = 0;
+  cap.style.cssText = 'text-align:center;font-size:.85rem;opacity:.7;margin-top:6px'; host.append(cv, cap);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, D2R = Math.PI / 180, TR = 1200;
+  let visN = -1, vl = [], touched = false, ftm = 0, S = 520, dpr = 1, mode = 'tree', u = 0, dead = false, t0 = performance.now(), tl = t0, grow = 0, leaves = [], parts = [], tufts = [], mods = [], pal, q, nMod, cam = {};
+  function rng(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
+  const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2, sm = (a, b, x) => { x = Math.min(1, Math.max(0, (x - a) / (b - a))); return x * x * (3 - 2 * x); };
+  function mkPal() {
+    const b = QT_PAL[o.season] || QT_PAL.autumn; pal = { leaf: b.leaf, mod: b.mod, grass: b.grass };
+    if (o.color && /^#[0-9a-f]{6}$/i.test(o.color)) { const [h, s] = qtHsl(o.color), ss = Math.max(.45, s); pal.leaf = [qtCol(h, ss, .72), qtCol(h, ss, .62), qtCol(h, ss, .8), qtCol(h + 8, ss, .55), qtCol(h - 8, ss, .68)]; pal.mod = [qtCol(h, Math.max(.5, s), .26), qtCol(h, Math.max(.5, s), .22), qtCol(h, Math.max(.5, s), .3)]; }
+  }
+  function mkQR() {
+    q = qrcode(0, 'M'); q.addData(o.url); q.make(); nMod = q.getModuleCount(); mods = []; const m = 2 / (nMod + 4);
+    for (let i = 0; i < nMod; i++) for (let j = 0; j < nMod; j++) if (q.isDark(i, j)) { const rd = Math.hypot(i - nMod / 2, j - nMod / 2) / (nMod * .7); mods.push({ i, j, x0: -1 + (j + 2) * m, y0: -1 + (i + 2) * m, k: Math.min(2, Math.floor(rd * 2.4 + ((i * 7 + j * 3) % 5) * .12)) }); }
+    mods.m = m;
+  }
+  function fit() { S = Math.max(240, Math.min(host.clientWidth || o.size, o.size)); dpr = Math.min(devicePixelRatio || 1, 2); cv.width = S * dpr; cv.height = S * dpr; cv.style.width = S + 'px'; cv.style.height = S + 'px'; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  function buildLeaves() {
+    const n = Math.round((o.season === 'winter' ? 220 : 420) + Math.min(o.count, 40) * (o.season === 'winter' ? 6 : 11)), r = rng(42); leaves = []; visN = -1;
+    for (let i = 0; i < n; i++) {
+      let x, y, z, k = 0; do { x = r() * 2 - 1; y = r() * 2 - 1; z = r() * 2 - 1; k++; } while (x * x + y * y + z * z > 1 && k < 20);
+      leaves.push({ id: i, x: x * .85, y: y * .85, z: z * .62, ph: r() * 6.28, c: Math.floor(r() * 5), rot: r() * 3.14, s: .7 + r() * .7 });
+    }
+    parts = []; const np = o.season === 'winter' ? 40 : 18; for (let i = 0; i < np; i++) parts.push({ a: r() * 6.28, ph: r(), sp: .5 + r() * .6, rad: .25 + r() * .75, c: Math.floor(r() * 5) });
+    tufts = []; for (let k = 0; k < 46; k++) { const side = k % 4, uu = -.95 + r() * 1.9, d = .9 + r() * .08; tufts.push({ x: side < 2 ? uu : (side === 2 ? d : -d), y: side < 2 ? (side === 0 ? d : -d) : uu, c: k % 3, h: .018 + r() * .03, j: r() }); }
+  }
+  function setCam(t, e) {
+    const psi = (45 + (reduce ? 0 : Math.sin(t * .0004) * 1.6)) * (1 - e) * D2R, phi = (30 + 60 * e) * D2R, K0 = S * .22 * 1.4142, K = K0 + (S * .4 - K0) * e - S * .07 * Math.sin(e * Math.PI);
+    cam = { cs: Math.cos(psi), sn: Math.sin(psi), sp: Math.sin(phi), cp: Math.cos(phi), K, K2: S * .3, zs: Math.max(0, 1 - Math.pow(e, 1.4)), cy: S * (.72 - .22 * e), e };
+  }
+  function P(x, y, z) { const X = x * cam.cs - y * cam.sn, Y = x * cam.sn + y * cam.cs; return [S / 2 + X * cam.K, cam.cy + Y * cam.K * cam.sp - z * cam.zs * cam.K2 * cam.cp]; }
+  const dep = (x, y) => x * cam.sn + y * cam.cs;
+  function poly(pts, fill) { cx.beginPath(); pts.forEach((a, i) => i ? cx.lineTo(a[0], a[1]) : cx.moveTo(a[0], a[1])); cx.closePath(); cx.fillStyle = fill; cx.fill(); }
+  let gx = null, gz0 = null, gz1 = null;
+  function lattice() {
+    const n = nMod + 1, m = mods.m; if (!gx || gx.length !== n * n * 2) { gx = new Float32Array(n * n * 2); gz0 = new Float32Array(n * n * 2); gz1 = new Float32Array(n * n * 2); }
+    const h = .035, K = cam.K, sp = cam.sp, hz = h * cam.zs * cam.K2 * cam.cp;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      const x = -1 + (j + 2) * m, y = -1 + (i + 2) * m, X = x * cam.cs - y * cam.sn, Y = x * cam.sn + y * cam.cs, k = (i * n + j) * 2, sx = S / 2 + X * K, sy = cam.cy + Y * K * sp;
+      gz0[k] = sx; gz0[k + 1] = sy; gz1[k] = sx; gz1[k + 1] = sy - hz;
+    }
+    return n;
+  }
+  function drawGround() {
+    const e1 = 1.02, th = .09, showSides = cam.cp > .03, N = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+    if (showSides) for (const [nx, ny] of N) {
+      if (nx * cam.sn + ny * cam.cs <= .001) continue;
+      const pts = nx ? [P(nx * e1, e1, 0), P(nx * e1, -e1, 0), P(nx * e1, -e1, -th), P(nx * e1, e1, -th)] : [P(e1, ny * e1, 0), P(-e1, ny * e1, 0), P(-e1, ny * e1, -th), P(e1, ny * e1, -th)];
+      poly(pts, nx ? '#B5AA92' : '#C9BFA9');
+    }
+    poly([P(-e1, -e1, 0), P(e1, -e1, 0), P(e1, e1, 0), P(-e1, e1, 0)], '#F4EEE2');
+    const n = lattice(), m = mods.m, side = [[], []], tops = [[], [], []];
+    if (showSides) {
+      for (const k of [0, 1]) {
+        const on = k === 0 ? cam.cs > .001 : cam.sn > .001; if (!on) continue;
+        cx.beginPath();
+        for (const d of mods) {
+          const i = d.i, j = d.j; let p0, p1;
+          if (k === 0) { p0 = (( i + 1) * n + j) * 2; p1 = ((i + 1) * n + j + 1) * 2; } else { p0 = ((i + 1) * n + j + 1) * 2; p1 = (i * n + j + 1) * 2; }
+          cx.moveTo(gz0[p0], gz0[p0 + 1]); cx.lineTo(gz0[p1], gz0[p1 + 1]); cx.lineTo(gz1[p1], gz1[p1 + 1]); cx.lineTo(gz1[p0], gz1[p0 + 1]); cx.closePath();
+        }
+        cx.fillStyle = k === 0 ? 'rgba(0,0,0,.28)' : 'rgba(0,0,0,.42)'; cx.fill();
+      }
+    }
+    for (let c = 0; c < 3; c++) {
+      cx.beginPath(); let any = false;
+      for (const d of mods) { if (d.k % pal.mod.length !== c) continue; any = true; const i = d.i, j = d.j, a = (i * n + j) * 2, b2 = (i * n + j + 1) * 2, c2 = ((i + 1) * n + j + 1) * 2, d2 = ((i + 1) * n + j) * 2; cx.moveTo(gz1[a], gz1[a + 1]); cx.lineTo(gz1[b2], gz1[b2 + 1]); cx.lineTo(gz1[c2], gz1[c2 + 1]); cx.lineTo(gz1[d2], gz1[d2 + 1]); cx.closePath(); }
+      if (any) { cx.fillStyle = pal.mod[c % pal.mod.length]; cx.fill(); }
+    }
+    if (cam.e < .95) {
+      cx.save(); cx.globalAlpha = 1 - cam.e; cx.lineCap = 'round'; cx.lineWidth = Math.max(1.2, S * .004);
+      for (let c = 0; c < 3; c++) { cx.strokeStyle = pal.grass[c]; cx.beginPath(); for (const g of tufts) { if (g.c !== c) continue; const [sx, sy] = P(g.x, g.y, .03), hh = S * g.h * cam.zs; for (let b = -1; b <= 1; b++) { cx.moveTo(sx + b * 2, sy); cx.lineTo(sx + b * 4 + (g.j - .5) * 4, sy - hh * (1 + b * .2)); } } cx.stroke(); }
+      cx.restore();
+    }
+  }
+  function drawTree(t, e) {
+    const gr = .38 + .62 * grow, trunkH = .55 + .55 * gr, cz = trunkH + .55 * gr, R = .55 + .5 * gr, sw = reduce ? 0 : 1, a = 1 - sm(.35, .9, e);
+    if (a <= 0) return;
+    cx.save(); cx.globalAlpha = a; cx.lineCap = 'round';
+    const sh = P(0, 0, 0), sr = S * .2 * (.6 + .4 * gr) * (1 - e * .5); cx.fillStyle = 'rgba(0,0,0,.14)'; cx.beginPath(); cx.ellipse(sh[0], sh[1], sr, sr * cam.sp * .5, 0, 0, 6.28); cx.fill();
+    const base = P(0, 0, 0), tp = P(0, 0, trunkH), bend = Math.sin(t * .0006) * 1.2 * sw;
+    cx.strokeStyle = '#6B4A2F'; cx.lineWidth = Math.max(1.5, S * .009); cx.beginPath();
+    for (let i = 0; i < 7; i++) { const an = i / 7 * 6.28 + .6, bz = trunkH * (.55 + (i % 3) * .15), s0 = P(0, 0, bz), en = P(Math.cos(an) * R * .8, Math.sin(an) * R * .8, cz + (i % 2 ? .1 : -.05) * gr); cx.moveTo(s0[0], s0[1]); cx.quadraticCurveTo((s0[0] + en[0]) / 2 + bend, (s0[1] + en[1]) / 2 - 6, en[0] + bend, en[1]); }
+    cx.stroke();
+    const w0 = S * .035 * (.6 + .4 * gr); cx.lineWidth = w0; cx.beginPath(); cx.moveTo(base[0], base[1]); cx.quadraticCurveTo(base[0] - 4, (base[1] + tp[1]) / 2, tp[0] + bend * .5, tp[1]); cx.stroke();
+    cx.strokeStyle = '#8A6340'; cx.lineWidth = w0 * .3; cx.beginPath(); cx.moveTo(base[0] + w0 * .18, base[1]); cx.quadraticCurveTo(base[0] - 2, (base[1] + tp[1]) / 2, tp[0] + w0 * .18 + bend * .5, tp[1]); cx.stroke();
+    const vis = Math.round(leaves.length * (.35 + .65 * gr)); if (vis !== visN) { visN = vis; vl = leaves.filter(l => l.id < vis).sort((p1, p2) => (p1.x + p1.y) - (p2.x + p2.y)); } const ls = S * .019 * (.7 + .5 * gr) * (1 + e * .6), fade = 1 - e * .55, rr = R * 1.15, zr = R * 1.05, zk = cam.zs * cam.K2 * cam.cp, ky = cam.K * cam.sp;
+    const BANDS = 10; for (let bi = 0; bi < BANDS * 5; bi++) {
+      const c = bi % 5, band = (bi / 5) | 0, lo = Math.floor(vl.length * band / BANDS), hi = Math.floor(vl.length * (band + 1) / BANDS);
+      cx.globalAlpha = a * fade; cx.fillStyle = pal.leaf[c]; cx.beginPath();
+      for (let i = lo; i < hi; i++) {
+        const l = vl[i], k = l.z > .25 && l.c < 3 ? (l.c + 2) % 5 : l.c; if (k !== c) continue;
+        const x = l.x * rr, y = l.y * rr, z = cz + l.z * zr, X = x * cam.cs - y * cam.sn, Y = x * cam.sn + y * cam.cs, sway = Math.sin(t * .0012 + l.ph) * 1.4 * sw * (.4 + l.z) * (1 - e);
+        const sx = S / 2 + X * cam.K + sway, sy = cam.cy + Y * ky - z * zk + Math.cos(t * .001 + l.ph) * .8 * sw, rx = ls * l.s;
+        cx.moveTo(sx + rx, sy); cx.ellipse(sx, sy, rx, rx * (.6 + .3 * cam.sp), l.rot + e * 2, 0, 6.283);
+      }
+      cx.fill();
+    }
+    cx.globalAlpha = a;
+    if (!reduce && e < .5) for (const q2 of parts) {
+      const ph = ((t * .00012 * q2.sp + q2.ph) % 1), ang = q2.a + ph * 5, rd = q2.rad * R, z = cz - ph * (cz + .02), [sx, sy] = P(Math.cos(ang) * rd, Math.sin(ang) * rd, Math.max(.02, z));
+      cx.globalAlpha = a * (ph < .1 ? ph * 10 : (ph > .9 ? (1 - ph) * 10 : 1)); cx.fillStyle = pal.leaf[q2.c]; cx.beginPath();
+      if (o.season === 'winter') cx.arc(sx, sy, S * .005, 0, 6.28); else cx.ellipse(sx, sy, S * .011, S * .007, ang + ph * 8, 0, 6.28); cx.fill();
+    }
+    cx.restore();
+  }
+  function frame(now) {
+    if (dead) return; if (!cv.isConnected) { dead = true; return; }
+    requestAnimationFrame(frame); const dt = now - tl; tl = now; if (document.hidden) return;
+    const t = now - t0; grow += (Math.min(1, o.count / 30) - grow) * .06;
+    const dir = mode === 'qr' ? 1 : mode === 'hold' ? 0 : -1; u = Math.min(1, Math.max(0, u + (reduce ? 1 : dt / TR) * dir)); const e = ease(u);
+    setCam(t, e); cx.clearRect(0, 0, S, S); drawGround(); drawTree(t, e);
+  }
+  function toggle(v) { mode = v || (mode === 'tree' ? 'qr' : 'tree'); cap.textContent = mode === 'tree' ? o.capTree : o.capQr; cv.setAttribute('aria-label', cap.textContent); }
+  cv.onclick = () => { touched = true; clearTimeout(ftm); toggle(); }; cv.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } };
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => fit()) : null; if (ro) ro.observe(host);
+  mkPal(); mkQR(); fit(); buildLeaves(); toggle('tree'); if (o.autoFlip) ftm = setTimeout(() => { if (!touched && !dead) toggle('qr'); }, o.autoFlip); grow = Math.min(1, o.count / 30); requestAnimationFrame(frame);
+  return {
+    toggle, setCount(n) { o.count = n; buildLeaves(); }, setSeason(s) { o.season = s; mkPal(); buildLeaves(); }, setColor(c) { o.color = c; mkPal(); buildLeaves(); },
+    setUrl(x) { o.url = x; mkQR(); }, destroy() { dead = true; clearTimeout(ftm); if (ro) ro.disconnect(); cv.remove(); cap.remove(); }, canvas: cv, get u() { return u; }, _hold(v) { mode = 'hold'; u = v; }, get qrMode() { return mode === 'qr'; }
+  };
 }
 
 function makeQR(text) {
@@ -4323,7 +4475,7 @@ function hostFrame(title, code, joinUrl) {
   top.append(el('span', 'qh-code', 'Код: ' + code), cnt, el('span', 'qh-sp'), mute, close);
   const body = el('div', 'qh-body'); root.append(top, body); SFX.paint();
   const lay = el('div', 'qh-cl'), side = el('div', 'qh-cside'), main = el('div', 'qh-cmain');
-  const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code);
+  const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code, () => P.size);
   side.append(qrBox, el('div', 'qh-bigcode sm', code)); lay.append(side, main); body.appendChild(lay);
   return { root, main, cnt, close, shutdown(ch, send) { send('st', { ph: 'closed' }); if (ch) setTimeout(() => { try { sb.removeChannel(ch); } catch {} }, 400); root.hidden = true; root.replaceChildren(); document.body.style.overflow = ''; } };
 }
@@ -5290,7 +5442,7 @@ function openCroc(list, title) {
       chipsEl = null;
     }
     startBtn = btn('qh-go', 'Бастау', () => start()); hintEl = el('p', 'qh-s sy-hint', ''); if (chipsEl) right.appendChild(chipsEl); right.append(startBtn, hintEl);
-    if (cfg.mode === 'phone') { const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code); wrap.append(qrBox, right); } else { wrap.classList.add('one'); wrap.appendChild(right); }
+    if (cfg.mode === 'phone') { const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code, () => P.size); wrap.append(qrBox, right); } else { wrap.classList.add('one'); wrap.appendChild(right); }
     body.appendChild(wrap); drawChips(); updStart();
   };
 
@@ -5472,7 +5624,7 @@ function openBoss(D, title) {
   const updStart = () => { if (!startBtn) return; const n = live().length; startBtn.disabled = n < 1; startBtn.textContent = n ? 'Шайқасты бастау (' + n + ' ойыншы)' : 'Шайқасты бастау'; hintEl.textContent = n < 1 ? 'Кемінде 1 ойыншы керек.' : ''; };
   const renderLobby = () => {
     stopTick(); body.replaceChildren(); const wrap = el('div', 'qh-lobby'), right = el('div', 'qh-lr');
-    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code);
+    const qrBox = el('button', 'qh-qr'); qrBox.type = 'button'; qrBox.title = 'Үлкейту'; qrBox.setAttribute('aria-label', 'QR-ды үлкейту'); qrBox.innerHTML = makeQR(joinUrl); qrBox.onclick = () => zoomQR(root, joinUrl, code, () => P.size);
     const bs = el('div', 'bs-lb'); bs.append(el('span', 'bs-lbe', BE), el('b', '', BN)); right.append(el('h2', 'qh-h cr-title', 'Босс шайқасы'), bs, el('p', 'qh-s', (title ? '«' + title + '» · ' : '') + Q.length + ' сұрақ. Бүкіл сынып босқа қарсы: дұрыс жауап соққы болады, қате жауап үшін босс шабуыл жасайды.'),
       mrow('Сұраққа уақыт (сек.)', segment([10, 15, 20, 30, 45].map(v => ({ v, t: String(v) })), cfg.sec, v => { cfg.sec = v; })), mrow('Қиындық', segment([{ v: 0, t: 'Жеңіл' }, { v: 1, t: 'Орта' }, { v: 2, t: 'Қиын' }], cfg.lvl, v => { cfg.lvl = v; })));
     chipsEl = el('div', 'qh-chips'); startBtn = btn('qh-go', 'Шайқасты бастау', () => start()); hintEl = el('p', 'qh-s sy-hint', ''); right.append(chipsEl, startBtn, hintEl); wrap.append(qrBox, right); body.appendChild(wrap); drawChips(); updStart();
@@ -5663,6 +5815,17 @@ function applyGS() {
 }
 document.querySelectorAll('#gsSeg button').forEach(b => b.onclick = () => { ls.set('gstyle', b.dataset.g); applyGS(); });
 applyGS();
+// ===== QR ағашы: маусым, түс =====
+const QT_COLS = ['#F28CB1', '#9B6BFF', '#E5484D', '#F5A623', '#3B82F6', '#22C55E'];
+function applyQT() {
+  const sv = ls.get('qtseason') || 'auto', cv = qtColor();
+  document.querySelectorAll('#qtSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === sv)));
+  const w = $('qtCol'); if (!w) return; w.replaceChildren();
+  const au = document.createElement('button'); au.type = 'button'; au.textContent = 'Түс: авто'; au.className = 'out'; au.setAttribute('aria-pressed', String(!cv)); au.onclick = () => { ls.set('qtcolor', ''); applyQT(); }; w.appendChild(au);
+  QT_COLS.forEach(c => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Түс ' + c); b.style.cssText = 'width:32px;height:32px;border-radius:50%;border:3px solid ' + (cv === c ? 'var(--ink)' : 'transparent') + ';background:' + c + ';cursor:pointer;padding:0'; b.onclick = () => { ls.set('qtcolor', c); applyQT(); }; w.appendChild(b); });
+}
+document.querySelectorAll('#qtSeg button').forEach(b => b.onclick = () => { ls.set('qtseason', b.dataset.s); applyQT(); });
+applyQT();
 // ===== Дыбыс режимі + фондық музыка =====
 function applySfxUI() { const m = SFX.muted ? 'off' : SFX.mode; document.querySelectorAll('#sfxSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === m))); const mb = $('musBtn'); if (mb) { mb.setAttribute('aria-pressed', String(SFX.music)); mb.textContent = SFX.music ? '🎵 Фондық музыка: қосулы' : '🎵 Фондық музыка: өшірулі'; } }
 document.querySelectorAll('#sfxSeg button').forEach(b => b.onclick = () => { if (b.dataset.m === 'off') SFX.setMuted(true); else { SFX.setMuted(false); SFX.setMode(b.dataset.m); } applySfxUI(); });
