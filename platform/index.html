@@ -954,6 +954,17 @@ html[data-gs=mono] :is(#qzHost,#stage) :is(.go,.qh-go){background:#111;color:#ff
 .gs-pop{position:fixed;z-index:80;display:flex;flex-direction:column;gap:2px;padding:6px;min-width:190px;border-radius:14px;background:var(--surf,#fff);color:var(--ink,#111);border:1px solid var(--line);box-shadow:0 12px 40px rgba(0,0,0,.35)}
 .gs-pop button{display:block;text-align:left;padding:9px 12px;border:0;border-radius:9px;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}.gs-pop button:hover{background:var(--accent-soft,rgba(128,128,128,.15))}.gs-pop button[aria-checked=true]{background:var(--accent);color:#fff}
 #stage .qh-top .gsb,#qzHost .qh-top .gsb{font-size:1.1rem}
+.ph-wrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;max-width:1500px;margin:0 auto;padding:50px 20px 16px;align-items:start}
+.ph-main canvas{display:block;width:100%;border-radius:18px;background:var(--surf,#fff);border:1px solid var(--line)}
+.ph-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.ph-tabs button,.ph-seg button{padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.ph-tabs button[aria-pressed=true],.ph-seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.ph-side{background:var(--surf,#fff);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}.ph-side h3{margin:0;font-size:1.15rem}
+.ph-fm{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1.05rem;font-weight:700;color:var(--accent);padding:8px 12px;border-radius:10px;background:var(--accent-soft,rgba(120,120,120,.12))}.ph-note{margin:0;color:var(--mute);font-size:.9rem}
+.ph-row{display:flex;flex-direction:column;gap:6px}.ph-rt{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}.ph-rt b{font-variant-numeric:tabular-nums}.ph-row input[type=range]{width:100%;accent-color:var(--accent)}
+.ph-seg{display:flex;gap:6px;flex-wrap:wrap}.ph-bar{display:flex;gap:8px}.ph-bar .go{flex:1;width:auto;margin:0}
+.ph-read{display:flex;flex-direction:column;border-top:1px solid var(--line);padding-top:8px}.ph-rr{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:.95rem;border-bottom:1px dashed var(--line)}.ph-rr b{font-variant-numeric:tabular-nums}
+@media (max-width:900px){.ph-wrap{grid-template-columns:1fr;padding-top:60px}}
+.qh-pod3{margin:6px auto 4px;max-width:780px}
 @media (prefers-reduced-motion:reduce){#stage::before,#qzHost::before{animation:none!important}}
 #gsSeg,#sfxSeg,#qtSeg{display:flex;gap:8px;flex-wrap:wrap}
 #gsSeg button,#sfxSeg button,#qtSeg button,#musBtn{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
@@ -1800,6 +1811,10 @@ document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc 
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '3.0', date: '28.10.2026', items: [
+    ['🏆', '3D подиум', 'Квиз бітерде үш жеңімпаз изометриялық сахнада көтеріледі: алтын, күміс, қола блоктар, бәрінің үстінде аватар мен ұпай, жоғарыдан конфетти түседі. Командалық жарыста да солай.'],
+    ['🧪', 'Физика анимациялары', '«Ойын-сауық» бетінде жаңа құрал: маятник, көлбеу жазықтық және еркін түсу. Жүгірткімен бұрыш, ұзындық, үйкеліс, планетаны (Жер, Ай, Марс, Юпитер) өзгертесің, сурет қозғалады, формула мен нәтиже есептеледі. Баяу қозғалыс режимі бар.']
+  ] },
   { ver: '2.9', date: '28.10.2026', items: [
     ['🌳', 'QR ағашы', 'QR-ды үлкейткенде ағаш көрінеді. Қосылған оқушы көбейген сайын ағаш өсіп, жапырағы көбейеді. Ағашты басқанда камера бұрылып, ол QR-ға айналады. Бірнеше секундтан кейін өзі де QR-ға ауысады.'],
     ['🖌️', 'Ойын стилі ойын алдында', 'Стильді баптаудан емес, «Ойын-сауық» бетінен таңдайсың. Ойынның ішінде де жоғарғы жолдағы 🎨 түймесі бар. Жаңа үш стиль: Мұхит, Күн батуы, Минимал.'],
@@ -2517,6 +2532,7 @@ const PLAY_TOOLS = [
   { k: 'lessons', t: 'Сабақ жоспары', d: 'Сабақты қадамдарға бөліп, бір басумен ретімен жүргіз.', cls: false, ic: '<path d="M4 5h16M4 12h10M4 19h16"/><path d="m17 10 3 2-3 2z"/>' },
   { k: 'quiz', t: 'Викторина', d: 'Өз сұрақтарыңмен: 4 нұсқа не сан жауабы. Телефонмен (QR) не үлкен экранда.', cls: false, ic: '<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 18h.01"/><circle cx="12" cy="12" r="10"/>' },
   { k: 'race', t: 'Ракета жарысы', d: 'Командалар жарысады: дұрыс жауап ракетаны алға жылжытады.', cls: false, ic: '<path d="M12 2c3 2.5 5 6 5 10l-2 3H9l-2-3c0-4 2-7.5 5-10z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M7 12.5 4 15l1 3 3-1.5M17 12.5l3 2.5-1 3-3-1.5M10 18.5 12 22l2-3.5"/>' },
+  { k: 'phys', t: 'Физика анимациясы', d: 'Маятник, көлбеу жазықтық, еркін түсу: жүгірткіні жылжытсаң, сурет қозғалып, формула есептеледі.', cls: false, ic: '<path d="M12 3v4M12 7l-5 9"/><circle cx="7" cy="18" r="2.6"/><path d="M14 20h7M17 13l4 7"/>' },
   { k: 'cloud', t: 'Сөз бұлты', d: 'Барлығы сөз жазады, ең көп айтылғаны үлкен болып шығады.', cls: false, ic: '<path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.7 1.5A4 4 0 0 0 6.5 19z"/>' },
   { k: 'poll', t: 'Жылдам дауыс', d: '«Түсінікті ме?» светофоры, иә/жоқ, A-B-C-D: бәрі телефонмен жауап береді, нәтиже тірідей шығады.', cls: false, ic: '<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>' },
   { k: 'ask', t: 'Сұрақ қорапшасы', d: 'Оқушылар анонимді сұрақ жібереді, басқалары дауыс береді, маңыздысы жоғарыға шығады.', cls: false, ic: '<path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>' },
@@ -2544,7 +2560,7 @@ const PLAY_TOOLS = [
   { k: 'games', t: 'Геймификация', d: 'Пәндер бөліміндегі ойындар мен виртуалды зертханалар.', cls: false, ic: '<path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.4 11.5 2 15.5 2 17a3 3 0 0 0 5 2.2L9 17h6l2 2.2A3 3 0 0 0 22 17c0-1.5-.4-5.5-.7-8.4A4 4 0 0 0 17.3 5z"/>' }
 ];
 const PL_STAGES = [['all', 'Барлығы'], ['start', '🚀 Сабақ басы'], ['teach', '📖 Түсіндіру'], ['fix', '🎯 Бекіту'], ['team', '👥 Топпен'], ['end', '🌙 Сабақ соңы']];
-const PL_MAP = { quiz: 'fix,end', error: 'teach,fix', chain: 'team,fix', relay: 'team,fix,start', bet: 'start,teach', detective: 'fix,team', spy: 'start,team', battle: 'team,fix,start', words: 'start,fix,team', croc: 'start,team,end', boss: 'fix,team,end', pairs: 'start,fix,team', sort: 'teach,fix', mill: 'fix,end', escape: 'team,fix,end', race: 'fix,team', cloud: 'start,end', poll: 'teach,end', ask: 'teach,end', wheel: 'start,fix', potato: 'start,fix', random: 'start,fix', groups: 'team', timer: 'teach,team', refl: 'end', team: 'team,fix', lessons: 'teach', games: 'fix' };
+const PL_MAP = { phys: 'teach,start,fix', quiz: 'fix,end', error: 'teach,fix', chain: 'team,fix', relay: 'team,fix,start', bet: 'start,teach', detective: 'fix,team', spy: 'start,team', battle: 'team,fix,start', words: 'start,fix,team', croc: 'start,team,end', boss: 'fix,team,end', pairs: 'start,fix,team', sort: 'teach,fix', mill: 'fix,end', escape: 'team,fix,end', race: 'fix,team', cloud: 'start,end', poll: 'teach,end', ask: 'teach,end', wheel: 'start,fix', potato: 'start,fix', random: 'start,fix', groups: 'team', timer: 'teach,team', refl: 'end', team: 'team,fix', lessons: 'teach', games: 'fix' };
 let plStage = 'all';
 function plFilter() {
   $('plStages').querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', b.dataset.k === plStage));
@@ -2576,11 +2592,208 @@ async function loadPlay() {
 }
 $('plClass').onchange = () => ls.set('plClass', $('plClass').value);
 $('plNoClass').onclick = () => go('rosters');
+// ===== Физика анимациялары: маятник, көлбеу жазықтық, еркін түсу =====
+const PH_PLANETS = [['earth', '🌍 Жер', 9.81], ['moon', '🌙 Ай', 1.62], ['mars', '🔴 Марс', 3.71], ['jup', '🟠 Юпитер', 24.8]];
+const phPlanetName = g => (PH_PLANETS.find(p => Math.abs(p[2] - g) < .01) || ['', '', g])[1];
+function openPhys(start) {
+  SFX.unlock(); const root = stage(), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wrap = el('div', 'ph-wrap'), main = el('div', 'ph-main'), side = el('div', 'ph-side'), tabs = el('div', 'ph-tabs'), cv = document.createElement('canvas'), g = cv.getContext('2d');
+  cv.setAttribute('role', 'img'); main.append(tabs, cv); wrap.append(main, side); root.appendChild(wrap);
+  let W = 600, H = 400, dpr = 1, cur = null, speed = 1, last = performance.now(), frames = 0, col = {};
+  const NF = (v, d) => (+v).toFixed(d === undefined ? 2 : d).replace('.', ',');
+  function colors() { const cs = getComputedStyle(root), v = (n, d) => (cs.getPropertyValue(n).trim() || d); col = { ink: v('--ink', '#14171F'), mute: v('--mute', '#6B7280'), line: v('--line', 'rgba(0,0,0,.2)'), accent: v('--accent', '#3B6BFF'), surf: v('--surf', '#fff') }; }
+  function fit() { const r = cv.parentElement.getBoundingClientRect(); W = Math.max(320, Math.floor(r.width)); H = Math.max(240, Math.min(Math.floor(window.innerHeight * .64), Math.floor(W * .62))); dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; g.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  function arrow(x0, y0, x1, y1, c, lab) {
+    const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy); if (L < 4) return; const a = Math.atan2(dy, dx);
+    g.strokeStyle = c; g.fillStyle = c; g.lineWidth = 3; g.lineCap = 'round'; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+    g.beginPath(); g.moveTo(x1, y1); g.lineTo(x1 - 11 * Math.cos(a - .4), y1 - 11 * Math.sin(a - .4)); g.lineTo(x1 - 11 * Math.cos(a + .4), y1 - 11 * Math.sin(a + .4)); g.closePath(); g.fill();
+    if (lab) { g.font = '700 14px system-ui,sans-serif'; g.textAlign = 'center'; g.fillText(lab, x1 + Math.cos(a) * 14, y1 + Math.sin(a) * 14 + 5); }
+  }
+  function text(t, x, y, c, sz, al) { g.fillStyle = c || col.ink; g.font = '600 ' + (sz || 14) + 'px system-ui,sans-serif'; g.textAlign = al || 'left'; g.fillText(t, x, y); }
+  // ---- слайдер/сегмент көмекшілері ----
+  const store = {};
+  function slider(label, min, max, step, val, unit, on) {
+    const row = el('div', 'ph-row'), lb = el('label', '', label), vv = el('b', '', ''), inp = document.createElement('input'); inp.type = 'range'; inp.min = min; inp.max = max; inp.step = step; inp.value = val;
+    const upd = () => { vv.textContent = NF(inp.value, step < 1 ? (step < .1 ? 2 : 1) : 0) + ' ' + unit; }; upd(); inp.oninput = () => { upd(); on(+inp.value); };
+    const id = 'phs' + Math.random().toString(36).slice(2, 7); inp.id = id; lb.htmlFor = id; const top = el('div', 'ph-rt'); top.append(lb, vv); row.append(top, inp); return row;
+  }
+  function seg(items, val, on) { const s = el('div', 'ph-seg'); const draw = v => { s.replaceChildren(); items.forEach(([k, t]) => { const b = el('button', '', t); b.type = 'button'; b.setAttribute('aria-pressed', String(k === v)); b.onclick = () => { on(k); draw(k); }; s.appendChild(b); }); }; draw(val); return s; }
+  function planetSeg(P, reset) { return seg(PH_PLANETS.map(p => [p[2], p[1]]), P.g, v => { P.g = v; reset(); }); }
+  // ---- 1. Маятник ----
+  function pendulum() {
+    const P = store.pend || (store.pend = { L: 1.5, th0: 40, g: 9.81, m: 1, damp: false }); let th, w, t, tm, lastCross, trace, running = true;
+    const reset = () => { th = P.th0 * Math.PI / 180; w = 0; t = 0; tm = 0; lastCross = null; trace = []; running = true; };
+    reset();
+    const T0 = () => 2 * Math.PI * Math.sqrt(P.L / P.g);
+    return {
+      title: 'Математикалық маятник', formula: 'T = 2π√(L/g)', note: 'Период массаға тәуелсіз. Массаны өзгертіп көр.',
+      controls: [slider('Ұзындығы L', .2, 3, .05, P.L, 'м', v => { P.L = v; reset(); }), slider('Бастапқы бұрыш', 5, 80, 1, P.th0, '°', v => { P.th0 = v; reset(); }), slider('Масса', .2, 5, .1, P.m, 'кг', v => { P.m = v; }), planetSeg(P, reset),
+        seg([[0, 'Үйкеліссіз'], [1, 'Үйкелісті']], P.damp ? 1 : 0, v => { P.damp = !!v; reset(); })],
+      run: () => running, toggle() { running = !running; }, reset,
+      step(dt) { if (!running) return; const n = 10, h = dt / n; for (let i = 0; i < n; i++) { const a = -(P.g / P.L) * Math.sin(th) - (P.damp ? .35 : 0) * w; w += a * h; const pt = th; th += w * h; if (pt < 0 && th >= 0) { if (lastCross !== null) tm = t + h * i - lastCross; lastCross = t + h * i; } } t += dt; trace.push([t, th]); while (trace.length && trace[0][0] < t - 6) trace.shift(); },
+      read: () => [['Теор. период T', NF(T0()) + ' с'], ['Өлшенген период', tm ? NF(tm) + ' с' : '…'], ['Жиілік ν', NF(1 / T0()) + ' Гц'], ['Макс. жылдамдық', NF(Math.sqrt(2 * P.g * P.L * (1 - Math.cos(P.th0 * Math.PI / 180)))) + ' м/с'], ['Уақыт', NF(t, 1) + ' с'], ['Орта', phPlanetName(P.g)]],
+      draw() {
+        const sc = H * .72 / 3.1, px = W / 2, py = H * .1, bx = px + P.L * sc * Math.sin(th), by = py + P.L * sc * Math.cos(th), r = 9 + P.m * 3.2;
+        g.strokeStyle = col.line; g.lineWidth = 1.5; g.setLineDash([4, 6]); g.beginPath(); g.arc(px, py, P.L * sc, Math.PI / 2 - P.th0 * Math.PI / 180, Math.PI / 2 + P.th0 * Math.PI / 180); g.stroke(); g.setLineDash([]);
+        g.beginPath(); g.moveTo(px, py); g.lineTo(px, py + P.L * sc + 14); g.strokeStyle = col.line; g.stroke();
+        g.strokeStyle = col.accent; g.lineWidth = 3; g.beginPath(); g.arc(px, py, 36, Math.PI / 2, Math.PI / 2 - th, th > 0); g.stroke(); text(NF(Math.abs(th) * 180 / Math.PI, 0) + '°', px + (th > 0 ? 44 : -44), py + 68, col.accent, 14, 'center');
+        g.fillStyle = col.ink; g.fillRect(px - 60, py - 8, 120, 8);
+        g.strokeStyle = col.ink; g.lineWidth = 2.5; g.beginPath(); g.moveTo(px, py); g.lineTo(bx, by); g.stroke();
+        const gr = g.createRadialGradient(bx - r * .3, by - r * .3, r * .1, bx, by, r); gr.addColorStop(0, '#fff'); gr.addColorStop(.25, col.accent); gr.addColorStop(1, col.ink); g.fillStyle = gr; g.beginPath(); g.arc(bx, by, r, 0, 6.283); g.fill();
+        g.fillStyle = 'rgba(0,0,0,.14)'; g.beginPath(); g.ellipse(bx, py + 3.1 * sc + 4, r * 1.1, r * .3, 0, 0, 6.283); g.fill();
+        const bw = Math.min(W * .3, 250), bh = H * .2, bx0 = W - bw - 14, by0 = H - bh - 14; g.fillStyle = col.surf; g.globalAlpha = .8; g.fillRect(bx0, by0, bw, bh); g.globalAlpha = 1; g.strokeStyle = col.line; g.lineWidth = 1; g.strokeRect(bx0, by0, bw, bh);
+        g.beginPath(); g.moveTo(bx0, by0 + bh / 2); g.lineTo(bx0 + bw, by0 + bh / 2); g.stroke(); g.strokeStyle = col.accent; g.lineWidth = 2; g.beginPath(); const amp = P.th0 * Math.PI / 180 || 1;
+        trace.forEach(([tt, a], i) => { const x = bx0 + (tt - (t - 6)) / 6 * bw, y = by0 + bh / 2 - a / amp * (bh / 2 - 6); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke(); text('θ(t)', bx0 + 6, by0 + 15, col.mute, 12);
+      }
+    };
+  }
+  // ---- 2. Көлбеу жазықтық ----
+  function incline() {
+    const P = store.inc || (store.inc = { ang: 30, mu: .2, m: 2, g: 9.81, vec: true }), LS = 4; let d, v, t, state;
+    const reset = () => { d = 0; v = 0; t = 0; state = 'ready'; }; reset();
+    const th = () => P.ang * Math.PI / 180, acc = () => P.g * (Math.sin(th()) - P.mu * Math.cos(th()));
+    return {
+      title: 'Көлбеу жазықтық', formula: 'a = g(sinα − μ·cosα)', note: 'Егер tgα ≤ μ болса, блок сырғымайды.',
+      controls: [slider('Көлбеу бұрышы α', 0, 60, 1, P.ang, '°', v2 => { P.ang = v2; reset(); }), slider('Үйкеліс коэфф. μ', 0, 1, .01, P.mu, '', v2 => { P.mu = v2; reset(); }), slider('Масса', 1, 10, .5, P.m, 'кг', v2 => { P.m = v2; }), planetSeg(P, reset),
+        seg([[1, 'Күштер көрінсін'], [0, 'Жасыр']], P.vec ? 1 : 0, v2 => { P.vec = !!v2; })],
+      run: () => state === 'run', toggle() { if (state === 'ready') { if (acc() > 0) state = 'run'; } else if (state === 'run') state = 'pause'; else if (state === 'pause') state = 'run'; else reset(); }, reset,
+      label: () => state === 'run' ? '⏸ Тоқтату' : state === 'pause' ? '▶ Жалғастыру' : state === 'done' ? '↺ Қайта' : '▶ Босату',
+      step(dt) { if (state !== 'run') return; const a = acc(); v += a * dt; d += v * dt + 0; t += dt; if (d >= LS - .5) { d = LS - .5; state = 'done'; } },
+      read() { const a = acc(), N = P.m * P.g * Math.cos(th()), f = P.mu * N; return [['Үдеу a', a > 0 ? NF(a) + ' м/с²' : '0 (тыныштық)'], ['Қалыпты реакция N', NF(N, 1) + ' Н'], ['Үйкеліс күші F', NF(Math.min(f, P.m * P.g * Math.sin(th())), 1) + ' Н'], ['Жылдамдық', NF(v) + ' м/с'], ['Уақыт', NF(t, 1) + ' с'], ['Орта', phPlanetName(P.g)]]; },
+      draw() {
+        const a = th(), s = Math.min(W * .74 / (LS * Math.cos(a) + .01), H * .66 / (LS * Math.sin(a) + .4), W * .17), x0 = W * .08, gy = H * .88, tx = x0, ty = gy - LS * Math.sin(a) * s, bxx = x0 + LS * Math.cos(a) * s;
+        g.fillStyle = col.line; g.beginPath(); g.moveTo(tx, ty); g.lineTo(bxx, gy); g.lineTo(tx, gy); g.closePath(); g.fill(); g.strokeStyle = col.ink; g.lineWidth = 3; g.beginPath(); g.moveTo(tx, ty); g.lineTo(bxx, gy); g.lineTo(tx, gy); g.stroke();
+        g.beginPath(); g.moveTo(bxx, gy); g.lineTo(bxx + W * .1, gy); g.stroke();
+        g.strokeStyle = col.accent; g.lineWidth = 3; g.beginPath(); g.arc(bxx, gy, 40, Math.PI, Math.PI + a, false); g.stroke(); text('α=' + P.ang + '°', bxx - 90, gy - 10, col.accent, 14);
+        const bl = .5 * s, bs = (.28 + P.m * .018) * s, ux = Math.cos(a), uy = Math.sin(a), nx = uy, ny = -ux; // slope dir (down-right), normal (up-right)
+        const cx = tx + (d + .25) * s * ux + nx * bs / 2, cy = ty + (d + .25) * s * uy + ny * bs / 2;
+        g.save(); g.translate(cx, cy); g.rotate(a); g.fillStyle = col.accent; g.fillRect(-bl / 2, -bs / 2, bl, bs); g.strokeStyle = col.ink; g.lineWidth = 2; g.strokeRect(-bl / 2, -bs / 2, bl, bs); g.restore();
+        if (P.vec) {
+          const k = Math.min(90, s * .6), gx = cx, gy2 = cy, N = Math.cos(a), fr = Math.min(P.mu * Math.cos(a), Math.sin(a));
+          arrow(gx, gy2, gx, gy2 + k, '#E5484D', 'mg'); arrow(gx, gy2, gx + nx * k * N, gy2 + ny * k * N, '#22A06B', 'N'); arrow(gx, gy2, gx - ux * k * fr, gy2 - uy * k * fr, '#F28C28', 'F');
+          const an = Math.max(0, Math.sin(a) - P.mu * Math.cos(a)); if (an > .01) arrow(gx, gy2, gx + ux * k * an, gy2 + uy * k * an, '#7C5CFF', 'R');
+        }
+        if (acc() <= 0) text('Блок сырғымайды (tgα ≤ μ)', W / 2, 28, '#E5484D', 16, 'center'); else if (state === 'done') text('Төменге жетті', W / 2, 28, col.accent, 16, 'center');
+      }
+    };
+  }
+  // ---- 3. Еркін түсу ----
+  function freefall() {
+    const P = store.ff || (store.ff = { h: 45, g: 9.81, drag: false }); let t, b1, b2, marks, mt;
+    const reset = () => { t = 0; mt = 0; marks = []; b1 = { y: 0, v: 0, k: .004, done: 0 }; b2 = { y: 0, v: 0, k: .45, done: 0 }; running = false; }; let running = false; reset();
+    const T0 = () => Math.sqrt(2 * P.h / P.g);
+    return {
+      title: 'Еркін түсу', formula: 't = √(2h/g),  v = g·t', note: 'Ауасыз ортада ауыр және жеңіл дене бірдей құлайды. Ауа кедергісін қосып көр.',
+      controls: [slider('Биіктік h', 5, 100, 1, P.h, 'м', v => { P.h = v; reset(); }), planetSeg(P, reset), seg([[0, 'Вакуум'], [1, 'Ауа кедергісімен']], P.drag ? 1 : 0, v => { P.drag = !!v; reset(); })],
+      run: () => running, toggle() { if (b1.done && b2.done) reset(); else running = !running; }, reset,
+      label: () => (b1.done && b2.done) ? '↺ Қайта' : running ? '⏸ Тоқтату' : (t > 0 ? '▶ Жалғастыру' : '▶ Тастау'),
+      step(dt) {
+        if (!running) return; const n = 8, h = dt / n; t += dt; mt += dt;
+        for (const b of [b1, b2]) { if (b.done) continue; for (let i = 0; i < n; i++) { const a = P.g - (P.drag ? b.k * b.v * Math.abs(b.v) : 0); b.v += a * h; b.y += b.v * h; if (b.y >= P.h) { b.y = P.h; b.done = t; break; } } }
+        if (mt >= .5) { mt -= .5; marks.push([b1.y, b2.y]); } if (b1.done && b2.done) running = false;
+      },
+      read: () => [['Теор. уақыт t', NF(T0()) + ' с'], ['Теор. соңғы жылд.', NF(Math.sqrt(2 * P.g * P.h), 1) + ' м/с'], ['Уақыт', NF(t, 1) + ' с'], ['Доп жылдамдығы', NF(b1.v, 1) + ' м/с'], ['Мамық жылдамдығы', NF(b2.v, 1) + ' м/с'], ['Орта', phPlanetName(P.g)]],
+      draw() {
+        const top = H * .08, gnd = H * .9, s = (gnd - top) / P.h, x1 = W * .38, x2 = W * .62;
+        g.fillStyle = col.line; g.fillRect(0, gnd, W, H - gnd); g.strokeStyle = col.ink; g.lineWidth = 2; g.beginPath(); g.moveTo(0, gnd); g.lineTo(W, gnd); g.stroke();
+        const step = P.h > 60 ? 20 : P.h > 25 ? 10 : 5; for (let m = 0; m <= P.h; m += step) { const y = top + m * s; g.strokeStyle = col.line; g.lineWidth = 1; g.beginPath(); g.moveTo(W * .08, y); g.lineTo(W * .92, y); g.stroke(); text(NF(P.h - m, 0) + ' м', W * .07, y + 4, col.mute, 12, 'right'); }
+        marks.forEach(([a, b], i) => { g.globalAlpha = .35; g.fillStyle = col.accent; g.beginPath(); g.arc(x1, top + a * s, 11, 0, 6.283); g.fill(); g.fillStyle = '#F28C28'; g.beginPath(); g.ellipse(x2, top + b * s, 8, 14, 0, 0, 6.283); g.fill(); g.globalAlpha = 1; text(NF((i + 1) * .5, 1) + ' с', x2 + 28, top + b * s + 4, col.mute, 11); });
+        g.fillStyle = col.accent; g.beginPath(); g.arc(x1, top + b1.y * s, 11, 0, 6.283); g.fill(); g.strokeStyle = col.ink; g.lineWidth = 2; g.stroke();
+        g.fillStyle = '#F28C28'; g.beginPath(); g.ellipse(x2, top + b2.y * s, 8, 14, 0, 0, 6.283); g.fill(); g.stroke();
+        text('Ауыр доп', x1, gnd + 22, col.ink, 13, 'center'); text('Жеңіл (мамық)', x2, gnd + 22, col.ink, 13, 'center');
+        if (b1.done) text(NF(b1.done) + ' с', x1, top - 6, col.accent, 14, 'center'); if (b2.done) text(NF(b2.done) + ' с', x2, top - 6, '#F28C28', 14, 'center');
+      }
+    };
+  }
+  // ---- Басқару, тақталар ----
+  const MODES = [['pend', '⏱️ Маятник', pendulum], ['inc', '📐 Көлбеу жазықтық', incline], ['ff', '🍎 Еркін түсу', freefall]]; let curK = start || 'pend', rd = {}, ctl = {};
+  function build(k) {
+    curK = k; cur = MODES.find(m => m[0] === k)[2](); side.replaceChildren(); tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k === k)));
+    const h = el('h3', '', cur.title), f = el('div', 'ph-fm', cur.formula), nt = el('p', 'ph-note', cur.note); side.append(h, f, nt);
+    const sp = el('div', 'ph-row'); sp.append(el('div', 'ph-rt', ''), seg([[1, '1×'], [.5, '0,5×'], [.25, '0,25×']], speed, v => { speed = v; })); sp.firstChild.append(el('label', '', 'Жылдамдық'));
+    const bar = el('div', 'ph-bar'), go2 = el('button', 'go', ''), rs = el('button', 'out', '↺ Басынан'); go2.type = rs.type = 'button'; go2.onclick = () => { cur.toggle(); SFX.pop(); }; rs.onclick = () => { cur.reset(); }; bar.append(go2, rs); ctl.go = go2;
+    const box = el('div', 'ph-read'); rd = box; side.append(bar, box, ...cur.controls, sp);
+  }
+  MODES.forEach(([k, t]) => { const b = el('button', '', t); b.type = 'button'; b.dataset.k = k; b.onclick = () => { build(k); }; tabs.appendChild(b); });
+  fit(); build(curK); colors(); const ro = new ResizeObserver(() => { fit(); }); ro.observe(main);
+  function frame(now) {
+    if (!cv.isConnected || $('stage').hidden) { ro.disconnect(); return; }
+    requestAnimationFrame(frame); const dt = Math.min(.05, (now - last) / 1000) * speed * (reduce ? 1 : 1); last = now; frames++; if (frames % 40 === 1) colors();
+    cur.step(dt); g.clearRect(0, 0, W, H); cur.draw();
+    if (frames % 4 === 0) { rd.replaceChildren(...cur.read().map(([a, b]) => { const r = el('div', 'ph-rr'); r.append(el('span', '', a), el('b', '', b)); return r; })); ctl.go.textContent = cur.label ? cur.label() : (cur.run() ? '⏸ Тоқтату' : '▶ Жалғастыру'); }
+  }
+  requestAnimationFrame(frame);
+}
+
+// ===== 3D подиум: үш жеңімпаз изометриялық сахнада көтеріледі, конфетти түседі =====
+function Podium3D(host, list, o) {
+  o = Object.assign({ unit: 'ұпай' }, o || {});
+  const cv = document.createElement('canvas'), g = cv.getContext('2d'), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  cv.style.cssText = 'display:block;margin:0 auto;max-width:100%'; cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', 'Жеңімпаздар подиумы: ' + list.map((p, i) => (i + 1) + '. ' + p.name + ' ' + p.score).join(', ')); host.appendChild(cv);
+  let W = 720, H = 420, dpr = 1, dead = false, waited = 0, t0 = performance.now(), parts = [], burst1 = false, burst2 = false, lastT = t0, col = {}, nf = 0;
+  const META = [{ c: '#F5B800', n: 1, h: 1.9, at: 1.15 }, { c: '#B8C2D1', n: 2, h: 1.3, at: .65 }, { c: '#CD7F32', n: 3, h: .85, at: .2 }];
+  const items = list.slice(0, 3).map((p, i) => Object.assign({}, p, META[i], { i })), POS = [0, -1, 1];
+  const ease = x => { x = Math.min(1, Math.max(0, x)); const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }, clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+  function shade(hex, k) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, gg = n >> 8 & 255, b = n & 255; r = Math.round(clamp(r * k, 0, 255)); gg = Math.round(clamp(gg * k, 0, 255)); b = Math.round(clamp(b * k, 0, 255)); return 'rgb(' + r + ',' + gg + ',' + b + ')'; }
+  function colors() { const cs = getComputedStyle(host), v = (n, d) => cs.getPropertyValue(n).trim() || d; col = { ink: v('--ink', '#14171F'), mute: v('--mute', '#6B7280'), surf: v('--surf', '#fff'), line: v('--line', 'rgba(0,0,0,.15)'), accent: v('--accent', '#3B6BFF') }; }
+  function fit() { W = Math.max(300, Math.min(host.clientWidth || 720, 780)); H = Math.round(W * .68); dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; g.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  const A = () => W * .125, cy0 = () => H * .74;
+  const P = (x, y, z) => [W / 2 + (x - y) * A(), cy0() + (x + y) * A() * .5 - z * A() * 1.1];
+  function poly(pts, f) { g.beginPath(); pts.forEach((a, i) => i ? g.lineTo(a[0], a[1]) : g.moveTo(a[0], a[1])); g.closePath(); g.fillStyle = f; g.fill(); }
+  function box(cx, cyy, h, c) {
+    const a = .5, p0 = P(cx - a, cyy - a, h), p1 = P(cx + a, cyy - a, h), p2 = P(cx + a, cyy + a, h), p3 = P(cx - a, cyy + a, h), b2 = P(cx + a, cyy + a, 0), b3 = P(cx - a, cyy + a, 0), b1 = P(cx + a, cyy - a, 0);
+    poly([p3, p2, b2, b3], shade(c, .78)); poly([p2, p1, b1, b2], shade(c, .58)); poly([p0, p1, p2, p3], shade(c, 1.08));
+    return [p0, p1, p2, p3];
+  }
+  function shorten(s, n) { s = String(s); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+  function spawn(n, x, y, vx, vy) { const cs = ['#E21B3C', '#1368CE', '#D89E00', '#26890C', '#7C5CFF', '#F28C28', '#FF4FA3']; for (let i = 0; i < n; i++) parts.push({ x: x + (Math.random() - .5) * 20, y, vx: vx + (Math.random() - .5) * 5, vy: vy - Math.random() * 7, w: 5 + Math.random() * 6, h: 3 + Math.random() * 4, r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: cs[i % cs.length], life: 0 }); }
+  function draw(now) {
+    const t = (now - t0) / 1000, dt = Math.min(.05, (now - lastT) / 1000) * 60; lastT = now; g.clearRect(0, 0, W, H);
+    const fin = reduce ? 99 : t;
+    // сахна тақтасы
+    const e0 = 3.1, th = .16; poly([P(-e0, e0, 0), P(e0, e0, 0), P(e0, e0, -th), P(-e0, e0, -th)], 'rgba(0,0,0,.18)');
+    const pl = [P(-e0, -e0, 0), P(e0, -e0, 0), P(e0, e0, 0), P(-e0, e0, 0)]; poly([P(e0, e0, 0), P(e0, -e0, 0), P(e0, -e0, -th), P(e0, e0, -th)], 'rgba(0,0,0,.28)'); poly(pl, col.surf);
+    g.strokeStyle = col.line; g.lineWidth = 1.2; g.beginPath(); pl.forEach((a, i) => i ? g.lineTo(a[0], a[1]) : g.moveTo(a[0], a[1])); g.closePath(); g.stroke();
+    // жарық
+    if (fin > 1.4) { const k = clamp((fin - 1.4) / .8, 0, 1), c = P(0, 0, 3.2), gr = g.createRadialGradient(c[0], c[1], 5, c[0], c[1], W * .34); gr.addColorStop(0, 'rgba(245,184,0,' + (.22 * k) + ')'); gr.addColorStop(1, 'rgba(245,184,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H); }
+    for (const it of items) {
+      const k = reduce ? 1 : ease((fin - it.at) / .75), h = Math.max(.001, it.h * clamp(k, 0, 1.12)), pos = POS[it.i] * 1.1; if (fin < it.at) continue;
+      const cx = pos, cyy = -pos, top = box(cx, cyy, h, it.c), c0 = P(cx, cyy, h);
+      { const fc = P(cx, cyy + .5, h / 2); g.save(); g.translate(fc[0], fc[1]); g.transform(A(), A() * .5, 0, A() * 1.1, 0, 0); g.fillStyle = 'rgba(255,255,255,.9)'; g.font = '800 .8px system-ui,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(it.n), 0, 0); g.restore(); }
+      // жеңімпаз белгісі
+      const ap = reduce ? 1 : clamp((fin - it.at - .55) / .5, 0, 1); if (ap <= 0) continue;
+      const sc = ease(ap), bob = reduce ? 0 : Math.sin(t * 2 + it.i) * 3, bx = c0[0], by = c0[1] - A() * .9 + (1 - sc) * 30 + bob, rad = A() * .52 * sc;
+      g.fillStyle = 'rgba(0,0,0,.18)'; g.beginPath(); g.ellipse(c0[0], c0[1] - 4, rad * .9, rad * .3, 0, 0, 6.283); g.fill();
+      const gr = g.createRadialGradient(bx - rad * .3, by - rad * .3, rad * .1, bx, by, rad); gr.addColorStop(0, '#fff'); gr.addColorStop(1, shade(it.c, 1.0)); g.fillStyle = gr; g.beginPath(); g.arc(bx, by, rad, 0, 6.283); g.fill(); g.strokeStyle = shade(it.c, .6); g.lineWidth = 3; g.stroke();
+      g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = col.ink; g.font = Math.round(rad * 1.05) + 'px system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif'; g.fillText(it.emoji || String(it.name).trim().charAt(0).toUpperCase(), bx, by + 1);
+      if (it.n === 1 && sc > .6) { g.font = Math.round(rad * .9) + 'px system-ui,"Apple Color Emoji",sans-serif'; g.fillText('👑', bx, by - rad - 8 + Math.sin(t * 3) * 2); }
+      { const fb = P(cx + .5, cyy + .5, 0), fs = Math.max(13, Math.round(A() * .2)), sv = Math.round((reduce ? 1 : clamp((fin - it.at - .6) / 1, 0, 1)) * it.score); g.globalAlpha = sc; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillStyle = col.ink; g.font = '800 ' + fs + 'px system-ui,sans-serif'; g.fillText(shorten(it.name, 16), fb[0], fb[1] + fs * 1.1);
+        g.fillStyle = it.n === 1 ? '#D89E00' : col.mute; g.font = '700 ' + Math.max(12, Math.round(fs * .85)) + 'px system-ui,sans-serif'; g.fillText(sv + ' ' + o.unit, fb[0], fb[1] + fs * 2.3); g.globalAlpha = 1; }
+    }
+    // конфетти
+    if (!reduce) {
+      if (fin > 1.9 && !burst1) { burst1 = true; spawn(70, 0, H * .85, 6, -6); spawn(70, W, H * .85, -6, -6); }
+      if (fin > 2.5 && !burst2) { burst2 = true; spawn(60, W * .3, -10, 0, 0); spawn(60, W * .7, -10, 0, 0); }
+      if (fin > 3 && fin < 7 && Math.random() < .25) spawn(2, Math.random() * W, -10, 0, 0);
+    }
+    parts = parts.filter(p => p.y < H + 20); for (const p of parts) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += .22 * dt; p.vx *= .995; p.r += p.vr * dt; g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c; g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); g.restore(); }
+  }
+  function frame(now) {
+    if (dead) return; if (!cv.isConnected) { if (++waited > 60) { dead = true; return; } requestAnimationFrame(frame); return; } waited = 0;
+    requestAnimationFrame(frame); if (document.hidden) return; if (nf++ % 90 === 0) colors(); draw(now);
+  }
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => fit()) : null; if (ro) ro.observe(host);
+  fit(); colors(); requestAnimationFrame(frame);
+  return { destroy() { dead = true; if (ro) ro.disconnect(); cv.remove(); }, replay() { t0 = performance.now(); parts = []; burst1 = burst2 = false; } };
+}
+
 async function playTool(t) {
   SFX.unlock();
   if (t.k === 'lessons') return go('lessons');
   if (t.k === 'quiz') { quizPreset = null; return go('quiz'); }
   if (t.k === 'race') { quizPreset = { team: true }; return go('quiz'); }
+  if (t.k === 'phys') return openPhys();
   if (t.k === 'cloud') return openCloud();
   if (t.k === 'poll') return openPoll();
   if (t.k === 'ask') return openAsk();
@@ -3035,13 +3248,13 @@ function runQuiz(quiz, cfg) {
     if (!screen) { lastMsg = { ph: 'end', n: Q.length, total: ranking.length, top: okp.slice(0, 10).map(p => ({ n: p.name, s: p.score })), r, nt: NT, ts: tscore.slice() }; push(); }
     SFX.fan(); confetti(); cnt.textContent = '';
     const wrap = el('div', 'qh-end'); wrap.appendChild(el('h2', 'qh-h', team ? 'Жарыс аяқталды' : 'Викторина аяқталды'));
-    const pod = el('div', 'qh-pod');
+    const pod = el('div', 'qh-pod3');
     if (team) {
       const order = [...Array(NT).keys()].sort((a, b) => tscore[b] - tscore[a]);
-      [1, 0, 2].forEach(i => { const t = order[i]; if (t === undefined) return; const c = el('div', 'qh-pc p' + (i + 1)); c.style.borderBottom = '6px solid ' + QCOL[t]; c.append(el('b', '', TNAME[t] + ' команда'), el('em', '', tscore[t] + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
+      Podium3D(pod, order.slice(0, 3).map(t => ({ name: TNAME[t] + ' команда', score: tscore[t], emoji: '🏆' })));
       wrap.append(pod, raceTrack(false));
     } else {
-      [1, 0, 2].forEach(i => { const p = okp[i]; if (!p) return; const c = el('div', 'qh-pc p' + (i + 1)); c.append(el('b', '', avTxt(p.av) + p.name), el('em', '', p.score + ' ұпай'), el('i', '', String(i + 1))); pod.appendChild(c); });
+      Podium3D(pod, okp.slice(0, 3).map(p => { const a = avParse(p.av); return { name: p.name, score: p.score, emoji: a ? a.e : '' }; }));
       wrap.appendChild(pod);
     }
     const rest = el('div', 'qh-rest'); (team ? okp.slice(0, 5) : okp.slice(3, 10)).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(team ? i + 1 : i + 4)), el('span', '', p.name + (team && p.team >= 0 ? ' · ' + TNAME[p.team] : '')), el('em', '', String(p.score))); rest.appendChild(row); });
