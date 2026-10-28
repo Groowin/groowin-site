@@ -938,6 +938,22 @@ html[data-gs=retro] :is(#qzHost,#stage)::before{background:repeating-linear-grad
 html[data-gs=retro] :is(#qzHost,#stage) :is(.bg-card,.qh-chip,.bg-team,.bg-opt,.game,.cr-sr,.bs-pl,.out,.go,.qh-go,.rf2-card){border-radius:2px!important;border:2px solid var(--accent)!important;box-shadow:4px 4px 0 rgba(57,255,122,.35)}
 html[data-gs=retro] :is(#qzHost,#stage) :is(h1,h2,.big,.qh-h,.tm2-n){text-shadow:0 0 10px rgba(57,255,122,.6)}
 html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background:var(--accent)}
+html[data-gs=ocean] :is(#qzHost,#stage){--bg:#04202E;--paper:#04202E;--surf:#0A3347;--card:#0A3347;--ink:#E6F7FF;--mute:#8FC3D6;--line:rgba(120,210,240,.28);--accent:#19C2E0;background:#04202E}
+html[data-gs=ocean] :is(#qzHost,#stage)::before{background:radial-gradient(1200px 400px at 20% 110%,rgba(25,194,224,.35),transparent 60%),radial-gradient(900px 400px at 90% -10%,rgba(80,160,255,.25),transparent 60%),repeating-linear-gradient(100deg,rgba(255,255,255,.05) 0 36px,transparent 36px 90px);background-size:auto,auto,180px 100%;animation:gswave 14s linear infinite}
+@keyframes gswave{to{background-position:0 0,0 0,180px 0}}
+html[data-gs=ocean] :is(#qzHost,#stage) :is(.bg-card,.qh-chip,.bg-team,.bg-opt,.game,.cr-sr,.bs-pl,.out,.rf2-card){border-radius:20px!important;border:1px solid var(--line);box-shadow:0 8px 24px -10px rgba(25,194,224,.45)}
+html[data-gs=sunset] :is(#qzHost,#stage){--bg:#2B1034;--paper:#2B1034;--surf:#3E1A4A;--card:#3E1A4A;--ink:#FFF1E6;--mute:#E7B7C8;--line:rgba(255,170,120,.32);--accent:#FF7A45;background:#2B1034}
+html[data-gs=sunset] :is(#qzHost,#stage)::before{background:linear-gradient(180deg,#2B1034 0%,#6B2060 40%,#D2455A 72%,#FF9A55 100%);background-size:100% 200%;animation:gssun 24s ease-in-out infinite alternate}
+@keyframes gssun{to{background-position:0 100%}}
+html[data-gs=sunset] :is(#qzHost,#stage) :is(.bg-card,.qh-chip,.bg-team,.bg-opt,.game,.cr-sr,.bs-pl,.out,.rf2-card){border-radius:18px!important;background:rgba(62,26,74,.78);backdrop-filter:blur(4px);border:1px solid var(--line)}
+html[data-gs=sunset] :is(#qzHost,#stage) :is(.go,.qh-go){color:#2B1034;font-weight:800}
+html[data-gs=mono] :is(#qzHost,#stage){--bg:#FFFFFF;--paper:#FFFFFF;--surf:#F6F6F6;--card:#F6F6F6;--ink:#111111;--mute:#666666;--line:#111111;--accent:#111111;background:#FFFFFF}
+html[data-gs=mono] :is(#qzHost,#stage)::before{background:none}
+html[data-gs=mono] :is(#qzHost,#stage) :is(.bg-card,.qh-chip,.bg-team,.bg-opt,.game,.cr-sr,.bs-pl,.out,.rf2-card){border-radius:8px!important;border:1.5px solid #111!important;box-shadow:none}
+html[data-gs=mono] :is(#qzHost,#stage) :is(.go,.qh-go){background:#111;color:#fff;border-radius:8px}
+.gs-pop{position:fixed;z-index:80;display:flex;flex-direction:column;gap:2px;padding:6px;min-width:190px;border-radius:14px;background:var(--surf,#fff);color:var(--ink,#111);border:1px solid var(--line);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.gs-pop button{display:block;text-align:left;padding:9px 12px;border:0;border-radius:9px;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}.gs-pop button:hover{background:var(--accent-soft,rgba(128,128,128,.15))}.gs-pop button[aria-checked=true]{background:var(--accent);color:#fff}
+#stage .qh-top .gsb,#qzHost .qh-top .gsb{font-size:1.1rem}
 @media (prefers-reduced-motion:reduce){#stage::before,#qzHost::before{animation:none!important}}
 #gsSeg,#sfxSeg,#qtSeg{display:flex;gap:8px;flex-wrap:wrap}
 #gsSeg button,#sfxSeg button,#qtSeg button,#musBtn{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
@@ -1201,6 +1217,8 @@ html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background
     <div id="v-play" hidden>
       <h2 style="margin:0 0 6px;font-size:1.2rem">Ойын-сауық</h2>
       <p class="sub" style="font-size:.9rem">Сабақты жандандыратын құралдар. Оқушыларға аккаунт керек емес. «Кездейсоқ оқушы» мен «Топқа бөлу» үшін сыныпты таңда.</p>
+      <p class="hint" style="margin:10px 0 6px">Ойын стилі: викторина, тақта ойындары және таймер осы стильде ашылады</p>
+      <div id="gsSeg" role="group" aria-label="Ойын стилі"><button type="button" data-g="space">🌌 Ғарыш</button><button type="button" data-g="neon">🌆 Неон</button><button type="button" data-g="paper">📄 Қағаз</button><button type="button" data-g="candy">🍬 Кәмпит</button><button type="button" data-g="retro">👾 Ретро</button><button type="button" data-g="ocean">🌊 Мұхит</button><button type="button" data-g="sunset">🌇 Күн батуы</button><button type="button" data-g="mono">◼️ Минимал</button><button type="button" data-g="auto">🔄 Тақырыпқа сай</button></div>
       <label for="plClass">Сынып</label>
       <select id="plClass"></select>
       <button class="lk" id="plNoClass" type="button" hidden>Сынып әлі жоқ. «Менің сыныптарым» бөлімінде жаса</button>
@@ -1341,11 +1359,6 @@ html[data-gs=retro] :is(#qzHost,#stage) :is(.go,.qh-go){color:#04210E;background
       <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button><button type="button" data-a="cyan" style="--c:#19B5D6" aria-label="Көгілдір"></button><button type="button" data-a="pink" style="--c:#E8559A" aria-label="Қызғылт"></button></div>
       <p class="hint" style="margin:14px 0 8px">Иконка стилі</p>
       <div id="icSeg" role="group" aria-label="Иконка стилі"><button type="button" data-i="line">▫️ Минимал</button><button type="button" data-i="emoji">😀 Эмодзи</button><button type="button" data-i="color">🎨 Түсті</button></div>
-      <p class="hint" style="margin:14px 0 8px">Ойын стилі (викторина, тақта ойындары, таймер)</p>
-      <div id="gsSeg" role="group" aria-label="Ойын стилі"><button type="button" data-g="space">🌌 Ғарыш</button><button type="button" data-g="neon">🌆 Неон</button><button type="button" data-g="paper">📄 Қағаз</button><button type="button" data-g="candy">🍬 Кәмпит</button><button type="button" data-g="retro">👾 Ретро</button><button type="button" data-g="auto">🔄 Тақырыпқа сай</button></div>
-      <p class="hint" style="margin:14px 0 8px">QR ағашы (маусым және жапырақ түсі)</p>
-      <div id="qtSeg" role="group" aria-label="Ағаш маусымы"><button type="button" data-s="auto">🗓️ Авто</button><button type="button" data-s="spring">🌸 Көктем</button><button type="button" data-s="summer">☀️ Жаз</button><button type="button" data-s="autumn">🍂 Күз</button><button type="button" data-s="winter">❄️ Қыс</button></div>
-      <div id="qtCol" role="group" aria-label="Жапырақ түсі" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center"></div>
       <p class="hint" style="margin:14px 0 8px">Дыбыс режимі</p>
       <div id="sfxSeg" role="group" aria-label="Дыбыс режимі"><button type="button" data-m="classic">🔔 Қалыпты</button><button type="button" data-m="arcade">🕹️ Аркада</button><button type="button" data-m="soft">🌿 Жұмсақ</button><button type="button" data-m="off">🔇 Үнсіз</button></div>
       <button type="button" id="musBtn" style="margin-top:10px">🎵 Фондық музыка: өшірулі</button>
@@ -1789,7 +1802,8 @@ document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc 
 const CHANGELOG = [
   { ver: '2.9', date: '28.10.2026', items: [
     ['🌳', 'QR ағашы', 'QR-ды үлкейткенде ағаш көрінеді. Қосылған оқушы көбейген сайын ағаш өсіп, жапырағы көбейеді. Ағашты басқанда камера бұрылып, ол QR-ға айналады. Бірнеше секундтан кейін өзі де QR-ға ауысады.'],
-    ['🎨', 'Маусым мен түс', 'Ағаштың қасындағы тақтадан төрт маусымды (көктем, жаз, күз, қыс) және жапырақ түсін бір басып таңдайсың. Баптауда да бар. «Авто» болса, маусым ай бойынша өзі таңдалады.']
+    ['🖌️', 'Ойын стилі ойын алдында', 'Стильді баптаудан емес, «Ойын-сауық» бетінен таңдайсың. Ойынның ішінде де жоғарғы жолдағы 🎨 түймесі бар. Жаңа үш стиль: Мұхит, Күн батуы, Минимал.'],
+    ['🎨', 'Маусым мен түс', 'Ағаштың қасындағы тақтадан төрт маусымды (көктем, жаз, күз, қыс) және жапырақ түсін бір басып таңдайсың. «Авто» болса, маусым ай бойынша өзі таңдалады.']
   ] },
   { ver: '2.8', date: '27.10.2026', items: [
     ['📁', 'Материалдар жаңа дизайнмен', 'Үлкен, кіші немесе тізім көрінісі. Папка стилі төртеу: классик, тақташа, қарапайым, тек белгі. Әр папканың түсі мен белгісін өзің таңдайсың. Іздеу, сұрыптау, файлды сүйреп жүктеу, атын өзгерту, папкаға ауыстыру.'],
@@ -3086,7 +3100,7 @@ function zoomQR(root, joinUrl, code, getN) {
   const num = () => { try { return Math.max(0, getN ? getN() | 0 : 0); } catch { return 0; } };
   const pan = el('div', 'qh-zp'); pan.setAttribute('role', 'group'); pan.setAttribute('aria-label', 'Ағаш көрінісі');
   z.append(x, box, pan, el('div', 'qh-zc', code), cn); root.appendChild(z);
-  const T = QrTree(box, { url: joinUrl, count: num(), season: qtSeason(), color: qtColor(), size: 760, autoFlip: 6000 });
+  const T = QrTree(box, { url: joinUrl, count: num(), season: qtSeason(), color: qtColor(), size: 760, autoFlip: 2000 });
   const SS = [['auto', '🗓️', 'Авто'], ['spring', '🌸', 'Көктем'], ['summer', '☀️', 'Жаз'], ['autumn', '🍂', 'Күз'], ['winter', '❄️', 'Қыс']];
   const drawPan = () => {
     const sv = ls.get('qtseason') || 'auto', cv = qtColor(); pan.replaceChildren();
@@ -5823,24 +5837,32 @@ applyIcons();
 
 { const g = $('plGrid'); if (g) new MutationObserver(() => applyIcons()).observe(g, { childList: true }); }
 // ===== Ойын стилі (дизайн) =====
-const GS_ST = ['auto', 'space', 'neon', 'paper', 'candy', 'retro'];
+const GS_ST = ['auto', 'space', 'neon', 'paper', 'candy', 'retro', 'ocean', 'sunset', 'mono'];
+const GS_LIST = [['space', '🌌', 'Ғарыш'], ['neon', '🌆', 'Неон'], ['paper', '📄', 'Қағаз'], ['candy', '🍬', 'Кәмпит'], ['retro', '👾', 'Ретро'], ['ocean', '🌊', 'Мұхит'], ['sunset', '🌇', 'Күн батуы'], ['mono', '◼️', 'Минимал'], ['auto', '🔄', 'Тақырыпқа сай']];
 function applyGS() {
   let g = ls.get('gstyle'); if (!GS_ST.includes(g)) g = 'space'; if (g === 'auto') delete document.documentElement.dataset.gs; else document.documentElement.dataset.gs = g;
   document.querySelectorAll('#gsSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.g === g)));
 }
 document.querySelectorAll('#gsSeg button').forEach(b => b.onclick = () => { ls.set('gstyle', b.dataset.g); applyGS(); });
+
+// ===== Ойын стилі: ойын ішіндегі 🎨 түймесі (алдын ала таңдау үшін) =====
+function gsPop(btn, root) {
+  const old = root.querySelector('.gs-pop'); if (old) { old.remove(); return; }
+  const pop = el('div', 'gs-pop'), cur = ls.get('gstyle') || 'space'; pop.setAttribute('role', 'menu');
+  GS_LIST.forEach(([k, em, nm]) => { const b = el('button', '', em + ' ' + nm); b.type = 'button'; b.setAttribute('role', 'menuitemradio'); b.setAttribute('aria-checked', String(k === cur)); b.onclick = e => { e.stopPropagation(); ls.set('gstyle', k); applyGS(); pop.remove(); }; pop.appendChild(b); });
+  const r = btn.getBoundingClientRect(); pop.style.top = Math.min(r.bottom + 6, innerHeight - 330) + 'px'; pop.style.right = Math.max(8, innerWidth - r.right) + 'px';
+  root.appendChild(pop); const off = e => { if (!pop.contains(e.target) && e.target !== btn) { pop.remove(); document.removeEventListener('pointerdown', off, true); } }; setTimeout(() => document.addEventListener('pointerdown', off, true), 0);
+}
+function gsInject(root) {
+  root.querySelectorAll('.qh-top:not([data-gsb])').forEach(top => {
+    top.dataset.gsb = '1'; const b = el('button', 'qh-btn gsb', '🎨'); b.type = 'button'; b.title = 'Ойын стилі'; b.setAttribute('aria-label', 'Ойын стилі'); b.onclick = () => gsPop(b, root);
+    const sp = top.querySelector('.qh-sp'); if (sp && sp.nextSibling) top.insertBefore(b, sp.nextSibling); else top.appendChild(b);
+  });
+}
+['qzHost', 'stage'].forEach(id => { const r = $(id); if (r) new MutationObserver(() => gsInject(r)).observe(r, { childList: true, subtree: true }); });
 applyGS();
 // ===== QR ағашы: маусым, түс =====
 const QT_COLS = ['#F28CB1', '#9B6BFF', '#E5484D', '#F5A623', '#3B82F6', '#22C55E'];
-function applyQT() {
-  const sv = ls.get('qtseason') || 'auto', cv = qtColor();
-  document.querySelectorAll('#qtSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === sv)));
-  const w = $('qtCol'); if (!w) return; w.replaceChildren();
-  const au = document.createElement('button'); au.type = 'button'; au.textContent = 'Түс: авто'; au.className = 'out'; au.setAttribute('aria-pressed', String(!cv)); au.onclick = () => { ls.set('qtcolor', ''); applyQT(); }; w.appendChild(au);
-  QT_COLS.forEach(c => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Түс ' + c); b.style.cssText = 'width:32px;height:32px;border-radius:50%;border:3px solid ' + (cv === c ? 'var(--ink)' : 'transparent') + ';background:' + c + ';cursor:pointer;padding:0'; b.onclick = () => { ls.set('qtcolor', c); applyQT(); }; w.appendChild(b); });
-}
-document.querySelectorAll('#qtSeg button').forEach(b => b.onclick = () => { ls.set('qtseason', b.dataset.s); applyQT(); });
-applyQT();
 // ===== Дыбыс режимі + фондық музыка =====
 function applySfxUI() { const m = SFX.muted ? 'off' : SFX.mode; document.querySelectorAll('#sfxSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === m))); const mb = $('musBtn'); if (mb) { mb.setAttribute('aria-pressed', String(SFX.music)); mb.textContent = SFX.music ? '🎵 Фондық музыка: қосулы' : '🎵 Фондық музыка: өшірулі'; } }
 document.querySelectorAll('#sfxSeg button').forEach(b => b.onclick = () => { if (b.dataset.m === 'off') SFX.setMuted(true); else { SFX.setMuted(false); SFX.setMode(b.dataset.m); } applySfxUI(); });
