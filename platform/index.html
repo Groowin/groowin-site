@@ -565,6 +565,11 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
 .qh-qr{display:block;border:0;cursor:zoom-in}
 .qh-zoom{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#fff;cursor:zoom-out;padding:20px}
 .qh-zoom.qt{background:#FBF7EF;cursor:default;gap:6px}.qh-zt{width:min(66vmin,700px)}.qh-zn{color:#6B7280;font-size:clamp(1rem,2.6vmin,1.4rem);min-height:1.4em}.qh-zx{position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#fff;color:#222;font-size:1.1rem;cursor:pointer;z-index:2}
+.qh-zp{position:absolute;left:18px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 8px;border-radius:22px;background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.08);backdrop-filter:blur(6px)}
+.qh-zb{width:42px;height:42px;border-radius:50%;border:2px solid transparent;background:transparent;font-size:1.3rem;cursor:pointer;line-height:1;transition:transform .15s,background .15s}.qh-zb:hover{transform:scale(1.1)}.qh-zb[aria-pressed=true]{background:#fff;border-color:#14171F}
+.qh-zd{width:26px;height:26px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.18);cursor:pointer;padding:0;transition:transform .15s}.qh-zd:hover{transform:scale(1.15)}.qh-zd[aria-pressed=true]{box-shadow:0 0 0 2.5px #14171F}.qh-zd.auto{background:conic-gradient(#F28CB1,#9B6BFF,#3B82F6,#22C55E,#F5A623,#E5484D,#F28CB1)}
+.qh-zsep{width:60%;height:1px;background:rgba(0,0,0,.15);margin:2px 0}
+@media (max-width:900px){.qh-zp{position:static;transform:none;flex-direction:row;flex-wrap:wrap;justify-content:center;padding:6px 10px;border-radius:18px;max-width:94vw}.qh-zsep{width:1px;height:24px;margin:0 2px}.qh-zb{width:36px;height:36px;font-size:1.1rem}}
 .qh-zq{width:min(78vmin,860px)}.qh-zq svg{display:block;width:100%;height:auto}
 .qh-zc{font-size:clamp(2rem,8vmin,5rem);font-weight:800;letter-spacing:.12em;color:#14171F}.qh-zh{color:#6B7280}
 
@@ -1784,7 +1789,7 @@ document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc 
 const CHANGELOG = [
   { ver: '2.9', date: '28.10.2026', items: [
     ['🌳', 'QR ағашы', 'QR-ды үлкейткенде ағаш көрінеді. Қосылған оқушы көбейген сайын ағаш өсіп, жапырағы көбейеді. Ағашты басқанда камера бұрылып, ол QR-ға айналады. Бірнеше секундтан кейін өзі де QR-ға ауысады.'],
-    ['🎨', 'Маусым мен түс', 'Баптауда төрт маусымды (көктем, жаз, күз, қыс) және жапырақ түсін таңдайсың. «Авто» болса, маусым ай бойынша өзі таңдалады.']
+    ['🎨', 'Маусым мен түс', 'Ағаштың қасындағы тақтадан төрт маусымды (көктем, жаз, күз, қыс) және жапырақ түсін бір басып таңдайсың. Баптауда да бар. «Авто» болса, маусым ай бойынша өзі таңдалады.']
   ] },
   { ver: '2.8', date: '27.10.2026', items: [
     ['📁', 'Материалдар жаңа дизайнмен', 'Үлкен, кіші немесе тізім көрінісі. Папка стилі төртеу: классик, тақташа, қарапайым, тек белгі. Әр папканың түсі мен белгісін өзің таңдайсың. Іздеу, сұрыптау, файлды сүйреп жүктеу, атын өзгерту, папкаға ауыстыру.'],
@@ -3079,8 +3084,18 @@ function qtColor() { const c = ls.get('qtcolor'); return /^#[0-9a-f]{6}$/i.test(
 function zoomQR(root, joinUrl, code, getN) {
   const z = el('div', 'qh-zoom qt'), box = el('div', 'qh-zt'), cn = el('div', 'qh-zn'), x = el('button', 'qh-zx', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'Жабу');
   const num = () => { try { return Math.max(0, getN ? getN() | 0 : 0); } catch { return 0; } };
-  z.append(x, box, el('div', 'qh-zc', code), cn); root.appendChild(z);
-  const T = QrTree(box, { url: joinUrl, count: num(), season: qtSeason(), color: qtColor(), size: 760, autoFlip: 2400 });
+  const pan = el('div', 'qh-zp'); pan.setAttribute('role', 'group'); pan.setAttribute('aria-label', 'Ағаш көрінісі');
+  z.append(x, box, pan, el('div', 'qh-zc', code), cn); root.appendChild(z);
+  const T = QrTree(box, { url: joinUrl, count: num(), season: qtSeason(), color: qtColor(), size: 760, autoFlip: 6000 });
+  const SS = [['auto', '🗓️', 'Авто'], ['spring', '🌸', 'Көктем'], ['summer', '☀️', 'Жаз'], ['autumn', '🍂', 'Күз'], ['winter', '❄️', 'Қыс']];
+  const drawPan = () => {
+    const sv = ls.get('qtseason') || 'auto', cv = qtColor(); pan.replaceChildren();
+    SS.forEach(([k, em, nm]) => { const b = el('button', 'qh-zb', em); b.type = 'button'; b.title = nm; b.setAttribute('aria-label', nm); b.setAttribute('aria-pressed', String(sv === k)); b.onclick = e => { e.stopPropagation(); T.keep(); ls.set('qtseason', k); T.setSeason(qtSeason()); drawPan(); }; pan.appendChild(b); });
+    pan.appendChild(el('i', 'qh-zsep'));
+    const au = el('button', 'qh-zd auto'); au.type = 'button'; au.title = 'Түс: авто'; au.setAttribute('aria-label', 'Түс: авто'); au.setAttribute('aria-pressed', String(!cv)); au.onclick = e => { e.stopPropagation(); T.keep(); ls.set('qtcolor', ''); T.setColor(null); drawPan(); }; pan.appendChild(au);
+    QT_COLS.forEach(c => { const b = el('button', 'qh-zd'); b.type = 'button'; b.style.background = c; b.setAttribute('aria-label', 'Түс ' + c); b.setAttribute('aria-pressed', String(cv === c)); b.onclick = e => { e.stopPropagation(); T.keep(); ls.set('qtcolor', c); T.setColor(c); drawPan(); }; pan.appendChild(b); });
+  };
+  drawPan();
   let last = -1; const tick = () => { const n = num(); if (n !== last) { last = n; T.setCount(n); cn.textContent = n ? n + ' оқушы қосылды' : 'Оқушылар қосылуын күтіп тұрмыз'; } }; tick(); const iv = setInterval(tick, 1000);
   const closeZ = () => { clearInterval(iv); T.destroy(); z.remove(); document.removeEventListener('keydown', zk, true); };
   const zk = e => { if (e.key === 'Escape') { e.stopPropagation(); closeZ(); } };
@@ -3432,12 +3447,12 @@ function QrTree(host, o) {
     setCam(t, e); cx.clearRect(0, 0, S, S); drawGround(); drawTree(t, e);
   }
   function toggle(v) { mode = v || (mode === 'tree' ? 'qr' : 'tree'); cap.textContent = mode === 'tree' ? o.capTree : o.capQr; cv.setAttribute('aria-label', cap.textContent); }
-  cv.onclick = () => { touched = true; clearTimeout(ftm); toggle(); }; cv.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } };
+  cv.onclick = () => { touched = true; clearTimeout(ftm); toggle(); }; cv.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); touched = true; clearTimeout(ftm); toggle(); } };
   const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => fit()) : null; if (ro) ro.observe(host);
   mkPal(); mkQR(); fit(); buildLeaves(); toggle('tree'); if (o.autoFlip) ftm = setTimeout(() => { if (!touched && !dead) toggle('qr'); }, o.autoFlip); grow = Math.min(1, o.count / 30); requestAnimationFrame(frame);
   return {
     toggle, setCount(n) { o.count = n; buildLeaves(); }, setSeason(s) { o.season = s; mkPal(); buildLeaves(); }, setColor(c) { o.color = c; mkPal(); buildLeaves(); },
-    setUrl(x) { o.url = x; mkQR(); }, destroy() { dead = true; clearTimeout(ftm); if (ro) ro.disconnect(); cv.remove(); cap.remove(); }, canvas: cv, get u() { return u; }, _hold(v) { mode = 'hold'; u = v; }, get qrMode() { return mode === 'qr'; }
+    setUrl(x) { o.url = x; mkQR(); }, keep() { touched = true; clearTimeout(ftm); }, destroy() { dead = true; clearTimeout(ftm); if (ro) ro.disconnect(); cv.remove(); cap.remove(); }, canvas: cv, get u() { return u; }, _hold(v) { mode = 'hold'; u = v; }, get qrMode() { return mode === 'qr'; }
   };
 }
 
