@@ -1036,6 +1036,48 @@ html[data-gs=mono] :is(#qzHost,#stage) :is(.go,.qh-go){background:#111;color:#ff
 .hw-att{margin:8px 0 12px}
 .del-warn{padding:12px 14px;border-radius:12px;background:rgba(229,72,77,.14);border:1px solid rgba(229,72,77,.45);margin:8px 0 12px}
 .dgr{color:#E5484D!important;border-color:rgba(229,72,77,.5)!important}.dgb{background:#E5484D!important}.dgb:disabled{opacity:.45}
+
+/* ===== Шыны режимі (Liquid Glass) ===== */
+html[data-glass]{--ga:.42;--gb:24px;background:#0B1020}
+html[data-glass][data-gi="1"]{--ga:.28;--gb:16px}html[data-glass][data-gi="3"]{--ga:.6;--gb:34px}
+html[data-glass][data-theme]{--bg:transparent;--surf:rgba(18,22,36,var(--ga));--card:rgba(18,22,36,var(--ga));--paper:rgba(255,255,255,.08);--line:rgba(255,255,255,.2);--grid:rgba(255,255,255,.12);--ink:#F4F7FF;--mute:rgba(236,241,255,.7);--hover:rgba(255,255,255,.12);--err:#FF9A9A;--accent-soft:rgba(255,255,255,.14);color-scheme:dark}
+html[data-glass] body{background:transparent!important;color:var(--ink)}
+html[data-glass] body::before{content:'';position:fixed;inset:0;z-index:-2;background:var(--gbg) center/cover no-repeat;transform:scale(1.02)}
+html[data-glass] #sky{display:none}
+html[data-glass] body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(6,10,24,.5),rgba(6,10,24,.26) 55%,rgba(6,10,24,.36))}
+html[data-glass][data-theme] #app .side.card{position:sticky;top:14px;height:calc(100dvh - 28px);margin:14px 0 14px 14px;border-radius:28px;border:1px solid rgba(255,255,255,.22)!important;background:var(--surf);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 18px 50px rgba(0,0,0,.32)}
+html[data-glass] #app{grid-template-columns:292px 1fr}html[data-glass] #app.collapsed{grid-template-columns:0px 1fr}
+html[data-glass] #app.collapsed .side{margin:0;border:0!important}
+html[data-glass][data-theme] #app .main.card{background:transparent}
+html[data-glass] #app .main.card{-webkit-backdrop-filter:none;backdrop-filter:none}
+html[data-glass][data-theme] body.in-app :is(.role,.av){background:rgba(255,255,255,.2);color:#fff}
+html[data-glass] :is(.side.card,.card,.game,.plc,.gradeBtn,.news,.qc,.qcard,.lpcard,.lpc2,.ak-item,.pth-card,.pth-head,.pth-tile,.ph-side,.mt-it,.mt-fold,.mt-add,#mBar,#dlg .dbox,.toast,.ctxm,.gs-pop,.qh-mc,.gcard,.pl-row,.bg-card,.bg-hero,.bg-lane,.bg-row,.bg-team,.bge-card,.lpbar,#lessonDock,#miniPop,#pult .pad,#pult .pst,.hw-card,.bge details,.thm button){-webkit-backdrop-filter:blur(var(--gb)) saturate(1.5);backdrop-filter:blur(var(--gb)) saturate(1.5)}
+html[data-glass][data-theme] body.in-app :is(.game,.plc,.gradeBtn,.news,.qc,.qcard,.lpcard,.lpc2,.ak-item,.pth-card,.mt-it,.mt-fold,.mt-add,.ph-side,.gcard,.hw-card){background:var(--surf);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 10px 34px rgba(0,0,0,.24);border-radius:22px}
+html[data-glass][data-theme] body.in-app :is(.game,.plc,.gradeBtn,.lpcard,.lpc2,.mt-it,.mt-fold,.gcard,.hw-card){transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s,background .28s}
+html[data-glass][data-theme] body.in-app :is(.game,.plc,.gradeBtn,.lpcard,.lpc2,.mt-it,.mt-fold,.gcard,.hw-card):hover{transform:translateY(-4px);background:rgba(30,36,58,calc(var(--ga) + .1));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 18px 44px rgba(0,0,0,.34)}
+html[data-glass][data-theme] .qh-mc{background:rgba(18,22,36,.8);border:1px solid rgba(255,255,255,.22);border-radius:26px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 30px 80px rgba(0,0,0,.5)}
+html[data-glass] .qh-modal{background:rgba(6,10,22,.45);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+html[data-glass][data-theme] body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea){background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.24);color:var(--ink);border-radius:14px}
+html[data-glass] body :is(input,textarea)::placeholder{color:rgba(236,241,255,.5)}
+html[data-glass][data-theme] body :is(input,select,textarea):focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,255,255,.14)}
+html[data-glass][data-theme] body :is(.out,.tabs button,.seg button,.icon-btn){background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.26);color:var(--ink);border-radius:99px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transition:background .2s,transform .2s}
+html[data-glass][data-theme] body :is(.out,.tabs button,.seg button,.icon-btn):hover{background:rgba(255,255,255,.2);transform:translateY(-1px)}
+html[data-glass][data-theme] body :is(.tabs button[aria-selected=true],.seg button[aria-pressed=true]){background:var(--accent);border-color:transparent;color:#fff}
+html[data-glass][data-theme] body :is(.go){border-radius:99px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 24px -6px var(--accent)}
+html[data-glass][data-theme] #nav button{border-radius:16px;transition:background .2s,transform .2s}
+html[data-glass][data-theme] #nav button:hover{background:rgba(255,255,255,.12)}
+html[data-glass][data-theme] #nav button.on{background:rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+html[data-glass] .mainhead h1,html[data-glass] #v-play>h2{text-shadow:0 2px 14px rgba(0,0,0,.45)}
+html[data-glass] .sub,html[data-glass] .hint{text-shadow:0 1px 8px rgba(0,0,0,.4)}
+html[data-glass] table{background:rgba(18,22,36,calc(var(--ga) - .06));border-radius:16px;overflow:hidden}
+html[data-glass]:not([data-gs]) :is(#stage,#qzHost){background:var(--gbg) center/cover no-repeat}
+html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+#glassBtn{padding:10px 18px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}#glassBtn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+#glassOpts{margin-top:12px}#glassI{display:flex;gap:8px;flex-wrap:wrap}#glassI button{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}#glassI button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.gl-bg{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.gl-bg button{width:92px;height:58px;border-radius:14px;border:2px solid transparent;background:var(--t) center/cover;cursor:pointer;box-shadow:0 0 0 1px var(--line);transition:transform .2s}.gl-bg button:hover{transform:scale(1.05)}.gl-bg button[aria-pressed=true]{border-color:#fff;box-shadow:0 0 0 3px var(--accent)}
+.gl-bg label.out{margin:0;cursor:pointer}
+@media (max-width:760px){html[data-glass] #app,html[data-glass] #app.collapsed{grid-template-columns:1fr}html[data-glass][data-theme] #app .side.card{position:static;height:auto;margin:10px 10px 0;border-radius:22px;padding:14px}html[data-glass][data-theme] #app.collapsed .side.card{display:none}html[data-glass][data-theme] #app .main.card{padding:18px 14px}}
+@media (prefers-reduced-motion:reduce){html[data-glass] *{transition:none!important}}
 </style>
 </head>
 <body>
@@ -1368,6 +1410,14 @@ html[data-gs=mono] :is(#qzHost,#stage) :is(.go,.qh-go){background:#111;color:#ff
       <div class="thm" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="dark" style="--tb:#0E1117;--ts:#151A23;--ta:#3B6BFF"><span class="pv"></span>Қараңғы</button><button type="button" data-t="light" style="--tb:#F6F7F9;--ts:#FFFFFF;--ta:#3B6BFF"><span class="pv"></span>Жарық</button><button type="button" data-t="milk" style="--tb:#FAF5EC;--ts:#FFFDF8;--ta:#F28C28"><span class="pv"></span>Сүтті</button><button type="button" data-t="ocean" style="--tb:#06161F;--ts:#0C2330;--ta:#19B5D6"><span class="pv"></span>Теңіз</button><button type="button" data-t="sunset" style="--tb:#1A0F1F;--ts:#251529;--ta:#FF7A5A"><span class="pv"></span>Күннің батуы</button><button type="button" data-t="forest" style="--tb:#0A1510;--ts:#112019;--ta:#1FA971"><span class="pv"></span>Орман</button><button type="button" data-t="amoled" style="--tb:#000000;--ts:#0A0A0A;--ta:#7C5CFF"><span class="pv"></span>Қара</button></div>
       <p class="hint" style="margin:14px 0 8px">Акцент түсі</p>
       <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button><button type="button" data-a="cyan" style="--c:#19B5D6" aria-label="Көгілдір"></button><button type="button" data-a="pink" style="--c:#E8559A" aria-label="Қызғылт"></button></div>
+      <p class="hint" style="margin:14px 0 8px">Шыны режимі: фонда сурет, үстінде бұлыңғыр шыны панельдер</p>
+      <button type="button" id="glassBtn" aria-pressed="false">🪟 Шыны режимі: өшірулі</button>
+      <div id="glassOpts" hidden>
+        <p class="hint" style="margin:10px 0 8px">Фон</p>
+        <div class="gl-bg" id="glassBg" role="group" aria-label="Фон"></div>
+        <p class="hint" style="margin:12px 0 8px">Шыныдың қоюлығы</p>
+        <div id="glassI" role="group" aria-label="Шыны қоюлығы"><button type="button" data-i="1">Жеңіл</button><button type="button" data-i="2">Орташа</button><button type="button" data-i="3">Қою</button></div>
+      </div>
       <p class="hint" style="margin:14px 0 8px">Иконка стилі</p>
       <div id="icSeg" role="group" aria-label="Иконка стилі"><button type="button" data-i="line">▫️ Минимал</button><button type="button" data-i="emoji">😀 Эмодзи</button><button type="button" data-i="color">🎨 Түсті</button></div>
       <p class="hint" style="margin:14px 0 8px">Дыбыс режимі</p>
@@ -1808,9 +1858,42 @@ $('themeBtn').onclick = () => setTheme(THEMES[(THEMES.indexOf(pref) + 1) % THEME
 document.querySelectorAll('#themeSeg button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
 document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc = b.dataset.a; ls.set('accent', acc); applyTheme(true); });
 
+// ===== Шыны режимі =====
+const GLASS_BGS = [
+  ['library', 'Кітапхана', "url('glass-bg.jpg'), linear-gradient(135deg,#2D4A3E,#0B1020)", "url('glass-bg.jpg') center/cover, #2D4A3E"],
+  ['dawn', 'Таң', 'linear-gradient(135deg,#FFB38A 0%,#FF7EB3 45%,#7B6CFF 100%)', 'linear-gradient(135deg,#FFB38A,#FF7EB3 45%,#7B6CFF)'],
+  ['dusk', 'Кеш', 'radial-gradient(900px 600px at 80% 10%,#FF9A6B,transparent 60%),linear-gradient(160deg,#2B1055,#7B5AA6 60%,#E26D5C)', 'linear-gradient(160deg,#2B1055,#7B5AA6 60%,#E26D5C)'],
+  ['night', 'Түн', 'radial-gradient(800px 500px at 20% 0%,#2A3A8C,transparent 60%),radial-gradient(700px 500px at 100% 100%,#6B2F8F,transparent 60%),#080B1E', 'linear-gradient(160deg,#2A3A8C,#080B1E 70%)'],
+  ['aurora', 'Аврора', 'radial-gradient(900px 500px at 15% 90%,#19D3A2,transparent 60%),radial-gradient(800px 500px at 85% 20%,#6C5CFF,transparent 60%),#06121F', 'linear-gradient(135deg,#19D3A2,#6C5CFF 70%)']
+];
+function glassBgCss() {
+  const k = ls.get('glassbg') || 'library';
+  if (k === 'custom') { const d = ls.get('glasscustom'); if (d) return 'url("' + d + '")'; }
+  const g = GLASS_BGS.find(x => x[0] === k) || GLASS_BGS[0]; return g[2];
+}
+function applyGlass() {
+  const on = ls.get('glass') === '1', h = document.documentElement;
+  if (on) { h.dataset.glass = '1'; h.dataset.gi = ['1', '2', '3'].includes(ls.get('glassi')) ? ls.get('glassi') : '2'; h.style.setProperty('--gbg', 'linear-gradient(rgba(8,12,26,.16),rgba(8,12,26,.44)),' + glassBgCss()); }
+  else { delete h.dataset.glass; delete h.dataset.gi; h.style.removeProperty('--gbg'); }
+  const b = $('glassBtn'); if (!b) return; b.setAttribute('aria-pressed', String(on)); b.textContent = '🪟 Шыны режимі: ' + (on ? 'қосулы' : 'өшірулі'); $('glassOpts').hidden = !on;
+  const cur = ls.get('glassbg') || 'library', w = $('glassBg'); w.replaceChildren();
+  GLASS_BGS.forEach(([k, nm, , th]) => { const x = document.createElement('button'); x.type = 'button'; x.title = nm; x.setAttribute('aria-label', 'Фон: ' + nm); x.style.setProperty('--t', th); x.setAttribute('aria-pressed', String(cur === k)); x.onclick = () => { ls.set('glassbg', k); applyGlass(); }; w.appendChild(x); });
+  const cd = ls.get('glasscustom'); if (cd) { const x = document.createElement('button'); x.type = 'button'; x.title = 'Менің суретім'; x.setAttribute('aria-label', 'Фон: менің суретім'); x.style.setProperty('--t', 'url("' + cd + '")'); x.setAttribute('aria-pressed', String(cur === 'custom')); x.onclick = () => { ls.set('glassbg', 'custom'); applyGlass(); }; w.appendChild(x); }
+  const up = document.createElement('label'); up.className = 'out'; up.textContent = '📷 Өз суретім'; const fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.hidden = true;
+  fi.onchange = () => { const f = fi.files[0]; fi.value = ''; if (!f) return; const im = new Image(), u = URL.createObjectURL(f); im.onload = () => { const sc = Math.min(1, 1920 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u); try { localStorage.setItem('glasscustom', c.toDataURL('image/jpeg', .82)); ls.set('glassbg', 'custom'); applyGlass(); } catch (e) { notify('Сурет тым үлкен немесе жады толы. Кішірек сурет таңда.'); } }; im.onerror = () => notify('Суретті ашу мүмкін болмады.'); im.src = u; };
+  up.appendChild(fi); w.appendChild(up);
+  document.querySelectorAll('#glassI button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.i === (h.dataset.gi || ls.get('glassi') || '2'))));
+}
+$('glassBtn').onclick = () => { ls.set('glass', ls.get('glass') === '1' ? '0' : '1'); applyGlass(); };
+document.querySelectorAll('#glassI button').forEach(x => x.onclick = () => { ls.set('glassi', x.dataset.i); applyGlass(); });
+applyGlass();
+
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '3.1', date: '29.10.2026', items: [
+    ['🪟', 'Шыны режимі', 'Баптауда бір түйме: бүкіл сайт Apple стиліндегі шыныға ауысады. Фонда сурет, үстінде бұлыңғыр жарқыраған панельдер, жұмсақ анимация. Фонды таңдайсың (Кітапхана, Таң, Кеш, Түн, Аврора) немесе өз суретіңді жүктейсің. Шыныдың қоюлығын реттейсің.']
+  ] },
   { ver: '3.0', date: '28.10.2026', items: [
     ['🏆', '3D подиум', 'Квиз бітерде үш жеңімпаз изометриялық сахнада көтеріледі: алтын, күміс, қола блоктар, бәрінің үстінде аватар мен ұпай, жоғарыдан конфетти түседі. Командалық жарыста да солай.'],
     ['🧪', 'Физика анимациялары', '«Ойын-сауық» бетінде жаңа құрал: маятник, көлбеу жазықтық және еркін түсу. Жүгірткімен бұрыш, ұзындық, үйкеліс, планетаны (Жер, Ай, Марс, Юпитер) өзгертесің, сурет қозғалады, формула мен нәтиже есептеледі. Баяу қозғалыс режимі бар.']
