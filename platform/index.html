@@ -24,6 +24,7 @@
 <meta property="og:image" content="https://groowin.github.io/groowin-site/platform/icon-512.png">
 <meta name="twitter:card" content="summary">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <style>
@@ -1162,6 +1163,11 @@ html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-
 @keyframes vBurst{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.4) rotate(220deg)}}
 @media (prefers-reduced-motion:reduce){.vIcon,.vbox i,.vdot{animation:none!important}.vbox svg,.vbox::before,.vdone h2,.vdone p{animation:none!important;opacity:1}}
 html[data-theme=light] #authCard{color:#fff}
+
+#qrBox{display:none}#authCard.qrm>:not(#qrBox):not(.vIcon):not(.vdone){display:none}#authCard.qrm #qrBox{display:block}
+#qrImg{width:220px;height:220px;margin:10px auto;padding:10px;border-radius:20px;background:#fff;box-shadow:0 0 40px rgba(92,160,255,.45);animation:vFloat 4s ease-in-out infinite}#qrImg svg{width:100%;height:100%;display:block}
+.qr-steps{margin:8px 0 0;padding-left:22px;font-size:.88rem;opacity:.85;line-height:1.7}
+.qd-row{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:8px 12px;margin-top:6px;border-radius:12px;border:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -1195,8 +1201,16 @@ html[data-theme=light] #authCard{color:#fff}
     <p class="hint" id="passHint" hidden>Кемінде 6 таңба.</p>
     <button class="go" id="submit">Кіру</button>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
+    <button class="lk" id="qrLoginBtn" type="button">📱 QR арқылы кіру (үлкен экранға)</button>
     <button class="lk" id="forgotBtn" type="button">Құпия сөзді ұмыттым</button>
     <button class="lk" id="accessBtn" type="button">Тізімде жоқпын, рұқсат сұраймын</button>
+    <div id="qrBox">
+      <h2 style="margin:0 0 6px;font-size:1.15rem;text-align:center">Телефонмен кіру</h2>
+      <div id="qrImg" aria-live="polite"></div>
+      <ol class="qr-steps"><li>Телефонда Groowin-ға кір</li><li>Аккаунт → «QR сканерлеу» бас</li><li>Экрандағы QR-ды көрсет</li></ol>
+      <p class="sub" id="qrNote" style="font-size:.85rem;text-align:center;margin:6px 0 0"></p>
+      <button class="lk" id="qrBack" type="button" style="text-align:center;width:100%">← Құпия сөзбен кіру</button>
+    </div>
     <div id="reqBox">
       <h2 id="rTitle" style="margin:0 0 6px;font-size:1.15rem"></h2>
       <p class="sub" id="rSub" style="margin:0 0 6px;font-size:.9rem"></p>
@@ -1479,6 +1493,10 @@ html[data-theme=light] #authCard{color:#fff}
         <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="go" id="bkSave" style="width:auto;padding:10px 22px">Көшірмені жүктеу</button><button class="out" id="bkLoad">Файлдан қалпына келтіру</button><input type="file" id="bkFile" accept=".json,application/json" hidden></div>
         <p class="msg" id="bkMsg" role="status" aria-live="polite"></p>
       </div>
+      <h3 style="margin:14px 0 0;font-size:1.05rem">Үлкен экранға кіру (QR)</h3>
+      <p class="sub" style="font-size:.9rem">Үлкен экранда сайтты ашып, «QR арқылы кіру» бас. Мына түймемен экрандағы QR-ды сканерле: нөмір мен құпия сөз экранда көрінбейді. Телефоннан кез келген уақытта экрандан шығара аласың.</p>
+      <button class="go" id="qrScan" style="width:auto;padding:10px 22px">📷 QR сканерлеу</button>
+      <div id="qrDev" style="margin-top:10px"></div>
       <h3 style="margin:14px 0 0;font-size:1.05rem">Телефонға орнату</h3>
       <p class="sub" style="font-size:.9rem" id="pwaHint">Сайтты қосымша сияқты орнат: басты экранда иконка болады, толық экранда ашылады.</p>
       <button class="go" id="pwaBtn" style="width:auto;padding:10px 22px" hidden>Орнату</button>
@@ -1618,7 +1636,7 @@ $('submit').onclick = async () => {
 };
 async function phoneStatus(phone) { const { data } = await sb.rpc('phone_status', { p_phone: phone }); return data || 'unknown'; }
 
-$('logout').onclick = () => sb.auth.signOut();
+$('logout').onclick = async () => { const q = qrGet(); if (q) { try { await sb.rpc('qr_revoke', { p_id: q.id }); } catch { } } ls.set('gwqr', ''); sb.auth.signOut(); };
 
 async function showApp(session) {
   $('auth').hidden = !!session;
@@ -1627,7 +1645,7 @@ async function showApp(session) {
   document.querySelector('.wrap').classList.toggle('wide', !!session);
   document.body.classList.toggle('in-app', !!session);
   if (!session) closeGame();
-  if (!session) { try { onlineStop(); } catch { } typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; $('phone').value = ''; $('pass').value = ''; try { $('name').value = ''; } catch {} say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
+  if (!session) { try { clearInterval(qrPing); ls.set('gwqr', ''); qrClose(); } catch { } try { onlineStop(); } catch { } typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; $('phone').value = ''; $('pass').value = ''; try { $('name').value = ''; } catch {} say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const lastA = +ls.get('lastActive');
   if (lastA && Date.now() - lastA > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; await sb.auth.signOut(); return; }
   touch();
@@ -1650,10 +1668,11 @@ async function showApp(session) {
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
   $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
+  if (isStaff) setTimeout(slidePre, 4000);
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
-  loadClassList().then(() => { if (isStaff) fillTargets(); renderNews(); }); loadGames();
+  loadClassList().then(() => { if (isStaff) fillTargets(); renderNews(); }); loadGames(); qrPingStart(); qrCheckPending(); qrDevices();
   if (XP_ON && me?.role === 'student') { const { data: x } = await sb.rpc('my_xp'); setXP(x || 0); } else $('xp').hidden = true;
 }
 
@@ -1977,6 +1996,8 @@ applyGlass();
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
   { ver: '3.2', date: '30.10.2026', items: [
+    ['📱', 'QR арқылы кіру', 'Үлкен экранда «QR арқылы кіру» бас, телефонда Аккаунт → «QR сканерлеу». Нөмір мен құпия сөз экранда көрінбейді. Телефоннан экраннан шығара аласың (WhatsApp Web сияқты).'],
+    ['⚡', 'PDF жылдам ашылады', 'Презентация бір ағынмен жүктеледі, құрылғыда сақталады: екінші ашқанда лезде ашылады. Үстіне барғанда не сабақ жоспары басталғанда алдын ала жүктеледі.'],
     ['🔐', 'Жаңа кіру беті', 'Шыны карточка, жарқыраған өрістер. Кіргенде «Верификация сәтті» анимациясы шығады. Галактика фоны сақталды.'],
     ['🪟', 'Шыны режимі: фокус', 'Фон сурет енді бұлыңғыр, сондықтан сайттағы мәтін мен карточкалар анық көрінеді. Бұлыңғырлық «Шыныдың қоюлығына» байланысты.'],
     ['👥', 'Топқа бөлу жаңарды', 'Сыныпты таңдауға не өз тізіміңді жазуға болады (әр жолға бір оқушы, Enter). Топ санын не әр топтағы адам санын таңда. Түрлі-түсті Canva стиліндегі карточкалар, көшіру түймесі бар.'],
@@ -2624,7 +2645,8 @@ function drawDock() {
   const tick = () => { if (!lessonRun) return; const el1 = (Date.now() - lessonRun.stepT0) / 1000, dd = stepDur(cur) * 60; if (dd) { const left = dd - el1; tm.textContent = left >= 0 ? fmtMin(left) : '+' + fmtMin(-left); tm.className = 'ld-tm' + (left < 0 ? ' over' : left < 60 ? ' low' : ''); if (left < 0 && !lessonRun.bell) { lessonRun.bell = true; SFX.bell(); } } else { tm.textContent = fmtMin(el1); tm.className = 'ld-tm'; } all.textContent = fmtMin((Date.now() - lessonRun.t0) / 1000) + (plan0 ? ' / ' + plan0 + ':00' : ''); };
   tick(); clearInterval(lessonDock.iv); lessonDock.iv = setInterval(tick, 1000); try { pultPush(); } catch { }
 }
-function startLesson(plan) { SFX.unlock(); lessonRun = { plan, i: 0, t0: Date.now(), stepT0: Date.now(), bell: false, spent: [] }; go('lessons'); drawDock(); stepSplash(0); runStep(plan.steps[0]); }
+async function lessonPrefetch(plan) { try { for (const st of plan.steps || []) { if (st.k === 'slides' && st.m) { const r = await sb.from('mat_items').select('id,title,storage_path,kind,mime').eq('id', st.m).maybeSingle(); if (r.data) slidePrefetch(r.data); } } } catch { } }
+function startLesson(plan) { SFX.unlock(); setTimeout(() => lessonPrefetch(plan), 800); lessonRun = { plan, i: 0, t0: Date.now(), stepT0: Date.now(), bell: false, spent: [] }; go('lessons'); drawDock(); stepSplash(0); runStep(plan.steps[0]); }
 function goStep(n) {
   if (!lessonRun) return; if (!$('qzHost').hidden) { notify('Алдымен ағымдағы ойынды жап (жоғарғы оң жақтағы ✕), сосын келесі қадамға өт.'); return; }
   closeSlides(); lessonRun.spent[lessonRun.i] = (lessonRun.spent[lessonRun.i] || 0) + (Date.now() - lessonRun.stepT0) / 1000; lessonRun.i = n; lessonRun.stepT0 = Date.now(); lessonRun.bell = false; drawDock(); stepSplash(n); runStep(lessonRun.plan.steps[n]);
@@ -3945,6 +3967,7 @@ function matKind(it) {
   return 'other';
 }
 async function loadMats() {
+  slidePre();
   const [f, i] = await Promise.all([sb.from('mat_folders').select('*').order('name'), sb.from('mat_items').select('*').order('created_at')]);
   mFolders = f.data || []; mItems = i.data || []; renderMats();
 }
@@ -4016,7 +4039,7 @@ function renderMats(keepBar) {
   its.forEach((it, i) => {
     const k = matKind(it), c = el('div', 'mt-it'); c.style.setProperty('--ic', KIND_COL[k] || KIND_COL.other); c.style.animationDelay = ((fs.length + i) * 25) + 'ms'; c.tabIndex = 0; c.setAttribute('role', 'button'); c.setAttribute('aria-label', it.title);
     const th = el('div', 'mt-th'); th.append(el('span', '', KIND_EMO[k] || '📄'), el('em', '', k === 'link' ? 'сілтеме' : (extOf(it.title) || k)));
-    const open = () => showMat(it); c.onclick = open; c.onkeydown = e => { if (e.key === 'Enter') open(); };
+    const open = () => showMat(it); if (it.kind === 'file' && matKind(it) === 'pdf') { c.addEventListener('pointerenter', () => slidePrefetch(it), { once: true }); c.addEventListener('touchstart', () => slidePrefetch(it), { once: true, passive: true }); } c.onclick = open; c.onkeydown = e => { if (e.key === 'Enter') open(); };
     const mt = [fmtSize(it.size), it.created_at ? new Date(it.created_at).toLocaleDateString('kk-KZ') : ''].filter(Boolean).join(' · ') + where(it);
     const acts = [['Көрсету', open], ...(it.kind === 'file' ? [['Жүктеп алу', async () => { const { data } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 300, { download: it.title }); if (data) location.href = data.signedUrl; }]] : []), ['Атын өзгерту', () => renameItem(it)], ['Папкаға ауыстыру', () => moveModal(it)],
       ['Жою', async () => { if (!(await ask('«' + it.title + '» жойылсын ба?'))) return; if (it.storage_path) await sb.storage.from('materials').remove([it.storage_path]); await sb.from('mat_items').delete().eq('id', it.id); loadMats(); }, true]];
@@ -4323,11 +4346,40 @@ function openSite(s) {
 
 // ===== Презентация (PDF) толық экранда =====
 let SL = null;
-async function pdfLib() {
-  if (window.pdfjsLib) return;
-  await new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; sc.onload = ok; sc.onerror = () => no(new Error('pdf.js жүктелмеді. Интернетті тексер.')); document.head.appendChild(sc); });
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let pdfLibP = null;
+function pdfLib() {
+  if (window.pdfjsLib) return Promise.resolve();
+  if (!pdfLibP) pdfLibP = new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'; sc.onload = () => { pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; ok(); }; sc.onerror = () => { pdfLibP = null; no(new Error('pdf.js жүктелмеді. Интернетті тексер.')); }; document.head.appendChild(sc); });
+  return pdfLibP;
 }
+// Алдын ала жүктеп қою: слайд ашқанда күтпеу үшін
+const slideUrls = new Map();
+async function slideUrl(path) {
+  const c = slideUrls.get(path); if (c && Date.now() - c.t < 50 * 60 * 1000) return c.u;
+  const { data, error } = await sb.storage.from('materials').createSignedUrl(path, 3600); if (error) throw error;
+  slideUrls.set(path, { u: data.signedUrl, t: Date.now() }); return data.signedUrl;
+}
+const slidePre = () => { try { pdfLib().catch(() => { }); } catch { } };
+// PDF-ті бір ағынмен жүктеп, құрылғыда кэштейді: екінші ашқанда лезде ашылады
+const slideInflight = new Map();
+async function slideData(it, onp) {
+  const key = 'https://gw-pdf.local/' + encodeURIComponent(it.storage_path); let cache = null;
+  try { cache = await caches.open('gw-pdf-v1'); const hit = await cache.match(key); if (hit) { const b = await hit.arrayBuffer(); if (b.byteLength > 100) return new Uint8Array(b); } } catch { }
+  if (slideInflight.has(key)) { const pr = slideInflight.get(key); pr.cbs.push(onp); return pr.p.then(b => new Uint8Array(b.slice(0))); }
+  const rec = { cbs: [onp] }; rec.p = (async () => {
+    const url = await slideUrl(it.storage_path), r = await fetch(url); if (!r.ok) throw new Error('Файл жүктелмеді (' + r.status + ')');
+    const total = +r.headers.get('content-length') || 0; let buf;
+    if (r.body && r.body.getReader) {
+      const rd = r.body.getReader(), parts = []; let got = 0;
+      for (;;) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; rec.cbs.forEach(f => f && f(got, total)); }
+      buf = new Uint8Array(got); let o = 0; parts.forEach(x => { buf.set(x, o); o += x.length; });
+    } else buf = new Uint8Array(await r.arrayBuffer());
+    if (cache && buf.length < 120 * 1048576) { try { await cache.put(key, new Response(buf.slice(0), { headers: { 'Content-Type': 'application/pdf' } })); } catch { } }
+    return buf;
+  })();
+  slideInflight.set(key, rec); try { const b = await rec.p; return new Uint8Array(b.slice(0)); } finally { slideInflight.delete(key); }
+}
+const slidePrefetch = it => { try { if (it && it.storage_path) slideData(it, null).catch(() => { }); } catch { } };
 function closeSlides() {
   if (!SL) return; const o = SL; SL = null;
   document.removeEventListener('keydown', o.key, true); removeEventListener('resize', o.rs); clearTimeout(o.idle);
@@ -4342,18 +4394,27 @@ async function openSlides(it, startAt) {
   try { const rf = ov.requestFullscreen || ov.webkitRequestFullscreen; const pr = rf && rf.call(ov); pr && pr.catch && pr.catch(() => {}); } catch {}
   let pdf;
   try {
-    const { data, error } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 3600); if (error) throw error;
-    await pdfLib(); pdf = await pdfjsLib.getDocument({ url: data.signedUrl }).promise;
+    const [data] = await Promise.all([slideData(it, (g, t) => { msg.textContent = t ? 'Жүктелуде… ' + Math.min(99, Math.round(100 * g / t)) + '% (' + fmtMb(t) + ')' : 'Жүктелуде… ' + fmtMb(g); }), pdfLib()]);
+    msg.textContent = 'Ашылуда…';
+    pdf = await pdfjsLib.getDocument({ data }).promise;
   } catch (e) { ov.remove(); if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); alert('Презентация ашылмады: ' + (e.message || e)); return; }
   msg.remove();
   const o = SL = { pdf, ov, cv, dot, blk, nn, t: it.title, i: Math.min(Math.max(+startAt || 1, 1), pdf.numPages), n: pdf.numPages, tok: 0 };
-  const render = async () => {
-    const tok = ++o.tok, pg = await pdf.getPage(o.i); if (tok !== o.tok || SL !== o) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2), v0 = pg.getViewport({ scale: 1 }), k = Math.min(innerWidth / v0.width, innerHeight / v0.height), vp = pg.getViewport({ scale: k * dpr });
+  const cache = new Map(); // бет нөмірі -> дайын сурет (келесі бет лезде ашылу үшін)
+  const paint = async i => {
+    const key = innerWidth + 'x' + innerHeight, c = cache.get(i); if (c && c.key === key) return c;
+    const pg = await pdf.getPage(i), dpr = Math.min(window.devicePixelRatio || 1, 2), v0 = pg.getViewport({ scale: 1 }), k = Math.min(innerWidth / v0.width, innerHeight / v0.height), vp = pg.getViewport({ scale: k * dpr });
     const tmp = document.createElement('canvas'); tmp.width = Math.floor(vp.width); tmp.height = Math.floor(vp.height);
-    await pg.render({ canvasContext: tmp.getContext('2d'), viewport: vp }).promise; if (tok !== o.tok || SL !== o) return;
-    cv.width = tmp.width; cv.height = tmp.height; cv.style.width = Math.floor(vp.width / dpr) + 'px'; cv.style.height = Math.floor(vp.height / dpr) + 'px'; cv.getContext('2d').drawImage(tmp, 0, 0);
+    await pg.render({ canvasContext: tmp.getContext('2d'), viewport: vp }).promise;
+    const r = { key, tmp, w: Math.floor(vp.width / dpr), h: Math.floor(vp.height / dpr) }; cache.set(i, r);
+    if (cache.size > 6) { for (const kk of cache.keys()) { if (Math.abs(kk - i) > 2) { cache.delete(kk); break; } } }
+    return r;
+  };
+  const render = async () => {
+    const tok = ++o.tok, i = o.i, r = await paint(i); if (tok !== o.tok || SL !== o) return;
+    cv.width = r.tmp.width; cv.height = r.tmp.height; cv.style.width = r.w + 'px'; cv.style.height = r.h + 'px'; cv.getContext('2d').drawImage(r.tmp, 0, 0);
     nn.textContent = o.i + ' / ' + o.n; try { pultPush(); } catch {}
+    setTimeout(() => { if (SL !== o || o.i !== i) return; (i < o.n ? paint(i + 1) : Promise.resolve()).then(() => { if (SL === o && o.i === i && i > 1) paint(i - 1); }).catch(() => { }); }, 60);
   };
   o.next = () => { if (o.i < (o.endAt || o.n)) o.go(1); else if (lessonRun) { closeSlides(); lessonStepBy(1); } };
   o.prev = () => { if (o.i > (o.startAt || 1)) o.go(-1); else if (lessonRun && lessonRun.i > 0) { closeSlides(); lessonStepBy(-1); } };
@@ -6307,6 +6368,70 @@ new MutationObserver(musicSync).observe($('qzHost'), { attributes: true, attribu
 new MutationObserver(musicSync).observe($('stage'), { attributes: true, attributeFilter: ['hidden'] });
 document.querySelectorAll('.sfxToggle').forEach(b => b.addEventListener('click', () => setTimeout(() => { applySfxUI(); musicSync(); }, 0)));
 applySfxUI();
+
+// ===== QR арқылы кіру (WhatsApp Web сияқты) =====
+const qrDeviceName = () => { const u = navigator.userAgent, b = /Edg\//.test(u) ? 'Edge' : /OPR\//.test(u) ? 'Opera' : /Firefox\//.test(u) ? 'Firefox' : /Chrome\//.test(u) ? 'Chrome' : /Safari\//.test(u) ? 'Safari' : 'Браузер', o = /Windows/.test(u) ? 'Windows' : /Android/.test(u) ? 'Android' : /iPhone|iPad/.test(u) ? 'iOS' : /Mac OS/.test(u) ? 'Mac' : /Linux/.test(u) ? 'Linux' : ''; return b + (o ? ' · ' + o : ''); };
+const qrGet = () => { try { return JSON.parse(ls.get('gwqr') || 'null'); } catch { return null; } };
+let qrS = null, qrPing = null;
+function qrStop() { if (qrS) { clearInterval(qrS.poll); qrS = null; } }
+function qrClose() { qrStop(); $('authCard').classList.remove('qrm'); }
+async function qrStart() {
+  qrStop(); $('authCard').classList.add('qrm'); $('qrImg').replaceChildren(); $('qrNote').textContent = 'QR дайындалуда…';
+  const { data, error } = await sb.rpc('qr_create', { p_device: qrDeviceName() }), row = Array.isArray(data) ? data[0] : data;
+  if (error || !row) { $('qrNote').textContent = 'QR жасалмады. SQL update-18 іске қосылған ба, интернет бар ма?'; return; }
+  const s = qrS = { id: row.id, secret: row.secret }, u = location.origin + location.pathname + '?qr=' + row.id;
+  $('qrImg').innerHTML = makeQR(u); $('qrNote').textContent = 'QR 3 минут жарамды, өзі жаңарады.';
+  s.poll = setInterval(async () => {
+    if (qrS !== s) return; const { data: st } = await sb.rpc('qr_status', { p_id: s.id, p_secret: s.secret });
+    if (qrS !== s) return;
+    if (st === 'approved') { clearInterval(s.poll); $('qrNote').textContent = 'Кіріп жатыр…'; await qrFinish(s); }
+    else if (st === 'expired' || st === 'none' || st === 'denied') { clearInterval(s.poll); qrStart(); if (st === 'denied') setTimeout(() => { $('qrNote').textContent = 'Телефонда рұқсат берілмеді.'; }, 600); }
+  }, 2000);
+}
+async function qrFinish(s) {
+  try {
+    const r = await fetch(SUPABASE_URL + '/functions/v1/qr-login', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY }, body: JSON.stringify({ id: s.id, secret: s.secret }) });
+    const j = await r.json().catch(() => ({})); if (!r.ok || !j.token_hash) throw new Error(j.error || 'Функция жауап бермеді (qr-login орнатылған ба?)');
+    ls.set('gwqr', JSON.stringify({ id: s.id, secret: s.secret })); window.__vflag = Date.now(); ls.set('lastActive', Date.now()); lastTouch = Date.now();
+    const { error } = await sb.auth.verifyOtp({ token_hash: j.token_hash, type: 'magiclink' }); if (error) throw error; qrStop();
+  } catch (e) { ls.set('gwqr', ''); $('qrNote').textContent = 'Қате: ' + (e.message || e); setTimeout(() => { if ($('authCard').classList.contains('qrm')) qrStart(); }, 3500); }
+}
+function qrPingStart() {
+  clearInterval(qrPing); if (!qrGet()) return;
+  const run = async () => { const q = qrGet(); if (!q) { clearInterval(qrPing); return; } const { data, error } = await sb.rpc('qr_ping', { p_id: q.id, p_secret: q.secret }); if (!error && data === false) { ls.set('gwqr', ''); clearInterval(qrPing); blockedMsg = 'Телефон арқылы бұл экраннан шығарылдың.'; await sb.auth.signOut(); } };
+  run(); qrPing = setInterval(run, 10000);
+}
+async function qrApprove(id) {
+  const ok = await ask('Үлкен экранға осы аккаунтпен кіруге рұқсат бересің бе? Тек өзің көріп тұрған экранға ғана рұқсат бер. Бейтаныс QR болса, «Жоқ» бас.', 'Рұқсат беру', 'Жоқ');
+  if (!ok) { sb.rpc('qr_deny', { p_id: id }); return; }
+  const { data } = await sb.rpc('qr_approve', { p_id: id });
+  notify(data === 'ok' ? 'Рұқсат берілді, экран кіріп жатыр.' : data === 'expired' ? 'QR ескірді. Экранда жаңасы шығады, қайта сканерле.' : data === 'used' ? 'Бұл QR қолданылып қойған.' : 'Қате: ' + (data || 'байланыс жоқ'), data === 'ok' ? '' : 'err'); qrDevices();
+}
+async function qrDevices() {
+  const box = $('qrDev'); if (!box) return; const { data } = await sb.rpc('qr_devices'); box.replaceChildren(); const L = data || [];
+  if (!L.length) { box.appendChild(el('p', 'hint', 'Қазір байланысқан үлкен экран жоқ.')); return; }
+  L.forEach(d => { const r = el('div', 'qd-row'), b = el('button', 'out', 'Шығару'); b.type = 'button'; b.onclick = async () => { b.disabled = true; await sb.rpc('qr_revoke', { p_id: d.id }); notify('Экраннан шығару жіберілді (10 секундқа дейін).'); setTimeout(qrDevices, 1200); }; r.append(el('span', '', '🖥 ' + d.device), b); box.appendChild(r); });
+}
+let jsQRp = null;
+const loadJsQR = () => window.jsQR ? Promise.resolve() : (jsQRp = jsQRp || new Promise(ok => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js'; sc.onload = ok; sc.onerror = ok; document.head.appendChild(sc); }));
+async function qrScan() {
+  const ov = document.createElement('div'); ov.id = 'dlg'; const bx = el('div', 'dbox'), v = document.createElement('video'), note = el('p', 'hint', 'QR-ды камераға көрсет'), cl = el('button', 'out', 'Жабу');
+  v.setAttribute('playsinline', ''); v.muted = true; v.style.cssText = 'width:100%;border-radius:14px;background:#000;max-height:60vh'; cl.type = 'button'; bx.append(el('p', '', 'Үлкен экрандағы QR-ды сканерле'), v, note, cl); ov.appendChild(bx); document.body.appendChild(ov);
+  let stream = null, stop = false; const end = () => { stop = true; try { stream && stream.getTracks().forEach(t => t.stop()); } catch { } ov.remove(); }; cl.onclick = end;
+  try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); v.srcObject = stream; await v.play(); } catch { note.textContent = 'Камераға рұқсат берілмеді. Телефонның өз камерасымен QR-ды сканерле, сайт ашылып, рұқсат сұрайды.'; return; }
+  let det = null; if ('BarcodeDetector' in window) { try { det = new BarcodeDetector({ formats: ['qr_code'] }); } catch { } } if (!det) await loadJsQR();
+  const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
+  const tick = async () => {
+    if (stop) return;
+    if (v.readyState >= 2 && v.videoWidth) { let txt = ''; try { if (det) { const r = await det.detect(v); txt = (r[0] && r[0].rawValue) || ''; } else if (window.jsQR) { cv.width = v.videoWidth; cv.height = v.videoHeight; cx.drawImage(v, 0, 0); const im = cx.getImageData(0, 0, cv.width, cv.height), r = jsQR(im.data, im.width, im.height); txt = r ? r.data : ''; } } catch { }
+      const m = txt.match(/[?&]qr=([0-9a-f-]{36})/i); if (m) { end(); qrApprove(m[1]); return; } }
+    setTimeout(tick, 220);
+  }; tick();
+}
+(() => { try { const q = new URLSearchParams(location.search).get('qr'); if (q && /^[0-9a-f-]{36}$/i.test(q)) { sessionStorage.setItem('gwqrp', q); history.replaceState(null, '', location.pathname); } } catch { } })();
+function qrCheckPending() { try { const q = sessionStorage.getItem('gwqrp'); if (q) { sessionStorage.removeItem('gwqrp'); setTimeout(() => qrApprove(q), 700); } } catch { } }
+$('qrLoginBtn').onclick = qrStart; $('qrBack').onclick = qrClose; $('qrScan').onclick = qrScan;
+
 function verifyAnim() {
   return new Promise(res => {
     const c = $('authCard'); if (!c || $('auth').hidden || matchMedia('(prefers-reduced-motion:reduce)').matches) return res();
