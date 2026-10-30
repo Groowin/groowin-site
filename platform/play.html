@@ -253,7 +253,7 @@ function onState(s) {
   if (s.tm && s.tm[myId] !== undefined) myTeam = s.tm[myId]; else if (s.r && s.r[myId] && s.r[myId].t !== undefined && s.r[myId].t >= 0) myTeam = s.r[myId].t;
   if (s.g === 'spy') return spyScreen(s);
   if (s.g === 'croc') return crocScreen(s);
-  if (s.g === 'boss') return bossScreen(s);
+  if (s.g === 'boss' || s.g === 'climb') return climbScreen(s);
   if (s.g === 'cloud') return cloudScreen(s);
   if (s.g === 'poll') return pollScreen(s);
   if (s.g === 'ask') return askScreen(s);
@@ -505,29 +505,32 @@ function crocScreen(s) {
   }
 }
 
-// ===== Босс (телефон) =====
+// ===== Шыңға шығу (телефон) =====
 let bsG = { qi: -1, picked: -1 };
-function bossScreen(s) {
+function climbScreen(s) {
   if (s.ph === 'closed') return end('Ойын аяқталды', 'Рақмет!');
   gotState = true; lastPh = 'boss'; clearInterval(tmr); paintFS();
-  if (s.ph === 'lobby') { bsG = { qi: -1, picked: -1 }; const c = el('div', 'center'); c.append(el('div', 'bs-big', s.be || '👹'), el('h1', '', (s.bn || 'Босс') + ' келе жатыр!'), el('p', 'mute', 'Сен кірдің. Мұғалім шайқасты бастағанша күт. Бәріміз бірге жеңеміз.')); draw(c); return; }
-  const me = (s.pl || []).find(p => p.i === myId); if (!me) { waitScreen('Шайқас басталып кетті', 'Келесі ойынға қосыл.'); return; }
-  const bars = () => { const b = el('div', 'bs-bars'); [['boss', (s.be || '') + ' ' + (s.bn || 'Босс'), s.bh, s.bm], ['cls', '🛡 Сынып', s.ch, 100]].forEach(([cl, t, v, m]) => { const w = el('div', 'bs-bw ' + cl), f = el('i'), tr = el('div', 'bs-bt'); f.style.width = (100 * Math.max(0, v) / m) + '%'; tr.appendChild(f); w.append(el('span', '', t + ': ' + v + ' / ' + m), tr); b.appendChild(w); }); return b; };
+  if (s.ph === 'lobby') { bsG = { qi: -1, picked: -1 }; const c = el('div', 'center'); c.append(el('div', 'bs-big', s.be || '🏔️'), el('h1', '', (s.bn || 'Шың') + ' күтіп тұр!'), el('p', 'mute', 'Сен кірдің. Мұғалім бастағанша күт. Дұрыс жауап жоғары көтереді.')); draw(c); return; }
+  const me = (s.pl || []).find(p => p.i === myId); if (!me) { waitScreen('Ойын басталып кетті', 'Келесі ойынға қосыл.'); return; }
+  const T = s.top || 5;
+  const bar = () => { const w = el('div', 'bs-bw cls'), f = el('i'), tr = el('div', 'bs-bt'); f.style.width = (100 * Math.min(T, me.p) / T) + '%'; tr.appendChild(f); w.append(el('span', '', '🏔️ Қабат: ' + me.p + ' / ' + T), tr); const b = el('div', 'bs-bars'); b.appendChild(w); return b; };
   if (s.ph === 'q') {
     if (bsG.qi !== s.qi) { bsG = { qi: s.qi, picked: -1 }; } let endAt = Date.now() + (s.left || 0) * 1000;
-    const top = el('div', 'top'), tm = el('div', 'tm', String(s.left || 0)), bar = el('div', 'bar'), fill = el('i'); bar.appendChild(fill); top.append(tm, bar, el('span', 'mute', (s.qi + 1) + '/' + s.qn));
+    const top = el('div', 'top'), tm = el('div', 'tm', String(s.left || 0)), bb = el('div', 'bar'), fill = el('i'); bb.appendChild(fill); top.append(tm, bb, el('span', 'mute', (s.qi + 1) + '/' + s.qn));
     const opts = el('div', 'opts'), st = el('p', 'mute', bsG.picked >= 0 ? 'Жауап қабылданды. Қалғандарын күт.' : ''); st.style.textAlign = 'center';
     (s.o || []).forEach((v, k) => { if (!v) return; const b = el('button', 'opt' + (bsG.picked === k ? ' pick' : (bsG.picked >= 0 ? ' dim' : ''))); b.type = 'button'; b.style.setProperty('--c', COL[k]); b.disabled = bsG.picked >= 0; b.append(el('span', '', ['▲', '◆', '●', '■'][k]), el('span', '', v));
       b.onclick = () => { if (bsG.picked >= 0 || Date.now() > endAt + 500) return; bsG.picked = k; opts.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (x !== b) x.classList.add('dim'); else x.classList.add('pick'); }); ch.send({ type: 'broadcast', event: 'bans', payload: { id: myId, qi: s.qi, k } }); st.textContent = 'Жауап қабылданды. Қалғандарын күт.'; if (navigator.vibrate) navigator.vibrate(30); }; opts.appendChild(b); });
-    draw(bars(), top, el('div', 'q', s.q), opts, st); const tk = () => { const left = endAt - Date.now(), sec = Math.max(0, Math.ceil(left / 1000)); tm.textContent = sec; fill.style.transform = 'scaleX(' + Math.max(0, Math.min(1, left / 1000 / (s.sec || 20))) + ')'; if (left <= 0) { clearInterval(tmr); opts.querySelectorAll('.opt').forEach(x => x.disabled = true); if (bsG.picked < 0) st.textContent = 'Уақыт бітті.'; } }; tk(); tmr = setInterval(tk, 250); return;
+    draw(bar(), top, el('div', 'q', s.q), opts, st); const tk = () => { const left = endAt - Date.now(), sec = Math.max(0, Math.ceil(left / 1000)); tm.textContent = sec; fill.style.transform = 'scaleX(' + Math.max(0, Math.min(1, left / 1000 / (s.sec || 20))) + ')'; if (left <= 0) { clearInterval(tmr); opts.querySelectorAll('.opt').forEach(x => x.disabled = true); if (bsG.picked < 0) st.textContent = 'Уақыт бітті.'; } }; tk(); tmr = setInterval(tk, 250); return;
   }
   if (s.ph === 'rev') {
-    const r = s.r || {}, mine = r.who && r.who[myId], c = el('div', 'center'); c.append(el('div', 'bs-big ' + (mine === 'ok' ? 'hit' : ''), mine === 'ok' ? '💥' : (s.be || '👹')), el('h1', '', mine === 'ok' ? 'Дұрыс! Соққы тиді' : mine === 'bad' ? 'Қате жауап' : 'Үлгермедің'),
-      el('p', mine === 'ok' ? 'res ok' : 'res bad', mine === 'ok' ? 'Боссқа −1 HP' : 'Босс сыныпқа шабуыл жасады'), el('p', 'mute', 'Барлығы: ✓ ' + (r.ok || 0) + ' · ✗ ' + ((r.bad || 0) + (r.none || 0)) + ' · Боссқа −' + (r.dmg || 0) + ', сыныпқа −' + (r.hit || 0)));
-    if (r.exp) c.appendChild(el('p', 'mute', r.exp)); draw(bars(), c); if (navigator.vibrate) navigator.vibrate(mine === 'ok' ? [40, 30, 40] : 120); return;
+    const r = s.r || {}, mine = r.who && r.who[myId], mv = (r.mv && r.mv[myId]) || 0, c = el('div', 'center');
+    c.append(el('div', 'bs-big ' + (mv > 0 ? 'hit' : ''), mv > 0 ? '🧗' : (mv < 0 ? '🪨' : (s.be || '🏔️'))), el('h1', '', mine === 'ok' ? (mv > 1 ? 'Ең жылдам! +2 қабат' : 'Дұрыс! +1 қабат') : mine === 'bad' ? 'Қате жауап' : 'Үлгермедің'),
+      el('p', mv > 0 ? 'res ok' : 'res bad', mv > 0 ? 'Жоғары көтерілдің' : (mv < 0 ? '1 қабат төмен түстің' : 'Орныңда тұрсың')), el('p', 'mute', 'Барлығы: ▲ ' + (r.ok || 0) + ' · ▼ ' + ((r.bad || 0) + (r.none || 0))));
+    if (r.exp) c.appendChild(el('p', 'mute', r.exp)); draw(bar(), c); if (navigator.vibrate) navigator.vibrate(mv > 0 ? [40, 30, 40] : 120); return;
   }
   if (s.ph === 'end') {
-    const c = el('div', 'center'), mine = (s.top || []).find(x => x.i === myId); c.append(el('div', 'bs-big', s.win ? '🏆' : '💀'), el('h1', '', s.win ? 'Сынып жеңді!' : (s.bn || 'Босс') + ' жеңді'), el('p', 'mute', s.win ? 'Бәріңе рақмет, командалық жұмыс керемет болды.' : 'Келесі жолы жеңеміз!'), el('p', 'pts', 'Сенің соққың: ' + (me.d || 0))); draw(c);
+    const rk = s.rk || [], idx = rk.findIndex(x => x.i === myId), c = el('div', 'center'); c.append(el('div', 'bs-big', idx === 0 ? '🏆' : '🏔️'), el('h1', '', idx === 0 ? 'Сен жеңдің!' : 'Ойын аяқталды'), el('p', 'mute', 'Сенің биіктігің: ' + me.p + ' қабат' + (idx >= 0 ? ' · ' + (idx + 1) + '-орын' : '')), el('p', 'mute', rk.map((x, i) => (i + 1) + '. ' + x.n).join('  ')));
+    draw(c);
   }
 }
 
