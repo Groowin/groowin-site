@@ -1936,6 +1936,7 @@ const VIEWS = ['path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalo
 function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); }
 function go(key, keep) {
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
+  clearInterval(window.__qrDevT); if (key === 'account') { qrDevices(); window.__qrDevT = setInterval(() => { if ($('v-account').hidden) clearInterval(window.__qrDevT); else qrDevices(); }, 15000); }
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === (key === 'quiz' ? 'play' : key)));
   if (key === 'physics' || key === 'math') {
     subj = key; if (!keep) gradeSel = null;
@@ -6410,7 +6411,7 @@ async function qrApprove(id) {
 async function qrDevices() {
   const box = $('qrDev'); if (!box) return; const { data } = await sb.rpc('qr_devices'); box.replaceChildren(); const L = data || [];
   if (!L.length) { box.appendChild(el('p', 'hint', 'Қазір байланысқан үлкен экран жоқ.')); return; }
-  L.forEach(d => { const r = el('div', 'qd-row'), b = el('button', 'out', 'Шығару'); b.type = 'button'; b.onclick = async () => { b.disabled = true; await sb.rpc('qr_revoke', { p_id: d.id }); notify('Экраннан шығару жіберілді (10 секундқа дейін).'); setTimeout(qrDevices, 1200); }; r.append(el('span', '', '🖥 ' + d.device), b); box.appendChild(r); });
+  L.forEach(d => { const r = el('div', 'qd-row'), b = el('button', 'out', 'Шығару'); b.type = 'button'; b.onclick = async () => { b.disabled = true; await sb.rpc('qr_revoke', { p_id: d.id }); notify('Экраннан шығару жіберілді (10 секундқа дейін).'); setTimeout(qrDevices, 1200); }; const me = qrGet(); if (me && me.id === d.id) { r.append(el('span', '', '🖥 ' + d.device + ' · осы құрылғы')); } else r.append(el('span', '', '🖥 ' + d.device), b); box.appendChild(r); });
 }
 let jsQRp = null;
 const loadJsQR = () => window.jsQR ? Promise.resolve() : (jsQRp = jsQRp || new Promise(ok => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js'; sc.onload = ok; sc.onerror = ok; document.head.appendChild(sc); }));
