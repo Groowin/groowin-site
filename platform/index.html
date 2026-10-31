@@ -1185,6 +1185,68 @@ html[data-theme=light] #authCard{color:#fff}
 .c-blue{--a:#2F6BFF;--b:#4FA3FF}.c-green{--a:#12A06B;--b:#43D08F}.c-orange{--a:#F2812A;--b:#FFB155}.c-violet{--a:#7C3AED;--b:#B07CFF}.c-pink{--a:#DB2777;--b:#FF6FA8}.c-cyan{--a:#0891B2;--b:#34D3EE}.c-teal{--a:#0D9488;--b:#4FE0C9}.c-amber{--a:#D97706;--b:#FBBF24}.c-indigo{--a:#4F46E5;--b:#8B8DFF}.c-rose{--a:#E11D48;--b:#FB7185}
 @media (max-width:760px){.hm-grid{grid-template-columns:1fr 1fr;gap:12px}.hm-two{grid-template-columns:1fr}.hm-card{min-height:130px;padding:16px}}
 @media (prefers-reduced-motion:reduce){.hm-card{transition:none}}
+
+/* ===== Ойын стилі 2.0: түрлі-түсті, жарқын, жанды (барлық тақта ойындарына) ===== */
+.bg-wrap{max-width:1180px;gap:18px}
+.bg-head{padding:12px 20px;border-radius:22px;background:linear-gradient(135deg,rgba(124,92,255,.35),rgba(59,107,255,.2));border:1px solid rgba(190,205,255,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 16px 40px -22px rgba(124,92,255,.9)}
+.bg-head h2{font-size:clamp(1.3rem,2.6vw,1.9rem);letter-spacing:-.01em}
+.bg-card{border-radius:26px;padding:22px 26px;border:1px solid rgba(190,205,255,.26);background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 22px 50px -26px rgba(0,0,0,.8)}
+.bg-q{position:relative;padding-left:34px}.bg-q::before{content:'';position:absolute;left:14px;top:20px;bottom:20px;width:6px;border-radius:6px;background:linear-gradient(180deg,#7C5CFF,#19B5D6)}
+.bg-turn{align-self:flex-start;padding:8px 18px 8px 12px;border-radius:99px;background:color-mix(in srgb,var(--tc) 22%,transparent);border:1.5px solid var(--tc);box-shadow:0 0 24px -6px var(--tc)}
+.bg-turn i{width:18px;height:18px;box-shadow:0 0 0 4px color-mix(in srgb,var(--tc) 30%,transparent);animation:bgPulse 1.6s infinite;--pc:var(--tc)}
+.bg-teams{gap:14px}
+.bg-team{position:relative;overflow:hidden;border:0;border-radius:24px;padding:16px 14px 14px;background:linear-gradient(150deg,color-mix(in srgb,var(--tc) 55%,#10162c),color-mix(in srgb,var(--tc) 18%,#0b1022));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 18px 36px -20px var(--tc);color:#fff;transition:transform .25s,box-shadow .25s}
+.bg-team::after{content:'';position:absolute;right:-26px;top:-26px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.12)}
+.bg-team .nm{font-size:1.15rem;color:#fff}.bg-team .sc{font-size:3rem;color:#fff;text-shadow:0 4px 18px rgba(0,0,0,.35)}
+.bg-team.top{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 3px #FFD23B,0 20px 44px -16px #FFD23B;transform:translateY(-3px)}
+.bg-team button{border-radius:99px}
+.bg-lane{border:0;border-radius:26px;padding:16px 18px;background:linear-gradient(120deg,color-mix(in srgb,var(--tc) 30%,#0c1226),rgba(255,255,255,.04));box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 4px 0 0 var(--tc),0 18px 40px -26px var(--tc)}
+.bg-ln b{font-size:1.3rem}
+.bg-track{height:18px;border-radius:12px;background:rgba(255,255,255,.12)}.bg-track>i{background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 70%,#fff),var(--tc));box-shadow:0 0 18px var(--tc)}
+.bg-run{font-size:2rem;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
+.bg-ltask{font-size:clamp(1.15rem,2.4vw,1.7rem)}
+.bg-opt{border-radius:22px;padding:20px 22px;background-image:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 55%);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 0 -4px rgba(0,0,0,.28)}
+.bg-opt:hover{transform:translateY(-3px)}
+.bg-step{border-radius:18px;background:rgba(255,255,255,.06);border-width:1.5px;padding:12px 18px}
+.bg-exp{border-radius:18px;border-left-width:8px}
+.bg-ctl button.go,.bg-ctl .go{border-radius:99px;padding:12px 26px;background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;border:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 28px -10px #7C3AED}
+.bg-ctl button.out{border-radius:99px;padding:11px 22px}
+.bg-tt{font-size:2.2rem;padding:2px 14px;border-radius:14px;background:rgba(0,0,0,.25)}
+.bg-hero{border-radius:28px}
+.bg-chain i{border-radius:14px}
+/* Сұрыптау */
+.so-z{border-style:solid;border-width:0;border-top:8px solid var(--zc);border-radius:24px;padding:14px;background:linear-gradient(180deg,color-mix(in srgb,var(--zc) 22%,#0c1226),color-mix(in srgb,var(--zc) 6%,transparent));box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 18px 40px -26px var(--zc);transition:transform .2s,box-shadow .2s}
+.so-z:hover,.so-z.over{transform:translateY(-4px);box-shadow:0 0 0 3px var(--zc),0 22px 44px -18px var(--zc)}
+.so-z>b{font-size:clamp(1.1rem,2.4vw,1.5rem);color:#fff;padding:2px 0 8px}
+.so-chip{box-shadow:0 14px 30px -12px var(--accent),inset 0 1px 0 rgba(255,255,255,.4)}
+
+/* ===== Ойын стилі 3.0: Басты бет сияқты жарқын градиент карточкалар ===== */
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-head{background:linear-gradient(120deg,#7C3AED,#EC4899 70%,#F59E0B);border:0;color:#fff;box-shadow:0 20px 44px -22px #EC4899,inset 0 1px 0 rgba(255,255,255,.4)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-head h2{color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.25)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-head .bg-tt,.bg-head .wd-tm{background:rgba(0,0,0,.28);color:#fff}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-head button:not(.go){background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:99px}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-head .go{background:#fff;color:#7C3AED;border:0;border-radius:99px;box-shadow:0 8px 20px -8px rgba(0,0,0,.4)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-turn{background:linear-gradient(120deg,var(--tc),color-mix(in srgb,var(--tc) 65%,#fff));border:0;color:#fff;padding:10px 22px 10px 14px;box-shadow:0 14px 32px -12px var(--tc)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-turn span{color:#fff}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-turn i{background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.35)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-team{background:linear-gradient(150deg,var(--tc),color-mix(in srgb,var(--tc) 55%,#fff));box-shadow:0 18px 38px -18px var(--tc),inset 0 1px 0 rgba(255,255,255,.5)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-team::after{width:120px;height:120px;right:-34px;top:-40px;background:rgba(255,255,255,.2)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-team .sc{font-size:3.4rem}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-team.turn{box-shadow:0 0 0 4px #fff,0 18px 38px -14px var(--tc)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-lane{background:linear-gradient(120deg,var(--tc),color-mix(in srgb,var(--tc) 55%,#000));color:#fff;box-shadow:0 20px 44px -22px var(--tc),inset 0 1px 0 rgba(255,255,255,.35)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-lane .bg-ln b,.bg-lane .bg-ln small,.bg-lane .bg-ltask{color:#fff}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-lane .bg-track{background:rgba(0,0,0,.28)}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-lane .bg-track>i{background:#fff;box-shadow:0 0 16px rgba(255,255,255,.8)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-lane.lead{box-shadow:0 0 0 4px #FFD23B,0 22px 46px -18px #FFD23B}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-lane .bg-lc button{border-radius:99px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.45);color:#fff}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-lane .bg-lc button.go{background:#fff;color:#1B2140;border:0}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .so-z{background:linear-gradient(170deg,var(--zc),color-mix(in srgb,var(--zc) 50%,#fff));border:0;border-radius:26px;box-shadow:0 20px 44px -20px var(--zc),inset 0 1px 0 rgba(255,255,255,.45);position:relative;overflow:hidden}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .so-z::after{content:'';position:absolute;right:-30px;bottom:-40px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.18);pointer-events:none}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .so-z>b{color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.25)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .so-chip{background:linear-gradient(135deg,#fff,#E8EEFF);color:#1B2140;font-weight:800;box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .pr-c .fa{background:linear-gradient(135deg,#7C3AED,#EC4899)}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .pr-c:nth-child(3n+2) .fa{background:linear-gradient(135deg,#0891B2,#34D3EE)}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .pr-c:nth-child(3n) .fa{background:linear-gradient(135deg,#F2812A,#FFB155)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .pr-c .fa,.pr-c .bk{border-radius:22px;box-shadow:0 14px 30px -14px rgba(0,0,0,.55)}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-g{background:linear-gradient(160deg,rgba(124,58,237,.3),rgba(8,145,178,.2));border-radius:24px}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-c{border-radius:10px}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-w{border-radius:16px}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-ob,.bg-ctl .go{background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;border:0;border-radius:99px}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-hero{background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;border:0;box-shadow:0 24px 54px -24px #EC4899}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-step{background:linear-gradient(120deg,rgba(124,58,237,.28),rgba(236,72,153,.16));border:0}
+html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn{background:linear-gradient(120deg,var(--tc),color-mix(in srgb,var(--tc) 65%,#fff));border:0;color:#fff;box-shadow:0 14px 32px -12px var(--tc)}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn i{background:#fff}
 </style>
 </head>
 <body>
@@ -2017,6 +2079,9 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '3.5', date: '31.10.2026', items: [
+    ['🎨', 'Ойындар жарқын стильде', 'Тақта ойындарының бәрі (Сұрыптау, Эстафета, Жұптарды тап, Сөз табу, Тізбек, Қателікті тап т.б.) Басты бет сияқты жарқын градиент карточкаларға ауысты: түрлі-түсті командалар, жолақтар, топтар және жоғарғы жолақ.']
+  ] },
   { ver: '3.2', date: '30.10.2026', items: [
     ['🏠', 'Басты бет және орталық алаң', 'Кіргенде жаңа Басты бет ашылады: сәлем және жылдам бастау карточкалары (Викторина, Топқа бөлу, Таймер, Сабақ жоспары т.б.). Барлық бөлімнің мазмұны енді ортада, ауасы бар жұмыс алаңында тұрады.'],
     ['📱', 'QR арқылы кіру', 'Үлкен экранда «QR арқылы кіру» бас, телефонда Аккаунт → «QR сканерлеу». Нөмір мен құпия сөз экранда көрінбейді. Телефоннан экраннан шығара аласың (WhatsApp Web сияқты).'],
