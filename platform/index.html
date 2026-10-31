@@ -1313,6 +1313,11 @@ html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn{back
 .rm-stats>div{padding:16px 8px;text-align:center}.rm-stats>div+div{border-left:1px solid var(--line)}
 .rm-stats b{display:block;font-size:clamp(1.6rem,4vw,2.4rem);font-family:Georgia,'Times New Roman',serif}
 .rm-stats small{opacity:.65;text-transform:uppercase;letter-spacing:.08em;font-size:.7rem}
+.rm-box{position:relative;border-radius:26px;overflow:hidden}
+.rm-box.is3{aspect-ratio:16/10;max-height:74vh;min-height:360px;background:#070a1a;border:1px solid var(--line);box-shadow:0 24px 50px -28px rgba(0,0,0,.8)}
+.rm3-cv{display:block;width:100%;height:100%;touch-action:none;cursor:grab}.rm3-cv:active{cursor:grabbing}
+.rm-box .rm-chip{position:absolute;left:14px;top:12px;z-index:6;font-size:13px;padding:7px 14px;gap:6px 12px}
+@media(max-width:700px){.rm-box.is3{aspect-ratio:1/1.1;max-height:74vh;min-height:320px}}
 @media(prefers-reduced-motion:reduce){.rm-av svg,.rm-z,.rm-seat{animation:none!important}}
 #offBar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;max-width:min(560px,calc(100vw - 24px));padding:11px 18px;border-radius:99px;background:#1f2937;color:#fff;font-size:.92rem;box-shadow:0 14px 34px -10px rgba(0,0,0,.6);text-align:center}#offBar.ok{background:#16a34a}#offBar[hidden]{display:none}
 </style>
@@ -2176,6 +2181,10 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '3.8', date: '01.11.2026', items: [
+    ['🌌', '3D Оқу бөлмесі', 'Бөлме енді шынайы 3D: түнгі ғарыш көрінетін терезесі, төбеде айналып тұрған күн жүйесі, телескопы бар обсерватория. Оқушылар «жұлдызшалар», басындағы жұлдыз көп оқыған сайын өседі, ұйықтап кетсе өшеді. Саусақпен айналдыр, екі саусақпен жақындат. Қаласаң 🖼️ 2D нұсқасына ауыса аласың.'],
+    ['🚪', 'Сынып жасамай кіруге болады', 'Бөлмеге енді сынып керек емес: «Ортақ бөлмеге» кез келген оқушы өзі кіреді (толса, келесі бөлме ашылады). Қаласа өз сыныбының жеке бөлмесіне де кіре алады.']
+  ] },
   { ver: '3.7', date: '01.11.2026', items: [
     ['🏫', 'Оқу бөлмесі', 'Жаңа бөлім: сыныптың ортақ бөлмесі. Оқушы кіргенде өз орнына отырады, сыныптастары мен мұғалім көрінеді. Күйіңді таңда: оқимын, жазамын, сұрағым бар немесе демалыс. Бірнеше минут тиіспесең, ұйықтап кетесің 😴. Отырған уақытың, сессиялар мен қатарынан күндер саналады. Ол үшін update-20.sql іске қос.']
   ] },
@@ -6670,7 +6679,7 @@ $('qrLoginBtn').onclick = qrStart; $('qrBack').onclick = qrClose; $('qrScan').on
 
 
 // ===== Басты бет =====
-// ===== Оқу бөлмесі 3.7: сыныптың ортақ бөлмесі. Оқушылар орнына отырады, күйі көрінеді (presence), отырған уақыт саналады =====
+// ===== Оқу бөлмесі 3.8: сыныптың ортақ бөлмесі. Оқушылар орнына отырады, күйі көрінеді (presence), отырған уақыт саналады =====
 const RM_SEATS = (() => {
   const T = [[345, 520, 1], [765, 430, .95], [1222, 492, .98], [310, 715, 1.14], [785, 693, 1.12], [1290, 718, 1.14]], tp = [[-108, 22], [102, 22], [-102, 52], [95, 52], [-2, 72]], out = [];
   T.forEach(([cx, cy, s]) => tp.forEach(([dx, dy]) => out.push([Math.round(cx + dx * s), Math.round(cy + dy * s)])));
@@ -6679,7 +6688,7 @@ const RM_SEATS = (() => {
 const RM_W = 1586, RM_H = 992;
 const RM_ST = { read: ['📖', 'Оқимын'], write: ['✍️', 'Жазамын'], hand: ['✋', 'Сұрағым бар'], sleep: ['😴', 'Демалыс'] };
 const RM_SKIN = ['#F6D2B0', '#EDBE96', '#D9A171', '#BF8460', '#8D5A3B'], RM_HAIR = ['#2B1B12', '#4A2C1A', '#7A4A22', '#1E1E24', '#B5651D', '#C94F7C'];
-const rmHash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } h ^= h >>> 15; h = Math.imul(h, 2246822507); h ^= h >>> 13; return h >>> 0; };
+const rmHash = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
 const rmName = n => { const p = String(n || '').trim().split(/\s+/); return (p[1] || p[0] || 'Оқушы').slice(0, 14); };
 function rmSvg(uid, av, st) {
   const h = rmHash(uid), sk = RM_SKIN[h % 5], hr = RM_HAIR[(h >> 3) % 6], sty = (h >> 6) % 3, a = avParse(av), sh = a ? AV_C[a.c] : AV_C[(h >> 9) % 8], ink = '#2a1d18';
@@ -6699,102 +6708,294 @@ function rmSvg(uid, av, st) {
   else if (st === 'sleep') ex = '<rect x="15" y="86" width="70" height="28" rx="14" fill="' + sh + '"/><circle cx="20" cy="100" r="7" fill="' + sk + '"/><circle cx="80" cy="100" r="7" fill="' + sk + '"/>';
   return '<svg viewBox="0 0 100 120" aria-hidden="true">' + (st === 'sleep' ? body + ex + head : body + head + ex) + '</svg>';
 }
+// ===== 3D: «Groowin Обсерваториясы». Түнгі ғарыш терезесі, төбеде күн жүйесі, оқушылар = жұлдызшалар (басындағы жұлдыз көп оқыған сайын өседі) =====
+const RM3_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+let rm3P = null;
+const rm3Load = () => window.THREE ? Promise.resolve(true) : (rm3P = rm3P || new Promise(res => { const s = document.createElement('script'); s.src = RM3_URL; s.onload = () => res(!!window.THREE); s.onerror = () => { rm3P = null; res(false); }; document.head.appendChild(s); }));
+const rmGL = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl') || c.getContext('experimental-webgl')); } catch { return false; } };
+const RM3_T = [[-5.2, -1.2], [0, -1.2], [5.2, -1.2], [-5.2, 3.6], [0, 3.6], [5.2, 3.6]];
+const RM3_SEAT = RM3_T.flatMap(([cx, cz]) => [0, 1, 2, 3, 4].map(k => { const th = (k * 72 - 36) * Math.PI / 180; return { x: cx + 1.85 * Math.sin(th), z: cz + 1.85 * Math.cos(th), ry: th + Math.PI, cx, cz }; }));
+function rm3Create(box, cb) {
+  const T = THREE, mob = matchMedia('(pointer:coarse)').matches;
+  const renderer = new T.WebGLRenderer({ antialias: !mob, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mob ? 1.5 : 2)); renderer.setClearColor(0x070a1a);
+  if (!mob) { renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap; }
+  const cv = renderer.domElement; cv.className = 'rm3-cv'; box.appendChild(cv);
+  const scene = new T.Scene(); scene.fog = new T.Fog(0x0a0d22, 30, 60);
+  const cam = new T.PerspectiveCamera(38, 1.6, .1, 120);
+  let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const L = (c, o) => new T.MeshLambertMaterial(Object.assign({ color: c }, o || {}));
+  const bas = (c, o) => new T.MeshBasicMaterial(Object.assign({ color: c }, o || {}));
+  const add = (g, m, x, y, z, par) => { const o = new T.Mesh(g, m); o.position.set(x, y, z); o.castShadow = !mob; o.receiveShadow = true; (par || scene).add(o); return o; };
+  const bx = (w, h, d, c, x, y, z, par) => add(new T.BoxGeometry(w, h, d), L(c), x, y, z, par);
+  const ct = (w, h, f, rep) => { const c = document.createElement('canvas'); c.width = w; c.height = h; f(c.getContext('2d'), w, h); const t = new T.CanvasTexture(c); t.anisotropy = 4; if (rep) { t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(rep[0], rep[1]); } return t; };
+  const glowTex = ct(64, 64, (x) => { const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,240,180,1)'); g.addColorStop(.3, 'rgba(255,200,90,.55)'); g.addColorStop(1, 'rgba(255,170,60,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); });
+  const glow = (s, o) => { const sp = new T.Sprite(new T.SpriteMaterial({ map: glowTex, blending: T.AdditiveBlending, depthWrite: false, transparent: true, opacity: o == null ? 1 : o })); sp.scale.set(s, s, 1); return sp; };
+  // --- жарық
+  scene.add(new T.HemisphereLight(0xffd9a8, 0x3a2412, .55)); scene.add(new T.AmbientLight(0x8f86b8, .5));
+  const moon = new T.DirectionalLight(0x9db8ff, .45); moon.position.set(-8, 12, 10);
+  if (!mob) { moon.castShadow = true; moon.shadow.mapSize.set(1024, 1024); const sc = moon.shadow.camera; sc.left = -14; sc.right = 14; sc.top = 12; sc.bottom = -12; sc.near = 1; sc.far = 40; moon.shadow.bias = -.0008; }
+  scene.add(moon);
+  // --- едендер мен қабырғалар
+  const floorT = ct(512, 512, (x, w, h) => { x.fillStyle = '#8a5a30'; x.fillRect(0, 0, w, h); for (let i = 0; i < 8; i++) { x.fillStyle = 'rgba(' + (60 + rnd() * 50 | 0) + ',' + (30 + rnd() * 30 | 0) + ',10,' + (.12 + rnd() * .15) + ')'; x.fillRect(0, i * 64, w, 64); x.fillStyle = 'rgba(30,15,5,.55)'; x.fillRect(0, i * 64, w, 3); for (let k = 0; k < 3; k++) x.fillRect(((i * 97 + k * 190) % 512), i * 64, 3, 64); } }, [6, 4]);
+  const floor = add(new T.PlaneGeometry(18, 13), L(0xffffff, { map: floorT }), 0, 0, .5); floor.rotation.x = -Math.PI / 2; floor.castShadow = false;
+  const wallC = 0x2b2748;
+  const back = add(new T.PlaneGeometry(18, 7), L(wallC), 0, 3.5, -6.02); back.castShadow = false;
+  const left = add(new T.PlaneGeometry(13, 7), L(wallC), -9.02, 3.5, .5); left.rotation.y = Math.PI / 2; left.castShadow = false;
+  bx(18, 1, .12, 0x4a2c15, 0, .5, -5.96); bx(.12, 1, 13, 0x4a2c15, -8.96, .5, .5); bx(18, .12, .14, 0x6b4423, 0, 1.02, -5.95); bx(.14, .12, 13, 0x6b4423, -8.95, 1.02, .5);
+  // --- терезе: түнгі галактика
+  const galT = ct(1024, 640, (x, w, h) => {
+    const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#04061a'); g.addColorStop(.55, '#150f45'); g.addColorStop(1, '#3a1658'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    [[250, 380, 330, 'rgba(255,90,170,.38)'], [650, 250, 380, 'rgba(70,120,255,.38)'], [860, 520, 260, 'rgba(160,90,255,.3)']].forEach(([cx, cy, r, c]) => { const q = x.createRadialGradient(cx, cy, 0, cx, cy, r); q.addColorStop(0, c); q.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = q; x.fillRect(0, 0, w, h); });
+    for (let i = 0; i < 950; i++) { const a = .3 + rnd() * .7, r = rnd() < .04 ? 2.4 : rnd() * 1.2 + .3; x.fillStyle = 'rgba(255,255,' + (220 + rnd() * 35 | 0) + ',' + a + ')'; x.beginPath(); x.arc(rnd() * w, rnd() * h, r, 0, 7); x.fill(); }
+    const pg = x.createRadialGradient(760, 220, 5, 770, 230, 95); pg.addColorStop(0, '#ffd9a0'); pg.addColorStop(.7, '#d6803f'); pg.addColorStop(1, '#6a2d1d'); x.fillStyle = pg; x.beginPath(); x.arc(770, 230, 82, 0, 7); x.fill();
+    x.strokeStyle = 'rgba(255,225,170,.8)'; x.lineWidth = 9; x.beginPath(); x.ellipse(770, 230, 160, 34, -.35, 0, 7); x.stroke();
+    const mg = x.createRadialGradient(170, 120, 4, 170, 120, 46); mg.addColorStop(0, '#fff'); mg.addColorStop(1, '#8aa0d6'); x.fillStyle = mg; x.beginPath(); x.arc(170, 120, 40, 0, 7); x.fill();
+  });
+  add(new T.PlaneGeometry(6.2, 4), bas(0xffffff, { map: galT }), -3.6, 3.35, -5.96).castShadow = false;
+  const fr = 0x3b2412; bx(6.5, .22, .3, fr, -3.6, 5.45, -5.88); bx(6.7, .26, .5, fr, -3.6, 1.28, -5.8); bx(.22, 4.2, .3, fr, -6.85, 3.35, -5.88); bx(.22, 4.2, .3, fr, -.35, 3.35, -5.88); bx(.12, 4, .22, fr, -3.6, 3.35, -5.9); bx(6.3, .12, .22, fr, -3.6, 3.4, -5.9);
+  bx(.9, 4.7, .4, 0x2d4f9a, -7.3, 3.4, -5.75); bx(.9, 4.7, .4, 0x2d4f9a, .1, 3.4, -5.75);
+  // --- тақта
+  const boardT = ct(1024, 420, (x, w, h) => {
+    x.fillStyle = '#1f3d30'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(255,255,255,.88)'; x.fillStyle = 'rgba(255,255,255,.9)'; x.lineWidth = 4; x.lineCap = 'round';
+    for (let i = 0; i < 3; i++) { x.beginPath(); x.ellipse(150, 140, 80, 28, i * Math.PI / 3, 0, 7); x.stroke(); } x.beginPath(); x.arc(150, 140, 9, 0, 7); x.fill();
+    x.beginPath(); x.moveTo(330, 60); x.lineTo(330, 230); x.lineTo(530, 230); x.stroke(); x.beginPath(); for (let i = 0; i <= 200; i++) { const px = 330 + i, py = 145 - Math.sin(i / 20) * 60; i ? x.lineTo(px, py) : x.moveTo(px, py); } x.stroke();
+    x.font = 'bold 66px "Segoe Script","Comic Sans MS",cursive'; x.fillText('E = mc²', 580, 130); x.font = 'bold 44px "Segoe Script","Comic Sans MS",cursive'; x.fillText('F = ma', 600, 220);
+    x.beginPath(); x.moveTo(110, 360); x.lineTo(300, 360); x.lineTo(300, 290); x.closePath(); x.stroke(); x.font = '34px sans-serif'; x.fillText('v = s / t', 420, 330); x.fillText('Groowin ★', 760, 350);
+  });
+  add(new T.PlaneGeometry(6.2, 2.55), bas(0xffffff, { map: boardT }), 4.9, 3.1, -5.92).castShadow = false;
+  bx(6.5, .16, .26, 0x7a4a24, 4.9, 4.45, -5.86); bx(6.5, .16, .26, 0x7a4a24, 4.9, 1.75, -5.86); bx(.16, 2.8, .26, 0x7a4a24, 1.68, 3.1, -5.86); bx(.16, 2.8, .26, 0x7a4a24, 8.12, 3.1, -5.86); bx(5.6, .08, .22, 0xd8c7a0, 4.9, 1.82, -5.75);
+  // --- кітап сөрелері (сол қабырға), кітаптар InstancedMesh
+  const BK = 260, books = new T.InstancedMesh(new T.BoxGeometry(1, 1, 1), L(0xffffff), BK); books.castShadow = false; const dm = new T.Object3D(); let bi = 0; const bc = [0xc0392b, 0x2e86c1, 0x27ae60, 0xd4ac0d, 0x8e44ad, 0xe67e22, 0x16a085, 0xecf0f1, 0xd35400, 0x34495e];
+  [-3.6, -.4, 2.8, 6].forEach(sz => {
+    bx(.5, 4.2, 2.6, 0x5a3418, -8.7, 2.1, sz); bx(.46, .1, 2.5, 0x3d2210, -8.62, 4.22, sz);
+    for (let r = 0; r < 5; r++) { const y = .35 + r * .8; bx(.52, .06, 2.5, 0x7a4a24, -8.66, y - .03, sz); let z = sz - 1.15; while (z < sz + 1.1 && bi < BK) { const w = .08 + rnd() * .12, h = .45 + rnd() * .27; dm.position.set(-8.5, y + h / 2, z + w / 2); dm.scale.set(.3, h, w); dm.updateMatrix(); books.setMatrixAt(bi, dm.matrix); books.setColorAt(bi, new T.Color(bc[(rnd() * bc.length) | 0])); bi++; z += w + .01; } }
+  }); books.count = bi; books.instanceMatrix.needsUpdate = true; if (books.instanceColor) books.instanceColor.needsUpdate = true; scene.add(books);
+  // --- кілемдер, үстелдер, орындықтар
+  const rugT = ct(512, 512, (x, w) => { x.fillStyle = '#12414d'; x.beginPath(); x.arc(256, 256, 250, 0, 7); x.fill(); x.strokeStyle = '#d6a23a'; x.lineWidth = 16; x.beginPath(); x.arc(256, 256, 232, 0, 7); x.stroke(); x.lineWidth = 4; x.setLineDash([14, 10]); x.beginPath(); x.arc(256, 256, 200, 0, 7); x.stroke(); x.setLineDash([]); x.fillStyle = '#d6a23a'; for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8; x.save(); x.translate(256 + Math.cos(a) * 160, 256 + Math.sin(a) * 160); x.rotate(a + Math.PI / 4); x.fillRect(-14, -14, 28, 28); x.restore(); } x.strokeStyle = '#d6a23a'; x.lineWidth = 6; for (let i = 0; i < 8; i++) { x.save(); x.translate(256, 256); x.rotate(i * Math.PI / 4); x.beginPath(); x.ellipse(0, -62, 22, 56, 0, 0, 7); x.stroke(); x.restore(); } });
+  const rugG = new T.CircleGeometry(2.45, 48), rugM = L(0xffffff, { map: rugT });
+  const chairG = { seat: new T.BoxGeometry(.66, .07, .66), back: new T.BoxGeometry(.66, .62, .06), leg: new T.CylinderGeometry(.05, .05, .46, 6) }, chM = L(0xa8652f), chM2 = L(0x7a4a24);
+  const lampLights = [];
+  RM3_T.forEach(([cx, cz]) => {
+    const rg = add(rugG, rugM, cx, .012, cz); rg.rotation.x = -Math.PI / 2; rg.castShadow = false;
+    add(new T.CylinderGeometry(1.2, 1.2, .08, 40), L(0x9d6232), cx, .76, cz); add(new T.CylinderGeometry(.16, .22, .72, 12), L(0x6b4423), cx, .38, cz); add(new T.CylinderGeometry(.55, .6, .06, 20), L(0x4a2c15), cx, .03, cz);
+    add(new T.CylinderGeometry(.04, .07, .5, 8), L(0xc9a25a), cx - .3, 1.05, cz - .25); const sh = add(new T.CylinderGeometry(.16, .3, .3, 16, 1, true), bas(0xffd9a0, { side: T.DoubleSide }), cx - .3, 1.42, cz - .25); sh.castShadow = false;
+    const gl = glow(1.5, .7); gl.position.set(cx - .3, 1.38, cz - .25); scene.add(gl);
+    bx(.36, .06, .26, 0x2e6fd1, cx + .35, .82, cz + .1); bx(.34, .06, .24, 0xd2554a, cx + .35, .88, cz + .1);
+    const pl = new T.PointLight(0xffb66a, .55, 7.5, 1.6); pl.position.set(cx, 2.1, cz); scene.add(pl); lampLights.push(pl);
+  });
+  RM3_SEAT.forEach(s => { const g = new T.Group(); g.position.set(s.x, 0, s.z); g.rotation.y = s.ry; scene.add(g);
+    add(chairG.seat, chM, 0, .46, -.05, g); add(chairG.back, chM, 0, .8, -.4, g); [[-.27, -.3], [.27, -.3], [-.27, .2], [.27, .2]].forEach(([lx, lz]) => add(chairG.leg, chM2, lx, .23, lz, g)); });
+  // --- тастағы өсімдік, телескоп
+  const plant = (x, z, s) => { const g = new T.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); scene.add(g); add(new T.CylinderGeometry(.34, .26, .5, 14), L(0xb5543a), 0, .25, 0, g); for (let i = 0; i < 9; i++) { const l = add(new T.SphereGeometry(.3, 8, 6), L(i % 2 ? 0x2f9e44 : 0x3fbf5a), Math.sin(i * 2.4) * .28, .8 + (i % 4) * .22, Math.cos(i * 2.4) * .28, g); l.scale.set(.55, 1.15, .55); l.rotation.z = Math.sin(i) * .6; } };
+  plant(-7.6, 6.4, 1.2); plant(8.3, -5.3, 1.3); plant(8.2, 5.8, 1.1); plant(-.4, -5.4, .9);
+  const tel = new T.Group(); tel.position.set(-.8, 1.4, -5.3); scene.add(tel);
+  [[0, .5], [-.4, -.3], [.4, -.3]].forEach(([lx, lz], i) => { const l = add(new T.CylinderGeometry(.03, .03, 1.5, 6), L(0xb89350), lx * .8, -.5, lz * .5, tel); l.rotation.z = lx * -.6; l.rotation.x = lz * .5; });
+  const tube = add(new T.CylinderGeometry(.14, .2, 1.5, 16), L(0xeae6da), 0, .5, 0, tel); tube.rotation.z = Math.PI / 2 - .35; tube.rotation.y = -.6; add(new T.CylinderGeometry(.22, .22, .12, 16), L(0xb89350), -.75, .78, .3, tel).rotation.z = Math.PI / 2 - .35;
+  // --- төбедегі күн жүйесі
+  const sys = new T.Group(); sys.position.set(.6, 6.3, -2.6); sys.rotation.x = .22; sys.scale.setScalar(.78); scene.add(sys);
+  const sun = new T.Mesh(new T.SphereGeometry(.38, 24, 16), bas(0xffb938)); sys.add(sun); const sg = glow(2.6, .95); sys.add(sg); const sl = new T.PointLight(0xffc27a, .8, 16); sys.add(sl);
+  const PL = [[.9, .1, 0xb9b9b9, 1.6], [1.35, .15, 0xe8c27a, 1.2], [1.85, .18, 0x3f8cff, .9], [2.4, .14, 0xe0553a, .7], [3.1, .32, 0xd9a766, .45], [3.8, .24, 0x7fd1e0, .3]], pls = [];
+  PL.forEach(([r, s, c, sp], i) => { const rg = new T.Mesh(new T.RingGeometry(r - .008, r + .008, 72), bas(0xffffff, { transparent: true, opacity: .22, side: T.DoubleSide })); rg.rotation.x = -Math.PI / 2; sys.add(rg); const p = new T.Mesh(new T.SphereGeometry(s, 16, 12), L(c, { emissive: new T.Color(c).multiplyScalar(.25) })); sys.add(p); if (i === 4) { const ring = new T.Mesh(new T.RingGeometry(s * 1.5, s * 2.1, 32), bas(0xe9d5a8, { side: T.DoubleSide, transparent: true, opacity: .75 })); ring.rotation.x = -1.2; p.add(ring); } pls.push([p, r, sp, i]); });
+  // --- кейіпкер (жұлдызша)
+  const faceTex = {}, faceT = k => faceTex[k] || (faceTex[k] = ct(256, 176, (x) => {
+    x.fillStyle = 'rgba(255,120,150,.5)'; [[44, 118], [212, 118]].forEach(([a, b]) => { x.beginPath(); x.ellipse(a, b, 22, 14, 0, 0, 7); x.fill(); });
+    const eye = (cx, o) => { if (k === 'closed') { x.strokeStyle = '#2a1d28'; x.lineWidth = 7; x.lineCap = 'round'; x.beginPath(); x.arc(cx, 76, 20, .15 * Math.PI, .85 * Math.PI); x.stroke(); return; } x.fillStyle = '#fff'; x.beginPath(); x.ellipse(cx, 74, 25, 30, 0, 0, 7); x.fill(); x.fillStyle = '#241a2e'; x.beginPath(); x.ellipse(cx + o, k === 'down' ? 88 : 76, 14, k === 'hand' ? 20 : 17, 0, 0, 7); x.fill(); x.fillStyle = '#fff'; x.beginPath(); x.arc(cx + o + 5, k === 'down' ? 82 : 69, 5, 0, 7); x.fill(); };
+    eye(84, 0); eye(172, 0); x.strokeStyle = '#2a1d28'; x.lineWidth = 6; x.lineCap = 'round';
+    if (k === 'closed') { x.fillStyle = '#c0626a'; x.beginPath(); x.ellipse(128, 130, 9, 11, 0, 0, 7); x.fill(); } else if (k === 'hand') { x.fillStyle = '#c0626a'; x.beginPath(); x.arc(128, 118, 17, 0, Math.PI); x.fill(); } else { x.beginPath(); x.arc(128, 112, 18, .15 * Math.PI, .85 * Math.PI); x.stroke(); }
+  }));
+  const tagTex = (name, emoji, me) => ct(320, 72, (x, w, h) => { x.fillStyle = me ? 'rgba(255,210,90,.95)' : 'rgba(18,12,30,.78)'; const r = 34; x.beginPath(); x.moveTo(r, 4); x.arcTo(w - 4, 4, w - 4, h - 4, r); x.arcTo(w - 4, h - 4, 4, h - 4, r); x.arcTo(4, h - 4, 4, 4, r); x.arcTo(4, 4, w - 4, 4, r); x.fill(); x.textBaseline = 'middle'; x.textAlign = 'center'; x.font = 'bold 34px "Segoe UI",Arial,sans-serif'; x.fillStyle = me ? '#3a2400' : '#fff'; x.fillText((emoji ? emoji + ' ' : '') + name, w / 2, h / 2 + 2); });
+  const zTex = ct(64, 64, x => { x.font = 'bold 54px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = '#d7e6ff'; x.shadowColor = '#4a78ff'; x.shadowBlur = 12; x.fillText('Z', 32, 34); });
+  const qTex = ct(64, 64, x => { x.fillStyle = '#fff'; x.beginPath(); x.arc(32, 32, 28, 0, 7); x.fill(); x.fillStyle = '#e5484d'; x.font = 'bold 44px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('?', 32, 35); });
+  const starG = (() => { const sh = new T.Shape(); for (let i = 0; i < 10; i++) { const r = i % 2 ? .05 : .115, a = Math.PI / 2 + i * Math.PI / 5; i ? sh.lineTo(Math.cos(a) * r, Math.sin(a) * r) : sh.moveTo(Math.cos(a) * r, Math.sin(a) * r); } sh.closePath(); const g = new T.ExtrudeGeometry(sh, { depth: .035, bevelEnabled: true, bevelSize: .012, bevelThickness: .012, bevelSegments: 1 }); g.translate(0, 0, -.017); return g; })();
+  const bodyG = new T.SphereGeometry(.4, 26, 18), faceG = new T.SphereGeometry(.415, 18, 12, Math.PI / 2 - .8, 1.6, Math.PI / 2 - .55, 1.05), handG = new T.SphereGeometry(.095, 12, 8), antG = new T.CylinderGeometry(.013, .013, .28, 5), earG = new T.SphereGeometry(.12, 10, 8), capG = new T.SphereGeometry(.425, 18, 8, 0, Math.PI * 2, 0, Math.PI / 5), starM = bas(0xffd45e), pageG = new T.BoxGeometry(.3, .02, .34), pageM = bas(0xfff7e6), covM = L(0x3b5bdb), padG = new T.BoxGeometry(.5, .02, .38), pencilG = new T.CylinderGeometry(.014, .014, .3, 6), pencilM = L(0xf5b82e), ringG = new T.RingGeometry(.52, .66, 36), ringM = bas(0xffd45e, { side: T.DoubleSide, transparent: true, opacity: .9 });
+  const chars = new Map();
+  function mkChar(m) {
+    const h = rmHash(m.uid), a = avParse(m.av), col = new T.Color(a ? AV_C[a.c] : AV_C[(h >> 9) % 8]), mat = L(col, { emissive: col.clone().multiplyScalar(.22) }), g = new T.Group(), body = new T.Group(); g.add(body); body.position.y = .92;
+    const sk = new T.Group(); sk.scale.set(1, 1.05, 1); body.add(sk); const bm = new T.Mesh(bodyG, mat); bm.castShadow = !mob; sk.add(bm);
+    const face = new T.Mesh(faceG, new T.MeshBasicMaterial({ map: faceT('open'), transparent: true, depthWrite: false })); sk.add(face);
+    const hands = [-1, 1].map(s => { const o = new T.Mesh(handG, mat); g.add(o); o.userData.s = s; return o; });
+    const ant = new T.Mesh(antG, L(0xcfd3dc)); ant.position.y = .5; body.add(ant); const star = new T.Mesh(starG, starM); star.position.y = .78; body.add(star); const sgl = glow(.7); sgl.position.y = .78; body.add(sgl);
+    const vr = h % 3; if (vr === 1) [-1, 1].forEach(s => { const e = new T.Mesh(earG, mat); e.position.set(s * .3, .32, 0); body.add(e); }); else if (vr === 2) { const cp = new T.Mesh(capG, L(['#ff6b6b', '#ffd166', '#4cc9f0', '#b8f2e6', '#c77dff', '#ffffff'][(h >> 5) % 6])); cp.position.y = .03; cp.rotation.x = -.12; body.add(cp); }
+    const book = new T.Group(); [-1, 1].forEach(s => { const p = new T.Mesh(pageG, pageM); p.position.x = s * .15; p.rotation.z = -s * .22; book.add(p); }); const cov = new T.Mesh(new T.BoxGeometry(.66, .015, .38), covM); cov.position.y = -.025; book.add(cov); g.add(book);
+    const pad = new T.Group(); pad.add(new T.Mesh(padG, pageM)); const pen = new T.Mesh(pencilG, pencilM); pen.rotation.z = 1.1; pad.add(pen); g.add(pad);
+    const tg = tagTex(m.name, a ? a.e : '', m.uid === meId), tag = new T.Sprite(new T.SpriteMaterial({ map: tg, transparent: true, depthWrite: false })); tag.scale.set(1.3, .29, 1); tag.position.y = 2.15; tag.renderOrder = 10; g.add(tag);
+    let ring = null; if (m.uid === meId) { ring = new T.Mesh(ringG, ringM); ring.rotation.x = -Math.PI / 2; ring.position.y = .03; g.add(ring); }
+    const zs = [0, 1, 2].map(i => { const s = new T.Sprite(new T.SpriteMaterial({ map: zTex, transparent: true, depthWrite: false })); s.visible = false; s.scale.setScalar(.34); g.add(s); return s; });
+    const q = new T.Sprite(new T.SpriteMaterial({ map: qTex, transparent: true, depthWrite: false })); q.scale.setScalar(.42); q.position.set(-.5, 1.9, 0); q.visible = false; g.add(q);
+    const arm = new T.Group(); arm.position.set(.34, .95, .05); g.add(arm); const am = new T.Mesh(new T.CylinderGeometry(.06, .06, .5, 8), mat); am.position.y = .25; arm.add(am); const ah = new T.Mesh(handG, mat); ah.position.y = .53; arm.add(ah);
+    g.userData = { h, body, face, hands, star, sgl, book, pad, pen, zs, q, arm, tag, tagKey: m.name + '|' + (a ? a.e : ''), tagTex: tg, ring, mat, st: '', ph: (h % 628) / 100 };
+    g.scale.setScalar(1.45); scene.add(g); return g;
+  }
+  function seatPose(c, i) { const s = RM3_SEAT[i]; if (!s) return; c.userData.tx = s.x; c.userData.tz = s.z; c.userData.try = s.ry; }
+  function setState(c, st, lv) {
+    const u = c.userData; if (u.st === st && u.lv === lv) return; u.st = st; u.lv = lv;
+    u.face.material.map = faceT(st === 'read' || st === 'write' ? 'down' : st === 'sleep' ? 'closed' : st === 'hand' ? 'hand' : 'open');
+    u.book.visible = st === 'read'; u.pad.visible = st === 'write'; u.q.visible = st === 'hand'; u.arm.visible = st === 'hand'; u.zs.forEach(z => z.visible = st === 'sleep');
+    const sl = st === 'sleep'; u.body.scale.y = 1; u.body.rotation.x = sl ? .55 : 0; u.body.position.set(0, sl ? .8 : .92, sl ? .22 : 0);
+    u.hands.forEach(hd => { const s = hd.userData.s; if (st === 'read') hd.position.set(s * .3, .78, .56); else if (st === 'write') hd.position.set(s > 0 ? .1 : -.22, .8, .64); else if (sl) hd.position.set(s * .3, .8, .62); else if (st === 'hand' && s > 0) hd.position.set(0, -9, 0); else hd.position.set(s * .4, .8, .12); });
+    u.book.position.set(0, .93, .5); u.book.rotation.x = -.55; u.pad.position.set(0, .77, .64); u.star.scale.setScalar((sl ? .55 : .8) + .12 * lv); u.sgl.scale.setScalar((sl ? .35 : .6) + .12 * lv); u.sgl.material.opacity = sl ? .3 : 1;
+  }
+  // --- камера: айналдыру, жақындату
+  const cs = { az: .62, el: .86, d: 22, tx: 0, ty: .8, tz: .6, g: null }; let fit = 22;
+  const place = () => { const ce = Math.cos(cs.el); cam.position.set(cs.tx + cs.d * ce * Math.sin(cs.az), cs.ty + cs.d * Math.sin(cs.el), cs.tz + cs.d * ce * Math.cos(cs.az)); cam.lookAt(cs.tx, cs.ty, cs.tz); };
+  const clampCam = () => { cs.az = Math.max(-.15, Math.min(1.3, cs.az)); cs.el = Math.max(.42, Math.min(1.2, cs.el)); cs.d = Math.max(7, Math.min(fit * 1.25, cs.d)); };
+  const resize = () => { const w = box.clientWidth || 800, h = box.clientHeight || 500; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); const nf = 21.5 * Math.max(1, 1.6 / cam.aspect) ** .7; if (Math.abs(nf - fit) > .01) { const k = cs.d / fit; fit = nf; if (!cs.g) cs.d = Math.min(fit * 1.25, nf * Math.min(k, 1.25)); } };
+  const ro = new ResizeObserver(resize); ro.observe(box); resize(); cs.d = fit; place();
+  const ptrs = new Map(); let pdist = 0, down = null;
+  const pd = e => { cv.setPointerCapture && cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 1) down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 }; if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pdist = Math.hypot(a[0] - b[0], a[1] - b[1]); } cs.g = null; };
+  const pm = e => { const o = ptrs.get(e.pointerId); if (!o) return; const dx = e.clientX - o[0], dy = e.clientY - o[1]; ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (down) down.moved += Math.abs(dx) + Math.abs(dy); if (ptrs.size === 1) { cs.az -= dx * .006; cs.el += dy * .005; } else if (ptrs.size === 2) { const [a, b] = [...ptrs.values()], nd = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pdist) cs.d *= pdist / nd; pdist = nd; } clampCam(); };
+  const pu = e => { ptrs.delete(e.pointerId); if (down && down.moved < 8 && performance.now() - down.t < 500 && ptrs.size === 0) tap(e); if (!ptrs.size) down = null; pdist = 0; };
+  const wh = e => { e.preventDefault(); cs.d *= 1 + Math.sign(e.deltaY) * .08; cs.g = null; clampCam(); };
+  cv.addEventListener('pointerdown', pd); cv.addEventListener('pointermove', pm); cv.addEventListener('pointerup', pu); cv.addEventListener('pointercancel', pu); cv.addEventListener('wheel', wh, { passive: false }); cv.style.touchAction = 'none';
+  // --- орын таңдау
+  const seatMarks = RM3_SEAT.map((s, i) => { const m = new T.Mesh(new T.CircleGeometry(.5, 24), bas(0xffd45e, { transparent: true, opacity: .55 })); m.rotation.x = -Math.PI / 2; m.position.set(s.x, .04, s.z); m.visible = false; m.userData.i = i; scene.add(m); return m; });
+  let pick = false; const ray = new T.Raycaster(), v2 = new T.Vector2();
+  function tap(e) { if (!pick) return; const r = cv.getBoundingClientRect(); v2.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(v2, cam); const hit = ray.intersectObjects(seatMarks.filter(m => m.visible), false)[0]; if (hit) cb.onSeat(hit.object.userData.i); }
+  let taken = new Set(), mySeat = null;
+  const paintMarks = () => seatMarks.forEach((m, i) => { m.visible = pick && !taken.has(i); });
+  // --- жаңарту және анимация
+  let raf = 0, t = 0, last = performance.now();
+  const loop = now => {
+    raf = requestAnimationFrame(loop); const dt = Math.min(.05, (now - last) / 1000); last = now; if (document.hidden) return; t += dt;
+    if (cs.g) { const k = 1 - Math.exp(-dt * 4); cs.tx += (cs.g.tx - cs.tx) * k; cs.tz += (cs.g.tz - cs.tz) * k; cs.d += (cs.g.d - cs.d) * k; cs.el += (cs.g.el - cs.el) * k; }
+    place();
+    sun.rotation.y = t * .3; sg.material.opacity = .85 + Math.sin(t * 2) * .1; pls.forEach(([p, r, sp, i]) => { const a = t * sp * .35 + i * 1.3; p.position.set(Math.cos(a) * r, 0, Math.sin(a) * r); p.rotation.y = t; });
+    chars.forEach(c => {
+      const u = c.userData, k = 1 - Math.exp(-dt * 6); c.position.x += (u.tx - c.position.x) * k; c.position.z += (u.tz - c.position.z) * k; const cy = Math.atan2(cam.position.x - c.position.x, cam.position.z - c.position.z); let ta = u.try + Math.atan2(Math.sin(cy - u.try), Math.cos(cy - u.try)) * .42; let dr = ta - c.rotation.y; dr = Math.atan2(Math.sin(dr), Math.cos(dr)); c.rotation.y += dr * k;
+      const sl = u.st === 'sleep', bob = Math.sin(t * 1.7 + u.ph); if (!sl) u.body.position.y = .92 + bob * .014; else u.body.scale.y = 1 + Math.sin(t * 1.2 + u.ph) * .025;
+      u.star.rotation.y = t * 1.3 + u.ph; u.star.position.y = .78 + Math.sin(t * 2 + u.ph) * .02; if (!sl) u.sgl.material.opacity = .8 + Math.sin(t * 3 + u.ph) * .2;
+      if (u.st === 'write') { u.pen.position.set(.12 + Math.sin(t * 7) * .02, .04, .02); u.pen.rotation.z = 1.1 + Math.sin(t * 9) * .12; u.hands[1].position.set(.1 + Math.sin(t * 7) * .02, .82, .64); }
+      if (u.st === 'read') u.book.rotation.x = -.55 + Math.sin(t * .9 + u.ph) * .03;
+      if (u.st === 'hand') { u.arm.rotation.z = -.35 - Math.abs(Math.sin(t * 5)) * .5 + .1; u.arm.rotation.x = 0; u.q.position.y = 1.9 + Math.sin(t * 4) * .05; }
+      if (sl) u.zs.forEach((z, i) => { const p = (t * .45 + i / 3) % 1; z.position.set(.3 + p * .35, 1.5 + p * .8, .1); z.material.opacity = Math.sin(p * Math.PI); z.scale.setScalar(.22 + p * .22); });
+    });
+    seatMarks.forEach(m => { if (m.visible) m.material.opacity = .4 + Math.sin(t * 4) * .15; });
+    renderer.render(scene, cam);
+  };
+  raf = requestAnimationFrame(loop);
+  return {
+    update(stu, my) {
+      mySeat = my; const seen = new Set(); taken = new Set();
+      stu.forEach(m => { if (!(m.seat >= 0 && m.seat < RM3_SEAT.length)) return; seen.add(m.uid); taken.add(m.seat); let c = chars.get(m.uid); const key = m.name + '|' + ((avParse(m.av) || {}).e || '');
+        if (c && c.userData.tagKey !== key) { scene.remove(c); chars.delete(m.uid); c = null; }
+        if (!c) { c = mkChar(m); chars.set(m.uid, c); seatPose(c, m.seat); c.position.set(RM3_SEAT[m.seat].x, 0, RM3_SEAT[m.seat].z); c.rotation.y = RM3_SEAT[m.seat].ry; } else seatPose(c, m.seat);
+        setState(c, RM_ST[m.st] ? m.st : 'read', Math.max(0, Math.min(5, m.lv | 0))); });
+      chars.forEach((c, id) => { if (!seen.has(id)) { try { c.userData.tagTex.dispose(); } catch { } scene.remove(c); chars.delete(id); } }); paintMarks();
+    },
+    setPick(on) { pick = on; paintMarks(); },
+    focusMe(seat) { const s = RM3_SEAT[seat == null ? mySeat : seat]; if (s) cs.g = { tx: s.cx, tz: s.cz, d: Math.max(8.5, fit * .5), el: .72 }; },
+    resetCam() { cs.g = { tx: 0, tz: .6, d: fit, el: .86 }; cs.az = .62; },
+    destroy() { cancelAnimationFrame(raf); ro.disconnect(); try { renderer.dispose(); renderer.forceContextLoss(); } catch { } cv.remove(); chars.clear(); }
+  };
+}
+
+function rm2dCreate(box, cb) {
+  const wrap = el('div', 'rm-wrap'), stage = el('div', 'rm-stage can'); wrap.appendChild(stage); box.appendChild(wrap);
+  const seatEls = RM_SEATS.map((p, i) => { const b = el('button', 'rm-seat'); b.type = 'button'; b.style.left = (p[0] / RM_W * 100) + '%'; b.style.top = (p[1] / RM_H * 100) + '%'; b.setAttribute('aria-label', 'Орын ' + (i + 1)); b.onclick = () => cb.onSeat(i); stage.appendChild(b); return b; });
+  const avs = el('div', 'rm-avs'); stage.appendChild(avs); let mySeat = null;
+  return {
+    update(stu, my) {
+      mySeat = my; avs.replaceChildren(); const used = new Set(stu.map(m => m.seat)); seatEls.forEach((b, i) => b.classList.toggle('taken', used.has(i)));
+      stu.filter(m => m.seat >= 0 && m.seat < RM_SEATS.length).sort((a, b) => RM_SEATS[a.seat][1] - RM_SEATS[b.seat][1]).forEach(m => {
+        const st = RM_ST[m.st] ? m.st : 'read', p = RM_SEATS[m.seat], d = el('div', 'rm-av st-' + st + (m.uid === meId ? ' me' : ''));
+        d.style.left = (p[0] / RM_W * 100) + '%'; d.style.top = (p[1] / RM_H * 100) + '%'; d.style.setProperty('--d', '-' + ((rmHash(m.uid) % 30) / 10) + 's');
+        d.innerHTML = rmSvg(m.uid, m.av, st); const a = avParse(m.av);
+        if (a) { const bd = el('span', 'rm-badge', a.e); bd.style.setProperty('--bc', AV_C[a.c]); d.appendChild(bd); }
+        if (st === 'sleep') d.appendChild(el('span', 'rm-z', 'z z'));
+        d.appendChild(el('span', 'rm-nm', String(m.name || '').slice(0, 14))); avs.appendChild(d);
+      });
+    },
+    setPick(on) { stage.classList.toggle('pick', on); },
+    focusMe() { if (wrap.scrollWidth > wrap.clientWidth && mySeat != null) { const p = RM_SEATS[mySeat]; wrap.scrollTo({ left: p[0] / RM_W * stage.offsetWidth - wrap.clientWidth / 2, behavior: 'smooth' }); } },
+    resetCam() { wrap.scrollTo({ left: 0, behavior: 'smooth' }); },
+    destroy() { wrap.remove(); }
+  };
+}
+const RM_MAX = 30;
+let rmTok = 0;
 function roomLeave(quiet) {
   if (!rm) return; const r = rm; rm = null;
   clearInterval(r.tick); ['pointerdown', 'keydown', 'touchstart', 'scroll', 'wheel'].forEach(t => removeEventListener(t, r.act, true));
   if (r.pend > 0 && !r.staff) { sb.rpc('room_add', { p_seconds: Math.min(r.pend, 90), p_new: !r.counted && Date.now() - (+ls.get('roomLast') || 0) > 1800000 }).then(() => ls.set('roomLast', Date.now()), () => { }); }
+  try { r.view && r.view.destroy(); } catch { }
   try { sb.removeChannel(r.ch); } catch { }
 }
-async function roomEnter() {
-  roomLeave(true);
+async function roomEnter(sel, n) {
+  roomLeave(true); const tok = ++rmTok;
   const v = $('v-room'); v.replaceChildren();
-  const h = el('h2', 'pg-h', 'Оқу бөлмесі'); h.dataset.ic = '🏫'; h.style.setProperty('--a', '#F59E0B'); h.style.setProperty('--b', '#FCD34D'); v.appendChild(h);
-  v.appendChild(el('p', 'sub', isStaff ? 'Сыныптың ортақ бөлмесі: оқушылар кірсе, өз орнына отырады. Кім отырғаны, оқып жатқаны не демалып жатқаны көрініп тұрады.' : 'Сыныптастарыңмен бірге отырып оқы. Орныңды таңда, күйіңді көрсет. Отырған уақытың есептеледі.'));
-  let cid = window.__myClass || null, sel = null;
-  if (isStaff) {
-    if (!classesCache.length) { try { await loadClassList(); } catch { } if ($('v-room').hidden) return; }
-    const list = assignable(); sel = document.createElement('select'); sel.setAttribute('aria-label', 'Сынып');
-    list.forEach(c => sel.append(new Option(c.name, c.id))); const last = ls.get('roomClass'); if (list.some(c => c.id === last)) sel.value = last; cid = sel.value || null;
-    sel.onchange = () => { ls.set('roomClass', sel.value); roomEnter(); };
-    const bar = el('div', 'rm-bar'); bar.append(sel); v.appendChild(bar);
-  }
-  if (!cid) { v.appendChild(el('p', 'msg err', isStaff ? 'Сынып жоқ. Алдымен «Менің сыныптарым» бөлімінде сынып жаса.' : 'Сен әлі сыныпқа қосылмағансың. Мұғалімге айт.')); return; }
-  const wrap = el('div', 'rm-wrap'), stage = el('div', 'rm-stage' + (isStaff ? '' : ' can')), chip = el('div', 'rm-chip'), avs = el('div', 'rm-avs');
-  wrap.appendChild(stage); stage.appendChild(chip);
-  const seatEls = RM_SEATS.map((p, i) => { const b = el('button', 'rm-seat'); b.type = 'button'; b.style.left = (p[0] / RM_W * 100) + '%'; b.style.top = (p[1] / RM_H * 100) + '%'; b.setAttribute('aria-label', 'Орын ' + (i + 1)); b.onclick = () => sit(i); stage.appendChild(b); return b; });
-  stage.appendChild(avs); v.appendChild(wrap);
-  const S = rm = { cid, staff: isStaff, members: [], my: { st: 'read', manual: 'read', auto: false, seat: null, t0: Date.now() }, pend: 0, sess: 0, counted: false, newSess: 0, last: Date.now(), base: { week_sec: 0, week_sessions: 0, streak: 0, today_sec: 0 } };
+  const h = el('h2', 'pg-h', 'Оқу бөлмесі'); h.dataset.ic = '🌌'; h.style.setProperty('--a', '#7C3AED'); h.style.setProperty('--b', '#B07CFF'); v.appendChild(h);
+  v.appendChild(el('p', 'sub', 'Groowin обсерваториясы: барлығы бірге отырып оқитын ортақ бөлме. Басыңдағы жұлдыз көп оқыған сайын өседі ✨'));
+  const cid = window.__myClass || null, opts = [['auto', '🌌 Ортақ бөлме']];
+  if (isStaff) { for (let i = 2; i <= 4; i++) opts.push(['a:' + i, '🌌 Ортақ бөлме ' + i]); if (!classesCache.length) { try { await loadClassList(); } catch { } if (tok !== rmTok || $('v-room').hidden) return; } assignable().forEach(c => opts.push(['c:' + c.id, '🏫 ' + c.name])); }
+  else if (cid) { let nm = (classesCache.find(c => c.id === cid) || {}).name; if (!nm) { try { const r = await sb.from('classes').select('name').eq('id', cid).maybeSingle(); nm = r.data && r.data.name; } catch { } if (tok !== rmTok || $('v-room').hidden) return; } opts.push(['c:' + cid, '🏫 ' + (nm || 'Менің сыныбым')]); }
+  let room = sel || ls.get('roomSel') || 'auto'; if (!opts.some(o => o[0] === room)) room = 'auto';
+  const bar = el('div', 'rm-bar'), s2 = document.createElement('select'); s2.setAttribute('aria-label', 'Бөлме'); opts.forEach(o => s2.append(new Option(o[1], o[0]))); s2.value = room; s2.onchange = () => { ls.set('roomSel', s2.value); roomEnter(s2.value); }; bar.appendChild(s2); v.appendChild(bar);
+  const num = room === 'auto' ? (n || 1) : room.startsWith('a:') ? +room.slice(2) : 0, chan = num ? 'all-' + num : room.slice(2);
+  const box = el('div', 'rm-box'), chip = el('div', 'rm-chip'); v.appendChild(box); box.appendChild(chip);
+  const S = rm = { chan, staff: isStaff, members: [], my: { st: 'read', manual: 'read', auto: false, seat: null, t0: Date.now() }, pend: 0, sess: 0, counted: false, newSess: 0, last: Date.now(), settled: false, lv: 0, base: { week_sec: 0, week_sessions: 0, streak: 0, today_sec: 0 } };
   const sv = +ls.get('roomSeat'); if (sv >= 0 && sv < RM_SEATS.length) S.my.seat = sv;
-  const track = () => { try { S.ch.track({ uid: meId, name: rmName(meName), av: myAvatar, st: S.my.st, seat: S.my.seat, t0: S.my.t0, staff: isStaff }); } catch { } };
+  const lvl = () => Math.min(5, Math.floor((S.base.week_sec + S.sess) / 1800));
+  const track = () => { S.lv = lvl(); try { S.ch.track({ uid: meId, name: rmName(meName), av: myAvatar, st: S.my.st, seat: S.my.seat, t0: S.my.t0, lv: S.lv, staff: isStaff }); } catch { } };
   function resolve() {
     if (isStaff) return; const taken = new Map(); S.members.forEach(m => { if (m.uid !== meId && m.seat != null && !m.staff) taken.set(m.seat, m); });
     const o = taken.get(S.my.seat);
     if (S.my.seat == null || (o && (o.t0 < S.my.t0 || (o.t0 === S.my.t0 && o.uid < meId)))) { const f = RM_SEATS.findIndex((_, i) => !taken.has(i)); S.my.seat = f < 0 ? null : f; track(); }
   }
   function draw() {
-    avs.replaceChildren(); const stu = S.members.filter(m => !m.staff), tch = S.members.filter(m => m.staff);
-    const used = new Set(stu.map(m => m.seat)); seatEls.forEach((b, i) => b.classList.toggle('taken', used.has(i)));
-    stu.filter(m => m.seat >= 0 && m.seat < RM_SEATS.length).sort((a, b) => RM_SEATS[a.seat][1] - RM_SEATS[b.seat][1]).forEach(m => {
-      const st = RM_ST[m.st] ? m.st : 'read', p = RM_SEATS[m.seat], d = el('div', 'rm-av st-' + st + (m.uid === meId ? ' me' : ''));
-      d.style.left = (p[0] / RM_W * 100) + '%'; d.style.top = (p[1] / RM_H * 100) + '%'; d.style.setProperty('--d', '-' + ((rmHash(m.uid) % 30) / 10) + 's');
-      d.innerHTML = rmSvg(m.uid, m.av, st); const a = avParse(m.av);
-      if (a) { const bd = el('span', 'rm-badge', a.e); bd.style.setProperty('--bc', AV_C[a.c]); d.appendChild(bd); }
-      if (st === 'sleep') d.appendChild(el('span', 'rm-z', 'z z'));
-      d.appendChild(el('span', 'rm-nm', String(m.name || '').slice(0, 14))); avs.appendChild(d);
-    });
-    const awake = stu.filter(m => m.st !== 'sleep').length;
-    chip.replaceChildren(); const dot = el('span', 'rm-dot'); chip.append(dot, el('span', '', stu.length ? stu.length + ' оқушы бөлмеде' + (awake !== stu.length ? ' · ' + awake + ' белсенді' : '') : 'Бөлме бос'));
-    if (tch.length) chip.appendChild(el('span', '', '👩‍🏫 ' + tch.map(t => t.name).slice(0, 2).join(', ')));
+    const stu = S.members.filter(m => !m.staff), tch = S.members.filter(m => m.staff);
+    if (S.view) { S.view.update(stu, S.my.seat); if (!S.focused && !isStaff && S.my.seat != null && box.clientWidth < 640 && S.view.focusMe && box.classList.contains('is3') && stu.some(m => m.uid === meId)) { S.focused = true; S.view.focusMe(S.my.seat); } }
+    const awake = stu.filter(m => m.st !== 'sleep').length; chip.replaceChildren(); chip.append(el('span', 'rm-dot'), el('span', '', stu.length ? stu.length + ' оқушы бөлмеде' + (awake !== stu.length ? ' · ' + awake + ' белсенді' : '') : 'Бөлме бос'));
+    if (num > 1) chip.appendChild(el('span', '', 'Бөлме ' + num)); if (tch.length) chip.appendChild(el('span', '', '👩‍🏫 ' + tch.map(t => t.name).slice(0, 2).join(', ')));
     if (!isStaff && S.my.seat == null) chip.appendChild(el('span', '', 'Бөлме толы'));
   }
-  function sit(i) { if (isStaff || S.members.some(m => m.uid !== meId && m.seat === i && !m.staff)) return; S.my.seat = i; ls.set('roomSeat', i); stage.classList.remove('pick'); pickBtn && pickBtn.setAttribute('aria-pressed', 'false'); track(); S.members = S.members.map(m => m.uid === meId ? { ...m, seat: i } : m); draw(); }
-  S.ch = sb.channel('room:' + cid, { config: { presence: { key: meId + '_' + Math.random().toString(36).slice(2, 8) } } });
+  function sit(i) { if (isStaff || S.members.some(m => m.uid !== meId && m.seat === i && !m.staff)) return; S.my.seat = i; ls.set('roomSeat', i); S.pick = false; pickBtn && pickBtn.setAttribute('aria-pressed', 'false'); S.view && S.view.setPick(false); track(); S.members = S.members.map(m => m.uid === meId ? { ...m, seat: i } : m); draw(); }
+  const cbk = { onSeat: sit };
+  let mode = ls.get('roomView') === '2d' ? '2d' : '3d';
+  async function mount() {
+    if (S.view) { try { S.view.destroy(); } catch { } S.view = null; }
+    if (mode === '3d') { if (!rmGL() || !(await rm3Load())) { mode = '2d'; msg3.textContent = '3D ашылмады (интернет не құрылғы). 2D көрсетіледі.'; } else if (rm !== S) return; }
+    if (rm !== S) return; box.classList.toggle('is3', mode === '3d'); try { S.view = mode === '3d' ? rm3Create(box, cbk) : rm2dCreate(box, cbk); } catch (e) { if (mode === '3d') { mode = '2d'; msg3.textContent = '3D ашылмады. 2D көрсетіледі.'; S.view = rm2dCreate(box, cbk); } }
+    box.classList.toggle('is3', mode === '3d'); if (S.view) { S.view.setPick(!!S.pick); draw(); } if (viewBtn) viewBtn.textContent = mode === '3d' ? '🖼️ 2D' : '🧊 3D'; if (meBtn) meBtn.hidden = false;
+  }
+  const msg3 = el('p', 'rm-hint', ''); let pickBtn = null, viewBtn = null, meBtn = null;
+  S.ch = sb.channel('room:' + chan, { config: { presence: { key: meId + '_' + Math.random().toString(36).slice(2, 8) } } });
   S.ch.on('presence', { event: 'sync' }, () => {
     const by = new Map(); Object.values(S.ch.presenceState()).flat().forEach(m => { if (!m || !m.uid) return; const o = by.get(m.uid); if (!o || (m.t0 || 0) < (o.t0 || 0)) by.set(m.uid, m); });
-    S.members = [...by.values()].map(m => ({ uid: String(m.uid), name: String(m.name || '').slice(0, 14), av: String(m.av || ''), st: RM_ST[m.st] ? m.st : 'read', seat: Number.isInteger(m.seat) ? m.seat : null, t0: +m.t0 || 0, staff: !!m.staff }));
+    S.members = [...by.values()].map(m => ({ uid: String(m.uid), name: String(m.name || '').slice(0, 14), av: String(m.av || ''), st: RM_ST[m.st] ? m.st : 'read', seat: Number.isInteger(m.seat) ? m.seat : null, t0: +m.t0 || 0, lv: Math.max(0, Math.min(5, m.lv | 0)), staff: !!m.staff }));
+    if (room === 'auto' && !S.settled) { S.settled = true; const others = S.members.filter(m => !m.staff && m.uid !== meId).length; if (others >= RM_MAX && (n || 1) < 4 && !isStaff) { roomEnter('auto', (n || 1) + 1); return; } }
     resolve(); draw();
   });
   S.ch.subscribe(s => { if (s === 'SUBSCRIBED') track(); });
-  // басқару
-  let pickBtn = null;
-  const setSt = k => {
-    S.my.auto = false; S.my.manual = (k === 'hand' && S.my.manual === 'hand') ? 'read' : k; S.my.st = S.my.manual; S.last = Date.now(); track();
-    S.members = S.members.map(m => m.uid === meId ? { ...m, st: S.my.st } : m); draw(); paintBtns();
-  };
-  let btns = [];
-  const paintBtns = () => btns.forEach(([k, b]) => b.setAttribute('aria-pressed', String(S.my.manual === k)));
+  const setSt = k => { S.my.auto = false; S.my.manual = (k === 'hand' && S.my.manual === 'hand') ? 'read' : k; S.my.st = S.my.manual; S.last = Date.now(); track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: S.my.st } : m); draw(); paintBtns(); };
+  let btns = []; const paintBtns = () => btns.forEach(([k, b]) => b.setAttribute('aria-pressed', String(S.my.manual === k)));
   const stat = [el('b', '', '0 м'), el('b', '', '0'), el('b', '', '0')];
-  const paintStats = () => {
-    const wk = S.base.week_sec + S.sess, today = S.base.today_sec + S.sess; let stk = S.base.streak; if (S.base.today_sec < 120 && today >= 120) stk++;
-    stat[0].textContent = (wk >= 3600 ? Math.floor(wk / 3600) + ' с ' + Math.floor(wk % 3600 / 60) + ' м' : Math.floor(wk / 60) + ' м'); stat[1].textContent = S.base.week_sessions + S.newSess; stat[2].textContent = stk;
-  };
+  const paintStats = () => { const wk = S.base.week_sec + S.sess, today = S.base.today_sec + S.sess; let stk = S.base.streak; if (S.base.today_sec < 120 && today >= 120) stk++; stat[0].textContent = wk >= 3600 ? Math.floor(wk / 3600) + ' с ' + Math.floor(wk % 3600 / 60) + ' м' : Math.floor(wk / 60) + ' м'; stat[1].textContent = S.base.week_sessions + S.newSess; stat[2].textContent = stk; };
+  const ctl = el('div', 'rm-ctl');
+  if (!isStaff) ['read', 'write', 'hand', 'sleep'].forEach(k => { const b = el('button', '', RM_ST[k][0] + ' ' + RM_ST[k][1]); b.type = 'button'; b.onclick = () => setSt(k); btns.push([k, b]); ctl.appendChild(b); });
+  if (!isStaff) { pickBtn = el('button', '', '🪑 Орын таңдау'); pickBtn.type = 'button'; pickBtn.setAttribute('aria-pressed', 'false'); pickBtn.onclick = () => { S.pick = !S.pick; pickBtn.setAttribute('aria-pressed', String(!!S.pick)); S.view && S.view.setPick(!!S.pick); }; ctl.appendChild(pickBtn); }
+  meBtn = el('button', '', '🎯 ' + (isStaff ? 'Бөлме' : 'Мен')); meBtn.type = 'button'; meBtn.onclick = () => { if (isStaff || S.my.seat == null) S.view && S.view.resetCam(); else S.view && S.view.focusMe(S.my.seat); }; ctl.appendChild(meBtn);
+  viewBtn = el('button', '', mode === '3d' ? '🖼️ 2D' : '🧊 3D'); viewBtn.type = 'button'; viewBtn.onclick = () => { mode = mode === '3d' ? '2d' : '3d'; ls.set('roomView', mode); msg3.textContent = ''; mount(); }; ctl.appendChild(viewBtn);
+  v.appendChild(ctl); v.appendChild(msg3);
   if (!isStaff) {
-    const ctl = el('div', 'rm-ctl');
-    ['read', 'write', 'hand', 'sleep'].forEach(k => { const b = el('button', '', RM_ST[k][0] + ' ' + RM_ST[k][1]); b.type = 'button'; b.onclick = () => setSt(k); btns.push([k, b]); ctl.appendChild(b); });
-    pickBtn = el('button', '', '🪑 Орын таңдау'); pickBtn.type = 'button'; pickBtn.setAttribute('aria-pressed', 'false'); pickBtn.onclick = () => { const on = stage.classList.toggle('pick'); pickBtn.setAttribute('aria-pressed', String(on)); }; ctl.appendChild(pickBtn);
-    v.appendChild(ctl); v.appendChild(el('p', 'rm-hint', 'Бірнеше минут тиіспесең, ұйықтап кетесің 😴. Бұл кезде уақыт есептелмейді.'));
+    v.appendChild(el('p', 'rm-hint', 'Бірнеше минут тиіспесең, ұйықтап кетесің 😴. Бұл кезде уақыт есептелмейді. Бөлмені саусақпен айналдыр, екі саусақпен жақындат.'));
     const st = el('div', 'rm-stats'); [['Бұл апта', 0], ['Сессия (апта)', 1], ['Күн қатар', 2]].forEach(([t, i]) => { const d = el('div'); d.append(stat[i], el('small', '', t)); st.appendChild(d); }); v.appendChild(st);
-    paintBtns();
-    sb.rpc('room_stats').then(r => { if (rm === S && r.data) { S.base = { week_sec: +r.data.week_sec || 0, week_sessions: +r.data.week_sessions || 0, streak: +r.data.streak || 0, today_sec: +r.data.today_sec || 0 }; paintStats(); } }, () => { });
-    paintStats();
+    paintBtns(); paintStats();
+    sb.rpc('room_stats').then(r => { if (rm === S && r.data) { S.base = { week_sec: +r.data.week_sec || 0, week_sessions: +r.data.week_sessions || 0, streak: +r.data.streak || 0, today_sec: +r.data.today_sec || 0 }; paintStats(); if (lvl() !== S.lv) track(); } }, () => { });
   }
-  // белсенділік: 90 сек тиіспесе ұйықтайды, қайтып тисе оянады
   S.act = () => { S.last = Date.now(); if (S.my.auto) { S.my.auto = false; S.my.st = S.my.manual; track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: S.my.st } : m); draw(); } };
   ['pointerdown', 'keydown', 'touchstart', 'scroll', 'wheel'].forEach(t => addEventListener(t, S.act, true));
   const flush = async () => {
-    if (S.flushing || S.pend <= 0 || isStaff) return; const n = Math.min(S.pend, 90), isNew = !S.counted && Date.now() - (+ls.get('roomLast') || 0) > 1800000; S.flushing = true;
-    try { const r = await sb.rpc('room_add', { p_seconds: n, p_new: isNew }); if (!r.error) { S.pend -= n; S.counted = true; if (isNew) S.newSess = 1; ls.set('roomLast', Date.now()); } } catch { }
+    if (S.flushing || S.pend <= 0 || isStaff) return; const k = Math.min(S.pend, 90), isNew = !S.counted && Date.now() - (+ls.get('roomLast') || 0) > 1800000; S.flushing = true;
+    try { const r = await sb.rpc('room_add', { p_seconds: k, p_new: isNew }); if (!r.error) { S.pend -= k; S.counted = true; if (isNew) S.newSess = 1; ls.set('roomLast', Date.now()); } } catch { }
     S.flushing = false;
   };
   S.tick = setInterval(() => {
-    if (!rm || rm !== S) return;
-    if (!isStaff) {
-      if (!S.my.auto && S.my.st !== 'sleep' && Date.now() - S.last > 90000) { S.my.auto = true; S.my.st = 'sleep'; track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: 'sleep' } : m); draw(); }
-      if (S.my.st !== 'sleep' && !document.hidden && navigator.onLine !== false) { S.sess++; S.pend++; if (S.pend >= 60) flush(); paintStats(); }
-    }
+    if (rm !== S || isStaff) return;
+    if (!S.my.auto && S.my.st !== 'sleep' && Date.now() - S.last > 90000) { S.my.auto = true; S.my.st = 'sleep'; track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: 'sleep' } : m); draw(); }
+    if (S.my.st !== 'sleep' && !document.hidden && navigator.onLine !== false) { S.sess++; S.pend++; if (S.pend >= 60) flush(); paintStats(); if (lvl() !== S.lv) track(); }
   }, 1000);
-  draw();
-  setTimeout(() => { if (rm !== S || wrap.scrollWidth <= wrap.clientWidth) return; const p = RM_SEATS[S.my.seat == null ? 12 : S.my.seat]; wrap.scrollLeft = p[0] / RM_W * stage.offsetWidth - wrap.clientWidth / 2; }, 400);
+  await mount();
 }
 
 const HM_ICON = {
