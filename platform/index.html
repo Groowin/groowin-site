@@ -1280,6 +1280,40 @@ html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn{back
 #rsList .hm-card strong{font-size:1.5rem;margin-top:0}
 #rsDetail .tools{display:flex;flex-wrap:wrap;gap:10px}#rsDetail .tools .go{width:auto;margin:0;padding:11px 20px;border-radius:14px}
 @media(max-width:600px){.pg-h::before{width:44px;height:44px;border-radius:15px}#classList{grid-template-columns:1fr}}
+/* Оқу бөлмесі 3.7 */
+#v-room{max-width:1240px;margin:0 auto}
+.rm-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 12px}
+.rm-bar select{padding:9px 12px;border-radius:12px;max-width:100%}
+.rm-wrap{overflow-x:auto;border-radius:26px;box-shadow:0 24px 50px -28px rgba(0,0,0,.7);border:1px solid var(--line);-webkit-overflow-scrolling:touch;background:#3a2412}
+.rm-stage{position:relative;min-width:780px;aspect-ratio:1586/992;background:#3a2412 url(room-bg.jpg) center/cover no-repeat;container-type:inline-size;overflow:hidden}
+.rm-chip{position:absolute;left:2cqw;top:1.8cqw;z-index:6;display:flex;flex-wrap:wrap;gap:.8cqw 1.4cqw;align-items:center;padding:.8cqw 1.6cqw;border-radius:99px;background:rgba(20,14,8,.64);backdrop-filter:blur(8px);color:#fff7e6;font-weight:700;font-size:max(12px,1.45cqw)}
+.rm-dot{width:.8em;height:.8em;border-radius:50%;background:#3ddc84;box-shadow:0 0 10px #3ddc84;flex:none}
+.rm-seat{position:absolute;width:3.6cqw;height:3.6cqw;transform:translate(-50%,-50%);border-radius:50%;border:2px dashed rgba(255,255,255,.95);background:rgba(255,255,255,.22);opacity:0;transition:opacity .2s;cursor:pointer;padding:0;z-index:2}
+.rm-stage.pick .rm-seat:not(.taken){opacity:1;animation:rmPulse 1.6s ease-in-out infinite}
+@media(hover:hover){.rm-stage.can:hover .rm-seat:not(.taken){opacity:.55}.rm-stage.can .rm-seat:not(.taken):hover{opacity:1}}
+.rm-seat.taken,.rm-stage:not(.can) .rm-seat{pointer-events:none}
+.rm-av{position:absolute;width:8.4cqw;transform:translate(-50%,-93%);z-index:3;pointer-events:none}
+.rm-av svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 .5cqw .5cqw rgba(0,0,0,.35));transform-origin:50% 100%}
+.rm-av.st-read svg,.rm-av.st-write svg{animation:rmBob 3.6s ease-in-out var(--d,0s) infinite}
+.rm-av.st-hand svg{animation:rmHop 1.1s ease-in-out infinite}
+.rm-nm{position:absolute;left:50%;top:97%;transform:translateX(-50%);white-space:nowrap;font-weight:800;font-size:max(10px,1.3cqw);color:#fff;text-shadow:0 1px 3px #000,0 0 6px #000}
+.rm-av.me .rm-nm{color:#ffe08a}
+.rm-av.me svg{filter:drop-shadow(0 0 .6cqw rgba(255,224,138,.95)) drop-shadow(0 .5cqw .5cqw rgba(0,0,0,.35))}
+.rm-badge{position:absolute;right:-.4cqw;top:.2cqw;width:2.5cqw;height:2.5cqw;min-width:19px;min-height:19px;border-radius:50%;display:grid;place-items:center;font-size:max(11px,1.45cqw);line-height:1;background:var(--bc,#3E63DD);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.rm-z{position:absolute;right:-.6cqw;top:-1.2cqw;font-weight:900;color:#d7e6ff;font-size:max(13px,2cqw);text-shadow:0 0 8px #4a78ff;animation:rmZ 2.4s ease-in-out infinite}
+@keyframes rmBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2%)}}
+@keyframes rmHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-5%)}}
+@keyframes rmZ{0%{opacity:0;transform:translate(0,.6cqw) scale(.7)}30%{opacity:1}100%{opacity:0;transform:translate(1cqw,-2cqw) scale(1.2)}}
+@keyframes rmPulse{50%{transform:translate(-50%,-50%) scale(1.14)}}
+.rm-ctl{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 8px}
+.rm-ctl button{border-radius:99px;padding:10px 16px;font-weight:700;border:1px solid var(--line);background:var(--surf,var(--card));color:inherit;cursor:pointer}
+.rm-ctl button[aria-pressed=true]{background:linear-gradient(145deg,#F59E0B,#FCD34D);color:#2b1a00;border-color:transparent}
+.rm-hint{margin:0 0 10px;font-size:.88rem;opacity:.7}
+.rm-stats{display:grid;grid-template-columns:repeat(3,1fr);margin:6px 0 4px;border:1px solid var(--line);border-radius:22px;background:var(--surf,var(--card));overflow:hidden}
+.rm-stats>div{padding:16px 8px;text-align:center}.rm-stats>div+div{border-left:1px solid var(--line)}
+.rm-stats b{display:block;font-size:clamp(1.6rem,4vw,2.4rem);font-family:Georgia,'Times New Roman',serif}
+.rm-stats small{opacity:.65;text-transform:uppercase;letter-spacing:.08em;font-size:.7rem}
+@media(prefers-reduced-motion:reduce){.rm-av svg,.rm-z,.rm-seat{animation:none!important}}
 #offBar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;max-width:min(560px,calc(100vw - 24px));padding:11px 18px;border-radius:99px;background:#1f2937;color:#fff;font-size:.92rem;box-shadow:0 14px 34px -10px rgba(0,0,0,.6);text-align:center}#offBar.ok{background:#16a34a}#offBar[hidden]{display:none}
 </style>
 </head>
@@ -1360,6 +1394,7 @@ html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn{back
       <button data-v="news"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg><span class="nl">Хабарландыру</span><span id="badge" hidden></span></button>
       <button data-v="path" id="navPath" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span class="nl">Менің жолым</span></button>
       <button data-v="hw" id="navHw" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1zM8 6H6a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2M9 14l2 2 4-4"/></svg><span class="nl">Үй тапсырмасы</span><span id="hwBadge" hidden></span></button>
+      <button data-v="room" id="navRoom"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/></svg><span class="nl">Оқу бөлмесі</span></button>
       <button data-v="rosters" id="navRosters" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span class="nl">Менің сыныптарым</span></button>
       <button data-v="lessons" id="navLessons" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h16"/><path d="m17 10 3 2-3 2z"/></svg><span class="nl">Сабақ жоспары</span></button>
       <button data-v="favs" id="navFavs" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span class="nl">Таңдаулылар</span></button>
@@ -1381,6 +1416,7 @@ html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn{back
     <div class="mainhead"><button class="icon-btn" id="sideBtn" aria-label="Панельді жасыру немесе көрсету" aria-expanded="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><h1 id="hello"></h1><span class="role" id="role"></span><span class="role" id="xp" hidden></span></div>
 
     <div id="v-home" hidden></div>
+    <div id="v-room" hidden></div>
 
     <div id="v-catalog">
       <div class="crumbs" id="catCrumbs"></div>
@@ -1786,7 +1822,7 @@ async function showApp(session) {
   document.querySelector('.wrap').classList.toggle('wide', !!session);
   document.body.classList.toggle('in-app', !!session);
   if (!session) closeGame();
-  if (!session) { try { clearInterval(qrPing); ls.set('gwqr', ''); qrClose(); } catch { } try { onlineStop(); } catch { } typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; $('phone').value = ''; $('pass').value = ''; try { $('name').value = ''; } catch {} say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
+  if (!session) { try { clearInterval(qrPing); ls.set('gwqr', ''); qrClose(); } catch { } try { onlineStop(); } catch { } try { roomLeave(); } catch { } typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; $('phone').value = ''; $('pass').value = ''; try { $('name').value = ''; } catch {} say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const lastA = +ls.get('lastActive');
   if (lastA && Date.now() - lastA > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; await sb.auth.signOut(); return; }
   touch();
@@ -1807,7 +1843,7 @@ async function showApp(session) {
   if (document.activeElement !== $('accEdit')) $('accEdit').value = me?.full_name || '';
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
-  meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
+  window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
   $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   if (isStaff) setTimeout(slidePre, 4000);
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
@@ -2074,8 +2110,9 @@ function closeGame() {
 }
 $('back').onclick = () => go(subj, true);
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
-const VIEWS = ['home', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
-function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); }
+let rm = null; // Оқу бөлмесі күйі
+const VIEWS = ['home', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
 function go(key, keep) {
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
   clearInterval(window.__qrDevT); if (key === 'account') { qrDevices(); window.__qrDevT = setInterval(() => { if ($('v-account').hidden) clearInterval(window.__qrDevT); else qrDevices(); }, 15000); }
@@ -2139,6 +2176,9 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '3.7', date: '01.11.2026', items: [
+    ['🏫', 'Оқу бөлмесі', 'Жаңа бөлім: сыныптың ортақ бөлмесі. Оқушы кіргенде өз орнына отырады, сыныптастары мен мұғалім көрінеді. Күйіңді таңда: оқимын, жазамын, сұрағым бар немесе демалыс. Бірнеше минут тиіспесең, ұйықтап кетесің 😴. Отырған уақытың, сессиялар мен қатарынан күндер саналады. Ол үшін update-20.sql іске қос.']
+  ] },
   { ver: '3.6', date: '31.10.2026', items: [
     ['🧪', 'Үй тапсырмасына тест', 'Тапсырма қойғанда «Тест қосу» бас: сұрақ пен 4 жауап жаз, дұрысын белгіле. Оқушы тапсырғанда баға автоматты қойылады (10 балдық), мұғалім нәтижені көреді. Дұрыс жауап оқушыға тапсырғанға дейін көрінбейді. Ол үшін update-19.sql іске қос.'],
     ['📴', 'Нашар интернетте жұмыс', 'Желі жоқ не баяу болса, соңғы көрген деректер (сабақтар, тапсырмалар, материалдар) сақталған күйде көрсетіледі, жоғарыда ескерту шығады. Желі қайтқанда өзі жаңарады.'],
@@ -6630,6 +6670,133 @@ $('qrLoginBtn').onclick = qrStart; $('qrBack').onclick = qrClose; $('qrScan').on
 
 
 // ===== Басты бет =====
+// ===== Оқу бөлмесі 3.7: сыныптың ортақ бөлмесі. Оқушылар орнына отырады, күйі көрінеді (presence), отырған уақыт саналады =====
+const RM_SEATS = (() => {
+  const T = [[345, 520, 1], [765, 430, .95], [1222, 492, .98], [310, 715, 1.14], [785, 693, 1.12], [1290, 718, 1.14]], tp = [[-108, 22], [102, 22], [-102, 52], [95, 52], [-2, 72]], out = [];
+  T.forEach(([cx, cy, s]) => tp.forEach(([dx, dy]) => out.push([Math.round(cx + dx * s), Math.round(cy + dy * s)])));
+  return out;
+})();
+const RM_W = 1586, RM_H = 992;
+const RM_ST = { read: ['📖', 'Оқимын'], write: ['✍️', 'Жазамын'], hand: ['✋', 'Сұрағым бар'], sleep: ['😴', 'Демалыс'] };
+const RM_SKIN = ['#F6D2B0', '#EDBE96', '#D9A171', '#BF8460', '#8D5A3B'], RM_HAIR = ['#2B1B12', '#4A2C1A', '#7A4A22', '#1E1E24', '#B5651D', '#C94F7C'];
+const rmHash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } h ^= h >>> 15; h = Math.imul(h, 2246822507); h ^= h >>> 13; return h >>> 0; };
+const rmName = n => { const p = String(n || '').trim().split(/\s+/); return (p[1] || p[0] || 'Оқушы').slice(0, 14); };
+function rmSvg(uid, av, st) {
+  const h = rmHash(uid), sk = RM_SKIN[h % 5], hr = RM_HAIR[(h >> 3) % 6], sty = (h >> 6) % 3, a = avParse(av), sh = a ? AV_C[a.c] : AV_C[(h >> 9) % 8], ink = '#2a1d18';
+  const back = sty === 1 ? '<ellipse cx="50" cy="54" rx="31" ry="36" fill="' + hr + '"/>' : '';
+  const hair = '<path d="M24 42C22 12 78 12 76 42C70 30 62 25 50 25C38 25 30 30 24 42Z" fill="' + hr + '"/>' + (sty === 2 ? '<circle cx="50" cy="13" r="9" fill="' + hr + '"/>' : sty === 0 ? '<path d="M24 42c-3 8 0 14 3 16-1-6 0-11 3-14zM76 42c3 8 0 14-3 16 1-6 0-11-3-14z" fill="' + hr + '"/>' : '');
+  const eyes = st === 'sleep' ? '<path d="M34 47q5 4 11 0M55 47q5 4 11 0" stroke="' + ink + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+    : (st === 'read' || st === 'write') ? '<ellipse cx="40" cy="49" rx="3" ry="2.6" fill="' + ink + '"/><ellipse cx="60" cy="49" rx="3" ry="2.6" fill="' + ink + '"/>'
+    : '<ellipse cx="40" cy="46" rx="3.2" ry="4.2" fill="' + ink + '"/><ellipse cx="60" cy="46" rx="3.2" ry="4.2" fill="' + ink + '"/><circle cx="41" cy="44.5" r="1.1" fill="#fff"/><circle cx="61" cy="44.5" r="1.1" fill="#fff"/>';
+  const mouth = st === 'sleep' ? '<ellipse cx="50" cy="57" rx="2.6" ry="3" fill="#c0626a"/>' : '<path d="M45 55q5 4.5 10 0" stroke="' + ink + '" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  const face = '<circle cx="33" cy="54" r="4" fill="#ff8f9c" opacity=".5"/><circle cx="67" cy="54" r="4" fill="#ff8f9c" opacity=".5"/>' + eyes + mouth;
+  const head = '<g' + (st === 'sleep' ? ' transform="translate(0,30) rotate(10 50 42)"' : '') + '>' + back + '<circle cx="50" cy="42" r="26" fill="' + sk + '"/>' + hair + face + '</g>';
+  const body = '<rect x="27" y="68" width="46" height="46" rx="16" fill="' + sh + '"/>';
+  let ex = '';
+  if (st === 'read') ex = '<path d="M17 80L50 89L83 80V111L50 120L17 111Z" fill="#3b5bdb"/><path d="M21 79L50 87V116L21 108Z" fill="#fff"/><path d="M79 79L50 87V116L79 108Z" fill="#f4efe3"/><path d="M27 88l17 4M27 95l17 4M73 88L56 92M73 95L56 99" stroke="#c9c2b0" stroke-width="1.6" stroke-linecap="round"/><circle cx="21" cy="100" r="7" fill="' + sk + '"/><circle cx="79" cy="100" r="7" fill="' + sk + '"/>';
+  else if (st === 'write') ex = '<rect x="18" y="94" width="64" height="24" rx="4" fill="#fff8e1" stroke="#d9c9a0"/><path d="M26 102h30M26 109h24" stroke="#c9c2b0" stroke-width="1.6"/><circle cx="34" cy="102" r="6.5" fill="' + sk + '"/><path d="M66 100L83 78" stroke="#f5b82e" stroke-width="5" stroke-linecap="round"/><path d="M63 105l-1-5 5 2z" fill="#444"/><circle cx="65" cy="100" r="6.5" fill="' + sk + '"/>';
+  else if (st === 'hand') ex = '<path d="M68 78L85 44" stroke="' + sh + '" stroke-width="13" stroke-linecap="round"/><circle cx="86" cy="36" r="8" fill="' + sk + '"/><circle cx="30" cy="106" r="7" fill="' + sk + '"/><circle cx="14" cy="14" r="11" fill="#fff" stroke="#e5484d" stroke-width="2"/><text x="14" y="20" text-anchor="middle" font-size="16" font-weight="800" fill="#e5484d" font-family="sans-serif">?</text>';
+  else if (st === 'sleep') ex = '<rect x="15" y="86" width="70" height="28" rx="14" fill="' + sh + '"/><circle cx="20" cy="100" r="7" fill="' + sk + '"/><circle cx="80" cy="100" r="7" fill="' + sk + '"/>';
+  return '<svg viewBox="0 0 100 120" aria-hidden="true">' + (st === 'sleep' ? body + ex + head : body + head + ex) + '</svg>';
+}
+function roomLeave(quiet) {
+  if (!rm) return; const r = rm; rm = null;
+  clearInterval(r.tick); ['pointerdown', 'keydown', 'touchstart', 'scroll', 'wheel'].forEach(t => removeEventListener(t, r.act, true));
+  if (r.pend > 0 && !r.staff) { sb.rpc('room_add', { p_seconds: Math.min(r.pend, 90), p_new: !r.counted && Date.now() - (+ls.get('roomLast') || 0) > 1800000 }).then(() => ls.set('roomLast', Date.now()), () => { }); }
+  try { sb.removeChannel(r.ch); } catch { }
+}
+async function roomEnter() {
+  roomLeave(true);
+  const v = $('v-room'); v.replaceChildren();
+  const h = el('h2', 'pg-h', 'Оқу бөлмесі'); h.dataset.ic = '🏫'; h.style.setProperty('--a', '#F59E0B'); h.style.setProperty('--b', '#FCD34D'); v.appendChild(h);
+  v.appendChild(el('p', 'sub', isStaff ? 'Сыныптың ортақ бөлмесі: оқушылар кірсе, өз орнына отырады. Кім отырғаны, оқып жатқаны не демалып жатқаны көрініп тұрады.' : 'Сыныптастарыңмен бірге отырып оқы. Орныңды таңда, күйіңді көрсет. Отырған уақытың есептеледі.'));
+  let cid = window.__myClass || null, sel = null;
+  if (isStaff) {
+    if (!classesCache.length) { try { await loadClassList(); } catch { } if ($('v-room').hidden) return; }
+    const list = assignable(); sel = document.createElement('select'); sel.setAttribute('aria-label', 'Сынып');
+    list.forEach(c => sel.append(new Option(c.name, c.id))); const last = ls.get('roomClass'); if (list.some(c => c.id === last)) sel.value = last; cid = sel.value || null;
+    sel.onchange = () => { ls.set('roomClass', sel.value); roomEnter(); };
+    const bar = el('div', 'rm-bar'); bar.append(sel); v.appendChild(bar);
+  }
+  if (!cid) { v.appendChild(el('p', 'msg err', isStaff ? 'Сынып жоқ. Алдымен «Менің сыныптарым» бөлімінде сынып жаса.' : 'Сен әлі сыныпқа қосылмағансың. Мұғалімге айт.')); return; }
+  const wrap = el('div', 'rm-wrap'), stage = el('div', 'rm-stage' + (isStaff ? '' : ' can')), chip = el('div', 'rm-chip'), avs = el('div', 'rm-avs');
+  wrap.appendChild(stage); stage.appendChild(chip);
+  const seatEls = RM_SEATS.map((p, i) => { const b = el('button', 'rm-seat'); b.type = 'button'; b.style.left = (p[0] / RM_W * 100) + '%'; b.style.top = (p[1] / RM_H * 100) + '%'; b.setAttribute('aria-label', 'Орын ' + (i + 1)); b.onclick = () => sit(i); stage.appendChild(b); return b; });
+  stage.appendChild(avs); v.appendChild(wrap);
+  const S = rm = { cid, staff: isStaff, members: [], my: { st: 'read', manual: 'read', auto: false, seat: null, t0: Date.now() }, pend: 0, sess: 0, counted: false, newSess: 0, last: Date.now(), base: { week_sec: 0, week_sessions: 0, streak: 0, today_sec: 0 } };
+  const sv = +ls.get('roomSeat'); if (sv >= 0 && sv < RM_SEATS.length) S.my.seat = sv;
+  const track = () => { try { S.ch.track({ uid: meId, name: rmName(meName), av: myAvatar, st: S.my.st, seat: S.my.seat, t0: S.my.t0, staff: isStaff }); } catch { } };
+  function resolve() {
+    if (isStaff) return; const taken = new Map(); S.members.forEach(m => { if (m.uid !== meId && m.seat != null && !m.staff) taken.set(m.seat, m); });
+    const o = taken.get(S.my.seat);
+    if (S.my.seat == null || (o && (o.t0 < S.my.t0 || (o.t0 === S.my.t0 && o.uid < meId)))) { const f = RM_SEATS.findIndex((_, i) => !taken.has(i)); S.my.seat = f < 0 ? null : f; track(); }
+  }
+  function draw() {
+    avs.replaceChildren(); const stu = S.members.filter(m => !m.staff), tch = S.members.filter(m => m.staff);
+    const used = new Set(stu.map(m => m.seat)); seatEls.forEach((b, i) => b.classList.toggle('taken', used.has(i)));
+    stu.filter(m => m.seat >= 0 && m.seat < RM_SEATS.length).sort((a, b) => RM_SEATS[a.seat][1] - RM_SEATS[b.seat][1]).forEach(m => {
+      const st = RM_ST[m.st] ? m.st : 'read', p = RM_SEATS[m.seat], d = el('div', 'rm-av st-' + st + (m.uid === meId ? ' me' : ''));
+      d.style.left = (p[0] / RM_W * 100) + '%'; d.style.top = (p[1] / RM_H * 100) + '%'; d.style.setProperty('--d', '-' + ((rmHash(m.uid) % 30) / 10) + 's');
+      d.innerHTML = rmSvg(m.uid, m.av, st); const a = avParse(m.av);
+      if (a) { const bd = el('span', 'rm-badge', a.e); bd.style.setProperty('--bc', AV_C[a.c]); d.appendChild(bd); }
+      if (st === 'sleep') d.appendChild(el('span', 'rm-z', 'z z'));
+      d.appendChild(el('span', 'rm-nm', String(m.name || '').slice(0, 14))); avs.appendChild(d);
+    });
+    const awake = stu.filter(m => m.st !== 'sleep').length;
+    chip.replaceChildren(); const dot = el('span', 'rm-dot'); chip.append(dot, el('span', '', stu.length ? stu.length + ' оқушы бөлмеде' + (awake !== stu.length ? ' · ' + awake + ' белсенді' : '') : 'Бөлме бос'));
+    if (tch.length) chip.appendChild(el('span', '', '👩‍🏫 ' + tch.map(t => t.name).slice(0, 2).join(', ')));
+    if (!isStaff && S.my.seat == null) chip.appendChild(el('span', '', 'Бөлме толы'));
+  }
+  function sit(i) { if (isStaff || S.members.some(m => m.uid !== meId && m.seat === i && !m.staff)) return; S.my.seat = i; ls.set('roomSeat', i); stage.classList.remove('pick'); pickBtn && pickBtn.setAttribute('aria-pressed', 'false'); track(); S.members = S.members.map(m => m.uid === meId ? { ...m, seat: i } : m); draw(); }
+  S.ch = sb.channel('room:' + cid, { config: { presence: { key: meId + '_' + Math.random().toString(36).slice(2, 8) } } });
+  S.ch.on('presence', { event: 'sync' }, () => {
+    const by = new Map(); Object.values(S.ch.presenceState()).flat().forEach(m => { if (!m || !m.uid) return; const o = by.get(m.uid); if (!o || (m.t0 || 0) < (o.t0 || 0)) by.set(m.uid, m); });
+    S.members = [...by.values()].map(m => ({ uid: String(m.uid), name: String(m.name || '').slice(0, 14), av: String(m.av || ''), st: RM_ST[m.st] ? m.st : 'read', seat: Number.isInteger(m.seat) ? m.seat : null, t0: +m.t0 || 0, staff: !!m.staff }));
+    resolve(); draw();
+  });
+  S.ch.subscribe(s => { if (s === 'SUBSCRIBED') track(); });
+  // басқару
+  let pickBtn = null;
+  const setSt = k => {
+    S.my.auto = false; S.my.manual = (k === 'hand' && S.my.manual === 'hand') ? 'read' : k; S.my.st = S.my.manual; S.last = Date.now(); track();
+    S.members = S.members.map(m => m.uid === meId ? { ...m, st: S.my.st } : m); draw(); paintBtns();
+  };
+  let btns = [];
+  const paintBtns = () => btns.forEach(([k, b]) => b.setAttribute('aria-pressed', String(S.my.manual === k)));
+  const stat = [el('b', '', '0 м'), el('b', '', '0'), el('b', '', '0')];
+  const paintStats = () => {
+    const wk = S.base.week_sec + S.sess, today = S.base.today_sec + S.sess; let stk = S.base.streak; if (S.base.today_sec < 120 && today >= 120) stk++;
+    stat[0].textContent = (wk >= 3600 ? Math.floor(wk / 3600) + ' с ' + Math.floor(wk % 3600 / 60) + ' м' : Math.floor(wk / 60) + ' м'); stat[1].textContent = S.base.week_sessions + S.newSess; stat[2].textContent = stk;
+  };
+  if (!isStaff) {
+    const ctl = el('div', 'rm-ctl');
+    ['read', 'write', 'hand', 'sleep'].forEach(k => { const b = el('button', '', RM_ST[k][0] + ' ' + RM_ST[k][1]); b.type = 'button'; b.onclick = () => setSt(k); btns.push([k, b]); ctl.appendChild(b); });
+    pickBtn = el('button', '', '🪑 Орын таңдау'); pickBtn.type = 'button'; pickBtn.setAttribute('aria-pressed', 'false'); pickBtn.onclick = () => { const on = stage.classList.toggle('pick'); pickBtn.setAttribute('aria-pressed', String(on)); }; ctl.appendChild(pickBtn);
+    v.appendChild(ctl); v.appendChild(el('p', 'rm-hint', 'Бірнеше минут тиіспесең, ұйықтап кетесің 😴. Бұл кезде уақыт есептелмейді.'));
+    const st = el('div', 'rm-stats'); [['Бұл апта', 0], ['Сессия (апта)', 1], ['Күн қатар', 2]].forEach(([t, i]) => { const d = el('div'); d.append(stat[i], el('small', '', t)); st.appendChild(d); }); v.appendChild(st);
+    paintBtns();
+    sb.rpc('room_stats').then(r => { if (rm === S && r.data) { S.base = { week_sec: +r.data.week_sec || 0, week_sessions: +r.data.week_sessions || 0, streak: +r.data.streak || 0, today_sec: +r.data.today_sec || 0 }; paintStats(); } }, () => { });
+    paintStats();
+  }
+  // белсенділік: 90 сек тиіспесе ұйықтайды, қайтып тисе оянады
+  S.act = () => { S.last = Date.now(); if (S.my.auto) { S.my.auto = false; S.my.st = S.my.manual; track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: S.my.st } : m); draw(); } };
+  ['pointerdown', 'keydown', 'touchstart', 'scroll', 'wheel'].forEach(t => addEventListener(t, S.act, true));
+  const flush = async () => {
+    if (S.flushing || S.pend <= 0 || isStaff) return; const n = Math.min(S.pend, 90), isNew = !S.counted && Date.now() - (+ls.get('roomLast') || 0) > 1800000; S.flushing = true;
+    try { const r = await sb.rpc('room_add', { p_seconds: n, p_new: isNew }); if (!r.error) { S.pend -= n; S.counted = true; if (isNew) S.newSess = 1; ls.set('roomLast', Date.now()); } } catch { }
+    S.flushing = false;
+  };
+  S.tick = setInterval(() => {
+    if (!rm || rm !== S) return;
+    if (!isStaff) {
+      if (!S.my.auto && S.my.st !== 'sleep' && Date.now() - S.last > 90000) { S.my.auto = true; S.my.st = 'sleep'; track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: 'sleep' } : m); draw(); }
+      if (S.my.st !== 'sleep' && !document.hidden && navigator.onLine !== false) { S.sess++; S.pend++; if (S.pend >= 60) flush(); paintStats(); }
+    }
+  }, 1000);
+  draw();
+  setTimeout(() => { if (rm !== S || wrap.scrollWidth <= wrap.clientWidth) return; const p = RM_SEATS[S.my.seat == null ? 12 : S.my.seat]; wrap.scrollLeft = p[0] / RM_W * stage.offsetWidth - wrap.clientWidth / 2; }, 400);
+}
+
 const HM_ICON = {
   quiz: '<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 18h.01"/><circle cx="12" cy="12" r="9"/>',
   groups: '<circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M2 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1M12 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1"/>',
@@ -6640,7 +6807,8 @@ const HM_ICON = {
   mats: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
   hw: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12l2 2 4-4"/>',
   physics: '<circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/>',
-  math: '<path d="M4 13h3l3 7 4-16h6"/>'
+  math: '<path d="M4 13h3l3 7 4-16h6"/>',
+  room: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/>'
 };
 function homeAct(k) {
   if (k === 'quiz' || k === 'timer') return playTool({ k });
@@ -6660,12 +6828,12 @@ function renderHome() {
     v.appendChild(el('h2', 'hm-h', 'Жылдам бастау'));
     const g = el('div', 'hm-grid');
     [['c-orange', 'Викторина', 'Телефонмен ойнайтын сұрақтар', 'quiz'], ['c-violet', 'Топқа бөлу', 'Сынып не өз тізімің', 'groups'], ['c-pink', 'Кездейсоқ оқушы', 'Әділ таңдау', 'random'], ['c-cyan', 'Таймер', 'Үлкен экранға', 'timer'],
-      ['c-teal', 'Сабақ жоспары', 'Қадамдармен жүргіз', 'lessons'], ['c-amber', 'Ойын-сауық', 'Барлық ойын мен құрал', 'play'], ['c-indigo', 'Материалдар', 'PDF, презентация, сілтеме', 'mats'], ['c-rose', 'Үй тапсырмасы', 'Беру мен бағалау', 'hw']]
+      ['c-teal', 'Сабақ жоспары', 'Қадамдармен жүргіз', 'lessons'], ['c-amber', 'Ойын-сауық', 'Барлық ойын мен құрал', 'play'], ['c-indigo', 'Материалдар', 'PDF, презентация, сілтеме', 'mats'], ['c-rose', 'Үй тапсырмасы', 'Беру мен бағалау', 'hw'], ['c-green', 'Оқу бөлмесі', 'Сыныптың ортақ бөлмесі', 'room']]
       .forEach(([c, t, d, k]) => g.appendChild(card(c, t, d, k, () => homeAct(k))));
     v.appendChild(g);
   } else {
     v.appendChild(el('h2', 'hm-h', 'Тапсырмалар'));
-    const g = el('div', 'hm-grid hm-two'); g.append(card('c-rose', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g);
+    const g = el('div', 'hm-grid hm-two'); g.append(card('c-teal', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-rose', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g);
   }
 }
 function verifyAnim() {
