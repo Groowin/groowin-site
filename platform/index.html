@@ -1181,6 +1181,8 @@ html[data-theme=light] #authCard{color:#fff}
 .hm-card:hover{transform:translateY(-4px);box-shadow:0 26px 50px -22px var(--a)}.hm-card:active{transform:scale(.98)}
 .hm-ic{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
 .hm-card strong{font-size:1.2rem;margin-top:6px}.hm-card small{opacity:.9;font-size:.92rem;line-height:1.35;max-width:88%}.hm-card em{margin-top:auto;font-style:normal;font-weight:700;font-size:.9rem;opacity:.95}
+.hw-tq{margin-top:10px}.hwq{border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;display:grid;gap:8px}.hwq-o{display:flex;gap:8px;align-items:center;margin:0}.hwq-o input[type=radio]{width:auto;flex:none;accent-color:#16a34a}.hwq-o input:not([type=radio]){flex:1}
+.hwt .tq{border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}.hwt .tq b{display:block;margin-bottom:8px}.hwt .to{display:block;width:100%;text-align:left;padding:10px 12px;margin:6px 0;border:1.5px solid var(--line);border-radius:12px;background:transparent;color:inherit;font:inherit;cursor:pointer}.hwt .to.on{border-color:#3B6BFF;background:rgba(59,107,255,.12)}.hwt .to.ok{border-color:#16a34a;background:rgba(22,163,74,.16)}.hwt .to.bad{border-color:#dc2626;background:rgba(220,38,38,.14)}.hwt .tsc{font-size:1.4rem;font-weight:800;margin:6px 0}
 .hm-two .hm-card{min-height:180px}.hm-two .hm-card strong{font-size:1.5rem}
 .c-blue{--a:#2F6BFF;--b:#4FA3FF}.c-green{--a:#12A06B;--b:#43D08F}.c-orange{--a:#F2812A;--b:#FFB155}.c-violet{--a:#7C3AED;--b:#B07CFF}.c-pink{--a:#DB2777;--b:#FF6FA8}.c-cyan{--a:#0891B2;--b:#34D3EE}.c-teal{--a:#0D9488;--b:#4FE0C9}.c-amber{--a:#D97706;--b:#FBBF24}.c-indigo{--a:#4F46E5;--b:#8B8DFF}.c-rose{--a:#E11D48;--b:#FB7185}
 @media (max-width:760px){.hm-grid{grid-template-columns:1fr 1fr;gap:12px}.hm-two{grid-template-columns:1fr}.hm-card{min-height:130px;padding:16px}}
@@ -1247,6 +1249,38 @@ html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-ob,.bg-ct
 html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-hero{background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;border:0;box-shadow:0 24px 54px -24px #EC4899}
 html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .bg-step{background:linear-gradient(120deg,rgba(124,58,237,.28),rgba(236,72,153,.16));border:0}
 html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn{background:linear-gradient(120deg,var(--tc),color-mix(in srgb,var(--tc) 65%,#fff));border:0;color:#fff;box-shadow:0 14px 32px -12px var(--tc)}html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn i{background:#fff}
+
+/* Беттер 3.6: бір стиль (Материалдар, Сыныптар, Хабарландыру, Үй тапсырмасы) */
+.pg-h{display:flex!important;align-items:center;gap:14px;margin:4px 0 6px!important}
+.pg-h::before{content:attr(data-ic);flex:none;width:52px;height:52px;border-radius:18px;display:grid;place-items:center;font-size:1.6rem;color:#fff;background:linear-gradient(145deg,var(--a,#3B6BFF),var(--b,#7CA0FF));box-shadow:0 14px 28px -14px var(--a,#3B6BFF),inset 0 1px 0 rgba(255,255,255,.4)}
+#v-hw .sub,#v-mats>.sub,#rsHome>.sub{max-width:62ch;line-height:1.45}
+#v-hw .qcard,#v-news .news,#classList .news{border:1px solid var(--line);border-radius:22px;padding:18px 20px;background:var(--surf,var(--card));box-shadow:0 12px 30px -22px rgba(0,0,0,.5);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+#v-hw .qcard::before,#v-news .news::before,#classList .news::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--a,#3B6BFF),var(--b,#7CA0FF))}
+#v-hw .qcard{--a:#8B5CF6;--b:#C084FC}#v-news .news{--a:#EC4899;--b:#F9A8D4;margin-top:14px}#classList .news{--a:#0EA5E9;--b:#67E8F9}
+#v-hw .qcard:hover,#v-news .news:hover,#classList .news:hover{transform:translateY(-3px);box-shadow:0 20px 36px -22px var(--a)}
+#v-news .news h3{font-size:1.15rem}
+#classList{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}#classList .news{margin:0;display:flex;flex-direction:column;gap:8px}
+#classList select{width:100%;padding:10px 12px;border-radius:12px}
+#v-news .tabs{gap:6px;padding:5px;border-radius:99px;background:var(--line);width:fit-content;max-width:100%;overflow:auto}
+#v-news .tabs button{flex:none;border:0;border-radius:99px;padding:8px 18px;font-weight:600}
+#v-news .tabs button[aria-selected=true]{background:linear-gradient(145deg,#EC4899,#F472B6);color:#fff;box-shadow:0 8px 18px -10px #EC4899}
+#newsForm{border:1px solid var(--line);border-radius:20px;padding:14px 18px;background:var(--surf,var(--card))}
+#newsForm summary{font-weight:700}
+#hwForm{border:1px solid var(--line);border-radius:22px;padding:6px 20px 18px;margin:14px 0;background:var(--surf,var(--card))}
+#hwForm .go,#v-news .go,#v-mats .go,#rsHome .go,#v-classes .go{border-radius:14px;background:linear-gradient(145deg,var(--accent,#3B6BFF),color-mix(in srgb,var(--accent,#3B6BFF) 65%,#fff))}
+#v-mats .mt-add{border:1px solid var(--line);border-radius:22px;padding:8px 18px;background:var(--surf,var(--card));margin:14px 0}
+#v-mats .mt-add .out,#v-mats .mtools .upl{border-radius:14px;border-width:1.5px}
+#v-mats .mt-q{border-radius:99px}
+#v-mats .mt-it,#v-mats .mt-fold{box-shadow:0 12px 28px -22px rgba(0,0,0,.55)}
+#v-mats .mt-it{border-radius:22px}
+#v-mats .mt-th{height:104px}
+#v-hw .hw-chip{padding:4px 12px}
+#rsList{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+#rsList .hm-card{min-height:130px}
+#rsList .hm-card strong{font-size:1.5rem;margin-top:0}
+#rsDetail .tools{display:flex;flex-wrap:wrap;gap:10px}#rsDetail .tools .go{width:auto;margin:0;padding:11px 20px;border-radius:14px}
+@media(max-width:600px){.pg-h::before{width:44px;height:44px;border-radius:15px}#classList{grid-template-columns:1fr}}
+#offBar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;max-width:min(560px,calc(100vw - 24px));padding:11px 18px;border-radius:99px;background:#1f2937;color:#fff;font-size:.92rem;box-shadow:0 14px 34px -10px rgba(0,0,0,.6);text-align:center}#offBar.ok{background:#16a34a}#offBar[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -1405,6 +1439,9 @@ html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn{back
         <label for="hwDue">Мерзімі</label><input id="hwDue" type="date" style="width:auto">
         <label for="hwFiles">Файл не сурет қосу (міндетті емес)</label><input id="hwFiles" type="file" multiple accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip">
         <div id="hwFPrev" class="hw-th"></div><small class="gm">5 файлға дейін, әрқайсысы 10 МБ-қа дейін. Оқушылар көреді және жүктеп алады.</small>
+        <div class="hw-tq"><button type="button" class="out" id="hwTestBtn">🧪 Тест қосу (автотексеру)</button>
+          <div id="hwTest" hidden><div id="hwQList"></div><button type="button" class="out" id="hwQAdd">+ Сұрақ қосу</button>
+          <small class="gm" style="display:block;margin-top:6px">Дұрыс жауапты дөңгелекпен белгіле. Оқушы тапсырғанда баға автоматты қойылады, дұрыс жауап оқушыға тапсырғанға дейін көрінбейді.</small></div></div>
         <div style="margin-top:12px"><button class="go" id="hwAdd" style="width:auto;padding:10px 22px">Тапсырма қою</button></div>
       </div>
       <p class="msg" id="hwMsg" role="status" aria-live="polite"></p>
@@ -1660,7 +1697,29 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 // Телефоннан жасалатын жасырын email үшін домен (нақты пошта қажет емес)
 const EMAIL_DOMAIN = 'fizmat.app';
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Офлайн/нашар желі: Supabase GET (оқу) сұраныстарының соңғы жауабы кэште сақталады. Желі жоқ не өте баяу болса, сол көрсетіледі.
+const GW_API = 'gw-api-v1';
+const gwFetch = async (input, init) => {
+  const req = new Request(input, init);
+  let ru = null; try { ru = new URL(req.url); } catch { }
+  if (req.method !== 'GET' || !ru || ru.origin !== new URL(SUPABASE_URL).origin || !ru.pathname.startsWith('/rest/v1/') || !window.caches) return fetch(req);
+  const key = new Request(req.url + (req.url.includes('?') ? '&' : '?') + '_u=' + (typeof meId === 'string' && meId ? meId : '') + '&_a=' + encodeURIComponent((req.headers.get('accept') || '') + '|' + (req.headers.get('prefer') || '') + '|' + (req.headers.get('range') || '')));
+  const fromCache = async () => { try { const c = await caches.open(GW_API); return await c.match(key); } catch { return null; } };
+  const net = fetch(req).then(async res => { if (res.status === 200) { try { const c = await caches.open(GW_API); await c.put(key, res.clone()); } catch { } } return res; });
+  if (!navigator.onLine) { try { return await net; } catch (e) { const h = await fromCache(); if (h) { gwOffline(true); return h; } throw e; } }
+  const hit = await fromCache();
+  if (!hit) return net;
+  // кэш бар: желі 7 секундта жауап бермесе, кэшті көрсетеміз (жаңа жауап фонда сақталады)
+  return Promise.race([net.catch(() => null), new Promise(r => setTimeout(() => r(null), 7000))]).then(r => { if (r) return r; gwOffline(true); return hit; });
+};
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { global: { fetch: gwFetch } });
+sb.auth.onAuthStateChange(ev => { if (ev === 'SIGNED_OUT' && window.caches) caches.delete(GW_API); });
+{ const bar = document.createElement('div'); bar.id = 'offBar'; bar.hidden = true; bar.setAttribute('role', 'status'); document.body.appendChild(bar);
+  let t = null;
+  window.gwOffline = on => { clearTimeout(t); if (on) { bar.className = ''; bar.textContent = '📴 Желі жоқ не нашар. Сақталған деректер көрсетіліп тұр, өзгертулер сақталмайды.'; bar.hidden = false; t = setTimeout(() => { if (navigator.onLine) bar.hidden = true; }, 12000); } else { bar.className = 'ok'; bar.textContent = '✓ Желі қайта қосылды'; bar.hidden = false; t = setTimeout(() => { bar.hidden = true; }, 2500); } };
+  addEventListener('offline', () => gwOffline(true));
+  addEventListener('online', () => { gwOffline(false); try { const k = document.querySelector('#nav button.on'); if (k) k.click(); } catch { } });
+  if (!navigator.onLine) gwOffline(true); }
 const $ = id => document.getElementById(id);
 let mode = 'in';
 let meId = null;
@@ -2014,6 +2073,7 @@ function closeGame() {
   $('frame').src = 'about:blank';
 }
 $('back').onclick = () => go(subj, true);
+[['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 const VIEWS = ['home', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { VIEWS.forEach(x => $('v-' + x).hidden = x !== v); }
 function go(key, keep) {
@@ -2079,6 +2139,11 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '3.6', date: '31.10.2026', items: [
+    ['🧪', 'Үй тапсырмасына тест', 'Тапсырма қойғанда «Тест қосу» бас: сұрақ пен 4 жауап жаз, дұрысын белгіле. Оқушы тапсырғанда баға автоматты қойылады (10 балдық), мұғалім нәтижені көреді. Дұрыс жауап оқушыға тапсырғанға дейін көрінбейді. Ол үшін update-19.sql іске қос.'],
+    ['📴', 'Нашар интернетте жұмыс', 'Желі жоқ не баяу болса, соңғы көрген деректер (сабақтар, тапсырмалар, материалдар) сақталған күйде көрсетіледі, жоғарыда ескерту шығады. Желі қайтқанда өзі жаңарады.'],
+    ['🎨', 'Беттер бір стильде', 'Материалдар, Сыныптар, Хабарландыру және Үй тапсырмасы беттері Басты бет сияқты жарқын тақырып белгісімен, дөңгелек карточкалармен жаңарды.']
+  ] },
   { ver: '3.5', date: '31.10.2026', items: [
     ['🎨', 'Ойындар жарқын стильде', 'Тақта ойындарының бәрі (Сұрыптау, Эстафета, Жұптарды тап, Сөз табу, Тізбек, Қателікті тап т.б.) Басты бет сияқты жарқын градиент карточкаларға ауысты: түрлі-түсті командалар, жолақтар, топтар және жоғарғы жолақ.']
   ] },
@@ -2360,7 +2425,8 @@ async function loadRosters() {
   const { data } = await sb.from('rosters').select('*, roster_students(count)').order('created_at');
   const box = $('rsList'); box.replaceChildren();
   (data || []).forEach(r => {
-    const b = el('button', 'game'); b.append(el('strong', '', r.name), el('span', 'gm', (r.roster_students?.[0]?.count || 0) + ' оқушы'));
+    const pl = [['#3B6BFF', '#7CA0FF'], ['#10B981', '#6EE7B7'], ['#F59E0B', '#FCD34D'], ['#EC4899', '#F9A8D4'], ['#8B5CF6', '#C4B5FD'], ['#0EA5E9', '#67E8F9']][(box.children.length) % 6];
+    const b = el('button', 'hm-card'); b.type = 'button'; b.style.setProperty('--a', pl[0]); b.style.setProperty('--b', pl[1]); const n = r.roster_students?.[0]?.count || 0; b.append(el('span', 'hm-ic', '👥'), el('strong', '', r.name), el('small', '', n + ' оқушы'), el('em', '', 'Ашу →'));
     b.onclick = () => openRoster(r); box.appendChild(b);
   });
   if (!(data || []).length) box.appendChild(el('p', 'sub', 'Әзірге сынып жоқ. Жоғарыда жаңасын жаса.'));
@@ -4957,6 +5023,7 @@ async function loadHw() {
       const di = dueInfo(x.due_date); top.append(el('strong', '', x.title), el('span', 'gm', (cls ? cls.name : '') + (x.due_date ? ' · мерзімі: ' + fmtD(x.due_date) : '') + (di && di.c === 'late' ? ' (өтті)' : '')));
       const nCheck = ss.filter(s => s.status === 'sent').length;
       if ((x.attachments || []).length) top.appendChild(el('span', 'gm', '📎 ' + x.attachments.length + ' файл'));
+      if (x.has_test) top.appendChild(el('span', 'gm', '🧪 Тест (автотексеру)'));
       top.appendChild(el('span', 'gm', 'Тапсырғандар: ' + ss.length + (tot ? ' / ' + tot : '') + (nCheck ? ' · тексеру керек: ' + nCheck : '')));
       const row = el('div', 'qrow'), go2 = el('button', 'go', nCheck ? 'Тексеру (' + nCheck + ')' : 'Қарау'); go2.onclick = () => reviewHw(x, studs.filter(s => s.class_id === x.class_id), ss);
       row.append(go2, mini('Жою', async () => { if (!(await ask('«' + x.title + '» тапсырмасы және оның жауаптары жойылсын ба?'))) return; await sb.from('homeworks').delete().eq('id', x.id); loadHw(); }));
@@ -4977,7 +5044,44 @@ async function loadHw() {
   }
   hwBadge();
 }
-let hwPick = [];
+let hwPick = [], hwQs = [];
+function hwQRender() {
+  const box = $('hwQList'); box.replaceChildren();
+  hwQs.forEach((q, i) => {
+    const c = el('div', 'hwq'), t = document.createElement('input'); t.placeholder = (i + 1) + '-сұрақ'; t.maxLength = 300; t.value = q.q; t.oninput = () => { q.q = t.value; }; c.appendChild(t);
+    q.o.forEach((o, j) => { const r = el('label', 'hwq-o'), rd = document.createElement('input'); rd.type = 'radio'; rd.name = 'hwqc' + i; rd.checked = q.c === j; rd.onchange = () => { q.c = j; }; rd.title = 'Дұрыс жауап'; const ti = document.createElement('input'); ti.placeholder = 'Жауап ' + 'ABCD'[j]; ti.maxLength = 150; ti.value = o; ti.oninput = () => { q.o[j] = ti.value; }; r.append(rd, ti); c.appendChild(r); });
+    c.appendChild(mini('Сұрақты өшіру', () => { hwQs.splice(i, 1); hwQRender(); })); box.appendChild(c);
+  });
+}
+function hwCleanQs() {
+  if (!hwQs.length) return null; const out = [];
+  for (const q of hwQs) { const txt = q.q.trim(); if (!txt && !q.o.some(o => o.trim())) continue; const opts = q.o.map((o, j) => ({ t: o.trim(), j })).filter(o => o.t); const ci = opts.findIndex(o => o.j === q.c); if (!txt || opts.length < 2 || ci < 0) return false; out.push({ q: txt.slice(0, 300), o: opts.map(o => o.t.slice(0, 150)), c: ci }); }
+  return out.length ? out : null;
+}
+$('hwTestBtn').onclick = () => { const h = $('hwTest'); h.hidden = !h.hidden; if (!h.hidden && !hwQs.length) hwQs.push({ q: '', o: ['', '', '', ''], c: 0 }); if (h.hidden) hwQs = []; hwQRender(); };
+$('hwQAdd').onclick = () => { if (hwQs.length >= 30) return; hwQs.push({ q: '', o: ['', '', '', ''], c: 0 }); hwQRender(); };
+async function hwTestUI(m, b, x, s) {
+  const wrap = el('div', 'hwt'); b.appendChild(wrap); wrap.appendChild(el('p', 'sub', 'Жүктелуде…'));
+  const qr = await sb.rpc('get_hw_test', { p_hw: x.id }); if (qr.error) { wrap.replaceChildren(el('p', 'msg err', 'Қате: ' + qr.error.message)); return; }
+  const qs = qr.data || []; let rev = null;
+  if (s && s.status === 'checked') { const r = await sb.rpc('my_hw_test_result', { p_hw: x.id }); if (r.data) rev = r.data.review; }
+  const ans = qs.map(() => null);
+  const draw = () => {
+    wrap.replaceChildren();
+    if (rev) { const sc = rev.filter(r => r.a === r.c).length; wrap.appendChild(el('div', 'tsc', 'Нәтиже: ' + sc + '/' + rev.length)); }
+    qs.forEach((q, i) => {
+      const c = el('div', 'tq'); c.appendChild(el('b', '', (i + 1) + '. ' + q.q));
+      q.o.forEach((o, j) => { const bt = el('button', 'to' + (rev ? (rev[i].c === j ? ' ok' : rev[i].a === j ? ' bad' : '') : (ans[i] === j ? ' on' : ''))); bt.type = 'button'; bt.textContent = o; if (rev) bt.disabled = true; else bt.onclick = () => { ans[i] = j; draw(); }; c.appendChild(bt); });
+      wrap.appendChild(c);
+    });
+    if (rev) { const ok = el('button', 'out', 'Жабу'); ok.onclick = m.close; wrap.appendChild(ok); return; }
+    const go2 = el('button', 'go', 'Тапсыру'), msg = el('p', 'msg', ''); go2.disabled = ans.some(a => a === null); if (go2.disabled) msg.textContent = 'Барлық сұраққа жауап бер (' + ans.filter(a => a !== null).length + '/' + qs.length + ')';
+    go2.onclick = async () => { go2.disabled = true; const r = await sb.rpc('submit_hw_test', { p_hw: x.id, p_answers: ans }); if (r.error) { msg.textContent = 'Қате: ' + r.error.message; msg.className = 'msg err'; go2.disabled = false; return; } rev = r.data.review; SFX.ok(); if (r.data.score >= r.data.total * .8 && typeof confetti === 'function') confetti(); draw(); loadHw(); };
+    wrap.append(go2, msg);
+  };
+  if (!qs.length) { wrap.replaceChildren(el('p', 'sub', 'Тест сұрақтары табылмады.')); return; }
+  draw();
+}
 $('hwFiles').onchange = e => { hwPick = [...e.target.files].slice(0, 5); $('hwFPrev').replaceChildren(...hwPick.map(f => { const c = el('span', 'hw-fc', ''); c.append(el('span', '', f.type.startsWith('image/') ? '🖼️' : '📎'), el('b', '', f.name)); return c; })); };
 $('hwAdd').onclick = async () => {
   const title = $('hwTitle').value.trim(), cid = $('hwClass').value;
@@ -4990,10 +5094,12 @@ $('hwAdd').onclick = async () => {
       const up = await sb.storage.from('hw-attach').upload(path, blob, { contentType: isI ? 'image/jpeg' : (f.type || 'application/octet-stream') }); if (up.error) throw up.error;
       att.push({ p: path, n: f.name.slice(0, 80), m: isI ? 'image/jpeg' : (f.type || ''), s: blob.size });
     }
-    const r = await sb.from('homeworks').insert({ title: title.slice(0, 120), body: $('hwBody').value.trim().slice(0, 2000) || null, class_id: cid, due_date: $('hwDue').value || null, attachments: att });
+    const tq = hwCleanQs(); if (tq === false) { $('hwAdd').disabled = false; return hwMsg('Тестте әр сұрақта мәтін, кемінде 2 жауап және белгіленген дұрыс жауап болуы керек', 'err'); }
+    const r = await sb.from('homeworks').insert({ title: title.slice(0, 120), body: $('hwBody').value.trim().slice(0, 2000) || null, class_id: cid, due_date: $('hwDue').value || null, attachments: att, has_test: !!tq }).select('id').single();
     if (r.error) { if (att.length) await sb.storage.from('hw-attach').remove(att.map(a => a.p)); throw r.error; }
-  } catch (e) { $('hwAdd').disabled = false; const t = String(e.message || e); return hwMsg(t.includes('attachments') || t.includes('hw-attach') || t.includes('Bucket') || t.includes('bucket') ? 'Файл қосу үшін update-17.sql әлі іске қосылмаған (Supabase → SQL Editor).' : 'Сақталмады: ' + t, 'err'); }
-  $('hwAdd').disabled = false; $('hwTitle').value = ''; $('hwBody').value = ''; $('hwDue').value = ''; $('hwFiles').value = ''; hwPick = []; $('hwFPrev').replaceChildren(); await loadHw(); hwMsg('Тапсырма қойылды', 'ok');
+    if (tq) { const t = await sb.from('homework_tests').insert({ hw_id: r.data.id, questions: tq }); if (t.error) { await sb.from('homeworks').delete().eq('id', r.data.id); throw t.error; } }
+  } catch (e) { $('hwAdd').disabled = false; const t = String(e.message || e); return hwMsg(t.includes('homework_tests') || t.includes('has_test') ? 'Тест үшін update-19.sql әлі іске қосылмаған (Supabase → SQL Editor).' : t.includes('attachments') || t.includes('hw-attach') || t.includes('Bucket') || t.includes('bucket') ? 'Файл қосу үшін update-17.sql әлі іске қосылмаған (Supabase → SQL Editor).' : 'Сақталмады: ' + t, 'err'); }
+  $('hwAdd').disabled = false; $('hwTitle').value = ''; $('hwBody').value = ''; $('hwDue').value = ''; $('hwFiles').value = ''; hwPick = []; $('hwFPrev').replaceChildren(); hwQs = []; $('hwTest').hidden = true; await loadHw(); hwMsg('Тапсырма қойылды', 'ok');
 };
 function openHw(x, s) {
   const m = modal(x.title), b = m.box; b.style.width = 'min(640px,100%)';
@@ -5002,6 +5108,7 @@ function openHw(x, s) {
   if ((x.attachments || []).length) { const ae = el('div', 'hw-att'); ae.appendChild(el('small', 'gm', 'Мұғалім қосқан файлдар:')); b.appendChild(ae); fileEl(x.attachments, 'hw-attach').then(e2 => ae.appendChild(e2)); }
   if (s && s.status === 'checked') { const g = el('div', 'hw-grade'); g.append(el('b', '', (s.grade || '—') + '/10'), el('span', '', s.comment || 'Тексерілді')); b.appendChild(g); }
   if (s && s.status === 'redo') { const g = el('div', 'hw-grade redo'); g.append(el('b', '', '↻'), el('span', '', s.comment || 'Қайта жасау керек')); b.appendChild(g); }
+  if (x.has_test) { hwTestUI(m, b, x, s); return; }
   if (s && s.status === 'checked') { const full = (async () => { const r = await sb.from('homework_subs').select('answer,files').eq('id', s.id).single(); return r.data; })(); full.then(async d => { if (!d) return; if (d.answer) { const a = el('p', 'hw-ans', d.answer); b.appendChild(a); } if ((d.files || []).length) b.appendChild(await fileEl(d.files)); }); const ok = el('button', 'out', 'Жабу'); ok.onclick = m.close; b.appendChild(ok); return; }
   const ta = document.createElement('textarea'); ta.rows = 4; ta.maxLength = 3000; ta.placeholder = 'Жауабың (міндетті емес, егер сурет не файл жүктесең)…'; ta.className = 'hw-ta';
   const fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip'; fi.multiple = true; fi.className = 'hw-file';
@@ -5031,6 +5138,7 @@ async function reviewHw(x, studs, subs) {
   for (const s of full) {
     const card = el('details', 'hw-sub'); card.open = s.status === 'sent';
     const sm = document.createElement('summary'), late = x.due_date && dayKey(s.submitted_at) > x.due_date; sm.append(el('b', '', nm(s.student_id)), el('span', 'hw-chip ' + s.status, HW_ST[s.status] + (s.grade ? ' · ' + s.grade + '/10' : '') + (late ? ' · кешіккен' : ''))); card.appendChild(sm);
+    if (s.test_total) card.appendChild(el('p', 'hw-ans', '🧪 Тест: ' + s.test_score + '/' + s.test_total));
     if (s.answer) { const a = el('p', 'hw-ans', s.answer); card.appendChild(a); }
     if ((s.files || []).length) fileEl(s.files).then(e2 => card.insertBefore(e2, card.querySelector('.hw-ctl')));
     const ctl = el('div', 'hw-ctl'), gr = document.createElement('select'); gr.appendChild(new Option('Баға', '')); for (let i = 10; i >= 1; i--) gr.appendChild(new Option(String(i), String(i))); gr.value = s.grade ? String(s.grade) : '';
