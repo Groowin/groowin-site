@@ -1284,8 +1284,6 @@ html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn{back
 #v-room{max-width:1240px;margin:0 auto}
 .rm-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 12px}
 .rm-bar select{padding:9px 12px;border-radius:12px;max-width:100%}
-.rm-wrap{overflow-x:auto;border-radius:26px;box-shadow:0 24px 50px -28px rgba(0,0,0,.7);border:1px solid var(--line);-webkit-overflow-scrolling:touch;background:#3a2412}
-.rm-stage{position:relative;min-width:780px;aspect-ratio:1586/992;background:#3a2412 url(room-bg.jpg) center/cover no-repeat;container-type:inline-size;overflow:hidden}
 .rm-chip{position:absolute;left:2cqw;top:1.8cqw;z-index:6;display:flex;flex-wrap:wrap;gap:.8cqw 1.4cqw;align-items:center;padding:.8cqw 1.6cqw;border-radius:99px;background:rgba(20,14,8,.64);backdrop-filter:blur(8px);color:#fff7e6;font-weight:700;font-size:max(12px,1.45cqw)}
 .rm-dot{width:.8em;height:.8em;border-radius:50%;background:#3ddc84;box-shadow:0 0 10px #3ddc84;flex:none}
 .rm-seat{position:absolute;width:3.6cqw;height:3.6cqw;transform:translate(-50%,-50%);border-radius:50%;border:2px dashed rgba(255,255,255,.95);background:rgba(255,255,255,.22);opacity:0;transition:opacity .2s;cursor:pointer;padding:0;z-index:2}
@@ -1318,6 +1316,42 @@ html:not([data-gs=paper]):not([data-gs=retro]):not([data-gs=mono]) .wd-turn{back
 .rm3-cv{display:block;width:100%;height:100%;touch-action:none;cursor:grab}.rm3-cv:active{cursor:grabbing}
 .rm-box .rm-chip{position:absolute;left:14px;top:12px;z-index:6;font-size:13px;padding:7px 14px;gap:6px 12px}
 @media(max-width:700px){.rm-box.is3{aspect-ratio:1/1.1;max-height:74vh;min-height:320px}}
+.rm-box.is3{touch-action:none}
+.rm-hud{position:absolute;inset:0;z-index:6;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:10px;gap:8px}
+.rm-top,.rm-bot{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.rm-bot{justify-content:center;align-items:flex-end}
+.rm-hud .rm-chip{position:static;pointer-events:auto;font-size:13px;padding:7px 14px;gap:6px 12px;background:rgba(14,10,28,.62);color:#fff;border-radius:99px;display:flex;align-items:center;flex-wrap:wrap;backdrop-filter:blur(8px)}
+.rm-tools{display:flex;gap:6px;margin-left:auto}
+.rm-hud button{pointer-events:auto;font:inherit;border:1px solid rgba(255,255,255,.2);background:rgba(14,10,28,.6);color:#fff;backdrop-filter:blur(8px);border-radius:99px;min-width:42px;height:42px;padding:0 12px;font-weight:700;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:2px;transition:transform .15s,background .15s}
+.rm-hud button:hover:not(:disabled){transform:translateY(-2px);background:rgba(40,28,70,.8)}
+.rm-hud button[aria-pressed=true],.rm-pomo.on{background:linear-gradient(145deg,#F59E0B,#FCD34D);color:#2b1a00;border-color:transparent}
+.rm-pomo.brk{background:linear-gradient(145deg,#34d399,#a7f3d0);color:#04301f}
+.rm-pomo{position:absolute;left:50%;transform:translateX(-50%);top:10px}
+.rm-hud .rm-ctl{display:flex;gap:6px;margin:0;flex-wrap:wrap;justify-content:center}
+.rm-react{display:flex;gap:6px}
+.rm-react button{font-size:18px;padding:0 10px}
+.rm-pan{position:absolute;right:10px;top:62px;bottom:70px;width:min(390px,calc(100% - 20px));z-index:8;background:rgba(14,10,28,.93);backdrop-filter:blur(14px);color:#f3eefc;border-radius:18px;border:1px solid rgba(255,255,255,.14);display:flex;flex-direction:column;overflow:hidden;pointer-events:auto}
+.rm-pan-h{display:flex;gap:6px;padding:10px;border-bottom:1px solid rgba(255,255,255,.12);flex-wrap:wrap}
+.rm-pan-h button{min-width:0;height:36px;font-size:13px;padding:0 12px}
+.rm-pan-h .rm-x{margin-left:auto}
+.rm-pan-b{padding:14px;overflow:auto;flex:1}
+.rm-pan-b h3{margin:0 0 10px;font-size:1.05rem}
+.rm-pan-b .rm-hint{opacity:.8}
+.rm-pan-b select{width:100%;padding:10px;border-radius:10px}
+.rm-pan-b table{width:100%;font-size:.85rem;color:#f3eefc}.rm-pan-b th,.rm-pan-b td{padding:6px 4px;text-align:left}.rm-zero td{color:#ff9aa2}
+.rm-row{display:flex;gap:10px;align-items:center;padding:9px 6px;border-bottom:1px solid rgba(255,255,255,.08)}
+.rm-row b{width:30px;text-align:center}.rm-row span{flex:1}.rm-row em{font-style:normal;color:#ffd45e;font-weight:800}
+.rm-prog{height:16px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:12px 0}
+.rm-prog i{display:block;height:100%;background:linear-gradient(90deg,#F59E0B,#FCD34D);border-radius:99px;transition:width .8s}
+.rm-big{font-size:1.5rem;font-weight:900;margin:6px 0}
+.rm-shop{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+.rm-pan-b .rm-shop button{height:auto;flex-direction:column;padding:12px 8px;border-radius:16px;gap:4px}
+.rm-shop .rm-ic{font-size:2rem}.rm-shop button:disabled{opacity:.55;cursor:default}
+.rm-box:fullscreen,.rm-box:-webkit-full-screen{width:100vw;height:100vh;max-height:none;min-height:0;aspect-ratio:auto;border-radius:0;border:0}
+.rm-box.is3.rm-fsx{position:fixed;inset:0;z-index:9999;width:100%;height:100dvh;max-height:none;min-height:0;aspect-ratio:auto;border-radius:0;border:0}
+body.rm-nsc{overflow:hidden}
+@media(max-width:700px){.rm-lb{display:none}.rm-hud button{min-width:38px;height:38px;padding:0 9px}.rm-pomo{top:56px}.rm-pan{top:100px;bottom:62px}}
+@media(max-width:500px){.rm-tools{flex-wrap:wrap;justify-content:flex-end}}
 @media(prefers-reduced-motion:reduce){.rm-av svg,.rm-z,.rm-seat{animation:none!important}}
 #offBar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;max-width:min(560px,calc(100vw - 24px));padding:11px 18px;border-radius:99px;background:#1f2937;color:#fff;font-size:.92rem;box-shadow:0 14px 34px -10px rgba(0,0,0,.6);text-align:center}#offBar.ok{background:#16a34a}#offBar[hidden]{display:none}
 </style>
@@ -2194,6 +2228,12 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '4.0', date: '01.11.2026', items: [
+    ['🌌', 'Оқу бөлмесі 4.0', 'Толық экранды 3D бөлме: 360° айналады, камераға жақын қабырғалар өздігінен ашылып, ішін көрсетеді. Екі нұсқа: Обсерватория мен Ағаш үй (🌌 түймесімен ауыстырылады). 2D нұсқасы алынды.'],
+    ['🖐️', 'Заттарды ұстау', 'Кітап, доп, қағаз ұшақ, шам: ұстап жылжыт, бөлмедегі бәрі көреді. Үстелге де қоюға болады.'],
+    ['🍅', 'Ортақ помодоро, дыбыс, реакциялар', '25 минут оқу, 5 минут демалыс таймері бәріне ортақ. Жаңбыр, от, музыка дыбыстары. 👏🔥❤️⭐ реакциялары чатсыз.'],
+    ['🏆', 'Көшбасшылар, мақсат, дүкен, есеп', 'Апта көшбасшылары, сыныптың апталық мақсаты (1000 минут), жұлдызға шам, өсімдік, ту, мысық алу. Мұғалімге оқу есебі. Бұл үшін update-21.sql керек.']
+  ] },
   { ver: '3.8', date: '01.11.2026', items: [
     ['🌌', '3D Оқу бөлмесі', 'Бөлме енді шынайы 3D: түнгі ғарыш көрінетін терезесі, төбеде айналып тұрған күн жүйесі, телескопы бар обсерватория. Оқушылар «жұлдызшалар», басындағы жұлдыз көп оқыған сайын өседі, ұйықтап кетсе өшеді. Саусақпен айналдыр, екі саусақпен жақындат. Қаласаң 🖼️ 2D нұсқасына ауыса аласың.'],
     ['🚪', 'Сынып жасамай кіруге болады', 'Бөлмеге енді сынып керек емес: «Ортақ бөлмеге» кез келген оқушы өзі кіреді (толса, келесі бөлме ашылады). Қаласа өз сыныбының жеке бөлмесіне де кіре алады.']
@@ -6701,51 +6741,61 @@ $('qrLoginBtn').onclick = qrStart; $('qrBack').onclick = qrClose; $('qrScan').on
 
 
 // ===== Басты бет =====
-// ===== Оқу бөлмесі 3.8: сыныптың ортақ бөлмесі. Оқушылар орнына отырады, күйі көрінеді (presence), отырған уақыт саналады =====
-const RM_SEATS = (() => {
-  const T = [[345, 520, 1], [765, 430, .95], [1222, 492, .98], [310, 715, 1.14], [785, 693, 1.12], [1290, 718, 1.14]], tp = [[-108, 22], [102, 22], [-102, 52], [95, 52], [-2, 72]], out = [];
-  T.forEach(([cx, cy, s]) => tp.forEach(([dx, dy]) => out.push([Math.round(cx + dx * s), Math.round(cy + dy * s)])));
-  return out;
-})();
-const RM_W = 1586, RM_H = 992;
+// ===== Оқу бөлмесі 4.0: толық экранды 3D диорама. 360° айналады, жақын қабырғалар көрінбей кетеді, заттарды ұстауға болады, бөлме нұсқалары =====
 const RM_ST = { read: ['📖', 'Оқимын'], write: ['✍️', 'Жазамын'], hand: ['✋', 'Сұрағым бар'], sleep: ['😴', 'Демалыс'] };
-const RM_SKIN = ['#F6D2B0', '#EDBE96', '#D9A171', '#BF8460', '#8D5A3B'], RM_HAIR = ['#2B1B12', '#4A2C1A', '#7A4A22', '#1E1E24', '#B5651D', '#C94F7C'];
-const rmHash = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+const rmHash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h; };
 const rmName = n => { const p = String(n || '').trim().split(/\s+/); return (p[1] || p[0] || 'Оқушы').slice(0, 14); };
-function rmSvg(uid, av, st) {
-  const h = rmHash(uid), sk = RM_SKIN[h % 5], hr = RM_HAIR[(h >> 3) % 6], sty = (h >> 6) % 3, a = avParse(av), sh = a ? AV_C[a.c] : AV_C[(h >> 9) % 8], ink = '#2a1d18';
-  const back = sty === 1 ? '<ellipse cx="50" cy="54" rx="31" ry="36" fill="' + hr + '"/>' : '';
-  const hair = '<path d="M24 42C22 12 78 12 76 42C70 30 62 25 50 25C38 25 30 30 24 42Z" fill="' + hr + '"/>' + (sty === 2 ? '<circle cx="50" cy="13" r="9" fill="' + hr + '"/>' : sty === 0 ? '<path d="M24 42c-3 8 0 14 3 16-1-6 0-11 3-14zM76 42c3 8 0 14-3 16 1-6 0-11-3-14z" fill="' + hr + '"/>' : '');
-  const eyes = st === 'sleep' ? '<path d="M34 47q5 4 11 0M55 47q5 4 11 0" stroke="' + ink + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
-    : (st === 'read' || st === 'write') ? '<ellipse cx="40" cy="49" rx="3" ry="2.6" fill="' + ink + '"/><ellipse cx="60" cy="49" rx="3" ry="2.6" fill="' + ink + '"/>'
-    : '<ellipse cx="40" cy="46" rx="3.2" ry="4.2" fill="' + ink + '"/><ellipse cx="60" cy="46" rx="3.2" ry="4.2" fill="' + ink + '"/><circle cx="41" cy="44.5" r="1.1" fill="#fff"/><circle cx="61" cy="44.5" r="1.1" fill="#fff"/>';
-  const mouth = st === 'sleep' ? '<ellipse cx="50" cy="57" rx="2.6" ry="3" fill="#c0626a"/>' : '<path d="M45 55q5 4.5 10 0" stroke="' + ink + '" stroke-width="2" fill="none" stroke-linecap="round"/>';
-  const face = '<circle cx="33" cy="54" r="4" fill="#ff8f9c" opacity=".5"/><circle cx="67" cy="54" r="4" fill="#ff8f9c" opacity=".5"/>' + eyes + mouth;
-  const head = '<g' + (st === 'sleep' ? ' transform="translate(0,30) rotate(10 50 42)"' : '') + '>' + back + '<circle cx="50" cy="42" r="26" fill="' + sk + '"/>' + hair + face + '</g>';
-  const body = '<rect x="27" y="68" width="46" height="46" rx="16" fill="' + sh + '"/>';
-  let ex = '';
-  if (st === 'read') ex = '<path d="M17 80L50 89L83 80V111L50 120L17 111Z" fill="#3b5bdb"/><path d="M21 79L50 87V116L21 108Z" fill="#fff"/><path d="M79 79L50 87V116L79 108Z" fill="#f4efe3"/><path d="M27 88l17 4M27 95l17 4M73 88L56 92M73 95L56 99" stroke="#c9c2b0" stroke-width="1.6" stroke-linecap="round"/><circle cx="21" cy="100" r="7" fill="' + sk + '"/><circle cx="79" cy="100" r="7" fill="' + sk + '"/>';
-  else if (st === 'write') ex = '<rect x="18" y="94" width="64" height="24" rx="4" fill="#fff8e1" stroke="#d9c9a0"/><path d="M26 102h30M26 109h24" stroke="#c9c2b0" stroke-width="1.6"/><circle cx="34" cy="102" r="6.5" fill="' + sk + '"/><path d="M66 100L83 78" stroke="#f5b82e" stroke-width="5" stroke-linecap="round"/><path d="M63 105l-1-5 5 2z" fill="#444"/><circle cx="65" cy="100" r="6.5" fill="' + sk + '"/>';
-  else if (st === 'hand') ex = '<path d="M68 78L85 44" stroke="' + sh + '" stroke-width="13" stroke-linecap="round"/><circle cx="86" cy="36" r="8" fill="' + sk + '"/><circle cx="30" cy="106" r="7" fill="' + sk + '"/><circle cx="14" cy="14" r="11" fill="#fff" stroke="#e5484d" stroke-width="2"/><text x="14" y="20" text-anchor="middle" font-size="16" font-weight="800" fill="#e5484d" font-family="sans-serif">?</text>';
-  else if (st === 'sleep') ex = '<rect x="15" y="86" width="70" height="28" rx="14" fill="' + sh + '"/><circle cx="20" cy="100" r="7" fill="' + sk + '"/><circle cx="80" cy="100" r="7" fill="' + sk + '"/>';
-  return '<svg viewBox="0 0 100 120" aria-hidden="true">' + (st === 'sleep' ? body + ex + head : body + head + ex) + '</svg>';
-}
-// ===== 3D: «Groowin Обсерваториясы». Түнгі ғарыш терезесі, төбеде күн жүйесі, оқушылар = жұлдызшалар (басындағы жұлдыз көп оқыған сайын өседі) =====
+const RM_THEMES = { obs: ['🌌', 'Обсерватория'], tree: ['🌳', 'Ағаш үй'] };
+const RM_REACT = ['👏', '🔥', '❤️', '⭐'];
+const RM_SHOP = { lamp: ['💡', 'Шам', 2], plant: ['🪴', 'Өсімдік', 3], flag: ['🚩', 'Ту', 3], cat: ['🐱', 'Мысық', 6] };
+const RM_GOAL = 60000; // секунд (1000 минут)
 const RM3_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 let rm3P = null;
 const rm3Load = () => window.THREE ? Promise.resolve(true) : (rm3P = rm3P || new Promise(res => { const s = document.createElement('script'); s.src = RM3_URL; s.onload = () => res(!!window.THREE); s.onerror = () => { rm3P = null; res(false); }; document.head.appendChild(s); }));
 const rmGL = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl') || c.getContext('experimental-webgl')); } catch { return false; } };
+const RM_CY = 1.2, RM_R = 10.6;
 const RM3_T = [[-5.2, -1.2], [0, -1.2], [5.2, -1.2], [-5.2, 3.6], [0, 3.6], [5.2, 3.6]];
 const RM3_SEAT = RM3_T.flatMap(([cx, cz]) => [0, 1, 2, 3, 4].map(k => { const th = (k * 72 - 36) * Math.PI / 180; return { x: cx + 1.85 * Math.sin(th), z: cz + 1.85 * Math.cos(th), ry: th + Math.PI, cx, cz }; }));
-function rm3Create(box, cb) {
-  const T = THREE, mob = matchMedia('(pointer:coarse)').matches;
+// Ұстауға болатын заттар: [түрі, x, z]
+const RM_OBJ0 = [['book', -2.6, 1.3], ['book', 2.6, 1.3], ['book', 0, 7.4], ['ball', -1.2, 1.3], ['ball', 1.2, 1.3], ['plane', -4, 7.4], ['plane', 4, 7.4], ['lamp', -7.6, 1.3], ['lamp', 7.6, 1.3]];
+
+// ===== Фондық дыбыс (WebAudio, файлсыз) =====
+const rmSnd = (() => {
+  let ac = null, nodes = [], tm = null, mode = 'off'; const bufs = {};
+  const ctx = () => ac || (ac = new (window.AudioContext || window.webkitAudioContext)());
+  const src = (c, brown) => { const k = brown ? 'b' : 'w'; if (!bufs[k] || bufs[k].sampleRate !== c.sampleRate) { const n = c.sampleRate * 2, b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0); let l = 0; for (let i = 0; i < n; i++) { const w = Math.random() * 2 - 1; if (brown) { l = (l + .02 * w) / 1.02; d[i] = l * 3.5; } else d[i] = w; } bufs[k] = b; } const s = c.createBufferSource(); s.buffer = bufs[k]; s.loop = true; return s; };
+  const stop = () => { clearInterval(tm); tm = null; nodes.forEach(n => { try { n.stop && n.stop(); } catch { } try { n.disconnect(); } catch { } }); nodes = []; };
+  const note = (c, out, f, t, dur, vol, type) => { const o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .06); g.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(g); g.connect(out); o.start(t); o.stop(t + dur + .1); };
+  return {
+    get mode() { return mode; },
+    set(m) {
+      stop(); mode = m; if (m === 'off') return;
+      try {
+        const c = ctx(); c.resume && c.resume(); const master = c.createGain(); master.gain.setValueAtTime(0, c.currentTime); master.gain.linearRampToValueAtTime(1, c.currentTime + 1.5); master.connect(c.destination); nodes.push(master);
+        if (m === 'rain') { const n = src(c), f = c.createBiquadFilter(), f2 = c.createBiquadFilter(), g = c.createGain(); f.type = 'highpass'; f.frequency.value = 900; f2.type = 'lowpass'; f2.frequency.value = 7000; g.gain.value = .14; n.connect(f); f.connect(f2); f2.connect(g); g.connect(master); n.start(); nodes.push(n); }
+        else if (m === 'fire') {
+          const n = src(c, true), f = c.createBiquadFilter(), g = c.createGain(); f.type = 'lowpass'; f.frequency.value = 520; g.gain.value = .6; n.connect(f); f.connect(g); g.connect(master); n.start(); nodes.push(n);
+          tm = setInterval(() => { if (Math.random() > .7) return; const t = c.currentTime, b = src(c), hf = c.createBiquadFilter(), gg = c.createGain(); hf.type = 'highpass'; hf.frequency.value = 1500 + Math.random() * 2500; gg.gain.setValueAtTime(.1 + Math.random() * .18, t); gg.gain.exponentialRampToValueAtTime(.001, t + .05 + Math.random() * .06); b.connect(hf); hf.connect(gg); gg.connect(master); b.start(t); b.stop(t + .14); }, 150);
+        } else {
+          const sc = [261.63, 293.66, 329.63, 392, 440, 523.25, 587.33], ch = [[130.81, 196], [110, 164.81], [146.83, 220], [98, 146.83]], d = c.createDelay(); d.delayTime.value = .42; const fb = c.createGain(); fb.gain.value = .38; d.connect(fb); fb.connect(d); d.connect(master); nodes.push(d, fb);
+          let k = 0; const play = () => { const t = c.currentTime + .05, f = sc[(Math.random() * sc.length) | 0]; note(c, master, f, t, 2.6, .06, 'triangle'); note(c, d, f, t, 2.6, .045, 'triangle'); if (k % 4 === 0) ch[(k / 4) % 4 | 0].forEach(q => note(c, master, q, t, 6, .05, 'sine')); k++; };
+          play(); tm = setInterval(play, 1700);
+        }
+      } catch { mode = 'off'; }
+    },
+    chime() { try { const c = ctx(); c.resume && c.resume(); const t = c.currentTime; [659, 880, 1175].forEach((f, i) => note(c, c.destination, f, t + i * .18, 1.1, .12, 'sine')); } catch { } }
+  };
+})();
+
+function rm3Create(box, cb, theme) {
+  const T = THREE, mob = matchMedia('(pointer:coarse)').matches, tree = theme === 'tree';
   const renderer = new T.WebGLRenderer({ antialias: !mob, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mob ? 1.5 : 2)); renderer.setClearColor(0x070a1a);
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mob ? 1.5 : 2)); renderer.setClearColor(tree ? 0x9fbf7a : 0x070a1a);
   if (!mob) { renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap; }
-  const cv = renderer.domElement; cv.className = 'rm3-cv'; box.appendChild(cv);
-  const scene = new T.Scene(); scene.fog = new T.Fog(0x0a0d22, 30, 60);
-  const cam = new T.PerspectiveCamera(38, 1.6, .1, 120);
-  let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const cv = renderer.domElement; cv.className = 'rm3-cv'; box.prepend(cv);
+  const scene = new T.Scene();
+  const cam = new T.PerspectiveCamera(38, 1.6, .1, 400);
+    let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
   const L = (c, o) => new T.MeshLambertMaterial(Object.assign({ color: c }, o || {}));
   const bas = (c, o) => new T.MeshBasicMaterial(Object.assign({ color: c }, o || {}));
   const add = (g, m, x, y, z, par) => { const o = new T.Mesh(g, m); o.position.set(x, y, z); o.castShadow = !mob; o.receiveShadow = true; (par || scene).add(o); return o; };
@@ -6753,74 +6803,121 @@ function rm3Create(box, cb) {
   const ct = (w, h, f, rep) => { const c = document.createElement('canvas'); c.width = w; c.height = h; f(c.getContext('2d'), w, h); const t = new T.CanvasTexture(c); t.anisotropy = 4; if (rep) { t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(rep[0], rep[1]); } return t; };
   const glowTex = ct(64, 64, (x) => { const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,240,180,1)'); g.addColorStop(.3, 'rgba(255,200,90,.55)'); g.addColorStop(1, 'rgba(255,170,60,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); });
   const glow = (s, o) => { const sp = new T.Sprite(new T.SpriteMaterial({ map: glowTex, blending: T.AdditiveBlending, depthWrite: false, transparent: true, opacity: o == null ? 1 : o })); sp.scale.set(s, s, 1); return sp; };
+  const cloudTex = ct(128, 128, (x) => { const g = x.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(255,255,255,.9)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); });
   // --- жарық
-  scene.add(new T.HemisphereLight(0xffd9a8, 0x3a2412, .55)); scene.add(new T.AmbientLight(0x8f86b8, .5));
-  const moon = new T.DirectionalLight(0x9db8ff, .45); moon.position.set(-8, 12, 10);
-  if (!mob) { moon.castShadow = true; moon.shadow.mapSize.set(1024, 1024); const sc = moon.shadow.camera; sc.left = -14; sc.right = 14; sc.top = 12; sc.bottom = -12; sc.near = 1; sc.far = 40; moon.shadow.bias = -.0008; }
-  scene.add(moon);
-  // --- едендер мен қабырғалар
-  const floorT = ct(512, 512, (x, w, h) => { x.fillStyle = '#8a5a30'; x.fillRect(0, 0, w, h); for (let i = 0; i < 8; i++) { x.fillStyle = 'rgba(' + (60 + rnd() * 50 | 0) + ',' + (30 + rnd() * 30 | 0) + ',10,' + (.12 + rnd() * .15) + ')'; x.fillRect(0, i * 64, w, 64); x.fillStyle = 'rgba(30,15,5,.55)'; x.fillRect(0, i * 64, w, 3); for (let k = 0; k < 3; k++) x.fillRect(((i * 97 + k * 190) % 512), i * 64, 3, 64); } }, [6, 4]);
-  const floor = add(new T.PlaneGeometry(18, 13), L(0xffffff, { map: floorT }), 0, 0, .5); floor.rotation.x = -Math.PI / 2; floor.castShadow = false;
-  const wallC = 0x2b2748;
-  const back = add(new T.PlaneGeometry(18, 7), L(wallC), 0, 3.5, -6.02); back.castShadow = false;
-  const left = add(new T.PlaneGeometry(13, 7), L(wallC), -9.02, 3.5, .5); left.rotation.y = Math.PI / 2; left.castShadow = false;
-  bx(18, 1, .12, 0x4a2c15, 0, .5, -5.96); bx(.12, 1, 13, 0x4a2c15, -8.96, .5, .5); bx(18, .12, .14, 0x6b4423, 0, 1.02, -5.95); bx(.14, .12, 13, 0x6b4423, -8.95, 1.02, .5);
-  // --- терезе: түнгі галактика
-  const galT = ct(1024, 640, (x, w, h) => {
-    const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#04061a'); g.addColorStop(.55, '#150f45'); g.addColorStop(1, '#3a1658'); x.fillStyle = g; x.fillRect(0, 0, w, h);
-    [[250, 380, 330, 'rgba(255,90,170,.38)'], [650, 250, 380, 'rgba(70,120,255,.38)'], [860, 520, 260, 'rgba(160,90,255,.3)']].forEach(([cx, cy, r, c]) => { const q = x.createRadialGradient(cx, cy, 0, cx, cy, r); q.addColorStop(0, c); q.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = q; x.fillRect(0, 0, w, h); });
-    for (let i = 0; i < 950; i++) { const a = .3 + rnd() * .7, r = rnd() < .04 ? 2.4 : rnd() * 1.2 + .3; x.fillStyle = 'rgba(255,255,' + (220 + rnd() * 35 | 0) + ',' + a + ')'; x.beginPath(); x.arc(rnd() * w, rnd() * h, r, 0, 7); x.fill(); }
-    const pg = x.createRadialGradient(760, 220, 5, 770, 230, 95); pg.addColorStop(0, '#ffd9a0'); pg.addColorStop(.7, '#d6803f'); pg.addColorStop(1, '#6a2d1d'); x.fillStyle = pg; x.beginPath(); x.arc(770, 230, 82, 0, 7); x.fill();
-    x.strokeStyle = 'rgba(255,225,170,.8)'; x.lineWidth = 9; x.beginPath(); x.ellipse(770, 230, 160, 34, -.35, 0, 7); x.stroke();
-    const mg = x.createRadialGradient(170, 120, 4, 170, 120, 46); mg.addColorStop(0, '#fff'); mg.addColorStop(1, '#8aa0d6'); x.fillStyle = mg; x.beginPath(); x.arc(170, 120, 40, 0, 7); x.fill();
+  if (tree) { scene.add(new T.HemisphereLight(0xfff0c0, 0x3a5a2a, .75)); scene.add(new T.AmbientLight(0xc9d9a0, .45)); } else { scene.add(new T.HemisphereLight(0xffd9a8, 0x3a2412, .55)); scene.add(new T.AmbientLight(0x8f86b8, .5)); }
+  const sunL = new T.DirectionalLight(tree ? 0xffe2a0 : 0x9db8ff, tree ? .85 : .45); sunL.position.set(-9, 14, 10);
+  if (!mob) { sunL.castShadow = true; sunL.shadow.mapSize.set(1024, 1024); const sc = sunL.shadow.camera; sc.left = -14; sc.right = 14; sc.top = 14; sc.bottom = -14; sc.near = 1; sc.far = 45; sunL.shadow.bias = -.0008; }
+  scene.add(sunL);
+  // --- аспан (сфера)
+  const skyT = ct(1024, 512, (x, w, h) => {
+    if (tree) {
+      const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#7fb8d8'); g.addColorStop(.45, '#ffe6a6'); g.addColorStop(.62, '#d9d98a'); g.addColorStop(1, '#4f7a3a'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+      for (let i = 0; i < 26; i++) { const cx = rnd() * w, cy = h * (.38 + rnd() * .12), r = 40 + rnd() * 90; const q = x.createRadialGradient(cx, cy, 0, cx, cy, r); q.addColorStop(0, 'rgba(255,255,230,.35)'); q.addColorStop(1, 'rgba(255,255,230,0)'); x.fillStyle = q; x.fillRect(cx - r, cy - r, r * 2, r * 2); }
+    } else {
+      const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#03041a'); g.addColorStop(.5, '#120d40'); g.addColorStop(1, '#3a1658'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+      [[200, 300, 280, 'rgba(255,90,170,.35)'], [620, 200, 330, 'rgba(70,120,255,.35)'], [900, 360, 260, 'rgba(160,90,255,.3)'], [420, 420, 220, 'rgba(60,200,255,.2)']].forEach(([cx, cy, r, c]) => { const q = x.createRadialGradient(cx, cy, 0, cx, cy, r); q.addColorStop(0, c); q.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = q; x.fillRect(0, 0, w, h); });
+      for (let i = 0; i < 1400; i++) { const a = .3 + rnd() * .7, r = rnd() < .04 ? 2.2 : rnd() * 1.1 + .3; x.fillStyle = 'rgba(255,255,' + (220 + rnd() * 35 | 0) + ',' + a + ')'; x.beginPath(); x.arc(rnd() * w, rnd() * h, r, 0, 7); x.fill(); }
+      x.save(); x.translate(760, 150); x.rotate(-.4); for (let i = 0; i < 700; i++) { const a = rnd() * 6.28, rr = Math.pow(rnd(), .6) * 110, sp = a + rr * .045; x.fillStyle = 'rgba(' + (200 + rnd() * 55 | 0) + ',' + (160 + rnd() * 60 | 0) + ',255,' + (.2 + rnd() * .6) + ')'; x.fillRect(Math.cos(sp) * rr, Math.sin(sp) * rr * .45, 1.6, 1.6); } x.restore();
+    }
   });
-  add(new T.PlaneGeometry(6.2, 4), bas(0xffffff, { map: galT }), -3.6, 3.35, -5.96).castShadow = false;
-  const fr = 0x3b2412; bx(6.5, .22, .3, fr, -3.6, 5.45, -5.88); bx(6.7, .26, .5, fr, -3.6, 1.28, -5.8); bx(.22, 4.2, .3, fr, -6.85, 3.35, -5.88); bx(.22, 4.2, .3, fr, -.35, 3.35, -5.88); bx(.12, 4, .22, fr, -3.6, 3.35, -5.9); bx(6.3, .12, .22, fr, -3.6, 3.4, -5.9);
-  bx(.9, 4.7, .4, 0x2d4f9a, -7.3, 3.4, -5.75); bx(.9, 4.7, .4, 0x2d4f9a, .1, 3.4, -5.75);
-  // --- тақта
-  const boardT = ct(1024, 420, (x, w, h) => {
-    x.fillStyle = '#1f3d30'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(255,255,255,.88)'; x.fillStyle = 'rgba(255,255,255,.9)'; x.lineWidth = 4; x.lineCap = 'round';
-    for (let i = 0; i < 3; i++) { x.beginPath(); x.ellipse(150, 140, 80, 28, i * Math.PI / 3, 0, 7); x.stroke(); } x.beginPath(); x.arc(150, 140, 9, 0, 7); x.fill();
-    x.beginPath(); x.moveTo(330, 60); x.lineTo(330, 230); x.lineTo(530, 230); x.stroke(); x.beginPath(); for (let i = 0; i <= 200; i++) { const px = 330 + i, py = 145 - Math.sin(i / 20) * 60; i ? x.lineTo(px, py) : x.moveTo(px, py); } x.stroke();
-    x.font = 'bold 66px "Segoe Script","Comic Sans MS",cursive'; x.fillText('E = mc²', 580, 130); x.font = 'bold 44px "Segoe Script","Comic Sans MS",cursive'; x.fillText('F = ma', 600, 220);
-    x.beginPath(); x.moveTo(110, 360); x.lineTo(300, 360); x.lineTo(300, 290); x.closePath(); x.stroke(); x.font = '34px sans-serif'; x.fillText('v = s / t', 420, 330); x.fillText('Groowin ★', 760, 350);
+  const sky = new T.Mesh(new T.SphereGeometry(180, 32, 16), new T.MeshBasicMaterial({ map: skyT, side: T.BackSide, fog: false })); sky.position.set(0, 0, RM_CY); scene.add(sky);
+  // --- едендер
+  const floorT = ct(512, 512, (x, w, h) => {
+    if (tree) { x.fillStyle = '#9a6a3a'; x.fillRect(0, 0, w, h); for (let i = 0; i < 10; i++) { x.fillStyle = 'rgba(' + (50 + rnd() * 40 | 0) + ',' + (25 + rnd() * 25 | 0) + ',8,' + (.1 + rnd() * .18) + ')'; x.fillRect(0, i * 51, w, 51); x.fillStyle = 'rgba(40,20,5,.5)'; x.fillRect(0, i * 51, w, 2); x.fillRect((i * 131) % 512, i * 51, 2, 51); } }
+    else { x.fillStyle = '#8a5a30'; x.fillRect(0, 0, w, h); for (let i = 0; i < 8; i++) { x.fillStyle = 'rgba(' + (60 + rnd() * 50 | 0) + ',' + (30 + rnd() * 30 | 0) + ',10,' + (.12 + rnd() * .15) + ')'; x.fillRect(0, i * 64, w, 64); x.fillStyle = 'rgba(30,15,5,.55)'; x.fillRect(0, i * 64, w, 3); for (let k = 0; k < 3; k++) x.fillRect(((i * 97 + k * 190) % 512), i * 64, 3, 64); } }
   });
-  add(new T.PlaneGeometry(6.2, 2.55), bas(0xffffff, { map: boardT }), 4.9, 3.1, -5.92).castShadow = false;
-  bx(6.5, .16, .26, 0x7a4a24, 4.9, 4.45, -5.86); bx(6.5, .16, .26, 0x7a4a24, 4.9, 1.75, -5.86); bx(.16, 2.8, .26, 0x7a4a24, 1.68, 3.1, -5.86); bx(.16, 2.8, .26, 0x7a4a24, 8.12, 3.1, -5.86); bx(5.6, .08, .22, 0xd8c7a0, 4.9, 1.82, -5.75);
-  // --- кітап сөрелері (сол қабырға), кітаптар InstancedMesh
-  const BK = 260, books = new T.InstancedMesh(new T.BoxGeometry(1, 1, 1), L(0xffffff), BK); books.castShadow = false; const dm = new T.Object3D(); let bi = 0; const bc = [0xc0392b, 0x2e86c1, 0x27ae60, 0xd4ac0d, 0x8e44ad, 0xe67e22, 0x16a085, 0xecf0f1, 0xd35400, 0x34495e];
-  [-3.6, -.4, 2.8, 6].forEach(sz => {
-    bx(.5, 4.2, 2.6, 0x5a3418, -8.7, 2.1, sz); bx(.46, .1, 2.5, 0x3d2210, -8.62, 4.22, sz);
-    for (let r = 0; r < 5; r++) { const y = .35 + r * .8; bx(.52, .06, 2.5, 0x7a4a24, -8.66, y - .03, sz); let z = sz - 1.15; while (z < sz + 1.1 && bi < BK) { const w = .08 + rnd() * .12, h = .45 + rnd() * .27; dm.position.set(-8.5, y + h / 2, z + w / 2); dm.scale.set(.3, h, w); dm.updateMatrix(); books.setMatrixAt(bi, dm.matrix); books.setColorAt(bi, new T.Color(bc[(rnd() * bc.length) | 0])); bi++; z += w + .01; } }
-  }); books.count = bi; books.instanceMatrix.needsUpdate = true; if (books.instanceColor) books.instanceColor.needsUpdate = true; scene.add(books);
+  const sideM = L(tree ? 0x6b4423 : 0x2a2f55), topM = L(0xffffff, { map: floorT });
+  const plat = new T.Mesh(new T.CylinderGeometry(RM_R, RM_R, .5, 64), [sideM, topM, sideM]); plat.position.set(0, -.25, RM_CY); plat.receiveShadow = true; scene.add(plat);
+  // --- тірек: қалқып тұрмайды
+  if (tree) {
+    const gr = new T.Mesh(new T.CircleGeometry(60, 48), L(0x4f8a3a)); gr.rotation.x = -Math.PI / 2; gr.position.set(0, -9, RM_CY); gr.receiveShadow = true; scene.add(gr);
+    for (let i = 0; i < 10; i++) { const a = i * Math.PI / 5; add(new T.CylinderGeometry(.42, .5, 9, 8), L(0x5a3a1c), (RM_R - 1) * Math.sin(a), -4.5, RM_CY + (RM_R - 1) * Math.cos(a)); }
+    add(new T.CylinderGeometry(5, 6.5, 9, 14), L(0x5a3a1c), 0, -4.5, RM_CY);
+    for (let i = 0; i < 5; i++) { const a = i * 1.25; add(new T.TorusGeometry(RM_R - 1, .12, 6, 40), L(0x7a5a30), 0, -2 - i * 1.5, RM_CY).rotation.x = Math.PI / 2; }
+  } else {
+    const ped = new T.Mesh(new T.CylinderGeometry(RM_R + .2, RM_R * .5, 12, 48), L(0x2a2d52)); ped.position.set(0, -6.5, RM_CY); scene.add(ped);
+    [-1.2, -3.4, -5.8].forEach((y, i) => { const r = new T.Mesh(new T.TorusGeometry(RM_R - i * 1.3 + .05, .1, 6, 64), bas(0xffb24a)); r.rotation.x = Math.PI / 2; r.position.set(0, y, RM_CY); scene.add(r); });
+    for (let i = 0; i < 22; i++) { const s = new T.Sprite(new T.SpriteMaterial({ map: cloudTex, color: i % 3 ? 0xb9a9ff : 0xffffff, transparent: true, opacity: .55, depthWrite: false })); const a = rnd() * 6.28, r = 7 + rnd() * 14; s.position.set(Math.sin(a) * r, -11 - rnd() * 4, RM_CY + Math.cos(a) * r); s.scale.setScalar(10 + rnd() * 9); scene.add(s); }
+  }
+  // --- қабырғалар: камераға қараған жағы ашылып, ішін көрсетеді (360° айналдыруға кедергі болмайды)
+  const NW = 30, walls = [];
+  for (let i = 0; i < NW; i++) {
+    const th = i * 2 * Math.PI / NW, w = 2 * Math.PI * RM_R / NW + .05, g = new T.Group(), mats = [];
+    g.position.set(RM_R * Math.sin(th), 0, RM_CY + RM_R * Math.cos(th)); g.rotation.y = th; scene.add(g);
+    const mk = (c, op, basic) => { const m = basic ? new T.MeshBasicMaterial({ color: c, transparent: true, opacity: op, depthWrite: op > .5 }) : new T.MeshLambertMaterial({ color: c, transparent: true, opacity: op }); m.userData.o = op; mats.push(m); return m; };
+    const part = (geo, m, x, y, z) => { const me = new T.Mesh(geo, m); me.position.set(x, y, z); me.receiveShadow = !mob; g.add(me); return me; };
+    const H = tree ? 1.5 : 1.3;
+    part(new T.BoxGeometry(w, H, .34), mk(tree ? 0x8a5a2e : 0x4a2c15, 1), 0, H / 2, 0);
+    part(new T.BoxGeometry(w + .02, .14, .5), mk(tree ? 0xb07a3e : 0x6b4423, 1), 0, H + .07, 0);
+    if (tree) { [.55, 1.05, 1.55].forEach(dy => part(new T.BoxGeometry(w, .05, .05), mk(0xd9c79a, 1), 0, H + dy, 0)); }
+    else { part(new T.BoxGeometry(w, 1.5, .05), mk(0x9db8ff, .1, true), 0, H + .85, 0); part(new T.BoxGeometry(.07, 1.5, .09), mk(0x6b4423, 1), w / 2, H + .85, 0); }
+    part(new T.BoxGeometry(.2, H + 1.9, .2), mk(tree ? 0x6b4423 : 0x5a3418, 1), w / 2, (H + 1.9) / 2, 0);
+    if (i % 2 === 0) {
+      const bm = mk(tree ? 0xffd27a : 0xffe6a0, 1, true); part(new T.SphereGeometry(.2, 12, 8), bm, w / 2, H + 2.05, 0);
+      const gs = new T.Sprite(new T.SpriteMaterial({ map: glowTex, blending: T.AdditiveBlending, depthWrite: false, transparent: true, opacity: .8 })); gs.material.userData.o = .8; mats.push(gs.material); gs.scale.setScalar(1.5); gs.position.set(w / 2, H + 2.05, 0); g.add(gs);
+    }
+    walls.push({ g, th, mats, a: 1 });
+  }
+  // --- көмекші: сөре, өсімдік, жастық
+  const shelf = (x, z, w) => {
+    const g = new T.Group(); g.position.set(x, 0, z); g.lookAt(0, 0, RM_CY); scene.add(g);
+    const wd = tree ? 0x6b4423 : 0x5a3418, wd2 = tree ? 0x8a5a2e : 0x7a4a24; add(new T.BoxGeometry(w, 3.6, .5), L(wd), 0, 1.8, -.1, g);
+    const bc = [0xc0392b, 0x2e86c1, 0x27ae60, 0xd4ac0d, 0x8e44ad, 0xe67e22, 0x16a085, 0xecf0f1, 0xd35400, 0x34495e], BK = 150, bk = new T.InstancedMesh(new T.BoxGeometry(1, 1, 1), L(0xffffff), BK), dm = new T.Object3D(); let bi = 0;
+    for (let r = 0; r < 4; r++) { const y = .35 + r * .85; add(new T.BoxGeometry(w - .1, .06, .46), L(wd2), 0, y - .03, .02, g); let xx = -w / 2 + .12; while (xx < w / 2 - .2 && bi < BK) { const bw = .08 + rnd() * .12, bh = .5 + rnd() * .25; dm.position.set(xx + bw / 2, y + bh / 2, .06); dm.scale.set(bw, bh, .3); dm.updateMatrix(); bk.setMatrixAt(bi, dm.matrix); bk.setColorAt(bi, new T.Color(bc[(rnd() * bc.length) | 0])); bi++; xx += bw + .01; } }
+    bk.count = bi; bk.instanceMatrix.needsUpdate = true; if (bk.instanceColor) bk.instanceColor.needsUpdate = true; bk.castShadow = false; g.add(bk); return g;
+  };
+  const plant = (x, z, s) => { const g = new T.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); scene.add(g); add(new T.CylinderGeometry(.34, .26, .5, 14), L(0xb5543a), 0, .25, 0, g); for (let i = 0; i < 9; i++) { const l = add(new T.SphereGeometry(.3, 8, 6), L(i % 2 ? 0x2f9e44 : 0x3fbf5a), Math.sin(i * 2.4) * .28, .8 + (i % 4) * .22, Math.cos(i * 2.4) * .28, g); l.scale.set(.55, 1.15, .55); l.rotation.z = Math.sin(i) * .6; } };
+  const cush = (x, z, c) => { const o = add(new T.SphereGeometry(.55, 14, 10), L(c), x, .17, z); o.scale.set(1, .34, 1); };
+  const ring = (deg, r) => [r * Math.sin(deg * Math.PI / 180), RM_CY + r * Math.cos(deg * Math.PI / 180)];
   // --- кілемдер, үстелдер, орындықтар
-  const rugT = ct(512, 512, (x, w) => { x.fillStyle = '#12414d'; x.beginPath(); x.arc(256, 256, 250, 0, 7); x.fill(); x.strokeStyle = '#d6a23a'; x.lineWidth = 16; x.beginPath(); x.arc(256, 256, 232, 0, 7); x.stroke(); x.lineWidth = 4; x.setLineDash([14, 10]); x.beginPath(); x.arc(256, 256, 200, 0, 7); x.stroke(); x.setLineDash([]); x.fillStyle = '#d6a23a'; for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8; x.save(); x.translate(256 + Math.cos(a) * 160, 256 + Math.sin(a) * 160); x.rotate(a + Math.PI / 4); x.fillRect(-14, -14, 28, 28); x.restore(); } x.strokeStyle = '#d6a23a'; x.lineWidth = 6; for (let i = 0; i < 8; i++) { x.save(); x.translate(256, 256); x.rotate(i * Math.PI / 4); x.beginPath(); x.ellipse(0, -62, 22, 56, 0, 0, 7); x.stroke(); x.restore(); } });
+  const rugT = ct(512, 512, (x) => { const c1 = tree ? '#2f5d34' : '#12414d', c2 = tree ? '#e6c57a' : '#d6a23a'; x.fillStyle = c1; x.beginPath(); x.arc(256, 256, 250, 0, 7); x.fill(); x.strokeStyle = c2; x.lineWidth = 16; x.beginPath(); x.arc(256, 256, 232, 0, 7); x.stroke(); x.lineWidth = 4; x.setLineDash([14, 10]); x.beginPath(); x.arc(256, 256, 200, 0, 7); x.stroke(); x.setLineDash([]); x.fillStyle = c2; for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8; x.save(); x.translate(256 + Math.cos(a) * 160, 256 + Math.sin(a) * 160); x.rotate(a + Math.PI / 4); x.fillRect(-14, -14, 28, 28); x.restore(); } x.strokeStyle = c2; x.lineWidth = 6; for (let i = 0; i < 8; i++) { x.save(); x.translate(256, 256); x.rotate(i * Math.PI / 4); x.beginPath(); x.ellipse(0, -62, 22, 56, 0, 0, 7); x.stroke(); x.restore(); } });
   const rugG = new T.CircleGeometry(2.45, 48), rugM = L(0xffffff, { map: rugT });
-  const chairG = { seat: new T.BoxGeometry(.66, .07, .66), back: new T.BoxGeometry(.66, .62, .06), leg: new T.CylinderGeometry(.05, .05, .46, 6) }, chM = L(0xa8652f), chM2 = L(0x7a4a24);
-  const lampLights = [];
+  const chairG = { seat: new T.BoxGeometry(.66, .07, .66), back: new T.BoxGeometry(.66, .62, .06), leg: new T.CylinderGeometry(.05, .05, .46, 6) }, chM = L(tree ? 0xb07a3e : 0x5b5fa8), chM2 = L(0x6b4423);
   RM3_T.forEach(([cx, cz]) => {
     const rg = add(rugG, rugM, cx, .012, cz); rg.rotation.x = -Math.PI / 2; rg.castShadow = false;
-    add(new T.CylinderGeometry(1.2, 1.2, .08, 40), L(0x9d6232), cx, .76, cz); add(new T.CylinderGeometry(.16, .22, .72, 12), L(0x6b4423), cx, .38, cz); add(new T.CylinderGeometry(.55, .6, .06, 20), L(0x4a2c15), cx, .03, cz);
+    add(new T.CylinderGeometry(1.2, 1.2, .08, 40), L(tree ? 0xb98349 : 0x9d6232), cx, .76, cz); add(new T.CylinderGeometry(.16, .22, .72, 12), L(0x6b4423), cx, .38, cz); add(new T.CylinderGeometry(.55, .6, .06, 20), L(0x4a2c15), cx, .03, cz);
     add(new T.CylinderGeometry(.04, .07, .5, 8), L(0xc9a25a), cx - .3, 1.05, cz - .25); const sh = add(new T.CylinderGeometry(.16, .3, .3, 16, 1, true), bas(0xffd9a0, { side: T.DoubleSide }), cx - .3, 1.42, cz - .25); sh.castShadow = false;
     const gl = glow(1.5, .7); gl.position.set(cx - .3, 1.38, cz - .25); scene.add(gl);
     bx(.36, .06, .26, 0x2e6fd1, cx + .35, .82, cz + .1); bx(.34, .06, .24, 0xd2554a, cx + .35, .88, cz + .1);
-    const pl = new T.PointLight(0xffb66a, .55, 7.5, 1.6); pl.position.set(cx, 2.1, cz); scene.add(pl); lampLights.push(pl);
+    const pl = new T.PointLight(0xffb66a, .55, 7.5, 1.6); pl.position.set(cx, 2.1, cz); scene.add(pl);
   });
   RM3_SEAT.forEach(s => { const g = new T.Group(); g.position.set(s.x, 0, s.z); g.rotation.y = s.ry; scene.add(g);
     add(chairG.seat, chM, 0, .46, -.05, g); add(chairG.back, chM, 0, .8, -.4, g); [[-.27, -.3], [.27, -.3], [-.27, .2], [.27, .2]].forEach(([lx, lz]) => add(chairG.leg, chM2, lx, .23, lz, g)); });
-  // --- тастағы өсімдік, телескоп
-  const plant = (x, z, s) => { const g = new T.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); scene.add(g); add(new T.CylinderGeometry(.34, .26, .5, 14), L(0xb5543a), 0, .25, 0, g); for (let i = 0; i < 9; i++) { const l = add(new T.SphereGeometry(.3, 8, 6), L(i % 2 ? 0x2f9e44 : 0x3fbf5a), Math.sin(i * 2.4) * .28, .8 + (i % 4) * .22, Math.cos(i * 2.4) * .28, g); l.scale.set(.55, 1.15, .55); l.rotation.z = Math.sin(i) * .6; } };
-  plant(-7.6, 6.4, 1.2); plant(8.3, -5.3, 1.3); plant(8.2, 5.8, 1.1); plant(-.4, -5.4, .9);
-  const tel = new T.Group(); tel.position.set(-.8, 1.4, -5.3); scene.add(tel);
-  [[0, .5], [-.4, -.3], [.4, -.3]].forEach(([lx, lz], i) => { const l = add(new T.CylinderGeometry(.03, .03, 1.5, 6), L(0xb89350), lx * .8, -.5, lz * .5, tel); l.rotation.z = lx * -.6; l.rotation.x = lz * .5; });
-  const tube = add(new T.CylinderGeometry(.14, .2, 1.5, 16), L(0xeae6da), 0, .5, 0, tel); tube.rotation.z = Math.PI / 2 - .35; tube.rotation.y = -.6; add(new T.CylinderGeometry(.22, .22, .12, 16), L(0xb89350), -.75, .78, .3, tel).rotation.z = Math.PI / 2 - .35;
-  // --- төбедегі күн жүйесі
-  const sys = new T.Group(); sys.position.set(.6, 6.3, -2.6); sys.rotation.x = .22; sys.scale.setScalar(.78); scene.add(sys);
-  const sun = new T.Mesh(new T.SphereGeometry(.38, 24, 16), bas(0xffb938)); sys.add(sun); const sg = glow(2.6, .95); sys.add(sg); const sl = new T.PointLight(0xffc27a, .8, 16); sys.add(sl);
-  const PL = [[.9, .1, 0xb9b9b9, 1.6], [1.35, .15, 0xe8c27a, 1.2], [1.85, .18, 0x3f8cff, .9], [2.4, .14, 0xe0553a, .7], [3.1, .32, 0xd9a766, .45], [3.8, .24, 0x7fd1e0, .3]], pls = [];
-  PL.forEach(([r, s, c, sp], i) => { const rg = new T.Mesh(new T.RingGeometry(r - .008, r + .008, 72), bas(0xffffff, { transparent: true, opacity: .22, side: T.DoubleSide })); rg.rotation.x = -Math.PI / 2; sys.add(rg); const p = new T.Mesh(new T.SphereGeometry(s, 16, 12), L(c, { emissive: new T.Color(c).multiplyScalar(.25) })); sys.add(p); if (i === 4) { const ring = new T.Mesh(new T.RingGeometry(s * 1.5, s * 2.1, 32), bas(0xe9d5a8, { side: T.DoubleSide, transparent: true, opacity: .75 })); ring.rotation.x = -1.2; p.add(ring); } pls.push([p, r, sp, i]); });
-  // --- кейіпкер (жұлдызша)
-  const faceTex = {}, faceT = k => faceTex[k] || (faceTex[k] = ct(256, 176, (x) => {
+  // --- тақырыпқа тән әшекей
+  const spin = [], fl = [], canopy = []; let sysG = null, pls = [], sun = null, sg = null, trunkAng = 0;
+  const planetTex = (kind) => ct(256, 128, (x, w, h) => { if (kind === 'earth') { x.fillStyle = '#2a63c4'; x.fillRect(0, 0, w, h); x.fillStyle = '#3f9d58'; for (let i = 0; i < 9; i++) { x.beginPath(); x.ellipse(rnd() * w, 20 + rnd() * 90, 14 + rnd() * 26, 8 + rnd() * 16, rnd() * 3, 0, 7); x.fill(); } x.fillStyle = 'rgba(255,255,255,.5)'; for (let i = 0; i < 14; i++) { x.beginPath(); x.ellipse(rnd() * w, rnd() * h, 20 + rnd() * 20, 4, 0, 0, 7); x.fill(); } } else { const cs = ['#e8c9a0', '#b9855a', '#f0dcc0', '#a2603a', '#e3b88a', '#c7a07a']; for (let i = 0; i < 12; i++) { x.fillStyle = cs[i % cs.length]; x.fillRect(0, i * h / 12, w, h / 12 + 1); } } });
+  if (!tree) {
+    [['earth', -62, 14, -20, 14], ['jup', 70, 22, -60, 16], ['jup', 40, 30, 80, 7]].forEach(([k, x, y, z, r], i) => { const p = new T.Mesh(new T.SphereGeometry(r, 32, 20), bas(0xffffff, { map: planetTex(i === 2 ? 'x' : k === 'earth' ? 'earth' : 'jup'), fog: false })); p.position.set(x, y, z); scene.add(p); spin.push(p); });
+    const pm = new T.Mesh(new T.SphereGeometry(9, 24, 16), bas(0x7a49c9, { fog: false })); pm.position.set(-80, 30, -70); scene.add(pm);
+    shelf(...ring(200, 9.4), 4.2); shelf(...ring(150, 9.4), 4.2);
+    const tel = new T.Group(); { const [qx, qz] = ring(120, 9.1); tel.position.set(qx, 1.4, qz); } tel.scale.setScalar(1.15); tel.rotation.y = 2.6; scene.add(tel);
+    [[0, .5], [-.4, -.3], [.4, -.3]].forEach(([lx, lz]) => { const l = add(new T.CylinderGeometry(.03, .03, 1.5, 6), L(0xb89350), lx * .8, -.5, lz * .5, tel); l.rotation.z = lx * -.6; l.rotation.x = lz * .5; });
+    const tube = add(new T.CylinderGeometry(.14, .2, 1.5, 16), L(0xeae6da), 0, .5, 0, tel); tube.rotation.z = Math.PI / 2 - .35; tube.rotation.y = -.6; add(new T.CylinderGeometry(.22, .22, .12, 16), L(0xb89350), -.75, .78, .3, tel).rotation.z = Math.PI / 2 - .35;
+    [[60, 9.3], [100, 9.3], [260, 9.3], [300, 9.3], [20, 9.5], [340, 9.5]].forEach(([d, r], i) => plant(...ring(d, r), 1 + (i % 3) * .12));
+    [[-3.5, -3.2, 0x5b5fa8], [3.4, 5.9, 0xd6a23a], [-8, 5, 0x7a49c9], [8.2, 4.4, 0x5b5fa8]].forEach(([x, z, c]) => cush(x, z, c));
+    // төбедегі күн жүйесі
+    sysG = new T.Group(); sysG.position.set(0, 7.6, RM_CY); sysG.rotation.x = .22; sysG.scale.setScalar(.85); scene.add(sysG);
+    [[1.4, 0], [-.9, 1.1], [-.6, -1.2]].forEach(([sx, sz]) => { const s = new T.Mesh(new T.CylinderGeometry(.012, .012, 5, 4), bas(0xd8b46a)); s.position.set(sx * 1.2, 2.5, sz * 1.2); sysG.add(s); });
+    sun = new T.Mesh(new T.SphereGeometry(.38, 24, 16), bas(0xffb938)); sysG.add(sun); sg = glow(2.6, .95); sysG.add(sg); const sl = new T.PointLight(0xffc27a, .8, 16); sysG.add(sl);
+    [[.9, .1, 0xb9b9b9, 1.6], [1.35, .15, 0xe8c27a, 1.2], [1.85, .18, 0x3f8cff, .9], [2.4, .14, 0xe0553a, .7], [3.1, .32, 0xd9a766, .45], [3.8, .24, 0x7fd1e0, .3]].forEach(([r, s, c, sp], i) => { const rg = new T.Mesh(new T.RingGeometry(r - .008, r + .008, 72), bas(0xffffff, { transparent: true, opacity: .22, side: T.DoubleSide })); rg.rotation.x = -Math.PI / 2; sysG.add(rg); const p = new T.Mesh(new T.SphereGeometry(s, 16, 12), L(c, { emissive: new T.Color(c).multiplyScalar(.25) })); sysG.add(p); if (i === 4) { const rr = new T.Mesh(new T.RingGeometry(s * 1.5, s * 2.1, 32), bas(0xe9d5a8, { side: T.DoubleSide, transparent: true, opacity: .75 })); rr.rotation.x = -1.2; p.add(rr); } pls.push([p, r, sp, i]); });
+  } else {
+    // орман: алыстағы ағаштар
+    for (let i = 0; i < 70; i++) { const a = rnd() * 6.28, r = 24 + rnd() * 36, hgt = 10 + rnd() * 14, x = Math.sin(a) * r, z = RM_CY + Math.cos(a) * r; add(new T.CylinderGeometry(.9, 1.3, hgt, 6), L(0x5a3a1c), x, -9 + hgt / 2, z); for (let k = 0; k < 3; k++) { const f = add(new T.SphereGeometry(3.5 + rnd() * 3, 7, 6), new T.MeshLambertMaterial({ color: [0x3f8a3a, 0x58a043, 0x2f7434][k], flatShading: true }), x + (rnd() - .5) * 3, -9 + hgt + k * 1.5, z + (rnd() - .5) * 3); f.castShadow = false; } }
+    // үлкен ағаш: сөреде кітаптар, фонарьлар
+    trunkAng = Math.PI; const tz = RM_CY - RM_R - 2.4;
+    const tr = add(new T.CylinderGeometry(2, 3, 28, 16), L(0x6a4524), 0, 5, tz); canopy.push(tr.material); tr.material.transparent = true;
+    for (let i = 0; i < 4; i++) { const a = (i - 1.5) * .55, b = add(new T.CylinderGeometry(.35, .6, 11, 8), L(0x6a4524), Math.sin(a) * 4.2, 15, tz + 4.5 + Math.cos(a) * 1.2); b.rotation.z = -Math.sin(a) * .9; b.rotation.x = .9; b.material.transparent = true; canopy.push(b.material); }
+    for (let i = 0; i < 16; i++) { const f = add(new T.SphereGeometry(3 + rnd() * 2.4, 8, 6), new T.MeshLambertMaterial({ color: [0x3f8a3a, 0x58a043, 0x2f7434, 0x6fb14e][i % 4], flatShading: true, transparent: true }), (rnd() - .5) * 20, 16 + rnd() * 6, tz + rnd() * 9); f.castShadow = false; canopy.push(f.material); }
+    shelf(...ring(180, 9.4), 5); shelf(...ring(215, 9.4), 3.6); shelf(...ring(145, 9.4), 3.6);
+    for (let i = 0; i < 9; i++) { const a = (i - 4) * .5, x = Math.sin(a) * 8.5, z = RM_CY - 1 - Math.cos(a) * 6, y = 6.2 + (i % 3) * .5; const ln = new T.Mesh(new T.CylinderGeometry(.01, .01, 3, 3), bas(0x6b4423)); ln.position.set(x, y + 1.5, z); scene.add(ln); const lb = new T.Mesh(new T.SphereGeometry(.28, 12, 8), bas(0xffc968)); lb.position.set(x, y, z); scene.add(lb); const gs = glow(2.2, .8); gs.position.set(x, y, z); scene.add(gs); fl.push(lb); }
+    [[60, 9.3], [100, 9.3], [260, 9.3], [300, 9.3], [20, 9.5], [340, 9.5]].forEach(([d, r], i) => plant(...ring(d, r), 1 + (i % 3) * .12));
+    [[-3.5, -3.2, 0xc9593a], [3.4, 5.9, 0xe6c57a], [-8, 5, 0x58a043], [8.2, 4.4, 0xc9593a]].forEach(([x, z, c]) => cush(x, z, c));
+    // жарқанаттар: ұшқыштар (светлячки)
+    const fg = new T.BufferGeometry(), fp = new Float32Array(90 * 3); for (let i = 0; i < 90; i++) { const a = rnd() * 6.28, r = rnd() * 11; fp[i * 3] = Math.sin(a) * r; fp[i * 3 + 1] = .8 + rnd() * 5; fp[i * 3 + 2] = RM_CY + Math.cos(a) * r; } fg.setAttribute('position', new T.BufferAttribute(fp, 3));
+    const ff = new T.Points(fg, new T.PointsMaterial({ color: 0xfff2a0, size: .22, map: glowTex, transparent: true, depthWrite: false, blending: T.AdditiveBlending })); scene.add(ff); spin.push(ff); ff.userData.ff = 1;
+  }
+    const faceTex = {}, faceT = k => faceTex[k] || (faceTex[k] = ct(256, 176, (x) => {
     x.fillStyle = 'rgba(255,120,150,.5)'; [[44, 118], [212, 118]].forEach(([a, b]) => { x.beginPath(); x.ellipse(a, b, 22, 14, 0, 0, 7); x.fill(); });
     const eye = (cx, o) => { if (k === 'closed') { x.strokeStyle = '#2a1d28'; x.lineWidth = 7; x.lineCap = 'round'; x.beginPath(); x.arc(cx, 76, 20, .15 * Math.PI, .85 * Math.PI); x.stroke(); return; } x.fillStyle = '#fff'; x.beginPath(); x.ellipse(cx, 74, 25, 30, 0, 0, 7); x.fill(); x.fillStyle = '#241a2e'; x.beginPath(); x.ellipse(cx + o, k === 'down' ? 88 : 76, 14, k === 'hand' ? 20 : 17, 0, 0, 7); x.fill(); x.fillStyle = '#fff'; x.beginPath(); x.arc(cx + o + 5, k === 'down' ? 82 : 69, 5, 0, 7); x.fill(); };
     eye(84, 0); eye(172, 0); x.strokeStyle = '#2a1d28'; x.lineWidth = 6; x.lineCap = 'round';
@@ -6846,7 +6943,12 @@ function rm3Create(box, cb) {
     const zs = [0, 1, 2].map(i => { const s = new T.Sprite(new T.SpriteMaterial({ map: zTex, transparent: true, depthWrite: false })); s.visible = false; s.scale.setScalar(.34); g.add(s); return s; });
     const q = new T.Sprite(new T.SpriteMaterial({ map: qTex, transparent: true, depthWrite: false })); q.scale.setScalar(.42); q.position.set(-.5, 1.9, 0); q.visible = false; g.add(q);
     const arm = new T.Group(); arm.position.set(.34, .95, .05); g.add(arm); const am = new T.Mesh(new T.CylinderGeometry(.06, .06, .5, 8), mat); am.position.y = .25; arm.add(am); const ah = new T.Mesh(handG, mat); ah.position.y = .53; arm.add(ah);
-    g.userData = { h, body, face, hands, star, sgl, book, pad, pen, zs, q, arm, tag, tagKey: m.name + '|' + (a ? a.e : ''), tagTex: tg, ring, mat, st: '', ph: (h % 628) / 100 };
+    g.userData = { h, body, face, hands, star, sgl, book, pad, pen, zs, q, arm, tag, tagKey: m.name + '|' + (a ? a.e : '') + '|' + (m.it || []).join(','), tagTex: tg, ring, mat, st: '', ph: (h % 628) / 100 };
+    const dec = new T.Group(); g.add(dec); const itm = m.it || [], dd = (geo, mt, x, y, z, par) => add(geo, mt, x, y, z, par || dec);
+    if (itm.includes('lamp')) { dd(new T.CylinderGeometry(.1, .14, .04, 10), L(0xc9a25a), .5, .57, .8); dd(new T.CylinderGeometry(.015, .015, .3, 5), L(0xc9a25a), .5, .72, .8); dd(new T.CylinderGeometry(.08, .16, .16, 12, 1, true), bas(0xffe08a, { side: T.DoubleSide }), .5, .92, .8).castShadow = false; const g2 = glow(.9, .9); g2.position.set(.5, .9, .8); dec.add(g2); }
+    if (itm.includes('plant')) { dd(new T.CylinderGeometry(.1, .08, .14, 10), L(0xb5543a), -.5, .62, .8); for (let i = 0; i < 5; i++) { const l = dd(new T.SphereGeometry(.09, 6, 5), L(0x3fbf5a), -.5 + Math.sin(i * 1.3) * .07, .78 + (i % 2) * .06, .8 + Math.cos(i * 1.3) * .07); l.scale.set(.6, 1.3, .6); } }
+    if (itm.includes('flag')) { dd(new T.CylinderGeometry(.015, .015, .7, 5), L(0xcfd3dc), .35, 1.1, -.3); dd(new T.BoxGeometry(.3, .18, .01), bas(AV_C[(h >> 4) % 8], { side: T.DoubleSide }), .5, 1.38, -.3); }
+    if (itm.includes('cat')) { const cg = new T.Group(); cg.position.set(-.85, 0, .15); cg.rotation.y = .5; dec.add(cg); const bd = dd(new T.SphereGeometry(.17, 12, 8), L(0xe8a35a), 0, .2, 0, cg); bd.scale.set(1, .75, 1.35); dd(new T.SphereGeometry(.12, 12, 8), L(0xe8a35a), 0, .34, .2, cg); [-1, 1].forEach(s => { const e = dd(new T.ConeGeometry(.05, .1, 4), L(0xe8a35a), s * .07, .46, .2, cg); e.rotation.z = -s * .2; }); [-1, 1].forEach(s => dd(new T.SphereGeometry(.018, 6, 4), bas(0x222222), s * .045, .36, .31, cg)); const tl = new T.Group(); tl.position.set(0, .2, -.22); cg.add(tl); const tp = dd(new T.CylinderGeometry(.02, .03, .3, 6), L(0xe8a35a), 0, .14, 0, tl); tl.userData.tail = tl; cg.userData.tail = tl; g.userData.cat = cg; }
     g.scale.setScalar(1.45); scene.add(g); return g;
   }
   function seatPose(c, i) { const s = RM3_SEAT[i]; if (!s) return; c.userData.tx = s.x; c.userData.tz = s.z; c.userData.try = s.ry; }
@@ -6858,31 +6960,84 @@ function rm3Create(box, cb) {
     u.hands.forEach(hd => { const s = hd.userData.s; if (st === 'read') hd.position.set(s * .3, .78, .56); else if (st === 'write') hd.position.set(s > 0 ? .1 : -.22, .8, .64); else if (sl) hd.position.set(s * .3, .8, .62); else if (st === 'hand' && s > 0) hd.position.set(0, -9, 0); else hd.position.set(s * .4, .8, .12); });
     u.book.position.set(0, .93, .5); u.book.rotation.x = -.55; u.pad.position.set(0, .77, .64); u.star.scale.setScalar((sl ? .55 : .8) + .12 * lv); u.sgl.scale.setScalar((sl ? .35 : .6) + .12 * lv); u.sgl.material.opacity = sl ? .3 : 1;
   }
-  // --- камера: айналдыру, жақындату
-  const cs = { az: .62, el: .86, d: 22, tx: 0, ty: .8, tz: .6, g: null }; let fit = 22;
+  // --- ұстауға болатын заттар
+  const objs = [], hitG = new T.SphereGeometry(.55, 8, 6), hitM = new T.MeshBasicMaterial({ visible: false });
+  const planeG = (() => { const g = new T.BufferGeometry(), v = [0, 0, .38, -.3, 0, -.22, 0, -.03, -.16, 0, 0, .38, 0, -.03, -.16, .3, 0, -.22, 0, 0, .38, 0, -.12, -.2, 0, -.03, -.16]; g.setAttribute('position', new T.BufferAttribute(new Float32Array(v), 3)); g.computeVertexNormals(); return g; })();
+  const mkObj = (type, i) => {
+    const g = new T.Group(); let base = 0;
+    if (type === 'book') { const c = [0xc0392b, 0x2e86c1, 0x27ae60][i % 3]; add(new T.BoxGeometry(.36, .08, .48), L(c), 0, .04, 0, g); add(new T.BoxGeometry(.32, .06, .44), L(0xfff3d6), .01, .045, 0, g); base = .08; }
+    else if (type === 'ball') { const c = [0xff5d5d, 0x4cc9f0][i % 2]; add(new T.SphereGeometry(.22, 18, 12), L(c, { emissive: new T.Color(c).multiplyScalar(.2) }), 0, .22, 0, g); const st = add(new T.TorusGeometry(.22, .02, 6, 20), L(0xffffff), 0, .22, 0, g); base = .22; }
+    else if (type === 'plane') { add(planeG, L(0xffffff, { side: T.DoubleSide, flatShading: true }), 0, .12, 0, g); base = .1; }
+    else { add(new T.CylinderGeometry(.16, .2, .05, 14), L(0xc9a25a), 0, .025, 0, g); add(new T.CylinderGeometry(.02, .02, .5, 6), L(0xc9a25a), 0, .3, 0, g); add(new T.CylinderGeometry(.1, .2, .22, 14, 1, true), bas(0xffd9a0, { side: T.DoubleSide }), 0, .55, 0, g); const gl = glow(.9, .8); gl.position.y = .5; g.add(gl); base = 0; }
+    const hm = new T.Mesh(hitG, hitM); hm.position.y = .3; hm.userData.oi = i; g.add(hm);
+    scene.add(g); return { g, type, base, hm };
+  };
+  const tableAt = (x, z) => RM3_T.some(([cx, cz]) => Math.hypot(x - cx, z - cz) < 1.1);
+  RM_OBJ0.forEach(([t, x, z], i) => { const o = mkObj(t, i); o.x = o.tx = x; o.z = o.tz = z; o.hold = false; o.by = null; o.at = 0; o.moved = false; o.y = o.base; o.g.position.set(x, o.base, z); objs.push(o); });
+  const restY = o => (tableAt(o.tx, o.tz) ? .8 : 0) + o.base;
+  const clampXZ = (x, z) => { const dx = x, dz = z - RM_CY, d = Math.hypot(dx, dz), m = RM_R - 1.3; return d > m ? [dx / d * m, RM_CY + dz / d * m] : [x, z]; };
+  // --- реакция эмодзилері, сыйлық
+  const fx = [], emTex = {}, emT = e => emTex[e] || (emTex[e] = ct(96, 96, x => { x.font = '68px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(e, 48, 52); }));
+  const prize = new T.Group(); prize.position.set(0, 3.1, RM_CY); prize.visible = false; scene.add(prize);
+  { const st = new T.Mesh(starG, bas(0xffd45e)); st.scale.setScalar(5); prize.add(st); prize.userData.st = st; const pg = glow(5, .9); prize.add(pg); const tg2 = tagTex('Апталық мақсат орындалды!', '🏆', false), tsp = new T.Sprite(new T.SpriteMaterial({ map: tg2, transparent: true, depthWrite: false })); tsp.scale.set(3.6, .8, 1); tsp.position.y = 1.4; tsp.renderOrder = 10; prize.add(tsp); }
+  // --- камера: толық 360°
+  const cs = { az: .62, el: .86, d: 24, tx: 0, ty: .8, tz: RM_CY, g: null }; let fit = 24;
   const place = () => { const ce = Math.cos(cs.el); cam.position.set(cs.tx + cs.d * ce * Math.sin(cs.az), cs.ty + cs.d * Math.sin(cs.el), cs.tz + cs.d * ce * Math.cos(cs.az)); cam.lookAt(cs.tx, cs.ty, cs.tz); };
-  const clampCam = () => { cs.az = Math.max(-.15, Math.min(1.3, cs.az)); cs.el = Math.max(.42, Math.min(1.2, cs.el)); cs.d = Math.max(7, Math.min(fit * 1.25, cs.d)); };
-  const resize = () => { const w = box.clientWidth || 800, h = box.clientHeight || 500; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); const nf = 21.5 * Math.max(1, 1.6 / cam.aspect) ** .7; if (Math.abs(nf - fit) > .01) { const k = cs.d / fit; fit = nf; if (!cs.g) cs.d = Math.min(fit * 1.25, nf * Math.min(k, 1.25)); } };
+  const clampCam = () => { cs.el = Math.max(.2, Math.min(1.42, cs.el)); cs.d = Math.max(6.5, Math.min(fit * 1.3, cs.d)); };
+  const resize = () => { const w = box.clientWidth || 800, h = box.clientHeight || 500; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); const nf = Math.max(24, 11.6 / (.344 * cam.aspect)); if (Math.abs(nf - fit) > .01) { const k = cs.d / fit; fit = nf; if (!cs.g) cs.d = Math.min(fit * 1.3, nf * Math.min(k, 1.3)); } };
   const ro = new ResizeObserver(resize); ro.observe(box); resize(); cs.d = fit; place();
-  const ptrs = new Map(); let pdist = 0, down = null;
-  const pd = e => { cv.setPointerCapture && cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 1) down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 }; if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pdist = Math.hypot(a[0] - b[0], a[1] - b[1]); } cs.g = null; };
-  const pm = e => { const o = ptrs.get(e.pointerId); if (!o) return; const dx = e.clientX - o[0], dy = e.clientY - o[1]; ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (down) down.moved += Math.abs(dx) + Math.abs(dy); if (ptrs.size === 1) { cs.az -= dx * .006; cs.el += dy * .005; } else if (ptrs.size === 2) { const [a, b] = [...ptrs.values()], nd = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pdist) cs.d *= pdist / nd; pdist = nd; } clampCam(); };
-  const pu = e => { ptrs.delete(e.pointerId); if (down && down.moved < 8 && performance.now() - down.t < 500 && ptrs.size === 0) tap(e); if (!ptrs.size) down = null; pdist = 0; };
+  const ptrs = new Map(); let pdist = 0, down = null, grab = -1, hov = -1, lastSend = 0; const ray = new T.Raycaster(), v2 = new T.Vector2(), pl = new T.Plane(new T.Vector3(0, 1, 0), -.95), hitP = new T.Vector3();
+  const setRay = e => { const r = cv.getBoundingClientRect(); v2.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(v2, cam); };
+  const objAt = e => { setRay(e); const h = ray.intersectObjects(objs.map(o => o.hm), false)[0]; return h ? h.object.userData.oi : -1; };
+  const pd = e => {
+    cv.setPointerCapture && cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); cs.g = null;
+    if (ptrs.size === 1) { down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 }; if (!pick) { const i = objAt(e); if (i >= 0) { const o = objs[i]; if (!(o.hold && o.by && performance.now() - o.at < 2500)) { grab = i; o.hold = true; o.by = 'me'; down.moved = 99; cv.style.cursor = 'grabbing'; cb.onObj(i, o.tx, o.tz, 1); } } } }
+    if (ptrs.size === 2) { if (grab >= 0) { const o = objs[grab]; o.hold = false; o.by = null; o.drop = 1; cb.onObj(grab, o.tx, o.tz, 0); grab = -1; } const [a, b] = [...ptrs.values()]; pdist = Math.hypot(a[0] - b[0], a[1] - b[1]); }
+  };
+  const pm = e => {
+    const o = ptrs.get(e.pointerId);
+    if (!o) { if (e.pointerType === 'mouse' && !pick) { const i = objAt(e); if (i !== hov) { hov = i; cv.style.cursor = i >= 0 ? 'grab' : ''; } } return; }
+    const dx = e.clientX - o[0], dy = e.clientY - o[1]; ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (down) down.moved += Math.abs(dx) + Math.abs(dy);
+    if (grab >= 0) { setRay(e); if (ray.ray.intersectPlane(pl, hitP)) { const ob = objs[grab], [x, z] = clampXZ(hitP.x, hitP.z); ob.tx = x; ob.tz = z; ob.moved = true; const n = performance.now(); if (n - lastSend > 110) { lastSend = n; cb.onObj(grab, x, z, 1); } } return; }
+    if (ptrs.size === 1) { cs.az -= dx * .006; cs.el += dy * .005; } else if (ptrs.size === 2) { const [a, b] = [...ptrs.values()], nd = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pdist) cs.d *= pdist / nd; pdist = nd; } clampCam();
+  };
+  const pu = e => {
+    ptrs.delete(e.pointerId);
+    if (grab >= 0) { const o = objs[grab]; o.hold = false; o.by = null; o.drop = 1; cb.onObj(grab, o.tx, o.tz, 0); grab = -1; cv.style.cursor = ''; }
+    else if (down && down.moved < 8 && performance.now() - down.t < 500 && ptrs.size === 0) tap(e);
+    if (!ptrs.size) down = null; pdist = 0;
+  };
   const wh = e => { e.preventDefault(); cs.d *= 1 + Math.sign(e.deltaY) * .08; cs.g = null; clampCam(); };
   cv.addEventListener('pointerdown', pd); cv.addEventListener('pointermove', pm); cv.addEventListener('pointerup', pu); cv.addEventListener('pointercancel', pu); cv.addEventListener('wheel', wh, { passive: false }); cv.style.touchAction = 'none';
   // --- орын таңдау
   const seatMarks = RM3_SEAT.map((s, i) => { const m = new T.Mesh(new T.CircleGeometry(.5, 24), bas(0xffd45e, { transparent: true, opacity: .55 })); m.rotation.x = -Math.PI / 2; m.position.set(s.x, .04, s.z); m.visible = false; m.userData.i = i; scene.add(m); return m; });
-  let pick = false; const ray = new T.Raycaster(), v2 = new T.Vector2();
-  function tap(e) { if (!pick) return; const r = cv.getBoundingClientRect(); v2.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(v2, cam); const hit = ray.intersectObjects(seatMarks.filter(m => m.visible), false)[0]; if (hit) cb.onSeat(hit.object.userData.i); }
+  let pick = false;
+  function tap(e) { if (!pick) return; setRay(e); const hit = ray.intersectObjects(seatMarks.filter(m => m.visible), false)[0]; if (hit) cb.onSeat(hit.object.userData.i); }
   let taken = new Set(), mySeat = null;
   const paintMarks = () => seatMarks.forEach((m, i) => { m.visible = pick && !taken.has(i); });
   // --- жаңарту және анимация
-  let raf = 0, t = 0, last = performance.now();
+  let raf = 0, t = 0, last = performance.now(); const ctr = new T.Vector3();
   const loop = now => {
     raf = requestAnimationFrame(loop); const dt = Math.min(.05, (now - last) / 1000); last = now; if (document.hidden) return; t += dt;
     if (cs.g) { const k = 1 - Math.exp(-dt * 4); cs.tx += (cs.g.tx - cs.tx) * k; cs.tz += (cs.g.tz - cs.tz) * k; cs.d += (cs.g.d - cs.d) * k; cs.el += (cs.g.el - cs.el) * k; }
     place();
-    sun.rotation.y = t * .3; sg.material.opacity = .85 + Math.sin(t * 2) * .1; pls.forEach(([p, r, sp, i]) => { const a = t * sp * .35 + i * 1.3; p.position.set(Math.cos(a) * r, 0, Math.sin(a) * r); p.rotation.y = t; });
+    // жақын қабырғаларды ашу
+    const cdx = cam.position.x, cdz = cam.position.z - RM_CY, cl = Math.hypot(cdx, cdz) || 1, top = cs.el > 1.18, kk = 1 - Math.exp(-dt * 8);
+    walls.forEach(w => { const dot = (Math.sin(w.th) * cdx + Math.cos(w.th) * cdz) / cl, tg = (!top && dot > .22) ? 0 : 1; w.a += (tg - w.a) * kk; w.g.visible = w.a > .03; if (w.g.visible) w.mats.forEach(m => { m.opacity = w.a * m.userData.o; }); });
+    if (canopy.length) { const dd = (Math.sin(trunkAng) * cdx + Math.cos(trunkAng) * cdz) / cl, tg = dd > .15 ? .22 : 1; canopy.forEach(m => { m.opacity += (tg - m.opacity) * kk; }); }
+    if (sun) { sun.rotation.y = t * .3; sg.material.opacity = .85 + Math.sin(t * 2) * .1; pls.forEach(([p, r, sp, i]) => { const a = t * sp * .35 + i * 1.3; p.position.set(Math.cos(a) * r, 0, Math.sin(a) * r); p.rotation.y = t; }); }
+    spin.forEach(p => { if (p.userData.ff) p.rotation.y = t * .05; else p.rotation.y = t * .04; });
+    fl.forEach((m, i) => { m.position.y += Math.sin(t * 1.3 + i) * .0015; });
+    if (prize.visible) { prize.userData.st.rotation.y = t * 1.2; prize.position.y = 3.1 + Math.sin(t * 1.6) * .15; }
+    objs.forEach((o, i) => {
+      const k = 1 - Math.exp(-dt * 16), g = o.g, ty = o.hold ? .95 + Math.sin(t * 6 + i) * .03 : restY(o);
+      o.x += (o.tx - o.x) * k; o.z += (o.tz - o.z) * k; o.y += (ty - o.y) * (o.hold ? k : 1 - Math.exp(-dt * 9));
+      if (o.drop && !o.hold && Math.abs(o.y - ty) < .02) { o.drop = 0; }
+      g.position.set(o.x, o.y - o.base + (o.drop ? Math.abs(Math.sin(t * 14)) * .06 * Math.min(1, (o.y - ty) * 3 + .2) : 0), o.z);
+      if (o.type === 'plane') g.rotation.set(o.hold ? -.3 : 0, o.hold ? t * 1.2 : g.rotation.y, o.hold ? .3 : 0); else if (o.type === 'ball' && o.hold) g.rotation.x = t * 3;
+      if (o.by && o.by !== 'me' && performance.now() - o.at > 2500) { o.hold = false; o.by = null; }
+    });
+    for (let i = fx.length - 1; i >= 0; i--) { const f = fx[i]; f.t += dt; const p = f.t / 1.8; if (p >= 1) { scene.remove(f.s); f.s.material.dispose(); fx.splice(i, 1); continue; } f.s.position.set(f.x + Math.sin(p * 6 + f.ph) * .15, f.y + p * 1.8, f.z); f.s.scale.setScalar(.5 + Math.min(p * 4, 1) * .45); f.s.material.opacity = p > .7 ? (1 - p) / .3 : 1; }
     chars.forEach(c => {
       const u = c.userData, k = 1 - Math.exp(-dt * 6); c.position.x += (u.tx - c.position.x) * k; c.position.z += (u.tz - c.position.z) * k; const cy = Math.atan2(cam.position.x - c.position.x, cam.position.z - c.position.z); let ta = u.try + Math.atan2(Math.sin(cy - u.try), Math.cos(cy - u.try)) * .42; let dr = ta - c.rotation.y; dr = Math.atan2(Math.sin(dr), Math.cos(dr)); c.rotation.y += dr * k;
       const sl = u.st === 'sleep', bob = Math.sin(t * 1.7 + u.ph); if (!sl) u.body.position.y = .92 + bob * .014; else u.body.scale.y = 1 + Math.sin(t * 1.2 + u.ph) * .025;
@@ -6891,6 +7046,7 @@ function rm3Create(box, cb) {
       if (u.st === 'read') u.book.rotation.x = -.55 + Math.sin(t * .9 + u.ph) * .03;
       if (u.st === 'hand') { u.arm.rotation.z = -.35 - Math.abs(Math.sin(t * 5)) * .5 + .1; u.arm.rotation.x = 0; u.q.position.y = 1.9 + Math.sin(t * 4) * .05; }
       if (sl) u.zs.forEach((z, i) => { const p = (t * .45 + i / 3) % 1; z.position.set(.3 + p * .35, 1.5 + p * .8, .1); z.material.opacity = Math.sin(p * Math.PI); z.scale.setScalar(.22 + p * .22); });
+      if (u.cat) u.cat.userData.tail.rotation.z = Math.sin(t * 2.4 + u.ph) * .5;
     });
     seatMarks.forEach(m => { if (m.visible) m.material.opacity = .4 + Math.sin(t * 4) * .15; });
     renderer.render(scene, cam);
@@ -6899,47 +7055,31 @@ function rm3Create(box, cb) {
   return {
     update(stu, my) {
       mySeat = my; const seen = new Set(); taken = new Set();
-      stu.forEach(m => { if (!(m.seat >= 0 && m.seat < RM3_SEAT.length)) return; seen.add(m.uid); taken.add(m.seat); let c = chars.get(m.uid); const key = m.name + '|' + ((avParse(m.av) || {}).e || '');
+      stu.forEach(m => { if (!(m.seat >= 0 && m.seat < RM3_SEAT.length)) return; seen.add(m.uid); taken.add(m.seat); let c = chars.get(m.uid); const key = m.name + '|' + ((avParse(m.av) || {}).e || '') + '|' + (m.it || []).join(',');
         if (c && c.userData.tagKey !== key) { scene.remove(c); chars.delete(m.uid); c = null; }
         if (!c) { c = mkChar(m); chars.set(m.uid, c); seatPose(c, m.seat); c.position.set(RM3_SEAT[m.seat].x, 0, RM3_SEAT[m.seat].z); c.rotation.y = RM3_SEAT[m.seat].ry; } else seatPose(c, m.seat);
         setState(c, RM_ST[m.st] ? m.st : 'read', Math.max(0, Math.min(5, m.lv | 0))); });
       chars.forEach((c, id) => { if (!seen.has(id)) { try { c.userData.tagTex.dispose(); } catch { } scene.remove(c); chars.delete(id); } }); paintMarks();
     },
     setPick(on) { pick = on; paintMarks(); },
-    focusMe(seat) { const s = RM3_SEAT[seat == null ? mySeat : seat]; if (s) cs.g = { tx: s.cx, tz: s.cz, d: Math.max(8.5, fit * .5), el: .72 }; },
-    resetCam() { cs.g = { tx: 0, tz: .6, d: fit, el: .86 }; cs.az = .62; },
+    focusMe(seat) { const s = RM3_SEAT[seat == null ? mySeat : seat]; if (s) cs.g = { tx: s.cx, tz: s.cz, d: Math.max(8.5, fit * .45), el: .72 }; },
+    resetCam() { cs.g = { tx: 0, tz: RM_CY, d: fit, el: .86 }; },
+    setObj(i, x, z, hold, by) { const o = objs[i]; if (!o || grab === i) return; const [px, pz] = clampXZ(x, z); o.tx = px; o.tz = pz; o.moved = true; o.at = performance.now(); if (hold) { o.hold = true; o.by = by || 'x'; } else { if (o.hold) o.drop = 1; o.hold = false; o.by = null; } },
+    objs() { return objs.map(o => o.moved ? [Math.round(o.tx * 100) / 100, Math.round(o.tz * 100) / 100] : null); },
+    react(uid, e) { const c = chars.get(uid); if (!c || fx.length > 40) return; const s = new T.Sprite(new T.SpriteMaterial({ map: emT(e), transparent: true, depthWrite: false })); s.renderOrder = 12; s.position.set(c.position.x, 2.7, c.position.z); scene.add(s); fx.push({ s, t: 0, x: c.position.x, y: 2.7, z: c.position.z, ph: Math.random() * 6 }); },
+    setPrize(on) { prize.visible = !!on; },
     destroy() { cancelAnimationFrame(raf); ro.disconnect(); try { renderer.dispose(); renderer.forceContextLoss(); } catch { } cv.remove(); chars.clear(); }
   };
 }
 
-function rm2dCreate(box, cb) {
-  const wrap = el('div', 'rm-wrap'), stage = el('div', 'rm-stage can'); wrap.appendChild(stage); box.appendChild(wrap);
-  const seatEls = RM_SEATS.map((p, i) => { const b = el('button', 'rm-seat'); b.type = 'button'; b.style.left = (p[0] / RM_W * 100) + '%'; b.style.top = (p[1] / RM_H * 100) + '%'; b.setAttribute('aria-label', 'Орын ' + (i + 1)); b.onclick = () => cb.onSeat(i); stage.appendChild(b); return b; });
-  const avs = el('div', 'rm-avs'); stage.appendChild(avs); let mySeat = null;
-  return {
-    update(stu, my) {
-      mySeat = my; avs.replaceChildren(); const used = new Set(stu.map(m => m.seat)); seatEls.forEach((b, i) => b.classList.toggle('taken', used.has(i)));
-      stu.filter(m => m.seat >= 0 && m.seat < RM_SEATS.length).sort((a, b) => RM_SEATS[a.seat][1] - RM_SEATS[b.seat][1]).forEach(m => {
-        const st = RM_ST[m.st] ? m.st : 'read', p = RM_SEATS[m.seat], d = el('div', 'rm-av st-' + st + (m.uid === meId ? ' me' : ''));
-        d.style.left = (p[0] / RM_W * 100) + '%'; d.style.top = (p[1] / RM_H * 100) + '%'; d.style.setProperty('--d', '-' + ((rmHash(m.uid) % 30) / 10) + 's');
-        d.innerHTML = rmSvg(m.uid, m.av, st); const a = avParse(m.av);
-        if (a) { const bd = el('span', 'rm-badge', a.e); bd.style.setProperty('--bc', AV_C[a.c]); d.appendChild(bd); }
-        if (st === 'sleep') d.appendChild(el('span', 'rm-z', 'z z'));
-        d.appendChild(el('span', 'rm-nm', String(m.name || '').slice(0, 14))); avs.appendChild(d);
-      });
-    },
-    setPick(on) { stage.classList.toggle('pick', on); },
-    focusMe() { if (wrap.scrollWidth > wrap.clientWidth && mySeat != null) { const p = RM_SEATS[mySeat]; wrap.scrollTo({ left: p[0] / RM_W * stage.offsetWidth - wrap.clientWidth / 2, behavior: 'smooth' }); } },
-    resetCam() { wrap.scrollTo({ left: 0, behavior: 'smooth' }); },
-    destroy() { wrap.remove(); }
-  };
-}
 const RM_MAX = 30;
 let rmTok = 0;
 function roomLeave(quiet) {
   if (!rm) return; const r = rm; rm = null;
   clearInterval(r.tick); ['pointerdown', 'keydown', 'touchstart', 'scroll', 'wheel'].forEach(t => removeEventListener(t, r.act, true));
+  document.removeEventListener('fullscreenchange', r.fsl); document.removeEventListener('webkitfullscreenchange', r.fsl);
   if (r.pend > 0 && !r.staff) { sb.rpc('room_add', { p_seconds: Math.min(r.pend, 90), p_new: !r.counted && Date.now() - (+ls.get('roomLast') || 0) > 1800000 }).then(() => ls.set('roomLast', Date.now()), () => { }); }
+  if (!quiet) { try { rmSnd.set('off'); } catch { } if (document.fullscreenElement && document.fullscreenElement === r.box) { try { document.exitFullscreen(); } catch { } } }
   try { r.view && r.view.destroy(); } catch { }
   try { sb.removeChannel(r.ch); } catch { }
 }
@@ -6947,64 +7087,104 @@ async function roomEnter(sel, n) {
   roomLeave(true); const tok = ++rmTok;
   const v = $('v-room'); v.replaceChildren();
   const h = el('h2', 'pg-h', 'Оқу бөлмесі'); h.dataset.ic = '🌌'; h.style.setProperty('--a', '#7C3AED'); h.style.setProperty('--b', '#B07CFF'); v.appendChild(h);
-  v.appendChild(el('p', 'sub', 'Groowin обсерваториясы: барлығы бірге отырып оқитын ортақ бөлме. Басыңдағы жұлдыз көп оқыған сайын өседі ✨'));
+  v.appendChild(el('p', 'sub', 'Барлығы бірге отырып оқитын ортақ 3D бөлме. Бөлмені айналдыр, заттарды ұста, ⛶ басып толық экранға шық. Басыңдағы жұлдыз көп оқыған сайын өседі ✨'));
   const cid = window.__myClass || null, opts = [['auto', '🌌 Ортақ бөлме']];
   if (isStaff) { for (let i = 2; i <= 4; i++) opts.push(['a:' + i, '🌌 Ортақ бөлме ' + i]); if (!classesCache.length) { try { await loadClassList(); } catch { } if (tok !== rmTok || $('v-room').hidden) return; } assignable().forEach(c => opts.push(['c:' + c.id, '🏫 ' + c.name])); }
   else if (cid) { let nm = (classesCache.find(c => c.id === cid) || {}).name; if (!nm) { try { const r = await sb.from('classes').select('name').eq('id', cid).maybeSingle(); nm = r.data && r.data.name; } catch { } if (tok !== rmTok || $('v-room').hidden) return; } opts.push(['c:' + cid, '🏫 ' + (nm || 'Менің сыныбым')]); }
   let room = sel || ls.get('roomSel') || 'auto'; if (!opts.some(o => o[0] === room)) room = 'auto';
   const bar = el('div', 'rm-bar'), s2 = document.createElement('select'); s2.setAttribute('aria-label', 'Бөлме'); opts.forEach(o => s2.append(new Option(o[1], o[0]))); s2.value = room; s2.onchange = () => { ls.set('roomSel', s2.value); roomEnter(s2.value); }; bar.appendChild(s2); v.appendChild(bar);
-  const num = room === 'auto' ? (n || 1) : room.startsWith('a:') ? +room.slice(2) : 0, chan = num ? 'all-' + num : room.slice(2);
-  const box = el('div', 'rm-box'), chip = el('div', 'rm-chip'); v.appendChild(box); box.appendChild(chip);
-  const S = rm = { chan, staff: isStaff, members: [], my: { st: 'read', manual: 'read', auto: false, seat: null, t0: Date.now() }, pend: 0, sess: 0, counted: false, newSess: 0, last: Date.now(), settled: false, lv: 0, base: { week_sec: 0, week_sessions: 0, streak: 0, today_sec: 0 } };
-  const sv = +ls.get('roomSeat'); if (sv >= 0 && sv < RM_SEATS.length) S.my.seat = sv;
+  const num = room === 'auto' ? (n || 1) : room.startsWith('a:') ? +room.slice(2) : 0, chan = num ? 'all-' + num : room.slice(2), cls = num ? null : chan;
+  const box = el('div', 'rm-box is3'); v.appendChild(box);
+  const S = rm = { chan, box, staff: isStaff, members: [], my: { st: 'read', manual: 'read', auto: false, seat: null, t0: Date.now() }, pend: 0, sess: 0, counted: false, newSess: 0, last: Date.now(), settled: false, lv: 0, base: { week_sec: 0, week_sessions: 0, streak: 0, today_sec: 0 }, items: [], objState: [], pomo: { ph: 'off', end: 0 }, goalSec: 0, theme: RM_THEMES[ls.get('roomTheme')] ? ls.get('roomTheme') : 'obs', lastReact: new Map(), pomoSeen: 0 };
+  const sv = +ls.get('roomSeat'); if (sv >= 0 && sv < RM3_SEAT.length) S.my.seat = sv;
   const lvl = () => Math.min(5, Math.floor((S.base.week_sec + S.sess) / 1800));
-  const track = () => { S.lv = lvl(); try { S.ch.track({ uid: meId, name: rmName(meName), av: myAvatar, st: S.my.st, seat: S.my.seat, t0: S.my.t0, lv: S.lv, staff: isStaff }); } catch { } };
+  const track = () => { S.lv = lvl(); try { S.ch.track({ uid: meId, name: rmName(meName), av: myAvatar, st: S.my.st, seat: S.my.seat, t0: S.my.t0, lv: S.lv, staff: isStaff, it: S.items }); } catch { } };
+  const bc = (event, payload) => { try { S.ch.send({ type: 'broadcast', event, payload: payload || {} }); } catch { } };
   function resolve() {
     if (isStaff) return; const taken = new Map(); S.members.forEach(m => { if (m.uid !== meId && m.seat != null && !m.staff) taken.set(m.seat, m); });
     const o = taken.get(S.my.seat);
-    if (S.my.seat == null || (o && (o.t0 < S.my.t0 || (o.t0 === S.my.t0 && o.uid < meId)))) { const f = RM_SEATS.findIndex((_, i) => !taken.has(i)); S.my.seat = f < 0 ? null : f; track(); }
+    if (S.my.seat == null || (o && (o.t0 < S.my.t0 || (o.t0 === S.my.t0 && o.uid < meId)))) { const f = RM3_SEAT.findIndex((_, i) => !taken.has(i)); S.my.seat = f < 0 ? null : f; track(); }
   }
+  // ---------- HUD
+  const hud = el('div', 'rm-hud'), top = el('div', 'rm-top'), bot = el('div', 'rm-bot'), chip = el('div', 'rm-chip'), tools = el('div', 'rm-tools');
+  const hb = (txt, title, fn, cls2) => { const b = el('button', cls2 || '', txt); b.type = 'button'; b.title = title; b.setAttribute('aria-label', title); b.onclick = fn; return b; };
+  const pomoBtn = hb('🍅 Помодоро', 'Ортақ таймер: 25 минут оқу, 5 минут демалыс', () => { if (S.pomo.ph === 'off') pomoStart(); else if (isStaff) pomoStop(); }, 'rm-pomo');
+  const sndB = hb('🔇', 'Фондық дыбыс', () => { const L2 = ['off', 'rain', 'fire', 'music'], nx = L2[(L2.indexOf(rmSnd.mode) + 1) % 4]; rmSnd.set(nx); ls.set('roomSnd', nx); paintSnd(); });
+  const SND = { off: '🔇', rain: '🌧️', fire: '🔥', music: '🎵' }, paintSnd = () => { sndB.textContent = SND[rmSnd.mode] || '🔇'; sndB.title = { off: 'Дыбыс өшірулі', rain: 'Жаңбыр', fire: 'Оттың дыбысы', music: 'Жұмсақ музыка' }[rmSnd.mode]; };
+  const thB = hb(RM_THEMES[S.theme][0], 'Бөлме нұсқасы', () => { const ks = Object.keys(RM_THEMES); S.theme = ks[(ks.indexOf(S.theme) + 1) % ks.length]; ls.set('roomTheme', S.theme); thB.textContent = RM_THEMES[S.theme][0]; msg3.textContent = 'Бөлме: ' + RM_THEMES[S.theme][1]; mount(); });
+  const meB = hb('🎯', isStaff ? 'Бөлмені толық көру' : 'Менің орныма', () => { if (isStaff || S.my.seat == null) S.view && S.view.resetCam(); else S.view && S.view.focusMe(S.my.seat); });
+  const panB = hb('🏆', 'Көшбасшылар, мақсат, ' + (isStaff ? 'есеп' : 'дүкен'), () => openPanel(S.pan ? null : 'top'));
+  const fsB = hb('⛶', 'Толық экран', () => { if (fsOn()) { ls.set('roomFS', '0'); fsExit(); } else { ls.set('roomFS', '1'); fsEnter(); } });
+  tools.append(sndB, thB, panB, meB, fsB); top.append(chip, pomoBtn, tools);
+  const ctl = el('div', 'rm-ctl'), react = el('div', 'rm-react'); let btns = [], pickBtn = null;
+  const setSt = k => { S.my.auto = false; S.my.manual = (k === 'hand' && S.my.manual === 'hand') ? 'read' : k; S.my.st = S.my.manual; S.last = Date.now(); track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: S.my.st } : m); draw(); paintBtns(); };
+  const paintBtns = () => btns.forEach(([k, b]) => b.setAttribute('aria-pressed', String(S.my.manual === k)));
+  if (!isStaff) ['read', 'write', 'hand', 'sleep'].forEach(k => { const b = el('button', '', RM_ST[k][0]); b.append(el('span', 'rm-lb', ' ' + RM_ST[k][1])); b.type = 'button'; b.title = RM_ST[k][1]; b.onclick = () => setSt(k); btns.push([k, b]); ctl.appendChild(b); });
+  if (!isStaff) { pickBtn = el('button', '', '🪑'); pickBtn.append(el('span', 'rm-lb', ' Орын')); pickBtn.title = 'Орын таңдау'; pickBtn.type = 'button'; pickBtn.setAttribute('aria-pressed', 'false'); pickBtn.onclick = () => { S.pick = !S.pick; pickBtn.setAttribute('aria-pressed', String(!!S.pick)); S.view && S.view.setPick(!!S.pick); }; ctl.appendChild(pickBtn); }
+  RM_REACT.forEach(e => { const b = el('button', '', e); b.type = 'button'; b.title = 'Реакция'; b.onclick = () => { const nw = Date.now(); if (nw - (S.lr || 0) < 700) return; S.lr = nw; S.view && S.view.react(meId, e); bc('react', { u: meId, e }); }; react.appendChild(b); });
+  bot.append(ctl, react); hud.append(top, bot); box.appendChild(hud);
+  const msg3 = el('p', 'rm-hint', ''); v.appendChild(msg3);
+  // ---------- толық экран
+  const fsOn = () => document.fullscreenElement === box || document.webkitFullscreenElement === box || box.classList.contains('rm-fsx');
+  const fsEnter = () => { try { if (box.requestFullscreen) { const r = box.requestFullscreen({ navigationUI: 'hide' }); r && r.catch && r.catch(() => box.classList.add('rm-fsx')); } else if (box.webkitRequestFullscreen) box.webkitRequestFullscreen(); else box.classList.add('rm-fsx'); } catch { box.classList.add('rm-fsx'); } fsPaint(); };
+  const fsExit = () => { box.classList.remove('rm-fsx'); try { if (document.fullscreenElement) document.exitFullscreen(); else if (document.webkitFullscreenElement) document.webkitExitFullscreen(); } catch { } fsPaint(); };
+  const fsPaint = () => { const on = fsOn(); fsB.textContent = on ? '✕' : '⛶'; fsB.title = fsB.ariaLabel = on ? 'Толық экраннан шығу' : 'Толық экран'; document.body.classList.toggle('rm-nsc', box.classList.contains('rm-fsx')); };
+  S.fsl = () => { const on = fsOn(); if (!on && S.fsWas && !box.classList.contains('rm-fsx')) ls.set('roomFS', '0'); S.fsWas = on; fsPaint(); };
+  document.addEventListener('fullscreenchange', S.fsl); document.addEventListener('webkitfullscreenchange', S.fsl);
+  // ---------- сахна
   function draw() {
     const stu = S.members.filter(m => !m.staff), tch = S.members.filter(m => m.staff);
-    if (S.view) { S.view.update(stu, S.my.seat); if (!S.focused && !isStaff && S.my.seat != null && box.clientWidth < 640 && S.view.focusMe && box.classList.contains('is3') && stu.some(m => m.uid === meId)) { S.focused = true; S.view.focusMe(S.my.seat); } }
-    const awake = stu.filter(m => m.st !== 'sleep').length; chip.replaceChildren(); chip.append(el('span', 'rm-dot'), el('span', '', stu.length ? stu.length + ' оқушы бөлмеде' + (awake !== stu.length ? ' · ' + awake + ' белсенді' : '') : 'Бөлме бос'));
+    if (S.view) { S.view.update(stu, S.my.seat); if (!S.focused && !isStaff && S.my.seat != null && box.clientWidth < 640 && S.view.focusMe && stu.some(m => m.uid === meId)) { S.focused = true; S.view.focusMe(S.my.seat); } }
+    const awake = stu.filter(m => m.st !== 'sleep').length; chip.replaceChildren(); chip.append(el('span', 'rm-dot'), el('span', '', stu.length ? stu.length + ' оқушы' + (awake !== stu.length ? ' · ' + awake + ' белсенді' : '') : 'Бөлме бос'));
     if (num > 1) chip.appendChild(el('span', '', 'Бөлме ' + num)); if (tch.length) chip.appendChild(el('span', '', '👩‍🏫 ' + tch.map(t => t.name).slice(0, 2).join(', ')));
     if (!isStaff && S.my.seat == null) chip.appendChild(el('span', '', 'Бөлме толы'));
   }
   function sit(i) { if (isStaff || S.members.some(m => m.uid !== meId && m.seat === i && !m.staff)) return; S.my.seat = i; ls.set('roomSeat', i); S.pick = false; pickBtn && pickBtn.setAttribute('aria-pressed', 'false'); S.view && S.view.setPick(false); track(); S.members = S.members.map(m => m.uid === meId ? { ...m, seat: i } : m); draw(); }
-  const cbk = { onSeat: sit };
-  let mode = ls.get('roomView') === '2d' ? '2d' : '3d';
+  const objSend = (i, x, z, h) => { S.objState[i] = [x, z]; bc('obj', { i, x: Math.round(x * 100) / 100, z: Math.round(z * 100) / 100, h: h ? 1 : 0, u: meId }); };
+  const cbk = { onSeat: sit, onObj: objSend };
   async function mount() {
     if (S.view) { try { S.view.destroy(); } catch { } S.view = null; }
-    if (mode === '3d') { if (!rmGL() || !(await rm3Load())) { mode = '2d'; msg3.textContent = '3D ашылмады (интернет не құрылғы). 2D көрсетіледі.'; } else if (rm !== S) return; }
-    if (rm !== S) return; box.classList.toggle('is3', mode === '3d'); try { S.view = mode === '3d' ? rm3Create(box, cbk) : rm2dCreate(box, cbk); } catch (e) { if (mode === '3d') { mode = '2d'; msg3.textContent = '3D ашылмады. 2D көрсетіледі.'; S.view = rm2dCreate(box, cbk); } }
-    box.classList.toggle('is3', mode === '3d'); if (S.view) { S.view.setPick(!!S.pick); draw(); } if (viewBtn) viewBtn.textContent = mode === '3d' ? '🖼️ 2D' : '🧊 3D'; if (meBtn) meBtn.hidden = false;
+    if (!rmGL() || !(await rm3Load())) { if (rm === S) msg3.textContent = '3D ашылмады: интернет не құрылғы қолдамайды.'; return; }
+    if (rm !== S) return; box.classList.add('is3');
+    try { S.view = rm3Create(box, cbk, S.theme); } catch (e) { msg3.textContent = '3D ашылмады.'; return; }
+    S.view.setPick(!!S.pick); S.objState.forEach((p, i) => { if (p) S.view.setObj(i, p[0], p[1], 0); }); S.view.setPrize(S.goalSec >= RM_GOAL); draw(); fsPaint();
+    if (!S.fsTried) { S.fsTried = true; if (ls.get('roomFS') !== '0') fsEnter(); }
   }
-  const msg3 = el('p', 'rm-hint', ''); let pickBtn = null, viewBtn = null, meBtn = null;
-  S.ch = sb.channel('room:' + chan, { config: { presence: { key: meId + '_' + Math.random().toString(36).slice(2, 8) } } });
+  // ---------- ортақ помодоро
+  function pomoStart() { S.pomo = { ph: 'work', end: Date.now() + 25 * 60000 }; bc('pomo', { ph: 'work', left: 25 * 60000 }); paintPomo(); }
+  function pomoStop() { S.pomo = { ph: 'off', end: 0 }; bc('pomo', { ph: 'off', left: 0 }); paintPomo(); }
+  function paintPomo() {
+    const p = S.pomo, left = Math.max(0, p.end - Date.now()), m = Math.floor(left / 60000), s = Math.floor(left % 60000 / 1000), tm = m + ':' + String(s).padStart(2, '0');
+    pomoBtn.textContent = p.ph === 'work' ? '🍅 Оқу ' + tm : p.ph === 'break' ? '☕ Демалыс ' + tm : '🍅 Помодоро'; pomoBtn.classList.toggle('on', p.ph !== 'off'); pomoBtn.classList.toggle('brk', p.ph === 'break');
+    pomoBtn.title = p.ph === 'off' ? '25 минут оқу, 5 минут демалыс (бәріне ортақ)' : isStaff ? 'Тоқтату' : 'Бәріне ортақ таймер';
+  }
+  // ---------- арна
+  S.ch = sb.channel('room:' + chan, { config: { presence: { key: meId + '_' + Math.random().toString(36).slice(2, 8) }, broadcast: { self: false } } });
   S.ch.on('presence', { event: 'sync' }, () => {
     const by = new Map(); Object.values(S.ch.presenceState()).flat().forEach(m => { if (!m || !m.uid) return; const o = by.get(m.uid); if (!o || (m.t0 || 0) < (o.t0 || 0)) by.set(m.uid, m); });
-    S.members = [...by.values()].map(m => ({ uid: String(m.uid), name: String(m.name || '').slice(0, 14), av: String(m.av || ''), st: RM_ST[m.st] ? m.st : 'read', seat: Number.isInteger(m.seat) ? m.seat : null, t0: +m.t0 || 0, lv: Math.max(0, Math.min(5, m.lv | 0)), staff: !!m.staff }));
+    S.members = [...by.values()].map(m => ({ uid: String(m.uid), name: String(m.name || '').slice(0, 14), av: String(m.av || ''), st: RM_ST[m.st] ? m.st : 'read', seat: Number.isInteger(m.seat) ? m.seat : null, t0: +m.t0 || 0, lv: Math.max(0, Math.min(5, m.lv | 0)), staff: !!m.staff, it: Array.isArray(m.it) ? m.it.filter(k => RM_SHOP[k]).slice(0, 4) : [] }));
     if (room === 'auto' && !S.settled) { S.settled = true; const others = S.members.filter(m => !m.staff && m.uid !== meId).length; if (others >= RM_MAX && (n || 1) < 4 && !isStaff) { roomEnter('auto', (n || 1) + 1); return; } }
     resolve(); draw();
   });
-  S.ch.subscribe(s => { if (s === 'SUBSCRIBED') track(); });
-  const setSt = k => { S.my.auto = false; S.my.manual = (k === 'hand' && S.my.manual === 'hand') ? 'read' : k; S.my.st = S.my.manual; S.last = Date.now(); track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: S.my.st } : m); draw(); paintBtns(); };
-  let btns = []; const paintBtns = () => btns.forEach(([k, b]) => b.setAttribute('aria-pressed', String(S.my.manual === k)));
+  S.ch.on('broadcast', { event: 'obj' }, ({ payload: p }) => { if (!p || !Number.isInteger(p.i) || p.i < 0 || p.i >= RM_OBJ0.length || !isFinite(p.x) || !isFinite(p.z)) return; S.objState[p.i] = [+p.x, +p.z]; S.view && S.view.setObj(p.i, +p.x, +p.z, p.h ? 1 : 0, String(p.u || 'x')); });
+  S.ch.on('broadcast', { event: 'objs?' }, () => { if (!S.objState.some(Boolean)) return; setTimeout(() => { if (rm === S && !S.gotObjs) bc('objs', { a: S.objState.map(p => p || null) }); }, 100 + Math.random() * 500); });
+  S.ch.on('broadcast', { event: 'objs' }, ({ payload: p }) => { if (S.gotObjs || !p || !Array.isArray(p.a)) return; S.gotObjs = true; p.a.slice(0, RM_OBJ0.length).forEach((q, i) => { if (Array.isArray(q) && isFinite(q[0]) && isFinite(q[1]) && !S.objState[i]) { S.objState[i] = [+q[0], +q[1]]; S.view && S.view.setObj(i, +q[0], +q[1], 0); } }); });
+  S.ch.on('broadcast', { event: 'react' }, ({ payload: p }) => { if (!p || !RM_REACT.includes(p.e) || !p.u) return; const nw = Date.now(); if (nw - (S.lastReact.get(p.u) || 0) < 600) return; S.lastReact.set(p.u, nw); S.view && S.view.react(String(p.u), p.e); });
+  S.ch.on('broadcast', { event: 'pomo' }, ({ payload: p }) => { if (!p || !['work', 'break', 'off'].includes(p.ph)) return; S.pomoSeen = Date.now(); const l = Math.max(0, Math.min(30 * 60000, +p.left || 0)); S.pomo = p.ph === 'off' ? { ph: 'off', end: 0 } : { ph: p.ph, end: Date.now() + l }; paintPomo(); if (p.ph === 'work') rmSnd.chime(); });
+  S.ch.on('broadcast', { event: 'pomo?' }, () => { if (S.pomo.ph === 'off') return; const t0 = Date.now(); setTimeout(() => { if (rm === S && S.pomo.ph !== 'off' && S.pomoSeen < t0) bc('pomo', { ph: S.pomo.ph, left: Math.max(0, S.pomo.end - Date.now()) }); }, 100 + Math.random() * 500); });
+  S.ch.subscribe(s => { if (s === 'SUBSCRIBED') { track(); bc('objs?'); bc('pomo?'); } });
+  // ---------- статистика
   const stat = [el('b', '', '0 м'), el('b', '', '0'), el('b', '', '0')];
   const paintStats = () => { const wk = S.base.week_sec + S.sess, today = S.base.today_sec + S.sess; let stk = S.base.streak; if (S.base.today_sec < 120 && today >= 120) stk++; stat[0].textContent = wk >= 3600 ? Math.floor(wk / 3600) + ' с ' + Math.floor(wk % 3600 / 60) + ' м' : Math.floor(wk / 60) + ' м'; stat[1].textContent = S.base.week_sessions + S.newSess; stat[2].textContent = stk; };
-  const ctl = el('div', 'rm-ctl');
-  if (!isStaff) ['read', 'write', 'hand', 'sleep'].forEach(k => { const b = el('button', '', RM_ST[k][0] + ' ' + RM_ST[k][1]); b.type = 'button'; b.onclick = () => setSt(k); btns.push([k, b]); ctl.appendChild(b); });
-  if (!isStaff) { pickBtn = el('button', '', '🪑 Орын таңдау'); pickBtn.type = 'button'; pickBtn.setAttribute('aria-pressed', 'false'); pickBtn.onclick = () => { S.pick = !S.pick; pickBtn.setAttribute('aria-pressed', String(!!S.pick)); S.view && S.view.setPick(!!S.pick); }; ctl.appendChild(pickBtn); }
-  meBtn = el('button', '', '🎯 ' + (isStaff ? 'Бөлме' : 'Мен')); meBtn.type = 'button'; meBtn.onclick = () => { if (isStaff || S.my.seat == null) S.view && S.view.resetCam(); else S.view && S.view.focusMe(S.my.seat); }; ctl.appendChild(meBtn);
-  viewBtn = el('button', '', mode === '3d' ? '🖼️ 2D' : '🧊 3D'); viewBtn.type = 'button'; viewBtn.onclick = () => { mode = mode === '3d' ? '2d' : '3d'; ls.set('roomView', mode); msg3.textContent = ''; mount(); }; ctl.appendChild(viewBtn);
-  v.appendChild(ctl); v.appendChild(msg3);
   if (!isStaff) {
-    v.appendChild(el('p', 'rm-hint', 'Бірнеше минут тиіспесең, ұйықтап кетесің 😴. Бұл кезде уақыт есептелмейді. Бөлмені саусақпен айналдыр, екі саусақпен жақындат.'));
+    v.appendChild(el('p', 'rm-hint', 'Бірнеше минут тиіспесең, ұйықтап кетесің 😴. Бұл кезде уақыт есептелмейді. Бөлмені саусақпен айналдыр, екі саусақпен жақындат, заттарды ұстап жылжыт.'));
     const st = el('div', 'rm-stats'); [['Бұл апта', 0], ['Сессия (апта)', 1], ['Күн қатар', 2]].forEach(([t, i]) => { const d = el('div'); d.append(stat[i], el('small', '', t)); st.appendChild(d); }); v.appendChild(st);
     paintBtns(); paintStats();
     sb.rpc('room_stats').then(r => { if (rm === S && r.data) { S.base = { week_sec: +r.data.week_sec || 0, week_sessions: +r.data.week_sessions || 0, streak: +r.data.streak || 0, today_sec: +r.data.today_sec || 0 }; paintStats(); if (lvl() !== S.lv) track(); } }, () => { });
+    sb.rpc('room_wallet').then(r => { if (rm === S && r.data && Array.isArray(r.data.items)) { S.items = r.data.items.filter(k => RM_SHOP[k]).slice(0, 4); S.stars = +r.data.stars || 0; track(); } }, () => { });
   }
+  const loadGoal = () => { if (!cls) return; sb.rpc('room_goal', { p_class: cls }).then(r => { if (rm === S && r.data) { S.goalSec = +r.data.sec || 0; S.view && S.view.setPrize(S.goalSec >= RM_GOAL); } }, () => { }); };
+  loadGoal();
   S.act = () => { S.last = Date.now(); if (S.my.auto) { S.my.auto = false; S.my.st = S.my.manual; track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: S.my.st } : m); draw(); } };
   ['pointerdown', 'keydown', 'touchstart', 'scroll', 'wheel'].forEach(t => addEventListener(t, S.act, true));
   const flush = async () => {
@@ -7012,11 +7192,53 @@ async function roomEnter(sel, n) {
     try { const r = await sb.rpc('room_add', { p_seconds: k, p_new: isNew }); if (!r.error) { S.pend -= k; S.counted = true; if (isNew) S.newSess = 1; ls.set('roomLast', Date.now()); } } catch { }
     S.flushing = false;
   };
+  let tk = 0;
   S.tick = setInterval(() => {
-    if (rm !== S || isStaff) return;
+    if (rm !== S) return; tk++;
+    if (S.pomo.ph !== 'off') { if (Date.now() >= S.pomo.end) { if (S.pomo.ph === 'work') S.pomo = { ph: 'break', end: Date.now() + 5 * 60000 }; else S.pomo = { ph: 'off', end: 0 }; rmSnd.chime(); } paintPomo(); }
+    if (tk % 300 === 0) loadGoal();
+    if (isStaff) return;
     if (!S.my.auto && S.my.st !== 'sleep' && Date.now() - S.last > 90000) { S.my.auto = true; S.my.st = 'sleep'; track(); S.members = S.members.map(m => m.uid === meId ? { ...m, st: 'sleep' } : m); draw(); }
     if (S.my.st !== 'sleep' && !document.hidden && navigator.onLine !== false) { S.sess++; S.pend++; if (S.pend >= 60) flush(); paintStats(); if (lvl() !== S.lv) track(); }
   }, 1000);
+  // ---------- панель: көшбасшылар, мақсат, дүкен, есеп
+  const rpc = async (fn, args) => { const r = await sb.rpc(fn, args); if (r.error) throw new Error(/function|schema cache|not find/i.test(r.error.message) ? 'update-21.sql әлі іске қосылмаған (Supabase → SQL Editor).' : r.error.message); return r.data; };
+  const mins = s => Math.round(s / 60) + ' м';
+  function openPanel(tab) {
+    if (S.pan) { S.pan.remove(); S.pan = null; } if (!tab) return;
+    const p = S.pan = el('div', 'rm-pan'), hd = el('div', 'rm-pan-h'), bd = el('div', 'rm-pan-b'), tabs = [['top', '🏆 Апта'], ['goal', '🎯 Мақсат'], isStaff ? ['rep', '📊 Есеп'] : ['shop', '🛍️ Дүкен']];
+    const cx = () => isStaff ? (cls || null) : (cid || null); let reportCls = cls || null;
+    const show = async k => {
+      hd.querySelectorAll('button[data-k]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k === k))); bd.replaceChildren(el('p', 'rm-hint', 'Жүктелуде…'));
+      try {
+        if (k === 'top') {
+          const d = await rpc('room_top', { p_class: cx() }); bd.replaceChildren(el('h3', '', 'Апта көшбасшылары' + (cx() ? '' : ' (мектеп)')));
+          if (!d.length) bd.appendChild(el('p', 'rm-hint', 'Бұл аптада әзірге ешкім оқыған жоқ. Бірінші бол!'));
+          d.forEach((r, i) => { const a = avParse(r.av), row = el('div', 'rm-row'); row.append(el('b', '', ['🥇', '🥈', '🥉'][i] || (i + 1)), el('span', '', (a ? a.e + ' ' : '') + rmName(r.name)), el('em', '', mins(r.sec))); bd.appendChild(row); });
+        } else if (k === 'goal') {
+          if (!cx()) { bd.replaceChildren(el('h3', '', 'Апталық мақсат'), el('p', 'rm-hint', 'Мақсат сынып бөлмесінде көрінеді. Жоғарыдағы тізімнен өз сыныбыңның бөлмесін таңда.')); return; }
+          const d = await rpc('room_goal', { p_class: cx() }), sec = +d.sec || 0; S.goalSec = cls === cx() ? sec : S.goalSec; const pc = Math.min(100, Math.round(sec / RM_GOAL * 100));
+          const pr = el('div', 'rm-prog'), fill = el('i'); fill.style.width = pc + '%'; pr.appendChild(fill);
+          bd.replaceChildren(el('h3', '', 'Сыныптың апталық мақсаты'), el('p', '', 'Бәріміз бірге ' + (RM_GOAL / 60) + ' минут оқысақ, бөлмеде алтын жұлдыз жарқырайды ⭐'), pr, el('p', 'rm-big', mins(sec) + ' / ' + (RM_GOAL / 60) + ' м  (' + pc + '%)'), el('p', 'rm-hint', sec >= RM_GOAL ? '🏆 Орындалды! Сыйлық бөлмеде тұр.' : 'Қалды: ' + mins(RM_GOAL - sec) + '. Бір-біріңді қолдаңдар!'));
+          if (cls === cx()) S.view && S.view.setPrize(sec >= RM_GOAL);
+        } else if (k === 'shop') {
+          const w = await rpc('room_wallet'); S.items = (w.items || []).filter(x => RM_SHOP[x]); S.stars = +w.stars || 0; track();
+          bd.replaceChildren(el('h3', '', 'Жұлдыз дүкені'), el('p', 'rm-big', '⭐ ' + S.stars), el('p', 'rm-hint', '30 минут оқу = 1 жұлдыз. Алған заттарың орныңның жанында тұрады, бәрі көреді.'));
+          const g = el('div', 'rm-shop'); Object.entries(RM_SHOP).forEach(([id, [ic, nm, pr]]) => { const own = S.items.includes(id), b = el('button', '', ''); b.type = 'button'; b.append(el('span', 'rm-ic', ic), el('b', '', nm), el('small', '', own ? '✓ Бар' : '⭐ ' + pr)); b.disabled = own || S.stars < pr; b.onclick = async () => { b.disabled = true; try { await rpc('room_buy', { p_item: id }); show('shop'); } catch (e) { msg3.textContent = 'Алу мүмкін болмады: ' + e.message; show('shop'); } }; g.appendChild(b); }); bd.appendChild(g);
+        } else if (k === 'rep') {
+          bd.replaceChildren(el('h3', '', 'Осы аптадағы оқу есебі'));
+          if (!reportCls) { const sl = document.createElement('select'); sl.append(new Option('Сыныпты таңда…', '')); assignable().forEach(c => sl.append(new Option(c.name, c.id))); sl.onchange = () => { reportCls = sl.value || null; if (reportCls) show('rep'); }; bd.appendChild(sl); return; }
+          const d = await rpc('room_report', { p_class: reportCls }); if (!d.length) { bd.appendChild(el('p', 'rm-hint', 'Бұл сыныпта оқушы жоқ.')); return; }
+          const tb = document.createElement('table'); tb.innerHTML = '<thead><tr><th>Оқушы</th><th>Апта</th><th>Бүгін</th><th>Сессия</th><th>Күн</th></tr></thead>'; const tbd = document.createElement('tbody'); d.forEach(r => { const tr = document.createElement('tr'); [r.name, mins(r.sec), mins(r.today), r.sessions, r.days + '/7'].forEach(x => { const td = document.createElement('td'); td.textContent = x; tr.appendChild(td); }); if (!r.sec) tr.className = 'rm-zero'; tbd.appendChild(tr); }); tb.appendChild(tbd); const sc = el('div', 'scroll'); sc.appendChild(tb); bd.appendChild(sc);
+          bd.appendChild(el('p', 'rm-hint', 'Қызыл жолдар: бұл аптада бөлмеде болмаған оқушылар.'));
+        }
+      } catch (e) { bd.replaceChildren(el('p', 'rm-hint', e.message)); }
+    };
+    tabs.forEach(([k, t]) => { const b = el('button', '', t); b.type = 'button'; b.dataset.k = k; b.onclick = () => show(k); hd.appendChild(b); });
+    const x = el('button', 'rm-x', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'Жабу'); x.onclick = () => openPanel(null); hd.appendChild(x);
+    p.append(hd, bd); box.appendChild(p); show(tab);
+  }
+  paintPomo(); paintSnd(); { const sv2 = ls.get('roomSnd'); if (sv2 && sv2 !== 'off' && rmSnd.mode === 'off') { rmSnd.set(sv2); paintSnd(); } }
   await mount();
 }
 
