@@ -2237,6 +2237,10 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '4.2', date: '02.11.2026', items: [
+    ['🎩', 'Кейіпкерге шляпа мен көзілдірік', 'Бөлмедегі жұлдызшаға шляпа (4 ⭐) мен көзілдірік (3 ⭐) алуға болады. Бәрі көреді.'],
+    ['🎥', 'Камера фокусы', 'Сөредегі кітапты бассаң, ол шығып, камера жақындайды. Бос жерді екі рет бассаң, камера сол жерге барады.']
+  ] },
   { ver: '4.1', date: '02.11.2026', items: [
     ['🪐', 'Менің ғаламым', 'Әр викторина бір планета: жасыл жақсы меңгерілген, қызыл қайталау керек. Сүйреп айналдыр, планетаны бас.'],
     ['📓', 'Қателер дәптері', 'Үй тапсырмасындағы тесттерде қателескен сұрақтар жиналады, қайта шешсең дәптерден кетеді.'],
@@ -6839,7 +6843,7 @@ const rmHash = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.ch
 const rmName = n => { const p = String(n || '').trim().split(/\s+/); return (p[1] || p[0] || 'Оқушы').slice(0, 14); };
 const RM_THEMES = { obs: ['🌌', 'Обсерватория'], tree: ['🌳', 'Ағаш үй'] };
 const RM_REACT = ['👏', '🔥', '❤️', '⭐'];
-const RM_SHOP = { lamp: ['💡', 'Шам', 2], plant: ['🪴', 'Өсімдік', 3], flag: ['🚩', 'Ту', 3], cat: ['🐱', 'Мысық', 6] };
+const RM_SHOP = { lamp: ['💡', 'Шам', 2], plant: ['🪴', 'Өсімдік', 3], flag: ['🚩', 'Ту', 3], cat: ['🐱', 'Мысық', 6], hat: ['🎩', 'Шляпа', 4], glasses: ['👓', 'Көзілдірік', 3] };
 const RM_GOAL = 60000; // секунд (1000 минут)
 const RM3_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 let rm3P = null;
@@ -6879,12 +6883,33 @@ const rmSnd = (() => {
   };
 })();
 
+const RM_BOOKS = [
+  ['Ньютон: «Табиғи философияның математикалық бастаулары»', 'Денеге күш әсер етпесе, ол тыныштықта не бірқалыпты қозғалыста қалады. Бұл инерция заңы.'],
+  ['Архимед: «Қалқып жүзетін денелер туралы»', 'Сұйыққа батқан денеге ығыстырылған сұйықтың салмағына тең көтеруші күш әсер етеді.'],
+  ['Евклид: «Бастамалар»', 'Геометрия осы кітаптан басталған: үшбұрыштың бұрыштарының қосындысы 180°.'],
+  ['Пифагор теоремасы', 'Тікбұрышты үшбұрышта a² + b² = c². Катеттердің квадраттарының қосындысы гипотенузаның квадратына тең.'],
+  ['Галилей: «Екі жаңа ғылым туралы»', 'Ауа кедергісі болмаса, ауыр да, жеңіл де дене бірдей жылдамдықпен құлайды.'],
+  ['Әл-Фараби: «Ғылымдар тізімі»', 'Әл-Фараби «Екінші ұстаз» атанған: ол математиканы, физиканы, музыканы зерттеген.'],
+  ['Әл-Хорезми: «Алгебра»', '«Алгебра» сөзі осы ғалымның кітабындағы «әл-жәбр» терминінен шыққан.'],
+  ['Эйнштейн: «Салыстырмалылық теориясы»', 'E = mc²: аз ғана массаның ішінде орасан көп энергия жасырынған.'],
+  ['Кеплер: «Жаңа астрономия»', 'Планеталар Күнді шеңбермен емес, эллипспен айналады.'],
+  ['Ом заңы', 'I = U / R: ток күші кернеуге тура, кедергіге кері пропорционал.'],
+  ['Фарадей: «Электр тәжірибелері»', 'Магнит өрісі өзгерсе, өткізгіште электр тогы пайда болады. Генераторлар осы заңмен жұмыс істейді.'],
+  ['Паскаль: «Сұйықтардың тепе-теңдігі»', 'Тұйық сұйыққа берілген қысым барлық бағытқа бірдей беріледі. Гидравликалық пресс осыған негізделген.'],
+  ['Ұлықбек: «Жаңа астрономиялық кестелер»', 'Ұлықбек Самарқандта обсерватория салып, мыңнан астам жұлдыздың орнын өте дәл өлшеген.'],
+  ['Лобачевский: «Геометрия негіздері»', 'Параллель түзулер қиылыспайды деген ереже тегіс жазықтықта ғана дұрыс. Басқа геометриялар да бар.'],
+  ['Мария Кюри: «Радиоактивтілік»', 'Кюри физика мен химия салаларында екі түрлі Нобель сыйлығын алған.'],
+  ['Бернулли: «Гидродинамика»', 'Ағынның жылдамдығы артқан жерде қысым азаяды. Ұшақ қанаты ауаға осылай көтеріледі.']
+];
+const OBJP = { book: { mu: 5, rest: .2, b: .12, g: 24 }, ball: { mu: .35, rest: .75, b: .6, g: 24 }, plane: { mu: .6, rest: .2, b: 0, g: 3.2 }, lamp: { mu: 9, rest: .1, b: 0, g: 24 } };
 function rm3Create(box, cb, theme) {
   const T = THREE, mob = matchMedia('(pointer:coarse)').matches, tree = theme === 'tree';
   const renderer = new T.WebGLRenderer({ antialias: !mob, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mob ? 1.5 : 2)); renderer.setClearColor(tree ? 0x9fbf7a : 0x070a1a);
   if (!mob) { renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap; }
   const cv = renderer.domElement; cv.className = 'rm3-cv'; box.prepend(cv);
+  const cap = document.createElement('div'); cap.style.cssText = 'position:absolute;left:50%;bottom:84px;transform:translateX(-50%);max-width:min(560px,90%);padding:10px 16px;border-radius:14px;background:rgba(14,10,28,.84);color:#fff;font:600 14px/1.45 system-ui,sans-serif;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s;z-index:6'; box.appendChild(cap); let capT = 0;
+  const info = (t, x) => { cap.replaceChildren(); const b = document.createElement('b'); b.textContent = t; const q = document.createElement('div'); q.textContent = x; q.style.fontWeight = '500'; cap.append(b, q); cap.style.opacity = 1; clearTimeout(capT); capT = setTimeout(() => { cap.style.opacity = 0; }, 8000); };
   const scene = new T.Scene();
   const cam = new T.PerspectiveCamera(38, 1.6, .1, 400);
     let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
@@ -6952,12 +6977,13 @@ function rm3Create(box, cb, theme) {
     walls.push({ g, th, mats, a: 1 });
   }
   // --- көмекші: сөре, өсімдік, жастық
+  const shelves = [], focusables = [], hitInv = new T.MeshBasicMaterial({ visible: false });
   const shelf = (x, z, w) => {
     const g = new T.Group(); g.position.set(x, 0, z); g.lookAt(0, 0, RM_CY); scene.add(g);
     const wd = tree ? 0x6b4423 : 0x5a3418, wd2 = tree ? 0x8a5a2e : 0x7a4a24; add(new T.BoxGeometry(w, 3.6, .5), L(wd), 0, 1.8, -.1, g);
-    const bc = [0xc0392b, 0x2e86c1, 0x27ae60, 0xd4ac0d, 0x8e44ad, 0xe67e22, 0x16a085, 0xecf0f1, 0xd35400, 0x34495e], BK = 150, bk = new T.InstancedMesh(new T.BoxGeometry(1, 1, 1), L(0xffffff), BK), dm = new T.Object3D(); let bi = 0;
-    for (let r = 0; r < 4; r++) { const y = .35 + r * .85; add(new T.BoxGeometry(w - .1, .06, .46), L(wd2), 0, y - .03, .02, g); let xx = -w / 2 + .12; while (xx < w / 2 - .2 && bi < BK) { const bw = .08 + rnd() * .12, bh = .5 + rnd() * .25; dm.position.set(xx + bw / 2, y + bh / 2, .06); dm.scale.set(bw, bh, .3); dm.updateMatrix(); bk.setMatrixAt(bi, dm.matrix); bk.setColorAt(bi, new T.Color(bc[(rnd() * bc.length) | 0])); bi++; xx += bw + .01; } }
-    bk.count = bi; bk.instanceMatrix.needsUpdate = true; if (bk.instanceColor) bk.instanceColor.needsUpdate = true; bk.castShadow = false; g.add(bk); return g;
+    const bc = [0xc0392b, 0x2e86c1, 0x27ae60, 0xd4ac0d, 0x8e44ad, 0xe67e22, 0x16a085, 0xecf0f1, 0xd35400, 0x34495e], BK = 150, bk = new T.InstancedMesh(new T.BoxGeometry(1, 1, 1), L(0xffffff), BK), dm = new T.Object3D(), B = []; let bi = 0;
+    for (let r = 0; r < 4; r++) { const y = .35 + r * .85; add(new T.BoxGeometry(w - .1, .06, .46), L(wd2), 0, y - .03, .02, g); let xx = -w / 2 + .12; while (xx < w / 2 - .2 && bi < BK) { const bw = .08 + rnd() * .12, bh = .5 + rnd() * .25; dm.position.set(xx + bw / 2, y + bh / 2, .06); dm.scale.set(bw, bh, .3); dm.updateMatrix(); bk.setMatrixAt(bi, dm.matrix); bk.setColorAt(bi, new T.Color(bc[(rnd() * bc.length) | 0])); B.push([xx + bw / 2, y + bh / 2, bw, bh]); bi++; xx += bw + .01; } }
+    bk.count = bi; bk.instanceMatrix.needsUpdate = true; if (bk.instanceColor) bk.instanceColor.needsUpdate = true; bk.castShadow = false; g.add(bk); shelves.push({ g, bk, B }); return g;
   };
   const plant = (x, z, s) => { const g = new T.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); scene.add(g); add(new T.CylinderGeometry(.34, .26, .5, 14), L(0xb5543a), 0, .25, 0, g); for (let i = 0; i < 9; i++) { const l = add(new T.SphereGeometry(.3, 8, 6), L(i % 2 ? 0x2f9e44 : 0x3fbf5a), Math.sin(i * 2.4) * .28, .8 + (i % 4) * .22, Math.cos(i * 2.4) * .28, g); l.scale.set(.55, 1.15, .55); l.rotation.z = Math.sin(i) * .6; } };
   const cush = (x, z, c) => { const o = add(new T.SphereGeometry(.55, 14, 10), L(c), x, .17, z); o.scale.set(1, .34, 1); };
@@ -6983,13 +7009,13 @@ function rm3Create(box, cb, theme) {
     [['earth', -62, 14, -20, 14], ['jup', 70, 22, -60, 16], ['jup', 40, 30, 80, 7]].forEach(([k, x, y, z, r], i) => { const p = new T.Mesh(new T.SphereGeometry(r, 32, 20), bas(0xffffff, { map: planetTex(i === 2 ? 'x' : k === 'earth' ? 'earth' : 'jup'), fog: false })); p.position.set(x, y, z); scene.add(p); spin.push(p); });
     const pm = new T.Mesh(new T.SphereGeometry(9, 24, 16), bas(0x7a49c9, { fog: false })); pm.position.set(-80, 30, -70); scene.add(pm);
     shelf(...ring(200, 9.4), 4.2); shelf(...ring(150, 9.4), 4.2);
-    const tel = new T.Group(); { const [qx, qz] = ring(120, 9.1); tel.position.set(qx, 1.4, qz); } tel.scale.setScalar(1.15); tel.rotation.y = 2.6; scene.add(tel);
+    const tel = new T.Group(); { const [qx, qz] = ring(120, 9.1); tel.position.set(qx, 1.4, qz); } tel.scale.setScalar(1.15); tel.rotation.y = 2.6; scene.add(tel); { const hb = new T.Mesh(new T.BoxGeometry(2, 2.6, 2), hitInv); hb.position.y = .5; tel.add(hb); focusables.push({ hit: hb, title: '🔭 Телескоп', text: 'Линзалы телескопты Галилей 1609 жылы аспанға бағыттап, Юпитердің төрт серігін көрген.', goal: () => ({ tx: tel.position.x, ty: 1.6, tz: tel.position.z, d: 6, el: .35, az: Math.atan2(-tel.position.x, RM_CY - tel.position.z) }) }); }
     [[0, .5], [-.4, -.3], [.4, -.3]].forEach(([lx, lz]) => { const l = add(new T.CylinderGeometry(.03, .03, 1.5, 6), L(0xb89350), lx * .8, -.5, lz * .5, tel); l.rotation.z = lx * -.6; l.rotation.x = lz * .5; });
     const tube = add(new T.CylinderGeometry(.14, .2, 1.5, 16), L(0xeae6da), 0, .5, 0, tel); tube.rotation.z = Math.PI / 2 - .35; tube.rotation.y = -.6; add(new T.CylinderGeometry(.22, .22, .12, 16), L(0xb89350), -.75, .78, .3, tel).rotation.z = Math.PI / 2 - .35;
     [[60, 9.3], [100, 9.3], [260, 9.3], [300, 9.3], [20, 9.5], [340, 9.5]].forEach(([d, r], i) => plant(...ring(d, r), 1 + (i % 3) * .12));
     [[-3.5, -3.2, 0x5b5fa8], [3.4, 5.9, 0xd6a23a], [-8, 5, 0x7a49c9], [8.2, 4.4, 0x5b5fa8]].forEach(([x, z, c]) => cush(x, z, c));
     // төбедегі күн жүйесі
-    sysG = new T.Group(); sysG.position.set(0, 7.6, RM_CY); sysG.rotation.x = .22; sysG.scale.setScalar(.85); scene.add(sysG);
+    sysG = new T.Group(); sysG.position.set(0, 7.6, RM_CY); sysG.rotation.x = .22; sysG.scale.setScalar(.85); scene.add(sysG); { const hb = new T.Mesh(new T.SphereGeometry(4, 8, 6), hitInv); sysG.add(hb); focusables.push({ hit: hb, title: '☀️ Күн жүйесі', text: 'Күннен бастап: Меркурий, Шолпан, Жер, Марс, Юпитер, Сатурн. Күн жүйесінде бар болғаны 8 планета бар.', goal: () => ({ tx: 0, ty: 7.4, tz: RM_CY, d: 9, el: .5 }) }); }
     [[1.4, 0], [-.9, 1.1], [-.6, -1.2]].forEach(([sx, sz]) => { const s = new T.Mesh(new T.CylinderGeometry(.012, .012, 5, 4), bas(0xd8b46a)); s.position.set(sx * 1.2, 2.5, sz * 1.2); sysG.add(s); });
     sun = new T.Mesh(new T.SphereGeometry(.38, 24, 16), bas(0xffb938)); sysG.add(sun); sg = glow(2.6, .95); sysG.add(sg); const sl = new T.PointLight(0xffc27a, .8, 16); sysG.add(sl);
     [[.9, .1, 0xb9b9b9, 1.6], [1.35, .15, 0xe8c27a, 1.2], [1.85, .18, 0x3f8cff, .9], [2.4, .14, 0xe0553a, .7], [3.1, .32, 0xd9a766, .45], [3.8, .24, 0x7fd1e0, .3]].forEach(([r, s, c, sp], i) => { const rg = new T.Mesh(new T.RingGeometry(r - .008, r + .008, 72), bas(0xffffff, { transparent: true, opacity: .22, side: T.DoubleSide })); rg.rotation.x = -Math.PI / 2; sysG.add(rg); const p = new T.Mesh(new T.SphereGeometry(s, 16, 12), L(c, { emissive: new T.Color(c).multiplyScalar(.25) })); sysG.add(p); if (i === 4) { const rr = new T.Mesh(new T.RingGeometry(s * 1.5, s * 2.1, 32), bas(0xe9d5a8, { side: T.DoubleSide, transparent: true, opacity: .75 })); rr.rotation.x = -1.2; p.add(rr); } pls.push([p, r, sp, i]); });
@@ -6998,7 +7024,7 @@ function rm3Create(box, cb, theme) {
     for (let i = 0; i < 70; i++) { const a = rnd() * 6.28, r = 24 + rnd() * 36, hgt = 10 + rnd() * 14, x = Math.sin(a) * r, z = RM_CY + Math.cos(a) * r; add(new T.CylinderGeometry(.9, 1.3, hgt, 6), L(0x5a3a1c), x, -9 + hgt / 2, z); for (let k = 0; k < 3; k++) { const f = add(new T.SphereGeometry(3.5 + rnd() * 3, 7, 6), new T.MeshLambertMaterial({ color: [0x3f8a3a, 0x58a043, 0x2f7434][k], flatShading: true }), x + (rnd() - .5) * 3, -9 + hgt + k * 1.5, z + (rnd() - .5) * 3); f.castShadow = false; } }
     // үлкен ағаш: сөреде кітаптар, фонарьлар
     trunkAng = Math.PI; const tz = RM_CY - RM_R - 2.4;
-    const tr = add(new T.CylinderGeometry(2, 3, 28, 16), L(0x6a4524), 0, 5, tz); canopy.push(tr.material); tr.material.transparent = true;
+    const tr = add(new T.CylinderGeometry(2, 3, 28, 16), L(0x6a4524), 0, 5, tz); canopy.push(tr.material); tr.material.transparent = true; focusables.push({ hit: tr, title: '🌳 Көне ағаш', text: 'Ағаш діңінің жылдық сақиналарын санасаң, оның жасын білуге болады: бір сақина бір жылға тең.', goal: () => ({ tx: 0, ty: 4, tz: tz, d: 15, el: .45, az: 0 }) });
     for (let i = 0; i < 4; i++) { const a = (i - 1.5) * .55, b = add(new T.CylinderGeometry(.35, .6, 11, 8), L(0x6a4524), Math.sin(a) * 4.2, 15, tz + 4.5 + Math.cos(a) * 1.2); b.rotation.z = -Math.sin(a) * .9; b.rotation.x = .9; b.material.transparent = true; canopy.push(b.material); }
     for (let i = 0; i < 16; i++) { const f = add(new T.SphereGeometry(3 + rnd() * 2.4, 8, 6), new T.MeshLambertMaterial({ color: [0x3f8a3a, 0x58a043, 0x2f7434, 0x6fb14e][i % 4], flatShading: true, transparent: true }), (rnd() - .5) * 20, 16 + rnd() * 6, tz + rnd() * 9); f.castShadow = false; canopy.push(f.material); }
     shelf(...ring(180, 9.4), 5); shelf(...ring(215, 9.4), 3.6); shelf(...ring(145, 9.4), 3.6);
@@ -7022,12 +7048,12 @@ function rm3Create(box, cb, theme) {
   const bodyG = new T.SphereGeometry(.4, 26, 18), faceG = new T.SphereGeometry(.415, 18, 12, Math.PI / 2 - .8, 1.6, Math.PI / 2 - .55, 1.05), handG = new T.SphereGeometry(.095, 12, 8), antG = new T.CylinderGeometry(.013, .013, .28, 5), earG = new T.SphereGeometry(.12, 10, 8), capG = new T.SphereGeometry(.425, 18, 8, 0, Math.PI * 2, 0, Math.PI / 5), starM = bas(0xffd45e), pageG = new T.BoxGeometry(.3, .02, .34), pageM = bas(0xfff7e6), covM = L(0x3b5bdb), padG = new T.BoxGeometry(.5, .02, .38), pencilG = new T.CylinderGeometry(.014, .014, .3, 6), pencilM = L(0xf5b82e), ringG = new T.RingGeometry(.52, .66, 36), ringM = bas(0xffd45e, { side: T.DoubleSide, transparent: true, opacity: .9 });
   const chars = new Map();
   function mkChar(m) {
-    const h = rmHash(m.uid), a = avParse(m.av), col = new T.Color(a ? AV_C[a.c] : AV_C[(h >> 9) % 8]), mat = L(col, { emissive: col.clone().multiplyScalar(.22) }), g = new T.Group(), body = new T.Group(); g.add(body); body.position.y = .92;
+    const hasHat = (m.it || []).includes('hat'), HS = hasHat ? 1.2 : .78, h = rmHash(m.uid), a = avParse(m.av), col = new T.Color(a ? AV_C[a.c] : AV_C[(h >> 9) % 8]), mat = L(col, { emissive: col.clone().multiplyScalar(.22) }), g = new T.Group(), body = new T.Group(); g.add(body); body.position.y = .92;
     const sk = new T.Group(); sk.scale.set(1, 1.05, 1); body.add(sk); const bm = new T.Mesh(bodyG, mat); bm.castShadow = !mob; sk.add(bm);
     const face = new T.Mesh(faceG, new T.MeshBasicMaterial({ map: faceT('open'), transparent: true, depthWrite: false })); sk.add(face);
     const hands = [-1, 1].map(s => { const o = new T.Mesh(handG, mat); g.add(o); o.userData.s = s; return o; });
-    const ant = new T.Mesh(antG, L(0xcfd3dc)); ant.position.y = .5; body.add(ant); const star = new T.Mesh(starG, starM); star.position.y = .78; body.add(star); const sgl = glow(.7); sgl.position.y = .78; body.add(sgl);
-    const vr = h % 3; if (vr === 1) [-1, 1].forEach(s => { const e = new T.Mesh(earG, mat); e.position.set(s * .3, .32, 0); body.add(e); }); else if (vr === 2) { const cp = new T.Mesh(capG, L(['#ff6b6b', '#ffd166', '#4cc9f0', '#b8f2e6', '#c77dff', '#ffffff'][(h >> 5) % 6])); cp.position.y = .03; cp.rotation.x = -.12; body.add(cp); }
+    const ant = new T.Mesh(antG, L(0xcfd3dc)); ant.position.y = .5; ant.visible = !hasHat; body.add(ant); const star = new T.Mesh(starG, starM); star.position.y = HS; body.add(star); const sgl = glow(.7); sgl.position.y = HS; body.add(sgl);
+    const vr = h % 3; if (vr === 1) [-1, 1].forEach(s => { const e = new T.Mesh(earG, mat); e.position.set(s * .3, .32, 0); body.add(e); }); else if (vr === 2 && !hasHat) { const cp = new T.Mesh(capG, L(['#ff6b6b', '#ffd166', '#4cc9f0', '#b8f2e6', '#c77dff', '#ffffff'][(h >> 5) % 6])); cp.position.y = .03; cp.rotation.x = -.12; body.add(cp); }
     const book = new T.Group(); [-1, 1].forEach(s => { const p = new T.Mesh(pageG, pageM); p.position.x = s * .15; p.rotation.z = -s * .22; book.add(p); }); const cov = new T.Mesh(new T.BoxGeometry(.66, .015, .38), covM); cov.position.y = -.025; book.add(cov); g.add(book);
     const pad = new T.Group(); pad.add(new T.Mesh(padG, pageM)); const pen = new T.Mesh(pencilG, pencilM); pen.rotation.z = 1.1; pad.add(pen); g.add(pad);
     const tg = tagTex(m.name, a ? a.e : '', m.uid === meId), tag = new T.Sprite(new T.SpriteMaterial({ map: tg, transparent: true, depthWrite: false })); tag.scale.set(1.3, .29, 1); tag.position.y = 2.15; tag.renderOrder = 10; g.add(tag);
@@ -7035,12 +7061,14 @@ function rm3Create(box, cb, theme) {
     const zs = [0, 1, 2].map(i => { const s = new T.Sprite(new T.SpriteMaterial({ map: zTex, transparent: true, depthWrite: false })); s.visible = false; s.scale.setScalar(.34); g.add(s); return s; });
     const q = new T.Sprite(new T.SpriteMaterial({ map: qTex, transparent: true, depthWrite: false })); q.scale.setScalar(.42); q.position.set(-.5, 1.9, 0); q.visible = false; g.add(q);
     const arm = new T.Group(); arm.position.set(.34, .95, .05); g.add(arm); const am = new T.Mesh(new T.CylinderGeometry(.06, .06, .5, 8), mat); am.position.y = .25; arm.add(am); const ah = new T.Mesh(handG, mat); ah.position.y = .53; arm.add(ah);
-    g.userData = { h, body, face, hands, star, sgl, book, pad, pen, zs, q, arm, tag, tagKey: m.name + '|' + (a ? a.e : '') + '|' + (m.it || []).join(','), tagTex: tg, ring, mat, st: '', ph: (h % 628) / 100 };
+    g.userData = { sy: HS, h, body, face, hands, star, sgl, book, pad, pen, zs, q, arm, tag, tagKey: m.name + '|' + (a ? a.e : '') + '|' + (m.it || []).join(','), tagTex: tg, ring, mat, st: '', ph: (h % 628) / 100 };
     const dec = new T.Group(); g.add(dec); const itm = m.it || [], dd = (geo, mt, x, y, z, par) => add(geo, mt, x, y, z, par || dec);
     if (itm.includes('lamp')) { dd(new T.CylinderGeometry(.1, .14, .04, 10), L(0xc9a25a), .5, .57, .8); dd(new T.CylinderGeometry(.015, .015, .3, 5), L(0xc9a25a), .5, .72, .8); dd(new T.CylinderGeometry(.08, .16, .16, 12, 1, true), bas(0xffe08a, { side: T.DoubleSide }), .5, .92, .8).castShadow = false; const g2 = glow(.9, .9); g2.position.set(.5, .9, .8); dec.add(g2); }
     if (itm.includes('plant')) { dd(new T.CylinderGeometry(.1, .08, .14, 10), L(0xb5543a), -.5, .62, .8); for (let i = 0; i < 5; i++) { const l = dd(new T.SphereGeometry(.09, 6, 5), L(0x3fbf5a), -.5 + Math.sin(i * 1.3) * .07, .78 + (i % 2) * .06, .8 + Math.cos(i * 1.3) * .07); l.scale.set(.6, 1.3, .6); } }
     if (itm.includes('flag')) { dd(new T.CylinderGeometry(.015, .015, .7, 5), L(0xcfd3dc), .35, 1.1, -.3); dd(new T.BoxGeometry(.3, .18, .01), bas(AV_C[(h >> 4) % 8], { side: T.DoubleSide }), .5, 1.38, -.3); }
     if (itm.includes('cat')) { const cg = new T.Group(); cg.position.set(-.85, 0, .15); cg.rotation.y = .5; dec.add(cg); const bd = dd(new T.SphereGeometry(.17, 12, 8), L(0xe8a35a), 0, .2, 0, cg); bd.scale.set(1, .75, 1.35); dd(new T.SphereGeometry(.12, 12, 8), L(0xe8a35a), 0, .34, .2, cg); [-1, 1].forEach(s => { const e = dd(new T.ConeGeometry(.05, .1, 4), L(0xe8a35a), s * .07, .46, .2, cg); e.rotation.z = -s * .2; }); [-1, 1].forEach(s => dd(new T.SphereGeometry(.018, 6, 4), bas(0x222222), s * .045, .36, .31, cg)); const tl = new T.Group(); tl.position.set(0, .2, -.22); cg.add(tl); const tp = dd(new T.CylinderGeometry(.02, .03, .3, 6), L(0xe8a35a), 0, .14, 0, tl); tl.userData.tail = tl; cg.userData.tail = tl; g.userData.cat = cg; }
+    if (hasHat) { const hc = new T.Color([0x7a49c9, 0xc0392b, 0x2e86c1, 0x16a085][(h >> 3) % 4]), hm2 = L(hc); const hg = new T.Group(); hg.position.set(0, .4, .02); hg.rotation.z = ((h >> 7) % 5 - 2) * .04; body.add(hg); add(new T.CylinderGeometry(.5, .52, .03, 24), hm2, 0, 0, 0, hg); add(new T.CylinderGeometry(.13, .3, .5, 20), hm2, 0, .26, 0, hg); add(new T.TorusGeometry(.3, .03, 6, 20), L(0xffd45e), 0, .04, 0, hg).rotation.x = Math.PI / 2; }
+    if (itm.includes('glasses')) { const fm = L(0x1b1426); [-1, 1].forEach(s => { const rg = add(new T.TorusGeometry(.088, .014, 8, 22), fm, s * .112, .05, .402, body); rg.castShadow = false; const ln = new T.Mesh(new T.CircleGeometry(.082, 16), new T.MeshBasicMaterial({ color: 0xa8dcff, transparent: true, opacity: .28, depthWrite: false })); ln.position.set(s * .112, .05, .4); body.add(ln); }); const br = add(new T.CylinderGeometry(.009, .009, .06, 6), fm, 0, .056, .406, body); br.rotation.z = Math.PI / 2; br.castShadow = false; }
     g.scale.setScalar(1.45); scene.add(g); return g;
   }
   function seatPose(c, i) { const s = RM3_SEAT[i]; if (!s) return; c.userData.tx = s.x; c.userData.tz = s.z; c.userData.try = s.ry; }
@@ -7075,35 +7103,46 @@ function rm3Create(box, cb, theme) {
   // --- камера: толық 360°
   const cs = { az: .62, el: .86, d: 24, tx: 0, ty: .8, tz: RM_CY, g: null }; let fit = 24;
   const place = () => { const ce = Math.cos(cs.el); cam.position.set(cs.tx + cs.d * ce * Math.sin(cs.az), cs.ty + cs.d * Math.sin(cs.el), cs.tz + cs.d * ce * Math.cos(cs.az)); cam.lookAt(cs.tx, cs.ty, cs.tz); };
-  const clampCam = () => { cs.el = Math.max(.2, Math.min(1.42, cs.el)); cs.d = Math.max(6.5, Math.min(fit * 1.3, cs.d)); };
+  const clampCam = () => { cs.el = Math.max(.2, Math.min(1.42, cs.el)); cs.d = Math.max(3.6, Math.min(fit * 1.3, cs.d)); };
   const resize = () => { const w = box.clientWidth || 800, h = box.clientHeight || 500; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); const nf = Math.max(24, 11.6 / (.344 * cam.aspect)); if (Math.abs(nf - fit) > .01) { const k = cs.d / fit; fit = nf; if (!cs.g) cs.d = Math.min(fit * 1.3, nf * Math.min(k, 1.3)); } };
   const ro = new ResizeObserver(resize); ro.observe(box); resize(); cs.d = fit; place();
   const ptrs = new Map(); let pdist = 0, down = null, grab = -1, hov = -1, lastSend = 0; const ray = new T.Raycaster(), v2 = new T.Vector2(), pl = new T.Plane(new T.Vector3(0, 1, 0), -.95), hitP = new T.Vector3();
   const setRay = e => { const r = cv.getBoundingClientRect(); v2.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(v2, cam); };
   const objAt = e => { setRay(e); const h = ray.intersectObjects(objs.map(o => o.hm), false)[0]; return h ? h.object.userData.oi : -1; };
+  const release = i => { const o = objs[i]; o.hold = false; o.by = null; o.drop = 1; let vx = 0, vz = 0; if (performance.now() - o.ht < 110 && o.hv) { vx = o.hv[0]; vz = o.hv[1]; const sp = Math.hypot(vx, vz); if (sp > 10) { vx *= 10 / sp; vz *= 10 / sp; } if (sp < .9) vx = vz = 0; } o.vx = vx; o.vz = vz; cb.onObj(i, o.tx, o.tz, 0, vx, vz); };
   const pd = e => {
     cv.setPointerCapture && cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); cs.g = null;
-    if (ptrs.size === 1) { down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 }; if (!pick) { const i = objAt(e); if (i >= 0) { const o = objs[i]; if (!(o.hold && o.by && performance.now() - o.at < 2500)) { grab = i; o.hold = true; o.by = 'me'; down.moved = 99; cv.style.cursor = 'grabbing'; cb.onObj(i, o.tx, o.tz, 1); } } } }
-    if (ptrs.size === 2) { if (grab >= 0) { const o = objs[grab]; o.hold = false; o.by = null; o.drop = 1; cb.onObj(grab, o.tx, o.tz, 0); grab = -1; } const [a, b] = [...ptrs.values()]; pdist = Math.hypot(a[0] - b[0], a[1] - b[1]); }
+    if (ptrs.size === 1) { down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 }; if (!pick) { const i = objAt(e); if (i >= 0) { const o = objs[i]; if (!(o.hold && o.by && performance.now() - o.at < 2500)) { grab = i; o.hold = true; o.by = 'me'; o.vx = o.vz = 0; o.hv = [0, 0]; o.ht = performance.now(); o.hl = [o.tx, o.tz]; down.moved = 99; cv.style.cursor = 'grabbing'; cb.onObj(i, o.tx, o.tz, 1); } } } }
+    if (ptrs.size === 2) { if (grab >= 0) { release(grab); grab = -1; } const [a, b] = [...ptrs.values()]; pdist = Math.hypot(a[0] - b[0], a[1] - b[1]); }
   };
   const pm = e => {
     const o = ptrs.get(e.pointerId);
     if (!o) { if (e.pointerType === 'mouse' && !pick) { const i = objAt(e); if (i !== hov) { hov = i; cv.style.cursor = i >= 0 ? 'grab' : ''; } } return; }
     const dx = e.clientX - o[0], dy = e.clientY - o[1]; ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (down) down.moved += Math.abs(dx) + Math.abs(dy);
-    if (grab >= 0) { setRay(e); if (ray.ray.intersectPlane(pl, hitP)) { const ob = objs[grab], [x, z] = clampXZ(hitP.x, hitP.z); ob.tx = x; ob.tz = z; ob.moved = true; const n = performance.now(); if (n - lastSend > 110) { lastSend = n; cb.onObj(grab, x, z, 1); } } return; }
+    if (grab >= 0) { setRay(e); if (ray.ray.intersectPlane(pl, hitP)) { const ob = objs[grab], [x, z] = clampXZ(hitP.x, hitP.z); ob.tx = x; ob.tz = z; ob.moved = true; const n = performance.now(), dtm = Math.max(.008, (n - ob.ht) / 1000); ob.hv = [ob.hv[0] * .5 + (x - ob.hl[0]) / dtm * .5, ob.hv[1] * .5 + (z - ob.hl[1]) / dtm * .5]; ob.hl = [x, z]; ob.ht = n; if (n - lastSend > 110) { lastSend = n; cb.onObj(grab, x, z, 1); } } return; }
     if (ptrs.size === 1) { cs.az -= dx * .006; cs.el += dy * .005; } else if (ptrs.size === 2) { const [a, b] = [...ptrs.values()], nd = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pdist) cs.d *= pdist / nd; pdist = nd; } clampCam();
   };
   const pu = e => {
     ptrs.delete(e.pointerId);
-    if (grab >= 0) { const o = objs[grab]; o.hold = false; o.by = null; o.drop = 1; cb.onObj(grab, o.tx, o.tz, 0); grab = -1; cv.style.cursor = ''; }
-    else if (down && down.moved < 8 && performance.now() - down.t < 500 && ptrs.size === 0) tap(e);
+    if (grab >= 0) { release(grab); grab = -1; cv.style.cursor = ''; }
+    else if (down && down.moved < 8 && performance.now() - down.t < 500 && ptrs.size === 0) tap2(e);
     if (!ptrs.size) down = null; pdist = 0;
   };
   const wh = e => { e.preventDefault(); cs.d *= 1 + Math.sign(e.deltaY) * .08; cs.g = null; clampCam(); };
   cv.addEventListener('pointerdown', pd); cv.addEventListener('pointermove', pm); cv.addEventListener('pointerup', pu); cv.addEventListener('pointercancel', pu); cv.addEventListener('wheel', wh, { passive: false }); cv.style.touchAction = 'none';
   // --- орын таңдау
   const seatMarks = RM3_SEAT.map((s, i) => { const m = new T.Mesh(new T.CircleGeometry(.5, 24), bas(0xffd45e, { transparent: true, opacity: .55 })); m.rotation.x = -Math.PI / 2; m.position.set(s.x, .04, s.z); m.visible = false; m.userData.i = i; scene.add(m); return m; });
-  let pick = false;
+  let pick = false, lastTap = { t: 0, x: 0, y: 0 }, pulled = null; const dm2 = new T.Object3D(), fp = new T.Vector3(), fpl = new T.Plane(new T.Vector3(0, 1, 0), 0);
+  const unpull = () => { if (!pulled) return; const { s, idx } = pulled, b = s.B[idx]; dm2.position.set(b[0], b[1], .06); dm2.rotation.set(0, 0, 0); dm2.scale.set(b[2], b[3], .3); dm2.updateMatrix(); s.bk.setMatrixAt(idx, dm2.matrix); s.bk.instanceMatrix.needsUpdate = true; pulled = null; };
+  function tap2(e) {
+    if (pick) { tap(e); return; }
+    setRay(e); const now = performance.now();
+    const bh = ray.intersectObjects(shelves.map(s => s.bk), false)[0];
+    if (bh) { const si = shelves.findIndex(s => s.bk === bh.object), s = shelves[si], b = s.B[bh.instanceId]; if (b) { unpull(); pulled = { s, idx: bh.instanceId, t: 0 }; const wp = new T.Vector3(b[0], b[1], .2); s.g.localToWorld(wp); cs.g = { tx: wp.x, ty: wp.y, tz: wp.z, d: 4.4, el: .2, az: Math.atan2(-s.g.position.x, RM_CY - s.g.position.z) }; const bk = RM_BOOKS[(si * 5 + bh.instanceId) % RM_BOOKS.length]; info('📖 ' + bk[0], bk[1]); } lastTap.t = 0; return; }
+    const fo = ray.intersectObjects(focusables.map(f => f.hit), false)[0];
+    if (fo) { const f = focusables.find(q => q.hit === fo.object); cs.g = f.goal(); info(f.title, f.text); lastTap.t = 0; return; }
+    if (now - lastTap.t < 380 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30) { lastTap.t = 0; if (ray.ray.intersectPlane(fpl, fp)) { const [x, z] = clampXZ(fp.x, fp.z); cs.g = { tx: x, ty: .8, tz: z, d: Math.max(5.5, Math.min(cs.d * .5, 11)), el: Math.max(.5, cs.el) }; } } else lastTap = { t: now, x: e.clientX, y: e.clientY };
+  }
   function tap(e) { if (!pick) return; setRay(e); const hit = ray.intersectObjects(seatMarks.filter(m => m.visible), false)[0]; if (hit) cb.onSeat(hit.object.userData.i); }
   let taken = new Set(), mySeat = null;
   const paintMarks = () => seatMarks.forEach((m, i) => { m.visible = pick && !taken.has(i); });
@@ -7111,7 +7150,7 @@ function rm3Create(box, cb, theme) {
   let raf = 0, t = 0, last = performance.now(); const ctr = new T.Vector3();
   const loop = now => {
     raf = requestAnimationFrame(loop); const dt = Math.min(.05, (now - last) / 1000); last = now; if (document.hidden) return; t += dt;
-    if (cs.g) { const k = 1 - Math.exp(-dt * 4); cs.tx += (cs.g.tx - cs.tx) * k; cs.tz += (cs.g.tz - cs.tz) * k; cs.d += (cs.g.d - cs.d) * k; cs.el += (cs.g.el - cs.el) * k; }
+    if (cs.g) { const k = 1 - Math.exp(-dt * 3.2); cs.tx += (cs.g.tx - cs.tx) * k; cs.tz += (cs.g.tz - cs.tz) * k; cs.ty += ((cs.g.ty ?? .8) - cs.ty) * k; cs.d += (cs.g.d - cs.d) * k; cs.el += (cs.g.el - cs.el) * k; if (cs.g.az != null) { let da = cs.g.az - cs.az; da = Math.atan2(Math.sin(da), Math.cos(da)); cs.az += da * k; } }
     place();
     // жақын қабырғаларды ашу
     const cdx = cam.position.x, cdz = cam.position.z - RM_CY, cl = Math.hypot(cdx, cdz) || 1, top = cs.el > 1.18, kk = 1 - Math.exp(-dt * 8);
@@ -7121,19 +7160,37 @@ function rm3Create(box, cb, theme) {
     spin.forEach(p => { if (p.userData.ff) p.rotation.y = t * .05; else p.rotation.y = t * .04; });
     fl.forEach((m, i) => { m.position.y += Math.sin(t * 1.3 + i) * .0015; });
     if (prize.visible) { prize.userData.st.rotation.y = t * 1.2; prize.position.y = 3.1 + Math.sin(t * 1.6) * .15; }
+    if (pulled) { const q = pulled; q.t += dt; const out = q.t < .5 ? q.t / .5 : q.t < 7 ? 1 : Math.max(0, 1 - (q.t - 7) / .5), b = q.s.B[q.idx]; dm2.position.set(b[0], b[1] + .05 * out, .06 + .42 * out); dm2.rotation.set(-.3 * out, 0, 0); dm2.scale.set(b[2], b[3], .3); dm2.updateMatrix(); q.s.bk.setMatrixAt(q.idx, dm2.matrix); q.s.bk.instanceMatrix.needsUpdate = true; if (q.t > 7.5) unpull(); }
     objs.forEach((o, i) => {
-      const k = 1 - Math.exp(-dt * 16), g = o.g, ty = o.hold ? .95 + Math.sin(t * 6 + i) * .03 : restY(o);
-      o.x += (o.tx - o.x) * k; o.z += (o.tz - o.z) * k; o.y += (ty - o.y) * (o.hold ? k : 1 - Math.exp(-dt * 9));
-      if (o.drop && !o.hold && Math.abs(o.y - ty) < .02) { o.drop = 0; }
-      g.position.set(o.x, o.y - o.base + (o.drop ? Math.abs(Math.sin(t * 14)) * .06 * Math.min(1, (o.y - ty) * 3 + .2) : 0), o.z);
-      if (o.type === 'plane') g.rotation.set(o.hold ? -.3 : 0, o.hold ? t * 1.2 : g.rotation.y, o.hold ? .3 : 0); else if (o.type === 'ball' && o.hold) g.rotation.x = t * 3;
+      const g = o.g, P = OBJP[o.type], k = 1 - Math.exp(-dt * 16); o.vx = o.vx || 0; o.vz = o.vz || 0; o.vy = o.vy || 0; o.py = o.y;
+      if (o.hold) { o.x += (o.tx - o.x) * k; o.z += (o.tz - o.z) * k; o.y += (.95 + Math.sin(t * 6 + i) * .03 - o.y) * k; o.vy = 0; o.vx = o.vz = 0; }
+      else {
+        if (o.vx || o.vz) {
+          const sp = Math.hypot(o.vx, o.vz);
+          if (sp < .06) { o.vx = o.vz = 0; } else {
+            let nx = o.x + o.vx * dt, nz = o.z + o.vz * dt;
+            if (o.y < .35) RM3_T.forEach(([cx, cz]) => { const dx = nx - cx, dz = nz - cz, d = Math.hypot(dx, dz) || .001, R = 1.28; if (d < R) { const ux = dx / d, uz = dz / d, vn = o.vx * ux + o.vz * uz; if (vn < 0) { o.vx -= (1 + P.rest) * vn * ux; o.vz -= (1 + P.rest) * vn * uz; } nx = cx + ux * R; nz = cz + uz * R; } });
+            const [cx2, cz2] = clampXZ(nx, nz); if (cx2 !== nx || cz2 !== nz) { const ux = nx, uz = nz - RM_CY, d = Math.hypot(ux, uz) || 1, nxn = ux / d, nzn = uz / d, vn = o.vx * nxn + o.vz * nzn; if (vn > 0) { o.vx -= (1 + P.rest) * vn * nxn; o.vz -= (1 + P.rest) * vn * nzn; } nx = cx2; nz = cz2; }
+            o.x = nx; o.z = nz; o.tx = nx; o.tz = nz; const f = Math.exp(-P.mu * dt); o.vx *= f; o.vz *= f;
+          }
+        } else { o.x += (o.tx - o.x) * k; o.z += (o.tz - o.z) * k; }
+        const gy = (tableAt(o.x, o.z) ? .8 : 0) + o.base;
+        if (o.py < gy - .015 && !o.vy) { o.y = Math.min(gy, o.y + dt * 7); o.vy = 0; }
+        else { o.vy -= P.g * dt; o.y += o.vy * dt; if (o.y <= gy) { o.y = gy; if (o.vy < -1.4 && P.b > 0) o.vy = -o.vy * P.b; else o.vy = 0; } }
+      }
+      g.position.set(o.x, o.y - o.base, o.z);
+      const mv = Math.hypot(o.vx, o.vz);
+      if (o.type === 'plane') { if (o.hold) g.rotation.set(-.3, t * 1.2, .3); else if (mv > .3) g.rotation.set(o.y > .3 ? -.12 : 0, Math.atan2(o.vx, o.vz), Math.sin(t * 3 + i) * .08 * Math.min(1, mv / 3)); else g.rotation.set(0, g.rotation.y, 0); }
+      else if (o.type === 'ball') { if (o.hold) g.rotation.x = t * 3; else if (mv > .05) { g.rotation.x += o.vz * dt / .22; g.rotation.z -= o.vx * dt / .22; } }
+      else if (o.type === 'book' && !o.hold && mv > .6) g.rotation.y += (Math.atan2(o.vx, o.vz) - g.rotation.y) * .02;
       if (o.by && o.by !== 'me' && performance.now() - o.at > 2500) { o.hold = false; o.by = null; }
     });
+    for (let a2 = 0; a2 < objs.length; a2++) for (let b2 = a2 + 1; b2 < objs.length; b2++) { const A = objs[a2], B2 = objs[b2]; if (A.hold || B2.hold || Math.abs(A.y - B2.y) > .35) continue; const dx = B2.x - A.x, dz = B2.z - A.z, d = Math.hypot(dx, dz); if (d < .46 && d > .001) { const ux = dx / d, uz = dz / d, ps = (.46 - d) / 2; A.x -= ux * ps; A.z -= uz * ps; B2.x += ux * ps; B2.z += uz * ps; A.tx = A.x; A.tz = A.z; B2.tx = B2.x; B2.tz = B2.z; const vn = (A.vx - B2.vx) * ux + (A.vz - B2.vz) * uz; if (vn > 0) { const j = vn * .8; A.vx -= j * ux; A.vz -= j * uz; B2.vx += j * ux; B2.vz += j * uz; } } }
     for (let i = fx.length - 1; i >= 0; i--) { const f = fx[i]; f.t += dt; const p = f.t / 1.8; if (p >= 1) { scene.remove(f.s); f.s.material.dispose(); fx.splice(i, 1); continue; } f.s.position.set(f.x + Math.sin(p * 6 + f.ph) * .15, f.y + p * 1.8, f.z); f.s.scale.setScalar(.5 + Math.min(p * 4, 1) * .45); f.s.material.opacity = p > .7 ? (1 - p) / .3 : 1; }
     chars.forEach(c => {
       const u = c.userData, k = 1 - Math.exp(-dt * 6); c.position.x += (u.tx - c.position.x) * k; c.position.z += (u.tz - c.position.z) * k; const cy = Math.atan2(cam.position.x - c.position.x, cam.position.z - c.position.z); let ta = u.try + Math.atan2(Math.sin(cy - u.try), Math.cos(cy - u.try)) * .42; let dr = ta - c.rotation.y; dr = Math.atan2(Math.sin(dr), Math.cos(dr)); c.rotation.y += dr * k;
       const sl = u.st === 'sleep', bob = Math.sin(t * 1.7 + u.ph); if (!sl) u.body.position.y = .92 + bob * .014; else u.body.scale.y = 1 + Math.sin(t * 1.2 + u.ph) * .025;
-      u.star.rotation.y = t * 1.3 + u.ph; u.star.position.y = .78 + Math.sin(t * 2 + u.ph) * .02; if (!sl) u.sgl.material.opacity = .8 + Math.sin(t * 3 + u.ph) * .2;
+      u.star.rotation.y = t * 1.3 + u.ph; u.star.position.y = u.sy + Math.sin(t * 2 + u.ph) * .02; if (!sl) u.sgl.material.opacity = .8 + Math.sin(t * 3 + u.ph) * .2;
       if (u.st === 'write') { u.pen.position.set(.12 + Math.sin(t * 7) * .02, .04, .02); u.pen.rotation.z = 1.1 + Math.sin(t * 9) * .12; u.hands[1].position.set(.1 + Math.sin(t * 7) * .02, .82, .64); }
       if (u.st === 'read') u.book.rotation.x = -.55 + Math.sin(t * .9 + u.ph) * .03;
       if (u.st === 'hand') { u.arm.rotation.z = -.35 - Math.abs(Math.sin(t * 5)) * .5 + .1; u.arm.rotation.x = 0; u.q.position.y = 1.9 + Math.sin(t * 4) * .05; }
@@ -7154,13 +7211,13 @@ function rm3Create(box, cb, theme) {
       chars.forEach((c, id) => { if (!seen.has(id)) { try { c.userData.tagTex.dispose(); } catch { } scene.remove(c); chars.delete(id); } }); paintMarks();
     },
     setPick(on) { pick = on; paintMarks(); },
-    focusMe(seat) { const s = RM3_SEAT[seat == null ? mySeat : seat]; if (s) cs.g = { tx: s.cx, tz: s.cz, d: Math.max(8.5, fit * .45), el: .72 }; },
-    resetCam() { cs.g = { tx: 0, tz: RM_CY, d: fit, el: .86 }; },
-    setObj(i, x, z, hold, by) { const o = objs[i]; if (!o || grab === i) return; const [px, pz] = clampXZ(x, z); o.tx = px; o.tz = pz; o.moved = true; o.at = performance.now(); if (hold) { o.hold = true; o.by = by || 'x'; } else { if (o.hold) o.drop = 1; o.hold = false; o.by = null; } },
+    focusMe(seat) { const s = RM3_SEAT[seat == null ? mySeat : seat]; if (s) cs.g = { tx: s.cx, ty: .8, tz: s.cz, d: Math.max(8.5, fit * .45), el: .72 }; },
+    resetCam() { unpull(); cs.g = { tx: 0, ty: .8, tz: RM_CY, d: fit, el: .86 }; },
+    setObj(i, x, z, hold, by, vx, vz) { const o = objs[i]; if (!o || grab === i) return; const [px, pz] = clampXZ(x, z); o.tx = px; o.tz = pz; o.moved = true; o.at = performance.now(); if (hold) { o.hold = true; o.by = by || 'x'; o.vx = o.vz = 0; } else { if (o.hold) o.drop = 1; o.hold = false; o.by = null; vx = +vx || 0; vz = +vz || 0; if (Math.hypot(vx, vz) > .05 && Math.hypot(vx, vz) < 12) { o.x = px; o.z = pz; o.vx = vx; o.vz = vz; } else { o.vx = o.vz = 0; } } },
     objs() { return objs.map(o => o.moved ? [Math.round(o.tx * 100) / 100, Math.round(o.tz * 100) / 100] : null); },
     react(uid, e) { const c = chars.get(uid); if (!c || fx.length > 40) return; const s = new T.Sprite(new T.SpriteMaterial({ map: emT(e), transparent: true, depthWrite: false })); s.renderOrder = 12; s.position.set(c.position.x, 2.7, c.position.z); scene.add(s); fx.push({ s, t: 0, x: c.position.x, y: 2.7, z: c.position.z, ph: Math.random() * 6 }); },
     setPrize(on) { prize.visible = !!on; },
-    destroy() { cancelAnimationFrame(raf); ro.disconnect(); try { renderer.dispose(); renderer.forceContextLoss(); } catch { } cv.remove(); chars.clear(); }
+    destroy() { cancelAnimationFrame(raf); clearTimeout(capT); cap.remove(); ro.disconnect(); try { renderer.dispose(); renderer.forceContextLoss(); } catch { } cv.remove(); chars.clear(); }
   };
 }
 
@@ -7232,7 +7289,7 @@ async function roomEnter(sel, n) {
     if (!isStaff && S.my.seat == null) chip.appendChild(el('span', '', 'Бөлме толы'));
   }
   function sit(i) { if (isStaff || S.members.some(m => m.uid !== meId && m.seat === i && !m.staff)) return; S.my.seat = i; ls.set('roomSeat', i); S.pick = false; pickBtn && pickBtn.setAttribute('aria-pressed', 'false'); S.view && S.view.setPick(false); track(); S.members = S.members.map(m => m.uid === meId ? { ...m, seat: i } : m); draw(); }
-  const objSend = (i, x, z, h) => { S.objState[i] = [x, z]; bc('obj', { i, x: Math.round(x * 100) / 100, z: Math.round(z * 100) / 100, h: h ? 1 : 0, u: meId }); };
+  const objSend = (i, x, z, h, vx, vz) => { S.objState[i] = [x, z]; const r2 = v => Math.round((v || 0) * 100) / 100; bc('obj', { i, x: r2(x), z: r2(z), h: h ? 1 : 0, vx: r2(vx), vz: r2(vz), u: meId }); };
   const cbk = { onSeat: sit, onObj: objSend };
   async function mount() {
     if (S.view) { try { S.view.destroy(); } catch { } S.view = null; }
@@ -7254,11 +7311,11 @@ async function roomEnter(sel, n) {
   S.ch = sb.channel('room:' + chan, { config: { presence: { key: meId + '_' + Math.random().toString(36).slice(2, 8) }, broadcast: { self: false } } });
   S.ch.on('presence', { event: 'sync' }, () => {
     const by = new Map(); Object.values(S.ch.presenceState()).flat().forEach(m => { if (!m || !m.uid) return; const o = by.get(m.uid); if (!o || (m.t0 || 0) < (o.t0 || 0)) by.set(m.uid, m); });
-    S.members = [...by.values()].map(m => ({ uid: String(m.uid), name: String(m.name || '').slice(0, 14), av: String(m.av || ''), st: RM_ST[m.st] ? m.st : 'read', seat: Number.isInteger(m.seat) ? m.seat : null, t0: +m.t0 || 0, lv: Math.max(0, Math.min(5, m.lv | 0)), staff: !!m.staff, it: Array.isArray(m.it) ? m.it.filter(k => RM_SHOP[k]).slice(0, 4) : [] }));
+    S.members = [...by.values()].map(m => ({ uid: String(m.uid), name: String(m.name || '').slice(0, 14), av: String(m.av || ''), st: RM_ST[m.st] ? m.st : 'read', seat: Number.isInteger(m.seat) ? m.seat : null, t0: +m.t0 || 0, lv: Math.max(0, Math.min(5, m.lv | 0)), staff: !!m.staff, it: Array.isArray(m.it) ? m.it.filter(k => RM_SHOP[k]).slice(0, 6) : [] }));
     if (room === 'auto' && !S.settled) { S.settled = true; const others = S.members.filter(m => !m.staff && m.uid !== meId).length; if (others >= RM_MAX && (n || 1) < 4 && !isStaff) { roomEnter('auto', (n || 1) + 1); return; } }
     resolve(); draw();
   });
-  S.ch.on('broadcast', { event: 'obj' }, ({ payload: p }) => { if (!p || !Number.isInteger(p.i) || p.i < 0 || p.i >= RM_OBJ0.length || !isFinite(p.x) || !isFinite(p.z)) return; S.objState[p.i] = [+p.x, +p.z]; S.view && S.view.setObj(p.i, +p.x, +p.z, p.h ? 1 : 0, String(p.u || 'x')); });
+  S.ch.on('broadcast', { event: 'obj' }, ({ payload: p }) => { if (!p || !Number.isInteger(p.i) || p.i < 0 || p.i >= RM_OBJ0.length || !isFinite(p.x) || !isFinite(p.z)) return; S.objState[p.i] = [+p.x, +p.z]; S.view && S.view.setObj(p.i, +p.x, +p.z, p.h ? 1 : 0, String(p.u || 'x'), +p.vx || 0, +p.vz || 0); });
   S.ch.on('broadcast', { event: 'objs?' }, () => { if (!S.objState.some(Boolean)) return; setTimeout(() => { if (rm === S && !S.gotObjs) bc('objs', { a: S.objState.map(p => p || null) }); }, 100 + Math.random() * 500); });
   S.ch.on('broadcast', { event: 'objs' }, ({ payload: p }) => { if (S.gotObjs || !p || !Array.isArray(p.a)) return; S.gotObjs = true; p.a.slice(0, RM_OBJ0.length).forEach((q, i) => { if (Array.isArray(q) && isFinite(q[0]) && isFinite(q[1]) && !S.objState[i]) { S.objState[i] = [+q[0], +q[1]]; S.view && S.view.setObj(i, +q[0], +q[1], 0); } }); });
   S.ch.on('broadcast', { event: 'react' }, ({ payload: p }) => { if (!p || !RM_REACT.includes(p.e) || !p.u) return; const nw = Date.now(); if (nw - (S.lastReact.get(p.u) || 0) < 600) return; S.lastReact.set(p.u, nw); S.view && S.view.react(String(p.u), p.e); });
@@ -7273,7 +7330,7 @@ async function roomEnter(sel, n) {
     const st = el('div', 'rm-stats'); [['Бұл апта', 0], ['Сессия (апта)', 1], ['Күн қатар', 2]].forEach(([t, i]) => { const d = el('div'); d.append(stat[i], el('small', '', t)); st.appendChild(d); }); v.appendChild(st);
     paintBtns(); paintStats();
     sb.rpc('room_stats').then(r => { if (rm === S && r.data) { S.base = { week_sec: +r.data.week_sec || 0, week_sessions: +r.data.week_sessions || 0, streak: +r.data.streak || 0, today_sec: +r.data.today_sec || 0 }; paintStats(); if (lvl() !== S.lv) track(); } }, () => { });
-    sb.rpc('room_wallet').then(r => { if (rm === S && r.data && Array.isArray(r.data.items)) { S.items = r.data.items.filter(k => RM_SHOP[k]).slice(0, 4); S.stars = +r.data.stars || 0; track(); } }, () => { });
+    sb.rpc('room_wallet').then(r => { if (rm === S && r.data && Array.isArray(r.data.items)) { S.items = r.data.items.filter(k => RM_SHOP[k]).slice(0, 6); S.stars = +r.data.stars || 0; track(); } }, () => { });
   }
   const loadGoal = () => { if (!cls) return; sb.rpc('room_goal', { p_class: cls }).then(r => { if (rm === S && r.data) { S.goalSec = +r.data.sec || 0; S.view && S.view.setPrize(S.goalSec >= RM_GOAL); } }, () => { }); };
   loadGoal();
