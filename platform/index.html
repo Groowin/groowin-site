@@ -1385,6 +1385,20 @@ select option:disabled{color:#8a93b4}
 .act.on .act-d{transform:scale(1);opacity:1}.act-d:hover{transform:scale(1.25)!important}
 .act-d[data-l="1"]{background:rgba(77,124,255,.32)}.act-d[data-l="2"]{background:rgba(77,124,255,.55)}.act-d[data-l="3"]{background:rgba(77,124,255,.78)}.act-d[data-l="4"]{background:#4d7cff}
 @media (prefers-reduced-motion:reduce){#v-account>*,.thm button,.sw button,.act-row,.act-d{animation:none!important;transition:none!important;opacity:1!important;transform:none!important}}
+
+/* ===== Статистика дашборды ===== */
+#staffDash{margin:22px 0 4px}.sd-h{margin:0 0 10px;font-size:1.15rem}
+.sd-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.sd-tile{padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surf,var(--paper));display:grid;gap:2px;animation:aplIn .7s cubic-bezier(.2,.9,.25,1) backwards;animation-delay:var(--d,0ms)}
+.sd-tile b{font-size:1.6rem;font-variant-numeric:tabular-nums}.sd-tile small{opacity:.7}.sd-ic{font-size:1.2rem}
+.sd-bars{display:flex;align-items:flex-end;gap:4px;height:120px}
+.sd-bars i{flex:1;height:var(--h);min-height:4px;border-radius:6px 6px 3px 3px;background:linear-gradient(#7aa2ff,#4d7cff);transform-origin:bottom;animation:sdGrow .8s cubic-bezier(.34,1.56,.64,1) backwards;animation-delay:var(--d)}
+.sd-bars i.z{background:rgba(128,128,128,.22)}.sd-bars i:hover{filter:brightness(1.25)}
+@keyframes sdGrow{from{transform:scaleY(0);opacity:0}to{transform:none;opacity:1}}
+.sd-cl{display:grid;grid-template-columns:minmax(70px,1fr) 2fr auto;gap:10px;align-items:center;margin:7px 0}.sd-cl .act-bar{grid-column:auto}.sd-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sd-st{display:block;width:100%;text-align:left;margin:6px 0}
+@media (max-width:560px){.sd-cl{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.sd-tile,.sd-bars i{animation:none!important}}
 </style>
 </head>
 <body>
@@ -1583,6 +1597,7 @@ select option:disabled{color:#8a93b4}
           <button class="go" id="tRandom">Кездейсоқ оқушы</button><button class="go" id="tGroups">Топқа бөлу</button>
           <button class="go" id="tTimer">Таймер</button><button class="go" id="tRefl">Рефлексия</button>
         </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px"><button class="out" id="rsXls" type="button">📥 Excel-ден оқушы жүктеу</button><button class="out" id="rsTpl" type="button">Үлгіні жүктеу</button></div>
         <label for="stName">Оқушы қосу</label>
         <input id="stName" placeholder="Аты-жөнін жазып Enter бас. Тізімді қойсаң, бәрі бірден қосылады">
         <p class="sub" id="stCount" style="margin:8px 0;font-size:.9rem"></p>
@@ -1684,6 +1699,7 @@ select option:disabled{color:#8a93b4}
         <button data-k="info" aria-selected="false">Хабарландыру</button>
         <button data-k="homework" aria-selected="false">Үй тапсырмасы</button>
       </div>
+      <button class="go" id="nQuick" hidden type="button" style="width:auto;padding:10px 22px;margin:10px 0 0">📣 Сыныпқа хабарлама (бір басумен)</button>
       <details id="newsForm" hidden style="margin:14px 0">
         <summary style="cursor:pointer;font-weight:500">+ Жаңа жариялау</summary>
         <label for="nKind">Түрі</label>
@@ -1715,6 +1731,7 @@ select option:disabled{color:#8a93b4}
       <input id="accEdit" maxlength="80" autocomplete="name">
       <button class="go" id="accSave" style="width:auto;padding:10px 22px">Сақтау</button>
       <p class="msg" id="accMsg" role="status" aria-live="polite"></p>
+      <div id="staffDash" hidden></div>
       <div id="orphBox" hidden>
         <h3 style="margin:14px 0 0;font-size:1.05rem">Қойманы тазалау</h3>
         <p class="sub" style="font-size:.9rem">Жойылған ойын, материал, тапсырмалардан қалған, ешқайда байланбаған файлдарды табады (1 тәуліктен ескілерін).</p>
@@ -1922,7 +1939,7 @@ async function showApp(session) {
   if (document.activeElement !== $('accEdit')) $('accEdit').value = me?.full_name || '';
   $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
-  window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isOwner = isAdmin && !!me?.is_owner; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff;
+  window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isOwner = isAdmin && !!me?.is_owner; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff; $('nQuick').hidden = !isStaff;
   $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   if (isStaff) setTimeout(slidePre, 4000);
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
@@ -2204,7 +2221,7 @@ $('back').onclick = () => go(subj, true);
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 let rm = null; // Оқу бөлмесі күйі
 const VIEWS = ['home', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
-function show(v) { trackView(v); if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
+function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined' && isStaff) setTimeout(() => loadStaffDash(($('sdClass') || {}).value || null), 0); if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
 function go(key, keep) {
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
   clearInterval(window.__qrDevT); if (key === 'account') { qrDevices(); window.__qrDevT = setInterval(() => { if ($('v-account').hidden) clearInterval(window.__qrDevT); else qrDevices(); }, 15000); }
@@ -2268,6 +2285,13 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '5.0', date: '03.11.2026', items: [
+    ['📈', 'Статистика дашборды', 'Баптау бетінде (админ мен мұғалімге): оқушы саны, апталық белсенділік, қай бөлімде көп болғаны, күн сайынғы кіру, сыныптар рейтингі, 7 күннен бері кірмегендер, ең қиын тесттер. Анимациямен.'],
+    ['🏆', 'Шын 3D подиум', 'Викторина соңында үш өлшемді подиум: камера айналады, блоктар көтеріледі, конфетти түседі. Саусақпен бұруға болады.'],
+    ['🤝', 'Мұғалімдер арасында бөлісу', 'Викторина, сабақ жоспары және ойын жинағын басқа мұғалімге көшірме етіп жібересің. Оған хабарландыру барады.'],
+    ['📣', 'Сыныпқа хабарлама', 'Хабарландыру бетінде бір түймемен сыныпқа хабарлама жіберіледі.'],
+    ['📥', 'Сыныпқа Excel-ден оқушы', '«Менің сыныптарым» ішінде Excel-ден аты-жөнін жүктеуге болады. Үлгі файл бар.']
+  ] },
   { ver: '4.3', date: '02.11.2026', items: [
     ['📊', 'Оқушы белсенділігі', 'Мұғалім мен админ оқушының прогресін ашқанда: қай бөлімде қанша уақыт болғаны (пайыз, дөңгелек диаграмма) және соңғы 28 күннің ішінде қай күндері кіргені көрінеді.'],
     ['✨', 'Баптау анимациясы', 'Баптау беті жұмсақ ашылады, тема мен түс түймелері серіппедей басылады.'],
@@ -2621,7 +2645,8 @@ async function addStudents(text) {
 }
 $('stName').onkeydown = e => { if (e.key === 'Enter') { addStudents($('stName').value); $('stName').value = ''; } };
 $('stName').onpaste = e => { const t = e.clipboardData.getData('text'); if (t.includes('\n')) { e.preventDefault(); addStudents(t); } };
-$('rsBack').onclick = showRosterHome;
+$('nQuick').onclick = async () => { await loadClassList(); classMsgModal(); };
+$('rsBack').onclick = showRosterHome; $('rsXls').onclick = rosterExcel; $('rsTpl').onclick = rosterTemplate;
 $('stClear').onclick = async () => { if (!(await ask('Сыныптағы барлық оқушыны өшіру керек пе?'))) return; await sb.from('roster_students').delete().eq('roster_id', curRoster.id); rsStudents = []; renderStudents(); };
 $('rsDel').onclick = async () => { if (!(await ask(curRoster.name + ' сыныбын толық жою керек пе?'))) return; await sb.from('rosters').delete().eq('id', curRoster.id); showRosterHome(); };
 
@@ -2857,7 +2882,7 @@ async function loadLessons() {
     const top = el('div', 'qct'); top.append(el('strong', '', z.title), el('span', 'gm', st.length + ' қадам' + (st.reduce((a, x) => a + stepDur(x), 0) ? ' · ' + st.reduce((a, x) => a + stepDur(x), 0) + ' мин' : '') + ' · ' + new Date(z.updated_at).toLocaleDateString('kk-KZ')));
     const chips = el('div', 'lpsteps'); st.slice(0, 12).forEach((x, i) => chips.appendChild(el('span', '', ((STEP_META[x.k] || [''])[0]) + ' ' + (x.t || STEP_TYPES[x.k] || ''))));
     const row = el('div', 'qrow'), go2 = el('button', 'go', 'Бастау'); go2.onclick = () => st.length ? startLesson(z) : alert('Бұл жоспарда қадам жоқ.');
-    row.append(go2, mini('Өзгерту', () => openLpEditor(z)), mini('Көшіру', async () => { const r = await sb.from('lesson_plans').insert({ title: (z.title + ' (көшірме)').slice(0, 120), steps: st }); if (r.error) alert(r.error.message); loadLessons(); }),
+    row.append(go2, mini('Өзгерту', () => openLpEditor(z)), mini('Бөлісу', () => shareModal('plan', z)), mini('Көшіру', async () => { const r = await sb.from('lesson_plans').insert({ title: (z.title + ' (көшірме)').slice(0, 120), steps: st }); if (r.error) alert(r.error.message); loadLessons(); }),
       mini('Жою', async () => { if (!(await ask('«' + z.title + '» жойылсын ба?'))) return; await sb.from('lesson_plans').delete().eq('id', z.id); loadLessons(); }));
     c.append(top, chips, row, favBtn('lesson', z.id)); box.appendChild(c);
   });
@@ -3276,6 +3301,59 @@ function openPhys(start) {
   requestAnimationFrame(frame);
 }
 
+// ===== Шын 3D подиум (Three.js): айналатын камера, көтерілетін блоктар, конфетти. WebGL не кітапхана болмаса, ескі изометриялыққа ауысады =====
+function PodiumGL(host, list, o) {
+  o = Object.assign({ unit: 'ұпай' }, o || {});
+  const items = list.slice(0, 3); if (!items.length) return;
+  if (!rmGL()) return Podium3D(host, list, o);
+  const wrap = document.createElement('div'); wrap.style.cssText = 'position:relative;width:100%;max-width:780px;margin:0 auto;aspect-ratio:16/10;border-radius:18px;overflow:hidden;background:linear-gradient(#0a0f2e,#221a52);touch-action:none;cursor:grab';
+  wrap.setAttribute('role', 'img'); wrap.setAttribute('aria-label', 'Жеңімпаздар подиумы: ' + items.map((p, i) => (i + 1) + '. ' + p.name + ' ' + p.score + ' ' + o.unit).join(', '));
+  host.appendChild(wrap);
+  let dead = false, api = { destroy() { dead = true; wrap.remove(); } };
+  rm3Load().then(ok => {
+    if (!ok || dead || !wrap.isConnected) { if (!dead) { wrap.remove(); Podium3D(host, list, o); } return; }
+    const T = THREE, still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ren = new T.WebGLRenderer({ antialias: true, alpha: true }); ren.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); wrap.prepend(ren.domElement); ren.domElement.style.cssText = 'display:block;width:100%;height:100%';
+    const sc = new T.Scene(), cam = new T.PerspectiveCamera(38, 1.6, .1, 100);
+    sc.add(new T.AmbientLight(0xffffff, .55)); const dl = new T.DirectionalLight(0xffffff, .5); dl.position.set(4, 8, 6); sc.add(dl); const pl = new T.PointLight(0xffc766, .35, 30); pl.position.set(0, 5, 3); sc.add(pl);
+    const floor = new T.Mesh(new T.CylinderGeometry(5.4, 5.6, .3, 48), new T.MeshLambertMaterial({ color: 0x1b1f4a })); floor.position.y = -.15; sc.add(floor);
+    const ring = new T.Mesh(new T.TorusGeometry(5.2, .05, 8, 64), new T.MeshBasicMaterial({ color: 0xffd45e })); ring.rotation.x = Math.PI / 2; sc.add(ring);
+    const tex = (w, h, fn) => { const c = document.createElement('canvas'); c.width = w; c.height = h; fn(c.getContext('2d'), w, h); const t = new T.CanvasTexture(c); t.anisotropy = 4; return t; };
+    const POS = [0, -2.1, 2.1], HGT = [2.3, 1.65, 1.15], COL = [0xf5b800, 0xb8c2d1, 0xcd7f32], AT = [1.15, .65, .2], CH = ['#F5B800', '#B8C2D1', '#CD7F32'];
+    const els = items.map((p, i) => {
+      const g = new T.Group(); g.position.x = POS[i]; sc.add(g);
+      const blk = new T.Mesh(new T.BoxGeometry(1.8, HGT[i], 1.8), new T.MeshLambertMaterial({ color: COL[i], emissive: new T.Color(COL[i]).multiplyScalar(.04) })); g.add(blk);
+      const num = new T.Mesh(new T.PlaneGeometry(1.1, 1.1), new T.MeshBasicMaterial({ map: tex(128, 128, (x, w, h) => { x.fillStyle = 'rgba(0,0,0,.28)'; x.font = '900 100px system-ui,sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(String(i + 1), w / 2, h / 2 + 6); }), transparent: true })); num.position.set(0, 0, .91); blk.add(num);
+      const top = new T.Group(); g.add(top);
+      const body = new T.Mesh(new T.SphereGeometry(.55, 24, 18), new T.MeshLambertMaterial({ color: new T.Color(CH[i]).lerp(new T.Color(0xffffff), .35) })); body.position.y = .55; top.add(body);
+      const em = new T.Sprite(new T.SpriteMaterial({ map: tex(128, 128, (x, w, h) => { x.font = '84px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(p.emoji || ['🥇', '🥈', '🥉'][i], w / 2, h / 2 + 6); }), transparent: true, depthWrite: false })); em.scale.set(.95, .95, 1); em.position.set(0, .62, .5); top.add(em);
+      if (i === 0) { const cr = new T.Mesh(new T.ConeGeometry(.34, .36, 5), new T.MeshLambertMaterial({ color: 0xffd45e, emissive: 0x7a5a00 })); cr.position.y = 1.25; top.add(cr); top.userData.cr = cr; }
+      const lb = new T.Sprite(new T.SpriteMaterial({ map: tex(512, 170, (x, w, h) => { x.fillStyle = 'rgba(14,16,40,.82)'; const r = 28; x.beginPath(); x.moveTo(r, 6); x.arcTo(w - 6, 6, w - 6, h - 6, r); x.arcTo(w - 6, h - 6, 6, h - 6, r); x.arcTo(6, h - 6, 6, 6, r); x.arcTo(6, 6, w - 6, 6, r); x.fill(); x.textAlign = 'center'; x.fillStyle = '#fff'; x.font = '700 54px system-ui,sans-serif'; x.fillText(String(p.name || '').slice(0, 16), w / 2, 78); x.fillStyle = CH[i]; x.font = '800 44px system-ui,sans-serif'; x.fillText(p.score + ' ' + o.unit, w / 2, 134); }), transparent: true, depthWrite: false })); lb.scale.set(2.6, .86, 1); g.add(lb);
+      return { g, blk, top, lb, h: HGT[i], at: AT[i] };
+    });
+    // конфетти
+    const N = 180, pos = new Float32Array(N * 3), colr = new Float32Array(N * 3), vel = new Float32Array(N * 2), palette = [0xffd45e, 0xff6b9a, 0x6ee7ff, 0xa78bfa, 0x7dffa1].map(c => new T.Color(c));
+    const seed = (k) => { for (let i = 0; i < N; i++) { pos[i * 3] = (Math.random() - .5) * 9; pos[i * 3 + 1] = 6 + Math.random() * 6; pos[i * 3 + 2] = (Math.random() - .5) * 5; vel[i * 2] = .8 + Math.random() * 1.6; vel[i * 2 + 1] = Math.random() * 6; const c = palette[i % 5]; colr[i * 3] = c.r; colr[i * 3 + 1] = c.g; colr[i * 3 + 2] = c.b; } };
+    seed(); const pg = new T.BufferGeometry(); pg.setAttribute('position', new T.BufferAttribute(pos, 3)); pg.setAttribute('color', new T.BufferAttribute(colr, 3));
+    const conf = new T.Points(pg, new T.PointsMaterial({ size: .16, vertexColors: true, transparent: true, opacity: .95 })); conf.visible = false; sc.add(conf);
+    const ease = x => { x = Math.min(1, Math.max(0, x)); const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+    let ang = 0, drag = null, t0 = performance.now(), last = t0, burstAt = -1;
+    const resize = () => { const w = wrap.clientWidth || 720, h = wrap.clientHeight || 450; ren.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }; const ro = new ResizeObserver(resize); ro.observe(wrap); resize();
+    wrap.onpointerdown = e => { drag = [e.clientX, ang]; wrap.setPointerCapture(e.pointerId); wrap.style.cursor = 'grabbing'; }; wrap.onpointermove = e => { if (drag) ang = Math.max(-1.1, Math.min(1.1, drag[1] + (e.clientX - drag[0]) * .006)); }; wrap.onpointerup = () => { drag = null; wrap.style.cursor = 'grab'; };
+    const frame = (now) => {
+      if (dead || !wrap.isConnected) { dead = true; ro.disconnect(); ren.dispose(); return; }
+      const t = still ? 99 : (now - t0) / 1000, dt = Math.min(.05, (now - last) / 1000); last = now;
+      els.forEach((e, i) => { const k = ease((t - e.at) / .9); e.blk.scale.y = Math.max(.001, k); e.blk.position.y = e.h * Math.max(.001, k) / 2; const up = e.h * k; e.top.position.y = up + Math.max(0, Math.sin(t * 2.2 + i) * .05); e.top.visible = k > .05; e.lb.position.y = up + 1.85; e.lb.visible = k > .3; if (e.top.userData.cr) e.top.userData.cr.rotation.y = t * 1.5; });
+      if (t > 1.9 && burstAt < 0) { burstAt = t; conf.visible = true; seed(); }
+      if (conf.visible) { const a = pg.attributes.position.array; for (let i = 0; i < N; i++) { a[i * 3 + 1] -= vel[i * 2] * dt * 1.4; a[i * 3] += Math.sin(t * 2 + vel[i * 2 + 1]) * dt * .5; if (a[i * 3 + 1] < -.2) { a[i * 3 + 1] = (t - burstAt < 5) ? 6 + Math.random() * 3 : -50; } } pg.attributes.position.needsUpdate = true; }
+      const a0 = ang + (drag || still ? 0 : Math.sin(t * .35) * .35); cam.position.set(Math.sin(a0) * 12.5, 4.2, Math.cos(a0) * 12.5); cam.lookAt(0, 1.9, 0);
+      ren.render(sc, cam); requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }).catch(() => { if (!dead) { wrap.remove(); Podium3D(host, list, o); } });
+  return api;
+}
+
 // ===== 3D подиум: үш жеңімпаз изометриялық сахнада көтеріледі, конфетти түседі =====
 function Podium3D(host, list, o) {
   o = Object.assign({ unit: 'ұпай' }, o || {});
@@ -3370,6 +3448,76 @@ let qz = null, quizzes = [];
 const newQ = () => ({ t: '', img: null, o: ['', '', '', ''], c: 0, s: 20, k: 'c', a: null, tol: 0, u: '' });
 const qmsg = (t, c) => note('qzMsg', t, c || '');
 
+// ===== Бөлісу, сыныпқа Excel, жаппай хабарлама, статистика дашборды (5.0) =====
+async function shareModal(kind, item) {
+  const m = modal('Бөлісу: ' + item.title), b = m.box; b.appendChild(el('p', 'sub', 'Жүктелуде…'));
+  const r = await sb.rpc('teacher_directory');
+  if (r.error) { b.replaceChildren(el('h2', '', 'Бөлісу'), el('p', 'msg err', /teacher_directory|function/.test(r.error.message) ? 'update-26.sql әлі іске қосылмаған.' : 'Қате: ' + r.error.message)); return; }
+  const sel = document.createElement('select'); sel.append(new Option('Кімге жібереміз?', '')); (r.data || []).forEach(t => sel.append(new Option(t.full_name || 'Атсыз', t.id)));
+  const go = el('button', 'go', 'Көшірмесін жіберу'), cn = el('button', 'out', 'Болдырмау'), msg = el('p', 'msg', ''), row = el('div', 'mtools'); go.type = cn.type = 'button'; row.append(go, cn); cn.onclick = m.close;
+  go.onclick = async () => { if (!sel.value) { msg.className = 'msg err'; msg.textContent = 'Мұғалімді таңда.'; return; } go.disabled = true; const x = await sb.rpc('share_item', { p_kind: kind, p_id: item.id, p_to: sel.value }); go.disabled = false; if (x.error) { msg.className = 'msg err'; msg.textContent = 'Қате: ' + x.error.message; return; } msg.className = 'msg ok'; msg.textContent = 'Жіберілді. Оның тізімінде көшірме пайда болды.'; try { SFX.ok(); } catch { } };
+  b.replaceChildren(el('h2', '', 'Бөлісу: ' + item.title), el('p', 'sub', 'Көшірме жіберіледі: сен өзгертсең, оның нұсқасы өзгермейді. Қабылдаушыға хабарландыру барады.'), sel, row, msg);
+}
+function classMsgModal() {
+  const m = modal('📣 Сыныпқа хабарлама'), b = m.box, sel = document.createElement('select'); sel.append(new Option('Сыныпты таңда', '')); classesCache.forEach(c => sel.append(new Option(c.name, c.id)));
+  const ti = document.createElement('input'); ti.placeholder = 'Тақырыбы'; ti.maxLength = 100; const bo = document.createElement('textarea'); bo.placeholder = 'Мәтіні'; bo.rows = 4; bo.maxLength = 1000;
+  const go = el('button', 'go', 'Жіберу'), cn = el('button', 'out', 'Болдырмау'), msg = el('p', 'msg', ''), row = el('div', 'mtools'); go.type = cn.type = 'button'; row.append(go, cn); cn.onclick = m.close;
+  go.onclick = async () => { if (!sel.value || !ti.value.trim()) { msg.className = 'msg err'; msg.textContent = 'Сыныпты таңда да, тақырып жаз.'; return; } go.disabled = true; const { error } = await sb.from('announcements').insert({ title: ti.value.trim(), body: bo.value.trim(), author: meName, kind: 'info', target_class: sel.value }); go.disabled = false; if (error) { msg.className = 'msg err'; msg.textContent = 'Қате: ' + error.message; return; } msg.className = 'msg ok'; msg.textContent = 'Жіберілді.'; try { SFX.ok(); } catch { } loadNews && loadNews(); setTimeout(m.close, 900); };
+  b.append(mrow('Сынып', sel), mrow('Тақырып', ti), mrow('Мәтін', bo), row, msg);
+}
+// «Менің сыныптарым»: Excel-ден аты-жөнін жүктеу
+async function rosterExcel() {
+  if (!curRoster) return; const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.xlsx,.xls,.csv';
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return; try { await loadXLSX(); } catch { return notify('Кітапхана жүктелмеді. Интернетті тексер.'); }
+    let rows; try { const wb = XLSX.read(await f.arrayBuffer()); rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: true, defval: '' }); } catch { return notify('Файлды оқу мүмкін болмады.'); }
+    const h = (rows[0] || []).map(String); let ci = h.findIndex(x => /аты|имя|фио|оқушы|ученик|name/i.test(x)); if (ci >= 0 || /№|тел/i.test(h.join(' '))) rows = rows.slice(1); if (ci < 0) ci = rows.some(r => r.length > 1 && /^\d+$/.test(String(r[0]).trim())) ? 1 : 0;
+    const have = new Set(rsStudents.map(s => s.name.toLowerCase())), names = [...new Set(rows.map(r => String(r[ci] ?? '').replace(/\s+/g, ' ').trim().slice(0, 60)).filter(x => x && !/^\d+$/.test(x)))].filter(x => !have.has(x.toLowerCase())).slice(0, 60);
+    if (!names.length) return notify('Жаңа аты-жөні табылмады. Бірінші бағанда (не «Аты-жөні» бағанында) оқушылардың аты болуы керек.');
+    if (!(await ask(names.length + ' оқушы қосылады: ' + names.slice(0, 4).join(', ') + (names.length > 4 ? '…' : '') + '. Жалғастырамыз ба?'))) return; await addStudents(names.join('\n'));
+  }; inp.click();
+}
+async function rosterTemplate() { try { await loadXLSX(); } catch { return notify('Кітапхана жүктелмеді.'); } const ws = XLSX.utils.aoa_to_sheet([['Аты-жөні'], ['Асанов Нұрлан'], ['Серікова Айгүл']]); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Сынып'); XLSX.writeFile(wb, 'synyp-ulgisi.xlsx'); }
+
+// ----- Статистика дашборды (баптау бетінде, админ мен мұғалімге)
+let sdBusy = false;
+async function loadStaffDash(cls) {
+  const box = $('staffDash'); if (!box || !isStaff || sdBusy) return; sdBusy = true; box.hidden = false;
+  try {
+    if (!box.firstChild) { box.append(el('h3', 'sd-h', '📈 Статистика')); const sel = document.createElement('select'); sel.id = 'sdClass'; sel.style.cssText = 'width:auto;margin:0 0 12px'; box.append(sel, el('div', '', '')); box.lastChild.id = 'sdBody'; await loadClassList(); sel.append(new Option(isAdmin ? 'Барлық сынып' : 'Менің оқушыларым', '')); classesCache.forEach(c => sel.append(new Option(c.name, c.id))); sel.onchange = () => loadStaffDash(sel.value); }
+    const body = $('sdBody'); body.replaceChildren(el('p', 'sub', 'Жүктелуде…'));
+    const r = await sb.rpc('staff_dashboard', { p_class: cls || null });
+    if (r.error) { body.replaceChildren(el('p', 'msg err', /staff_dashboard|function/.test(r.error.message) ? 'update-26.sql (және 25) әлі іске қосылмаған.' : 'Қате: ' + r.error.message)); return; }
+    renderStaffDash(body, r.data || {});
+  } finally { sdBusy = false; }
+}
+function renderStaffDash(body, D) {
+  body.replaceChildren(); const root = el('div', 'sd on');
+  const pct = (a, b) => b ? Math.min(100, Math.round(100 * a / b)) : 0;
+  const tiles = [['👥', 'Оқушы', D.students || 0, v => v], ['🟢', 'Осы аптада кірген', D.active7 || 0, v => v + ' / ' + (D.students || 0)], ['⏱️', 'Апталық оқу уақыты', Math.round((D.secs7 || 0) / 60), v => v >= 120 ? (v / 60).toFixed(1) + ' сағ' : v + ' мин'], ['🧠', 'Орташа викторина', D.avg_quiz == null ? null : +D.avg_quiz, v => v + '%'], ['📚', 'Тапсырма орындалуы', pct(D.hw_done, D.hw_exp), v => D.hw_exp ? v + '%' : '—']];
+  const tg = el('div', 'sd-tiles'); tiles.forEach(([ic, t, v, f], i) => { const c = el('div', 'sd-tile'), n = el('b', '', '0'); c.style.setProperty('--d', i * 70 + 'ms'); c.append(el('span', 'sd-ic', ic), n, el('small', '', t)); tg.appendChild(c); if (v == null) n.textContent = '—'; else countUp(n, v, f, 1100); }); root.appendChild(tg);
+  // бөлімдер үлесі
+  const views = (D.views || []).filter(x => x.secs > 0 || x.n > 0), w = x => x.secs > 0 ? x.secs : x.n * 20;
+  const vc = el('div', 'pth-card'); vc.append(el('h3', '', 'Оқушылар қайда көп болады'));
+  if (!views.length) vc.appendChild(el('p', 'sub', 'Әзірге дерек жоқ. Оқушылар жаңа нұсқаға кіргеннен кейін жиналады.'));
+  else { const tot = views.reduce((s, x) => s + w(x), 0) || 1, rows = views.slice(0, 7).map(x => ({ k: VIEW_KK[x.view] || x.view, p: Math.round(100 * w(x) / tot), secs: x.secs, n: x.n })); const g = el('div', 'act-leg'); rows.forEach((r, i) => { const row = el('div', 'act-row'), dot = el('i', 'act-dot'), pc = el('b', 'act-pc', '0%'), bar = el('div', 'act-bar'), fi = el('i'); dot.style.background = fi.style.background = ACT_COL[i]; fi.style.width = '0%'; fi.style.transition = 'width 1s cubic-bezier(.2,.9,.25,1) ' + (.1 + i * .08) + 's'; bar.appendChild(fi); row.style.setProperty('--d', i * 70 + 'ms'); row.append(dot, el('span', 'act-nm', r.k), pc, bar); row.title = (r.secs ? fmtT(r.secs) + ', ' : '') + r.n + ' рет'; g.appendChild(row); requestAnimationFrame(() => requestAnimationFrame(() => { fi.style.width = r.p + '%'; countUp(pc, r.p, v => v + '%', 1000); })); }); vc.appendChild(g); vc.classList.add('act', 'on'); }
+  // күн сайынғы кіру
+  const dc = el('div', 'pth-card'); dc.append(el('h3', '', 'Күн сайын кірген оқушы (28 күн)'));
+  const map = new Map((D.days || []).map(d => [String(d.day).slice(0, 10), d])), mx = Math.max(1, ...(D.days || []).map(d => d.users)), bars = el('div', 'sd-bars'), td = new Date();
+  for (let k = 27; k >= 0; k--) { const dt = new Date(td); dt.setDate(td.getDate() - k); const key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0'), d = map.get(key), b = el('i'); b.style.setProperty('--h', d ? Math.max(8, Math.round(100 * d.users / mx)) + '%' : '4%'); b.style.setProperty('--d', (27 - k) * 22 + 'ms'); if (!d) b.className = 'z'; b.title = dt.toLocaleDateString('kk-KZ', { day: 'numeric', month: 'long' }) + ': ' + (d ? d.users + ' оқушы, ' + fmtT(d.secs || 0) : 'ешкім кірмеді'); bars.appendChild(b); }
+  dc.appendChild(bars);
+  // сыныптар рейтингі
+  const cc = el('div', 'pth-card'); cc.append(el('h3', '', 'Сыныптар: осы аптадағы белсенділік'));
+  const cls = D.classes || []; if (!cls.length) cc.appendChild(el('p', 'sub', 'Сынып бойынша дерек жоқ.')); else { const mxs = Math.max(1, ...cls.map(c => c.secs)); cls.slice(0, 8).forEach((c, i) => { const row = el('div', 'sd-cl'), bar = el('div', 'act-bar'), fi = el('i'); fi.style.background = ACT_COL[i % 6]; fi.style.width = '0%'; fi.style.transition = 'width 1s cubic-bezier(.2,.9,.25,1) ' + (.1 + i * .08) + 's'; bar.appendChild(fi); row.append(el('b', '', c.name), bar, el('small', '', fmtT(c.secs) + ' · ' + c.active + '/' + c.students)); cc.appendChild(row); requestAnimationFrame(() => requestAnimationFrame(() => { fi.style.width = Math.max(3, Math.round(100 * c.secs / mxs)) + '%'; })); }); }
+  // назар аудару керек оқушылар
+  const ic = el('div', 'pth-card'); ic.append(el('h3', '', '⚠️ 7 күннен бері кірмегендер'));
+  const ina = D.inactive || []; if (!ina.length) ic.appendChild(el('p', 'sub', 'Бәрі кірген. Керемет! 🎉')); else ina.forEach(s => { const b = el('button', 'out sd-st', (s.name || 'Атсыз') + (s.last ? ' · соңғы: ' + new Date(s.last + 'T00:00').toLocaleDateString('kk-KZ', { day: 'numeric', month: 'short' }) : ' · әлі кірмеген')); b.type = 'button'; b.onclick = () => showStudentPath(s.id, s.name || 'Оқушы'); ic.appendChild(b); });
+  // қиын тесттер
+  const hc = el('div', 'pth-card'); hc.append(el('h3', '', '🧩 Ең қиын тесттер (үй тапсырмасы)'));
+  const hd = D.hard || []; if (!hd.length) hc.appendChild(el('p', 'sub', 'Әзірге тест нәтижесі жоқ.')); else hd.forEach((x, i) => { const row = el('div', 'sd-cl'), bar = el('div', 'act-bar'), fi = el('i'); fi.style.background = x.pct < 50 ? '#F87171' : x.pct < 75 ? '#FBBF24' : '#34D399'; fi.style.width = '0%'; fi.style.transition = 'width 1s cubic-bezier(.2,.9,.25,1) ' + (.1 + i * .08) + 's'; bar.appendChild(fi); row.append(el('b', 'sd-t', x.title), bar, el('small', '', x.pct + '% · ' + x.n + ' оқушы')); hc.appendChild(row); requestAnimationFrame(() => requestAnimationFrame(() => { fi.style.width = x.pct + '%'; })); });
+  root.append(vc, dc, cc, ic, hc); body.appendChild(root);
+}
+
 async function loadQuizzes() {
   $('qzEdit').hidden = true; $('qzList').hidden = false; qmsg('');
   const [q, r] = await Promise.all([
@@ -3383,7 +3531,7 @@ async function loadQuizzes() {
     const top = el('div', 'qct'); top.append(el('strong', '', z.title), el('span', 'gm', n + ' сұрақ · ' + new Date(z.updated_at).toLocaleDateString('kk-KZ')));
     const row = el('div', 'qrow');
     const st = el('button', 'go', 'Бастау'); st.onclick = () => n ? hostQuiz(z) : alert('Бұл викторинада сұрақ жоқ.');
-    row.append(st, mini('Өзгерту', () => openEditor(z)), mini('Көшіру', async () => { const { error } = await sb.from('quizzes').insert({ title: (z.title + ' (көшірме)').slice(0, 120), questions: z.questions }); if (error) alert(error.message); else loadQuizzes(); }),
+    row.append(st, mini('Өзгерту', () => openEditor(z)), mini('Бөлісу', () => shareModal('quiz', z)), mini('Көшіру', async () => { const { error } = await sb.from('quizzes').insert({ title: (z.title + ' (көшірме)').slice(0, 120), questions: z.questions }); if (error) alert(error.message); else loadQuizzes(); }),
       mini('Жою', async () => { if (!(await ask('«' + z.title + '» викторинасы жойылсын ба?'))) return; await sb.from('quizzes').delete().eq('id', z.id); loadQuizzes(); }));
     c.append(top, row, favBtn('quiz', z.id)); box.appendChild(c);
   });
@@ -3801,10 +3949,10 @@ function runQuiz(quiz, cfg) {
     const pod = el('div', 'qh-pod3');
     if (team) {
       const order = [...Array(NT).keys()].sort((a, b) => tscore[b] - tscore[a]);
-      Podium3D(pod, order.slice(0, 3).map(t => ({ name: TNAME[t] + ' команда', score: tscore[t], emoji: '🏆' })));
+      PodiumGL(pod, order.slice(0, 3).map(t => ({ name: TNAME[t] + ' команда', score: tscore[t], emoji: '🏆' })));
       wrap.append(pod, raceTrack(false));
     } else {
-      Podium3D(pod, okp.slice(0, 3).map(p => { const a = avParse(p.av); return { name: p.name, score: p.score, emoji: a ? a.e : '' }; }));
+      PodiumGL(pod, okp.slice(0, 3).map(p => { const a = avParse(p.av); return { name: p.name, score: p.score, emoji: a ? a.e : '' }; }));
       wrap.appendChild(pod);
     }
     const rest = el('div', 'qh-rest'); (team ? okp.slice(0, 5) : okp.slice(3, 10)).forEach((p, i) => { const row = el('div', 'qh-row'); row.append(el('b', '', String(team ? i + 1 : i + 4)), el('span', '', p.name + (team && p.team >= 0 ? ' · ' + TNAME[p.team] : '')), el('em', '', String(p.score))); rest.appendChild(row); });
@@ -6288,7 +6436,7 @@ async function bgHome(kind) {
   if (error) { list.appendChild(el('p', 'msg err', error.message.includes('board_sets') ? 'Сақтау үшін update-13.sql әлі іске қосылмаған (Supabase → SQL Editor). Үлгімен бастау істей береді.' : 'Қате: ' + error.message)); return; }
   (data || []).forEach(s => { const r = el('div', 'bg-row'), nm = el('div', 'qct'); let meta = ''; try { meta = K.meta(bgNorm(kind, s.data)) + ' · '; } catch { }
     nm.append(el('strong', '', s.title), el('span', 'gm', meta + new Date(s.updated_at).toLocaleDateString('kk-KZ')));
-    r.append(nm, bgB('go', 'Бастау', () => bgStart(kind, s.data, s.title), 'padding:8px 18px'), mini('Өзгерту', () => bgEdit(kind, s)), mini('Көшіру', async () => { const x = await sb.from('board_sets').insert({ kind, title: (s.title + ' (көшірме)').slice(0, 120), data: s.data }); if (x.error) alert(x.error.message); else bgHome(kind); }), mini('Жою', async () => { if (!(await ask('«' + s.title + '» жойылсын ба?'))) return; await sb.from('board_sets').delete().eq('id', s.id); bgHome(kind); })); list.appendChild(r); });
+    r.append(nm, bgB('go', 'Бастау', () => bgStart(kind, s.data, s.title), 'padding:8px 18px'), mini('Өзгерту', () => bgEdit(kind, s)), mini('Бөлісу', () => shareModal('game', s)), mini('Көшіру', async () => { const x = await sb.from('board_sets').insert({ kind, title: (s.title + ' (көшірме)').slice(0, 120), data: s.data }); if (x.error) alert(x.error.message); else bgHome(kind); }), mini('Жою', async () => { if (!(await ask('«' + s.title + '» жойылсын ба?'))) return; await sb.from('board_sets').delete().eq('id', s.id); bgHome(kind); })); list.appendChild(r); });
   if (!(data || []).length) list.appendChild(el('p', 'sub', 'Әзірге өз жинағың жоқ. «Үлгімен бастау» арқылы көр, не «+ Жаңа жинақ» жаса.'));
 }
 function bgEdit(kind, s, pre, preTitle) {
