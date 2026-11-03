@@ -1399,6 +1399,12 @@ select option:disabled{color:#8a93b4}
 .sd-st{display:block;width:100%;text-align:left;margin:6px 0}
 @media (max-width:560px){.sd-cl{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.sd-tile,.sd-bars i{animation:none!important}}
+
+.ms-btn{margin:14px 0 10px;transition:transform .4s cubic-bezier(.34,1.56,.64,1),background .25s}.ms-btn:active{transform:scale(.96)}.ms-btn.on{background:var(--blue,#4d7cff);color:#fff;border-color:transparent}
+#myStats:not([hidden]),#staffDash:not([hidden]){animation:aplIn .6s cubic-bezier(.2,.9,.25,1) backwards}
+.ln-wrap{position:relative}.ln-svg{width:100%;height:auto;display:block;overflow:visible}.ln-ax{display:flex;justify-content:space-between;opacity:.65;margin-top:4px}
+.sd-made{display:grid;gap:10px}.sd-mk{display:grid;grid-template-columns:minmax(130px,1.2fr) 40px 2fr;gap:10px;align-items:center}.sd-mk b{font-variant-numeric:tabular-nums;text-align:right}.sd-mk .act-bar{grid-column:auto}
+@media (max-width:560px){.sd-mk{grid-template-columns:1fr 36px}.sd-mk .act-bar{grid-column:1/3}}
 </style>
 </head>
 <body>
@@ -1586,6 +1592,7 @@ select option:disabled{color:#8a93b4}
       <div id="rsHome">
         <h2 style="margin:0 0 6px;font-size:1.2rem">Менің сыныптарым</h2>
         <p class="sub" style="font-size:.9rem">Сыныптар мен оқушы аттарын осында сақтайсың, тізімді тек өзің көресің. Оқушыларға аккаунт керек емес.</p>
+        <button class="out ms-btn" id="rsStat" type="button" style="margin:0 0 12px">📈 Оқушылар статистикасы</button>
         <label for="rsName">Жаңа сынып</label>
         <input id="rsName" placeholder="Мысалы: 7А, содан кейін Enter">
         <button class="go" id="rsAdd">Сынып жасау</button>
@@ -1731,7 +1738,10 @@ select option:disabled{color:#8a93b4}
       <input id="accEdit" maxlength="80" autocomplete="name">
       <button class="go" id="accSave" style="width:auto;padding:10px 22px">Сақтау</button>
       <p class="msg" id="accMsg" role="status" aria-live="polite"></p>
-      <div id="staffDash" hidden></div>
+      <div id="msWrap" hidden>
+        <button class="out ms-btn" id="msBtn" type="button" aria-expanded="false">📈 Менің статистикам</button>
+        <div id="myStats" hidden></div>
+      </div>
       <div id="orphBox" hidden>
         <h3 style="margin:14px 0 0;font-size:1.05rem">Қойманы тазалау</h3>
         <p class="sub" style="font-size:.9rem">Жойылған ойын, материал, тапсырмалардан қалған, ешқайда байланбаған файлдарды табады (1 тәуліктен ескілерін).</p>
@@ -1784,6 +1794,7 @@ select option:disabled{color:#8a93b4}
 
     <div id="v-students" hidden>
       <h2 id="uTitle" style="margin:0 0 4px;font-size:1.2rem">Оқушылар</h2>
+      <div id="sdWrap"><button class="out ms-btn" id="sdBtn" type="button" aria-expanded="false">📈 Оқушылар статистикасы</button><div id="staffDash" hidden></div></div>
       <p class="sub" style="margin-bottom:8px">Тізімге қосылған нөмір ғана тіркеле алады. Қосқан оқушың алдымен «Тіркелу» бөлімінде өз құпия сөзін ойлап табуы керек. Күйі «Тіркелмеген» болса, ол әлі кірмеген.</p>
       <label for="aName">Аты-жөні</label>
       <input id="aName">
@@ -2221,7 +2232,7 @@ $('back').onclick = () => go(subj, true);
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 let rm = null; // Оқу бөлмесі күйі
 const VIEWS = ['home', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
-function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined' && isStaff) setTimeout(() => loadStaffDash(($('sdClass') || {}).value || null), 0); if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
+function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined') { const w = $('msWrap'); if (w) w.hidden = !isStaff; } if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
 function go(key, keep) {
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
   clearInterval(window.__qrDevT); if (key === 'account') { qrDevices(); window.__qrDevT = setInterval(() => { if ($('v-account').hidden) clearInterval(window.__qrDevT); else qrDevices(); }, 15000); }
@@ -2285,6 +2296,10 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '5.1', date: '03.11.2026', items: [
+    ['📈', 'Менің статистикам', 'Баптауда админ мен мұғалім өзінің белсенділігін көреді: қай күндері кірді, қай бөлімде көп болды, не істеді (викторина, жоспар, тапсырма). График сызылып шығады, дөңгелек пайызбен толады.'],
+    ['👥', 'Оқушылар статистикасы', 'Енді «Оқушылар» бетінде және «Менің сыныптарым» ішіндегі түймеден ашылады.']
+  ] },
   { ver: '5.0', date: '03.11.2026', items: [
     ['📈', 'Статистика дашборды', 'Баптау бетінде (админ мен мұғалімге): оқушы саны, апталық белсенділік, қай бөлімде көп болғаны, күн сайынғы кіру, сыныптар рейтингі, 7 күннен бері кірмегендер, ең қиын тесттер. Анимациямен.'],
     ['🏆', 'Шын 3D подиум', 'Викторина соңында үш өлшемді подиум: камера айналады, блоктар көтеріледі, конфетти түседі. Саусақпен бұруға болады.'],
@@ -2645,6 +2660,9 @@ async function addStudents(text) {
 }
 $('stName').onkeydown = e => { if (e.key === 'Enter') { addStudents($('stName').value); $('stName').value = ''; } };
 $('stName').onpaste = e => { const t = e.clipboardData.getData('text'); if (t.includes('\n')) { e.preventDefault(); addStudents(t); } };
+$('msBtn').onclick = toggleMyStats;
+$('rsStat').onclick = () => { go('students'); setTimeout(() => { if ($('staffDash').hidden) $('sdBtn').click(); $('sdWrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250); };
+$('sdBtn').onclick = () => { const b = $('sdBtn'), box = $('staffDash'), open = box.hidden; b.setAttribute('aria-expanded', String(open)); b.classList.toggle('on', open); if (!open) { box.hidden = true; return; } loadStaffDash(($('sdClass') || {}).value || null); };
 $('nQuick').onclick = async () => { await loadClassList(); classMsgModal(); };
 $('rsBack').onclick = showRosterHome; $('rsXls').onclick = rosterExcel; $('rsTpl').onclick = rosterTemplate;
 $('stClear').onclick = async () => { if (!(await ask('Сыныптағы барлық оқушыны өшіру керек пе?'))) return; await sb.from('roster_students').delete().eq('roster_id', curRoster.id); rsStudents = []; renderStudents(); };
@@ -3479,12 +3497,63 @@ async function rosterExcel() {
 }
 async function rosterTemplate() { try { await loadXLSX(); } catch { return notify('Кітапхана жүктелмеді.'); } const ws = XLSX.utils.aoa_to_sheet([['Аты-жөні'], ['Асанов Нұрлан'], ['Серікова Айгүл']]); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Сынып'); XLSX.writeFile(wb, 'synyp-ulgisi.xlsx'); }
 
-// ----- Статистика дашборды (баптау бетінде, админ мен мұғалімге)
+// ===== Графиктер: сызылатын сызық және толатын дөңгелек (пайызбен) =====
+function ringChart(rows, big, small) {
+  const NS = 'http://www.w3.org/2000/svg', R = 54, C = 2 * Math.PI * R, tot = rows.reduce((s, r) => s + r.w, 0) || 1;
+  const box = el('div', 'act-top'), rw = el('div', 'act-ringwrap'), svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 140 140'); svg.setAttribute('class', 'act-ring'); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', rows.map(r => r.k + ' ' + Math.round(100 * r.w / tot) + '%').join(', '));
+  const mk = (a) => { const c = document.createElementNS(NS, 'circle'); Object.entries(Object.assign({ cx: 70, cy: 70, r: R, fill: 'none', 'stroke-width': 16 }, a)).forEach(([k, v]) => c.setAttribute(k, v)); return c; };
+  svg.appendChild(mk({ stroke: 'rgba(128,128,128,.16)' })); let off = 0;
+  const arcs = rows.map((r, i) => { const len = r.w / tot * C, c = mk({ stroke: ACT_COL[i % 7], transform: 'rotate(' + (-90 + off / C * 360) + ' 70 70)', 'stroke-dasharray': '0 ' + C }); c.style.transition = 'stroke-dasharray 1.1s cubic-bezier(.2,.9,.25,1) ' + (i * .12) + 's'; svg.appendChild(c); off += len; return [c, Math.max(0, len - (rows.length > 1 ? 2 : 0))]; });
+  const mid = el('div', 'act-mid'), bn = el('b', '', '0'); mid.append(bn, el('small', '', small || '')); rw.append(svg, mid);
+  const leg = el('div', 'act-leg'), pcs = rows.map((r, i) => { const row = el('div', 'act-row'), dot = el('i', 'act-dot'), pc = el('b', 'act-pc', '0%'), bar = el('div', 'act-bar'), fi = el('i'); dot.style.background = fi.style.background = ACT_COL[i % 7]; fi.style.width = '0%'; fi.style.transition = 'width 1s cubic-bezier(.2,.9,.25,1) ' + (.15 + i * .08) + 's'; bar.appendChild(fi); row.style.setProperty('--d', i * 70 + 'ms'); row.append(dot, el('span', 'act-nm', r.k), pc, bar); if (r.t) row.title = r.t; leg.appendChild(row); return [fi, pc, Math.round(100 * r.w / tot)]; });
+  box.classList.add('act'); box.append(rw, leg);
+  box.play = () => requestAnimationFrame(() => requestAnimationFrame(() => { arcs.forEach(([c, g]) => c.setAttribute('stroke-dasharray', g + ' ' + C)); pcs.forEach(([fi, pc, p]) => { fi.style.width = p + '%'; countUp(pc, p, v => v + '%', 1000); }); box.classList.add('on'); big && countUp(bn, big[0], big[1], 1200); }));
+  return box;
+}
+function lineChart(vals, labels, fmt, color) {
+  const NS = 'http://www.w3.org/2000/svg', W = 640, H = 190, px = 8, py = 16, n = vals.length, mx = Math.max(1, ...vals), col = color || '#4d7cff';
+  const X = i => px + (n < 2 ? (W - 2 * px) / 2 : i * (W - 2 * px) / (n - 1)), Y = v => H - py - (H - 2 * py) * v / mx;
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('class', 'ln-svg'); svg.setAttribute('role', 'img');
+  const mk = (t, a) => { const e = document.createElementNS(NS, t); Object.entries(a).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
+  const gid = 'lg' + Math.random().toString(36).slice(2, 7), df = mk('defs', {}), lg = mk('linearGradient', { id: gid, x1: 0, y1: 0, x2: 0, y2: 1 }); lg.append(mk('stop', { offset: '0', 'stop-color': col, 'stop-opacity': '.35' }), mk('stop', { offset: '1', 'stop-color': col, 'stop-opacity': '0' })); df.appendChild(lg); svg.appendChild(df);
+  [0, .5, 1].forEach(k => svg.appendChild(mk('line', { x1: px, x2: W - px, y1: Y(mx * k), y2: Y(mx * k), stroke: 'rgba(128,128,128,.2)', 'stroke-dasharray': '3 5' })));
+  let d = ''; vals.forEach((v, i) => { const x = X(i), y = Y(v); if (!i) d = 'M' + x + ' ' + y; else { const xp = X(i - 1), yp = Y(vals[i - 1]), cx = (xp + x) / 2; d += ' C' + cx + ' ' + yp + ' ' + cx + ' ' + y + ' ' + x + ' ' + y; } });
+  const area = mk('path', { d: d + ' L' + X(n - 1) + ' ' + (H - py) + ' L' + X(0) + ' ' + (H - py) + ' Z', fill: 'url(#' + gid + ')' }); area.style.opacity = 0; area.style.transition = 'opacity 1s ease .9s'; svg.appendChild(area);
+  const path = mk('path', { d, fill: 'none', stroke: col, 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }); svg.appendChild(path);
+  const dots = vals.map((v, i) => { const c = mk('circle', { cx: X(i), cy: Y(v), r: v > 0 ? 3.6 : 0, fill: '#fff', stroke: col, 'stroke-width': 2 }); c.style.opacity = 0; c.style.transition = 'opacity .4s ease ' + (.5 + i * .03) + 's'; const t = mk('title', {}); t.textContent = (labels[i] || '') + ': ' + fmt(v); c.appendChild(t); svg.appendChild(c); return c; });
+  const wrap = el('div', 'ln-wrap'); wrap.appendChild(svg); const ax = el('div', 'ln-ax'); [0, Math.floor((n - 1) / 2), n - 1].forEach(i => ax.appendChild(el('small', '', labels[i] || ''))); wrap.appendChild(ax);
+  wrap.play = () => { const L = path.getTotalLength ? path.getTotalLength() : 1000; path.style.strokeDasharray = L; path.style.strokeDashoffset = L; path.getBoundingClientRect(); requestAnimationFrame(() => { path.style.transition = 'stroke-dashoffset 1.6s cubic-bezier(.4,.1,.2,1)'; path.style.strokeDashoffset = 0; area.style.opacity = 1; dots.forEach(c => c.style.opacity = 1); }); };
+  return wrap;
+}
+const dKey28 = dt => dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+function last28() { const out = [], td = new Date(); for (let k = 27; k >= 0; k--) { const dt = new Date(td); dt.setDate(td.getDate() - k); out.push({ key: dKey28(dt), lab: dt.getDate() + '.' + String(dt.getMonth() + 1).padStart(2, '0') }); } return out; }
+function viewRows(views) { const w = x => x.secs > 0 ? x.secs : x.n * 20; let rows = views.filter(x => x.secs > 0 || x.n > 0).map(x => ({ k: VIEW_KK[x.view] || x.view, w: w(x), t: (x.secs ? fmtT(x.secs) + ', ' : '') + x.n + ' рет' })).sort((a, b) => b.w - a.w); if (rows.length > 6) { const rest = rows.slice(6); rows = rows.slice(0, 6); rows.push({ k: 'Басқа', w: rest.reduce((s, r) => s + r.w, 0) }); } return rows; }
+
+// ----- Менің статистикам (баптауда): админ/мұғалімнің өз белсенділігі
+let msOpen = false;
+async function toggleMyStats() {
+  const box = $('myStats'), btn = $('msBtn'); msOpen = !msOpen; btn.setAttribute('aria-expanded', String(msOpen)); btn.classList.toggle('on', msOpen);
+  if (!msOpen) { box.hidden = true; return; } box.hidden = false; box.replaceChildren(el('p', 'sub', 'Жүктелуде…'));
+  const r = await sb.rpc('my_staff_stats');
+  if (r.error) { box.replaceChildren(el('p', 'msg err', /my_staff_stats|function/.test(r.error.message) ? 'update-27.sql әлі іске қосылмаған.' : 'Қате: ' + r.error.message)); return; }
+  const D = r.data || {}, root = el('div', 'sd on'), days = new Map((D.days || []).map(d => [String(d.day).slice(0, 10), d])), L = last28(), mins = L.map(x => Math.round(((days.get(x.key) || {}).secs || 0) / 60)), cnt = L.filter(x => days.has(x.key)).length, tot = mins.reduce((a, b) => a + b, 0), M = D.made || {};
+  const rows = viewRows(D.views || []), top = rows[0];
+  const tiles = [['📅', 'Кірген күн (28 күн)', cnt, v => v + ' күн'], ['⏱️', 'Жалпы уақыт', tot, v => v >= 120 ? (v / 60).toFixed(1) + ' сағ' : v + ' мин'], ['🏁', 'Викторина өткіздім', +M.runs30 || 0, v => v + ' рет'], ['🙋', 'Қатысқан оқушы', +M.players || 0, v => v]];
+  const tg = el('div', 'sd-tiles'); tiles.forEach(([ic, t, v, f], i) => { const c = el('div', 'sd-tile'), n = el('b', '', '0'); c.style.setProperty('--d', i * 70 + 'ms'); c.append(el('span', 'sd-ic', ic), n, el('small', '', t)); tg.appendChild(c); countUp(n, v, f, 1100); }); root.appendChild(tg);
+  const lc = el('div', 'pth-card'); lc.append(el('h3', '', 'Платформада өткізген уақытым (минут, 28 күн)')); const ln = lineChart(mins, L.map(x => x.lab), v => v + ' мин'); lc.appendChild(ln); root.appendChild(lc);
+  const rc = el('div', 'pth-card'); rc.append(el('h3', '', 'Қай бөлімде көп боламын')); let ring = null; if (rows.length) { ring = ringChart(rows, [Math.round(100 * rows[0].w / (rows.reduce((s, r) => s + r.w, 0) || 1)), v => v + '%'], top ? top.k : ''); rc.appendChild(ring); } else rc.appendChild(el('p', 'sub', 'Әзірге дерек жоқ. Платформаны пайдаланған сайын осында жиналады.')); root.appendChild(rc);
+  const mc = el('div', 'pth-card'); mc.append(el('h3', '', 'Не істедім'));
+  const made = [['🏁', 'Викторина', M.quizzes], ['📋', 'Сабақ жоспары', M.plans], ['📚', 'Үй тапсырмасы', M.homeworks], ['🗂️', 'Материал', M.mats], ['🎲', 'Ойын жинағы', M.games], ['👥', 'Сынып тізімі', M.rosters]], mxm = Math.max(1, ...made.map(x => +x[2] || 0)), mg = el('div', 'sd-made');
+  made.forEach(([ic, t, n], i) => { const c = el('div', 'sd-mk'), b = el('b', '', '0'), bar = el('div', 'act-bar'), fi = el('i'); fi.style.background = ACT_COL[i % 7]; fi.style.width = '0%'; fi.style.transition = 'width 1s cubic-bezier(.2,.9,.25,1) ' + (.2 + i * .08) + 's'; bar.appendChild(fi); c.append(el('span', '', ic + ' ' + t), b, bar); mg.appendChild(c); countUp(b, +n || 0, v => v, 1000); requestAnimationFrame(() => requestAnimationFrame(() => { fi.style.width = Math.max(3, Math.round(100 * (+n || 0) / mxm)) + '%'; })); });
+  mc.appendChild(mg); root.appendChild(mc); box.replaceChildren(root); ln.play(); ring && ring.play();
+}
+
+// ----- Оқушылар статистикасы («Оқушылар» бетінде, админ мен мұғалімге)
 let sdBusy = false;
 async function loadStaffDash(cls) {
   const box = $('staffDash'); if (!box || !isStaff || sdBusy) return; sdBusy = true; box.hidden = false;
   try {
-    if (!box.firstChild) { box.append(el('h3', 'sd-h', '📈 Статистика')); const sel = document.createElement('select'); sel.id = 'sdClass'; sel.style.cssText = 'width:auto;margin:0 0 12px'; box.append(sel, el('div', '', '')); box.lastChild.id = 'sdBody'; await loadClassList(); sel.append(new Option(isAdmin ? 'Барлық сынып' : 'Менің оқушыларым', '')); classesCache.forEach(c => sel.append(new Option(c.name, c.id))); sel.onchange = () => loadStaffDash(sel.value); }
+    if (!box.firstChild) { const sel = document.createElement('select'); sel.id = 'sdClass'; sel.style.cssText = 'width:auto;margin:0 0 12px'; box.append(sel, el('div', '', '')); box.lastChild.id = 'sdBody'; await loadClassList(); sel.append(new Option(isAdmin ? 'Барлық сынып' : 'Менің оқушыларым', '')); classesCache.forEach(c => sel.append(new Option(c.name, c.id))); sel.onchange = () => loadStaffDash(sel.value); }
     const body = $('sdBody'); body.replaceChildren(el('p', 'sub', 'Жүктелуде…'));
     const r = await sb.rpc('staff_dashboard', { p_class: cls || null });
     if (r.error) { body.replaceChildren(el('p', 'msg err', /staff_dashboard|function/.test(r.error.message) ? 'update-26.sql (және 25) әлі іске қосылмаған.' : 'Қате: ' + r.error.message)); return; }
@@ -3496,16 +3565,11 @@ function renderStaffDash(body, D) {
   const pct = (a, b) => b ? Math.min(100, Math.round(100 * a / b)) : 0;
   const tiles = [['👥', 'Оқушы', D.students || 0, v => v], ['🟢', 'Осы аптада кірген', D.active7 || 0, v => v + ' / ' + (D.students || 0)], ['⏱️', 'Апталық оқу уақыты', Math.round((D.secs7 || 0) / 60), v => v >= 120 ? (v / 60).toFixed(1) + ' сағ' : v + ' мин'], ['🧠', 'Орташа викторина', D.avg_quiz == null ? null : +D.avg_quiz, v => v + '%'], ['📚', 'Тапсырма орындалуы', pct(D.hw_done, D.hw_exp), v => D.hw_exp ? v + '%' : '—']];
   const tg = el('div', 'sd-tiles'); tiles.forEach(([ic, t, v, f], i) => { const c = el('div', 'sd-tile'), n = el('b', '', '0'); c.style.setProperty('--d', i * 70 + 'ms'); c.append(el('span', 'sd-ic', ic), n, el('small', '', t)); tg.appendChild(c); if (v == null) n.textContent = '—'; else countUp(n, v, f, 1100); }); root.appendChild(tg);
-  // бөлімдер үлесі
-  const views = (D.views || []).filter(x => x.secs > 0 || x.n > 0), w = x => x.secs > 0 ? x.secs : x.n * 20;
-  const vc = el('div', 'pth-card'); vc.append(el('h3', '', 'Оқушылар қайда көп болады'));
-  if (!views.length) vc.appendChild(el('p', 'sub', 'Әзірге дерек жоқ. Оқушылар жаңа нұсқаға кіргеннен кейін жиналады.'));
-  else { const tot = views.reduce((s, x) => s + w(x), 0) || 1, rows = views.slice(0, 7).map(x => ({ k: VIEW_KK[x.view] || x.view, p: Math.round(100 * w(x) / tot), secs: x.secs, n: x.n })); const g = el('div', 'act-leg'); rows.forEach((r, i) => { const row = el('div', 'act-row'), dot = el('i', 'act-dot'), pc = el('b', 'act-pc', '0%'), bar = el('div', 'act-bar'), fi = el('i'); dot.style.background = fi.style.background = ACT_COL[i]; fi.style.width = '0%'; fi.style.transition = 'width 1s cubic-bezier(.2,.9,.25,1) ' + (.1 + i * .08) + 's'; bar.appendChild(fi); row.style.setProperty('--d', i * 70 + 'ms'); row.append(dot, el('span', 'act-nm', r.k), pc, bar); row.title = (r.secs ? fmtT(r.secs) + ', ' : '') + r.n + ' рет'; g.appendChild(row); requestAnimationFrame(() => requestAnimationFrame(() => { fi.style.width = r.p + '%'; countUp(pc, r.p, v => v + '%', 1000); })); }); vc.appendChild(g); vc.classList.add('act', 'on'); }
-  // күн сайынғы кіру
+  // бөлімдер үлесі (дөңгелек) және күн сайынғы кіру (сызылатын график)
+  const vc = el('div', 'pth-card'); vc.append(el('h3', '', 'Оқушылар қайда көп болады')); const vr = viewRows(D.views || []); let ring = null;
+  if (!vr.length) vc.appendChild(el('p', 'sub', 'Әзірге дерек жоқ. Оқушылар жаңа нұсқаға кіргеннен кейін жиналады.')); else { ring = ringChart(vr, [Math.round((D.secs7 || 0) / 60), v => v >= 120 ? (v / 60).toFixed(1) + ' сағ' : v + ' мин'], 'осы аптада'); vc.appendChild(ring); }
   const dc = el('div', 'pth-card'); dc.append(el('h3', '', 'Күн сайын кірген оқушы (28 күн)'));
-  const map = new Map((D.days || []).map(d => [String(d.day).slice(0, 10), d])), mx = Math.max(1, ...(D.days || []).map(d => d.users)), bars = el('div', 'sd-bars'), td = new Date();
-  for (let k = 27; k >= 0; k--) { const dt = new Date(td); dt.setDate(td.getDate() - k); const key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0'), d = map.get(key), b = el('i'); b.style.setProperty('--h', d ? Math.max(8, Math.round(100 * d.users / mx)) + '%' : '4%'); b.style.setProperty('--d', (27 - k) * 22 + 'ms'); if (!d) b.className = 'z'; b.title = dt.toLocaleDateString('kk-KZ', { day: 'numeric', month: 'long' }) + ': ' + (d ? d.users + ' оқушы, ' + fmtT(d.secs || 0) : 'ешкім кірмеді'); bars.appendChild(b); }
-  dc.appendChild(bars);
+  const dmap = new Map((D.days || []).map(d => [String(d.day).slice(0, 10), d])), L28 = last28(), ln = lineChart(L28.map(x => (dmap.get(x.key) || {}).users || 0), L28.map(x => x.lab), v => v + ' оқушы', '#34D399'); dc.appendChild(ln);
   // сыныптар рейтингі
   const cc = el('div', 'pth-card'); cc.append(el('h3', '', 'Сыныптар: осы аптадағы белсенділік'));
   const cls = D.classes || []; if (!cls.length) cc.appendChild(el('p', 'sub', 'Сынып бойынша дерек жоқ.')); else { const mxs = Math.max(1, ...cls.map(c => c.secs)); cls.slice(0, 8).forEach((c, i) => { const row = el('div', 'sd-cl'), bar = el('div', 'act-bar'), fi = el('i'); fi.style.background = ACT_COL[i % 6]; fi.style.width = '0%'; fi.style.transition = 'width 1s cubic-bezier(.2,.9,.25,1) ' + (.1 + i * .08) + 's'; bar.appendChild(fi); row.append(el('b', '', c.name), bar, el('small', '', fmtT(c.secs) + ' · ' + c.active + '/' + c.students)); cc.appendChild(row); requestAnimationFrame(() => requestAnimationFrame(() => { fi.style.width = Math.max(3, Math.round(100 * c.secs / mxs)) + '%'; })); }); }
@@ -3515,7 +3579,7 @@ function renderStaffDash(body, D) {
   // қиын тесттер
   const hc = el('div', 'pth-card'); hc.append(el('h3', '', '🧩 Ең қиын тесттер (үй тапсырмасы)'));
   const hd = D.hard || []; if (!hd.length) hc.appendChild(el('p', 'sub', 'Әзірге тест нәтижесі жоқ.')); else hd.forEach((x, i) => { const row = el('div', 'sd-cl'), bar = el('div', 'act-bar'), fi = el('i'); fi.style.background = x.pct < 50 ? '#F87171' : x.pct < 75 ? '#FBBF24' : '#34D399'; fi.style.width = '0%'; fi.style.transition = 'width 1s cubic-bezier(.2,.9,.25,1) ' + (.1 + i * .08) + 's'; bar.appendChild(fi); row.append(el('b', 'sd-t', x.title), bar, el('small', '', x.pct + '% · ' + x.n + ' оқушы')); hc.appendChild(row); requestAnimationFrame(() => requestAnimationFrame(() => { fi.style.width = x.pct + '%'; })); });
-  root.append(vc, dc, cc, ic, hc); body.appendChild(root);
+  root.append(dc, vc, cc, ic, hc); body.appendChild(root); ln.play(); ring && ring.play();
 }
 
 async function loadQuizzes() {
@@ -4597,7 +4661,7 @@ $('rGo').onclick = async () => {
 let userRole = 'student', inKind = 'all';
 function setUserPage(role) {
   userRole = role; const t = role === 'student';
-  $('uTitle').textContent = t ? (isAdmin ? 'Оқушылар' : 'Менің оқушыларым') : 'Мұғалімдер мен админдер';
+  $('sdWrap').hidden = !t; $('uTitle').textContent = t ? (isAdmin ? 'Оқушылар' : 'Менің оқушыларым') : 'Мұғалімдер мен админдер';
   $('aRole').replaceChildren(...(t ? [['student', 'Оқушы']] : [['teacher', 'Мұғалім'], ['admin', 'Админ']]).map(([v, l]) => new Option(l, v)));
   if (!t) $('aClass').value = '';
   $('aClassLab').hidden = $('aClass').hidden = $('aNewClass').hidden = $('imp').hidden = !t;
@@ -5326,12 +5390,12 @@ async function orphanScan() {
 }
 
 // ===== Оқушы белсенділігі: бөлімдер бойынша үлес (дөңгелек диаграмма) және кірген күндер =====
-const VIEW_KK = { home: 'Басты бет', room: 'Оқу бөлмесі', path: 'Менің жолым', hw: 'Үй тапсырмасы', sites: 'Сайттар', favs: 'Таңдаулылар', catalog: 'Ойындар каталогы', viewer: 'Ойын ойнау', rank: 'Рейтинг', news: 'Хабарландыру', account: 'Аккаунт', play: 'Ойын-сауық', quiz: 'Викторина', mats: 'Материалдар' };
+const VIEW_KK = { home: 'Басты бет', room: 'Оқу бөлмесі', path: 'Менің жолым', hw: 'Үй тапсырмасы', sites: 'Сайттар', favs: 'Таңдаулылар', catalog: 'Ойындар каталогы', viewer: 'Ойын ойнау', rank: 'Рейтинг', news: 'Хабарландыру', account: 'Аккаунт', play: 'Ойын-сауық', quiz: 'Викторина', mats: 'Материалдар', lessons: 'Сабақ жоспары', rosters: 'Менің сыныптарым', students: 'Оқушылар', classes: 'Сыныптар', inbox: 'Сұраулар', games: 'Ойындарды басқару', sites: 'Сайттар' };
 const ACT_COL = ['#4D7CFF', '#34D399', '#FBBF24', '#F472B6', '#A78BFA', '#22D3EE', '#94A3B8'];
 let tv = { v: null, t: 0 };
 function trackView(v) {
   try {
-    if (meRole !== 'student' || !v) return; const now = Date.now(), snd = (a, b) => { const r = sb.rpc('track_view', { p_view: a, p_secs: b }); r && r.then && r.then(() => { }, () => { }); };
+    if (!meRole || !v) return; const now = Date.now(), snd = (a, b) => { const r = sb.rpc('track_view', { p_view: a, p_secs: b }); r && r.then && r.then(() => { }, () => { }); };
     if (tv.v && tv.v !== v) { const s = Math.round((now - tv.t) / 1000); if (s > 0) snd(tv.v, Math.min(s, 900)); }
     if (tv.v !== v) { snd(v, 0); tv = { v, t: now }; }
   } catch { }
