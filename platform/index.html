@@ -1744,8 +1744,8 @@ select option:disabled{color:#8a93b4}
       </div>
       <div id="orphBox" hidden>
         <h3 style="margin:14px 0 0;font-size:1.05rem">Қойманы тазалау</h3>
-        <p class="sub" style="font-size:.9rem">Жойылған ойын, материал, тапсырмалардан қалған, ешқайда байланбаған файлдарды табады (1 тәуліктен ескілерін).</p>
-        <button class="out" id="orphGo">🧹 Жетім файлдарды іздеу</button>
+        <p class="sub" style="font-size:.9rem">Жойылған ойын, материал, тапсырмалардан қалған, ешқайда қолданылмай жатқан файлдарды табады (1 тәуліктен ескілерін).</p>
+        <button class="out" id="orphGo">🧹 Артық файлдарды іздеу</button>
         <div id="orphOut" style="margin-top:8px"></div>
       </div>
       <div id="bkBox" hidden>
@@ -2319,7 +2319,7 @@ const CHANGELOG = [
   { ver: '4.1', date: '02.11.2026', items: [
     ['🪐', 'Менің ғаламым', 'Әр викторина бір планета: жасыл жақсы меңгерілген, қызыл қайталау керек. Сүйреп айналдыр, планетаны бас.'],
     ['📓', 'Қателер дәптері', 'Үй тапсырмасындағы тесттерде қателескен сұрақтар жиналады, қайта шешсең дәптерден кетеді.'],
-    ['🧹', 'Қойманы тазалау (админ)', 'Жойылған ойын, материал, тапсырмалардан қалған жетім файлдарды табады және жояды.'],
+    ['🧹', 'Қойманы тазалау (админ)', 'Жойылған ойын, материал, тапсырмалардан қалған артық файлдарды табады және жояды.'],
     ['📴', 'Офлайн ойындар', 'Жүктелген html ойын бір рет ашылса, интернетсіз де ашылады.']
   ] },
   { ver: '4.0', date: '01.11.2026', items: [
@@ -5378,10 +5378,10 @@ async function orphanScan() {
   const out = $('orphOut'), msg = t => { out.replaceChildren(el('p', 'sub', t)); };
   msg('Іздеу…'); const r = await sb.rpc('storage_orphans');
   if (r.error) return msg(/storage_orphans|function/.test(r.error.message) ? 'update-23.sql әлі іске қосылмаған.' : 'Қате: ' + r.error.message);
-  const rows = r.data || []; if (!rows.length) return msg('Жетім файл жоқ. Қойма таза ✅');
+  const rows = r.data || []; if (!rows.length) return msg('Артық файл жоқ. Қойма таза ✅');
   const mb = (rows.reduce((s, x) => s + (+x.bytes || 0), 0) / 1048576).toFixed(1), by = {}; rows.forEach(x => { (by[x.bucket] = by[x.bucket] || []).push(x.name); });
   const b = el('button', 'go dgb', 'Жою (' + rows.length + ' файл)'); b.style.cssText = 'width:auto;padding:10px 22px;margin-top:8px';
-  out.replaceChildren(el('p', '', rows.length + ' жетім файл, шамамен ' + mb + ' МБ: ' + Object.entries(by).map(([k, v]) => k + ' ' + v.length).join(', ')), b);
+  out.replaceChildren(el('p', '', rows.length + ' артық файл, шамамен ' + mb + ' МБ: ' + Object.entries(by).map(([k, v]) => k + ' ' + v.length).join(', ')), b);
   b.onclick = async () => {
     if (!(await ask(rows.length + ' файл біржола жойылады. Жалғастырамыз ба?'))) return; b.disabled = true; let n = 0;
     for (const [k, v] of Object.entries(by)) for (let i = 0; i < v.length; i += 100) { const d = await sb.storage.from(k).remove(v.slice(i, i + 100)); if (!d.error) n += (d.data || []).length; }
