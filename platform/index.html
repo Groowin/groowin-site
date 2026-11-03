@@ -1133,16 +1133,18 @@ html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-
 
 /* Кіру беті: шыны карточка (Glassy OTP стилі) */
 
-.pdWrap{display:block;width:min(200px,52vw);margin:4px auto -50px;position:relative;z-index:1;pointer-events:none}
-.pdSvg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 12px 20px rgba(0,0,0,.5))}
+.pdBadge{width:92px;height:92px;border-radius:50%;overflow:hidden;position:relative;margin-top:-12px;background:radial-gradient(circle at 50% 30%,rgba(140,180,255,.5),rgba(40,70,160,.45) 70%);border:1.5px solid rgba(190,215,255,.6)}
+.pdBadge .pdSvg{display:block;width:100%;height:100%;overflow:hidden;will-change:transform}
+#authCard .pdBadge{width:96px;height:96px;border-radius:50%;margin:-4px auto 14px;display:block;overflow:hidden}
+.pdBadge{animation:none}
+@media (prefers-reduced-motion:no-preference){.pdBadge{animation:pdPop 1s 4.3s cubic-bezier(.34,1.56,.64,1) backwards}}
+@keyframes pdPop{from{opacity:0;transform:scale(.2) translateY(30px)}}
 #authCard{z-index:2}
-#authCard.pdOn{padding-top:54px}
 .pdFld{position:relative}.pdFld input{padding-right:48px}
 .pdEye{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:10px;background:transparent;color:#aebbe6;font-size:1.05rem;cursor:pointer;padding:0}
 .pdEye:hover{color:#fff;background:rgba(255,255,255,.1)}
 .pdEye:focus-visible{outline:2px solid #5CA0FF}
 .pf{position:fixed;pointer-events:none;z-index:99;font-size:1.4rem;will-change:transform,opacity}
-@media (max-height:620px){.pdWrap{width:120px;margin-bottom:-34px}}
 #auth{text-align:center}#authCard{text-align:left}#auth h1{font-size:2.4rem;margin-bottom:6px}
 #authCard{position:relative;border-radius:34px;padding:34px 28px 26px;max-width:430px;margin-left:auto;margin-right:auto;
   background:linear-gradient(155deg,rgba(40,70,140,.34),rgba(10,18,44,.5) 55%,rgba(20,40,96,.34));
@@ -1432,7 +1434,8 @@ select option:disabled{color:#8a93b4}
   <h1>Groowin</h1>
   <p class="by">by Askerov Almas</p>
   <p class="sub">Ойнап үйренетін платформа.</p>
-  <div class="pdWrap" id="pdWrap"><svg class="pdSvg" id="pdSvg" viewBox="0 0 230 208" role="img" aria-label="Панда: курсорға қарап, құпия сөз жазғанда көзін жабады">
+  <div class="card" id="authCard">
+    <div class="vIcon pdBadge" id="pdBadge"><svg class="pdSvg" id="pdSvg" viewBox="34 30 162 162" role="img" aria-label="Панда: курсорға қарап, құпия сөз жазғанда көзін жабады">
     <defs>
       <radialGradient id="pd_hg" cx="50%" cy="35%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3e8f2"/></radialGradient>
       <radialGradient id="pd_pg" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#454a5c"/><stop offset="1" stop-color="#181a22"/></radialGradient>
@@ -1465,8 +1468,6 @@ select option:disabled{color:#8a93b4}
       <g id="pd_beansR" fill="#5b6074"><circle cx="0" cy="0" r="3.4"/><circle cx="-7" cy="-8" r="2.2"/><circle cx="0" cy="-10" r="2.2"/><circle cx="7" cy="-8" r="2.2"/></g>
     </g>
   </svg></div>
-  <div class="card pdOn" id="authCard">
-    <div class="vIcon" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></div>
     <div class="tabs" role="tablist">
       <button role="tab" id="t-in" aria-selected="true">Кіру</button>
       <button role="tab" id="t-up" aria-selected="false">Тіркелу</button>
@@ -7869,7 +7870,7 @@ sb.auth.onAuthStateChange((_e, session) => {
     beansL.setAttribute('transform', 'translate(' + lx.toFixed(1) + ' ' + (ly + 9).toFixed(1) + ')'); beansR.setAttribute('transform', 'translate(' + rx.toFixed(1) + ' ' + (ry + 9).toFixed(1) + ')');
     // секіру
     S.jv -= 26 * dt; S.jump = Math.max(0, S.jump + S.jv * dt * 22); if (S.jump === 0 && S.jv < 0) S.jv = 0;
-    svg.style.transform = 'translateY(' + (-S.jump).toFixed(1) + 'px)';
+    svg.style.transform = 'translateY(' + (-S.jump * .5).toFixed(1) + 'px) scale(' + (1 + S.jump / 40).toFixed(3) + ')';
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
