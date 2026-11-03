@@ -1132,6 +1132,17 @@ html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-
 @media (prefers-reduced-motion:reduce){.cx-n,.cx-st,.bg-given{animation:none!important}}
 
 /* Кіру беті: шыны карточка (Glassy OTP стилі) */
+
+.pdWrap{display:block;width:min(200px,52vw);margin:4px auto -50px;position:relative;z-index:1;pointer-events:none}
+.pdSvg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 12px 20px rgba(0,0,0,.5))}
+#authCard{z-index:2}
+#authCard.pdOn{padding-top:54px}
+.pdFld{position:relative}.pdFld input{padding-right:48px}
+.pdEye{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:10px;background:transparent;color:#aebbe6;font-size:1.05rem;cursor:pointer;padding:0}
+.pdEye:hover{color:#fff;background:rgba(255,255,255,.1)}
+.pdEye:focus-visible{outline:2px solid #5CA0FF}
+.pf{position:fixed;pointer-events:none;z-index:99;font-size:1.4rem;will-change:transform,opacity}
+@media (max-height:620px){.pdWrap{width:120px;margin-bottom:-34px}}
 #auth{text-align:center}#authCard{text-align:left}#auth h1{font-size:2.4rem;margin-bottom:6px}
 #authCard{position:relative;border-radius:34px;padding:34px 28px 26px;max-width:430px;margin-left:auto;margin-right:auto;
   background:linear-gradient(155deg,rgba(40,70,140,.34),rgba(10,18,44,.5) 55%,rgba(20,40,96,.34));
@@ -1421,7 +1432,40 @@ select option:disabled{color:#8a93b4}
   <h1>Groowin</h1>
   <p class="by">by Askerov Almas</p>
   <p class="sub">Ойнап үйренетін платформа.</p>
-  <div class="card" id="authCard">
+  <div class="pdWrap" id="pdWrap"><svg class="pdSvg" id="pdSvg" viewBox="0 0 230 208" role="img" aria-label="Панда: курсорға қарап, құпия сөз жазғанда көзін жабады">
+    <defs>
+      <radialGradient id="pd_hg" cx="50%" cy="35%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3e8f2"/></radialGradient>
+      <radialGradient id="pd_pg" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#454a5c"/><stop offset="1" stop-color="#181a22"/></radialGradient>
+    </defs>
+    <g id="pd_arms">
+      <line id="pd_armL" stroke="url(#pd_pg)" stroke-width="30" stroke-linecap="round" x1="52" y1="250" x2="62" y2="196"/>
+      <line id="pd_armR" stroke="url(#pd_pg)" stroke-width="30" stroke-linecap="round" x1="178" y1="250" x2="168" y2="196"/>
+    </g>
+    <g id="pd_head">
+      <g id="pd_ears">
+        <circle cx="70" cy="48" r="23" fill="#16181f"/><circle cx="70" cy="50" r="11" fill="#3a3e4d"/>
+        <circle cx="160" cy="48" r="23" fill="#16181f"/><circle cx="160" cy="50" r="11" fill="#3a3e4d"/>
+      </g>
+      <ellipse cx="115" cy="100" rx="68" ry="61" fill="url(#pd_hg)" stroke="#cfd5e3" stroke-width="1.5"/>
+      <g id="pd_face">
+        <ellipse cx="87" cy="98" rx="15" ry="18" transform="rotate(20 87 98)" fill="#16181f"/>
+        <ellipse cx="143" cy="98" rx="15" ry="18" transform="rotate(-20 143 98)" fill="#16181f"/>
+        <g id="pd_eL"><circle cx="88" cy="97" r="8.2" fill="#fff"/><g id="pd_pL"><circle cx="88" cy="97" r="4.4" fill="#0c0d12"/><circle cx="86.6" cy="95.4" r="1.5" fill="#fff"/></g></g>
+        <g id="pd_eR"><circle cx="142" cy="97" r="8.2" fill="#fff"/><g id="pd_pR"><circle cx="142" cy="97" r="4.4" fill="#0c0d12"/><circle cx="140.6" cy="95.4" r="1.5" fill="#fff"/></g></g>
+        <circle cx="76" cy="124" r="8" fill="#ff9fb4" opacity=".42"/><circle cx="154" cy="124" r="8" fill="#ff9fb4" opacity=".42"/>
+        <ellipse cx="115" cy="117" rx="8" ry="5.6" fill="#16181f"/><ellipse cx="112.5" cy="115.2" rx="2.6" ry="1.4" fill="#fff" opacity=".55"/>
+        <path d="M115 122 V127" stroke="#16181f" stroke-width="2.4" stroke-linecap="round"/>
+        <path id="pd_mouth" d="M105 127 Q115 134 125 127" fill="none" stroke="#16181f" stroke-width="2.6" stroke-linecap="round"/>
+      </g>
+    </g>
+    <g id="pd_paws">
+      <ellipse id="pd_pawL" cx="62" cy="196" rx="19" ry="23" fill="url(#pd_pg)"/>
+      <ellipse id="pd_pawR" cx="168" cy="196" rx="19" ry="23" fill="url(#pd_pg)"/>
+      <g id="pd_beansL" fill="#5b6074"><circle cx="0" cy="0" r="3.4"/><circle cx="-7" cy="-8" r="2.2"/><circle cx="0" cy="-10" r="2.2"/><circle cx="7" cy="-8" r="2.2"/></g>
+      <g id="pd_beansR" fill="#5b6074"><circle cx="0" cy="0" r="3.4"/><circle cx="-7" cy="-8" r="2.2"/><circle cx="0" cy="-10" r="2.2"/><circle cx="7" cy="-8" r="2.2"/></g>
+    </g>
+  </svg></div>
+  <div class="card pdOn" id="authCard">
     <div class="vIcon" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></div>
     <div class="tabs" role="tablist">
       <button role="tab" id="t-in" aria-selected="true">Кіру</button>
@@ -1434,7 +1478,7 @@ select option:disabled{color:#8a93b4}
     <label for="phone">Телефон нөмірі</label>
     <input id="phone" type="tel" inputmode="tel" placeholder="+7 700 123 45 67" autocomplete="off" name="gw-phone" data-lpignore="true">
     <label for="pass">Құпия сөз</label>
-    <input id="pass" type="password" autocomplete="new-password" name="gw-pass" data-lpignore="true">
+    <div class="pdFld"><input id="pass" type="password" autocomplete="new-password" name="gw-pass" data-lpignore="true"><button class="pdEye" id="pdEye" type="button" aria-label="Құпия сөзді көрсету" aria-pressed="false">👁</button></div>
     <p class="hint" id="passHint" hidden>Кемінде 6 таңба.</p>
     <button class="go" id="submit">Кіру</button>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
@@ -2296,6 +2340,9 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '5.2', date: '04.11.2026', items: [
+    ['🐼', 'Кіру бетіндегі панда', 'Панда курсорға қарайды, нөмір жазғанда сол жаққа үңіледі, құпия сөзде көзін жауып, 👁 басқанда сығалайды. Қате болса бас шайқайды, кірсе қуанады.']
+  ] },
   { ver: '5.1', date: '03.11.2026', items: [
     ['📈', 'Менің статистикам', 'Баптауда админ мен мұғалім өзінің белсенділігін көреді: қай күндері кірді, қай бөлімде көп болды, не істеді (викторина, жоспар, тапсырма). График сызылып шығады, дөңгелек пайызбен толады.'],
     ['👥', 'Оқушылар статистикасы', 'Енді «Оқушылар» бетінде және «Менің сыныптарым» ішіндегі түймеден ашылады.']
@@ -7729,9 +7776,107 @@ function verifyAnim() {
   });
 }
 sb.auth.onAuthStateChange((_e, session) => {
-  if (session && _e === 'SIGNED_IN' && window.__vflag && Date.now() - window.__vflag < 15000 && !$('auth').hidden) { window.__vflag = 0; verifyAnim().then(() => showApp(session)); return; }
+  if (session && _e === 'SIGNED_IN' && window.__vflag && Date.now() - window.__vflag < 15000 && !$('auth').hidden) { window.__vflag = 0; try { window.pandaCheer && window.pandaCheer(); } catch (e) {} verifyAnim().then(() => showApp(session)); return; }
   setTimeout(() => showApp(session), 0);
 });
+</script>
+<script>
+(() => {
+
+  const $ = id => document.getElementById(id), still = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const svg = $('pdSvg'), head = $('pd_head'), face = $('pd_face'), ears = $('pd_ears'), mouth = $('pd_mouth'), pL = $('pd_pL'), pR = $('pd_pR'), eL = $('pd_eL'), eR = $('pd_eR');
+  const pawL = $('pd_pawL'), pawR = $('pd_pawR'), armL = $('pd_armL'), armR = $('pd_armR'), beansL = $('pd_beansL'), beansR = $('pd_beansR');
+  const U = $('phone'), P = $('pass'), msg = $('msg'), card = $('authCard'), eye = $('pdEye');
+  const live = () => !$('auth').hidden && !card.classList.contains('req');
+
+  // ---------- күй ----------
+  const S = { lx: 0, ly: 0, tx: 0, ty: 0, smile: .35, smileT: .35, blink: 1, shake: 0, jump: 0, jv: 0, mode: 'look', peek: false, lastMove: performance.now() };
+  // paw позициялары: тыныштық, көзді жабу, сығалау
+  const POS = { rest: [[62, 196], [168, 196]], cover: [[90, 103], [140, 103]], peek: [[90, 103], [186, 134]] };
+  const pawC = { L: [62, 196], R: [168, 196] };
+  const lerp = (a, b, k) => a + (b - a) * k;
+
+  // ---------- қарау бағыты ----------
+  function headCenter() { const r = svg.getBoundingClientRect(); return [r.left + r.width * .5, r.top + r.height * .48]; }
+  function lookAt(x, y, strength) {
+    const [cx, cy] = headCenter(), dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy) || 1, k = clamp(d / 260, 0, 1) * (strength || 1);
+    S.tx = clamp(dx / d * k * 1.15, -1, 1); S.ty = clamp(dy / d * k * 1.1, -1, 1);
+  }
+  addEventListener('pointermove', e => { if (!live()) return; S.lastMove = performance.now(); if (document.activeElement === P && S.mode !== 'peek') return; if (document.activeElement === U) { lookAtField(); return; } lookAt(e.clientX, e.clientY); });
+  addEventListener('pointerdown', e => { if (!live()) return; S.lastMove = performance.now(); if (!e.target.closest('#authCard')) lookAt(e.clientX, e.clientY); });
+  function lookAtField() {
+    const r = U.getBoundingClientRect(), f = clamp(U.value.length / 14, 0, 1);
+    lookAt(r.left + 18 + f * (r.width - 36), r.top + r.height * .5, 1.35); S.ty = clamp(S.ty + .35, -1, 1);
+  }
+
+  // ---------- оқиғалар ----------
+  U.addEventListener('focus', () => { S.mode = 'look'; S.peek = false; S.smileT = .6; lookAtField(); });
+  U.addEventListener('input', () => { S.smileT = .85; lookAtField(); });
+  U.addEventListener('blur', () => { S.smileT = .35; });
+  P.addEventListener('focus', () => { S.mode = S.peek ? 'peek' : 'cover'; S.smileT = .5; if (S.peek) lookAtField(); });
+  P.addEventListener('blur', () => { if (!S.peek || document.activeElement !== P) { S.mode = 'look'; S.smileT = .35; } });
+  P.addEventListener('input', () => { if (S.peek) { lookAtField(); } });
+  eye.addEventListener('click', () => {
+    S.peek = !S.peek; P.type = S.peek ? 'text' : 'password'; eye.setAttribute('aria-pressed', String(S.peek)); eye.textContent = S.peek ? '🙈' : '👁'; eye.setAttribute('aria-label', S.peek ? 'Құпия сөзді жасыру' : 'Құпия сөзді көрсету');
+    if (document.activeElement !== P) P.focus(); S.mode = S.peek ? 'peek' : 'cover'; if (S.peek) { const r = P.getBoundingClientRect(); lookAt(r.left + r.width * .3, r.top + r.height * .5, 1.4); }
+    S.smileT = S.peek ? .9 : .5;
+  });
+  const nm = $('name'); nm.addEventListener('focus', () => { S.mode = 'look'; S.peek = false; S.smileT = .6; const r = nm.getBoundingClientRect(); lookAt(r.left + r.width * .4, r.top + r.height * .5, 1.35); });
+  $('submit').addEventListener('click', () => { S.peek = false; P.type = 'password'; eye.textContent = '👁'; eye.setAttribute('aria-pressed', 'false'); S.mode = 'look'; S.smileT = .8; });
+  ['t-in', 't-up', 'qrLoginBtn', 'forgotBtn', 'accessBtn'].forEach(i => { const b = $(i); b && b.addEventListener('click', () => { S.mode = 'look'; S.peek = false; S.smileT = .6; S.tx = 0; S.ty = .3; }); });
+  new MutationObserver(() => { if (msg.classList.contains('err') && msg.textContent) { S.mode = 'look'; S.smileT = -1; S.shake = 1; setTimeout(() => { S.smileT = .35; }, 1800); } else if (msg.classList.contains('ok') && msg.textContent) { S.smileT = 1; S.jv = 7.5; } }).observe(msg, { attributes: true, childList: true, characterData: true, subtree: true });
+  window.pandaCheer = () => { S.smileT = 1; S.jv = 7.5; S.mode = 'look'; confetti(); };
+  function confetti() {
+    const r = card.getBoundingClientRect(), em = ['🎉', '⭐', '💛', '✨', '🐼', '🎈'];
+    for (let i = 0; i < 26; i++) { const s = document.createElement('span'); s.className = 'pf'; s.textContent = em[i % em.length]; s.style.left = r.left + r.width / 2 + 'px'; s.style.top = r.top + 40 + 'px'; document.body.appendChild(s);
+      const a = -Math.PI / 2 + (Math.random() - .5) * 2.4, v = 160 + Math.random() * 260, dx = Math.cos(a) * v, dy = Math.sin(a) * v;
+      s.animate([{ transform: 'translate(0,0) scale(.4)', opacity: 1 }, { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(1.1)', opacity: 1, offset: .45 }, { transform: 'translate(' + dx * 1.2 + 'px,' + (dy + 340) + 'px) scale(.8) rotate(' + (Math.random() * 360) + 'deg)', opacity: 0 }], { duration: 1500 + Math.random() * 700, easing: 'cubic-bezier(.2,.7,.3,1)' }).onfinish = () => s.remove(); }
+  }
+
+  // ---------- блинк ----------
+  let blinkT = 0, nextBlink = performance.now() + 2500;
+  // ---------- негізгі цикл ----------
+  let last = performance.now();
+  function frame(now) {
+    if ($('auth').hidden) { last = now; requestAnimationFrame(frame); return; }
+    const dt = Math.min(.05, (now - last) / 1000); last = now; const t = now / 1000;
+    // бос тұрса, панда өздігінен жан-жаққа қарайды
+    if (now - S.lastMove > 6000 && S.mode === 'look' && document.activeElement !== U) { S.tx = Math.sin(t * .7) * .7; S.ty = Math.sin(t * .45) * .3; }
+    const k = 1 - Math.exp(-dt * (still ? 30 : 9));
+    S.lx = lerp(S.lx, S.tx, k); S.ly = lerp(S.ly, S.ty, k); S.smile = lerp(S.smile, S.smileT, 1 - Math.exp(-dt * 8));
+    // бас: 3D параллакс (бет көбірек, құлақ кері жүреді)
+    S.shake = Math.max(0, S.shake - dt * 1.4); const sh = Math.sin(t * 38) * 9 * S.shake * S.shake * (still ? 0 : 1);
+    head.setAttribute('transform', 'translate(' + (S.lx * 4 + sh * .6).toFixed(2) + ' ' + (S.ly * 3).toFixed(2) + ') rotate(' + (S.lx * 7 + sh).toFixed(2) + ' 115 150)');
+    face.setAttribute('transform', 'translate(' + (S.lx * 8).toFixed(2) + ' ' + (S.ly * 5.5).toFixed(2) + ')');
+    ears.setAttribute('transform', 'translate(' + (-S.lx * 2.2).toFixed(2) + ' ' + (-S.ly * 1.6).toFixed(2) + ')');
+    // қарашық
+    const px = (S.lx * 3.7).toFixed(2), py = (S.ly * 3.3).toFixed(2); pL.setAttribute('transform', 'translate(' + px + ' ' + py + ')'); pR.setAttribute('transform', 'translate(' + px + ' ' + py + ')');
+    // көз қағу
+    if (now > nextBlink && !blinkT) { blinkT = now; nextBlink = now + 2200 + Math.random() * 3800; }
+    let b = 1; if (blinkT) { const p = (now - blinkT) / 170; if (p >= 1) { blinkT = 0; } else b = 1 - Math.sin(p * Math.PI) * .92; }
+    const sm = S.smile > .8 ? .0 : 0; const be = S.mode === 'cover' ? 1 : b; // көз жабық болса да қозғалмайды
+    eL.setAttribute('transform', 'translate(88 97) scale(1 ' + b.toFixed(3) + ') translate(-88 -97)'); eR.setAttribute('transform', 'translate(142 97) scale(1 ' + (S.mode === 'peek' ? Math.max(b, .98) : b).toFixed(3) + ') translate(-142 -97)');
+    // ауыз
+    const sv = S.smile, qy = 127 + sv * 9; mouth.setAttribute('d', sv > .9 ? 'M103 126 Q115 ' + (127 + 13) + ' 127 126 Q115 ' + (127 + 22) + ' 103 126 Z' : 'M105 127 Q115 ' + qy.toFixed(2) + ' 125 127'); mouth.setAttribute('fill', sv > .9 ? '#ff6b86' : 'none');
+    // paws
+    const tgt = POS[S.mode === 'cover' ? 'cover' : S.mode === 'peek' ? 'peek' : 'rest'], kp = 1 - Math.exp(-dt * (still ? 30 : 11));
+    pawC.L[0] = lerp(pawC.L[0], tgt[0][0], kp); pawC.L[1] = lerp(pawC.L[1], tgt[0][1], kp); pawC.R[0] = lerp(pawC.R[0], tgt[1][0], kp * .9); pawC.R[1] = lerp(pawC.R[1], tgt[1][1], kp * .9);
+    const hx = S.lx * 7, hy = S.ly * 5, cov = S.mode !== 'look' ? 1 : 0; // көзді жапқанда paw бетпен бірге жүреді
+    const lx = pawC.L[0] + hx * cov, ly = pawC.L[1] + hy * cov, rx = pawC.R[0] + (S.mode === 'cover' ? hx : 0), ry = pawC.R[1] + (S.mode === 'cover' ? hy : 0);
+    pawL.setAttribute('cx', lx.toFixed(1)); pawL.setAttribute('cy', ly.toFixed(1)); pawR.setAttribute('cx', rx.toFixed(1)); pawR.setAttribute('cy', ry.toFixed(1));
+    armL.setAttribute('x2', lx.toFixed(1)); armL.setAttribute('y2', ly.toFixed(1)); armR.setAttribute('x2', rx.toFixed(1)); armR.setAttribute('y2', ry.toFixed(1));
+    beansL.setAttribute('transform', 'translate(' + lx.toFixed(1) + ' ' + (ly + 9).toFixed(1) + ')'); beansR.setAttribute('transform', 'translate(' + rx.toFixed(1) + ' ' + (ry + 9).toFixed(1) + ')');
+    // секіру
+    S.jv -= 26 * dt; S.jump = Math.max(0, S.jump + S.jv * dt * 22); if (S.jump === 0 && S.jv < 0) S.jv = 0;
+    svg.style.transform = 'translateY(' + (-S.jump).toFixed(1) + 'px)';
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+})();
+
+addEventListener('load', () => { try { const r = document.getElementById('pdSvg').getBoundingClientRect(); } catch (e) {} });
 </script>
 </body>
 </html>
