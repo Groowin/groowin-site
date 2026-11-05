@@ -8092,7 +8092,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
   // ---------- агент циклі ----------
   async function call() {
     const r = await sb.functions.invoke('teacher-agent', { body: { messages: msgs } });
-    if (r.error) { let t = r.error.message || 'Қате'; try { const j = await r.error.context.json(); if (j && j.error) t = j.error; } catch { } if (/not found|404|Failed to send/i.test(t)) t = 'Көмекші әлі орнатылмаған: teacher-agent функциясын Supabase-ке жүктеу керек.'; throw new Error(t); }
+    if (r.error) { let t = r.error.message || 'Қате'; try { const j = await r.error.context.json(); if (j && j.error) t = j.error + (Array.isArray(j.detail) && j.detail.length ? '\n[' + j.detail.join('; ') + ']' : ''); } catch { } if (/not found|404|Failed to send/i.test(t)) t = 'Көмекші әлі орнатылмаған: teacher-agent функциясын Supabase-ке жүктеу керек.'; throw new Error(t); }
     if (!r.data || !r.data.message) throw new Error((r.data && r.data.error) || 'Бос жауап');
     return r.data.message;
   }
