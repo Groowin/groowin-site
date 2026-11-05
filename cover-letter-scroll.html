@@ -85,7 +85,9 @@ button{font:inherit;color:inherit}
 @keyframes rise{from{transform:translateY(112%)}to{transform:none}}
 .s0-sub{margin:0;font:500 38px/1.35 var(--sans);color:var(--muted);animation:fade 1s .7s both}
 @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.s0-hint{display:flex;align-items:center;gap:20px;margin-top:70px;font:500 26px var(--sans);color:var(--muted);animation:fade 1s 1.1s both}
+.s0-by{margin:34px 0 0;font:500 34px/1.3 var(--sans);color:var(--muted);animation:fade 1s .9s both}
+.s0-by b{font:700 44px var(--serif);color:var(--text);margin-left:8px;padding-bottom:4px;border-bottom:4px solid var(--accent)}
+.s0-hint{display:flex;align-items:center;gap:20px;margin-top:56px;font:500 26px var(--sans);color:var(--muted);animation:fade 1s 1.1s both}
 .mouse{width:34px;height:54px;border:3px solid var(--muted);border-radius:20px;position:relative}
 .mouse::after{content:"";position:absolute;left:50%;top:10px;width:4px;height:10px;margin-left:-2px;border-radius:2px;background:var(--gold);animation:wheel 1.6s ease-in-out infinite}
 @keyframes wheel{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(18px)}}
@@ -272,7 +274,7 @@ button{font:inherit;color:inherit}
 @media (prefers-reduced-motion:reduce){
   .env-wrap{animation:none}
   .mouse::after{animation:none;opacity:1}
-  .s0-text .ln > span,.s0-sub,.s0-hint{animation:none}
+  .s0-text .ln > span,.s0-sub,.s0-by,.s0-hint{animation:none}
 }
 </style>
 </head>
@@ -290,6 +292,7 @@ button{font:inherit;color:inherit}
     <div class="s0-text" id="s0t">
       <h1><span class="ln"><span>How to write</span></span><span class="ln"><span>a cover letter</span></span></h1>
       <p class="s0-sub">Writing a CV and a letter of application</p>
+      <p class="s0-by">Presented by <b>Askerov Almas</b></p>
       <div class="s0-hint"><div class="mouse"></div><span>Scroll to begin</span></div>
     </div>
     <div class="env-wrap">
