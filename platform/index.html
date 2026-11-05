@@ -1147,6 +1147,60 @@ html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-
 .pdEye:hover{color:#fff;background:rgba(255,255,255,.1)}
 .pdEye:focus-visible{outline:2px solid #5CA0FF}
 .pf{position:fixed;pointer-events:none;z-index:99;font-size:1.4rem;will-change:transform,opacity}
+/* ===== ЖИ көмекші ===== */
+#aiFab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;width:58px;height:58px;border-radius:50%;border:1.5px solid rgba(190,215,255,.6);background:radial-gradient(circle at 50% 30%,rgba(140,180,255,.55),rgba(40,70,160,.85) 75%);box-shadow:0 12px 30px -6px rgba(40,80,220,.7);cursor:pointer;padding:0;display:grid;place-items:center;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+#aiFab:hover{transform:scale(1.08)}#aiFab:active{transform:scale(.94)}#aiFab:focus-visible{outline:3px solid var(--sun)}
+#aiFab svg{width:46px;height:46px;overflow:visible}
+#aiPanel{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:61;width:min(410px,calc(100vw - 24px));height:min(640px,calc(100vh - 110px));display:flex;flex-direction:column;border-radius:22px;border:1px solid rgba(170,200,255,.35);background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden;transform-origin:100% 100%;animation:aiIn .3s cubic-bezier(.2,.9,.3,1.2)}
+#aiPanel[hidden]{display:none}
+@keyframes aiIn{from{opacity:0;transform:scale(.85) translateY(20px)}}
+.ai-h{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(170,200,255,.2);background:linear-gradient(160deg,rgba(77,124,255,.22),transparent)}
+.ai-h .av{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(140,180,255,.5),rgba(40,70,160,.6) 75%);border:1px solid rgba(190,215,255,.5);display:grid;place-items:center;flex:none}
+.ai-h .av svg{width:34px;height:34px;overflow:visible}
+.ai-h b{flex:1;font-size:1rem}
+.ai-h button{background:none;border:0;color:var(--mute);font-size:1.2rem;cursor:pointer;border-radius:8px;width:32px;height:32px}
+.ai-h button:hover{background:rgba(128,150,200,.2);color:var(--ink)}
+.ai-proc{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:.82rem;color:var(--mute);border-bottom:1px solid rgba(170,200,255,.12);cursor:pointer;user-select:none}
+.ai-proc input{accent-color:var(--blue);width:16px;height:16px;margin:0;cursor:pointer}
+#aiLog{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.ai-m{max-width:88%;padding:9px 12px;border-radius:16px;line-height:1.45;font-size:.93rem;white-space:pre-wrap;word-wrap:break-word;animation:aiMsg .25s ease backwards}
+@keyframes aiMsg{from{opacity:0;transform:translateY(8px)}}
+.ai-m.u{align-self:flex-end;background:linear-gradient(135deg,#3b6bff,#1f8fd8);color:#fff;border-bottom-right-radius:5px}
+.ai-m.a{align-self:flex-start;background:rgba(128,150,200,.16);border-bottom-left-radius:5px}
+.ai-m.e{align-self:flex-start;background:rgba(255,100,90,.16);color:var(--err)}
+.ai-st{align-self:flex-start;font-size:.8rem;color:var(--mute);display:flex;gap:6px;align-items:center;padding:2px 4px;animation:aiMsg .25s ease backwards}
+.ai-st .sp{width:12px;height:12px;border:2px solid rgba(150,170,220,.4);border-top-color:var(--blue);border-radius:50%;animation:aiSpin .8s linear infinite;flex:none}
+.ai-st.ok .sp{animation:none;border:0;width:auto;height:auto}.ai-st.ok .sp::before{content:'✓';color:#2fbf71;font-weight:700}
+@keyframes aiSpin{to{transform:rotate(360deg)}}
+.ai-dots{align-self:flex-start;display:flex;gap:4px;padding:8px 12px}
+.ai-dots i{width:7px;height:7px;border-radius:50%;background:var(--mute);animation:aiDot 1s infinite ease-in-out}.ai-dots i:nth-child(2){animation-delay:.15s}.ai-dots i:nth-child(3){animation-delay:.3s}
+@keyframes aiDot{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+.ai-card{align-self:stretch;border:1px solid rgba(170,200,255,.28);border-radius:14px;padding:10px;background:rgba(128,150,200,.1);display:flex;flex-direction:column;gap:7px;animation:aiMsg .25s ease backwards}
+.ai-card h4{margin:0;font-size:.88rem;color:var(--mute);font-weight:600}
+.ai-hit{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:10px;background:rgba(128,150,200,.14)}
+.ai-hit span{flex:1;min-width:0;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-hit small{display:block;color:var(--mute);font-size:.74rem}
+.ai-card button,.ai-chip{font:inherit;font-size:.84rem;border-radius:10px;border:1px solid rgba(170,200,255,.4);background:rgba(77,124,255,.2);color:var(--ink);padding:6px 11px;cursor:pointer}
+.ai-card button:hover,.ai-chip:hover{background:rgba(77,124,255,.4)}
+.ai-card button.go2{background:linear-gradient(90deg,#3b6bff,#19b0dd);color:#fff;border:0;font-weight:700}
+.ai-card button:disabled{opacity:.5;cursor:default}
+.ai-card input,.ai-card textarea,.ai-card select{width:100%;font:inherit;font-size:.88rem;padding:7px 9px;border-radius:10px;border:1px solid rgba(170,200,255,.35);background:rgba(0,0,0,.18);color:var(--ink)}
+html[data-theme=light] .ai-card input,html[data-theme=light] .ai-card textarea,html[data-theme=light] .ai-card select{background:#fff}
+.ai-card textarea{min-height:64px;resize:vertical}
+.ai-row{display:flex;gap:7px;flex-wrap:wrap}
+.ai-q{font-size:.84rem;line-height:1.4}.ai-q .ok{color:#2fbf71;font-weight:700}
+.ai-chips{display:flex;gap:6px;flex-wrap:wrap}
+.ai-f{display:flex;gap:6px;padding:10px;border-top:1px solid rgba(170,200,255,.2)}
+.ai-f textarea{flex:1;resize:none;height:42px;min-height:0;max-height:110px;margin:0;box-sizing:border-box;font:inherit;font-size:.93rem;padding:9px 12px;border-radius:14px;border:1px solid rgba(170,200,255,.35);background:rgba(0,0,0,.18);color:var(--ink);outline:0}
+html[data-theme=light] .ai-f textarea{background:#fff}
+.ai-f textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(77,124,255,.25)}
+.ai-f button{border:0;border-radius:14px;width:46px;height:42px;flex:none;margin:0;padding:0;background:linear-gradient(90deg,#3b6bff,#19b0dd);color:#fff;font-size:1.1rem;cursor:pointer}
+.ai-f button:disabled{opacity:.5}
+.ai-foot{display:flex;justify-content:space-between;align-items:center;padding:0 12px 8px;font-size:.74rem;color:var(--mute)}
+.ai-foot button{background:none;border:0;color:var(--mute);cursor:pointer;font-size:.74rem;text-decoration:underline}
+.aiHit{animation:aiPulse 1.2s ease 3;outline:3px solid var(--sun);outline-offset:2px;border-radius:14px}
+@keyframes aiPulse{50%{box-shadow:0 0 0 10px rgba(255,200,61,.35)}}
+@media (max-width:560px){#aiPanel{right:8px;left:8px;width:auto;bottom:calc(80px + env(safe-area-inset-bottom));height:calc(100vh - 100px)}}
+@media (prefers-reduced-motion:reduce){#aiPanel,.ai-m,.ai-st,.ai-card{animation:none}.ai-dots i,.ai-st .sp,.aiHit{animation:none}}
 #auth{text-align:center}#authCard{text-align:left}#auth h1{font-size:2.4rem;margin-bottom:6px}
 #authCard{position:relative;border-radius:34px;padding:34px 28px 26px;max-width:430px;margin-left:auto;margin-right:auto;
   background:linear-gradient(155deg,rgba(40,70,140,.34),rgba(10,18,44,.5) 55%,rgba(20,40,96,.34));
@@ -2000,6 +2054,7 @@ async function showApp(session) {
   window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isOwner = isAdmin && !!me?.is_owner; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff; $('nQuick').hidden = !isStaff;
   $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   if (isStaff) setTimeout(slidePre, 4000);
+  try { window.aiInit && window.aiInit(); } catch (e) { }
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
@@ -2343,6 +2398,9 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '5.3', date: '06.11.2026', items: [
+    ['🤖', 'Groowin көмекші', 'Мұғалім мен админге: файлды тауып береді, үй тапсырмасы мен викторина жобасын жасайды. «Процесті көрсету» қосулы болса, сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді. Жоба тек сен «Растау» басқанда сақталады.']
+  ] },
   { ver: '5.2', date: '04.11.2026', items: [
     ['🐼', 'Кіру бетіндегі панда', 'Панда курсорға қарайды, нөмір жазғанда сол жаққа үңіледі, құпия сөзде көзін жауып, 👁 басқанда сығалайды. Қате болса бас шайқайды, кірсе қуанады.']
   ] },
@@ -7881,6 +7939,191 @@ sb.auth.onAuthStateChange((_e, session) => {
 })();
 
 addEventListener('load', () => { try { const r = document.getElementById('pdSvg').getBoundingClientRect(); } catch (e) {} });
+</script>
+<script>
+/* ===== ЖИ көмекші (мұғалім/админ) ===== */
+(() => {
+  const g = id => document.getElementById(id), PK = 'gwAiProc';
+  let msgs = [], busy = false, stop = false, built = false, showProc = ls.get(PK) !== '0';
+  const PANDA = '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="#16181f"/><circle cx="31" cy="9" r="6" fill="#16181f"/><ellipse cx="20" cy="22" rx="16" ry="14.5" fill="#fff"/><ellipse cx="13" cy="21" rx="4" ry="4.8" transform="rotate(20 13 21)" fill="#16181f"/><ellipse cx="27" cy="21" rx="4" ry="4.8" transform="rotate(-20 27 21)" fill="#16181f"/><circle cx="13.4" cy="20.6" r="1.7" fill="#fff"/><circle cx="26.6" cy="20.6" r="1.7" fill="#fff"/><ellipse cx="20" cy="27" rx="2.2" ry="1.5" fill="#16181f"/><path d="M17 30q3 2.6 6 0" fill="none" stroke="#16181f" stroke-width="1.2" stroke-linecap="round"/></svg>';
+  const trunc = (s, n) => String(s == null ? '' : s).slice(0, n);
+  const plain = t => String(t || '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/^\s*[*-] /gm, '• ').replace(/`/g, '');
+
+  function build() {
+    built = true;
+    const fab = el('button'); fab.id = 'aiFab'; fab.type = 'button'; fab.innerHTML = PANDA; fab.setAttribute('aria-label', 'Көмекшіні ашу'); fab.hidden = true;
+    const p = el('div'); p.id = 'aiPanel'; p.hidden = true; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Groowin көмекші');
+    p.innerHTML = '<div class="ai-h"><div class="av">' + PANDA + '</div><b>Groowin көмекші</b><button type="button" id="aiClr" title="Жаңа әңгіме" aria-label="Жаңа әңгіме">↻</button><button type="button" id="aiX" aria-label="Жабу">✕</button></div>' +
+      '<label class="ai-proc" title="Қосулы болса, көмекші сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді"><input type="checkbox" id="aiProc"> Процесті көрсету</label>' +
+      '<div id="aiLog" aria-live="polite"></div>' +
+      '<div class="ai-foot"><span id="aiStat"></span><button type="button" id="aiAdm" hidden>Статистика</button></div>' +
+      '<form class="ai-f" id="aiForm"><textarea id="aiIn" rows="1" maxlength="2000" placeholder="Не істеу керек?" aria-label="Хабарлама"></textarea><button type="submit" id="aiSend" aria-label="Жіберу">➤</button></form>';
+    document.body.append(fab, p);
+    g('aiProc').checked = showProc;
+    g('aiProc').onchange = e => { showProc = e.target.checked; ls.set(PK, showProc ? '1' : '0'); };
+    const open = o => { p.hidden = !o; fab.hidden = o; if (o) { welcome(); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
+    fab.onclick = () => open(true); g('aiX').onclick = () => open(false);
+    p.addEventListener('keydown', e => { if (e.key === 'Escape') open(false); });
+    g('aiClr').onclick = () => { if (busy) { stop = true; } msgs = []; g('aiLog').replaceChildren(); welcome(true); };
+    const ta = g('aiIn'); ta.oninput = () => { ta.style.height = '42px'; ta.style.height = Math.min(110, ta.scrollHeight) + 'px'; };
+    ta.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); g('aiForm').requestSubmit(); } };
+    g('aiForm').onsubmit = e => { e.preventDefault(); const t = ta.value.trim(); if (!t || busy) return; ta.value = ''; ta.style.height = '42px'; run(t); };
+    g('aiAdm').onclick = adminStats; g('aiAdm').hidden = !isAdmin;
+  }
+
+  function welcome(force) {
+    const log = g('aiLog'); if (log.children.length && !force) return;
+    log.append(bubble('a', 'Сәлем! Мен Groowin көмекшісімін 🐼 Файлыңды тауып, тапсырма не викторина жобасын жасап бере аламын.'));
+    const ch = el('div', 'ai-chips');
+    ['Файлымды тауып бер', 'Викторина жасап бер', 'Үй тапсырмасын дайында'].forEach(t => { const b = el('button', 'ai-chip', t); b.type = 'button'; b.onclick = () => { g('aiIn').value = t + ': '; g('aiIn').focus(); }; ch.append(b); });
+    log.append(ch);
+  }
+  const bubble = (k, t) => el('div', 'ai-m ' + k, k === 'a' ? plain(t) : t);
+  const scroll = () => { const l = g('aiLog'); l.scrollTop = l.scrollHeight; };
+  const push = n => { g('aiLog').append(n); scroll(); return n; };
+
+  async function refreshStats() {
+    try { const r = await sb.rpc('ai_stats'); if (r.error || !r.data) { g('aiStat').textContent = ''; return; } const d = r.data; g('aiStat').textContent = 'Бүгін: ' + d.today.requests + ' сұрау · ' + Number(d.today.tokens).toLocaleString('ru') + ' токен'; } catch { }
+  }
+  async function adminStats() {
+    const m = modal('ЖИ көмекші статистикасы'); const b = m.box; b.append(el('p', 'msg', 'Жүктелуде…'));
+    const r = await sb.rpc('ai_stats'); b.lastChild.remove();
+    if (r.error) { b.append(el('p', 'msg err', 'Қате: ' + r.error.message + ' (update-28.sql іске қосылды ма?)')); return; }
+    const d = r.data, fm = n => Number(n).toLocaleString('ru');
+    b.append(el('p', '', 'Бүгін (барлығы): ' + d.all_today.requests + ' сұрау, ' + fm(d.all_today.tokens) + ' токен'));
+    b.append(el('p', '', 'Менің айым: ' + d.month.requests + ' сұрау, ' + fm(d.month.tokens) + ' токен'));
+    const tb = (title, rows, key) => { b.append(el('h3', '', title)); if (!rows.length) { b.append(el('p', 'msg', 'Әзірге бос.')); return; } const t = el('table'); t.style.cssText = 'width:100%;border-collapse:collapse;font-size:.9rem'; rows.forEach(x => { const tr = el('tr'); [x[key] || '—', x.requests + ' сұрау', fm(x.tokens) + ' токен'].forEach((c, i) => { const td = el('td', '', c); td.style.cssText = 'padding:5px 6px;border-bottom:1px solid rgba(128,150,200,.25);' + (i ? 'text-align:right;white-space:nowrap' : ''); tr.append(td); }); t.append(tr); }); b.append(t); };
+    tb('Осы ай: провайдер бойынша', d.by_provider || [], 'provider'); tb('Осы ай: мұғалім бойынша', d.by_user || [], 'name');
+  }
+
+  // ---------- құралдар ----------
+  async function fetchMats() {
+    const [f, i] = await Promise.all([sb.from('mat_folders').select('id,name,parent_id').limit(2000), sb.from('mat_items').select('id,title,kind,folder_id,created_at,mime').limit(3000)]);
+    return { f: f.data || [], i: i.data || [] };
+  }
+  const fpath = (fs, id) => { const a = []; let c = id, n = 0; while (c && n++ < 12) { const f = fs.find(x => x.id === c); if (!f) break; a.unshift(f.name); c = f.parent_id; } return a; };
+  const toks = q => String(q || '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(t => t.length > 1);
+  function score(hay, tk) { hay = hay.toLowerCase(); let s = 0; tk.forEach(t => { if (hay.includes(t)) s += 2; else { const st = t.slice(0, Math.max(3, t.length - 2)); if (t.length > 3 && hay.includes(st)) s += 1; } }); return s; }
+
+  const TOOLS = {
+    async search_materials(a) {
+      const tk = toks(a.query); if (!tk.length) return { error: 'Іздеу сөзі бос' };
+      const { f, i } = await fetchMats(), hits = [];
+      i.forEach(it => { const p = fpath(f, it.folder_id), s = score(it.title + ' ' + p.join(' '), tk); if (s) hits.push({ s, id: it.id, title: it.title, folder: p.join(' / ') || 'Басты бет', type: it.kind === 'link' ? 'сілтеме' : (it.mime || 'файл'), date: String(it.created_at || '').slice(0, 10) }); });
+      f.forEach(x => { const s = score(x.name + ' ' + fpath(f, x.parent_id).join(' '), tk); if (s) hits.push({ s: s - .5, id: 'f:' + x.id, title: x.name, folder: fpath(f, x.parent_id).join(' / ') || 'Басты бет', type: 'папка', date: '' }); });
+      hits.sort((x, y) => y.s - x.s); const top = hits.slice(0, 6).map(({ s, ...r }) => r);
+      if (top.length) card_hits(top);
+      return { count: hits.length, results: top };
+    },
+    async open_material(a) {
+      const { f, i } = await fetchMats(), isF = String(a.id).startsWith('f:'), id = String(a.id).replace(/^f:/, '');
+      const it = isF ? f.find(x => x.id === id) : i.find(x => x.id === id); if (!it) return { error: 'Табылмады' };
+      if (!showProc) return { ok: true, note: 'Процесс көрсету өшірулі, мұғалім чаттағы «Көрсету» батырмасын басады.' };
+      await openMat(a.id); return { ok: true, shown: it.title || it.name };
+    },
+    async list_classes() {
+      let q = sb.from('classes').select('id,name').order('name').limit(200);
+      if (!isAdmin) { const t = await sb.from('teacher_classes').select('class_id').eq('teacher_id', meId); const ids = (t.data || []).map(x => x.class_id); if (!ids.length) return { classes: [] }; q = q.in('id', ids); }
+      const r = await q; if (r.error) return { error: r.error.message }; return { classes: r.data || [] };
+    },
+    async create_homework_draft(a) {
+      const cl = (await TOOLS.list_classes()).classes || [], c = cl.find(x => x.id === a.class_id);
+      if (!c) return { error: 'class_id қате. Алдымен list_classes шақыр және сол тізімнен id ал.' };
+      const due = /^\d{4}-\d{2}-\d{2}$/.test(a.due_date || '') ? a.due_date : '';
+      card_hw({ cls: cl, class_id: c.id, title: trunc(a.title, 120), body: trunc(a.body, 2000), due }); return { ok: true, note: 'Жоба мұғалімге көрсетілді, растауын күтіп тұр.' };
+    },
+    async create_quiz_draft(a) {
+      const qs = (Array.isArray(a.questions) ? a.questions : []).slice(0, 20).map(q => { let o = (Array.isArray(q.options) ? q.options : []).map(x => trunc(x, 150).trim()).slice(0, 4); while (o.length < 4) o.push(''); const c = Math.max(0, Math.min(3, parseInt(q.correct, 10) || 0)); return { t: trunc(q.text, 400).trim(), img: null, o, c, s: 20 }; }).filter(q => q.t && q.o.filter(Boolean).length >= 2 && q.o[q.c]);
+      if (!qs.length) return { error: 'Жарамды сұрақ жоқ (әр сұраққа мәтін, кемінде 2 жауап және дұрыс жауап керек).' };
+      card_quiz({ title: trunc(a.title, 120) || 'Викторина', questions: qs }); return { ok: true, count: qs.length, note: 'Жоба мұғалімге көрсетілді, растауын күтіп тұр.' };
+    },
+    async go_to(a) {
+      const ok = ['home', 'mats', 'lessons', 'quiz', 'hw', 'students', 'rosters', 'news', 'account', 'play', 'sites']; if (!ok.includes(a.view)) return { error: 'Белгісіз бөлім' };
+      if (!showProc) return { ok: true, note: 'Процесс көрсету өшірулі, бөлім ашылмады.' };
+      if (a.view === 'quiz') go('play'); else go(a.view); return { ok: true };
+    }
+  };
+  const LABEL = { search_materials: 'Материалдардан іздеп жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+
+  async function openMat(id) {
+    const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
+    const it = isF ? f.find(x => x.id === rid) : i.find(x => x.id === rid); if (!it) { notify('Материал табылмады (жойылған болуы мүмкін)', 'err'); return; }
+    go('mats'); await loadMats(); mCur = (isF ? it.id : (it.folder_id || null)); matQ = ''; if (isF) mCur = it.id; renderMats();
+    if (!isF) { await new Promise(r => setTimeout(r, 120)); const t = [...g('mList').children].find(c => c.textContent.includes(it.title)); if (t) { t.classList.add('aiHit'); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); setTimeout(() => t.classList.remove('aiHit'), 4500); } }
+  }
+
+  // ---------- карточкалар ----------
+  function card_hits(rows) {
+    const c = el('div', 'ai-card'); c.append(el('h4', '', 'Табылғандар'));
+    rows.forEach(r => { const row = el('div', 'ai-hit'), s = el('span', '', (r.type === 'папка' ? '📁 ' : '📄 ') + r.title), sm = el('small', '', r.folder + (r.date ? ' · ' + r.date : '')); s.append(sm); const b = el('button', '', 'Көрсету'); b.type = 'button'; b.onclick = () => openMat(r.id); row.append(s, b); c.append(row); });
+    push(c);
+  }
+  function card_hw(d) {
+    const c = el('div', 'ai-card'); c.append(el('h4', '', '📝 Үй тапсырмасының жобасы'));
+    const sel = el('select'); sel.setAttribute('aria-label', 'Сынып'); d.cls.forEach(x => { const o = el('option', '', x.name); o.value = x.id; if (x.id === d.class_id) o.selected = true; sel.append(o); });
+    const ti = el('input'); ti.value = d.title; ti.maxLength = 120; ti.setAttribute('aria-label', 'Тақырып');
+    const bd = el('textarea'); bd.value = d.body; bd.maxLength = 2000; bd.setAttribute('aria-label', 'Мәтіні');
+    const du = el('input'); du.type = 'date'; du.value = d.due; du.setAttribute('aria-label', 'Мерзімі');
+    const ok = el('button', 'go2', 'Растау және жіберу'), no = el('button', '', 'Бас тарту'), msg = el('div', 'ai-q'); ok.type = no.type = 'button';
+    ok.onclick = async () => {
+      if (!ti.value.trim()) { msg.textContent = 'Тақырып бос.'; return; } ok.disabled = no.disabled = true;
+      const r = await sb.from('homeworks').insert({ title: ti.value.trim().slice(0, 120), body: bd.value.trim().slice(0, 2000) || null, class_id: sel.value, due_date: du.value || null, attachments: [], has_test: false });
+      if (r.error) { msg.textContent = 'Қате: ' + r.error.message; ok.disabled = no.disabled = false; return; }
+      msg.textContent = '✅ Тапсырма сыныпқа жіберілді.'; c.querySelectorAll('input,textarea,select').forEach(x => x.disabled = true); ok.hidden = no.hidden = true; notify('Тапсырма жіберілді');
+    };
+    no.onclick = () => { c.remove(); push(bubble('a', 'Жоба алынып тасталды.')); };
+    const row = el('div', 'ai-row'); row.append(ok, no); c.append(sel, ti, bd, du, row, msg); push(c);
+  }
+  function card_quiz(d) {
+    const c = el('div', 'ai-card'); c.append(el('h4', '', '🎯 Викторина жобасы'));
+    const ti = el('input'); ti.value = d.title; ti.maxLength = 120; ti.setAttribute('aria-label', 'Атауы'); c.append(ti);
+    d.questions.forEach((q, i) => { const x = el('div', 'ai-q'); x.append(el('b', '', (i + 1) + '. ' + q.t)); q.o.forEach((o, j) => { if (!o) return; const l = el('div', j === q.c ? 'ok' : '', (j === q.c ? '✓ ' : '• ') + o); x.append(l); }); c.append(x); });
+    const ok = el('button', 'go2', 'Сақтау'), no = el('button', '', 'Бас тарту'), msg = el('div', 'ai-q'); ok.type = no.type = 'button';
+    ok.onclick = async () => {
+      ok.disabled = no.disabled = true;
+      const r = await sb.from('quizzes').insert({ title: ti.value.trim().slice(0, 120) || d.title, questions: d.questions, updated_at: new Date().toISOString() }).select('id').single();
+      if (r.error) { msg.textContent = 'Қате: ' + r.error.message; ok.disabled = no.disabled = false; return; }
+      msg.textContent = '✅ Сақталды. Енді «Ойын-сауық → Викторина» бөлімінде көресің.'; ok.hidden = no.hidden = true; ti.disabled = true; notify('Викторина сақталды');
+    };
+    no.onclick = () => { c.remove(); push(bubble('a', 'Жоба алынып тасталды.')); };
+    const row = el('div', 'ai-row'); row.append(ok, no); c.append(row, msg); push(c);
+  }
+
+  // ---------- агент циклі ----------
+  async function call() {
+    const r = await sb.functions.invoke('teacher-agent', { body: { messages: msgs } });
+    if (r.error) { let t = r.error.message || 'Қате'; try { const j = await r.error.context.json(); if (j && j.error) t = j.error; } catch { } if (/not found|404|Failed to send/i.test(t)) t = 'Көмекші әлі орнатылмаған: teacher-agent функциясын Supabase-ке жүктеу керек.'; throw new Error(t); }
+    if (!r.data || !r.data.message) throw new Error((r.data && r.data.error) || 'Бос жауап');
+    return r.data.message;
+  }
+  async function run(text) {
+    busy = true; stop = false; g('aiSend').disabled = true; g('aiLog').querySelectorAll('.ai-chips').forEach(x => x.remove());
+    push(bubble('u', text)); msgs.push({ role: 'user', content: text });
+    while (msgs.length > 30) { msgs.shift(); while (msgs.length && msgs[0].role !== 'user') msgs.shift(); }
+    const dots = el('div', 'ai-dots'); dots.append(el('i'), el('i'), el('i')); push(dots);
+    try {
+      for (let step = 0; step < 8 && !stop; step++) {
+        const m = await call(); msgs.push(m);
+        if (m.tool_calls && m.tool_calls.length) {
+          if (m.content) dots.before(bubble('a', m.content));
+          for (const tc of m.tool_calls) {
+            const name = tc.function.name; let args = {}; try { args = JSON.parse(tc.function.arguments || '{}'); } catch { }
+            let st = null; if (showProc) { st = el('div', 'ai-st'); st.append(el('span', 'sp'), el('span', '', LABEL[name] || name)); dots.before(st); scroll(); await new Promise(r => setTimeout(r, 350)); }
+            let res; try { res = TOOLS[name] ? await TOOLS[name](args) : { error: 'Белгісіз құрал' }; } catch (e) { res = { error: String(e.message || e) }; }
+            if (st) { st.classList.add('ok'); await new Promise(r => setTimeout(r, 250)); }
+            msgs.push({ role: 'tool', tool_call_id: tc.id, name, content: trunc(JSON.stringify(res), 4000) });
+          }
+          dots.before(...[]); scroll(); continue;
+        }
+        dots.remove(); push(bubble('a', m.content || 'Дайын.')); break;
+      }
+      if (dots.isConnected) { dots.remove(); if (!stop) push(bubble('a', 'Тым көп қадам болды. Тапсырманы нақтылап қайта жазыңыз.')); }
+    } catch (e) { dots.remove(); push(bubble('e', e.message || String(e))); msgs.pop(); while (msgs.length && msgs[msgs.length - 1].role !== 'user') msgs.pop(); if (msgs.length) msgs.pop(); }
+    busy = false; g('aiSend').disabled = false; refreshStats(); g('aiIn').focus();
+  }
+
+  window.aiInit = () => { if (!isStaff) { const f = g('aiFab'); if (f) f.hidden = true; return; } if (!built) build(); const p = g('aiPanel'); g('aiFab').hidden = !p.hidden; g('aiAdm').hidden = !isAdmin; };
+})();
 </script>
 </body>
 </html>
