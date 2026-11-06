@@ -81,6 +81,11 @@ body.in-app{display:block;padding:0}
 .game .gm{color:var(--mute);font-size:.88rem}
 .vbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .vbar .out{margin:0}
+body.vfake #frame{position:fixed;inset:0;width:100vw;height:100vh;min-height:0;border:0;border-radius:0;z-index:9990}
+.vfx{display:none;position:fixed;top:10px;right:10px;z-index:9991;border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:700;background:rgba(15,20,40,.8);color:#fff;cursor:pointer;backdrop-filter:blur(8px)}
+body.vfake .vfx{display:block}
+.ai-foot .wn{color:#e8a317;text-decoration:none;font-weight:700}
+.ai-card details{font-size:.84rem}.ai-card summary{cursor:pointer;color:var(--blue);margin:2px 0 4px}
 #frame{width:100%;height:calc(100vh - 190px);min-height:520px;border:2px solid var(--ink);border-radius:10px;background:#fff}
 .wrap{position:relative;z-index:1}
 .card{background:var(--card);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(160,190,255,.3);box-shadow:0 0 70px rgba(77,124,255,.2)}
@@ -1218,6 +1223,14 @@ html[data-theme=light] .ai-f textarea{background:#fff}
 .ai-hi .ti span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem}.ai-hi .ti small{color:var(--mute);font-size:.72rem}
 .ai-hi.on .ti,.ai-hi .ti:hover{border-color:var(--blue);background:rgba(77,124,255,.18)}
 .ai-hi .dl{border:0;background:none;cursor:pointer;font-size:1rem;border-radius:8px;width:34px;height:34px;opacity:.7}.ai-hi .dl:hover{opacity:1;background:rgba(255,100,90,.2)}
+#aiNudge{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:62;max-width:min(340px,calc(100vw - 32px));display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:18px 18px 4px 18px;background:var(--paper);color:var(--ink);border:1px solid rgba(170,200,255,.4);box-shadow:0 20px 50px rgba(0,0,0,.4);animation:aiNg .5s cubic-bezier(.34,1.56,.64,1) backwards}
+@keyframes aiNg{from{opacity:0;transform:translateY(18px) scale(.9)}}
+#aiNudge .av{width:34px;height:34px;border-radius:50%;flex:none;background:radial-gradient(circle at 50% 30%,rgba(150,190,255,.5),rgba(40,70,170,.6) 75%);display:grid;place-items:center}
+#aiNudge .av svg{width:30px;height:30px}
+#aiNudge .col{display:flex;flex-direction:column;gap:9px}#aiNudge .tx{font-size:.9rem;line-height:1.45}
+#aiNudge button{font:inherit;font-size:.82rem;border-radius:11px;border:1px solid rgba(170,200,255,.4);background:rgba(77,124,255,.18);color:var(--ink);padding:6px 11px;cursor:pointer}
+#aiNudge button.go2{background:linear-gradient(90deg,#3b6bff,#19b0dd);color:#fff;border:0;font-weight:700}
+#aiNudge button.x{padding:6px 8px;opacity:.7}
 .aiHit{animation:aiPulse 1.2s ease 3;outline:3px solid var(--sun);outline-offset:2px;border-radius:14px}
 @keyframes aiPulse{50%{box-shadow:0 0 0 10px rgba(255,200,61,.35)}}
 @media (max-width:560px){#aiPanel{right:8px;left:8px;width:auto;bottom:calc(80px + env(safe-area-inset-bottom));height:calc(100vh - 100px)}}
@@ -1636,7 +1649,7 @@ select option:disabled{color:#8a93b4}
     </div>
 
     <div id="v-viewer" hidden>
-      <div class="vbar"><button class="out" id="back">← Артқа</button><strong id="vtitle"></strong><span class="sub" id="vmsg" style="margin:0 0 0 auto"></span></div>
+      <div class="vbar"><button class="out" id="back">← Артқа</button><strong id="vtitle"></strong><span class="sub" id="vmsg" style="margin:0 0 0 auto"></span><button class="out" id="vfs" type="button" title="Ойынды толық экранда ашу">⛶ Толық экран</button></div>
       <iframe id="frame" title="Ойын" allow="fullscreen"></iframe>
     </div>
 
@@ -2348,10 +2361,17 @@ async function gameSrc(u) {
   return { src: /^https?:/.test(u) ? u : '../' + encodeURIComponent(u), sb: false };
 }
 function closeGame() {
-  curGame = null;
+  curGame = null; document.body.classList.remove('vfake');
   $('frame').src = 'about:blank';
 }
 $('back').onclick = () => go(subj, true);
+$('vfs').onclick = () => {
+  const f = $('frame'), fn = f.requestFullscreen || f.webkitRequestFullscreen;
+  if (fn) { try { const p = fn.call(f); if (p && p.catch) p.catch(() => document.body.classList.add('vfake')); return; } catch { } }
+  document.body.classList.add('vfake'); // iPhone/iPad: толық экран API жоқ, бетті толтырамыз
+};
+{ const x = el('button', 'vfx', '✕ Толық экраннан шығу'); x.type = 'button'; x.onclick = () => document.body.classList.remove('vfake'); document.body.appendChild(x); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.body.classList.remove('vfake'); });
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 let rm = null; // Оқу бөлмесі күйі
 const VIEWS = ['home', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
@@ -3859,6 +3879,7 @@ function segment(opts, cur, cb) {
   paint(); return d;
 }
 function modal(title) {
+  document.querySelectorAll('.qh-modal').forEach(x => { const h2 = x.querySelector('h2'); if (h2 && h2.textContent === title) x.remove(); });
   const ov = el('div', 'qh-modal'), box = el('div', 'qh-mc');
   const close = () => ov.remove();
   ov.onclick = e => { if (e.target === ov) close(); };
@@ -7968,7 +7989,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
 /* ===== Groowin ЖИ (мұғалім/админ) ===== */
 (() => {
   const g = id => document.getElementById(id), PK = 'gwAiProc', LIM_T = 20; // LIM_T = мұғалімнің күндік лимиті (серверде AI_DAILY_LIMIT)
-  let msgs = [], busy = false, stop = false, built = false, chatId = null, showProc = ls.get(PK) !== '0';
+  let lastSkip = [], msgs = [], busy = false, stop = false, built = false, chatId = null, showProc = ls.get(PK) !== '0';
   const PANDA = '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="#16181f"/><circle cx="31" cy="9" r="6" fill="#16181f"/><ellipse cx="20" cy="22" rx="16" ry="14.5" fill="#fff"/><ellipse cx="13" cy="21" rx="4" ry="4.8" transform="rotate(20 13 21)" fill="#16181f"/><ellipse cx="27" cy="21" rx="4" ry="4.8" transform="rotate(-20 27 21)" fill="#16181f"/><circle cx="13.4" cy="20.6" r="1.7" fill="#fff"/><circle cx="26.6" cy="20.6" r="1.7" fill="#fff"/><ellipse cx="20" cy="27" rx="2.2" ry="1.5" fill="#16181f"/><path d="M17 30q3 2.6 6 0" fill="none" stroke="#16181f" stroke-width="1.2" stroke-linecap="round"/></svg>';
   const trunc = (s, n) => String(s == null ? '' : s).slice(0, n);
 
@@ -8003,13 +8024,15 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     const p = el('div'); p.id = 'aiPanel'; p.hidden = true; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Groowin ЖИ');
     p.innerHTML = '<div class="ai-h"><div class="av">' + PANDA + '</div><div class="tt"><b>Groowin ЖИ</b><small>Мұғалім көмекшісі</small></div><button type="button" id="aiHis" title="Тарих" aria-label="Әңгіме тарихы">🕘</button><button type="button" id="aiClr" title="Жаңа әңгіме" aria-label="Жаңа әңгіме">＋</button><button type="button" id="aiX" aria-label="Жабу">✕</button></div>' +
       '<label class="ai-proc" title="Қосулы болса, ЖИ сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді"><input type="checkbox" id="aiProc"> Процесті көрсету</label>' +
+      '<label class="ai-proc" title="ЖИ сенің уақытыңа қарай кейде ұсыныс айтады (күніне бір реттен көп емес)"><input type="checkbox" id="aiNg"> Ұсыныстар айтып тұр</label>' +
       '<div id="aiLog" aria-live="polite"></div><div id="aiHist" hidden></div>' +
       '<div class="ai-foot"><span id="aiStat"></span><button type="button" id="aiAdm" hidden>Статистика</button></div>' +
       '<form class="ai-f" id="aiForm"><textarea id="aiIn" rows="1" maxlength="2000" placeholder="Не істеу керек?" aria-label="Хабарлама"></textarea><button type="submit" id="aiSend" aria-label="Жіберу">➤</button></form>';
     document.body.append(fab, p);
     g('aiProc').checked = showProc;
     g('aiProc').onchange = e => { showProc = e.target.checked; ls.set(PK, showProc ? '1' : '0'); };
-    const open = o => { p.hidden = !o; fab.hidden = o; if (o) { if (!g('aiLog').children.length) welcome(); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
+    g('aiNg').checked = ls.get('gwAiNgOff') !== '1'; g('aiNg').onchange = e => { ls.set('gwAiNgOff', e.target.checked ? '0' : '1'); if (!e.target.checked) hideNudge(); };
+    const open = o => { p.hidden = !o; fab.hidden = o; if (o) hideNudge(); if (o) { if (!g('aiLog').children.length) welcome(); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
     fab.onclick = () => open(true); g('aiX').onclick = () => open(false);
     p.addEventListener('keydown', e => { if (e.key === 'Escape') { if (!g('aiHist').hidden) g('aiHist').hidden = true; else open(false); } });
     g('aiClr').onclick = newChat; g('aiHis').onclick = toggleHist;
@@ -8069,7 +8092,8 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       const r = await sb.rpc('ai_stats'); if (r.error || !r.data) { g('aiStat').textContent = ''; return; }
       const d = r.data, st = g('aiStat');
       st.textContent = 'Бүгін: ' + d.today.requests + (isAdmin ? '' : '/' + LIM_T) + ' сұрау · ' + Number(d.today.tokens).toLocaleString('ru') + ' токен';
-      if (isAdmin && skipped && skipped.length) { st.title = skipped.join('\n'); st.textContent += ' · ⚠ ' + skipped.length; }
+      if (skipped !== undefined) lastSkip = skipped || [];
+      if (isAdmin && lastSkip.length) { const w = el('button', 'wn', ' ⚠ ' + lastSkip.length); w.type = 'button'; w.title = 'Өтпеген провайдерлер'; w.onclick = () => { const m = modal('Өтпеген провайдерлер'); m.box.append(el('p', '', 'Төмендегі модельдер бұл сұрауда жауап бермеді, сондықтан ЖИ келесісіне ауысты. Жауап дұрыс келсе, мазаланудың қажеті жоқ.')); lastSkip.forEach(x => m.box.append(el('p', 'msg', x))); const cl = el('button', 'out', 'Жабу'); cl.type = 'button'; cl.onclick = m.close; m.box.append(cl); }; st.append(w); }
     } catch { }
   }
   async function adminStats() {
@@ -8110,19 +8134,39 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     },
     async list_classes() {
       let q = sb.from('classes').select('id,name').order('name').limit(200);
-      if (!isAdmin) { const t = await sb.from('teacher_classes').select('class_id').eq('teacher_id', meId); const ids = (t.data || []).map(x => x.class_id); if (!ids.length) return { classes: [] }; q = q.in('id', ids); }
-      const r = await q; if (r.error) return { error: r.error.message }; return { classes: r.data || [] };
+      if (!isAdmin) { const t = await sb.from('teacher_classes').select('class_id').eq('teacher_id', meId); const ids = (t.data || []).map(x => x.class_id); q = ids.length ? q.in('id', ids) : null; }
+      const [r, ro] = await Promise.all([q ? q : Promise.resolve({ data: [] }), sb.from('rosters').select('id,name,roster_students(count)').order('created_at')]);
+      if (r.error) return { error: r.error.message };
+      return {
+        school_classes: r.data || [],
+        my_lists: (ro.data || []).map(x => ({ id: x.id, name: x.name, students: (x.roster_students && x.roster_students[0] && x.roster_students[0].count) || 0 })),
+        note: 'school_classes — аккаунты бар сыныптар (үй тапсырмасы тек осыларға беріледі). my_lists — мұғалімнің «Менің сыныптарым» бөліміндегі жеке тізімдері (оқушы аттары), оған үй тапсырмасын жіберуге болмайды.'
+      };
     },
     async create_homework_draft(a) {
-      const cl = (await TOOLS.list_classes()).classes || [], c = cl.find(x => x.id === a.class_id);
-      if (!c) return { error: 'class_id қате. Алдымен list_classes шақыр және сол тізімнен id ал.' };
+      const lc = await TOOLS.list_classes(), cl = lc.school_classes || [], c = cl.find(x => x.id === a.class_id);
+      if (!c) return { error: cl.length ? 'class_id қате. school_classes тізімінен id ал.' : 'Аккаунты бар сынып жоқ, сондықтан үй тапсырмасын жіберуге болмайды. Мұғалімге «Сыныптар» бөлімінде сынып жасау керек екенін айт (оның жеке тізімдері: ' + (lc.my_lists || []).map(x => x.name).join(', ') + ').' };
       const due = /^\d{4}-\d{2}-\d{2}$/.test(a.due_date || '') ? a.due_date : '';
       card_hw({ cls: cl, class_id: c.id, title: trunc(a.title, 120), body: trunc(a.body, 2000), due }); return { ok: true, note: 'Жоба мұғалімге көрсетілді, растауын күтіп тұр.' };
     },
     async create_quiz_draft(a) {
-      const qs = (Array.isArray(a.questions) ? a.questions : []).slice(0, 20).map(q => { let o = (Array.isArray(q.options) ? q.options : []).map(x => trunc(x, 150).trim()).slice(0, 4); while (o.length < 4) o.push(''); const c = Math.max(0, Math.min(3, parseInt(q.correct, 10) || 0)); return { t: trunc(q.text, 400).trim(), img: null, o, c, s: 20 }; }).filter(q => q.t && q.o.filter(Boolean).length >= 2 && q.o[q.c]);
-      if (!qs.length) return { error: 'Жарамды сұрақ жоқ (әр сұраққа мәтін, кемінде 2 жауап және дұрыс жауап керек).' };
-      card_quiz({ title: trunc(a.title, 120) || 'Викторина', questions: qs }); return { ok: true, count: qs.length, note: 'Жоба мұғалімге көрсетілді, растауын күтіп тұр.' };
+      const qs = mapQs(a.questions);
+      if (!qs.length) return { error: 'Жарамды сұрақ жоқ (таңдау сұрағына мәтін, 2–4 жауап және дұрыс жауап; сан сұрағына answer керек).' };
+      let plan = null;
+      if (a.add_to_plan_id) { const r = await sb.from('lesson_plans').select('id,title').eq('id', a.add_to_plan_id).single(); if (r.error || !r.data) return { error: 'Мұндай сабақ жоспары жоқ. Алдымен list_lesson_plans шақыр.' }; plan = r.data; }
+      card_quiz({ title: trunc(a.title, 120) || 'Викторина', questions: qs, plan }); return { ok: true, count: qs.length, note: 'Жоба мұғалімге көрсетілді, растауын күтіп тұр.' + (plan ? ' Растаған соң «' + plan.title + '» жоспарына автоматты қосылады.' : '') };
+    },
+    async list_lesson_plans() {
+      const r = await sb.from('lesson_plans').select('id,title,steps,updated_at').order('updated_at', { ascending: false }).limit(30); if (r.error) return { error: r.error.message };
+      return { plans: (r.data || []).map(p => ({ id: p.id, title: p.title, steps: (p.steps || []).length, minutes: (p.steps || []).reduce((s, x) => s + (+x.d || 0), 0) })) };
+    },
+    async create_lesson_plan_draft(a) {
+      const KS = ['text', 'cloud', 'poll', 'ask', 'random', 'groups', 'timer', 'refl', 'wheel', 'potato', 'team', 'quiz', 'hw'];
+      const steps = (Array.isArray(a.steps) ? a.steps : []).slice(0, 14).map(s => { const k = KS.includes(s.kind) ? s.kind : 'text'; const o = { k, t: trunc(s.title, 80).trim() || STEP_TYPES[k], d: Math.max(0, Math.min(45, parseInt(s.minutes, 10) || 0)) }; if (s.text && ['text', 'hw', 'refl', 'cloud', 'poll', 'ask'].includes(k)) o.x = trunc(s.text, 500); return o; });
+      if (!steps.length) return { error: 'Қадамдар бос.' };
+      const quiz = a.quiz && Array.isArray(a.quiz.questions) ? { title: trunc(a.quiz.title, 120) || trunc(a.title, 100), questions: mapQs(a.quiz.questions) } : null;
+      if (quiz && !quiz.questions.length) return { error: 'Викторинадағы сұрақтар жарамсыз.' };
+      card_plan({ title: trunc(a.title, 120) || 'Сабақ жоспары', steps, quiz }); return { ok: true, note: 'Жоспар жобасы көрсетілді, растауын күтіп тұр.' };
     },
     async go_to(a) {
       const ok = ['home', 'mats', 'lessons', 'quiz', 'hw', 'students', 'rosters', 'news', 'account', 'play', 'sites']; if (!ok.includes(a.view)) return { error: 'Белгісіз бөлім' };
@@ -8130,7 +8174,15 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       if (a.view === 'quiz') go('play'); else go(a.view); return { ok: true };
     }
   };
-  const LABEL = { search_materials: 'Материалдардан іздеп жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+  function mapQs(arr) {
+    return (Array.isArray(arr) ? arr : []).slice(0, 20).map(q => {
+      const t = trunc(q.text, 400).trim();
+      if (q.type === 'number' && Number.isFinite(Number(q.answer)) && q.answer !== '' && q.answer !== null) return { t, img: null, o: ['', '', '', ''], c: 0, s: 40, k: 'num', a: Number(q.answer), tol: Math.max(0, Number(q.tolerance) || 0), u: trunc(q.unit, 12).trim() };
+      let o = (Array.isArray(q.options) ? q.options : []).map(x => trunc(x, 150).trim()).slice(0, 4); while (o.length < 4) o.push(''); const c = Math.max(0, Math.min(3, parseInt(q.correct, 10) || 0));
+      return { t, img: null, o, c, s: 20 };
+    }).filter(q => q.t && (q.k === 'num' || (q.o.filter(Boolean).length >= 2 && q.o[q.c])));
+  }
+  const LABEL = { list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
 
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
@@ -8161,16 +8213,48 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     no.onclick = () => { c.remove(); push(aiRow('Жоба алынып тасталды.')); };
     const row = el('div', 'ai-row'); row.append(ok, no); c.append(sel, ti, bd, du, row, msg); push(c);
   }
+  const qLine = (q, i) => { const x = el('div', 'ai-q'); x.append(el('b', '', (i + 1) + '. ' + q.t)); if (q.k === 'num') x.append(el('div', 'ok', '✓ Жауап: ' + q.a + (q.tol ? ' (± ' + q.tol + ')' : '') + (q.u ? ' ' + q.u : '') + '  · сан енгізу')); else q.o.forEach((o, j) => { if (o) x.append(el('div', j === q.c ? 'ok' : '', (j === q.c ? '✓ ' : '• ') + o)); }); return x; };
+  async function saveQuiz(title, questions) { return sb.from('quizzes').insert({ title, questions, updated_at: new Date().toISOString() }).select('id').single(); }
   function card_quiz(d) {
     const c = el('div', 'ai-card'); c.append(el('h4', '', '🎯 Викторина жобасы'));
     const ti = el('input'); ti.value = d.title; ti.maxLength = 120; ti.setAttribute('aria-label', 'Атауы'); c.append(ti);
-    d.questions.forEach((q, i) => { const x = el('div', 'ai-q'); x.append(el('b', '', (i + 1) + '. ' + q.t)); q.o.forEach((o, j) => { if (!o) return; x.append(el('div', j === q.c ? 'ok' : '', (j === q.c ? '✓ ' : '• ') + o)); }); c.append(x); });
-    const ok = el('button', 'go2', 'Сақтау'), no = el('button', '', 'Бас тарту'), msg = el('div', 'ai-q'); ok.type = no.type = 'button';
+    if (d.plan) c.append(el('div', 'ai-q', '📅 Растаған соң «' + d.plan.title + '» сабақ жоспарына қосылады.'));
+    d.questions.forEach((q, i) => c.append(qLine(q, i)));
+    const ok = el('button', 'go2', d.plan ? 'Сақтау және жоспарға қосу' : 'Сақтау'), no = el('button', '', 'Бас тарту'), msg = el('div', 'ai-q'); ok.type = no.type = 'button';
     ok.onclick = async () => {
-      ok.disabled = no.disabled = true;
-      const r = await sb.from('quizzes').insert({ title: ti.value.trim().slice(0, 120) || d.title, questions: d.questions, updated_at: new Date().toISOString() }).select('id').single();
+      ok.disabled = no.disabled = true; const title = ti.value.trim().slice(0, 120) || d.title;
+      const r = await saveQuiz(title, d.questions);
       if (r.error) { msg.textContent = 'Қате: ' + r.error.message; ok.disabled = no.disabled = false; return; }
-      msg.textContent = '✅ Сақталды. Енді «Ойын-сауық → Викторина» бөлімінде көресің.'; ok.hidden = no.hidden = true; ti.disabled = true; notify('Викторина сақталды');
+      let t = '✅ Викторина сақталды.';
+      if (d.plan) {
+        const p = await sb.from('lesson_plans').select('steps').eq('id', d.plan.id).single(); const st = (p.data && p.data.steps) || [];
+        const ix = st.findIndex(x => x.k === 'refl' || x.k === 'hw'); const ns = { k: 'quiz', t: title, q: r.data.id, d: 5 }; if (ix > 0) st.splice(ix, 0, ns); else st.push(ns);
+        const u = await sb.from('lesson_plans').update({ steps: st, updated_at: new Date().toISOString() }).eq('id', d.plan.id);
+        t += u.error ? ' Бірақ жоспарға қосылмады: ' + u.error.message : ' «' + d.plan.title + '» жоспарына қосылды.';
+      } else t += ' «Ойын-сауық → Викторина» бөлімінде көресің.';
+      msg.textContent = t; ok.hidden = no.hidden = true; ti.disabled = true; notify('Викторина сақталды');
+    };
+    no.onclick = () => { c.remove(); push(aiRow('Жоба алынып тасталды.')); };
+    const row = el('div', 'ai-row'); row.append(ok, no); c.append(row, msg); push(c);
+  }
+  function card_plan(d) {
+    const c = el('div', 'ai-card'); c.append(el('h4', '', '📅 Сабақ жоспарының жобасы'));
+    const ti = el('input'); ti.value = d.title; ti.maxLength = 120; ti.setAttribute('aria-label', 'Атауы'); c.append(ti);
+    const tot = d.steps.reduce((s, x) => s + x.d, 0);
+    d.steps.forEach((s, i) => { const m = STEP_META[s.k] || ['•']; c.append(el('div', 'ai-q', m[0] + ' ' + (i + 1) + '. ' + s.t + (s.d ? ' · ' + s.d + ' мин' : ''))); });
+    c.append(el('div', 'ai-q', 'Барлығы: ' + tot + ' мин' + (d.quiz ? ' · ішінде викторина (' + d.quiz.questions.length + ' сұрақ) автоматты қосылады' : '')));
+    if (d.quiz) { const dt = el('details'); dt.append(el('summary', '', 'Викторина сұрақтарын көру')); d.quiz.questions.forEach((q, i) => dt.append(qLine(q, i))); c.append(dt); }
+    const ok = el('button', 'go2', 'Растау және сақтау'), no = el('button', '', 'Бас тарту'), msg = el('div', 'ai-q'); ok.type = no.type = 'button';
+    ok.onclick = async () => {
+      ok.disabled = no.disabled = true; const title = ti.value.trim().slice(0, 120) || d.title, steps = JSON.parse(JSON.stringify(d.steps));
+      if (d.quiz) {
+        const r = await saveQuiz(d.quiz.title, d.quiz.questions); if (r.error) { msg.textContent = 'Викторина сақталмады: ' + r.error.message; ok.disabled = no.disabled = false; return; }
+        const qs = steps.filter(x => x.k === 'quiz'); if (qs.length) { qs.forEach(x => { x.q = r.data.id; }); } else { const ix = steps.findIndex(x => x.k === 'refl' || x.k === 'hw'); const ns = { k: 'quiz', t: d.quiz.title, q: r.data.id, d: 5 }; if (ix > 0) steps.splice(ix, 0, ns); else steps.push(ns); }
+      } else steps.forEach(x => { if (x.k === 'quiz') x.k = 'text'; });
+      const r2 = await sb.from('lesson_plans').insert({ title, steps, updated_at: new Date().toISOString() });
+      if (r2.error) { msg.textContent = 'Қате: ' + r2.error.message; ok.disabled = no.disabled = false; return; }
+      msg.textContent = '✅ Жоспар сақталды.'; ok.hidden = no.hidden = true; ti.disabled = true; notify('Сабақ жоспары сақталды');
+      const op = el('button', '', 'Жоспарларға өту'); op.type = 'button'; op.onclick = () => go('lessons'); c.append(op);
     };
     no.onclick = () => { c.remove(); push(aiRow('Жоба алынып тасталды.')); };
     const row = el('div', 'ai-row'); row.append(ok, no); c.append(row, msg); push(c);
@@ -8208,10 +8292,38 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       }
       if (dots.isConnected) { dots.remove(); if (!stop) push(aiRow('Тым көп қадам болды. Тапсырманы нақтылап қайта жазыңыз.')); }
     } catch (e) { dots.remove(); push(errRow(e.message || String(e))); while (msgs.length && msgs[msgs.length - 1].role !== 'user') msgs.pop(); if (msgs.length) msgs.pop(); }
-    setBusy(false); save(); refreshStats(skipped); g('aiIn').focus();
+    setBusy(false); save(); refreshStats(skipped || []); g('aiIn').focus();
   }
 
-  window.aiInit = () => { if (!isStaff) { const f = g('aiFab'); if (f) f.hidden = true; return; } if (!built) build(); const p = g('aiPanel'); g('aiFab').hidden = !p.hidden; g('aiAdm').hidden = !isAdmin; };
+  // ---- ЖИ өзі ұсыныс айтады (ережеге негізделген, токен жұмсамайды, күніне ≤1) ----
+  const NK = 'gwAiNudge';
+  const nst = () => { try { return JSON.parse(ls.get(NK) || '{}'); } catch { return {}; } };
+  const dayK = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+  function pickNudge() {
+    const d = new Date(), hr = d.getHours(), wd = d.getDay(), dark = document.documentElement.getAttribute('data-theme') === 'dark', L = [];
+    if ((hr >= 19 || hr < 5) && !dark) L.push({ id: 'dark', text: 'Кеш болды 🌙 Көзің шаршамас үшін қараңғы тақырыпқа ауыстырайын ба?', yes: 'Иә, ауыстыр', act: () => { setTheme('dark'); notify('Қараңғы тақырып қосылды'); } });
+    if (hr >= 5 && hr < 11) L.push({ id: 'plan', text: 'Қайырлы таң ☀️ Бүгінгі сабаққа жоспар дайындап берейін бе?', yes: 'Иә, дайында', chat: 'Бүгінгі сабаққа жоспар жасап бер. Тақырып: ' });
+    if (wd === 5 && hr >= 12 && hr < 19) L.push({ id: 'fri', text: 'Жұма 🎉 Келесі аптаға викторина дайындап қояйық па?', yes: 'Дайындайық', chat: 'Келесі аптаға викторина жасап бер. Тақырып: ' });
+    if ((wd === 0 || wd === 6) && hr >= 10 && hr < 19) L.push({ id: 'wk', text: 'Демалыс күні 🌿 Дүйсенбіге жоспар дайындап қойсақ, ертең тынышырақ болады.', yes: 'Жоспар жасайық', chat: 'Дүйсенбі сабағына жоспар жасап бер. Тақырып: ' });
+    return L[0] || null;
+  }
+  function hideNudge() { const n = g('aiNudge'); if (n) n.remove(); }
+  function showNudge(n) {
+    hideNudge(); const b = el('div'); b.id = 'aiNudge'; b.setAttribute('role', 'status');
+    const av = el('div', 'av'); av.innerHTML = PANDA; const tx = el('div', 'tx', n.text), row = el('div', 'ai-row');
+    const y = el('button', 'go2', n.yes), l = el('button', '', 'Кейін'), x = el('button', 'x', '🔕'); y.type = l.type = x.type = 'button'; x.title = 'Ұсыныстарды өшіру'; x.setAttribute('aria-label', 'Ұсыныстарды өшіру');
+    y.onclick = () => { hideNudge(); if (n.act) n.act(); else { g('aiFab').click(); g('aiIn').value = n.chat || ''; g('aiIn').focus(); } };
+    l.onclick = hideNudge; x.onclick = () => { ls.set('gwAiNgOff', '1'); if (g('aiNg')) g('aiNg').checked = false; hideNudge(); notify('Ұсыныстар өшірілді. ЖИ ішіндегі қосқышпен қайта қосуға болады'); };
+    row.append(y, l, x); const col = el('div', 'col'); col.append(tx, row); b.append(av, col); document.body.append(b);
+    setTimeout(hideNudge, 30000);
+  }
+  function maybeNudge() {
+    if (!isStaff || ls.get('gwAiNgOff') === '1' || matchMedia('(prefers-reduced-motion: reduce)').matches && false) return;
+    const s = nst(); if (s.day === dayK()) return; if (!g('aiPanel').hidden) return;
+    const n = pickNudge(); if (!n) return; ls.set(NK, JSON.stringify({ day: dayK(), id: n.id })); showNudge(n);
+  }
+
+  window.aiInit = () => { setTimeout(() => { try { maybeNudge(); } catch { } }, 9000); if (!isStaff) { const f = g('aiFab'); if (f) f.hidden = true; return; } if (!built) build(); const p = g('aiPanel'); g('aiFab').hidden = !p.hidden; g('aiAdm').hidden = !isAdmin; };
 })();
 </script>
 </body>
