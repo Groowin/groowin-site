@@ -1147,60 +1147,81 @@ html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-
 .pdEye:hover{color:#fff;background:rgba(255,255,255,.1)}
 .pdEye:focus-visible{outline:2px solid #5CA0FF}
 .pf{position:fixed;pointer-events:none;z-index:99;font-size:1.4rem;will-change:transform,opacity}
-/* ===== ЖИ көмекші ===== */
-#aiFab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;width:58px;height:58px;border-radius:50%;border:1.5px solid rgba(190,215,255,.6);background:radial-gradient(circle at 50% 30%,rgba(140,180,255,.55),rgba(40,70,160,.85) 75%);box-shadow:0 12px 30px -6px rgba(40,80,220,.7);cursor:pointer;padding:0;display:grid;place-items:center;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
-#aiFab:hover{transform:scale(1.08)}#aiFab:active{transform:scale(.94)}#aiFab:focus-visible{outline:3px solid var(--sun)}
-#aiFab svg{width:46px;height:46px;overflow:visible}
-#aiPanel{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:61;width:min(410px,calc(100vw - 24px));height:min(640px,calc(100vh - 110px));display:flex;flex-direction:column;border-radius:22px;border:1px solid rgba(170,200,255,.35);background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden;transform-origin:100% 100%;animation:aiIn .3s cubic-bezier(.2,.9,.3,1.2)}
+/* ===== Groowin ЖИ ===== */
+#aiFab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;width:60px;height:60px;border-radius:50%;border:1.5px solid rgba(190,215,255,.65);background:radial-gradient(circle at 50% 30%,rgba(150,190,255,.6),rgba(40,70,170,.9) 75%);box-shadow:0 12px 30px -6px rgba(40,80,220,.7),inset 0 1px 0 rgba(255,255,255,.4);cursor:pointer;padding:0;display:grid;place-items:center;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+#aiFab:hover{transform:scale(1.08) rotate(-4deg)}#aiFab:active{transform:scale(.94)}#aiFab:focus-visible{outline:3px solid var(--sun)}
+#aiFab svg{width:48px;height:48px;overflow:visible}
+#aiPanel{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:61;width:min(420px,calc(100vw - 24px));height:min(660px,calc(100vh - 110px));display:flex;flex-direction:column;border-radius:24px;border:1px solid rgba(170,200,255,.35);background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden;transform-origin:100% 100%;animation:aiIn .3s cubic-bezier(.2,.9,.3,1.2)}
 #aiPanel[hidden]{display:none}
 @keyframes aiIn{from{opacity:0;transform:scale(.85) translateY(20px)}}
-.ai-h{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(170,200,255,.2);background:linear-gradient(160deg,rgba(77,124,255,.22),transparent)}
-.ai-h .av{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(140,180,255,.5),rgba(40,70,160,.6) 75%);border:1px solid rgba(190,215,255,.5);display:grid;place-items:center;flex:none}
-.ai-h .av svg{width:34px;height:34px;overflow:visible}
-.ai-h b{flex:1;font-size:1rem}
-.ai-h button{background:none;border:0;color:var(--mute);font-size:1.2rem;cursor:pointer;border-radius:8px;width:32px;height:32px}
-.ai-h button:hover{background:rgba(128,150,200,.2);color:var(--ink)}
+.ai-h{display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid rgba(170,200,255,.2);background:linear-gradient(160deg,rgba(77,124,255,.28),rgba(25,176,221,.08))}
+.ai-h .av{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(150,190,255,.55),rgba(40,70,170,.7) 75%);border:1px solid rgba(190,215,255,.55);display:grid;place-items:center;flex:none}
+.ai-h .av svg{width:36px;height:36px;overflow:visible}
+.ai-h .tt{flex:1;display:flex;flex-direction:column;line-height:1.15;min-width:0}.ai-h b{font-size:1.02rem}.ai-h small{color:var(--mute);font-size:.74rem}
+.ai-h button{background:none;border:0;color:var(--mute);font-size:1.1rem;cursor:pointer;border-radius:10px;width:34px;height:34px;padding:0}
+.ai-h button:hover{background:rgba(128,150,200,.22);color:var(--ink)}
 .ai-proc{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:.82rem;color:var(--mute);border-bottom:1px solid rgba(170,200,255,.12);cursor:pointer;user-select:none}
 .ai-proc input{accent-color:var(--blue);width:16px;height:16px;margin:0;cursor:pointer}
-#aiLog{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
-.ai-m{max-width:88%;padding:9px 12px;border-radius:16px;line-height:1.45;font-size:.93rem;white-space:pre-wrap;word-wrap:break-word;animation:aiMsg .25s ease backwards}
+#aiLog{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.ai-hello{margin:auto 0;text-align:center;padding:10px;animation:aiMsg .4s ease backwards}
+.ai-hello .big{width:78px;height:78px;margin:0 auto 10px;border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(150,190,255,.55),rgba(40,70,170,.7) 75%);border:1.5px solid rgba(190,215,255,.55);display:grid;place-items:center;box-shadow:0 14px 34px -10px rgba(60,100,240,.7)}
+.ai-hello .big svg{width:66px;height:66px;overflow:visible}
+.ai-hello h3{margin:0 0 4px;font-size:1.2rem}.ai-hello p{margin:0 0 14px;color:var(--mute);font-size:.9rem}
+.ai-hello .ai-chips{justify-content:center;flex-direction:column;align-items:stretch}
+.ai-r{display:flex;gap:8px;align-items:flex-end;align-self:flex-start;max-width:96%}
+.ai-r .av{width:28px;height:28px;border-radius:50%;flex:none;background:radial-gradient(circle at 50% 30%,rgba(150,190,255,.5),rgba(40,70,170,.6) 75%);border:1px solid rgba(190,215,255,.45);display:grid;place-items:center}
+.ai-r .av svg{width:24px;height:24px;overflow:visible}
+.ai-r .cp{opacity:0;border:0;background:none;color:var(--mute);cursor:pointer;font-size:.95rem;padding:2px 4px;border-radius:6px;transition:opacity .2s}
+.ai-r:hover .cp,.ai-r .cp:focus-visible{opacity:1}
+.ai-m{padding:9px 13px;border-radius:18px;line-height:1.5;font-size:.93rem;word-wrap:break-word;animation:aiMsg .25s ease backwards}
 @keyframes aiMsg{from{opacity:0;transform:translateY(8px)}}
-.ai-m.u{align-self:flex-end;background:linear-gradient(135deg,#3b6bff,#1f8fd8);color:#fff;border-bottom-right-radius:5px}
-.ai-m.a{align-self:flex-start;background:rgba(128,150,200,.16);border-bottom-left-radius:5px}
-.ai-m.e{align-self:flex-start;background:rgba(255,100,90,.16);color:var(--err)}
-.ai-st{align-self:flex-start;font-size:.8rem;color:var(--mute);display:flex;gap:6px;align-items:center;padding:2px 4px;animation:aiMsg .25s ease backwards}
+.ai-m.u{align-self:flex-end;max-width:86%;white-space:pre-wrap;background:linear-gradient(135deg,#3b6bff,#1f8fd8);color:#fff;border-bottom-right-radius:5px;box-shadow:0 6px 16px -8px rgba(40,90,230,.8)}
+.ai-m.a{background:rgba(128,150,200,.16);border-bottom-left-radius:5px;min-width:0}
+.ai-m.e{align-self:flex-start;max-width:92%;white-space:pre-wrap;background:rgba(255,100,90,.15);color:var(--err);border:1px solid rgba(255,100,90,.3)}
+.ai-md>div{margin:0}.ai-md .ai-gap{height:6px}.ai-md .ai-li{display:flex;gap:8px;margin:2px 0}.ai-md .ai-li .k{color:var(--blue);font-weight:700;min-width:1.1em}
+.ai-md code{background:rgba(128,150,200,.25);border-radius:6px;padding:1px 5px;font-size:.88em}
+.ai-st{align-self:flex-start;font-size:.8rem;color:var(--mute);display:flex;gap:6px;align-items:center;padding:2px 4px 2px 36px;animation:aiMsg .25s ease backwards}
 .ai-st .sp{width:12px;height:12px;border:2px solid rgba(150,170,220,.4);border-top-color:var(--blue);border-radius:50%;animation:aiSpin .8s linear infinite;flex:none}
 .ai-st.ok .sp{animation:none;border:0;width:auto;height:auto}.ai-st.ok .sp::before{content:'✓';color:#2fbf71;font-weight:700}
 @keyframes aiSpin{to{transform:rotate(360deg)}}
-.ai-dots{align-self:flex-start;display:flex;gap:4px;padding:8px 12px}
+.ai-dots{align-self:flex-start;display:flex;gap:4px;padding:8px 14px 8px 40px}
 .ai-dots i{width:7px;height:7px;border-radius:50%;background:var(--mute);animation:aiDot 1s infinite ease-in-out}.ai-dots i:nth-child(2){animation-delay:.15s}.ai-dots i:nth-child(3){animation-delay:.3s}
 @keyframes aiDot{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-5px);opacity:1}}
-.ai-card{align-self:stretch;border:1px solid rgba(170,200,255,.28);border-radius:14px;padding:10px;background:rgba(128,150,200,.1);display:flex;flex-direction:column;gap:7px;animation:aiMsg .25s ease backwards}
+.ai-card{align-self:stretch;margin-left:36px;border:1px solid rgba(170,200,255,.28);border-radius:16px;padding:11px;background:rgba(128,150,200,.1);display:flex;flex-direction:column;gap:7px;animation:aiMsg .25s ease backwards}
 .ai-card h4{margin:0;font-size:.88rem;color:var(--mute);font-weight:600}
 .ai-hit{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:10px;background:rgba(128,150,200,.14)}
-.ai-hit span{flex:1;min-width:0;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-hit small{display:block;color:var(--mute);font-size:.74rem}
-.ai-card button,.ai-chip{font:inherit;font-size:.84rem;border-radius:10px;border:1px solid rgba(170,200,255,.4);background:rgba(77,124,255,.2);color:var(--ink);padding:6px 11px;cursor:pointer}
-.ai-card button:hover,.ai-chip:hover{background:rgba(77,124,255,.4)}
+.ai-hit span{flex:1;min-width:0;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-hit small{display:block;color:var(--mute);font-size:.74rem;overflow:hidden;text-overflow:ellipsis}
+.ai-card button,.ai-chip{font:inherit;font-size:.84rem;border-radius:12px;border:1px solid rgba(170,200,255,.4);background:rgba(77,124,255,.2);color:var(--ink);padding:7px 12px;cursor:pointer;transition:background .2s,transform .15s}
+.ai-card button:hover,.ai-chip:hover{background:rgba(77,124,255,.4)}.ai-chip:active,.ai-card button:active{transform:scale(.96)}
+.ai-chip{text-align:left;padding:10px 14px;font-size:.9rem}
 .ai-card button.go2{background:linear-gradient(90deg,#3b6bff,#19b0dd);color:#fff;border:0;font-weight:700}
 .ai-card button:disabled{opacity:.5;cursor:default}
-.ai-card input,.ai-card textarea,.ai-card select{width:100%;font:inherit;font-size:.88rem;padding:7px 9px;border-radius:10px;border:1px solid rgba(170,200,255,.35);background:rgba(0,0,0,.18);color:var(--ink)}
+.ai-card input,.ai-card textarea,.ai-card select{width:100%;font:inherit;font-size:.88rem;padding:7px 9px;border-radius:10px;border:1px solid rgba(170,200,255,.35);background:rgba(0,0,0,.18);color:var(--ink);box-sizing:border-box}
 html[data-theme=light] .ai-card input,html[data-theme=light] .ai-card textarea,html[data-theme=light] .ai-card select{background:#fff}
 .ai-card textarea{min-height:64px;resize:vertical}
 .ai-row{display:flex;gap:7px;flex-wrap:wrap}
 .ai-q{font-size:.84rem;line-height:1.4}.ai-q .ok{color:#2fbf71;font-weight:700}
-.ai-chips{display:flex;gap:6px;flex-wrap:wrap}
+.ai-chips{display:flex;gap:7px;flex-wrap:wrap}
 .ai-f{display:flex;gap:6px;padding:10px;border-top:1px solid rgba(170,200,255,.2)}
 .ai-f textarea{flex:1;resize:none;height:42px;min-height:0;max-height:110px;margin:0;box-sizing:border-box;font:inherit;font-size:.93rem;padding:9px 12px;border-radius:14px;border:1px solid rgba(170,200,255,.35);background:rgba(0,0,0,.18);color:var(--ink);outline:0}
 html[data-theme=light] .ai-f textarea{background:#fff}
 .ai-f textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(77,124,255,.25)}
 .ai-f button{border:0;border-radius:14px;width:46px;height:42px;flex:none;margin:0;padding:0;background:linear-gradient(90deg,#3b6bff,#19b0dd);color:#fff;font-size:1.1rem;cursor:pointer}
-.ai-f button:disabled{opacity:.5}
+.ai-f button.stop{background:linear-gradient(90deg,#e0524a,#f08a4b)}
 .ai-foot{display:flex;justify-content:space-between;align-items:center;padding:0 12px 8px;font-size:.74rem;color:var(--mute)}
 .ai-foot button{background:none;border:0;color:var(--mute);cursor:pointer;font-size:.74rem;text-decoration:underline}
+#aiHist{position:absolute;left:0;right:0;top:58px;bottom:0;background:var(--paper);z-index:3;overflow-y:auto;padding:10px 12px;animation:aiMsg .2s ease backwards}
+#aiHist[hidden]{display:none}
+.ai-hh{font-weight:700;margin:2px 0 10px}.ai-empty{color:var(--mute);font-size:.9rem}
+.ai-hi{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.ai-hi .ti{flex:1;min-width:0;text-align:left;border:1px solid rgba(170,200,255,.25);background:rgba(128,150,200,.1);color:var(--ink);border-radius:12px;padding:9px 12px;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:2px}
+.ai-hi .ti span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem}.ai-hi .ti small{color:var(--mute);font-size:.72rem}
+.ai-hi.on .ti,.ai-hi .ti:hover{border-color:var(--blue);background:rgba(77,124,255,.18)}
+.ai-hi .dl{border:0;background:none;cursor:pointer;font-size:1rem;border-radius:8px;width:34px;height:34px;opacity:.7}.ai-hi .dl:hover{opacity:1;background:rgba(255,100,90,.2)}
 .aiHit{animation:aiPulse 1.2s ease 3;outline:3px solid var(--sun);outline-offset:2px;border-radius:14px}
 @keyframes aiPulse{50%{box-shadow:0 0 0 10px rgba(255,200,61,.35)}}
 @media (max-width:560px){#aiPanel{right:8px;left:8px;width:auto;bottom:calc(80px + env(safe-area-inset-bottom));height:calc(100vh - 100px)}}
-@media (prefers-reduced-motion:reduce){#aiPanel,.ai-m,.ai-st,.ai-card{animation:none}.ai-dots i,.ai-st .sp,.aiHit{animation:none}}
+@media (prefers-reduced-motion:reduce){#aiPanel,.ai-m,.ai-st,.ai-card,.ai-hello,#aiHist{animation:none}.ai-dots i,.ai-st .sp,.aiHit{animation:none}}
 #auth{text-align:center}#authCard{text-align:left}#auth h1{font-size:2.4rem;margin-bottom:6px}
 #authCard{position:relative;border-radius:34px;padding:34px 28px 26px;max-width:430px;margin-left:auto;margin-right:auto;
   background:linear-gradient(155deg,rgba(40,70,140,.34),rgba(10,18,44,.5) 55%,rgba(20,40,96,.34));
@@ -2398,8 +2419,11 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '5.4', date: '06.11.2026', items: [
+    ['💬', 'Groowin ЖИ жаңарды', 'Чат безендірілді, әңгіме тарихы сақталады (телефон мен ноутбукта бірдей), жауапты көшіруге болады. Мұғалімге күніне 20 сұрау, админге шектеу жоқ.']
+  ] },
   { ver: '5.3', date: '06.11.2026', items: [
-    ['🤖', 'Groowin көмекші', 'Мұғалім мен админге: файлды тауып береді, үй тапсырмасы мен викторина жобасын жасайды. «Процесті көрсету» қосулы болса, сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді. Жоба тек сен «Растау» басқанда сақталады.']
+    ['🤖', 'Groowin ЖИ', 'Мұғалім мен админге: файлды тауып береді, үй тапсырмасы мен викторина жобасын жасайды. «Процесті көрсету» қосулы болса, сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді. Жоба тек сен «Растау» басқанда сақталады.']
   ] },
   { ver: '5.2', date: '04.11.2026', items: [
     ['🐼', 'Кіру бетіндегі панда', 'Панда курсорға қарайды, нөмір жазғанда сол жаққа үңіледі, құпия сөзде көзін жауып, 👁 басқанда сығалайды. Қате болса бас шайқайды, кірсе қуанады.']
@@ -7941,59 +7965,122 @@ sb.auth.onAuthStateChange((_e, session) => {
 addEventListener('load', () => { try { const r = document.getElementById('pdSvg').getBoundingClientRect(); } catch (e) {} });
 </script>
 <script>
-/* ===== ЖИ көмекші (мұғалім/админ) ===== */
+/* ===== Groowin ЖИ (мұғалім/админ) ===== */
 (() => {
-  const g = id => document.getElementById(id), PK = 'gwAiProc';
-  let msgs = [], busy = false, stop = false, built = false, showProc = ls.get(PK) !== '0';
+  const g = id => document.getElementById(id), PK = 'gwAiProc', LIM_T = 20; // LIM_T = мұғалімнің күндік лимиті (серверде AI_DAILY_LIMIT)
+  let msgs = [], busy = false, stop = false, built = false, chatId = null, showProc = ls.get(PK) !== '0';
   const PANDA = '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="#16181f"/><circle cx="31" cy="9" r="6" fill="#16181f"/><ellipse cx="20" cy="22" rx="16" ry="14.5" fill="#fff"/><ellipse cx="13" cy="21" rx="4" ry="4.8" transform="rotate(20 13 21)" fill="#16181f"/><ellipse cx="27" cy="21" rx="4" ry="4.8" transform="rotate(-20 27 21)" fill="#16181f"/><circle cx="13.4" cy="20.6" r="1.7" fill="#fff"/><circle cx="26.6" cy="20.6" r="1.7" fill="#fff"/><ellipse cx="20" cy="27" rx="2.2" ry="1.5" fill="#16181f"/><path d="M17 30q3 2.6 6 0" fill="none" stroke="#16181f" stroke-width="1.2" stroke-linecap="round"/></svg>';
   const trunc = (s, n) => String(s == null ? '' : s).slice(0, n);
-  const plain = t => String(t || '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/^\s*[*-] /gm, '• ').replace(/`/g, '');
+
+  // ---- қарапайым markdown (қауіпсіз: тек DOM түйіндері) ----
+  function inline(par, s) {
+    const re = /(\*\*[^*]+\*\*|`[^`]+`)/g; let last = 0, m;
+    while ((m = re.exec(s))) { if (m.index > last) par.append(s.slice(last, m.index)); const t = m[0]; par.append(el(t[0] === '`' ? 'code' : 'b', '', t.replace(/^(\*\*|`)|(\*\*|`)$/g, ''))); last = m.index + t.length; }
+    if (last < s.length) par.append(s.slice(last));
+  }
+  function md(text) {
+    const box = el('div', 'ai-md');
+    String(text || '').split('\n').forEach(line => {
+      const b = line.match(/^\s*(?:[*\-•]|(\d+)[.)])\s+(.*)$/);
+      if (b) { const r = el('div', 'ai-li'); r.append(el('span', 'k', b[1] ? b[1] + '.' : '•')); const t = el('span'); inline(t, b[2]); r.append(t); box.append(r); }
+      else if (!line.trim()) box.append(el('div', 'ai-gap'));
+      else { const p = el('div'); inline(p, line.replace(/^#+\s*/, '')); box.append(p); }
+    });
+    return box;
+  }
+  function aiRow(text) {
+    const row = el('div', 'ai-r'), av = el('div', 'av'), m = el('div', 'ai-m a'); av.innerHTML = PANDA; m.append(md(text));
+    const cp = el('button', 'cp', '⧉'); cp.type = 'button'; cp.title = 'Көшіру'; cp.setAttribute('aria-label', 'Көшіру');
+    cp.onclick = async () => { try { await navigator.clipboard.writeText(text); cp.textContent = '✓'; setTimeout(() => cp.textContent = '⧉', 1200); } catch { } };
+    row.append(av, m, cp); return row;
+  }
+  const userRow = t => el('div', 'ai-m u', t);
+  const errRow = t => el('div', 'ai-m e', t);
 
   function build() {
     built = true;
-    const fab = el('button'); fab.id = 'aiFab'; fab.type = 'button'; fab.innerHTML = PANDA; fab.setAttribute('aria-label', 'Көмекшіні ашу'); fab.hidden = true;
-    const p = el('div'); p.id = 'aiPanel'; p.hidden = true; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Groowin көмекші');
-    p.innerHTML = '<div class="ai-h"><div class="av">' + PANDA + '</div><b>Groowin көмекші</b><button type="button" id="aiClr" title="Жаңа әңгіме" aria-label="Жаңа әңгіме">↻</button><button type="button" id="aiX" aria-label="Жабу">✕</button></div>' +
-      '<label class="ai-proc" title="Қосулы болса, көмекші сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді"><input type="checkbox" id="aiProc"> Процесті көрсету</label>' +
-      '<div id="aiLog" aria-live="polite"></div>' +
+    const fab = el('button'); fab.id = 'aiFab'; fab.type = 'button'; fab.innerHTML = PANDA; fab.setAttribute('aria-label', 'Groowin ЖИ ашу'); fab.hidden = true;
+    const p = el('div'); p.id = 'aiPanel'; p.hidden = true; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Groowin ЖИ');
+    p.innerHTML = '<div class="ai-h"><div class="av">' + PANDA + '</div><div class="tt"><b>Groowin ЖИ</b><small>Мұғалім көмекшісі</small></div><button type="button" id="aiHis" title="Тарих" aria-label="Әңгіме тарихы">🕘</button><button type="button" id="aiClr" title="Жаңа әңгіме" aria-label="Жаңа әңгіме">＋</button><button type="button" id="aiX" aria-label="Жабу">✕</button></div>' +
+      '<label class="ai-proc" title="Қосулы болса, ЖИ сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді"><input type="checkbox" id="aiProc"> Процесті көрсету</label>' +
+      '<div id="aiLog" aria-live="polite"></div><div id="aiHist" hidden></div>' +
       '<div class="ai-foot"><span id="aiStat"></span><button type="button" id="aiAdm" hidden>Статистика</button></div>' +
       '<form class="ai-f" id="aiForm"><textarea id="aiIn" rows="1" maxlength="2000" placeholder="Не істеу керек?" aria-label="Хабарлама"></textarea><button type="submit" id="aiSend" aria-label="Жіберу">➤</button></form>';
     document.body.append(fab, p);
     g('aiProc').checked = showProc;
     g('aiProc').onchange = e => { showProc = e.target.checked; ls.set(PK, showProc ? '1' : '0'); };
-    const open = o => { p.hidden = !o; fab.hidden = o; if (o) { welcome(); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
+    const open = o => { p.hidden = !o; fab.hidden = o; if (o) { if (!g('aiLog').children.length) welcome(); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
     fab.onclick = () => open(true); g('aiX').onclick = () => open(false);
-    p.addEventListener('keydown', e => { if (e.key === 'Escape') open(false); });
-    g('aiClr').onclick = () => { if (busy) { stop = true; } msgs = []; g('aiLog').replaceChildren(); welcome(true); };
+    p.addEventListener('keydown', e => { if (e.key === 'Escape') { if (!g('aiHist').hidden) g('aiHist').hidden = true; else open(false); } });
+    g('aiClr').onclick = newChat; g('aiHis').onclick = toggleHist;
     const ta = g('aiIn'); ta.oninput = () => { ta.style.height = '42px'; ta.style.height = Math.min(110, ta.scrollHeight) + 'px'; };
     ta.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); g('aiForm').requestSubmit(); } };
-    g('aiForm').onsubmit = e => { e.preventDefault(); const t = ta.value.trim(); if (!t || busy) return; ta.value = ''; ta.style.height = '42px'; run(t); };
+    g('aiForm').onsubmit = e => { e.preventDefault(); if (busy) { stop = true; return; } const t = ta.value.trim(); if (!t) return; ta.value = ''; ta.style.height = '42px'; run(t); };
     g('aiAdm').onclick = adminStats; g('aiAdm').hidden = !isAdmin;
   }
 
-  function welcome(force) {
-    const log = g('aiLog'); if (log.children.length && !force) return;
-    log.append(bubble('a', 'Сәлем! Мен Groowin көмекшісімін 🐼 Файлыңды тауып, тапсырма не викторина жобасын жасап бере аламын.'));
+  function newChat() { if (busy) stop = true; msgs = []; chatId = null; g('aiHist').hidden = true; g('aiLog').replaceChildren(); welcome(); g('aiIn').focus(); }
+  function welcome() {
+    const log = g('aiLog'), name = (typeof me !== 'undefined' && me && me.full_name) ? String(me.full_name).split(' ')[0] : '';
+    const w = el('div', 'ai-hello'); const av = el('div', 'big'); av.innerHTML = PANDA; w.append(av, el('h3', '', 'Сәлем' + (name ? ', ' + name : '') + '!'), el('p', '', 'Файлыңды тауып, үй тапсырмасы мен викторина жобасын жасап беремін.'));
     const ch = el('div', 'ai-chips');
-    ['Файлымды тауып бер', 'Викторина жасап бер', 'Үй тапсырмасын дайында'].forEach(t => { const b = el('button', 'ai-chip', t); b.type = 'button'; b.onclick = () => { g('aiIn').value = t + ': '; g('aiIn').focus(); }; ch.append(b); });
-    log.append(ch);
+    [['🔎', 'Файлымды тауып бер'], ['🎯', 'Викторина жасап бер'], ['📝', 'Үй тапсырмасын дайында']].forEach(([i, t]) => { const b = el('button', 'ai-chip', i + ' ' + t); b.type = 'button'; b.onclick = () => { g('aiIn').value = t + ': '; g('aiIn').focus(); }; ch.append(b); });
+    w.append(ch); log.append(w);
   }
-  const bubble = (k, t) => el('div', 'ai-m ' + k, k === 'a' ? plain(t) : t);
   const scroll = () => { const l = g('aiLog'); l.scrollTop = l.scrollHeight; };
-  const push = n => { g('aiLog').append(n); scroll(); return n; };
+  const push = n => { const l = g('aiLog'); l.querySelectorAll('.ai-hello').forEach(x => x.remove()); l.append(n); scroll(); return n; };
 
-  async function refreshStats() {
-    try { const r = await sb.rpc('ai_stats'); if (r.error || !r.data) { g('aiStat').textContent = ''; return; } const d = r.data; g('aiStat').textContent = 'Бүгін: ' + d.today.requests + ' сұрау · ' + Number(d.today.tokens).toLocaleString('ru') + ' токен'; } catch { }
+  // ---- тарих (Supabase: телефон мен ноутбукта бірдей көрінеді) ----
+  async function save() {
+    if (!msgs.length) return;
+    try {
+      let m = msgs.slice(); while (JSON.stringify(m).length > 180000 && m.length > 2) { m.shift(); while (m.length && m[0].role !== 'user') m.shift(); }
+      const title = trunc((msgs.find(x => x.role === 'user') || {}).content, 50) || 'Әңгіме';
+      if (!chatId) { const r = await sb.from('ai_chats').insert({ title, messages: m }).select('id').single(); if (r.data) chatId = r.data.id; }
+      else await sb.from('ai_chats').update({ messages: m, updated_at: new Date().toISOString() }).eq('id', chatId);
+    } catch { }
+  }
+  async function toggleHist() {
+    const h = g('aiHist'); if (!h.hidden) { h.hidden = true; return; }
+    h.hidden = false; h.replaceChildren(el('div', 'ai-hh', 'Тарих'), el('p', 'ai-empty', 'Жүктелуде…'));
+    const r = await sb.from('ai_chats').select('id,title,updated_at').order('updated_at', { ascending: false }).limit(40);
+    h.replaceChildren(el('div', 'ai-hh', 'Әңгіме тарихы'));
+    if (r.error) { h.append(el('p', 'ai-empty', 'Тарихты ашу мүмкін болмады. update-29.sql іске қосылды ма?')); return; }
+    if (!(r.data || []).length) { h.append(el('p', 'ai-empty', 'Әзірге бос. Әңгімелер осында сақталады.')); return; }
+    r.data.forEach(c => {
+      const row = el('div', 'ai-hi' + (c.id === chatId ? ' on' : '')), b = el('button', 'ti'), d = el('button', 'dl', '🗑');
+      const dt = new Date(c.updated_at); b.append(el('span', '', c.title), el('small', '', dt.toLocaleString('kk-KZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })));
+      b.type = d.type = 'button'; d.title = 'Жою'; d.setAttribute('aria-label', 'Әңгімені жою');
+      b.onclick = () => openChat(c.id);
+      d.onclick = async () => { if (!await ask('Бұл әңгіме жойылсын ба?')) return; await sb.from('ai_chats').delete().eq('id', c.id); if (c.id === chatId) newChat(); else { h.hidden = true; toggleHist(); } };
+      row.append(b, d); h.append(row);
+    });
+  }
+  async function openChat(id) {
+    const r = await sb.from('ai_chats').select('id,messages').eq('id', id).single(); if (r.error || !r.data) { notify('Әңгіме ашылмады', 'err'); return; }
+    if (busy) stop = true; msgs = Array.isArray(r.data.messages) ? r.data.messages : []; chatId = r.data.id; g('aiHist').hidden = true;
+    const log = g('aiLog'); log.replaceChildren();
+    msgs.forEach(m => { if (m.role === 'user') log.append(userRow(m.content)); else if (m.role === 'assistant' && m.content) log.append(aiRow(m.content)); });
+    scroll();
+  }
+
+  async function refreshStats(skipped) {
+    try {
+      const r = await sb.rpc('ai_stats'); if (r.error || !r.data) { g('aiStat').textContent = ''; return; }
+      const d = r.data, st = g('aiStat');
+      st.textContent = 'Бүгін: ' + d.today.requests + (isAdmin ? '' : '/' + LIM_T) + ' сұрау · ' + Number(d.today.tokens).toLocaleString('ru') + ' токен';
+      if (isAdmin && skipped && skipped.length) { st.title = skipped.join('\n'); st.textContent += ' · ⚠ ' + skipped.length; }
+    } catch { }
   }
   async function adminStats() {
-    const m = modal('ЖИ көмекші статистикасы'); const b = m.box; b.append(el('p', 'msg', 'Жүктелуде…'));
+    const m = modal('Groowin ЖИ статистикасы'); const b = m.box; b.append(el('p', 'msg', 'Жүктелуде…'));
     const r = await sb.rpc('ai_stats'); b.lastChild.remove();
-    if (r.error) { b.append(el('p', 'msg err', 'Қате: ' + r.error.message + ' (update-28.sql іске қосылды ма?)')); return; }
+    if (r.error) { b.append(el('p', 'msg err', 'Қате: ' + r.error.message + ' (update-28/29.sql іске қосылды ма?)')); return; }
     const d = r.data, fm = n => Number(n).toLocaleString('ru');
     b.append(el('p', '', 'Бүгін (барлығы): ' + d.all_today.requests + ' сұрау, ' + fm(d.all_today.tokens) + ' токен'));
     b.append(el('p', '', 'Менің айым: ' + d.month.requests + ' сұрау, ' + fm(d.month.tokens) + ' токен'));
-    const tb = (title, rows, key) => { b.append(el('h3', '', title)); if (!rows.length) { b.append(el('p', 'msg', 'Әзірге бос.')); return; } const t = el('table'); t.style.cssText = 'width:100%;border-collapse:collapse;font-size:.9rem'; rows.forEach(x => { const tr = el('tr'); [x[key] || '—', x.requests + ' сұрау', fm(x.tokens) + ' токен'].forEach((c, i) => { const td = el('td', '', c); td.style.cssText = 'padding:5px 6px;border-bottom:1px solid rgba(128,150,200,.25);' + (i ? 'text-align:right;white-space:nowrap' : ''); tr.append(td); }); t.append(tr); }); b.append(t); };
-    tb('Осы ай: провайдер бойынша', d.by_provider || [], 'provider'); tb('Осы ай: мұғалім бойынша', d.by_user || [], 'name');
+    const tb = (title, rows, key, suf) => { b.append(el('h3', '', title)); if (!rows.length) { b.append(el('p', 'msg', 'Әзірге бос.')); return; } const t = el('table'); t.style.cssText = 'width:100%;border-collapse:collapse;font-size:.9rem'; rows.forEach(x => { const tr = el('tr'); [x[key] || '—', x.requests + ' ' + suf, fm(x.tokens) + ' токен'].forEach((c, i) => { const td = el('td', '', c); td.style.cssText = 'padding:5px 6px;border-bottom:1px solid rgba(128,150,200,.25);' + (i ? 'text-align:right;white-space:nowrap' : ''); tr.append(td); }); t.append(tr); }); b.append(t); };
+    tb('Осы ай: провайдер бойынша', d.by_provider || [], 'provider', 'шақыру'); tb('Осы ай: мұғалім бойынша', d.by_user || [], 'name', 'сұрау');
   }
 
   // ---------- құралдар ----------
@@ -8048,7 +8135,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
     const it = isF ? f.find(x => x.id === rid) : i.find(x => x.id === rid); if (!it) { notify('Материал табылмады (жойылған болуы мүмкін)', 'err'); return; }
-    go('mats'); await loadMats(); mCur = (isF ? it.id : (it.folder_id || null)); matQ = ''; if (isF) mCur = it.id; renderMats();
+    go('mats'); await loadMats(); mCur = (isF ? it.id : (it.folder_id || null)); matQ = ''; renderMats();
     if (!isF) { await new Promise(r => setTimeout(r, 120)); const t = [...g('mList').children].find(c => c.textContent.includes(it.title)); if (t) { t.classList.add('aiHit'); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); setTimeout(() => t.classList.remove('aiHit'), 4500); } }
   }
 
@@ -8071,13 +8158,13 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       if (r.error) { msg.textContent = 'Қате: ' + r.error.message; ok.disabled = no.disabled = false; return; }
       msg.textContent = '✅ Тапсырма сыныпқа жіберілді.'; c.querySelectorAll('input,textarea,select').forEach(x => x.disabled = true); ok.hidden = no.hidden = true; notify('Тапсырма жіберілді');
     };
-    no.onclick = () => { c.remove(); push(bubble('a', 'Жоба алынып тасталды.')); };
+    no.onclick = () => { c.remove(); push(aiRow('Жоба алынып тасталды.')); };
     const row = el('div', 'ai-row'); row.append(ok, no); c.append(sel, ti, bd, du, row, msg); push(c);
   }
   function card_quiz(d) {
     const c = el('div', 'ai-card'); c.append(el('h4', '', '🎯 Викторина жобасы'));
     const ti = el('input'); ti.value = d.title; ti.maxLength = 120; ti.setAttribute('aria-label', 'Атауы'); c.append(ti);
-    d.questions.forEach((q, i) => { const x = el('div', 'ai-q'); x.append(el('b', '', (i + 1) + '. ' + q.t)); q.o.forEach((o, j) => { if (!o) return; const l = el('div', j === q.c ? 'ok' : '', (j === q.c ? '✓ ' : '• ') + o); x.append(l); }); c.append(x); });
+    d.questions.forEach((q, i) => { const x = el('div', 'ai-q'); x.append(el('b', '', (i + 1) + '. ' + q.t)); q.o.forEach((o, j) => { if (!o) return; x.append(el('div', j === q.c ? 'ok' : '', (j === q.c ? '✓ ' : '• ') + o)); }); c.append(x); });
     const ok = el('button', 'go2', 'Сақтау'), no = el('button', '', 'Бас тарту'), msg = el('div', 'ai-q'); ok.type = no.type = 'button';
     ok.onclick = async () => {
       ok.disabled = no.disabled = true;
@@ -8085,27 +8172,29 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       if (r.error) { msg.textContent = 'Қате: ' + r.error.message; ok.disabled = no.disabled = false; return; }
       msg.textContent = '✅ Сақталды. Енді «Ойын-сауық → Викторина» бөлімінде көресің.'; ok.hidden = no.hidden = true; ti.disabled = true; notify('Викторина сақталды');
     };
-    no.onclick = () => { c.remove(); push(bubble('a', 'Жоба алынып тасталды.')); };
+    no.onclick = () => { c.remove(); push(aiRow('Жоба алынып тасталды.')); };
     const row = el('div', 'ai-row'); row.append(ok, no); c.append(row, msg); push(c);
   }
 
   // ---------- агент циклі ----------
-  async function call() {
-    const r = await sb.functions.invoke('teacher-agent', { body: { messages: msgs } });
-    if (r.error) { let t = r.error.message || 'Қате'; try { const j = await r.error.context.json(); if (j && j.error) t = j.error + (Array.isArray(j.detail) && j.detail.length ? '\n[' + j.detail.join('; ') + ']' : ''); } catch { } if (!/\[/.test(t) && /not found|404|Failed to send/i.test(t)) t = 'Көмекші әлі орнатылмаған: teacher-agent функциясын Supabase-ке жүктеу керек.'; throw new Error(t); }
+  async function call(turn) {
+    const r = await sb.functions.invoke('teacher-agent', { body: { messages: msgs, turn } });
+    if (r.error) { let t = r.error.message || 'Қате'; try { const j = await r.error.context.json(); if (j && j.error) t = j.error + (Array.isArray(j.detail) && j.detail.length ? '\n[' + j.detail.join('; ') + ']' : ''); } catch { } if (!/\[/.test(t) && /not found|404|Failed to send/i.test(t)) t = 'Groowin ЖИ әлі орнатылмаған: teacher-agent функциясын Supabase-ке жүктеу керек.'; throw new Error(t); }
     if (!r.data || !r.data.message) throw new Error((r.data && r.data.error) || 'Бос жауап');
-    return r.data.message;
+    return r.data;
   }
+  function setBusy(b) { busy = b; const s = g('aiSend'); s.textContent = b ? '■' : '➤'; s.setAttribute('aria-label', b ? 'Тоқтату' : 'Жіберу'); s.classList.toggle('stop', b); }
   async function run(text) {
-    busy = true; stop = false; g('aiSend').disabled = true; g('aiLog').querySelectorAll('.ai-chips').forEach(x => x.remove());
-    push(bubble('u', text)); msgs.push({ role: 'user', content: text });
+    stop = false; setBusy(true);
+    push(userRow(text)); msgs.push({ role: 'user', content: text });
     while (msgs.length > 30) { msgs.shift(); while (msgs.length && msgs[0].role !== 'user') msgs.shift(); }
     const dots = el('div', 'ai-dots'); dots.append(el('i'), el('i'), el('i')); push(dots);
+    let skipped = null;
     try {
       for (let step = 0; step < 8 && !stop; step++) {
-        const m = await call(); msgs.push(m);
+        const d = await call(step === 0), m = d.message; msgs.push(m); if (d.skipped && d.skipped.length) skipped = d.skipped;
         if (m.tool_calls && m.tool_calls.length) {
-          if (m.content) dots.before(bubble('a', m.content));
+          if (m.content) dots.before(aiRow(m.content));
           for (const tc of m.tool_calls) {
             const name = tc.function.name; let args = {}; try { args = JSON.parse(tc.function.arguments || '{}'); } catch { }
             let st = null; if (showProc) { st = el('div', 'ai-st'); st.append(el('span', 'sp'), el('span', '', LABEL[name] || name)); dots.before(st); scroll(); await new Promise(r => setTimeout(r, 350)); }
@@ -8113,13 +8202,13 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
             if (st) { st.classList.add('ok'); await new Promise(r => setTimeout(r, 250)); }
             msgs.push({ role: 'tool', tool_call_id: tc.id, name, content: trunc(JSON.stringify(res), 4000) });
           }
-          dots.before(...[]); scroll(); continue;
+          scroll(); continue;
         }
-        dots.remove(); push(bubble('a', m.content || 'Дайын.')); break;
+        dots.remove(); push(aiRow(m.content || 'Дайын.')); break;
       }
-      if (dots.isConnected) { dots.remove(); if (!stop) push(bubble('a', 'Тым көп қадам болды. Тапсырманы нақтылап қайта жазыңыз.')); }
-    } catch (e) { dots.remove(); push(bubble('e', e.message || String(e))); msgs.pop(); while (msgs.length && msgs[msgs.length - 1].role !== 'user') msgs.pop(); if (msgs.length) msgs.pop(); }
-    busy = false; g('aiSend').disabled = false; refreshStats(); g('aiIn').focus();
+      if (dots.isConnected) { dots.remove(); if (!stop) push(aiRow('Тым көп қадам болды. Тапсырманы нақтылап қайта жазыңыз.')); }
+    } catch (e) { dots.remove(); push(errRow(e.message || String(e))); while (msgs.length && msgs[msgs.length - 1].role !== 'user') msgs.pop(); if (msgs.length) msgs.pop(); }
+    setBusy(false); save(); refreshStats(skipped); g('aiIn').focus();
   }
 
   window.aiInit = () => { if (!isStaff) { const f = g('aiFab'); if (f) f.hidden = true; return; } if (!built) build(); const p = g('aiPanel'); g('aiFab').hidden = !p.hidden; g('aiAdm').hidden = !isAdmin; };
