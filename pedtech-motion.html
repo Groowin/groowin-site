@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Заманауи педагогикалық технологияларды таңдау және енгізу әдістемесі</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080d28;
+  --bg2:#131a4f;
+  --violet:#7c5cff;
+  --cyan:#2ee6d6;
+  --amber:#ffb547;
+  --pink:#ff5fa2;
+  --text:#f4f6ff;
+  --muted:#aab3da;
+  --card:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.16);
+  --sans:'Noto Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#03050f;color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+
+#frame{
+  position:fixed;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;
+  background:radial-gradient(1400px 900px at 78% 8%,#26267a 0%,rgba(38,38,122,0) 62%),radial-gradient(1100px 800px at 0% 100%,#0d3b57 0%,rgba(13,59,87,0) 60%),var(--bg);
+}
+#bgc{position:absolute;inset:0;width:1920px;height:1080px;opacity:.7}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.38;pointer-events:none}
+.b1{width:620px;height:620px;left:-120px;top:-80px;background:var(--violet);animation:drift1 22s ease-in-out infinite}
+.b2{width:520px;height:520px;right:-100px;bottom:-60px;background:var(--cyan);animation:drift2 26s ease-in-out infinite}
+.b3{width:380px;height:380px;left:48%;top:36%;background:var(--pink);opacity:.18;animation:drift1 30s ease-in-out infinite reverse}
+@keyframes drift1{50%{transform:translate(160px,120px) scale(1.15)}}
+@keyframes drift2{50%{transform:translate(-200px,-90px) scale(1.1)}}
+.gridfx{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(900px 600px at 50% 50%,#000,transparent 85%);-webkit-mask-image:radial-gradient(900px 600px at 50% 50%,#000,transparent 85%)}
+
+/* ---------- slides ---------- */
+.slide{position:absolute;inset:0;visibility:hidden}
+.slide.on{visibility:visible}
+.h{position:absolute;left:120px;top:84px;max-width:1560px;margin:0;font:800 66px/1.08 var(--sans);letter-spacing:-.015em}
+.h small{display:block;margin-top:12px;font:500 29px/1.4 var(--sans);color:var(--muted);letter-spacing:0}
+.hline{position:absolute;left:120px;top:236px;width:140px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--amber),var(--pink))}
+
+/* entrance animations (play when .slide gets .on) */
+.slide:not(.on) [data-an]{opacity:0}
+.slide.on [data-an]{animation-duration:.95s;animation-timing-function:cubic-bezier(.2,.8,.2,1);animation-fill-mode:both;animation-delay:var(--d,0s)}
+.slide.on [data-an="up"]{animation-name:anUp}
+.slide.on [data-an="left"]{animation-name:anLeft}
+.slide.on [data-an="right"]{animation-name:anRight}
+.slide.on [data-an="zoom"]{animation-name:anZoom}
+.slide.on [data-an="pop"]{animation-name:anPop;animation-duration:.8s;animation-timing-function:cubic-bezier(.3,1.5,.5,1)}
+.slide.on [data-an="flip"]{animation-name:anFlip}
+.slide.on [data-an="rotx"]{animation-name:anRotx;transform-origin:50% 0}
+.slide.on [data-an="mask"]{animation-name:anMask}
+.slide.on [data-an="draw"]{animation-name:anDraw;animation-duration:1.6s}
+@keyframes anUp{from{opacity:0;transform:translateY(70px)}to{opacity:1;transform:none}}
+@keyframes anLeft{from{opacity:0;transform:translateX(-130px)}to{opacity:1;transform:none}}
+@keyframes anRight{from{opacity:0;transform:translateX(130px)}to{opacity:1;transform:none}}
+@keyframes anZoom{from{opacity:0;transform:scale(.55)}to{opacity:1;transform:none}}
+@keyframes anPop{from{opacity:0;transform:scale(.2) rotate(-10deg)}to{opacity:1;transform:none}}
+@keyframes anFlip{from{opacity:0;transform:perspective(1000px) rotateY(-95deg)}to{opacity:1;transform:perspective(1000px) rotateY(0)}}
+@keyframes anRotx{from{opacity:0;transform:perspective(1000px) rotateX(-85deg)}to{opacity:1;transform:perspective(1000px) rotateX(0)}}
+@keyframes anMask{from{opacity:1;clip-path:inset(0 100% 0 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes anDraw{from{opacity:1;stroke-dashoffset:1}to{opacity:1;stroke-dashoffset:0}}
+
+/* cinematic text */
+.split{perspective:700px}
+.split .w{display:inline-block;overflow:hidden;vertical-align:top;padding:.08em .02em .16em;margin:-.08em 0 -.16em}
+.split .ch{display:inline-block;opacity:0;transform:translateY(118%) rotateX(-85deg);transform-origin:50% 100%;filter:blur(8px)}
+.slide.on .split .ch{animation:chIn .95s cubic-bezier(.2,.85,.2,1) calc(var(--d,0s) + var(--i) * 26ms) both}
+@keyframes chIn{to{opacity:1;transform:none;filter:blur(0)}}
+.slide:not(.on) .split .ch{opacity:0}
+
+/* icons */
+.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- HUD ---------- */
+.hud{position:absolute;inset:0;z-index:50;pointer-events:none}
+.brand{position:absolute;left:120px;bottom:44px;font:500 22px var(--sans);color:var(--muted)}
+.cnt{position:absolute;right:130px;bottom:40px;font:700 30px var(--sans);color:var(--text)}
+.cnt span{color:var(--muted);font-weight:500}
+.pbar{position:absolute;left:0;right:0;bottom:0;height:7px;background:rgba(255,255,255,.08)}
+.pbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--violet),var(--cyan),var(--amber));transform-origin:left;transform:scaleX(0);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.fsb{
+  position:absolute;right:44px;top:32px;pointer-events:auto;display:flex;align-items:center;gap:12px;height:52px;padding:0 22px;
+  border:1.5px solid var(--line);border-radius:999px;background:rgba(8,13,40,.6);cursor:pointer;font:600 21px var(--sans);transition:background .2s,border-color .2s;
+}
+.fsb:hover{background:var(--violet);border-color:var(--violet)}
+.fsb .ic{font-size:26px}
+.nav{position:absolute;right:34px;top:50%;transform:translateY(-50%);display:grid;gap:22px;justify-items:center;pointer-events:none}
+.nb{
+  pointer-events:auto;position:relative;display:grid;place-items:center;border:0;border-radius:50%;cursor:pointer;
+  transition:transform .2s,opacity .3s,background .2s,box-shadow .2s;
+}
+.nb.next{width:104px;height:104px;background:linear-gradient(135deg,var(--violet),var(--cyan));box-shadow:0 20px 50px -12px rgba(124,92,255,.8);color:#fff}
+.nb.prev{width:68px;height:68px;background:rgba(255,255,255,.1);border:1.5px solid var(--line)}
+.nb:hover{transform:scale(1.1)}
+.nb:active{transform:scale(.94)}
+.nb .ic{font-size:46px;stroke-width:3.6}
+.nb.prev .ic{font-size:32px}
+.nb.off{opacity:0;pointer-events:none;transform:scale(.6)}
+.nb.next::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid var(--cyan);animation:ring 2s ease-out infinite}
+@keyframes ring{from{transform:scale(1);opacity:.9}to{transform:scale(1.7);opacity:0}}
+.wipe{position:absolute;inset:-5% -20%;z-index:45;pointer-events:none;background:linear-gradient(100deg,#7c5cff,#2ee6d6 55%,#ffb547);transform:translateX(-120%) skewX(-14deg)}
+
+/* ---------- slide 1: title ---------- */
+#s1 .t{position:absolute;left:120px;top:130px;width:1100px;margin:0;font:900 76px/1.08 var(--sans);letter-spacing:-.025em}
+#s1 .t .ln{display:block;white-space:nowrap}
+#s1 .t .ln:nth-child(2){color:var(--cyan)}
+#s1 .t .ln:nth-child(4){color:var(--amber)}
+#s1 .by{position:absolute;left:120px;top:590px;width:1000px;display:grid;gap:10px}
+#s1 .by b{font:700 46px var(--sans)}
+#s1 .by span{font:500 28px/1.4 var(--sans);color:var(--muted)}
+#s1 .by i{display:block;width:260px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--pink),var(--amber));margin-bottom:12px}
+.scene{position:absolute;left:1120px;top:200px;width:640px;height:640px;perspective:1500px}
+.cube{position:absolute;left:170px;top:170px;width:300px;height:300px;transform-style:preserve-3d;animation:cubeSpin 20s linear infinite}
+@keyframes cubeSpin{from{transform:rotateX(-22deg) rotateY(0)}to{transform:rotateX(-22deg) rotateY(360deg)}}
+.cube .f{
+  position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:10px;border:2px solid rgba(255,255,255,.35);border-radius:14px;
+  background:linear-gradient(145deg,rgba(124,92,255,.55),rgba(46,230,214,.35));backdrop-filter:blur(2px);font:800 40px var(--sans);text-shadow:0 4px 20px rgba(0,0,0,.4);
+}
+.cube .f .ic{font-size:76px}
+.cube .f:nth-child(1){transform:translateZ(150px)}
+.cube .f:nth-child(2){transform:rotateY(90deg) translateZ(150px)}
+.cube .f:nth-child(3){transform:rotateY(180deg) translateZ(150px)}
+.cube .f:nth-child(4){transform:rotateY(-90deg) translateZ(150px)}
+.cube .f:nth-child(5){transform:rotateX(90deg) translateZ(150px)}
+.cube .f:nth-child(6){transform:rotateX(-90deg) translateZ(150px)}
+.orb{position:absolute;left:50%;top:50%;border-radius:50%;border:2px solid rgba(255,255,255,.22);transform-style:preserve-3d}
+.orb.o1{width:560px;height:560px;margin:-280px 0 0 -280px;transform:rotateX(72deg);animation:orbA 14s linear infinite}
+.orb.o2{width:640px;height:640px;margin:-320px 0 0 -320px;transform:rotateX(72deg) rotateY(22deg);animation:orbA 22s linear infinite reverse;border-color:rgba(255,181,71,.35)}
+@keyframes orbA{to{transform:rotateX(72deg) rotateZ(360deg)}}
+.orb i{position:absolute;left:50%;top:-14px;width:28px;height:28px;margin-left:-14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--cyan));box-shadow:0 0 30px var(--cyan)}
+.orb.o2 i{background:radial-gradient(circle at 35% 30%,#fff,var(--amber));box-shadow:0 0 30px var(--amber)}
+.fl{position:absolute;display:grid;place-items:center;border-radius:22px;background:rgba(255,255,255,.1);border:1.5px solid var(--line);backdrop-filter:blur(6px);animation:flo 5s ease-in-out infinite}
+.fl .ic{font-size:60px}
+@keyframes flo{50%{transform:translateY(-22px) rotate(4deg)}}
+
+/* ---------- slide 2: plan ---------- */
+#s2 .plan{position:absolute;left:760px;top:170px;width:960px;display:grid;gap:18px}
+.pl{display:flex;align-items:center;gap:30px;padding:22px 34px;border-radius:20px;background:var(--card);border:1.5px solid var(--line);font:600 34px/1.25 var(--sans);position:relative;overflow:hidden}
+.pl::after{content:"";position:absolute;left:0;bottom:0;height:4px;width:0;background:linear-gradient(90deg,var(--violet),var(--cyan));animation:plBar 1s var(--d) both}
+.slide:not(.on) .pl::after{animation:none}
+@keyframes plBar{from{width:0}to{width:100%}}
+.pl b{flex:none;width:76px;height:76px;border-radius:20px;display:grid;place-items:center;font:800 38px var(--sans);background:linear-gradient(135deg,var(--violet),var(--cyan))}
+.pl:nth-child(2) b{background:linear-gradient(135deg,var(--cyan),#3aa8ff)}
+.pl:nth-child(3) b{background:linear-gradient(135deg,var(--amber),var(--pink))}
+.pl:nth-child(4) b{background:linear-gradient(135deg,var(--pink),var(--violet))}
+.pl:nth-child(5) b{background:linear-gradient(135deg,#3aa8ff,var(--violet))}
+.pl:nth-child(6) b{background:linear-gradient(135deg,var(--cyan),var(--amber))}
+#s2 .ill{position:absolute;left:120px;top:330px;width:560px;height:560px}
+.big-ic{position:absolute;display:grid;place-items:center;border-radius:36px;background:linear-gradient(145deg,rgba(124,92,255,.5),rgba(46,230,214,.25));border:2px solid rgba(255,255,255,.3);box-shadow:0 40px 80px -30px #000}
+.big-ic .ic{width:55%;height:55%}
+
+/* ---------- slide 3: definition ---------- */
+#s3 .def{position:absolute;left:120px;top:290px;width:980px;padding:44px 52px;border-radius:28px;background:linear-gradient(145deg,rgba(124,92,255,.32),rgba(46,230,214,.12));border:2px solid rgba(255,255,255,.22);font:600 40px/1.4 var(--sans)}
+#s3 .def em{font-style:normal;color:var(--amber)}
+#s3 .feat{position:absolute;left:120px;top:660px;width:1100px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.ft{padding:26px 22px;border-radius:22px;background:var(--card);border:1.5px solid var(--line);text-align:center;font:600 26px/1.3 var(--sans)}
+.ft .ic{font-size:60px;color:var(--cyan);margin-bottom:10px}
+.ft:nth-child(2) .ic{color:var(--amber)}.ft:nth-child(3) .ic{color:var(--pink)}.ft:nth-child(4) .ic{color:var(--violet)}
+#s3 .vs{position:absolute;left:1260px;top:290px;width:480px;display:grid;gap:22px}
+.vsb{padding:26px 30px;border-radius:22px;border:2px solid var(--line);background:var(--card);font:500 27px/1.4 var(--sans);color:var(--muted)}
+.vsb b{display:block;font:800 36px var(--sans);color:var(--text);margin-bottom:6px}
+.vsb.tech{background:linear-gradient(145deg,rgba(255,181,71,.25),rgba(255,95,162,.14));border-color:rgba(255,181,71,.6)}
+.vsb.tech b{color:var(--amber)}
+.bulb{position:absolute;left:1260px;top:720px;width:480px;height:300px;display:flex;justify-content:center}
+.bulb svg{height:100%;overflow:visible}
+.bulb .rays line{stroke:var(--amber);stroke-width:5;stroke-linecap:round;animation:rayP 2s ease-in-out infinite}
+@keyframes rayP{50%{opacity:.25}}
+
+/* ---------- slide 4: carousel ---------- */
+.carw{position:absolute;left:0;top:240px;width:1920px;height:520px;perspective:2300px;perspective-origin:50% 40%}
+.car{position:absolute;left:50%;top:0;width:0;height:0;transform-style:preserve-3d;transform:translateZ(-680px) rotateY(var(--ry,0deg));transition:transform 1.2s cubic-bezier(.6,0,.2,1)}
+.cc{
+  position:absolute;left:-170px;top:0;width:340px;height:460px;padding:34px 30px;border-radius:26px;display:flex;flex-direction:column;gap:14px;
+  background:linear-gradient(160deg,rgba(124,92,255,.7),rgba(19,26,79,.9));border:2px solid rgba(255,255,255,.28);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(calc(var(--k) * 45deg)) translateZ(680px);box-shadow:0 30px 60px -20px rgba(0,0,0,.7);
+  transition:filter .6s,border-color .6s;
+}
+.cc:nth-child(2n){background:linear-gradient(160deg,rgba(46,230,214,.5),rgba(19,26,79,.92))}
+.cc:nth-child(3n){background:linear-gradient(160deg,rgba(255,95,162,.55),rgba(19,26,79,.92))}
+.cc .ic{font-size:92px;color:#fff;margin-bottom:6px}
+.cc h3{margin:0;font:800 36px/1.12 var(--sans)}
+.cc p{margin:0;font:500 24px/1.4 var(--sans);color:rgba(255,255,255,.82)}
+.cc.fo{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,181,71,.5),0 40px 80px -20px rgba(255,181,71,.4)}
+.carcap{position:absolute;left:300px;right:300px;top:800px;text-align:center}
+.carcap b{display:block;font:800 46px var(--sans);color:var(--amber);transition:opacity .4s}
+.carcap span{display:block;margin-top:8px;font:500 30px/1.4 var(--sans);color:var(--text);transition:opacity .4s}
+.dots{position:absolute;left:0;right:0;top:760px;display:flex;justify-content:center;gap:14px}
+.dots i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.25);transition:background .3s,transform .3s}
+.dots i.on{background:var(--amber);transform:scale(1.5)}
+
+/* ---------- slide 5: criteria ---------- */
+.crit{position:absolute;left:120px;top:290px;width:1620px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.cr{position:relative;padding:34px 36px;border-radius:26px;background:var(--card);border:1.5px solid var(--line);min-height:300px;overflow:hidden}
+.cr::before{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:var(--c);opacity:.28;filter:blur(10px)}
+.cr .n{position:absolute;right:30px;top:20px;font:900 84px/1 var(--sans);color:rgba(255,255,255,.1)}
+.cr .ic{font-size:78px;color:var(--c);margin-bottom:14px;position:relative}
+.cr h3{margin:0 0 10px;font:800 38px/1.15 var(--sans);position:relative}
+.cr p{margin:0;font:500 27px/1.4 var(--sans);color:var(--muted);position:relative}
+
+/* ---------- slide 6: matrix ---------- */
+.mx{position:absolute;left:120px;top:290px;width:1620px}
+.mxg{display:grid;grid-template-columns:380px repeat(4,1fr) 270px;grid-template-rows:64px repeat(4,112px);gap:10px 14px;align-items:center}
+.mh{font:600 22px/1.3 var(--sans);color:var(--muted);text-align:center;padding:0 6px}
+.mn{font:800 34px/1.2 var(--sans);padding:0 8px}
+.mc{display:flex;gap:10px;justify-content:center}
+.mc i{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12)}
+.mc i.f{background:linear-gradient(135deg,var(--amber),var(--pink));box-shadow:0 0 18px rgba(255,181,71,.55)}
+.slide.on .mc i.f{animation:dotPop .5s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(var(--d) + var(--j) * .12s)}
+@keyframes dotPop{from{transform:scale(0)}to{transform:scale(1)}}
+.mt{display:flex;align-items:center;gap:14px}
+.mt .bar{flex:1;height:18px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden}
+.mt .bar i{display:block;height:100%;width:calc(var(--v) * 1%);border-radius:9px;background:linear-gradient(90deg,var(--violet),var(--cyan));transform-origin:left}
+.slide.on .mt .bar i{animation:barGrow 1.3s cubic-bezier(.2,.8,.2,1) var(--d) both}
+@keyframes barGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.mt b{width:72px;text-align:right;font:800 36px var(--sans)}
+.mrow{display:contents}
+.win .mn{color:var(--amber)}
+.win .mt .bar i{background:linear-gradient(90deg,var(--amber),var(--pink))}
+.badge{display:inline-block;margin-left:12px;padding:4px 14px;border-radius:999px;background:var(--amber);color:#1b1230;font:800 20px var(--sans);vertical-align:4px}
+.note{position:absolute;left:120px;top:900px;width:1620px;font:500 25px/1.5 var(--sans);color:var(--muted)}
+.note b{color:var(--cyan)}
+
+/* ---------- slide 7: bloom ---------- */
+.bl{position:absolute;left:120px;top:262px;width:1620px;display:grid;gap:8px}
+.br{display:grid;grid-template-columns:760px 1fr;align-items:center;height:104px}
+.lv{width:100%;height:100%;display:grid;place-items:center;font:800 34px var(--sans);clip-path:polygon(var(--ins) 0,calc(100% - var(--ins)) 0,calc(100% - var(--ins) + 22px) 100%,calc(var(--ins) - 22px) 100%);background:var(--bgc)}
+.br .tx{padding-left:44px;font:500 29px/1.35 var(--sans);color:var(--muted)}
+.br .tx b{display:block;color:var(--text);font:700 32px var(--sans)}
+
+/* ---------- slide 8: PDCA ---------- */
+#s8 svg.pd{position:absolute;left:100px;top:230px;width:820px;height:780px;overflow:visible}
+.pdl{position:absolute;left:1000px;top:300px;width:740px;display:grid}
+.pdb{grid-area:1/1;padding:34px 40px;border-radius:26px;background:var(--card);border:2px solid var(--c);opacity:0;transform:translateX(40px);transition:opacity .6s,transform .6s}
+.pdb.on{opacity:1;transform:none}
+.pdb h3{margin:0 0 18px;font:800 46px var(--sans);color:var(--c)}
+.pdb h3 small{font:500 26px var(--sans);color:var(--muted);margin-left:12px}
+.pdb ul{margin:0;padding:0;list-style:none;display:grid;gap:16px}
+.pdb li{position:relative;padding-left:44px;font:500 31px/1.35 var(--sans)}
+.pdb li::before{content:"";position:absolute;left:0;top:.5em;width:20px;height:20px;border-radius:6px;background:var(--c)}
+.pdstep{position:absolute;left:1000px;top:200px;width:740px;display:flex;gap:12px}
+.pdstep i{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.14);transition:background .5s}
+.pdstep i.on{background:var(--amber)}
+
+/* ---------- slide 9: flipped ---------- */
+.lanes{position:absolute;left:120px;top:300px;width:1620px;display:grid;grid-template-columns:repeat(3,1fr);gap:46px}
+.lane{position:relative;padding:36px 36px 40px;border-radius:28px;background:var(--card);border:2px solid var(--line);min-height:560px}
+.lane .ic{font-size:92px;color:var(--c);margin-bottom:14px}
+.lane h3{margin:0 0 4px;font:800 42px/1.15 var(--sans);color:var(--c)}
+.lane .sb{margin:0 0 20px;font:500 24px var(--sans);color:var(--muted)}
+.lane ul{margin:0;padding:0;list-style:none;display:grid;gap:18px}
+.lane li{position:relative;padding-left:40px;font:500 29px/1.35 var(--sans)}
+.lane li::before{content:"";position:absolute;left:0;top:.5em;width:18px;height:18px;border-radius:50%;background:var(--c)}
+.track{position:absolute;left:120px;top:256px;width:1620px;height:8px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}
+.track::after{content:"";position:absolute;top:0;left:-30%;width:30%;height:100%;border-radius:4px;background:linear-gradient(90deg,transparent,var(--amber),transparent);animation:sweep 3.2s linear infinite}
+@keyframes sweep{to{left:100%}}
+.arrow-j{position:absolute;top:556px;width:46px;height:46px;color:var(--amber);font-size:46px;z-index:3}
+
+/* ---------- slide 10: tools ---------- */
+.legend{position:absolute;left:120px;top:290px;width:760px;display:grid;gap:22px}
+.lg{padding:24px 30px;border-radius:22px;background:var(--card);border:1.5px solid var(--line)}
+.lg b{display:flex;align-items:center;gap:14px;font:800 32px var(--sans);margin-bottom:6px}
+.lg b i{width:20px;height:20px;border-radius:50%;background:var(--c);box-shadow:0 0 16px var(--c)}
+.lg span{font:500 26px/1.4 var(--sans);color:var(--muted)}
+.orbit{position:absolute;left:1330px;top:610px;width:0;height:0}
+.ring{position:absolute;border-radius:50%;border:2px dashed rgba(255,255,255,.2)}
+.ring.r1{width:440px;height:440px;margin:-220px 0 0 -220px;animation:spinR 46s linear infinite}
+.ring.r2{width:760px;height:760px;margin:-380px 0 0 -380px;animation:spinR 70s linear infinite reverse}
+@keyframes spinR{to{transform:rotate(360deg)}}
+@keyframes spinC{to{transform:rotate(-360deg)}}
+.chip{position:absolute;left:50%;top:50%;width:0;height:0;transform:rotate(var(--a)) translateX(var(--r)) rotate(calc(var(--a) * -1))}
+.chip .u{position:absolute;left:0;top:0;width:0;height:0;animation:spinC 46s linear infinite}
+.r2 .chip .u{animation:spinC 70s linear infinite reverse}
+.chip .t{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;padding:12px 24px;border-radius:999px;font:700 26px var(--sans);background:var(--c);color:#0b1030;box-shadow:0 10px 30px -8px var(--c)}
+.core{position:absolute;left:-110px;top:-110px;width:220px;height:220px;border-radius:50%;display:grid;place-items:center;align-content:center;text-align:center;background:radial-gradient(circle at 35% 30%,#fff3,transparent 60%),linear-gradient(135deg,var(--violet),var(--cyan));box-shadow:0 0 80px rgba(124,92,255,.7);font:800 36px/1.1 var(--sans)}
+.core .ic{font-size:64px;margin-bottom:6px}
+
+/* ---------- slide 11: assessment ---------- */
+.kp{position:absolute;left:120px;top:290px;width:1620px;display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.kpi{padding:36px 38px;border-radius:28px;background:var(--card);border:2px solid var(--line)}
+.kpi h3{margin:0 0 20px;font:700 30px var(--sans);color:var(--muted)}
+.kpi .nums{display:flex;align-items:baseline;gap:16px;margin-bottom:22px}
+.kpi .a{font:600 44px var(--sans);color:var(--muted);text-decoration:line-through;text-decoration-thickness:3px}
+.kpi .arr{font-size:40px;color:var(--amber)}
+.kpi .b{font:900 100px/1 var(--sans);color:var(--c)}
+.kpi .bar{height:16px;border-radius:8px;background:rgba(255,255,255,.1);overflow:hidden;position:relative;margin-bottom:12px}
+.kpi .bar i{position:absolute;left:0;top:0;height:100%;border-radius:8px}
+.kpi .bar .p{width:calc(var(--p) * 1%);background:rgba(255,255,255,.3)}
+.kpi .bar .q{width:calc(var(--q) * 1%);background:linear-gradient(90deg,var(--c),#fff8)}
+.slide.on .kpi .bar .q{animation:barGrow 1.6s cubic-bezier(.2,.8,.2,1) calc(var(--d) + .3s) both;transform-origin:left}
+.kpi small{font:500 24px var(--sans);color:var(--muted)}
+.tag{position:absolute;right:170px;top:96px;padding:10px 24px;border-radius:999px;background:var(--amber);color:#1b1230;font:800 24px var(--sans)}
+.tools{position:absolute;left:120px;top:760px;width:1620px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.tools b{font:700 30px var(--sans);margin-right:10px}
+.tl{padding:12px 26px;border-radius:999px;border:2px solid var(--line);background:var(--card);font:600 27px var(--sans)}
+
+/* ---------- slide 12: challenges ---------- */
+.fcg{position:absolute;left:120px;top:290px;width:1620px;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.fc{position:relative;height:300px;perspective:1600px}
+.fci{position:absolute;inset:0;transform-style:preserve-3d}
+.slide.on .fci{animation:fcFlip 1s cubic-bezier(.5,0,.2,1) calc(var(--d) + 2.6s) both}
+@keyframes fcFlip{from{transform:rotateX(0)}to{transform:rotateX(180deg)}}
+.fcf,.fcb{position:absolute;inset:0;padding:34px 42px;border-radius:26px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;gap:12px;border:2px solid var(--line)}
+.fcf{background:linear-gradient(145deg,rgba(255,95,162,.32),rgba(124,92,255,.2));border-color:rgba(255,95,162,.6)}
+.fcb{transform:rotateX(180deg);background:linear-gradient(145deg,rgba(46,230,214,.3),rgba(58,168,255,.18));border-color:rgba(46,230,214,.6)}
+.fcf small,.fcb small{font:700 24px var(--sans);color:var(--amber)}
+.fcf p,.fcb p{margin:0;font:700 36px/1.28 var(--sans)}
+.fcb p{font-weight:600;font-size:32px}
+
+/* ---------- slide 13/14 ---------- */
+.cl{position:absolute;left:120px;top:300px;width:1580px;display:grid;gap:60px}
+.cli{display:flex;align-items:center;gap:44px}
+.cli b{flex:none;font:900 150px/1 var(--sans);color:transparent;-webkit-text-stroke:3px var(--c)}
+.cli p{margin:0;font:700 52px/1.25 var(--sans)}
+.cli p em{font-style:normal;color:var(--c)}
+#s14 .th{position:absolute;left:0;right:0;top:290px;text-align:center;font:900 100px/1.12 var(--sans);letter-spacing:-.02em}
+#s14 .th .ln{display:block}
+#s14 .th .ln:nth-child(1){color:var(--cyan)}
+#s14 .th .ln:nth-child(2){color:var(--amber)}
+#s14 .q{position:absolute;left:0;right:0;top:640px;text-align:center;font:600 46px var(--sans);color:var(--text)}
+#s14 .who{position:absolute;left:0;right:0;top:760px;text-align:center;font:500 30px/1.5 var(--sans);color:var(--muted)}
+#s14 .who b{color:var(--text);font:700 38px var(--sans)}
+.conf{position:absolute;width:26px;height:14px;border-radius:3px;animation:conf linear infinite}
+@keyframes conf{from{transform:translateY(-60px) rotate(0)}to{transform:translateY(1160px) rotate(720deg)}}
+
+@media (prefers-reduced-motion:reduce){
+  .cube,.orb,.fl,.ring,.chip .u,.blob,.track::after,.nb.next::after,.conf{animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-cap" viewBox="0 0 64 64"><path d="M32 12L4 26l28 14 28-14L32 12z"/><path d="M14 33v13c0 4 8 8 18 8s18-4 18-8V33"/><path d="M60 26v16"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 64 64"><path d="M22 44c-6-4-10-9-10-16a20 20 0 1 1 40 0c0 7-4 12-10 16v6H22v-6z"/><path d="M24 56h16M27 62h10M26 36l6-8 6 8"/></symbol>
+  <symbol id="i-book" viewBox="0 0 64 64"><path d="M6 12c10-3 18-2 26 4 8-6 16-7 26-4v38c-10-3-18-2-26 4-8-6-16-7-26-4V12z"/><path d="M32 16v38"/></symbol>
+  <symbol id="i-target" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24"/><circle cx="32" cy="32" r="14"/><circle cx="32" cy="32" r="4"/><path d="M32 4v8M32 52v8M4 32h8M52 32h8"/></symbol>
+  <symbol id="i-users" viewBox="0 0 64 64"><circle cx="24" cy="22" r="9"/><path d="M6 54c0-11 8-18 18-18s18 7 18 18"/><circle cx="46" cy="24" r="7"/><path d="M46 38c8 0 14 5 14 14"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 64 64"><path d="M8 8v48h48"/><path d="M18 44V32M30 44V20M42 44V28M54 44V12"/></symbol>
+  <symbol id="i-tools" viewBox="0 0 64 64"><circle cx="32" cy="32" r="9"/><path d="M32 6v8M32 50v8M6 32h8M50 32h8M13.6 13.6l5.7 5.7M44.7 44.7l5.7 5.7M13.6 50.4l5.7-5.7M44.7 19.3l5.7-5.7"/></symbol>
+  <symbol id="i-star" viewBox="0 0 64 64"><path d="M32 6l7.5 17 18.5 1.8-14 12.4 4.2 18.3L32 45.8 15.8 55.5 20 37.2 6 24.8 24.5 23z"/></symbol>
+  <symbol id="i-laptop" viewBox="0 0 64 64"><rect x="10" y="12" width="44" height="30" rx="3"/><path d="M4 50h56l-4 6H8l-4-6z"/><path d="M24 26l6 6 10-10"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 64 64"><path d="M8 12h48v32H30L16 56V44H8V12z"/><path d="M20 24h24M20 33h14"/></symbol>
+  <symbol id="i-puzzle" viewBox="0 0 64 64"><path d="M10 22h10a6 6 0 1 1 12 0h10v10a6 6 0 1 1 0 12v10H32a6 6 0 1 0-12 0H10V44a6 6 0 1 0 0-12V22z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 64 64"><rect x="6" y="12" width="52" height="40" rx="8"/><path d="M26 22l16 10-16 10V22z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 64 64"><circle cx="32" cy="32" r="25"/><path d="M20 33l8 8 17-18"/></symbol>
+  <symbol id="i-game" viewBox="0 0 64 64"><rect x="4" y="18" width="56" height="30" rx="14"/><path d="M20 26v14M13 33h14"/><circle cx="43" cy="30" r="2.5"/><circle cx="50" cy="36" r="2.5"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 64 64"><path d="M22 8l24 24-24 24"/></symbol>
+  <symbol id="i-arrowl" viewBox="0 0 64 64"><path d="M42 8L18 32l24 24"/></symbol>
+  <symbol id="i-full" viewBox="0 0 64 64"><path d="M8 24V8h16M56 24V8H40M8 40v16h16M56 40v16H40"/></symbol>
+  <symbol id="i-cycle" viewBox="0 0 64 64"><path d="M54 24A22 22 0 0 0 14 20M10 40a22 22 0 0 0 40 4"/><path d="M52 8v16H36M12 56V40h16"/></symbol>
+</svg>
+
+<div id="frame">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="gridfx"></div>
+  <canvas id="bgc" width="960" height="540"></canvas>
+
+  <!-- 1 TITLE -->
+  <section class="slide" id="s1">
+    <h1 class="t">
+      <span class="ln split" style="--d:.25s">Заманауи педагогикалық</span>
+      <span class="ln split" style="--d:.55s">технологияларды таңдау</span>
+      <span class="ln split" style="--d:.85s">және оқу үдерісіне</span>
+      <span class="ln split" style="--d:1.15s">енгізу әдістемесі</span>
+    </h1>
+    <div class="by" data-an="up" style="--d:1.9s">
+      <i></i>
+      <b>Аскеров Алмас</b>
+      <span>М Физ-11 тобы, магистрант</span>
+      <span>«Жоғары мектепте оқытудың заманауи технологиялары мен әдістері» пәні</span>
+      <span>М. Өтемісов атындағы Батыс Қазақстан университеті</span>
+    </div>
+    <div class="scene" data-an="zoom" style="--d:.5s">
+      <div class="orb o1"><i></i></div>
+      <div class="orb o2"><i></i></div>
+      <div class="cube">
+        <div class="f"><svg class="ic"><use href="#i-laptop"/></svg>АКТ</div>
+        <div class="f"><svg class="ic"><use href="#i-puzzle"/></svg>Кейс</div>
+        <div class="f"><svg class="ic"><use href="#i-target"/></svg>Жоба</div>
+        <div class="f"><svg class="ic"><use href="#i-cycle"/></svg>Flipped</div>
+        <div class="f"><svg class="ic"><use href="#i-game"/></svg>Ойын</div>
+        <div class="f"><svg class="ic"><use href="#i-chart"/></svg>Бағалау</div>
+      </div>
+      <div class="fl" style="left:20px;top:60px;width:120px;height:120px;color:var(--amber);animation-delay:-1s"><svg class="ic"><use href="#i-cap"/></svg></div>
+      <div class="fl" style="right:10px;top:150px;width:110px;height:110px;color:var(--cyan);animation-delay:-2.5s"><svg class="ic"><use href="#i-bulb"/></svg></div>
+      <div class="fl" style="left:60px;bottom:40px;width:104px;height:104px;color:var(--pink);animation-delay:-3.5s"><svg class="ic"><use href="#i-book"/></svg></div>
+    </div>
+  </section>
+
+  <!-- 2 PLAN -->
+  <section class="slide" id="s2">
+    <h2 class="h split" style="--d:.1s">Жоспар</h2>
+    <div class="hline" data-an="mask" style="--d:.5s"></div>
+    <div class="ill">
+      <div class="big-ic" data-an="pop" style="--d:.4s;left:40px;top:20px;width:260px;height:260px"><svg class="ic"><use href="#i-cap"/></svg></div>
+      <div class="big-ic" data-an="pop" style="--d:.6s;left:250px;top:200px;width:230px;height:230px;transform:rotate(6deg);color:var(--amber)"><svg class="ic"><use href="#i-book"/></svg></div>
+      <div class="big-ic" data-an="pop" style="--d:.8s;left:20px;top:300px;width:200px;height:200px;color:var(--cyan)"><svg class="ic"><use href="#i-bulb"/></svg></div>
+    </div>
+    <div class="plan">
+      <div class="pl" data-an="right" style="--d:.4s"><b>1</b>Педагогикалық технология ұғымы</div>
+      <div class="pl" data-an="right" style="--d:.55s"><b>2</b>Заманауи технологиялардың жіктелуі</div>
+      <div class="pl" data-an="right" style="--d:.7s"><b>3</b>Таңдау критерийлері және матрицасы</div>
+      <div class="pl" data-an="right" style="--d:.85s"><b>4</b>Мақсатқа сай таңдау (Блум таксономиясы)</div>
+      <div class="pl" data-an="right" style="--d:1s"><b>5</b>Енгізу әдістемесі: PDCA циклі</div>
+      <div class="pl" data-an="right" style="--d:1.15s"><b>6</b>Нәтижені бағалау және қиындықтар</div>
+    </div>
+  </section>
+
+  <!-- 3 DEFINITION -->
+  <section class="slide" id="s3">
+    <h2 class="h split" style="--d:.1s">Педагогикалық технология дегеніміз не?</h2>
+    <div class="hline" data-an="mask" style="--d:.7s"></div>
+    <div class="def" data-an="left" style="--d:.6s">Оқыту мақсатына <em>жобаланған жүйелі әрекеттер</em> арқылы жетіп, нәтижесін <em>өлшеуге болатын</em> оқыту жүйесі.</div>
+    <div class="feat">
+      <div class="ft" data-an="flip" style="--d:1.1s"><svg class="ic"><use href="#i-puzzle"/></svg><br>Жүйелілік</div>
+      <div class="ft" data-an="flip" style="--d:1.25s"><svg class="ic"><use href="#i-target"/></svg><br>Нәтижеге бағыттылық</div>
+      <div class="ft" data-an="flip" style="--d:1.4s"><svg class="ic"><use href="#i-cycle"/></svg><br>Қайталанымдылық</div>
+      <div class="ft" data-an="flip" style="--d:1.55s"><svg class="ic"><use href="#i-chart"/></svg><br>Өлшенетін нәтиже</div>
+    </div>
+    <div class="vs">
+      <div class="vsb" data-an="right" style="--d:.9s"><b>Әдіс</b>Қалай оқытамыз? Жеке тәсіл: дәріс, талқылау, тапсырма.</div>
+      <div class="vsb tech" data-an="right" style="--d:1.1s"><b>Технология</b>Мақсаттан нәтижеге дейінгі бүкіл жүйе: мазмұн, әдіс, құрал, бағалау.</div>
+    </div>
+    <div class="bulb" data-an="zoom" style="--d:1.4s">
+      <svg viewBox="0 0 300 300">
+        <g class="rays"><line x1="150" y1="10" x2="150" y2="40"/><line x1="60" y1="46" x2="80" y2="68" style="animation-delay:.3s"/><line x1="240" y1="46" x2="220" y2="68" style="animation-delay:.6s"/><line x1="22" y1="130" x2="52" y2="134" style="animation-delay:.9s"/><line x1="278" y1="130" x2="248" y2="134" style="animation-delay:1.2s"/></g>
+        <path d="M110 190c-24-16-38-36-38-62a78 78 0 1 1 156 0c0 26-14 46-38 62v26h-80v-26z" fill="rgba(255,181,71,.2)" stroke="#ffb547" stroke-width="7" stroke-linejoin="round"/>
+        <path d="M120 232h60M130 258h40M130 150l20-30 20 30" fill="none" stroke="#ffb547" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 4 CLASSIFICATION -->
+  <section class="slide" id="s4">
+    <h2 class="h split" style="--d:.1s">Заманауи технологиялардың жіктелуі<small>Сегіз негізгі бағыт</small></h2>
+    <div class="hline" data-an="mask" style="--d:.8s"></div>
+    <div class="carw" data-an="zoom" style="--d:.5s">
+      <div class="car" id="car">
+        <div class="cc" style="--k:0"><svg class="ic"><use href="#i-laptop"/></svg><h3>АКТ және цифрлық оқыту</h3><p>LMS, онлайн материалдар</p></div>
+        <div class="cc" style="--k:1"><svg class="ic"><use href="#i-puzzle"/></svg><h3>Проблемалық оқыту</h3><p>Мәселелік жағдай арқылы</p></div>
+        <div class="cc" style="--k:2"><svg class="ic"><use href="#i-target"/></svg><h3>Жоба әдісі</h3><p>Нақты өнім жасау</p></div>
+        <div class="cc" style="--k:3"><svg class="ic"><use href="#i-chat"/></svg><h3>Кейс-стади</h3><p>Нақты жағдайды талдау</p></div>
+        <div class="cc" style="--k:4"><svg class="ic"><use href="#i-cycle"/></svg><h3>Flipped classroom</h3><p>Теория үйде, практика аудиторияда</p></div>
+        <div class="cc" style="--k:5"><svg class="ic"><use href="#i-game"/></svg><h3>Геймификация</h3><p>Ойын элементтері</p></div>
+        <div class="cc" style="--k:6"><svg class="ic"><use href="#i-bulb"/></svg><h3>Сыни ойлау</h3><p>Сұрақ қою және дәлелдеу</p></div>
+        <div class="cc" style="--k:7"><svg class="ic"><use href="#i-users"/></svg><h3>Ынтымақтастықта оқыту</h3><p>Топпен бірге жұмыс</p></div>
+      </div>
+    </div>
+    <div class="dots" id="cdots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="carcap"><b id="cct"></b><span id="ccd"></span></div>
+  </section>
+
+  <!-- 5 CRITERIA -->
+  <section class="slide" id="s5">
+    <h2 class="h split" style="--d:.1s">Технологияны таңдау критерийлері<small>Алты сұрақ, алты шешім</small></h2>
+    <div class="hline" data-an="mask" style="--d:.8s"></div>
+    <div class="crit">
+      <div class="cr" data-an="flip" style="--d:.6s;--c:var(--violet)"><span class="n">1</span><svg class="ic"><use href="#i-target"/></svg><h3>Оқыту мақсаты</h3><p>Технология мақсатқа жетуге көмектесе ме?</p></div>
+      <div class="cr" data-an="flip" style="--d:.76s;--c:var(--cyan)"><span class="n">2</span><svg class="ic"><use href="#i-users"/></svg><h3>Студенттер</h3><p>Деңгейі, дайындығы және қажеттілігі қандай?</p></div>
+      <div class="cr" data-an="flip" style="--d:.92s;--c:var(--amber)"><span class="n">3</span><svg class="ic"><use href="#i-book"/></svg><h3>Пән мазмұны</h3><p>Тақырып теориялық па, практикалық па?</p></div>
+      <div class="cr" data-an="flip" style="--d:1.08s;--c:var(--pink)"><span class="n">4</span><svg class="ic"><use href="#i-tools"/></svg><h3>Ресурстар</h3><p>Уақыт, құрал, интернет жеткілікті ме?</p></div>
+      <div class="cr" data-an="flip" style="--d:1.24s;--c:#3aa8ff"><span class="n">5</span><svg class="ic"><use href="#i-star"/></svg><h3>Оқытушы құзыреті</h3><p>Мен бұл технологияны меңгердім бе?</p></div>
+      <div class="cr" data-an="flip" style="--d:1.4s;--c:var(--cyan)"><span class="n">6</span><svg class="ic"><use href="#i-chart"/></svg><h3>Нәтижені өлшеу</h3><p>Нәтижені қалай тексереміз?</p></div>
+    </div>
+  </section>
+
+  <!-- 6 MATRIX -->
+  <section class="slide" id="s6">
+    <h2 class="h split" style="--d:.1s">Таңдау матрицасы<small>Мақсат: студент нақты жағдайды талдап, шешім қабылдайды</small></h2>
+    <div class="hline" data-an="mask" style="--d:.8s"></div>
+    <div class="tag" data-an="pop" style="--d:.8s">Үлгі бағалау</div>
+    <div class="mx">
+      <div class="mxg">
+        <div></div><div class="mh" data-an="up" style="--d:.6s">Мақсатқа сәйкестік</div><div class="mh" data-an="up" style="--d:.7s">Студенттерге лайықтылық</div><div class="mh" data-an="up" style="--d:.8s">Ресурс жеңілдігі</div><div class="mh" data-an="up" style="--d:.9s">Нәтиже өлшенуі</div><div class="mh" data-an="up" style="--d:1s">Жиынтық (12 ішінен)</div>
+
+        <div class="mrow win">
+          <div class="mn" data-an="left" style="--d:1.1s">Кейс-стади<span class="badge">таңдалды</span></div>
+          <div class="mc" style="--d:1.4s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i class="f" style="--j:2"></i></div>
+          <div class="mc" style="--d:1.4s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i class="f" style="--j:2"></i></div>
+          <div class="mc" style="--d:1.4s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i></i></div>
+          <div class="mc" style="--d:1.4s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i class="f" style="--j:2"></i></div>
+          <div class="mt" style="--d:2.2s"><div class="bar"><i style="--v:91.6"></i></div><b data-count="11">0</b></div>
+        </div>
+        <div class="mrow">
+          <div class="mn" data-an="left" style="--d:1.25s">Flipped classroom</div>
+          <div class="mc" style="--d:1.9s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i></i></div>
+          <div class="mc" style="--d:1.9s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i class="f" style="--j:2"></i></div>
+          <div class="mc" style="--d:1.9s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i></i></div>
+          <div class="mc" style="--d:1.9s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i></i></div>
+          <div class="mt" style="--d:2.6s"><div class="bar"><i style="--v:75"></i></div><b data-count="9">0</b></div>
+        </div>
+        <div class="mrow">
+          <div class="mn" data-an="left" style="--d:1.4s">Жоба әдісі</div>
+          <div class="mc" style="--d:2.3s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i class="f" style="--j:2"></i></div>
+          <div class="mc" style="--d:2.3s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i></i></div>
+          <div class="mc" style="--d:2.3s"><i class="f" style="--j:0"></i><i></i><i></i></div>
+          <div class="mc" style="--d:2.3s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i></i></div>
+          <div class="mt" style="--d:3s"><div class="bar"><i style="--v:66.6"></i></div><b data-count="8">0</b></div>
+        </div>
+        <div class="mrow">
+          <div class="mn" data-an="left" style="--d:1.55s">Геймификация</div>
+          <div class="mc" style="--d:2.7s"><i class="f" style="--j:0"></i><i></i><i></i></div>
+          <div class="mc" style="--d:2.7s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i class="f" style="--j:2"></i></div>
+          <div class="mc" style="--d:2.7s"><i class="f" style="--j:0"></i><i class="f" style="--j:1"></i><i class="f" style="--j:2"></i></div>
+          <div class="mc" style="--d:2.7s"><i class="f" style="--j:0"></i><i></i><i></i></div>
+          <div class="mt" style="--d:3.4s"><div class="bar"><i style="--v:58.3"></i></div><b data-count="7">0</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="note" data-an="up" style="--d:3.4s"><b>Қалай қолданамыз:</b> әр критерийге 0–3 ұпай қоямыз, жиынтығы ең жоғары технологияны таңдаймыз. Баға нақты жағдайға байланысты, мұндағы сандар мысал үшін алынған.</div>
+  </section>
+
+  <!-- 7 BLOOM -->
+  <section class="slide" id="s7">
+    <h2 class="h split" style="--d:.1s">Мақсатқа сай таңдау<small>Блум таксономиясы: мақсат деңгейі технологияны анықтайды</small></h2>
+    <div class="hline" data-an="mask" style="--d:.8s"></div>
+    <div class="bl">
+      <div class="br"><div class="lv" data-an="up" style="--d:2.1s;--ins:300px;--bgc:linear-gradient(90deg,#ff5fa2,#ff8a5f)">Жасау</div><div class="tx" data-an="right" style="--d:2.3s"><b>Жоба әдісі, зерттеу жұмысы</b>жаңа өнім немесе шешім ұсыну</div></div>
+      <div class="br"><div class="lv" data-an="up" style="--d:1.75s;--ins:240px;--bgc:linear-gradient(90deg,#ffb547,#ff8a5f)">Бағалау</div><div class="tx" data-an="right" style="--d:1.95s"><b>Рубрика, өзара бағалау, портфолио</b>өз және өзгенің жұмысын бағалау</div></div>
+      <div class="br"><div class="lv" data-an="up" style="--d:1.4s;--ins:180px;--bgc:linear-gradient(90deg,#c8d94a,#ffb547)">Талдау</div><div class="tx" data-an="right" style="--d:1.6s"><b>Кейс-стади, проблемалық оқыту</b>себеп-салдарды табу, салыстыру</div></div>
+      <div class="br"><div class="lv" data-an="up" style="--d:1.05s;--ins:120px;--bgc:linear-gradient(90deg,#2ee6d6,#8be07a)">Қолдану</div><div class="tx" data-an="right" style="--d:1.25s"><b>Практикум, симуляция, есеп шығару</b>білімді жаңа жағдайда қолдану</div></div>
+      <div class="br"><div class="lv" data-an="up" style="--d:.7s;--ins:60px;--bgc:linear-gradient(90deg,#3aa8ff,#2ee6d6)">Түсіну</div><div class="tx" data-an="right" style="--d:.9s"><b>Flipped classroom, интерактивті дәріс</b>өз сөзімен түсіндіру</div></div>
+      <div class="br"><div class="lv" data-an="up" style="--d:.35s;--ins:0px;--bgc:linear-gradient(90deg,#7c5cff,#3aa8ff)">Еске түсіру</div><div class="tx" data-an="right" style="--d:.55s"><b>Квиз, тест, флэш-карточкалар</b>терминдер мен фактілерді еске сақтау</div></div>
+    </div>
+  </section>
+
+  <!-- 8 PDCA -->
+  <section class="slide" id="s8">
+    <h2 class="h split" style="--d:.1s">Енгізу әдістемесі: PDCA циклі<small>Деминг циклі бойынша жоспарлы енгізу</small></h2>
+    <div class="hline" data-an="mask" style="--d:.8s"></div>
+    <svg class="pd" id="pd" viewBox="0 0 820 780" data-an="zoom" style="--d:.5s"></svg>
+    <div class="pdstep" id="pdstep"><i></i><i></i><i></i><i></i></div>
+    <div class="pdl" data-an="right" style="--d:.9s" id="pdl">
+      <div class="pdb" style="--c:#8f73ff"><h3>Жоспарла<small>Plan</small></h3><ul><li>Мақсат пен оқу нәтижелерін анықтау</li><li>Технологияны матрица арқылы таңдау</li><li>Сабақ сценарийі мен рубрика жасау</li></ul></div>
+      <div class="pdb" style="--c:var(--cyan)"><h3>Орында<small>Do</small></h3><ul><li>Алдымен пилоттық топта сынау</li><li>Студенттерге қысқа нұсқаулық беру</li><li>Цифрлық ортаны дайындау</li></ul></div>
+      <div class="pdb" style="--c:var(--amber)"><h3>Тексер<small>Check</small></h3><ul><li>Қатысу мен белсенділікті бақылау</li><li>Тест және сауалнама жүргізу</li><li>Нәтижені бастапқы деңгеймен салыстыру</li></ul></div>
+      <div class="pdb" style="--c:var(--pink)"><h3>Түзет<small>Act</small></h3><ul><li>Қателерді түзету</li><li>Табысты тәжірибені кеңейту</li><li>Әдістемелік материалды жинақтау</li></ul></div>
+    </div>
+  </section>
+
+  <!-- 9 FLIPPED EXAMPLE -->
+  <section class="slide" id="s9">
+    <h2 class="h split" style="--d:.1s">Мысал: «төңкерілген сынып»<small>Бір технологияны сабаққа енгізу сценарийі</small></h2>
+    <div class="hline" data-an="mask" style="--d:.9s"></div>
+    <div class="track" data-an="mask" style="--d:.6s"></div>
+    <div class="lanes">
+      <div class="lane" data-an="up" style="--d:.8s;--c:var(--violet)"><svg class="ic" style="color:#9d86ff"><use href="#i-play"/></svg><h3 style="color:#9d86ff">Дәріске дейін</h3><p class="sb">үйде, өз қарқынымен</p><ul style="--c:#9d86ff"><li>Қысқа бейне-дәріс (5–10 минут)</li><li>Оқу материалы LMS-те</li><li>Кіріспе тест</li></ul></div>
+      <div class="lane" data-an="up" style="--d:1.05s;--c:var(--cyan)"><svg class="ic"><use href="#i-chat"/></svg><h3>Аудиторияда</h3><p class="sb">практика мен талқылау</p><ul><li>Сұрақ-жауап</li><li>Топтық тапсырма немесе кейс</li><li>Оқытушы кеңес береді</li></ul></div>
+      <div class="lane" data-an="up" style="--d:1.3s;--c:var(--amber)"><svg class="ic"><use href="#i-check"/></svg><h3>Дәрістен кейін</h3><p class="sb">бекіту және бағалау</p><ul><li>Рефлексия жазу</li><li>Үйге шығармашылық тапсырма</li><li>Рубрика бойынша бағалау</li></ul></div>
+    </div>
+    <svg class="ic arrow-j" style="left:629px" data-an="pop"><use href="#i-arrow"/></svg>
+    <svg class="ic arrow-j" style="left:1185px" data-an="pop"><use href="#i-arrow"/></svg>
+  </section>
+
+  <!-- 10 TOOLS -->
+  <section class="slide" id="s10">
+    <h2 class="h split" style="--d:.1s">Цифрлық құралдар<small>Студент ортасында: бір орбитадағы құралдар</small></h2>
+    <div class="hline" data-an="mask" style="--d:.8s"></div>
+    <div class="legend">
+      <div class="lg" data-an="left" style="--d:.6s;--c:var(--violet)"><b><i></i>Оқу ортасы</b><span>Moodle, Google Classroom, MS Teams</span></div>
+      <div class="lg" data-an="left" style="--d:.8s;--c:var(--cyan)"><b><i></i>Белсенді қатысу</b><span>Kahoot!, Mentimeter, Quizizz</span></div>
+      <div class="lg" data-an="left" style="--d:1s;--c:var(--amber)"><b><i></i>Ынтымақтастық</b><span>Padlet, Miro, Google Docs</span></div>
+      <div class="lg" data-an="left" style="--d:1.2s;--c:var(--pink)"><b><i></i>Контент және кері байланыс</b><span>Canva, Genially, Google Forms</span></div>
+    </div>
+    <div class="orbit" data-an="zoom" style="--d:.5s">
+      <div class="ring r1">
+        <div class="chip" style="--a:0deg;--r:220px;--c:var(--violet)"><div class="u"><div class="t">Moodle</div></div></div>
+        <div class="chip" style="--a:120deg;--r:220px;--c:var(--cyan)"><div class="u"><div class="t">Kahoot!</div></div></div>
+        <div class="chip" style="--a:240deg;--r:220px;--c:var(--amber)"><div class="u"><div class="t">Padlet</div></div></div>
+      </div>
+      <div class="ring r2">
+        <div class="chip" style="--a:20deg;--r:380px;--c:var(--violet)"><div class="u"><div class="t">Google Classroom</div></div></div>
+        <div class="chip" style="--a:92deg;--r:380px;--c:var(--cyan)"><div class="u"><div class="t">Mentimeter</div></div></div>
+        <div class="chip" style="--a:150deg;--r:380px;--c:var(--amber)"><div class="u"><div class="t">Miro</div></div></div>
+        <div class="chip" style="--a:206deg;--r:380px;--c:var(--pink)"><div class="u"><div class="t">Canva</div></div></div>
+        <div class="chip" style="--a:262deg;--r:380px;--c:var(--pink)"><div class="u"><div class="t">Google Forms</div></div></div>
+        <div class="chip" style="--a:318deg;--r:380px;--c:var(--violet)"><div class="u"><div class="t">MS Teams</div></div></div>
+      </div>
+      <div class="core"><svg class="ic"><use href="#i-cap"/></svg>Студент</div>
+    </div>
+  </section>
+
+  <!-- 11 ASSESSMENT -->
+  <section class="slide" id="s11">
+    <h2 class="h split" style="--d:.1s">Нәтижені бағалау<small>Енгізуге дейін және кейін</small></h2>
+    <div class="hline" data-an="mask" style="--d:.8s"></div>
+    <div class="tag" data-an="pop" style="--d:.8s">Мысал деректер</div>
+    <div class="kp">
+      <div class="kpi" data-an="up" style="--d:.6s;--c:var(--cyan);--p:64;--q:79"><h3>Орташа балл (100 ішінен)</h3><div class="nums"><span class="a">64</span><svg class="ic arr"><use href="#i-arrow"/></svg><span class="b" data-count="79">0</span></div><div class="bar"><i class="p"></i><i class="q"></i></div><small>бұрын 64, қазір 79</small></div>
+      <div class="kpi" data-an="up" style="--d:.85s;--c:var(--amber);--p:45;--q:72"><h3>Сабаққа белсенділік</h3><div class="nums"><span class="a">45%</span><svg class="ic arr"><use href="#i-arrow"/></svg><span class="b" data-count="72" data-suf="%">0</span></div><div class="bar"><i class="p"></i><i class="q"></i></div><small>бұрын 45%, қазір 72%</small></div>
+      <div class="kpi" data-an="up" style="--d:1.1s;--c:var(--pink);--p:70;--q:88"><h3>Қанағаттану (5 балдық)</h3><div class="nums"><span class="a">3,5</span><svg class="ic arr"><use href="#i-arrow"/></svg><span class="b" data-count="4.4" data-dec="1">0</span></div><div class="bar"><i class="p"></i><i class="q"></i></div><small>бұрын 3,5, қазір 4,4</small></div>
+    </div>
+    <div class="tools" data-an="up" style="--d:1.6s"><b>Құралдар:</b><span class="tl">Рубрика</span><span class="tl">Тест</span><span class="tl">Сауалнама</span><span class="tl">Портфолио</span><span class="tl">Бақылау парағы</span></div>
+  </section>
+
+  <!-- 12 CHALLENGES -->
+  <section class="slide" id="s12">
+    <h2 class="h split" style="--d:.1s">Қиындықтар және шешімдер<small>Қиындық бір жағында, шешім екінші жағында</small></h2>
+    <div class="hline" data-an="mask" style="--d:.8s"></div>
+    <div class="fcg">
+      <div class="fc" data-an="up" style="--d:.5s"><div class="fci" style="--d:.5s"><div class="fcf"><small>Қиындық</small><p>Студенттер жаңа форматқа үйренбеген</p></div><div class="fcb"><small>Шешім</small><p>Пилоттан бастау, қысқа нұсқаулық беру, кезең-кезеңімен енгізу</p></div></div></div>
+      <div class="fc" data-an="up" style="--d:.7s"><div class="fci" style="--d:.7s"><div class="fcf"><small>Қиындық</small><p>Техника мен интернет жеткіліксіз</p></div><div class="fcb"><small>Шешім</small><p>Қарапайым әрі тегін құралдарды таңдау, офлайн нұсқаны дайындау</p></div></div></div>
+      <div class="fc" data-an="up" style="--d:.9s"><div class="fci" style="--d:.9s"><div class="fcf"><small>Қиындық</small><p>Дайындыққа көп уақыт кетеді</p></div><div class="fcb"><small>Шешім</small><p>Дайын шаблондар, модульдік жоспар, әріптестермен бөлісу</p></div></div></div>
+      <div class="fc" data-an="up" style="--d:1.1s"><div class="fci" style="--d:1.1s"><div class="fcf"><small>Қиындық</small><p>Нәтижені бағалау қиын</p></div><div class="fcb"><small>Шешім</small><p>Айқын рубрика, бастапқы және соңғы өлшем, кері байланыс</p></div></div></div>
+    </div>
+  </section>
+
+  <!-- 13 CONCLUSION -->
+  <section class="slide" id="s13">
+    <h2 class="h split" style="--d:.1s">Қорытынды</h2>
+    <div class="hline" data-an="mask" style="--d:.5s"></div>
+    <div class="cl">
+      <div class="cli" data-an="left" style="--d:.7s;--c:var(--cyan)"><b>01</b><p>Технологияны <em>мақсатқа қарап</em> таңдаймыз, сәнге қарап емес.</p></div>
+      <div class="cli" data-an="left" style="--d:1.3s;--c:var(--amber)"><b>02</b><p>Енгізу: <em>жоспарлы цикл</em>. Сынау, өлшеу, түзету.</p></div>
+      <div class="cli" data-an="left" style="--d:1.9s;--c:var(--pink)"><b>03</b><p>Нәтиже <em>дәлелмен</em> расталады: өлшем, кері байланыс, рефлексия.</p></div>
+    </div>
+  </section>
+
+  <!-- 14 THANKS -->
+  <section class="slide" id="s14">
+    <h2 class="th">
+      <span class="ln split" style="--d:.2s">Назар аударғандарыңызға</span>
+      <span class="ln split" style="--d:.7s">рақмет!</span>
+    </h2>
+    <div class="q" data-an="up" style="--d:1.6s">Сұрақтарыңыз бар ма?</div>
+    <div class="who" data-an="up" style="--d:2s"><b>Аскеров Алмас</b><br>М Физ-11 тобы</div>
+    <div id="confetti"></div>
+  </section>
+
+  <div class="wipe" id="wipe"></div>
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="brand">Педагогикалық технологиялар</div>
+    <div class="cnt"><b id="cn">01</b> <span>/ 14</span></div>
+    <div class="pbar"><i id="pb"></i></div>
+    <button class="fsb" id="fs" type="button" aria-label="Толық экран"><svg class="ic"><use href="#i-full"/></svg><span id="fsT">Толық экран</span></button>
+    <div class="nav">
+      <button class="nb prev off" id="prev" type="button" aria-label="Алдыңғы слайд"><svg class="ic"><use href="#i-arrowl"/></svg></button>
+      <button class="nb next" id="next" type="button" aria-label="Келесі слайд"><svg class="ic"><use href="#i-arrow"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const frame = $('frame');
+  const slides = [...document.querySelectorAll('.slide')];
+  const N = slides.length;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cur = -1, busy = false;
+
+  /* ---------- fit 16:9 ---------- */
+  function fit() {
+    const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+    frame.style.transform = `translate(${((innerWidth - 1920 * k) / 2).toFixed(2)}px,${((innerHeight - 1080 * k) / 2).toFixed(2)}px) scale(${k})`;
+  }
+  addEventListener('resize', fit); fit();
+
+  /* ---------- split text for cinematic reveal ---------- */
+  document.querySelectorAll('.split').forEach((el) => {
+    const smallEl = el.querySelector('small');
+    const nodes = [...el.childNodes].filter((n) => n.nodeType === 3);
+    const text = nodes.map((n) => n.textContent).join('').trim();
+    nodes.forEach((n) => n.remove());
+    const wrap = document.createElement('span');
+    wrap.setAttribute('aria-label', text);
+    let k = 0;
+    text.split(/\s+/).forEach((word) => {
+      const w = document.createElement('span'); w.className = 'w'; w.setAttribute('aria-hidden', 'true');
+      [...word].forEach((c) => { const s = document.createElement('span'); s.className = 'ch'; s.style.setProperty('--i', k++); s.textContent = c; w.appendChild(s); });
+      wrap.appendChild(w); wrap.appendChild(document.createTextNode(' '));
+    });
+    el.insertBefore(wrap, smallEl || null);
+    if (smallEl) { smallEl.setAttribute('data-an', 'up'); smallEl.style.setProperty('--d', 'calc(var(--d, .1s) + .9s)'); smallEl.style.setProperty('--d', (parseFloat(getComputedStyle(el).getPropertyValue('--d')) || 0.1) + 0.9 + 's'); }
+  });
+
+  /* ---------- background particles ---------- */
+  const cv = $('bgc'), cx = cv.getContext('2d');
+  const P = Array.from({ length: 54 }, () => ({ x: Math.random() * 960, y: Math.random() * 540, vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3, r: 1 + Math.random() * 1.8 }));
+  function bg() {
+    cx.clearRect(0, 0, 960, 540);
+    for (const p of P) {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > 960) p.vx *= -1;
+      if (p.y < 0 || p.y > 540) p.vy *= -1;
+    }
+    for (let i = 0; i < P.length; i++) {
+      for (let j = i + 1; j < P.length; j++) {
+        const dx = P[i].x - P[j].x, dy = P[i].y - P[j].y, d = dx * dx + dy * dy;
+        if (d < 8100) { cx.strokeStyle = `rgba(150,170,255,${(0.18 * (1 - d / 8100)).toFixed(3)})`; cx.lineWidth = 1; cx.beginPath(); cx.moveTo(P[i].x, P[i].y); cx.lineTo(P[j].x, P[j].y); cx.stroke(); }
+      }
+      cx.fillStyle = 'rgba(190,205,255,.75)'; cx.beginPath(); cx.arc(P[i].x, P[i].y, P[i].r, 0, 6.283); cx.fill();
+    }
+    if (!reduce) requestAnimationFrame(bg);
+  }
+  bg();
+
+  /* ---------- carousel (slide 4) ---------- */
+  const CAR = [
+    ['АКТ және цифрлық оқыту', 'Оқу материалдары мен тапсырмалар цифрлық ортада: LMS, онлайн тест, бейне.'],
+    ['Проблемалық оқыту', 'Студент мәселелік жағдайға тап болып, шешімін өзі іздейді.'],
+    ['Жоба әдісі', 'Студенттер нақты өнім жасайды: зерттеу, презентация, модель.'],
+    ['Кейс-стади', 'Нақты жағдайды талдап, шешім ұсынады.'],
+    ['Flipped classroom', 'Теория үйде, ал аудиторияда практика мен талқылау.'],
+    ['Геймификация', 'Ұпай, деңгей, жарыс сияқты ойын элементтері ынтаны арттырады.'],
+    ['Сыни ойлау', 'Сұрақ қою, дәлел келтіру, пікірді салыстыру дағдысын дамытады.'],
+    ['Ынтымақтастықта оқыту', 'Студенттер топта бірін-бірі оқытады, ортақ нәтижеге жауап береді.']
+  ];
+  let carI = 0, carT = 0;
+  const car = $('car'), cards = [...car.querySelectorAll('.cc')], cdots = [...$('cdots').children];
+  function carShow(i) {
+    carI = (i + CAR.length) % CAR.length;
+    car.style.setProperty('--ry', (-carI * 45) + 'deg');
+    cards.forEach((c, k) => c.classList.toggle('fo', k === carI));
+    cdots.forEach((d, k) => d.classList.toggle('on', k === carI));
+    const t = $('cct'), d = $('ccd');
+    t.style.opacity = 0; d.style.opacity = 0;
+    setTimeout(() => { t.textContent = CAR[carI][0]; d.textContent = CAR[carI][1]; t.style.opacity = 1; d.style.opacity = 1; }, 300);
+  }
+  function carStart() { carStop(); carT = setInterval(() => carShow(carI + 1), 3200); carShow(0); }
+  function carStop() { clearInterval(carT); }
+
+  /* ---------- PDCA (slide 8) ---------- */
+  const NS = 'http://www.w3.org/2000/svg';
+  const pd = $('pd'), PH = [
+    { n: 'Жоспарла', c: '#8f73ff' }, { n: 'Орында', c: '#2ee6d6' }, { n: 'Тексер', c: '#ffb547' }, { n: 'Түзет', c: '#ff5fa2' }
+  ];
+  const pcx = 410, pcy = 400, pr = 280;
+  const pt = (r, d) => [pcx + Math.cos(d * Math.PI / 180) * r, pcy + Math.sin(d * Math.PI / 180) * r];
+  const arcs = PH.map((p, i) => {
+    const a0 = -90 + i * 90 + 5, a1 = a0 + 80, s = pt(pr, a0), e = pt(pr, a1);
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', `M${s[0]},${s[1]} A${pr},${pr} 0 0 1 ${e[0]},${e[1]}`);
+    path.setAttribute('fill', 'none'); path.setAttribute('stroke', p.c); path.setAttribute('stroke-width', 46); path.setAttribute('stroke-linecap', 'round');
+    path.style.transition = 'opacity .5s,stroke-width .5s'; path.style.opacity = .35;
+    pd.appendChild(path);
+    const m = pt(pr, a0 + 40), t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', m[0]); t.setAttribute('y', m[1]); t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'central');
+    t.setAttribute('fill', '#fff'); t.setAttribute('font-size', 28); t.setAttribute('font-weight', 800); t.setAttribute('font-family', 'Noto Sans, sans-serif');
+    t.textContent = p.n; pd.appendChild(t);
+    return path;
+  });
+  const core = document.createElementNS(NS, 'g');
+  core.innerHTML = `<circle cx="${pcx}" cy="${pcy}" r="150" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.22)" stroke-width="2"/><text x="${pcx}" y="${pcy - 14}" text-anchor="middle" fill="#fff" font-size="82" font-weight="900" font-family="Noto Sans, sans-serif">PDCA</text><text x="${pcx}" y="${pcy + 48}" text-anchor="middle" fill="#aab3da" font-size="28" font-weight="500" font-family="Noto Sans, sans-serif">Деминг циклі</text>`;
+  pd.appendChild(core);
+  const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('r', 16); dot.setAttribute('fill', '#fff'); dot.style.filter = 'drop-shadow(0 0 12px #fff)';
+  dot.style.transition = 'transform 1.2s cubic-bezier(.6,0,.2,1)'; pd.appendChild(dot);
+  const pdb = [...$('pdl').querySelectorAll('.pdb')], pstep = [...$('pdstep').children];
+  let pdI = 0, pdT = 0, pdAng = 0;
+  function pdShow(i) {
+    const prev = pdI; pdI = i % 4;
+    arcs.forEach((a, k) => { a.style.opacity = k === pdI ? 1 : .3; a.setAttribute('stroke-width', k === pdI ? 58 : 46); });
+    pdb.forEach((b, k) => b.classList.toggle('on', k === pdI));
+    pstep.forEach((s, k) => { s.classList.toggle('on', k <= pdI); s.style.background = ''; });
+    const target = -90 + pdI * 90 + 45;
+    let from = pdAng; let to = target; while (to < from) to += 360;
+    pdAng = to;
+    const mid = pt(pr, to);
+    dot.setAttribute('cx', pcx); dot.setAttribute('cy', pcy);
+    dot.style.transformOrigin = `${pcx}px ${pcy}px`;
+    dot.style.transform = `rotate(${to + 90}deg) translateY(${-pr}px)`;
+    dot.setAttribute('cy', pcy);
+  }
+  dot.setAttribute('cx', pcx); dot.setAttribute('cy', pcy);
+  function pdStart() { pdStop(); pdAng = -90 + 45; pdI = 0; dot.style.transition = 'none'; pdShow(0); requestAnimationFrame(() => { dot.style.transition = 'transform 1.2s cubic-bezier(.6,0,.2,1)'; }); pdT = setInterval(() => pdShow(pdI + 1), 3300); }
+  function pdStop() { clearInterval(pdT); }
+
+  /* ---------- count up ---------- */
+  function countUp(el, delay) {
+    const to = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0), suf = el.dataset.suf || '';
+    const t0 = performance.now() + delay * 1000, dur = 1600;
+    el.textContent = (0).toFixed(dec).replace('.', ',') + suf;
+    function step(now) {
+      if (now < t0) return requestAnimationFrame(step);
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = (to * e).toFixed(dec).replace('.', ',') + suf;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- confetti on the last slide ---------- */
+  const conf = $('confetti');
+  const cols = ['#7c5cff', '#2ee6d6', '#ffb547', '#ff5fa2'];
+  for (let i = 0; i < 38; i++) {
+    const c = document.createElement('i'); c.className = 'conf';
+    c.style.left = (Math.random() * 1900) + 'px'; c.style.background = cols[i % 4];
+    c.style.animationDuration = (5 + Math.random() * 5) + 's'; c.style.animationDelay = (-Math.random() * 8) + 's';
+    conf.appendChild(c);
+  }
+
+  /* ---------- hooks ---------- */
+  const hooks = {
+    3: { enter: carStart, leave: carStop },
+    5: { enter: (s) => s.querySelectorAll('[data-count]').forEach((e, i) => countUp(e, 2.2 + i * .4)) },
+    7: { enter: pdStart, leave: pdStop },
+    10: { enter: (s) => s.querySelectorAll('[data-count]').forEach((e, i) => countUp(e, 0.9 + i * .25)) }
+  };
+
+  /* ---------- navigation ---------- */
+  const prevB = $('prev'), nextB = $('next'), wipe = $('wipe');
+  function apply(i) {
+    if (cur >= 0) { slides[cur].classList.remove('on'); hooks[cur] && hooks[cur].leave && hooks[cur].leave(slides[cur]); }
+    cur = i;
+    slides[cur].classList.add('on');
+    hooks[cur] && hooks[cur].enter && hooks[cur].enter(slides[cur]);
+    $('cn').textContent = String(cur + 1).padStart(2, '0');
+    $('pb').style.transform = `scaleX(${((cur + 1) / N).toFixed(4)})`;
+    prevB.classList.toggle('off', cur === 0);
+    nextB.classList.toggle('off', cur === N - 1);
+  }
+  function go(i) {
+    i = Math.max(0, Math.min(N - 1, i));
+    if (i === cur || busy) return;
+    if (reduce || cur < 0) { apply(i); return; }
+    busy = true;
+    wipe.animate([
+      { transform: 'translateX(-120%) skewX(-14deg)' },
+      { transform: 'translateX(0) skewX(-14deg)', offset: .46 },
+      { transform: 'translateX(120%) skewX(-14deg)' }
+    ], { duration: 950, easing: 'cubic-bezier(.65,0,.3,1)' });
+    setTimeout(() => apply(i), 440);
+    setTimeout(() => { busy = false; }, 900);
+  }
+  nextB.addEventListener('click', () => go(cur + 1));
+  prevB.addEventListener('click', () => go(cur - 1));
+  addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); go(cur + 1); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); go(cur - 1); }
+    else if (k === 'Home') go(0);
+    else if (k === 'End') go(N - 1);
+    else if (k === 'f' || k === 'F') $('fs').click();
+  });
+  let tx = null;
+  addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  addEventListener('touchend', (e) => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 60) go(cur + (dx < 0 ? 1 : -1)); }, { passive: true });
+
+  /* ---------- fullscreen ---------- */
+  const root = document.documentElement, fsb = $('fs');
+  const canFs = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+  if (!canFs) fsb.hidden = true;
+  const isFs = () => document.fullscreenElement || document.webkitFullscreenElement;
+  fsb.addEventListener('click', () => {
+    if (isFs()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+  });
+  const onFs = () => { $('fsT').textContent = isFs() ? 'Шығу' : 'Толық экран'; fit(); };
+  document.addEventListener('fullscreenchange', onFs);
+  document.addEventListener('webkitfullscreenchange', onFs);
+
+  setTimeout(() => apply(0), 250);
+})();
+</script>
+</body>
+</html>
