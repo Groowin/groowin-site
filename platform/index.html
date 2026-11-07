@@ -1165,6 +1165,7 @@ html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-
 .ai-h .tt{flex:1;display:flex;flex-direction:column;line-height:1.15;min-width:0}.ai-h b{font-size:1.02rem}.ai-h small{color:var(--mute);font-size:.74rem}
 .ai-h button{background:none;border:0;color:var(--mute);font-size:1.1rem;cursor:pointer;border-radius:10px;width:34px;height:34px;padding:0}
 .ai-h button:hover{background:rgba(128,150,200,.22);color:var(--ink)}
+.mt-it.sel{outline:3px solid var(--blue,#3B6BFF);outline-offset:-3px}.mt-it.sel::after{content:'✓';position:absolute;top:8px;left:8px;width:26px;height:26px;border-radius:50%;background:var(--blue,#3B6BFF);color:#fff;display:grid;place-items:center;font-weight:800}.mt-it{position:relative}.mt-selbtn{min-height:40px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line,#cfd6e4);background:transparent;color:inherit;font:inherit;cursor:pointer}.mt-selbtn.on{background:var(--blue,#3B6BFF);color:#fff;border-color:transparent}.mt-selrow{flex-basis:100%;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .ai-proc{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:.82rem;color:var(--mute);border-bottom:1px solid rgba(170,200,255,.12);cursor:pointer;user-select:none}
 .ai-proc input{accent-color:var(--blue);width:16px;height:16px;margin:0;cursor:pointer}
 #aiLog{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
@@ -2485,6 +2486,8 @@ const CHANGELOG = [
     ['🔎', 'Файл ішінен іздеу', 'PDF және Word (.docx) ішіндегі мәтін бойынша іздеуге болады, қай бетте екенін көрсетеді. Материалдарда немесе Groowin ЖИ арқылы.'],
     ['🎲', 'ЖИ ойын жасайды', 'Сөз табу, жұптар, сұрыптау, кім миллионер, эстафета, тізбек, қашу бөлмесі: енді викторинамен қатар осы ойындардың жинағын да жасап береді.'],
     ['🌙', 'Қараңғы тақырып таңертең қайтады', 'Кешке ЖИ қараңғыға ауыстырса, таңертең бұрынғы тақырып өзі қайтады.'],
+    ['☑', 'Файлдарды таңдап жылжыту', 'Материалдарда «☑ Таңдау» басып, бірнеше файлды бір папкаға салуға болады. ЖИ-ға да айтсаң болады.'],
+    ['🎯', 'Файлдан викторина/ойын', 'PDF/Word файлдың ⋯ мәзірінен «Осы файлдан викторина/ойын (ЖИ)» таңда. Кирилл мен латын атаулары (Розанова = rozanova) енді бірдей ізделеді.'],
     ['🏫', 'Бөлім атаулары', '«Сыныптар» → «Мектеп сыныптары» (аккаунты бар), «Менің сыныптарым» → «Менің тізімдерім» (жеке тізім).']
   ] },
   { ver: '5.4', date: '06.11.2026', items: [
@@ -4701,6 +4704,10 @@ const FOLD_COL = ['#F5A524', '#3B6BFF', '#1FA971', '#E8559A', '#7C5CFF', '#19B5D
 const FOLD_EMO = ['📁', '📚', '🧪', '🔬', '📐', '⚡', '🚀', '🎮', '📝', '🎓', '🧲', '🌌', '💡', '📊', '🎯', '⭐'];
 const KIND_COL = { image: '#E8559A', video: '#F28C28', audio: '#7C5CFF', pdf: '#E5484D', office: '#3B6BFF', link: '#19B5D6', other: '#8B93A3' };
 const KIND_EMO = { image: '🖼️', video: '🎬', audio: '🎵', pdf: '📕', office: '📊', link: '🔗', other: '📄' };
+let matSelMode = false; const matSel = new Set();
+function askAI(t) { if (!window.aiAsk) return notify('Groowin ЖИ қолжетімсіз', 'err'); window.aiAsk(t); }
+function matTog(it, c) { if (matSel.has(it.id)) { matSel.delete(it.id); c.classList.remove('sel'); } else { matSel.add(it.id); c.classList.add('sel'); } matSelUpd(); }
+function matSelUpd() { const e = $('mSelCnt'); if (e) e.textContent = 'Таңдалды: ' + matSel.size; document.querySelectorAll('.mt-mvbtn').forEach(b => b.disabled = !matSel.size); }
 let matView = ls.get('matView') || 'big', matFold = ls.get('matFold') || 'classic', matQ = '', matSort = ls.get('matSort') || 'name';
 if (!['big', 'small', 'list'].includes(matView)) matView = 'big'; if (!['classic', 'tile', 'flat', 'emoji'].includes(matFold)) matFold = 'classic'; if (!['name', 'new', 'type'].includes(matSort)) matSort = 'name';
 const fcol = f => f.color || FOLD_COL[[...String(f.id)].reduce((a, c) => a + c.charCodeAt(0), 0) % FOLD_COL.length];
@@ -4743,6 +4750,22 @@ function matBar() {
   const so = document.createElement('select'); [['name', 'Аты бойынша'], ['new', 'Жаңасы жоғарыда'], ['type', 'Түрі бойынша']].forEach(([v, t]) => so.appendChild(new Option(t, v))); so.value = matSort; so.className = 'mt-so'; so.onchange = () => { matSort = so.value; ls.set('matSort', matSort); renderMats(); }; so.setAttribute('aria-label', 'Сұрыптау');
   bar.append(q, so, seg([['big', '▦', 'Үлкен'], ['small', '▪▪', 'Кіші'], ['list', '☰', 'Тізім']], matView, v => { matView = v; ls.set('matView', v); renderMats(); matBar(); }),
     seg([['classic', '📁', 'Классик папка'], ['tile', '🟦', 'Тақташа'], ['flat', '▭', 'Қарапайым'], ['emoji', '😀', 'Тек белгі']], matFold, v => { matFold = v; ls.set('matFold', v); renderMats(); matBar(); }));
+  const sbt = el('button', 'mt-selbtn' + (matSelMode ? ' on' : ''), matSelMode ? '✖ Таңдауды өшіру' : '☑ Таңдау'); sbt.type = 'button'; sbt.onclick = () => { matSelMode = !matSelMode; matSel.clear(); renderMats(true); matBar(); }; bar.append(sbt);
+  if (matSelMode) {
+    const w = el('div', 'mt-selrow'), cnt = el('b', ''); cnt.id = 'mSelCnt';
+    const mv = el('button', 'go mt-mvbtn', '📁 Папкаға жылжыту'); mv.type = 'button'; mv.onclick = () => moveMany([...matSel]);
+    const all = el('button', 'out', 'Көрінетіндерін таңдау'); all.type = 'button'; all.onclick = () => { document.querySelectorAll('#mList .mt-it').forEach(c => { if (c.dataset.id) { matSel.add(c.dataset.id); c.classList.add('sel'); } }); matSelUpd(); };
+    w.append(cnt, mv, all); bar.append(w); matSelUpd();
+  }
+}
+function moveMany(ids) {
+  if (!ids.length) return; const m = modal(ids.length + ' файлды қай папкаға жылжытамыз?'), b = m.box, list = el('div', 'mt-mv');
+  const done = async fid => { const r = await sb.from('mat_items').update({ folder_id: fid }).in('id', ids); if (r.error) return notify('Қате: ' + r.error.message, 'err'); m.close(); matSel.clear(); matSelMode = false; notify(ids.length + ' файл жылжытылды'); await loadMats(); matBar(); };
+  const add = (id, label, depth) => { const x = el('button', '', '　'.repeat(depth) + label); x.type = 'button'; x.onclick = () => done(id); list.appendChild(x); };
+  add(null, '🏠 Басты бет', 0); const walk = (pid, d) => mFolders.filter(f => (f.parent_id || null) === pid).forEach(f => { add(f.id, (f.emoji || '📁') + ' ' + f.name, d); walk(f.id, d + 1); }); walk(null, 1);
+  const nn = el('input'); nn.placeholder = 'Не жаңа папка атауы'; nn.maxLength = 60; const nb = el('button', 'go', '➕ Жаңа папка жасап, соған салу'); nb.type = 'button';
+  nb.onclick = async () => { const name = nn.value.trim(); if (!name) return nn.focus(); const r = await sb.from('mat_folders').insert({ name, parent_id: mCur }).select().single(); if (r.error) return notify('Қате: ' + r.error.message, 'err'); done(r.data.id); };
+  const cn = el('button', 'out', 'Жабу'); cn.type = 'button'; cn.onclick = m.close; b.append(list, nn, nb, cn);
 }
 function renderMats(keepBar) {
   if (!keepBar) matBar();
@@ -4751,7 +4774,7 @@ function renderMats(keepBar) {
   const home = el('button', 'mt-cr', '🏠 Басты бет'); home.type = 'button'; home.onclick = () => { mCur = null; renderMats(); }; cr.append(home);
   path.forEach(f => { cr.append(el('span', 'mt-sep', '›')); const b = el('button', 'mt-cr', (f.emoji || '📁') + ' ' + f.name); b.type = 'button'; b.onclick = () => { mCur = f.id; renderMats(); }; cr.append(b); });
   const box = $('mList'); box.replaceChildren(); box.className = 'mt-g ' + matView + ' f-' + matFold;
-  const searching = !!matQ; let fs = mFolders.filter(f => searching ? f.name.toLowerCase().includes(matQ) : (f.parent_id || null) === mCur), its = mItems.filter(it => searching ? it.title.toLowerCase().includes(matQ) : (it.folder_id || null) === mCur);
+  const searching = !!matQ; let fs = mFolders.filter(f => searching ? matHit(f.name, matQ) : (f.parent_id || null) === mCur), its = mItems.filter(it => searching ? matHit(it.title, matQ) : (it.folder_id || null) === mCur);
   const cmp = { name: (a, b2) => (a.name || a.title).localeCompare(b2.name || b2.title, 'kk'), new: (a, b2) => String(b2.created_at || '').localeCompare(String(a.created_at || '')), type: (a, b2) => matKind(a).localeCompare(matKind(b2)) || a.title.localeCompare(b2.title, 'kk') };
   fs = fs.slice().sort(matSort === 'new' ? cmp.new : (a, b2) => a.name.localeCompare(b2.name, 'kk')); its = its.slice().sort(cmp[matSort]);
   const where = it => { if (!searching || !it.folder_id) return ''; const f = mFolders.find(x => x.id === it.folder_id); return f ? ' · ' + f.name : ''; };
@@ -4764,9 +4787,9 @@ function renderMats(keepBar) {
   its.forEach((it, i) => {
     const k = matKind(it), c = el('div', 'mt-it'); c.style.setProperty('--ic', KIND_COL[k] || KIND_COL.other); c.style.animationDelay = ((fs.length + i) * 25) + 'ms'; c.tabIndex = 0; c.setAttribute('role', 'button'); c.setAttribute('aria-label', it.title);
     const th = el('div', 'mt-th'); th.append(el('span', '', KIND_EMO[k] || '📄'), el('em', '', k === 'link' ? 'сілтеме' : (extOf(it.title) || k)));
-    const open = () => showMat(it); if (it.kind === 'file' && matKind(it) === 'pdf') { c.addEventListener('pointerenter', () => slidePrefetch(it), { once: true }); c.addEventListener('touchstart', () => slidePrefetch(it), { once: true, passive: true }); } c.onclick = open; c.onkeydown = e => { if (e.key === 'Enter') open(); };
+    const open = () => showMat(it); if (it.kind === 'file' && matKind(it) === 'pdf') { c.addEventListener('pointerenter', () => slidePrefetch(it), { once: true }); c.addEventListener('touchstart', () => slidePrefetch(it), { once: true, passive: true }); } c.dataset.id = it.id; if (matSelMode && matSel.has(it.id)) c.classList.add('sel'); const act1 = () => matSelMode ? matTog(it, c) : open(); c.onclick = act1; c.onkeydown = e => { if (e.key === 'Enter') act1(); };
     const mt = [fmtSize(it.size), it.created_at ? new Date(it.created_at).toLocaleDateString('kk-KZ') : ''].filter(Boolean).join(' · ') + where(it);
-    const acts = [['Көрсету', open], ...(it.kind === 'file' ? [['Жүктеп алу', async () => { const { data } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 300, { download: it.title }); if (data) location.href = data.signedUrl; }]] : []), ['Атын өзгерту', () => renameItem(it)], ['Папкаға ауыстыру', () => moveModal(it)],
+    const acts = [['Көрсету', open], ['☑ Таңдау (бірнешеуін жылжыту)', () => { matSelMode = true; matSel.clear(); matSel.add(it.id); renderMats(true); matBar(); }], ...(txtKind(it) ? [['🎯 Осы файлдан викторина (ЖИ)', () => askAI('«' + it.title + '» файлының (id: ' + it.id + ') мәтінін read_file_text арқылы оқып, одан 8 сұрақтан тұратын викторина жобасын жаса.')], ['🎲 Осы файлдан ойын (ЖИ)', () => askAI('«' + it.title + '» файлының (id: ' + it.id + ') мәтінін read_file_text арқылы оқып, мазмұнына ең қолайлы ойын жинағын (сөз табу, жұптар, сұрыптау т.б.) жаса.')]] : []), ...(it.kind === 'file' ? [['Жүктеп алу', async () => { const { data } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 300, { download: it.title }); if (data) location.href = data.signedUrl; }]] : []), ['Атын өзгерту', () => renameItem(it)], ['Папкаға ауыстыру', () => moveModal(it)],
       ['Жою', async () => { if (!(await ask('«' + it.title + '» жойылсын ба?'))) return; if (it.storage_path) await sb.storage.from('materials').remove([it.storage_path]); await sb.from('mat_items').delete().eq('id', it.id); loadMats(); }, true]];
     c.append(th, el('div', 'mt-ft', it.title), el('small', 'mt-fm', mt), dotBtn(b => ctxMenu(b, acts))); box.appendChild(c);
   });
@@ -4802,6 +4825,10 @@ async function uploadMats(files) {
 }
 
 // ===== Файл ішінен іздеу (PDF, Word .docx) =====
+const TLM = { а: 'a', ә: 'a', б: 'b', в: 'v', г: 'g', ғ: 'g', д: 'd', е: 'e', ё: 'e', ж: 'j', з: 'z', и: 'i', й: 'i', к: 'k', қ: 'k', л: 'l', м: 'm', н: 'n', ң: 'n', о: 'o', ө: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ұ: 'u', ү: 'u', ф: 'f', х: 'h', һ: 'h', ц: 'c', ч: 'c', ш: 's', щ: 's', ъ: '', ы: 'i', і: 'i', ь: '', э: 'e', ю: 'u', я: 'a' };
+// кирилл ↔ латын: «Розанова» мен rozanova бірдей болып салыстырылады
+const latSk = x => String(x || '').toLowerCase().replace(/[а-яёәғқңөұүһі]/g, c => TLM[c] ?? c).replace(/y/g, 'i').replace(/w/g, 'v').replace(/x/g, 'k').replace(/q/g, 'k');
+const matHit = (text, q) => { text = String(text).toLowerCase(); return text.includes(q) || latSk(text).includes(latSk(q)); };
 const txtKind = it => it && it.kind === 'file' && ({ pdf: 'pdf', docx: 'docx' })[extOf(it.title).toLowerCase()] || '';
 const txtNorm = x => String(x || '').toLowerCase().replace(/\s+/g, ' ').trim();
 const txtStem = w => { w = txtNorm(w).replace(/[^\p{L}\p{N}%.,-]/gu, ''); const n = w.length; return n >= 8 ? w.slice(0, n - 3) : n >= 6 ? w.slice(0, n - 2) : n === 5 ? w.slice(0, 4) : w; };
@@ -8238,7 +8265,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
   }
   const fpath = (fs, id) => { const a = []; let c = id, n = 0; while (c && n++ < 12) { const f = fs.find(x => x.id === c); if (!f) break; a.unshift(f.name); c = f.parent_id; } return a; };
   const toks = q => String(q || '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(t => t.length > 1);
-  function score(hay, tk) { hay = hay.toLowerCase(); let s = 0; tk.forEach(t => { if (hay.includes(t)) s += 2; else { const st = t.slice(0, Math.max(3, t.length - 2)); if (t.length > 3 && hay.includes(st)) s += 1; } }); return s; }
+  function score(hay, tk) { hay = hay.toLowerCase(); const hl = latSk(hay); let s = 0; tk.forEach(t => { if (hay.includes(t) || hl.includes(latSk(t))) s += 2; else { const st = t.slice(0, Math.max(3, t.length - 2)); if (t.length > 3 && (hay.includes(st) || hl.includes(latSk(st)))) s += 1; } }); return s; }
 
   const TOOLS = {
     async search_materials(a) {
@@ -8248,7 +8275,25 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       f.forEach(x => { const s = score(x.name + ' ' + fpath(f, x.parent_id).join(' '), tk); if (s) hits.push({ s: s - .5, id: 'f:' + x.id, title: x.name, folder: fpath(f, x.parent_id).join(' / ') || 'Басты бет', type: 'папка', date: '' }); });
       hits.sort((x, y) => y.s - x.s); const top = hits.slice(0, 6).map(({ s, ...r }) => r);
       if (top.length) card_hits(top);
+      if (!top.length) return { count: 0, results: [], all_files: i.slice(0, 150).map(x => ({ id: x.id, title: x.title, folder: fpath(f, x.folder_id).join(' / ') || 'Басты бет' })), note: 'Атау бойынша табылмады. all_files тізімінен мағынасы/транслитерациясы бойынша (кирилл↔латын, мысалы Розанова=rozanova) сәйкесін өзің таңда, табылса open_material қолдан. Таппасаң search_file_text-пен мәтін ішінен іздеп көр.' };
       return { count: hits.length, results: top };
+    },
+    async read_file_text(a) {
+      const { i } = await fetchMatsAll(), it = i.find(x => x.id === a.id); if (!it) return { error: 'Файл табылмады' }; if (!txtKind(it)) return { error: 'Тек PDF және Word (.docx) оқылады' };
+      let q = () => sb.from('mat_chunks').select('page,content').eq('item_id', it.id).order('page').order('id');
+      let r = await q(); if (r.error) return { error: /mat_chunks|schema cache/i.test(r.error.message) ? 'update-31.sql әлі іске қосылмаған' : r.error.message };
+      if (!(r.data || []).length) { const st = await txtIndex(it); if (st === 'nosql') return { error: 'update-31.sql әлі іске қосылмаған' }; if (st === 'empty') return { error: 'Файлда мәтін жоқ (сканерленген сурет болуы мүмкін)' }; if (st === 'error') return { error: 'Файлды оқу мүмкін болмады' }; r = await q(); }
+      const from = +a.from_page || 1, to = +a.to_page || 9999; let out = '', last = 0, cut = false;
+      for (const x of (r.data || [])) { if (x.page < from || x.page > to) continue; const t = '[' + x.page + '] ' + x.content + '\n'; if (out.length + t.length > 9000) { cut = true; break; } out += t; last = x.page; }
+      if (!out) return { error: 'Бұл беттерде мәтін жоқ' };
+      return { title: it.title, text: out, last_page: last, truncated: cut, note: cut ? 'Мәтін қысқартылды. Жалғасы керек болса from_page=' + (last + 1) + ' деп қайта шақыр.' : 'Толық оқылды.' };
+    },
+    async move_materials_draft(a) {
+      const ids = (Array.isArray(a.ids) ? a.ids : []).map(String).filter(x => !x.startsWith('f:')).slice(0, 100), name = trunc(a.folder_name, 60).trim();
+      if (!ids.length || !name) return { error: 'Файл тізімі не папка атауы бос' };
+      const { f, i } = await fetchMatsAll(), items = ids.map(x => i.find(y => y.id === x)).filter(Boolean); if (!items.length) return { error: 'Файлдар табылмады' };
+      const fold = f.find(x => latSk(x.name) === latSk(name)) || f.find(x => matHit(x.name, name.toLowerCase()));
+      card_move({ items, folder: fold ? { id: fold.id, name: fold.name } : null, name }); return { ok: true, note: 'Жобасы көрсетілді, мұғалімнің растауын күтіп тұр. ' + (fold ? 'Бар папкаға салынады.' : 'Папка жаңадан жасалады.') };
     },
     async search_file_text(a) {
       const r = await txtSearch(a.query); if (r.error) return r; if (r.results.length) card_texthits(r.results);
@@ -8334,7 +8379,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       return { t, img: null, o, c, s: 20 };
     }).filter(q => q.t && (q.k === 'num' || (q.o.filter(Boolean).length >= 2 && q.o[q.c])));
   }
-  const LABEL = { list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+  const LABEL = { list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
 
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
@@ -8343,7 +8388,36 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     if (!isF) { await new Promise(r => setTimeout(r, 120)); const t = [...g('mList').children].find(c => c.textContent.includes(it.title)); if (t) { t.classList.add('aiHit'); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); setTimeout(() => t.classList.remove('aiHit'), 4500); } }
   }
 
+  // «Процесті көрсету»: ЖИ сайтты өзі ашып, іздеу жолына жазып көрсетеді
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  async function typeInto(inp, text) { inp.focus(); inp.value = ''; for (const ch of String(text).slice(0, 40)) { inp.value += ch; inp.dispatchEvent(new Event('input')); await wait(35); } }
+  async function showAct(name, a) {
+    if (name === 'search_materials') { go('mats'); await loadMats(); mCur = null; matQ = ''; renderMats(); const q = document.querySelector('#mBar .mt-q'); if (q) { q.value = ''; await typeInto(q, a.query); } await wait(500); }
+    else if (name === 'search_file_text') { go('mats'); await loadMats(); const q = $('mTextQ'); if (q) { await typeInto(q, a.query); $('mTextGo').click(); } await wait(900); }
+    else if (name === 'read_file_text' || name === 'open_material') { if (a.id && !String(a.id).startsWith('f:')) { await openMat(a.id); await wait(500); } }
+    else if (name === 'move_materials_draft') { go('mats'); await loadMats(); await wait(400); }
+    else if (name === 'create_homework_draft' || name === 'list_classes') { go('hw'); await wait(500); }
+    else if (name === 'create_quiz_draft' || name === 'create_game_draft') { go('play'); await wait(500); }
+    else if (name === 'create_lesson_plan_draft' || name === 'list_lesson_plans') { go('lessons'); await wait(500); }
+  }
+  window.aiAsk = t => { const fab = g('aiFab'); if (!fab) return; if (!fab.hidden) fab.click(); g('aiIn').value = t; g('aiForm').requestSubmit(); };
+
   // ---------- карточкалар ----------
+  function card_move(d) {
+    const c = el('div', 'ai-card'); c.append(el('h4', '', '📁 Файлдарды жылжыту'));
+    c.append(el('div', 'ai-q', 'Папка: ' + (d.folder ? d.folder.name : d.name + ' (жаңа папка жасалады)')));
+    d.items.forEach(x => c.append(el('div', 'ai-q', '📄 ' + x.title)));
+    const ok = el('button', 'go2', 'Растау'), no = el('button', '', 'Бас тарту'), msg = el('div', 'ai-q'); ok.type = no.type = 'button';
+    ok.onclick = async () => {
+      ok.disabled = no.disabled = true; let fid = d.folder && d.folder.id;
+      if (!fid) { const r = await sb.from('mat_folders').insert({ name: d.name, parent_id: null }).select().single(); if (r.error) { msg.textContent = 'Қате: ' + r.error.message; ok.disabled = no.disabled = false; return; } fid = r.data.id; }
+      const r2 = await sb.from('mat_items').update({ folder_id: fid }).in('id', d.items.map(x => x.id));
+      if (r2.error) { msg.textContent = 'Қате: ' + r2.error.message; ok.disabled = no.disabled = false; return; }
+      msg.textContent = '✅ ' + d.items.length + ' файл жылжытылды.'; ok.hidden = no.hidden = true; notify('Файлдар жылжытылды'); if (showProc) { go('mats'); loadMats(); }
+    };
+    no.onclick = () => { c.remove(); push(aiRow('Жылжыту алынып тасталды.')); };
+    const row = el('div', 'ai-row'); row.append(ok, no); c.append(row, msg); push(c);
+  }
   function card_texthits(rows) {
     const c = el('div', 'ai-card'); c.append(el('h4', '', 'Файл ішінен табылғандар'));
     rows.forEach(r => { const row = el('div', 'ai-hit'), sp = el('span', '', '📄 ' + r.title), sm = el('small', '', r.folder + ' · ' + r.hits.map(h => (h.pdf ? h.page + '-бет' : h.page + '-бөлім')).join(', ')); sp.append(sm); const b = el('button', '', 'Көрсету'); b.type = 'button'; b.onclick = () => openMat(r.id); row.append(sp, b); c.append(row); });
@@ -8454,9 +8528,10 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
           for (const tc of m.tool_calls) {
             const name = tc.function.name; let args = {}; try { args = JSON.parse(tc.function.arguments || '{}'); } catch { }
             let st = null; if (showProc) { st = el('div', 'ai-st'); st.append(el('span', 'sp'), el('span', '', LABEL[name] || name)); dots.before(st); scroll(); await new Promise(r => setTimeout(r, 350)); }
+            if (showProc) { try { await showAct(name, args); } catch { } }
             let res; try { res = TOOLS[name] ? await TOOLS[name](args) : { error: 'Белгісіз құрал' }; } catch (e) { res = { error: String(e.message || e) }; }
             if (st) { st.classList.add('ok'); await new Promise(r => setTimeout(r, 250)); }
-            msgs.push({ role: 'tool', tool_call_id: tc.id, name, content: trunc(JSON.stringify(res), 4000) });
+            msgs.push({ role: 'tool', tool_call_id: tc.id, name, content: trunc(JSON.stringify(res), name === 'read_file_text' ? 12000 : 4000) });
           }
           scroll(); continue;
         }
