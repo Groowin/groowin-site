@@ -1166,27 +1166,6 @@ html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-
 .ai-h button{background:none;border:0;color:var(--mute);font-size:1.1rem;cursor:pointer;border-radius:10px;width:34px;height:34px;padding:0}
 .ai-h button:hover{background:rgba(128,150,200,.22);color:var(--ink)}
 .mt-it.sel{outline:3px solid var(--blue,#3B6BFF);outline-offset:-3px}.mt-it.sel::after{content:'✓';position:absolute;top:8px;left:8px;width:26px;height:26px;border-radius:50%;background:var(--blue,#3B6BFF);color:#fff;display:grid;place-items:center;font-weight:800}.mt-it{position:relative}.mt-selbtn{min-height:40px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line,#cfd6e4);background:transparent;color:inherit;font:inherit;cursor:pointer}.mt-selbtn.on{background:var(--blue,#3B6BFF);color:#fff;border-color:transparent}.mt-selrow{flex-basis:100%;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-/* ===== Маусымдық безендіру ===== */
-html[data-season]{--se:'';--swc:transparent;--swc2:transparent}
-html[data-season=winter]{--se:'❄️';--swc:rgba(150,200,255,.16);--swc2:rgba(200,230,255,.22);--sg:rgba(255,255,255,.55)}
-html[data-season=spring]{--se:'🌸';--swc:rgba(255,170,200,.14);--swc2:rgba(190,255,190,.18);--sg:rgba(120,200,110,.45)}
-html[data-season=summer]{--se:'☀️';--swc:rgba(255,205,80,.15);--swc2:rgba(255,215,90,.32);--sg:rgba(255,200,70,.4)}
-html[data-season=autumn]{--se:'🍂';--swc:rgba(255,140,50,.15);--swc2:rgba(255,170,60,.22);--sg:rgba(200,110,40,.45)}
-html[data-season] body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 70% 55% at 88% -8%,var(--swc2),transparent 70%),radial-gradient(ellipse 80% 40% at 8% 105%,var(--swc),transparent 70%)}
-html[data-season] body::after{content:'';position:fixed;left:0;right:0;bottom:0;height:46px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 120px 38px at 10% 100%,var(--sg),transparent 72%),radial-gradient(ellipse 160px 46px at 38% 100%,var(--sg),transparent 72%),radial-gradient(ellipse 130px 36px at 66% 100%,var(--sg),transparent 72%),radial-gradient(ellipse 150px 44px at 92% 100%,var(--sg),transparent 72%)}
-html[data-season] #app .main.card{background-image:linear-gradient(180deg,var(--swc) 0,transparent 170px)}
-html[data-season] #app .main [id^=v-]>h2:first-child::before,html[data-season] #auth h1::after{content:var(--se);margin:0 8px 0 0;display:inline-block;animation:seaBob 3.2s ease-in-out infinite}
-html[data-season] #auth h1::after{margin:0 0 0 10px}
-html[data-season] #authCard{box-shadow:0 0 0 1px var(--swc2),0 18px 50px -20px var(--swc2)}
-@keyframes seaBob{50%{transform:translateY(-3px) rotate(6deg)}}
-#seaRib{position:fixed;top:0;left:0;right:0;height:30px;z-index:6;pointer-events:none;display:flex;justify-content:space-around;align-items:flex-start;font-size:17px;line-height:1;overflow:hidden;opacity:.92}
-#seaRib span{display:inline-block;transform-origin:50% 0;animation:seaSway 4s ease-in-out infinite}
-#seaRib span:nth-child(odd){animation-delay:-1.6s}
-#seaRib b{align-self:center;font-size:.72rem;letter-spacing:.04em;color:var(--ink);background:var(--swc2);padding:3px 12px;border-radius:99px;margin-top:2px;white-space:nowrap}
-@keyframes seaSway{50%{transform:rotate(9deg)}}
-#seaFx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
-@media (prefers-reduced-motion:reduce){#seaRib span,html[data-season] #app .main [id^=v-]>h2:first-child::before,html[data-season] #auth h1::after{animation:none}}
-@media print{#seaRib,#seaFx{display:none}}
 .ai-proc{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:.82rem;color:var(--mute);border-bottom:1px solid rgba(170,200,255,.12);cursor:pointer;user-select:none}
 .ai-proc input{accent-color:var(--blue);width:16px;height:16px;margin:0;cursor:pointer}
 #aiLog{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
@@ -1654,7 +1633,7 @@ select option:disabled{color:#8a93b4}
       <button data-v="teachers" id="navTeachers" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg><span class="nl">Мұғалімдер</span></button>
       <button data-v="students" id="navStudents" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg><span class="nl">Оқушылар</span></button>
     </nav>
-    <div class="me"><button class="icon-btn" id="seasonBtn" type="button" aria-label="Маусымдық безендіру" title="Маусымдық безендіру">🍂</button><button class="icon-btn" id="themeBtn" type="button" aria-label="Тема ауыстыру" title="Тема ауыстыру"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+    <div class="me"><button class="icon-btn" id="themeBtn" type="button" aria-label="Тема ауыстыру" title="Тема ауыстыру"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
       <button class="mecard" id="meCard" type="button" aria-label="Менің аккаунтым"><span class="av" id="meAv">?</span><span class="mt"><strong id="meNm"></strong><small id="meRl"></small></span><i class="od off" id="meDot" title="Байланыс"></i></button>
       
     </div>
@@ -2505,15 +2484,18 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '5.6', date: '08.11.2026', items: [
+    ['📱', 'Менің құрылғыларым', 'Аккаунтқа кірген құрылғылар тізімі: «Менің аккаунтым» бетінде. Телефоннан басқасын қашықтан шығаруға болады.'],
+    ['⏱', 'Сеанс 1 сағат', 'Бір сағат белсенділік болмаса, аккаунттан өзі шығады.'],
+    ['☑', 'Файлдарды таңдап жылжыту', 'Материалдарда «☑ Таңдау» басып, бірнеше файлды бір папкаға салуға болады. ЖИ-ға да айтсаң болады.'],
+    ['🎯', 'Файлдан викторина/ойын', 'PDF/Word файлдың ⋯ мәзірінен «Осы файлдан викторина/ойын (ЖИ)» таңда. Кирилл мен латын атаулары (Розанова = rozanova) бірдей ізделеді.'],
+    ['🤖', 'Groowin ЖИ жақсарды', '«Процесті көрсету» қосулы болса, ЖИ бөлімді өзі ашып, іздеу жолына жазып көрсетеді. Панда көзі түзетілді.']
+  ] },
   { ver: '5.5', date: '07.11.2026', items: [
     ['🔒', 'Телефон нөмірлері базада жасырылды', 'Мұғалім мен админнің нөмірін енді тек басты админ көреді. Қалған админдер оларды «жасырын» деп көреді, бірақ құлыптау және құпиясөз қалпына келтіру істейді.'],
     ['🔎', 'Файл ішінен іздеу', 'PDF және Word (.docx) ішіндегі мәтін бойынша іздеуге болады, қай бетте екенін көрсетеді. Материалдарда немесе Groowin ЖИ арқылы.'],
     ['🎲', 'ЖИ ойын жасайды', 'Сөз табу, жұптар, сұрыптау, кім миллионер, эстафета, тізбек, қашу бөлмесі: енді викторинамен қатар осы ойындардың жинағын да жасап береді.'],
     ['🌙', 'Қараңғы тақырып таңертең қайтады', 'Кешке ЖИ қараңғыға ауыстырса, таңертең бұрынғы тақырып өзі қайтады.'],
-    ['🍂', 'Маусымдық безендіру', 'Сайт жыл мезгіліне қарай өзі безендіріледі (қыс, көктем, жаз, күз): жауып тұрған қар, жапырақ, гүл, кіру бетінде де, әр бөлімде де. Мейрамдарда құттықтау шығады. Жоғарыдағы батырмамен өзгертуге не өшіруге болады.'],
-    ['📱', 'Менің құрылғыларым', 'Аккаунтқа кірген құрылғылар тізімі, телефоннан басқасын қашықтан шығаруға болады. Сеанс енді 1 сағат белсенділік болмаса аяқталады.'],
-    ['☑', 'Файлдарды таңдап жылжыту', 'Материалдарда «☑ Таңдау» басып, бірнеше файлды бір папкаға салуға болады. ЖИ-ға да айтсаң болады.'],
-    ['🎯', 'Файлдан викторина/ойын', 'PDF/Word файлдың ⋯ мәзірінен «Осы файлдан викторина/ойын (ЖИ)» таңда. Кирилл мен латын атаулары (Розанова = rozanova) енді бірдей ізделеді.'],
     ['🏫', 'Бөлім атаулары', '«Сыныптар» → «Мектеп сыныптары» (аккаунты бар), «Менің сыныптарым» → «Менің тізімдерім» (жеке тізім).']
   ] },
   { ver: '5.4', date: '06.11.2026', items: [
@@ -2808,54 +2790,6 @@ async function devRender() {
   if (L.length > 1) { const all = el('button', 'out', 'Басқа барлық құрылғыдан шығару'); all.type = 'button'; all.onclick = async () => { if (!(await ask('Осыдан басқа барлық құрылғы аккаунттан шығарылсын ба?'))) return; await sb.rpc('device_revoke_others', { p_keep: me }); try { await sb.auth.signOut({ scope: 'others' }); } catch { } notify('Басқа құрылғылар шығарылды'); devRender(); }; box.appendChild(all); }
 }
 
-
-// ===== Маусымдық безендіру (авто немесе қолмен) =====
-const SEA = {
-  winter: { n: 'Қыс', e: '❄️', orn: ['❄️', '⛄', '🎄', '❄️', '🧣', '❄️', '⛄', '❄️'] },
-  spring: { n: 'Көктем', e: '🌸', orn: ['🌸', '🌷', '🦋', '🌼', '🌸', '🐝', '🌷', '🌼'] },
-  summer: { n: 'Жаз', e: '☀️', orn: ['☀️', '🌻', '🦋', '🍉', '🌻', '☀️', '🌴', '🍦'] },
-  autumn: { n: 'Күз', e: '🍂', orn: ['🍂', '🍁', '🍄', '🍂', '🎃', '🍁', '🍂', '📚'] }
-};
-function seaAuto() { const m = new Date().getMonth() + 1; return m === 12 || m <= 2 ? 'winter' : m <= 5 ? 'spring' : m <= 8 ? 'summer' : 'autumn'; }
-function seaPref() { const v = ls.get('season') || 'auto'; return v === 'auto' || v === 'off' || SEA[v] ? v : 'auto'; }
-function seaHoliday() { const d = new Date(), m = d.getMonth() + 1, x = d.getDate(); if (m === 9 && x === 1) return '📚 Білім күні құтты болсын!'; if (m === 3 && x >= 14 && x <= 25) return '🌷 Наурыз мейрамы құтты болсын!'; if ((m === 12 && x >= 25) || (m === 1 && x <= 3)) return '🎄 Жаңа жыл құтты болсын!'; if (m === 12 && x === 16) return '🇰🇿 Тәуелсіздік күні құтты болсын!'; return ''; }
-const fx = { cv: null, c: null, ps: [], raf: 0, last: 0, s: '' };
-const seaMotion = () => !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-function seaApply() {
-  const v = seaPref(), s = v === 'off' ? '' : (v === 'auto' ? seaAuto() : v), root = document.documentElement;
-  if (s) root.dataset.season = s; else delete root.dataset.season;
-  const b = $('seasonBtn'); if (b) b.textContent = s ? SEA[s].e : '🚫';
-  let rib = $('seaRib'); if (rib) rib.remove();
-  if (s) { rib = el('div', ''); rib.id = 'seaRib'; rib.setAttribute('aria-hidden', 'true'); const hol = seaHoliday(), o = SEA[s].orn, mid = (innerWidth < 640 ? 5 : 8);
-    for (let i = 0; i < mid; i++) { if (hol && i === mid >> 1) rib.append(el('b', '', hol)); rib.append(el('span', '', o[i % o.length])); } document.body.appendChild(rib); }
-  seaFx(s);
-}
-function seaFx(s) {
-  cancelAnimationFrame(fx.raf); fx.raf = 0; fx.s = s;
-  if (!s || !seaMotion()) { if (fx.cv) { fx.cv.remove(); fx.cv = null; } return; }
-  if (!fx.cv) { fx.cv = document.createElement('canvas'); fx.cv.id = 'seaFx'; fx.cv.setAttribute('aria-hidden', 'true'); document.body.appendChild(fx.cv); fx.c = fx.cv.getContext('2d'); addEventListener('resize', seaSize); }
-  seaSize(); const n = innerWidth < 640 ? 18 : 32, R = Math.random; fx.ps = [];
-  for (let i = 0; i < n; i++) fx.ps.push({ x: R() * innerWidth, y: R() * innerHeight, r: 6 + R() * 10, vy: .35 + R() * .8, vx: (R() - .5) * .5, ph: R() * 6.28, rot: R() * 6.28, vr: (R() - .5) * .04, g: ['🍂', '🍁'][i % 2] });
-  fx.last = 0; fx.raf = requestAnimationFrame(seaTick);
-}
-function seaSize() { if (!fx.cv) return; const d = Math.min(devicePixelRatio || 1, 2); fx.cv.width = innerWidth * d; fx.cv.height = innerHeight * d; fx.c.setTransform(d, 0, 0, d, 0, 0); }
-function seaTick(t) {
-  fx.raf = requestAnimationFrame(seaTick); if (t - fx.last < 33) return; fx.last = t;
-  const c = fx.c, W = innerWidth, H = innerHeight; c.clearRect(0, 0, W, H);
-  const busy = ['stage', 'qzHost', 'v-viewer'].some(id => { const e = $(id); return e && !e.hidden; }); fx.cv.style.display = busy || document.hidden ? 'none' : ''; if (busy || document.hidden) return;
-  const s = fx.s; c.textAlign = 'center'; c.textBaseline = 'middle';
-  fx.ps.forEach(p => {
-    p.ph += .02; p.rot += p.vr; p.x += p.vx + Math.sin(p.ph) * (s === 'summer' ? .2 : .5);
-    if (s === 'summer') { p.y -= p.vy * .35; if (p.y < -20) { p.y = H + 20; p.x = Math.random() * W; } } else { p.y += p.vy * (s === 'winter' ? .8 : 1); if (p.y > H + 20) { p.y = -20; p.x = Math.random() * W; } }
-    if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
-    if (s === 'winter') { c.fillStyle = 'rgba(255,255,255,' + (.55 + p.r / 40) + ')'; c.beginPath(); c.arc(p.x, p.y, p.r / 4 + .8, 0, 6.283); c.fill(); }
-    else if (s === 'summer') { const a = .25 + .25 * Math.sin(p.ph * 2); c.fillStyle = 'rgba(255,215,100,' + a + ')'; c.beginPath(); c.arc(p.x, p.y, p.r / 3 + 1, 0, 6.283); c.fill(); }
-    else { c.save(); c.translate(p.x, p.y); c.rotate(p.rot); c.font = Math.round(p.r + 4) + 'px serif'; c.fillText(s === 'spring' ? '🌸' : p.g, 0, 0); c.restore(); }
-  });
-}
-$('seasonBtn').onclick = e => { const v = seaPref(), mk = (k, t) => [(v === k ? '✓ ' : '') + t, () => { ls.set('season', k); seaApply(); }];
-  ctxMenu(e.currentTarget, [mk('auto', '🌿 Авто (қазір: ' + SEA[seaAuto()].n.toLowerCase() + ')'), mk('winter', '❄️ Қыс'), mk('spring', '🌸 Көктем'), mk('summer', '☀️ Жаз'), mk('autumn', '🍂 Күз'), mk('off', '🚫 Өшіру')]); };
-seaApply(); setInterval(() => { if (seaPref() === 'auto' && document.documentElement.dataset.season !== seaAuto()) seaApply(); }, 3600000);
 
 // ===== 1 сағат белсенділік болмаса автоматты шығу =====
 const IDLE_MS = 3600 * 1000; let lastTouch = 0;
@@ -8244,7 +8178,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
 (() => {
   const g = id => document.getElementById(id), PK = 'gwAiProc', LIM_T = 20; // LIM_T = мұғалімнің күндік лимиті (серверде AI_DAILY_LIMIT)
   let lastSkip = [], msgs = [], busy = false, stop = false, built = false, chatId = null, showProc = ls.get(PK) !== '0';
-  const PANDA = '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="#16181f"/><circle cx="31" cy="9" r="6" fill="#16181f"/><ellipse cx="20" cy="22" rx="16" ry="14.5" fill="#fff"/><ellipse cx="13" cy="21" rx="4" ry="4.8" transform="rotate(20 13 21)" fill="#16181f"/><ellipse cx="27" cy="21" rx="4" ry="4.8" transform="rotate(-20 27 21)" fill="#16181f"/><circle cx="13.4" cy="20.6" r="1.7" fill="#fff"/><circle cx="26.6" cy="20.6" r="1.7" fill="#fff"/><ellipse cx="20" cy="27" rx="2.2" ry="1.5" fill="#16181f"/><path d="M17 30q3 2.6 6 0" fill="none" stroke="#16181f" stroke-width="1.2" stroke-linecap="round"/></svg>';
+  const PANDA = '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="#16181f"/><circle cx="31" cy="9" r="6" fill="#16181f"/><ellipse cx="20" cy="22" rx="16" ry="14.5" fill="#fff"/><ellipse cx="13" cy="21" rx="4" ry="4.8" transform="rotate(20 13 21)" fill="#16181f"/><ellipse cx="27" cy="21" rx="4" ry="4.8" transform="rotate(-20 27 21)" fill="#16181f"/><circle cx="13.6" cy="21" r="2.5" fill="#fff"/><circle cx="26.4" cy="21" r="2.5" fill="#fff"/><circle cx="13.9" cy="21.3" r="1.5" fill="#16181f"/><circle cx="26.1" cy="21.3" r="1.5" fill="#16181f"/><circle cx="14.4" cy="20.6" r=".55" fill="#fff"/><circle cx="26.6" cy="20.6" r=".55" fill="#fff"/><ellipse cx="20" cy="27" rx="2.2" ry="1.5" fill="#16181f"/><path d="M17 30q3 2.6 6 0" fill="none" stroke="#16181f" stroke-width="1.2" stroke-linecap="round"/></svg>';
   const trunc = (s, n) => String(s == null ? '' : s).slice(0, n);
 
   // ---- қарапайым markdown (қауіпсіз: тек DOM түйіндері) ----
