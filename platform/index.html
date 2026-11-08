@@ -69,6 +69,17 @@ body.in-app{display:block;padding:0}
 .main{min-width:0}
 .side .out{margin:0}
 .brand{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:1.25rem}
+.bw{position:relative;display:inline-block;padding-right:22px}
+.bw .bt{font-weight:inherit}
+.bw[data-s] .bt{background:linear-gradient(100deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.bw[data-s=winter]{--g1:#2a6fdb;--g2:#69b7ff}.bw[data-s=spring]{--g1:#1fa65a;--g2:#8ed42f}.bw[data-s=summer]{--g1:#f08a00;--g2:#e8b800}.bw[data-s=autumn]{--g1:#d2531a;--g2:#e69a00}
+.bw .bk{position:absolute;right:0;top:-6px;font-size:.95rem;line-height:1;transform-origin:50% 60%;animation:bks 4s ease-in-out infinite;pointer-events:none}
+.bw .bp{position:absolute;top:-4px;font-size:.7rem;line-height:1;opacity:0;pointer-events:none;animation:bfall 5.5s linear infinite}
+@keyframes bks{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(10deg) scale(1.12)}}
+@keyframes bfall{0%{transform:translate(0,-4px) rotate(0);opacity:0}12%{opacity:.95}85%{opacity:.8}100%{transform:translate(var(--dx,8px),34px) rotate(260deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.bw .bk,.bw .bp{animation:none}.bw .bp{display:none}}
+body:not(.in-app) .bw .bp{display:none}
+
 #nav{display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(160,190,255,.35) transparent;overscroll-behavior:contain;padding-right:4px;margin-right:-4px}
 .side .me{flex:none}
 #nav::-webkit-scrollbar{width:6px}#nav::-webkit-scrollbar-thumb{background:rgba(160,190,255,.35);border-radius:6px}
@@ -1616,7 +1627,7 @@ select option:disabled{color:#8a93b4}
 <!-- Кіргеннен кейін -->
 <section id="app" hidden>
   <aside class="side card">
-    <div class="brand"><span>Groowin</span><button class="icon-btn" id="sideClose" aria-label="Панельді жасыру" style="width:34px;height:34px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>
+    <div class="brand"><span class="bw" id="brandW"><b class="bt">Groowin</b></span><button class="icon-btn" id="sideClose" aria-label="Панельді жасыру" style="width:34px;height:34px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>
     <nav id="nav">
       <button data-v="home" id="navHome"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Басты бет</span></button>
       <button type="button" class="grphead" id="subjHead" aria-expanded="true"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2zM22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg><span class="nl">Пәндер</span><span id="subjArrow">▾</span></button>
@@ -8705,6 +8716,20 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
   }
 
   window.aiInit = () => { setTimeout(() => { try { maybeNudge(); } catch { } }, 9000); if (!isStaff) { const f = g('aiFab'); if (f) f.hidden = true; return; } if (!built) build(); const p = g('aiPanel'); g('aiFab').hidden = !p.hidden; g('aiAdm').hidden = !isAdmin; };
+})();
+
+// ===== Брендтің маусымдық безендірілуі (автоматты, батырмасыз) =====
+(function () {
+  const w = document.getElementById('brandW'); if (!w) return;
+  const SE = { winter: ['❄️', ['❄', '❅', '❆']], spring: ['🌸', ['🌸', '🌿', '🌸']], summer: ['☀️', ['✨', '🦋', '✨']], autumn: ['🍂', ['🍁', '🍂', '🍁']] };
+  function season(d) { const m = d.getMonth(); return m === 11 || m < 2 ? 'winter' : m < 5 ? 'spring' : m < 8 ? 'summer' : 'autumn'; }
+  function paint() {
+    const k = season(new Date()); if (w.dataset.s === k) return; w.dataset.s = k;
+    w.querySelectorAll('.bk,.bp').forEach(n => n.remove());
+    const e = SE[k], a = document.createElement('i'); a.className = 'bk'; a.textContent = e[0]; a.setAttribute('aria-hidden', 'true'); w.appendChild(a);
+    e[1].forEach((ch, i) => { const p = document.createElement('i'); p.className = 'bp'; p.textContent = ch; p.setAttribute('aria-hidden', 'true'); p.style.left = (14 + i * 30) + '%'; p.style.animationDelay = (i * 1.7) + 's'; p.style.setProperty('--dx', (i % 2 ? -9 : 9) + 'px'); if (k === 'winter') p.style.color = '#8cc8ff'; w.appendChild(p); });
+  }
+  paint(); setInterval(paint, 6 * 3600 * 1000);
 })();
 </script>
 </body>
