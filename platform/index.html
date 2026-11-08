@@ -45,6 +45,12 @@ input{width:100%;padding:11px 12px;border:2px solid var(--ink);border-radius:8px
 input:focus,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .go{width:100%;margin-top:18px;padding:12px;border:0;border-radius:8px;background:var(--blue);color:#fff;font:inherit;font-weight:700;cursor:pointer}
 .go:disabled{opacity:.6;cursor:wait}
+#auth #gLogin{background:#fff!important;color:#1f1f1f!important;border:1px solid #dadce0!important;box-shadow:0 1px 3px rgba(0,0,0,.25)!important;font-weight:600}
+#auth #gLogin:hover{background:#f1f5ff!important}
+#auth .sepl{display:flex;align-items:center;gap:10px;margin:16px 0 4px;font-size:.88rem;font-weight:700;color:#ffd166;letter-spacing:.02em}
+#auth .sepl::before,#auth .sepl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.28)}
+#auth #submit{background:linear-gradient(135deg,#ffb020,#ff7a18)!important;color:#1a1205!important;font-weight:800}
+#auth #accessBtn{display:block;text-align:center;width:100%;margin:8px 0 0;font-size:.85rem}
 .msg{min-height:1.4em;margin:12px 0 0;font-size:.92rem}
 .msg.err{color:var(--err)}.msg.ok{color:var(--blue)}
 .hint{font-size:.85rem;color:var(--mute);margin:6px 0 0}
@@ -1560,7 +1566,8 @@ select option:disabled{color:#8a93b4}
     </g>
   </svg></div>
     <button class="go" id="gLogin" type="button" style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Мұғалім / админ: Google арқылы кіру</button>
-    <p class="hint" style="text-align:center;margin:10px 0 6px">Оқушы: логин мен құпия сөзбен кіреді</p>
+    <button class="lk" id="accessBtn" type="button">Gmail тізімде жоқ па? Админнен рұқсат сұра</button>
+    <div class="sepl"><span>👩‍🎓 Тек оқушыға: логин және құпия сөз</span></div>
     <div class="tabs" role="tablist" hidden>
       <button role="tab" id="t-in" aria-selected="true">Кіру</button>
       <button role="tab" id="t-up" aria-selected="false">Тіркелу</button>
@@ -1577,8 +1584,8 @@ select option:disabled{color:#8a93b4}
     <button class="go" id="submit">Кіру</button>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
     <button class="lk" id="qrLoginBtn" type="button">📱 QR арқылы кіру (үлкен экранға)</button>
-    <button class="lk" id="forgotBtn" type="button">Құпия сөзді ұмыттым</button>
-    <button class="lk" id="accessBtn" type="button" hidden>Тізімде жоқпын, рұқсат сұраймын</button>
+    <button class="lk" id="forgotBtn" type="button">Оқушы құпия сөзді ұмытты ма?</button>
+    
     <div id="qrBox">
       <h2 style="margin:0 0 6px;font-size:1.15rem;text-align:center">Телефонмен кіру</h2>
       <div id="qrImg" aria-live="polite"></div>
@@ -1872,7 +1879,7 @@ select option:disabled{color:#8a93b4}
       <h2 style="margin:0 0 12px;font-size:1.2rem">Менің аккаунтым</h2>
       <dl class="kv">
         <dt>Аты-жөні</dt><dd id="accName"></dd>
-        <dt>Телефон</dt><dd id="accPhone"></dd>
+        <dt id="accIdLab">Логин</dt><dd id="accPhone"></dd>
         <dt>Рөл</dt><dd id="accRole"></dd>
       </dl>
       <h3 style="margin:22px 0 0;font-size:1.05rem">Атыңды өзгерту</h3>
@@ -2032,7 +2039,7 @@ function setMode(m) {
   $('t-up').setAttribute('aria-selected', m === 'up');
   $('nameRow').hidden = m === 'in';
   $('passHint').hidden = m === 'in';
-  $('submit').textContent = m === 'in' ? 'Кіру' : 'Тіркелу';
+  $('submit').textContent = m === 'in' ? 'Оқушы болып кіру' : 'Тіркелу';
   $('pass').autocomplete = 'new-password';
   say('');
 }
@@ -2046,7 +2053,7 @@ $('gLogin').onclick = async () => {
 };
 // Google қайтарған қате (мысалы Gmail тізімде жоқ)
 (() => { const q = new URLSearchParams((location.hash || '').replace(/^#/, '') + '&' + (location.search || '').replace(/^\?/, '')), d = q.get('error_description') || ''; if (!q.get('error') && !d) return;
-  history.replaceState(null, '', location.pathname); setTimeout(() => say(/email_not_allowed|Database error/i.test(d) ? 'Бұл Gmail тізімде жоқ. Админге Gmail-ыңды айт, ол қосқан соң қайта кір.' : 'Google кіруі орындалмады: ' + d.replace(/\+/g, ' '), 'err'), 300); })();
+  history.replaceState(null, '', location.pathname); setTimeout(() => say(/email_not_allowed|Database error/i.test(d) ? 'Бұл Gmail тізімде жоқ. Төмендегі «Админнен рұқсат сұра» бас, админ қосқан соң қайта кір.' : 'Google кіруі орындалмады: ' + d.replace(/\+/g, ' '), 'err'), 300); })();
 async function loginByName(raw, pass) {
   const lg = raw.trim().toLowerCase();
   if (!/^[a-z][a-z0-9._-]{2,29}$/.test(lg)) return say('Логинді латын әріптерімен жаз (мысалы asan7b).', 'err');
@@ -2058,7 +2065,7 @@ async function loginByName(raw, pass) {
 $('submit').onclick = async () => {
   if (mode === 'in' && /[a-zA-Z]/.test($('phone').value)) return loginByName($('phone').value, $('pass').value);
   const phone = normPhone($('phone').value), pass = $('pass').value, name = $('name').value.trim();
-  if (phone.length !== 11) return say('Телефон нөмірін толық жаз: 11 сан.', 'err');
+  if (phone.length !== 11) return say('Логинді латын әріптерімен жаз (мысалы asan7b). Мұғалім мен админ жоғарыдағы Google батырмасын басады.', 'err');
   if (pass.length < 6) return say('Құпия сөз кемінде 6 таңба болсын.', 'err');
 
   $('submit').disabled = true; say('Күте тұр…'); ls.set('lastActive', Date.now()); lastTouch = Date.now(); window.__vflag = Date.now();
@@ -2070,16 +2077,9 @@ $('submit').onclick = async () => {
 
   if (error) {
     const m = error.message.toLowerCase();
-    if (m.includes('invalid login')) {
-      const st = await phoneStatus(phone);
-      if (st === 'allowed') { setMode('up'); say('Сен тізімдесің, бірақ әлі тіркелмегенсің. Өз құпия сөзіңді ойлап тап та, «Тіркелу» бас.', 'ok'); }
-      else say('Нөмір немесе құпия сөз қате. Алғаш рет кіріп жатсаң, алдымен «Тіркелу» бөліміне өтіп, өз құпия сөзіңді ойлап тап. Ұмытсаң, төмендегі «Құпия сөзді ұмыттым» сілтемесін бас.', 'err');
-    }
-    else if (m.includes('already')) say('Бұл нөмір тіркелген. «Кіру» бөліміне өт.', 'err');
-    else if (m.includes('database error')) {
-      const st = await phoneStatus(phone);
-      say(st === 'allowed' ? 'Тіркелу кезінде техникалық қате. Админге хабарла (SQL жаңартулары толық іске қосылғанын тексерсін).' : 'Бұл нөмір тізімде жоқ. Мұғалімге немесе админге жаз.', 'err');
-    }
+    if (m.includes('invalid login')) say('Логин не құпия сөз қате. Ұмытсаң, «Оқушы құпия сөзді ұмытты ма?» бас, мұғалімің жаңасын береді. Мұғалім мен админ жоғарыдағы Google батырмасымен кіреді.', 'err');
+    else if (m.includes('already')) say('Бұл аккаунт бұрын тіркелген.', 'err');
+    else if (m.includes('database error')) say('Бұл аккаунт жүйеде жоқ. Мұғалімің оқушы ретінде тіркеуі керек.', 'err');
     else say('Қате: ' + error.message, 'err');
   }
 };
@@ -2113,7 +2113,7 @@ async function showApp(session) {
   $('accName').textContent = me?.full_name || '';
   $('meNm').textContent = me?.full_name || 'Қонақ'; $('meRl').textContent = roles[me?.role] || 'Оқушы'; meName = me?.full_name || ''; if (me && avParse(me.avatar)) { myAvatar = me.avatar; ls.set('avatar', me.avatar); } else if (avParse(myAvatar)) { try { sb.rpc('set_my_avatar', { p: myAvatar }); } catch {} } paintMeAv();
   if (document.activeElement !== $('accEdit')) $('accEdit').value = me?.full_name || '';
-  $('accPhone').textContent = me?.login ? 'Логин: ' + me.login : me?.email ? me.email : me?.phone ? '+' + me.phone : '';
+  $('accPhone').textContent = me?.login ? me.login : me?.email ? me.email : me?.phone ? '+' + me.phone : ''; $('accIdLab').textContent = me?.login ? 'Логин' : me?.email ? 'Gmail' : 'Телефон';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isOwner = isAdmin && !!me?.is_owner; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff; $('nQuick').hidden = !isStaff;
   $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
@@ -2835,7 +2835,7 @@ async function gLinkRender() {
   const { data } = await sb.auth.getUser(), g = ((data && data.user && data.user.identities) || []).find(i => i.provider === 'google');
   box.appendChild(el('h3', '', '🔗 Google аккаунт')); box.lastChild.style.cssText = 'margin:14px 0 0;font-size:1.05rem';
   if (g) { const r = await sb.rpc('sync_my_email'); box.appendChild(el('p', 'sub', '✅ Google байланысқан' + (g.identity_data && g.identity_data.email ? ': ' + g.identity_data.email : '') + '. Енді басты беттегі «Google арқылы кіру» жеткілікті.')); return; }
-  box.appendChild(el('p', 'sub', 'Телефон нөмірімен кіріп жүрсең, Google-ды қос. Содан кейін нөмір мен құпия сөз керек болмайды, деректерің сол күйі қалады.'));
+  box.appendChild(el('p', 'sub', 'Ескі аккаунтпен кіріп жүрсең, Google-ды қос. Содан кейін құпия сөз керек болмайды, деректерің сол күйі қалады.'));
   const b = el('button', 'go', 'Google байланыстыру'); b.type = 'button';
   b.onclick = async () => { const r = await sb.auth.linkIdentity({ provider: 'google', options: { redirectTo: location.origin + location.pathname } }); if (r.error) alert(/manual linking/i.test(r.error.message) ? 'Supabase-та «Allow manual linking» қосылмаған (Authentication → Sign In / Providers).' : 'Қате: ' + r.error.message); };
   box.appendChild(b);
@@ -5043,20 +5043,28 @@ async function showMat(it) {
 let reqKind = 'password';
 function openReq(kind) {
   reqKind = kind; $('authCard').classList.add('req');
-  $('rTitle').textContent = kind === 'password' ? 'Құпия сөзді ұмыттым' : 'Рұқсат сұрау';
-  $('rSub').textContent = kind === 'password' ? 'Логиніңді жаз. Сынып мұғалімің жаңа құпия сөз береді. Мұғалім мен админ Google арқылы кіреді, оларға құпия сөз керек емес.' : 'Тізімде жоқ болсаң, деректеріңді жібер. Админ қарап, рұқсат береді, содан кейін «Тіркелу» арқылы кіре аласың.';
-  $('rRoleRow').hidden = kind === 'password'; $('rPhone').value = $('phone').value; note('rNote', '', '');
+  const em = kind === 'access'; $('rTitle').textContent = em ? 'Мұғалім/админ: рұқсат сұрау' : 'Оқушы: құпия сөзді ұмыттым';
+  document.querySelector('label[for=rPhone]').textContent = em ? 'Gmail (Google аккаунтың)' : 'Логин'; $('rPhone').type = em ? 'email' : 'text'; $('rPhone').placeholder = em ? 'teacher@gmail.com' : 'мысалы: asan7b'; $('rPhone').inputMode = em ? 'email' : 'text';
+  $('rSub').textContent = em ? 'Gmail мекенжайыңды және аты-жөніңді жаз. Админ тізімге қосқан соң, «Google арқылы кіру» бас.' : 'Логиніңді жаз. Сынып мұғалімің жаңа құпия сөз береді.';
+  $('rRoleRow').hidden = true; $('rPhone').value = em ? '' : $('phone').value; note('rNote', '', '');
 }
 $('forgotBtn').onclick = () => openReq('password');
 $('accessBtn').onclick = () => openReq('access');
 $('rBack').onclick = () => $('authCard').classList.remove('req');
 $('rGo').onclick = async () => {
+  if (reqKind === 'access') {
+    const em = $('rPhone').value.trim().toLowerCase(), nm = $('rName').value.trim();
+    if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(em)) return note('rNote', 'Gmail мекенжайын дұрыс жаз.', 'err');
+    if (nm.length < 2) return note('rNote', 'Аты-жөніңді жаз.', 'err');
+    $('rGo').disabled = true; const { error } = await sb.rpc('submit_email_request', { p_email: em, p_name: nm, p_message: $('rText').value.trim() }); $('rGo').disabled = false;
+    return error ? note('rNote', error.message.includes('already') ? 'Бұл Gmail-мен аккаунт бар, «Google арқылы кіру» бас.' : error.message.includes('too many') ? 'Тым көп сұраныс, кейінірек байқа.' : error.message.includes('function') ? 'update-34.sql әлі іске қосылмаған.' : 'Қате: ' + error.message, 'err') : note('rNote', 'Жіберілді. Админ қосқан соң «Google арқылы кіру» бас.', 'ok');
+  }
   if (reqKind === 'password' && /[a-zA-Z]/.test($('rPhone').value)) {
     $('rGo').disabled = true; const { error } = await sb.rpc('submit_login_request', { p_login: $('rPhone').value, p_message: $('rText').value.trim() }); $('rGo').disabled = false;
     return error ? note('rNote', error.message.includes('function') ? 'update-33.sql әлі іске қосылмаған.' : 'Қате: ' + error.message, 'err') : note('rNote', 'Жіберілді. Егер логин дұрыс болса, мұғалімің жаңа құпия сөз береді.', 'ok');
   }
   const phone = normPhone($('rPhone').value), name = $('rName').value.trim();
-  if (phone.length !== 11) return note('rNote', 'Телефон нөмірін толық жаз: 11 сан.', 'err');
+  if (phone.length !== 11) return note('rNote', 'Логинді латын әріптерімен жаз (мысалы asan7b).', 'err');
   if (reqKind === 'access' && !name) return note('rNote', 'Аты-жөніңді жаз.', 'err');
   $('rGo').disabled = true;
   const { error } = await sb.rpc('submit_request', { p_kind: reqKind, p_name: name, p_phone: phone, p_role: reqKind === 'access' ? $('rRole').value : null, p_message: $('rText').value.trim() });
@@ -5094,13 +5102,18 @@ async function loadReqs() {
   const done = async id => { await sb.from('requests').update({ status: 'done' }).eq('id', id); loadReqs(); };
   list.filter(r => inKind === 'all' || r.kind === inKind).forEach(r => {
     const d = document.createElement('div'); d.className = 'news'; if (r.status === 'done') d.style.opacity = .55;
-    const h = document.createElement('h3'); h.textContent = r.kind === 'password' ? 'Құпия сөзді ұмытты' : 'Рұқсат сұрайды (' + (ROLE_KK[r.role_wanted] || 'Оқушы') + ')';
-    const p = document.createElement('p'); p.textContent = [r.full_name, r.login ? 'логин: ' + r.login : '+' + r.phone, r.message].filter(Boolean).join(', ');
+    const h = document.createElement('h3'); h.textContent = r.kind === 'password' ? 'Құпия сөзді ұмытты' : r.email ? 'Мұғалім ретінде рұқсат сұрайды' : 'Рұқсат сұрайды (' + (ROLE_KK[r.role_wanted] || 'Оқушы') + ')';
+    const p = document.createElement('p'); p.textContent = [r.full_name, r.email ? r.email : r.login ? 'логин: ' + r.login : '+' + r.phone, r.message].filter(Boolean).join(', ');
     const m = document.createElement('small'); m.textContent = new Date(r.created_at).toLocaleString('kk-KZ');
     const act = document.createElement('div'); act.style.marginTop = '10px';
     if (r.status === 'new') {
       if (r.kind === 'password' && r.login) act.append(mini('Құпия сөз беру', async () => { const { data: pr } = await sb.from('profiles').select('id,full_name,login').eq('login', r.login).maybeSingle(); if (!pr) return alert('Бұл логинмен оқушы табылмады.'); if (await studentPw(pr.id, pr.full_name, pr.login)) loadReqs(); }));
       else if (r.kind === 'password') act.append(mini('Құпия сөз беру', async () => { if (await resetPw(r.phone)) done(r.id); }));
+      else if (r.email) act.append(mini('Рұқсат беру (мұғалім)', async () => {
+        const { error } = await sb.rpc('add_staff_email', { p_email: r.email, p_name: r.full_name || '', p_role: 'teacher' });
+        if (error) return alert(error.message.includes('already') ? 'Бұл Gmail-мен аккаунт бар.' : 'Қате: ' + error.message);
+        await done(r.id); alert('Қосылды. Енді ол «Google арқылы кіру» бас.');
+      }));
       else act.append(mini('Қабылдау', async () => {
         const { error } = await sb.from('allowed_phones').upsert({ phone: r.phone, full_name: r.full_name || 'Атсыз', role: r.role_wanted || 'student' });
         if (error) return alert('Қате: ' + error.message);
