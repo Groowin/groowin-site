@@ -8461,9 +8461,21 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       const r = await sb.from('lesson_plans').select('id,title,steps,updated_at').order('updated_at', { ascending: false }).limit(30); if (r.error) return { error: r.error.message };
       return { plans: (r.data || []).map(p => ({ id: p.id, title: p.title, steps: (p.steps || []).length, minutes: (p.steps || []).reduce((s, x) => s + (+x.d || 0), 0) })) };
     },
+    async list_catalog_games(a) {
+      const sj = String(a && a.subject || '').toLowerCase(), q = String(a && a.query || '').toLowerCase();
+      let l = (GAMES || []).filter(g => (!sj || g.subj === sj) && (!q || (g.title + ' ' + (g.topic || '') + ' ' + (g.type || '')).toLowerCase().includes(q)));
+      return { count: l.length, games: l.slice(0, 40).map(g => ({ url: g.url, title: g.title, subject: g.subj, topic: g.topic || '', type: g.type || '', grade: g.grade || '' })), note: 'Бұл — Физика/Математика бөліміндегі ойындар мен зертханалар. Жоспарға kind=game, game_url=url түрінде қос.' };
+    },
     async create_lesson_plan_draft(a) {
-      const KS = ['text', 'cloud', 'poll', 'ask', 'random', 'groups', 'timer', 'refl', 'wheel', 'potato', 'team', 'quiz', 'hw'];
-      const steps = (Array.isArray(a.steps) ? a.steps : []).slice(0, 14).map(s => { const k = KS.includes(s.kind) ? s.kind : 'text'; const o = { k, t: trunc(s.title, 80).trim() || STEP_TYPES[k], d: Math.max(0, Math.min(45, parseInt(s.minutes, 10) || 0)) }; if (s.text && ['text', 'hw', 'refl', 'cloud', 'poll', 'ask'].includes(k)) o.x = trunc(s.text, 500); return o; });
+      const KS = ['text', 'cloud', 'poll', 'ask', 'random', 'groups', 'timer', 'refl', 'wheel', 'potato', 'team', 'quiz', 'hw', 'slides', 'game'];
+      const mats = (await fetchMats()).i;
+      const steps = (Array.isArray(a.steps) ? a.steps : []).slice(0, 16).map(s => {
+        const k = KS.includes(s.kind) ? s.kind : 'text'; const o = { k, t: trunc(s.title, 80).trim() || STEP_TYPES[k], d: Math.max(0, Math.min(45, parseInt(s.minutes, 10) || 0)) };
+        if (s.text && ['text', 'hw', 'refl', 'cloud', 'poll', 'ask'].includes(k)) o.x = trunc(s.text, 500);
+        if (k === 'slides') { const m = mats.find(x => x.id === s.material_id); if (m) { o.m = m.id; const pf = parseInt(s.page_from, 10) || 0, pt = parseInt(s.page_to, 10) || 0; if (pf > 0) o.pf = pf; if (pt > 0 && pt >= pf) o.pt = pt; } else { o.k = 'text'; o.x = 'Презентация таңдалмады (материал табылмады). Жоспарды өзгертіп, PDF таңда.'; } }
+        if (k === 'game') { const g = (GAMES || []).find(x => x.url === s.game_url); if (g) { o.u = g.url; if (!s.title) o.t = g.title; } else { o.k = 'text'; } }
+        return o;
+      });
       if (!steps.length) return { error: 'Қадамдар бос.' };
       const quiz = a.quiz && Array.isArray(a.quiz.questions) ? { title: trunc(a.quiz.title, 120) || trunc(a.title, 100), questions: mapQs(a.quiz.questions) } : null;
       if (quiz && !quiz.questions.length) return { error: 'Викторинадағы сұрақтар жарамсыз.' };
@@ -8501,7 +8513,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       return { t, img: null, o, c, s: 20 };
     }).filter(q => q.t && (q.k === 'num' || (q.o.filter(Boolean).length >= 2 && q.o[q.c])));
   }
-  const LABEL = { list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+  const LABEL = { list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
 
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
@@ -8609,7 +8621,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     const c = el('div', 'ai-card'); c.append(el('h4', '', '📅 Сабақ жоспарының жобасы'));
     const ti = el('input'); ti.value = d.title; ti.maxLength = 120; ti.setAttribute('aria-label', 'Атауы'); c.append(ti);
     const tot = d.steps.reduce((s, x) => s + x.d, 0);
-    d.steps.forEach((s, i) => { const m = STEP_META[s.k] || ['•']; c.append(el('div', 'ai-q', m[0] + ' ' + (i + 1) + '. ' + s.t + (s.d ? ' · ' + s.d + ' мин' : ''))); });
+    d.steps.forEach((s, i) => { const m = STEP_META[s.k] || ['•']; c.append(el('div', 'ai-q', m[0] + ' ' + (i + 1) + '. ' + s.t + (s.k === 'slides' && s.pf ? ' · ' + s.pf + (s.pt ? '–' + s.pt : '') + '-беттер' : '') + (s.d ? ' · ' + s.d + ' мин' : ''))); });
     c.append(el('div', 'ai-q', 'Барлығы: ' + tot + ' мин' + (d.quiz ? ' · ішінде викторина (' + d.quiz.questions.length + ' сұрақ) автоматты қосылады' : '')));
     if (d.quiz) { const dt = el('details'); dt.append(el('summary', '', 'Викторина сұрақтарын көру')); d.quiz.questions.forEach((q, i) => dt.append(qLine(q, i))); c.append(dt); }
     const ok = el('button', 'go2', 'Растау және сақтау'), no = el('button', '', 'Бас тарту'), msg = el('div', 'ai-q'); ok.type = no.type = 'button';
