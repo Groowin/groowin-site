@@ -78,7 +78,8 @@ body.in-app{display:block;padding:0}
 @keyframes bks{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(10deg) scale(1.12)}}
 @keyframes bfall{0%{transform:translate(0,-4px) rotate(0);opacity:0}12%{opacity:.95}85%{opacity:.8}100%{transform:translate(var(--dx,8px),34px) rotate(260deg);opacity:0}}
 @media (prefers-reduced-motion:reduce){.bw .bk,.bw .bp{animation:none}.bw .bp{display:none}}
-body:not(.in-app) .bw .bp{display:none}
+body:not(.in-app) .bw:not(.bwl) .bp{display:none}
+#auth .bw.bwl{padding:0 34px}#auth .bw .bk{font-size:1.5rem;top:-12px;right:2px}#auth .bw .bp{font-size:1rem;top:-8px}
 
 #nav{display:flex;flex-direction:column;gap:6px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(160,190,255,.35) transparent;overscroll-behavior:contain;padding-right:4px;margin-right:-4px}
 .side .me{flex:none}
@@ -1526,6 +1527,14 @@ select option:disabled{color:#8a93b4}
 .ln-wrap{position:relative}.ln-svg{width:100%;height:auto;display:block;overflow:visible}.ln-ax{display:flex;justify-content:space-between;opacity:.65;margin-top:4px}
 .sd-made{display:grid;gap:10px}.sd-mk{display:grid;grid-template-columns:minmax(130px,1.2fr) 40px 2fr;gap:10px;align-items:center}.sd-mk b{font-variant-numeric:tabular-nums;text-align:right}.sd-mk .act-bar{grid-column:auto}
 @media (max-width:560px){.sd-mk{grid-template-columns:1fr 36px}.sd-mk .act-bar{grid-column:1/3}}
+
+#credSheet{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);overflow:auto;padding:20px 12px;display:flex;justify-content:center;align-items:flex-start}
+#credSheet .cbox{background:#fff;color:#111;border-radius:14px;max-width:860px;width:100%;padding:22px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+#credSheet table{width:100%;border-collapse:collapse;margin:12px 0;font-size:1rem}
+#credSheet th,#credSheet td{border:1px solid #bbb;padding:8px 10px;text-align:left}
+#credSheet th{background:#f1f1f1}#credSheet td.pw{font-family:ui-monospace,Consolas,monospace;font-weight:700;letter-spacing:.5px}
+#credSheet .crow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media print{body.printing>*:not(#credSheet){display:none!important}body.printing #credSheet{position:static;background:#fff;padding:0;display:block}body.printing #credSheet .cbox{box-shadow:none;max-width:none;padding:0}.nop{display:none!important}}
 </style>
 </head>
 <body>
@@ -1539,7 +1548,7 @@ select option:disabled{color:#8a93b4}
 
 <!-- Кіру / Тіркелу -->
 <section id="auth">
-  <h1>Groowin</h1>
+  <h1><span class="bw bwl"><b class="bt">Groowin</b></span></h1>
   <p class="by">by Askerov Almas</p>
   <p class="sub">Ойнап үйренетін платформа.</p>
   <div class="card" id="authCard">
@@ -1960,6 +1969,7 @@ select option:disabled{color:#8a93b4}
       <h2 id="uTitle" style="margin:0 0 4px;font-size:1.2rem">Оқушылар</h2>
       <div id="sdWrap"><button class="out ms-btn" id="sdBtn" type="button" aria-expanded="false">📈 Оқушылар статистикасы</button><div id="staffDash" hidden></div></div>
       <p class="sub" id="uHelp" style="margin-bottom:8px"></p>
+      <button class="out ms-btn" id="credBtn" type="button" hidden>📄 Логин парағы (<span id="credN">0</span>)</button>
       <label for="aName">Аты-жөні</label>
       <input id="aName">
       <label for="aPhone" id="aPhoneLab">Gmail</label>
@@ -2163,6 +2173,7 @@ async function studentPw(id, name, login) {
   if (!(await ask((name || 'Оқушы') + ' үшін жаңа құпия сөз орнатылсын ба?'))) return;
   const pw = genPw(), r = await sb.rpc('student_set_password', { p_id: id, p_password: pw });
   if (r.error) return alert(r.error.message.includes('forbidden') ? 'Бұл оқушының құпия сөзін өзгертуге рұқсатың жоқ.' : r.error.message.includes('function') ? 'update-33.sql әлі іске қосылмаған.' : 'Қате: ' + r.error.message);
+  credAdd(name, login, pw, '');
   showSecret('Құпия сөз өзгертілді. Оқушыға айт: логин ' + (login || '') + ', құпия сөз:', pw); notify('Құпия сөз берілді'); return true;
 }
 const phShow = (ph, uid) => (isOwner || uid === meId) ? '+' + ph : '+' + String(ph).slice(0, 1) + '••••••••' + String(ph).slice(-2);
@@ -2294,6 +2305,7 @@ $('aAdd').onclick = async () => {
   let err = r.error && r.error.message; try { if (r.error && r.error.context) err = (await r.error.context.json()).error || err; } catch { }
   if (err || !r.data || !r.data.ok) return show(/not found|Failed to send|404/i.test(err || '') ? 'student-admin функциясы әлі орнатылмаған (Supabase → Edge Functions).' : (err || (r.data && r.data.error) || 'Қате'), 'err');
   $('aName').value = ''; $('aLogin').value = ''; $('aNewClass').value = ''; await loadClassList(); show('Қосылды.', 'ok');
+  credAdd(r.data.full_name, r.data.login, r.data.password, classId);
   showSecret('Оқушыға айт: ' + r.data.full_name + ', логин: ' + r.data.login + ', құпия сөз:', r.data.password); loadUsers();
 };
 
@@ -8720,10 +8732,11 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
 
 // ===== Брендтің маусымдық безендірілуі (автоматты, батырмасыз) =====
 (function () {
-  const w = document.getElementById('brandW'); if (!w) return;
+  const ws = [...document.querySelectorAll('.bw')]; if (!ws.length) return;
   const SE = { winter: ['❄️', ['❄', '❅', '❆']], spring: ['🌸', ['🌸', '🌿', '🌸']], summer: ['☀️', ['✨', '🦋', '✨']], autumn: ['🍂', ['🍁', '🍂', '🍁']] };
   function season(d) { const m = d.getMonth(); return m === 11 || m < 2 ? 'winter' : m < 5 ? 'spring' : m < 8 ? 'summer' : 'autumn'; }
-  function paint() {
+  function paint() { ws.forEach(paintOne); }
+  function paintOne(w) {
     const k = season(new Date()); if (w.dataset.s === k) return; w.dataset.s = k;
     w.querySelectorAll('.bk,.bp').forEach(n => n.remove());
     const e = SE[k], a = document.createElement('i'); a.className = 'bk'; a.textContent = e[0]; a.setAttribute('aria-hidden', 'true'); w.appendChild(a);
@@ -8731,6 +8744,34 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
   }
   paint(); setInterval(paint, 6 * 3600 * 1000);
 })();
+
+// ===== Оқушыларға логин/құпия сөз парағы (құпия сөздер тек осы бет ашық тұрғанда жадта; серверде сақталмайды) =====
+window.credList = window.credList || [];
+function credAdd(name, login, pw, classId) {
+  const c = classId && typeof classesCache !== 'undefined' ? (classesCache.find(x => x.id === classId) || {}).name : '';
+  credList = credList.filter(x => x.login !== login); credList.push({ name: name || '', login: login || '', pw, cls: c || '' });
+  const b = document.getElementById('credBtn'), n = document.getElementById('credN'); if (b) { b.hidden = false; n.textContent = credList.length; }
+}
+function credShow() {
+  const old = document.getElementById('credSheet'); if (old) old.remove();
+  const ov = document.createElement('div'); ov.id = 'credSheet'; const bx = el('div', 'cbox');
+  const rows = [...credList].sort((a, b) => (a.cls + a.name).localeCompare(b.cls + b.name, 'kk'));
+  const url = location.origin + location.pathname;
+  const t = el('table'); t.innerHTML = '<tr><th>Сынып</th><th>Аты-жөні</th><th>Логин</th><th>Құпия сөз</th></tr>';
+  rows.forEach(r => { const tr = document.createElement('tr'); [r.cls, r.name, r.login, r.pw].forEach((v, i) => { const td = document.createElement('td'); if (i === 3) td.className = 'pw'; td.textContent = v; tr.appendChild(td); }); t.appendChild(tr); });
+  const h = el('h2', '', 'Groowin: кіру деректері'); h.style.margin = '0 0 4px';
+  const sub = el('p', '', 'Сайт: ' + url + '. Оқушы логин мен құпия сөзді енгізіп кіреді. Құпия сөзді басқа адамға көрсетпе.'); sub.style.margin = '0';
+  const warn = el('p', 'nop', 'Назар аудар: құпия сөздер тек осы беті ашық тұрғанда сақталады. Беттегі парақты жаппас бұрын басып шығар не CSV жүктеп ал.'); warn.style.cssText = 'color:#a15c00;font-size:.9rem';
+  const row = el('div', 'crow nop'), pr = el('button', 'go', '🖨 Басып шығару'), cs = el('button', 'out', 'CSV жүктеу'), cl = el('button', 'out', 'Тізімді тазалау'), cx = el('button', 'out', 'Жабу');
+  [pr, cs, cl, cx].forEach(b => b.type = 'button'); pr.style.width = 'auto'; pr.style.marginTop = '0';
+  pr.onclick = () => { document.body.classList.add('printing'); setTimeout(() => { window.print(); }, 50); };
+  addEventListener('afterprint', () => document.body.classList.remove('printing'));
+  cs.onclick = () => { const q = v => '"' + String(v).replace(/"/g, '""') + '"'; const csv = '\ufeff' + 'Сынып;Аты-жөні;Логин;Құпия сөз\n' + rows.map(r => [r.cls, r.name, r.login, r.pw].map(q).join(';')).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'groowin-logins.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
+  cl.onclick = async () => { if (!(await ask('Тізім тазаланады: құпия сөздер жадтан өшеді. Жалғастыру керек пе?'))) return; credList = []; const b = document.getElementById('credBtn'); if (b) b.hidden = true; ov.remove(); };
+  cx.onclick = () => ov.remove(); row.append(pr, cs, cl, cx);
+  bx.append(h, sub, t, warn, row); ov.appendChild(bx); document.body.appendChild(ov);
+}
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('#credBtn')) credShow(); });
 </script>
 </body>
 </html>
