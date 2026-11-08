@@ -1559,7 +1559,9 @@ select option:disabled{color:#8a93b4}
       <g id="pd_beansR" fill="#5b6074"><circle cx="0" cy="0" r="3.4"/><circle cx="-7" cy="-8" r="2.2"/><circle cx="0" cy="-10" r="2.2"/><circle cx="7" cy="-8" r="2.2"/></g>
     </g>
   </svg></div>
-    <div class="tabs" role="tablist">
+    <button class="go" id="gLogin" type="button" style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Мұғалім / админ: Google арқылы кіру</button>
+    <p class="hint" style="text-align:center;margin:10px 0 6px">Оқушы: логин мен құпия сөзбен кіреді</p>
+    <div class="tabs" role="tablist" hidden>
       <button role="tab" id="t-in" aria-selected="true">Кіру</button>
       <button role="tab" id="t-up" aria-selected="false">Тіркелу</button>
     </div>
@@ -1567,8 +1569,8 @@ select option:disabled{color:#8a93b4}
       <label for="name">Аты-жөні (міндетті емес)</label>
       <input id="name" autocomplete="name">
     </div>
-    <label for="phone">Телефон нөмірі</label>
-    <input id="phone" type="tel" inputmode="tel" placeholder="+7 700 123 45 67" autocomplete="off" name="gw-phone" data-lpignore="true">
+    <label for="phone">Логин</label>
+    <input id="phone" type="text" inputmode="text" placeholder="мысалы: asan7b" autocomplete="username" autocapitalize="none" spellcheck="false" name="gw-phone" data-lpignore="true">
     <label for="pass">Құпия сөз</label>
     <div class="pdFld"><input id="pass" type="password" autocomplete="new-password" name="gw-pass" data-lpignore="true"><button class="pdEye" id="pdEye" type="button" aria-label="Құпия сөзді көрсету" aria-pressed="false">👁</button></div>
     <p class="hint" id="passHint" hidden>Кемінде 6 таңба.</p>
@@ -1576,7 +1578,7 @@ select option:disabled{color:#8a93b4}
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
     <button class="lk" id="qrLoginBtn" type="button">📱 QR арқылы кіру (үлкен экранға)</button>
     <button class="lk" id="forgotBtn" type="button">Құпия сөзді ұмыттым</button>
-    <button class="lk" id="accessBtn" type="button">Тізімде жоқпын, рұқсат сұраймын</button>
+    <button class="lk" id="accessBtn" type="button" hidden>Тізімде жоқпын, рұқсат сұраймын</button>
     <div id="qrBox">
       <h2 style="margin:0 0 6px;font-size:1.15rem;text-align:center">Телефонмен кіру</h2>
       <div id="qrImg" aria-live="polite"></div>
@@ -1589,7 +1591,7 @@ select option:disabled{color:#8a93b4}
       <p class="sub" id="rSub" style="margin:0 0 6px;font-size:.9rem"></p>
       <label for="rName">Аты-жөні</label>
       <input id="rName" autocomplete="name">
-      <label for="rPhone">Телефон нөмірі</label>
+      <label for="rPhone">Логин (ескі аккаунт: телефон нөмірі)</label>
       <input id="rPhone" type="tel" inputmode="tel" placeholder="+7 700 123 45 67">
       <div id="rRoleRow">
         <label for="rRole">Кімсің?</label>
@@ -1894,6 +1896,7 @@ select option:disabled{color:#8a93b4}
         <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="go" id="bkSave" style="width:auto;padding:10px 22px">Көшірмені жүктеу</button><button class="out" id="bkLoad">Файлдан қалпына келтіру</button><input type="file" id="bkFile" accept=".json,application/json" hidden></div>
         <p class="msg" id="bkMsg" role="status" aria-live="polite"></p>
       </div>
+      <div id="gLinkBox"></div>
       <h3 style="margin:14px 0 0;font-size:1.05rem">📱 Менің құрылғыларым</h3>
       <p class="sub" style="font-size:.9rem">Аккаунтқа кірген құрылғылар. Біреуін басқа құрылғыдан (мысалы телефоннан) шығарып жіберуге болады. Ол құрылғы ашық болса, ~1 минутта шығады, жабық болса келесі ашқанда шығады.</p>
       <div id="devBox"></div>
@@ -1938,11 +1941,13 @@ select option:disabled{color:#8a93b4}
     <div id="v-students" hidden>
       <h2 id="uTitle" style="margin:0 0 4px;font-size:1.2rem">Оқушылар</h2>
       <div id="sdWrap"><button class="out ms-btn" id="sdBtn" type="button" aria-expanded="false">📈 Оқушылар статистикасы</button><div id="staffDash" hidden></div></div>
-      <p class="sub" style="margin-bottom:8px">Тізімге қосылған нөмір ғана тіркеле алады. Қосқан оқушың алдымен «Тіркелу» бөлімінде өз құпия сөзін ойлап табуы керек. Күйі «Тіркелмеген» болса, ол әлі кірмеген.</p>
+      <p class="sub" id="uHelp" style="margin-bottom:8px"></p>
       <label for="aName">Аты-жөні</label>
       <input id="aName">
-      <label for="aPhone">Телефон нөмірі</label>
-      <input id="aPhone" type="tel" inputmode="tel" placeholder="+7 700 123 45 67">
+      <label for="aPhone" id="aPhoneLab">Gmail</label>
+      <input id="aPhone" type="email" inputmode="email" placeholder="teacher@gmail.com" autocomplete="off">
+      <label for="aLogin" id="aLoginLab">Логин (міндетті емес, бос болса өзі жасалады)</label>
+      <input id="aLogin" placeholder="мысалы: asan7b" autocomplete="off" autocapitalize="none" maxlength="30">
       <label for="aRole">Рөл</label>
       <select id="aRole" style="width:100%;padding:11px 12px">
         <option value="student">Оқушы</option>
@@ -1952,7 +1957,7 @@ select option:disabled{color:#8a93b4}
       <label for="aClass" id="aClassLab">Сынып</label>
       <select id="aClass" style="width:100%;padding:11px 12px"></select>
       <input id="aNewClass" placeholder="Немесе жаңа сынып атауы: 7А" style="margin-top:8px">
-      <button class="go" id="aAdd">Тізімге қосу</button>
+      <button class="go" id="aAdd">Қосу</button>
       <p class="msg" id="aMsg" role="status" aria-live="polite"></p>
       <details id="imp" style="margin:6px 0 18px">
         <summary style="cursor:pointer;font-weight:500">Excel-ден жүктеу</summary>
@@ -1966,7 +1971,7 @@ select option:disabled{color:#8a93b4}
       <label for="byFilter" id="byLab" hidden>Қосқан мұғалім бойынша</label>
       <select id="byFilter" hidden></select>
       <div class="scroll"><table>
-        <thead><tr><th>Аты</th><th>Телефон</th><th>Рөл</th><th>Күйі</th><th>Сынып</th><th id="thBy">Қосқан</th><th></th></tr></thead>
+        <thead><tr><th>Аты</th><th>Логин / Gmail</th><th>Рөл</th><th>Күйі</th><th>Сынып</th><th id="thBy">Қосқан</th><th></th></tr></thead>
         <tbody id="users"></tbody>
       </table></div>
     </div>
@@ -2034,7 +2039,24 @@ function setMode(m) {
 $('t-in').onclick = () => setMode('in');
 $('t-up').onclick = () => setMode('up');
 
+$('gLogin').onclick = async () => {
+  say('Google-ға өтіп жатыр…'); ls.set('lastActive', Date.now()); lastTouch = Date.now(); window.__vflag = Date.now();
+  const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: 'select_account' } } });
+  if (error) say(/provider is not enabled|Unsupported provider/i.test(error.message) ? 'Google кіруі әлі қосылмаған (Supabase → Authentication → Providers → Google).' : 'Қате: ' + error.message, 'err');
+};
+// Google қайтарған қате (мысалы Gmail тізімде жоқ)
+(() => { const q = new URLSearchParams((location.hash || '').replace(/^#/, '') + '&' + (location.search || '').replace(/^\?/, '')), d = q.get('error_description') || ''; if (!q.get('error') && !d) return;
+  history.replaceState(null, '', location.pathname); setTimeout(() => say(/email_not_allowed|Database error/i.test(d) ? 'Бұл Gmail тізімде жоқ. Админге Gmail-ыңды айт, ол қосқан соң қайта кір.' : 'Google кіруі орындалмады: ' + d.replace(/\+/g, ' '), 'err'), 300); })();
+async function loginByName(raw, pass) {
+  const lg = raw.trim().toLowerCase();
+  if (!/^[a-z][a-z0-9._-]{2,29}$/.test(lg)) return say('Логинді латын әріптерімен жаз (мысалы asan7b).', 'err');
+  if (pass.length < 6) return say('Құпия сөз кемінде 6 таңба болсын.', 'err');
+  $('submit').disabled = true; say('Күте тұр…'); ls.set('lastActive', Date.now()); lastTouch = Date.now(); window.__vflag = Date.now();
+  const { error } = await sb.auth.signInWithPassword({ email: lg + '@' + EMAIL_DOMAIN, password: pass }); $('submit').disabled = false;
+  if (error) say(/invalid login/i.test(error.message) ? 'Логин не құпия сөз қате. Ұмытсаң, төмендегі «Құпия сөзді ұмыттым» бас, мұғалімің жаңасын береді.' : 'Қате: ' + error.message, 'err');
+}
 $('submit').onclick = async () => {
+  if (mode === 'in' && /[a-zA-Z]/.test($('phone').value)) return loginByName($('phone').value, $('pass').value);
   const phone = normPhone($('phone').value), pass = $('pass').value, name = $('name').value.trim();
   if (phone.length !== 11) return say('Телефон нөмірін толық жаз: 11 сан.', 'err');
   if (pass.length < 6) return say('Құпия сөз кемінде 6 таңба болсын.', 'err');
@@ -2091,7 +2113,7 @@ async function showApp(session) {
   $('accName').textContent = me?.full_name || '';
   $('meNm').textContent = me?.full_name || 'Қонақ'; $('meRl').textContent = roles[me?.role] || 'Оқушы'; meName = me?.full_name || ''; if (me && avParse(me.avatar)) { myAvatar = me.avatar; ls.set('avatar', me.avatar); } else if (avParse(myAvatar)) { try { sb.rpc('set_my_avatar', { p: myAvatar }); } catch {} } paintMeAv();
   if (document.activeElement !== $('accEdit')) $('accEdit').value = me?.full_name || '';
-  $('accPhone').textContent = me?.phone ? '+' + me.phone : '';
+  $('accPhone').textContent = me?.login ? 'Логин: ' + me.login : me?.email ? me.email : me?.phone ? '+' + me.phone : '';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isOwner = isAdmin && !!me?.is_owner; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff; $('nQuick').hidden = !isStaff;
   $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
@@ -2124,10 +2146,18 @@ function onlineStart() {
 function onlineStop() { if (onlCh) { try { sb.removeChannel(onlCh); } catch { } onlCh = null; } onl = new Set(); onlOk = false; paintOnline(); }
 addEventListener('online', paintOnline); addEventListener('offline', paintOnline);
 
+const idLabel = (a, p) => a.login ? a.login : a.phone ? (a.role === 'student' ? '+' + a.phone : phShow(a.phone, p && p.id)) : (a.email || '');
+// Логинмен кіретін оқушыға жаңа құпия сөз (мұғалім не админ). Оқушының сұранысы өзі жойылады.
+async function studentPw(id, name, login) {
+  if (!(await ask((name || 'Оқушы') + ' үшін жаңа құпия сөз орнатылсын ба?'))) return;
+  const pw = genPw(), r = await sb.rpc('student_set_password', { p_id: id, p_password: pw });
+  if (r.error) return alert(r.error.message.includes('forbidden') ? 'Бұл оқушының құпия сөзін өзгертуге рұқсатың жоқ.' : r.error.message.includes('function') ? 'update-33.sql әлі іске қосылмаған.' : 'Қате: ' + r.error.message);
+  showSecret('Құпия сөз өзгертілді. Оқушыға айт: логин ' + (login || '') + ', құпия сөз:', pw); notify('Құпия сөз берілді'); return true;
+}
 const phShow = (ph, uid) => (isOwner || uid === meId) ? '+' + ph : '+' + String(ph).slice(0, 1) + '••••••••' + String(ph).slice(-2);
 function deleteAccount(a, p) {
   const m = modal('Аккаунтты жою'), b = m.box, reg = !!p, isT = a.role === 'teacher';
-  b.append(el('p', '', (a.full_name || 'Атсыз') + ' · ' + (a.role === 'student' ? '+' + a.phone : phShow(a.phone, p && p.id)) + ' · ' + (ROLE_KK[a.role] || '')));
+  b.append(el('p', '', (a.full_name || 'Атсыз') + ' · ' + idLabel(a, p) + ' · ' + (ROLE_KK[a.role] || '')));
   const wn = el('div', 'del-warn'); wn.textContent = reg ? (isT ? 'Мұғалімнің аккаунты, викториналары, сабақ жоспарлары, материалдары және қойған тапсырмалары жойылады.' : 'Оқушының аккаунты, нәтижелері, прогресі және жауаптары жойылады.') + ' Мұны қайтару мүмкін емес. Егер тек уақытша тоқтату керек болса, «Бұғаттау» түймесін қолдан.' : 'Бұл нөмір тіркелу тізімінен өшіріледі. Ол әлі тіркелмеген.';
   b.appendChild(wn); let inp = null;
   if (reg) { inp = document.createElement('input'); inp.placeholder = 'Растау үшін «ЖОЮ» деп жаз'; inp.autocomplete = 'off'; inp.setAttribute('aria-label', 'Растау'); b.appendChild(inp); }
@@ -2135,16 +2165,25 @@ function deleteAccount(a, p) {
   const upd = () => { ok.disabled = reg && inp.value.trim().toUpperCase() !== 'ЖОЮ'; }; if (inp) { inp.oninput = upd; } upd();
   ok.onclick = async () => {
     ok.disabled = true; msg.textContent = 'Жойылып жатыр…'; msg.className = 'msg';
-    const r = await sb.rpc('delete_account', { p_phone: a.phone });
+    const r = a.phone ? await sb.rpc('delete_account', { p_phone: a.phone }) : a.role === 'student' ? await sb.rpc('student_delete', { p_id: p.id }) : await sb.rpc('staff_delete', { p_id: p.id });
     if (r.error) { const t = r.error.message || ''; msg.className = 'msg err'; msg.textContent = t.includes('admin protected') ? 'Басты админді жоюға болмайды.' : t.includes('owner only') ? 'Админді тек басты админ жоя алады.' : t.includes('forbidden') ? 'Бұл адамды жоюға құқығың жоқ.' : t.includes('self') ? 'Өз аккаунтыңды осы жерден жоя алмайсың.' : t.includes('function') || t.includes('delete_account') ? 'update-17.sql әлі іске қосылмаған (Supabase → SQL Editor).' : 'Қате: ' + t; upd(); return; }
     SFX.ok(); m.close(); notify('Аккаунт жойылды.'); loadUsers();
   };
 }
+async function loadPwReqs() {
+  let box = $('pwReqs'); if (!box) { box = el('div', ''); box.id = 'pwReqs'; $('sdWrap').after(box); } box.replaceChildren(); if (userRole !== 'student') return;
+  const r = await sb.from('requests').select('*').eq('kind', 'password').eq('status', 'new').not('login', 'is', null); if (r.error) return;
+  (r.data || []).forEach(q => { const d = el('div', 'news'), b = el('button', 'go', 'Жаңа құпия сөз беру'); b.type = 'button';
+    b.onclick = async () => { const { data: pr } = await sb.from('profiles').select('id,full_name,login').eq('login', q.login).maybeSingle(); if (pr && await studentPw(pr.id, pr.full_name, pr.login)) loadPwReqs(); };
+    d.append(el('h3', '', '🔑 ' + (q.full_name || q.login) + ' құпия сөзді ұмытты'), el('p', 'sub', 'Логин: ' + q.login + ' · ' + new Date(q.created_at).toLocaleString('kk-KZ')), b); box.appendChild(d); });
+}
 async function loadUsers() {
+  loadPwReqs();
   if (isAdmin && !isOwner && userRole !== 'student') return loadStaffNoPhone();
-  const [{ data: allowed }, { data: profs }] = await Promise.all([
+  const [{ data: allowed }, { data: profs }, { data: pend }] = await Promise.all([
     sb.from('allowed_phones').select('*').order('created_at', { ascending: false }),
-    sb.from('profiles').select('id,phone,active,class_id,full_name,role,is_owner')
+    sb.from('profiles').select('id,phone,active,class_id,full_name,role,is_owner,login,email,added_by'),
+    isAdmin ? sb.from('allowed_emails').select('*') : Promise.resolve({ data: [] })
   ]);
   const byPhone = Object.fromEntries((profs || []).map(p => [p.phone, p]));
   $('thBy').hidden = !isAdmin;
@@ -2156,19 +2195,23 @@ async function loadUsers() {
   }
   const flt = fsel.hidden ? 'all' : fsel.value;
   const body = $('users'); const frag = document.createDocumentFragment();
-  (allowed || []).map(a => { const q = byPhone[a.phone]; return q && q.role ? { ...a, role: q.role } : a; }).filter(a => (a.role === 'student') === (userRole === 'student')).filter(a => flt === 'all' || (flt === 'none' ? !a.added_by : a.added_by === flt)).forEach(a => {
-    const p = byPhone[a.phone];
-    const status = !p ? 'Тіркелмеген' : p.active ? 'Белсенді' : 'Бұғатталған';
+  const extra = [];
+  (profs || []).filter(x => !x.phone && (x.login || x.email)).forEach(x => extra.push({ phone: null, login: x.login, email: x.email, full_name: x.full_name, role: x.role, class_id: x.class_id, added_by: x.added_by, _p: x }));
+  (pend || []).forEach(e => extra.push({ phone: null, email: e.email, full_name: e.full_name, role: e.role, added_by: e.added_by, _pending: true }));
+  (allowed || []).map(a => { const q = byPhone[a.phone]; return q && q.role ? { ...a, role: q.role } : a; }).concat(extra).filter(a => (a.role === 'student') === (userRole === 'student')).filter(a => flt === 'all' || (flt === 'none' ? !a.added_by : a.added_by === flt)).forEach(a => {
+    const p = a._p || byPhone[a.phone];
+    const status = a._pending ? 'Google-мен кіруін күтіп тұр' : !p ? 'Тіркелмеген' : p.active ? 'Белсенді' : 'Бұғатталған';
     const tr = document.createElement('tr');
-    [a.full_name, a.role === 'student' ? '+' + a.phone : phShow(a.phone, p && p.id), (ROLE_KK[a.role] || '') + (p && p.is_owner ? ' · Басты' : ''), status].forEach((t, i) => {
+    [a.full_name, idLabel(a, p), (ROLE_KK[a.role] || '') + (p && p.is_owner ? ' · Басты' : ''), status].forEach((t, i) => {
       const td = document.createElement('td'); td.textContent = t || '';
       if (i === 0 && p) { const dt = document.createElement('i'); dt.className = 'od off'; dt.dataset.uid = p.id; td.prepend(dt); }
       tr.appendChild(td);
     });
     const ctd = document.createElement('td'), csel = classSelect(p ? p.class_id : a.class_id);
+    if (a._pending) csel.disabled = true;
     csel.onchange = async () => {
       const v = csel.value || null;
-      await sb.from('allowed_phones').update({ class_id: v }).eq('phone', a.phone);
+      if (a.phone) await sb.from('allowed_phones').update({ class_id: v }).eq('phone', a.phone);
       if (p) await sb.from('profiles').update({ class_id: v }).eq('id', p.id);
     };
     ctd.appendChild(csel); tr.appendChild(ctd);
@@ -2179,8 +2222,9 @@ async function loadUsers() {
         await sb.from('profiles').update({ active: !p.active }).eq('id', p.id); loadUsers();
       }));
       if (p && a.role === 'student') td.appendChild(mini('Прогресс', () => showStudentPath(p.id, a.full_name || 'Оқушы')));
-      if (p && a.role !== 'admin') td.appendChild(mini('Құпия сөз', () => resetPw(a.phone)));
-      if (a.role !== 'admin' || (isOwner && !(p && p.is_owner))) { const dl = mini('Жою', () => deleteAccount(a, p)); dl.classList.add('dgr'); td.appendChild(dl); }
+      if (p && a.role !== 'admin' && (a.phone || a.login)) td.appendChild(mini('Құпия сөз', () => a.login ? studentPw(p.id, a.full_name, a.login) : resetPw(a.phone)));
+      if (a._pending) { const dl = mini('Алып тастау', async () => { await sb.rpc('remove_staff_email', { p_email: a.email }); loadUsers(); }); dl.classList.add('dgr'); td.appendChild(dl); }
+      else if (a.role !== 'admin' || (isOwner && !(p && p.is_owner))) { const dl = mini('Жою', () => deleteAccount(a, p)); dl.classList.add('dgr'); td.appendChild(dl); }
     }
     tr.appendChild(td); frag.appendChild(tr);
   });
@@ -2216,22 +2260,30 @@ async function loadStaffNoPhone() {
 }
 
 $('aAdd').onclick = async () => {
-  const phone = normPhone($('aPhone').value), name = $('aName').value.trim(), role = $('aRole').value;
-  const m = $('aMsg');
+  const name = $('aName').value.trim(), m = $('aMsg'), btn = $('aAdd');
   const show = (t, c) => { m.textContent = t; m.className = 'msg ' + c; };
-  if (phone.length !== 11 || !name) return show('Аты-жөні мен 11 санды нөмірді жаз.', 'err');
+  if (!name) return show('Аты-жөнін жаз.', 'err');
+  if (userRole !== 'student') {
+    const email = $('aPhone').value.trim().toLowerCase(), role = $('aRole').value;
+    if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) return show('Gmail мекенжайын дұрыс жаз.', 'err');
+    btn.disabled = true; const { error } = await sb.rpc('add_staff_email', { p_email: email, p_name: name, p_role: role }); btn.disabled = false;
+    if (error) return show(error.message.includes('owner only') ? 'Админді тек Басты админ қоса алады.' : error.message.includes('already') ? 'Бұл Gmail-мен аккаунт бар.' : error.message.includes('function') ? 'update-33.sql әлі іске қосылмаған.' : 'Қате: ' + error.message, 'err');
+    $('aName').value = ''; $('aPhone').value = ''; show('Қосылды. Ол сайтта «Google арқылы кіру» басады.', 'ok'); return loadUsers();
+  }
   let classId = $('aClass').value || null; const nc = $('aNewClass').value.trim().replace(/\s+/g, '');
-  if (nc && role === 'student') {
+  if (nc) {
     const ex = classesCache.find(c => ckey(c.name) === ckey(nc));
     if (ex) classId = ex.id;
     else { const { data, error } = await sb.from('classes').insert({ name: nc }).select().single(); if (error) return show('Қате: ' + error.message, 'err'); classId = data.id; await loadClassList(); }
   }
-  const { data: cnt, error } = await sb.rpc('staff_add_students', { p_rows: [{ phone, full_name: name, role, class_id: classId }] });
-  if (error) return show(error.message.includes('bad class') ? 'Бұл сынып саған бекітілмеген. Админнен қосуын сұра немесе жаңа сынып жаса.' : error.message.includes('function') ? 'update-7.sql әлі іске қосылмаған сияқты.' : 'Қате: ' + error.message, 'err');
-  if (!cnt) return show('Қосылмады: бұл нөмір басқа мұғалімнің оқушысы немесе админнің тізімінде бар.', 'err');
-  $('aName').value = ''; $('aPhone').value = ''; $('aNewClass').value = ''; await loadClassList();
-  show('Қосылды. Енді ол «Тіркелу» арқылы өз құпия сөзін қояды.', 'ok');
-  loadUsers();
+  if (!classId) return show('Сыныпты таңда не жаңа сынып атауын жаз.', 'err');
+  btn.disabled = true; show('Жасалып жатыр…', '');
+  const r = await sb.functions.invoke('student-admin', { body: { action: 'create', full_name: name, class_id: classId, login: $('aLogin').value.trim() } });
+  btn.disabled = false;
+  let err = r.error && r.error.message; try { if (r.error && r.error.context) err = (await r.error.context.json()).error || err; } catch { }
+  if (err || !r.data || !r.data.ok) return show(/not found|Failed to send|404/i.test(err || '') ? 'student-admin функциясы әлі орнатылмаған (Supabase → Edge Functions).' : (err || (r.data && r.data.error) || 'Қате'), 'err');
+  $('aName').value = ''; $('aLogin').value = ''; $('aNewClass').value = ''; await loadClassList(); show('Қосылды.', 'ok');
+  showSecret('Оқушыға айт: ' + r.data.full_name + ', логин: ' + r.data.login + ', құпия сөз:', r.data.password); loadUsers();
 };
 
 // ===== Жазылу эффектісі =====
@@ -2414,7 +2466,7 @@ const VIEWS = ['home', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play',
 function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined') { const w = $('msWrap'); if (w) w.hidden = !isStaff; } if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
 function go(key, keep) {
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
-  clearInterval(window.__qrDevT); if (key === 'account') { qrDevices(); devRender(); window.__qrDevT = setInterval(() => { if ($('v-account').hidden) clearInterval(window.__qrDevT); else qrDevices(); }, 15000); }
+  clearInterval(window.__qrDevT); if (key === 'account') { qrDevices(); devRender(); gLinkRender(); window.__qrDevT = setInterval(() => { if ($('v-account').hidden) clearInterval(window.__qrDevT); else qrDevices(); }, 15000); }
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === (key === 'quiz' ? 'play' : key)));
   if (key === 'home') { show('home'); renderHome(); return; }
   if (key === 'physics' || key === 'math') {
@@ -2485,6 +2537,7 @@ applyGlass();
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
   { ver: '5.6', date: '08.11.2026', items: [
+    ['🔑', 'Жаңа кіру жүйесі', 'Мұғалім мен админ Google аккаунтымен кіреді (құпия сөз керек емес). Оқушыны мұғалім өзі тіркейді: логин мен құпия сөз береді. Оқушы ұмытса, сынып мұғалімі жаңасын береді.'],
     ['📱', 'Менің құрылғыларым', 'Аккаунтқа кірген құрылғылар тізімі: «Менің аккаунтым» бетінде. Телефоннан басқасын қашықтан шығаруға болады.'],
     ['⏱', 'Сеанс 1 сағат', 'Бір сағат белсенділік болмаса, аккаунттан өзі шығады.'],
     ['☑', 'Файлдарды таңдап жылжыту', 'Материалдарда «☑ Таңдау» басып, бірнеше файлды бір папкаға салуға болады. ЖИ-ға да айтсаң болады.'],
@@ -2777,6 +2830,16 @@ function devStop() { clearInterval(devT); devT = null; }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && devT) devPing(); });
 async function devLeave() { devStop(); if (devOff) return; try { await sb.rpc('device_leave', { p_id: devId() }); } catch { } }
 const ago = t => { const m = Math.round((Date.now() - new Date(t)) / 60000); return m < 2 ? 'қазір онлайн' : m < 60 ? m + ' мин бұрын' : m < 1440 ? Math.round(m / 60) + ' сағ бұрын' : Math.round(m / 1440) + ' күн бұрын'; };
+async function gLinkRender() {
+  const box = $('gLinkBox'); if (!box) return; box.replaceChildren(); if (!isStaff) return;
+  const { data } = await sb.auth.getUser(), g = ((data && data.user && data.user.identities) || []).find(i => i.provider === 'google');
+  box.appendChild(el('h3', '', '🔗 Google аккаунт')); box.lastChild.style.cssText = 'margin:14px 0 0;font-size:1.05rem';
+  if (g) { const r = await sb.rpc('sync_my_email'); box.appendChild(el('p', 'sub', '✅ Google байланысқан' + (g.identity_data && g.identity_data.email ? ': ' + g.identity_data.email : '') + '. Енді басты беттегі «Google арқылы кіру» жеткілікті.')); return; }
+  box.appendChild(el('p', 'sub', 'Телефон нөмірімен кіріп жүрсең, Google-ды қос. Содан кейін нөмір мен құпия сөз керек болмайды, деректерің сол күйі қалады.'));
+  const b = el('button', 'go', 'Google байланыстыру'); b.type = 'button';
+  b.onclick = async () => { const r = await sb.auth.linkIdentity({ provider: 'google', options: { redirectTo: location.origin + location.pathname } }); if (r.error) alert(/manual linking/i.test(r.error.message) ? 'Supabase-та «Allow manual linking» қосылмаған (Authentication → Sign In / Providers).' : 'Қате: ' + r.error.message); };
+  box.appendChild(b);
+}
 async function devRender() {
   const box = $('devBox'); if (!box) return; const r = await sb.rpc('device_list'); box.replaceChildren();
   if (r.error) { box.appendChild(el('p', 'hint', 'Құрылғылар тізімі үшін update-32.sql әлі іске қосылмаған (Supabase → SQL Editor).')); return; }
@@ -4981,13 +5044,17 @@ let reqKind = 'password';
 function openReq(kind) {
   reqKind = kind; $('authCard').classList.add('req');
   $('rTitle').textContent = kind === 'password' ? 'Құпия сөзді ұмыттым' : 'Рұқсат сұрау';
-  $('rSub').textContent = kind === 'password' ? 'Нөміріңді жаз. Админ сенімен байланысып, жаңа құпия сөз береді.' : 'Тізімде жоқ болсаң, деректеріңді жібер. Админ қарап, рұқсат береді, содан кейін «Тіркелу» арқылы кіре аласың.';
+  $('rSub').textContent = kind === 'password' ? 'Логиніңді жаз. Сынып мұғалімің жаңа құпия сөз береді. Мұғалім мен админ Google арқылы кіреді, оларға құпия сөз керек емес.' : 'Тізімде жоқ болсаң, деректеріңді жібер. Админ қарап, рұқсат береді, содан кейін «Тіркелу» арқылы кіре аласың.';
   $('rRoleRow').hidden = kind === 'password'; $('rPhone').value = $('phone').value; note('rNote', '', '');
 }
 $('forgotBtn').onclick = () => openReq('password');
 $('accessBtn').onclick = () => openReq('access');
 $('rBack').onclick = () => $('authCard').classList.remove('req');
 $('rGo').onclick = async () => {
+  if (reqKind === 'password' && /[a-zA-Z]/.test($('rPhone').value)) {
+    $('rGo').disabled = true; const { error } = await sb.rpc('submit_login_request', { p_login: $('rPhone').value, p_message: $('rText').value.trim() }); $('rGo').disabled = false;
+    return error ? note('rNote', error.message.includes('function') ? 'update-33.sql әлі іске қосылмаған.' : 'Қате: ' + error.message, 'err') : note('rNote', 'Жіберілді. Егер логин дұрыс болса, мұғалімің жаңа құпия сөз береді.', 'ok');
+  }
   const phone = normPhone($('rPhone').value), name = $('rName').value.trim();
   if (phone.length !== 11) return note('rNote', 'Телефон нөмірін толық жаз: 11 сан.', 'err');
   if (reqKind === 'access' && !name) return note('rNote', 'Аты-жөніңді жаз.', 'err');
@@ -5005,7 +5072,9 @@ function setUserPage(role) {
   $('sdWrap').hidden = !t; $('uTitle').textContent = t ? (isAdmin ? 'Оқушылар' : 'Менің оқушыларым') : 'Мұғалімдер мен админдер';
   $('aRole').replaceChildren(...(t ? [['student', 'Оқушы']] : [['teacher', 'Мұғалім'], ['admin', 'Админ']]).map(([v, l]) => new Option(l, v)));
   if (!t) $('aClass').value = '';
-  $('aClassLab').hidden = $('aClass').hidden = $('aNewClass').hidden = $('imp').hidden = !t;
+  $('aClassLab').hidden = $('aClass').hidden = $('aNewClass').hidden = !t; $('imp').hidden = true;
+  $('aPhone').hidden = $('aPhoneLab').hidden = t; $('aRole').hidden = t; document.querySelector('label[for=aRole]').hidden = t; $('aLogin').hidden = $('aLoginLab').hidden = !t; $('aAdd').textContent = t ? 'Оқушыны қосу' : 'Мұғалімді қосу';
+  $('uHelp').textContent = t ? 'Оқушыға логин мен құпия сөз жасалады. Оларды оқушыға өзің айтасың, ол алғаш кіргенде қолданады. Ұмытса, төмендегі тізімнен «Құпия сөз» арқылы жаңасын бересің.' : 'Мұғалім мен админ Google аккаунтымен кіреді. Gmail-ін осында қос, ол «Google арқылы кіру» бассa болды. Құпия сөз керек емес.';
   loadUsers();
 }
 $('byFilter').onchange = loadUsers;
@@ -5026,11 +5095,12 @@ async function loadReqs() {
   list.filter(r => inKind === 'all' || r.kind === inKind).forEach(r => {
     const d = document.createElement('div'); d.className = 'news'; if (r.status === 'done') d.style.opacity = .55;
     const h = document.createElement('h3'); h.textContent = r.kind === 'password' ? 'Құпия сөзді ұмытты' : 'Рұқсат сұрайды (' + (ROLE_KK[r.role_wanted] || 'Оқушы') + ')';
-    const p = document.createElement('p'); p.textContent = [r.full_name, '+' + r.phone, r.message].filter(Boolean).join(', ');
+    const p = document.createElement('p'); p.textContent = [r.full_name, r.login ? 'логин: ' + r.login : '+' + r.phone, r.message].filter(Boolean).join(', ');
     const m = document.createElement('small'); m.textContent = new Date(r.created_at).toLocaleString('kk-KZ');
     const act = document.createElement('div'); act.style.marginTop = '10px';
     if (r.status === 'new') {
-      if (r.kind === 'password') act.append(mini('Құпия сөз беру', async () => { if (await resetPw(r.phone)) done(r.id); }));
+      if (r.kind === 'password' && r.login) act.append(mini('Құпия сөз беру', async () => { const { data: pr } = await sb.from('profiles').select('id,full_name,login').eq('login', r.login).maybeSingle(); if (!pr) return alert('Бұл логинмен оқушы табылмады.'); if (await studentPw(pr.id, pr.full_name, pr.login)) loadReqs(); }));
+      else if (r.kind === 'password') act.append(mini('Құпия сөз беру', async () => { if (await resetPw(r.phone)) done(r.id); }));
       else act.append(mini('Қабылдау', async () => {
         const { error } = await sb.from('allowed_phones').upsert({ phone: r.phone, full_name: r.full_name || 'Атсыз', role: r.role_wanted || 'student' });
         if (error) return alert('Қате: ' + error.message);
