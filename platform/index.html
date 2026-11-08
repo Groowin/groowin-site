@@ -2121,7 +2121,7 @@ async function showApp(session) {
   try { window.aiInit && window.aiInit(); } catch (e) { }
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
-  $('navClasses').hidden = !isAdmin; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
+  $('navClasses').hidden = !isStaff; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
   loadClassList().then(() => { if (isStaff) fillTargets(); renderNews(); }); loadGames(); qrPingStart(); qrCheckPending(); qrDevices(); if (!$('v-home').hidden) renderHome();
   if (XP_ON && me?.role === 'student') { const { data: x } = await sb.rpc('my_xp'); setXP(x || 0); } else $('xp').hidden = true;
 }
@@ -2894,7 +2894,8 @@ async function loadClasses() {
   ]);
   const tn = id => (tch || []).find(t => t.id === id)?.full_name || 'Атсыз';
   const box = $('classList'); box.replaceChildren();
-  classesCache.forEach(c => {
+  if (!isAdmin && !assignable().length) { const e = document.createElement('p'); e.className = 'sub'; e.textContent = 'Әзірге сыныбың жоқ. Жоғарыдағы жолға сынып атын жазып (мысалы 7А) «Қосу» бас, ол сенің сыныбың болады. Дайын сыныпқа қосылғың келсе, админге айт.'; box.appendChild(e); }
+  assignable().forEach(c => {
     const d = document.createElement('div'); d.className = 'news';
     const h = document.createElement('h3'); h.textContent = c.name;
     const mine = (tc || []).filter(x => x.class_id === c.id);
@@ -2902,6 +2903,7 @@ async function loadClasses() {
     const sel = document.createElement('select'); sel.append(new Option('Мұғалім қосу…', ''));
     (tch || []).filter(t => !mine.some(x => x.teacher_id === t.id)).forEach(t => sel.append(new Option(t.full_name || 'Атсыз', t.id)));
     sel.onchange = async () => { if (sel.value) { await sb.from('teacher_classes').insert({ teacher_id: sel.value, class_id: c.id }); loadClasses(); } };
+    if (!isAdmin) { d.append(h, p); box.appendChild(d); return; }
     d.append(h, p, sel);
     mine.forEach(x => d.append(mini('× ' + tn(x.teacher_id), async () => { await sb.from('teacher_classes').delete().match({ teacher_id: x.teacher_id, class_id: c.id }); loadClasses(); })));
     d.append(mini('Сыныпты жою', async () => { if ((await ask(c.name + ' сыныбын жою керек пе?'))) { await sb.from('classes').delete().eq('id', c.id); loadClasses(); } }));
@@ -2911,8 +2913,8 @@ async function loadClasses() {
 $('cToLists').onclick = () => go('rosters');
 $('cAdd').onclick = async () => {
   const n = $('cName').value.trim(); if (!n) return;
-  const { error } = await sb.from('classes').insert({ name: n });
-  note('cMsg', error ? 'Қате: ' + error.message : 'Қосылды.', error ? 'err' : 'ok'); $('cName').value = ''; loadClasses();
+  const { error } = await sb.from('classes').insert({ name: n.replace(/\s+/g, '') });
+  note('cMsg', error ? (error.message.includes('duplicate') ? 'Бұл сынып бар. Админнен өзіңе тағайындауын сұра.' : 'Қате: ' + error.message) : 'Қосылды. Енді үй тапсырмасын осы сыныпқа бере аласың.', error ? 'err' : 'ok'); $('cName').value = ''; loadClasses();
 };
 
 // ===== Мұғалімнің сыныптары =====
@@ -5918,7 +5920,7 @@ async function loadHw() {
   $('hwForm').hidden = !isStaff; hwMsg('');
   const box = $('hwList'); box.replaceChildren(el('p', 'sub', 'Жүктелуде…'));
   $('hwSub').textContent = isStaff ? 'Сыныпқа тапсырма қой, оқушылар жауабын (мәтін не фото) жібереді, сен тексересің.' : 'Мұғалім қойған тапсырмалар. Тапсырып, бағаңды осында көр.';
-  if (isStaff) { if (!classesCache.length) await loadClassList(); const sel = $('hwClass'), cur = sel.value; sel.replaceChildren(); assignable().forEach(c => sel.append(new Option(c.name, c.id))); if (cur) sel.value = cur; }
+  if (isStaff) { if (!classesCache.length) await loadClassList(); const sel = $('hwClass'), cur = sel.value; sel.replaceChildren(); assignable().forEach(c => sel.append(new Option(c.name, c.id))); if (!sel.options.length) sel.append(new Option('Сынып жоқ: «Мектеп сыныптары» бөлімінде жаса', '')); if (cur) sel.value = cur; }
   const h = await sb.from('homeworks').select('*').order('created_at', { ascending: false });
   if (h.error) { box.replaceChildren(el('p', 'msg err', h.error.message.includes('homeworks') ? 'update-12.sql әлі іске қосылмаған. Оны Supabase → SQL Editor ішінде іске қос.' : 'Қате: ' + h.error.message)); return; }
   const list = h.data || [], ids = list.map(x => x.id);
@@ -8438,7 +8440,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     },
     async create_homework_draft(a) {
       const lc = await TOOLS.list_classes(), cl = lc.school_classes || [], c = cl.find(x => x.id === a.class_id);
-      if (!c) return { error: cl.length ? 'class_id қате. school_classes тізімінен id ал.' : 'Аккаунты бар сынып жоқ, сондықтан үй тапсырмасын жіберуге болмайды. Мұғалімге «Сыныптар» бөлімінде сынып жасау керек екенін айт (оның жеке тізімдері: ' + (lc.my_lists || []).map(x => x.name).join(', ') + ').' };
+      if (!c) return { error: cl.length ? 'class_id қате. school_classes тізімінен id ал.' : 'Аккаунты бар сынып жоқ, сондықтан үй тапсырмасын жіберуге болмайды. Мұғалімге сол жақ мәзірдегі «Мектеп сыныптары» бөлімінде сынып жасау керек екенін айт (оның жеке тізімдері: ' + (lc.my_lists || []).map(x => x.name).join(', ') + ').' };
       const due = /^\d{4}-\d{2}-\d{2}$/.test(a.due_date || '') ? a.due_date : '';
       card_hw({ cls: cl, class_id: c.id, title: trunc(a.title, 120), body: trunc(a.body, 2000), due }); return { ok: true, note: 'Жоба мұғалімге көрсетілді, растауын күтіп тұр.' };
     },
