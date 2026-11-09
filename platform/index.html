@@ -1559,6 +1559,7 @@ select option:disabled{color:#8a93b4}
 .pl-add button.go{width:auto;margin:0;padding:10px 20px;border-radius:12px}
 .pl-chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.pl-chips button{padding:4px 12px;border:1px solid var(--line);border-radius:99px;background:transparent;color:var(--mute);font:inherit;font-size:.82rem;cursor:pointer}
 .pl-chips button:hover{color:var(--ink)}
+.pl-rep{margin-left:auto;padding:5px 12px;border:1px solid var(--line);border-radius:99px;background:var(--paper);color:var(--ink);font:inherit;font-size:.85rem}
 .pl-list{margin-top:12px;display:flex;flex-direction:column;gap:8px}
 .pl-lab{margin:8px 2px 0;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:700}.pl-lab.late{color:var(--err)}
 .pl-it{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
@@ -1571,6 +1572,36 @@ select option:disabled{color:#8a93b4}
 .pl-empty{margin:14px 2px 2px;color:var(--mute);font-size:.95rem;line-height:1.5}
 .pl-more{align-self:flex-start;margin-top:6px;padding:4px 2px;border:0;background:transparent;color:var(--mute);font:inherit;font-size:.88rem;cursor:pointer;text-decoration:underline}
 @media(max-width:760px){.pl-add{grid-template-columns:1fr 1fr}.pl-add input:first-child{grid-column:1/-1}.pl-add button.go{grid-column:1/-1;width:100%}}
+
+/* ===== Телефон (9:16): жоғарыда қысқа тақта, төменде навигация ===== */
+@media (max-width:760px){
+  body.in-app #app,body.in-app #app.collapsed{display:block;padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+  body.in-app #app .side.card{position:sticky;top:0;z-index:30;display:flex!important;flex-wrap:nowrap!important;flex-direction:row!important;align-items:center;gap:10px;min-height:60px;padding:8px 112px 8px 14px!important;border:0;border-bottom:1px solid rgba(160,190,255,.22);border-radius:0;background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none}
+  body.in-app #app.collapsed .side{display:flex!important;visibility:visible}
+  body.in-app #sideClose,body.in-app #sideBtn,body.in-app #subjHead{display:none!important}
+  body.in-app .side .brand{flex:1 1 auto;width:auto;min-width:0;margin:0;justify-content:flex-start}
+  body.in-app .side .me{flex:none;display:flex;flex-direction:row;flex-wrap:nowrap;width:auto;align-items:center;gap:8px;margin:0;padding:0;border:0}
+  body.in-app .side .me .mt,body.in-app .side .me .od{display:none}
+  body.in-app .side .me #meCard{padding:0;border:0;background:none;min-width:0;flex:none;width:36px;height:36px}body.in-app .side .me #meCard .av{width:34px;height:34px;margin:0}
+  body.in-app #nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;flex-direction:row;gap:2px;overflow-x:auto;overflow-y:hidden;margin:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid rgba(160,190,255,.28);box-shadow:0 -8px 24px rgba(0,0,0,.28);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  body.in-app #nav::-webkit-scrollbar{display:none}
+  body.in-app #subjItems{display:flex!important;flex-direction:row;gap:2px;margin:0;padding:0;border:0}
+  body.in-app #nav button{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:auto;min-width:68px;height:56px;padding:6px 8px;border-radius:12px;font-size:.68rem;font-weight:600;line-height:1.15;white-space:nowrap}
+  body.in-app #nav button .ni{width:22px;height:22px}
+  body.in-app #nav button:not(.on){color:var(--mute)}
+  body.in-app .main.card,body.in-app #app .main.card{padding:16px 14px 20px}
+  body.in-app .mainhead{display:none}
+  body.in-app h1{font-size:1.45rem;line-height:1.25}
+  body.in-app .pl{padding:14px;border-radius:18px}
+  body.in-app .pl-add{grid-template-columns:1fr 1fr}
+  body.in-app .pl-add input:first-child{grid-column:1/-1}
+  body.in-app .pl-add .go{grid-column:1/-1;min-height:46px}
+  body.in-app .pl-add input,body.in-app .pl-add select{min-height:46px;font-size:16px}
+  body.in-app .pl-add select{grid-column:1/-1;text-overflow:ellipsis}
+  body.in-app .pl-rep{margin-left:0;flex:1 1 100%;min-height:42px;border-radius:12px;font-size:16px}
+  body.in-app .pl-chips button{min-height:36px}
+}
+#auth .keep{display:flex;align-items:center;gap:8px;margin:12px 0 0;font-size:.85rem;color:#cfe0ff;cursor:pointer}#auth .keep input{width:18px;height:18px;margin:0;accent-color:#ff9a18;flex:none}
 </style>
 </head>
 <body>
@@ -1642,6 +1673,7 @@ select option:disabled{color:#8a93b4}
     <label for="pass">Құпия сөз</label>
     <div class="pdFld"><input id="pass" type="password" autocomplete="new-password" name="gw-pass" data-lpignore="true"><button class="pdEye" id="pdEye" type="button" aria-label="Құпия сөзді көрсету" aria-pressed="false">👁</button></div>
     <p class="hint" id="passHint" hidden>Кемінде 6 таңба.</p>
+    <label class="keep" id="keepRow"><input type="checkbox" id="keepMe"> <span>Осы құрылғыда қосулы қалсын</span></label>
     <button class="go" id="submit">Кіру</button>
       <button class="lk" id="forgotBtn" type="button">Құпия сөзді ұмыттым</button>
     </div>
@@ -2159,7 +2191,7 @@ async function showApp(session) {
   if (!session) closeGame();
   if (!session) { try { devStop(); } catch { } try { clearInterval(qrPing); ls.set('gwqr', ''); qrClose(); } catch { } try { onlineStop(); } catch { } try { roomLeave(); } catch { } typedFor = null; window.__staff = false; try { pultStop(); } catch {} clearInterval(newsTimer); newsTimer = null; document.title = 'Groowin'; $('phone').value = ''; $('pass').value = ''; try { $('name').value = ''; } catch {} say(blockedMsg, blockedMsg ? 'err' : ''); blockedMsg = ''; return; }
   const lastA = +ls.get('lastActive');
-  if (lastA && Date.now() - lastA > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; await sb.auth.signOut(); return; }
+  if (lastA && Date.now() - lastA > idleMs()) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; await sb.auth.signOut(); return; }
   touch();
   const { data: me } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
   if (me && me.active === false) {
@@ -2167,6 +2199,9 @@ async function showApp(session) {
     await sb.auth.signOut();
     return;
   }
+  { const stf = !!me && me.role !== 'student'; const kp = stf || ls.get('keep') === '1'; ls.set('idleMs', String(kp ? 30 * 864e5 : 3600e3));
+    const si = session.user.last_sign_in_at ? Date.parse(session.user.last_sign_in_at) : 0;
+    if (kp && si && Date.now() - si > 30 * 864e5) { blockedMsg = 'Бір ай өтті, қауіпсіздік үшін қайта кіріңіз.'; await sb.auth.signOut(); return; } }
   if (me && me.role === 'student' && me.must_change_pw) forcePw();
   meId = session.user.id; onlineStart(); devStart();
   const roles = { admin: 'Админ', teacher: 'Мұғалім', student: 'Оқушы' };
@@ -2607,6 +2642,7 @@ const CHANGELOG = [
     ['🔐', 'Оқушы құпия сөзін өзі қояды', 'Бірінші рет кіргенде жаңа құпия сөз қою керек. Кейін Баптаудан өзгертуге болады.'],
     ['🗓', 'Менің жоспарым', 'Басты бетте жеке жоспар: тақырып, күні мен уақыты. Уақыт қойсаң, 10 минут бұрын телефонға еске салғыш келеді. Мұғалім ЖИ-ға да айта алады.'],
     ['🗓', 'Менің жоспарым', 'Басты бетте жеке жоспар: күні мен уақытын қойсаң, телефонға еске салғыш келеді. ЖИ-ға «ертең 3-сабақта … деп жазып қой» десең де болады.'],
+    ['🔁', 'Қайталау', 'Жоспарда жазбаны күн сайын, апта сайын немесе ай сайын қайталатуға болады.'],
     ['📲', 'Қосымшаны орнату', 'Телефонға немесе компьютерге орнатсаң, Groowin қосымша сияқты бірден ашылады.']
   ] },
   { ver: '5.6', date: '08.11.2026', items: [
@@ -2929,14 +2965,14 @@ async function devRender() {
 
 
 // ===== 1 сағат белсенділік болмаса автоматты шығу =====
-const IDLE_MS = 3600 * 1000; let lastTouch = 0;
+const idleMs = () => +ls.get('idleMs') || 3600e3; let lastTouch = 0; // мұғалім/админ: 30 күн (қосулы қалады), оқушы: 1 сағат (ортақ компьютер қауіпсіздігі)
 function touch() { const n = Date.now(); if (n - lastTouch > 15000) { lastTouch = n; ls.set('lastActive', n); } }
 ['pointermove', 'pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(e => addEventListener(e, touch, { passive: true }));
 setInterval(() => {
   if (!typedFor) return;
   if (document.visibilityState === 'visible' && (!$('v-viewer').hidden || !$('qzHost').hidden || !$('stage').hidden)) touch();   // ойын ашық тұрса, белсенді деп саналады
   const last = +ls.get('lastActive') || Date.now();
-  if (Date.now() - last > IDLE_MS) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; devLeave().finally(() => sb.auth.signOut()); }
+  if (Date.now() - last > idleMs()) { blockedMsg = 'Ұзақ уақыт белсенділік болмады. Қайта кіріңіз.'; devLeave().finally(() => sb.auth.signOut()); }
 }, 60000);
 
 // ===== Сыныптар =====
@@ -8211,6 +8247,15 @@ function plWhen(it) {
 }
 const plLate = it => { if (it.done || !it.due_at) return false; const d = new Date(it.due_at); return it.has_time ? d < new Date() : plDay(d) < plDay(new Date()); };
 const plRemTxt = m => m == null ? '' : m === 0 ? 'уақытында' : m >= 1440 ? '1 күн бұрын' : m >= 60 ? (m / 60) + ' сағ бұрын' : m + ' мин бұрын';
+const PL_REP = { daily: 'Күн сайын', weekdays: 'Жұмыс күндері', weekly: 'Апта сайын', monthly: 'Ай сайын' };
+function plNext(iso, rule) {
+  const d = new Date(iso), od = d.getDate(), now = Date.now();
+  do {
+    if (rule === 'monthly') { d.setDate(1); d.setMonth(d.getMonth() + 1); d.setDate(Math.min(od, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate())); }
+    else d.setDate(d.getDate() + (rule === 'weekly' ? 7 : 1));
+  } while (d.getTime() <= now || (rule === 'weekdays' && (d.getDay() === 0 || d.getDay() === 6)));
+  return d.toISOString();
+}
 async function plLoad() {
   if (!sb || !meId) return;
   const r = await sb.from('planner_items').select('*').order('created_at', { ascending: false }).limit(200);
@@ -8220,22 +8265,31 @@ async function plLoad() {
 function plSorted(done) {
   return PL.items.filter(x => !!x.done === done).sort((a, b) => (a.due_at ? 0 : 1) - (b.due_at ? 0 : 1) || (a.due_at && b.due_at ? new Date(a.due_at) - new Date(b.due_at) : 0) || new Date(a.created_at) - new Date(b.created_at));
 }
-async function plAdd(title, dStr, tStr, rem) {
+async function plAdd(title, dStr, tStr, rem, rule) {
   title = String(title || '').trim().slice(0, 200); if (!title) return null;
-  if (tStr && !dStr) dStr = plIso(new Date());
+  if (!PL_REP[rule]) rule = null;
+  if ((tStr || rule) && !dStr) dStr = plIso(new Date());
   const due = dStr ? new Date(dStr + 'T' + (tStr || '23:59') + ':00') : null;
   const row = { title, due_at: due && !isNaN(due) ? due.toISOString() : null, has_time: !!(due && tStr), remind_min: due && tStr && rem != null && rem !== '' ? +rem : null };
+  if (rule) row.repeat_rule = rule;
   const r = await sb.from('planner_items').insert(row).select().single();
-  if (r.error) { notify(r.error.message.includes('planner_items') ? 'Жоспар кестесі жоқ: update-38.sql іске қос' : r.error.message, 'err'); return null; }
+  if (r.error) { notify(r.error.message.includes('repeat_rule') ? 'Қайталау үшін update-39.sql іске қос' : r.error.message.includes('planner_items') ? 'Жоспар кестесі жоқ: update-38.sql іске қос' : r.error.message, 'err'); return null; }
   PL.items.unshift(r.data); plPaint(); return r.data;
 }
-async function plToggle(it) { const v = !it.done; it.done = v; plPaint(); SFX.tick(); const r = await sb.from('planner_items').update({ done: v }).eq('id', it.id); if (r.error) { it.done = !v; plPaint(); notify(r.error.message, 'err'); } }
+async function plToggle(it) {
+  if (it.repeat_rule && !it.done) {
+    const base = it.due_at || new Date().toISOString(), nx = plNext(base, it.repeat_rule), old = { due_at: it.due_at, reminded: it.reminded };
+    it.due_at = nx; it.reminded = false; if (!it.due_at) return; plPaint(); SFX.tick();
+    const r = await sb.from('planner_items').update({ due_at: nx, reminded: false }).eq('id', it.id);
+    if (r.error) { Object.assign(it, old); plPaint(); notify(r.error.message, 'err'); } else notify('Орындалды ✓ Келесісі: ' + plWhen(it), 'ok'); return;
+  }
+  const v = !it.done; it.done = v; plPaint(); SFX.tick(); const r = await sb.from('planner_items').update({ done: v }).eq('id', it.id); if (r.error) { it.done = !v; plPaint(); notify(r.error.message, 'err'); } }
 async function plDel(it) { PL.items = PL.items.filter(x => x !== it); plPaint(); await sb.from('planner_items').delete().eq('id', it.id); }
 function plRow(it) {
   const r = el('div', 'pl-it' + (it.done ? ' done' : '') + (plLate(it) ? ' late' : '')), ck = el('button', 'pl-ck', '✓'), tx = el('div', 'pl-tx'), x = el('button', 'pl-x', '✕');
   ck.type = x.type = 'button'; ck.setAttribute('aria-label', it.done ? 'Орындалмады деп белгіле' : 'Орындалды'); x.setAttribute('aria-label', 'Жою');
   ck.onclick = () => plToggle(it); x.onclick = () => plDel(it);
-  tx.appendChild(el('b', '', it.title)); const w = plWhen(it); if (w) tx.appendChild(el('small', '', w + (it.has_time && it.remind_min != null && !it.done ? ' · 🔔 ' + plRemTxt(it.remind_min) : '')));
+  tx.appendChild(el('b', '', it.title)); const w = plWhen(it); if (w) tx.appendChild(el('small', '', w + (it.has_time && it.remind_min != null && !it.done ? ' · 🔔 ' + plRemTxt(it.remind_min) : '') + (it.repeat_rule && PL_REP[it.repeat_rule] ? ' · 🔁 ' + PL_REP[it.repeat_rule] : '')));
   r.append(ck, tx, x); return r;
 }
 function plPaint() {
@@ -8270,6 +8324,7 @@ async function plBell() {
   const b = $('plBell'); if (!b) return; const s = await pushSub(), on = !!s && typeof Notification !== 'undefined' && Notification.permission === 'granted';
   b.setAttribute('aria-pressed', String(on)); b.textContent = on ? '🔔 Телефонға еске салу: қосулы' : '🔕 Телефонға еске салуды қосу';
 }
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.type === 'chime') { try { SFX.pop(); setTimeout(() => SFX.pop(), 220); } catch { } } });
 // сайт ашық кезде де еске салады
 setInterval(() => {
   if (!PL.loaded || $('app').hidden) return; const now = Date.now();
@@ -8285,9 +8340,11 @@ function renderPlanner(v) {
   const f = el('form', 'pl-add'), ti = document.createElement('input'), di = document.createElement('input'), tm = document.createElement('input'), sl = document.createElement('select'), go = el('button', 'go', 'Қосу');
   ti.placeholder = 'Не істеу керек? Мысалы: 7А-да Ньютон заңдары'; ti.maxLength = 200; ti.setAttribute('aria-label', 'Жазба'); di.type = 'date'; di.setAttribute('aria-label', 'Күні'); tm.type = 'time'; tm.setAttribute('aria-label', 'Уақыты'); go.type = 'submit'; sl.setAttribute('aria-label', 'Қашан еске салу');
   [['10', '10 мин бұрын'], ['0', 'Уақытында'], ['5', '5 мин бұрын'], ['30', '30 мин бұрын'], ['60', '1 сағ бұрын'], ['1440', '1 күн бұрын'], ['', 'Еске салма']].forEach(([a, b]) => sl.append(new Option(b, a)));
+  const rp = document.createElement('select'); rp.className = 'pl-rep'; rp.setAttribute('aria-label', 'Қайталау'); rp.append(new Option('🔁 Қайталанбайды', '')); Object.entries(PL_REP).forEach(([a, b]) => rp.append(new Option('🔁 ' + b, a)));
   f.append(ti, di, tm, sl, go);
-  f.onsubmit = async e => { e.preventDefault(); if (!ti.value.trim()) { ti.focus(); return; } go.disabled = true; const r = await plAdd(ti.value, di.value, tm.value, sl.value); go.disabled = false; if (r) { ti.value = ''; di.value = ''; tm.value = ''; SFX.ok(); ti.focus(); } };
+  f.onsubmit = async e => { e.preventDefault(); if (!ti.value.trim()) { ti.focus(); return; } go.disabled = true; const r = await plAdd(ti.value, di.value, tm.value, sl.value, rp.value); go.disabled = false; if (r) { ti.value = ''; di.value = ''; tm.value = ''; rp.value = ''; SFX.ok(); ti.focus(); } };
   const ch = el('div', 'pl-chips'); [['Бүгін', 0], ['Ертең', 1], ['Бір аптадан кейін', 7]].forEach(([t, n]) => { const b = el('button', '', t); b.type = 'button'; b.onclick = () => { const d = new Date(); d.setDate(d.getDate() + n); di.value = plIso(d); }; ch.appendChild(b); });
+  ch.appendChild(rp);
   const list = el('div', 'pl-list'); list.id = 'plList'; sec.append(hd, f, ch, list); v.appendChild(sec);
   plPaint(); if (!PL.loaded) plLoad(); plBell();
 }
@@ -8648,12 +8705,12 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       if (d && !/^\d{4}-\d{2}-\d{2}$/.test(d)) d = '';
       let tm = String(a.time || '').trim(); if (!/^\d{1,2}:\d{2}$/.test(tm)) tm = ''; else tm = tm.padStart(5, '0');
       const rem = tm ? (Number.isInteger(+a.remind_min) && a.remind_min !== null && a.remind_min !== undefined ? +a.remind_min : 10) : null;
-      const it = await plAdd(a.title, d, tm, rem); if (!it) return { error: 'Қосылмады (жоспар кестесін тексер)' };
-      return { ok: true, title: it.title, when: plWhen(it) || 'күні жоқ', reminder: it.has_time && it.remind_min != null ? plRemTxt(it.remind_min) : 'жоқ' };
+      const it = await plAdd(a.title, d, tm, rem, a.repeat); if (!it) return { error: 'Қосылмады (жоспар кестесін тексер)' };
+      return { ok: true, title: it.title, when: plWhen(it) || 'күні жоқ', reminder: it.has_time && it.remind_min != null ? plRemTxt(it.remind_min) : 'жоқ', repeat: it.repeat_rule ? PL_REP[it.repeat_rule] : 'жоқ' };
     },
     async list_planner_items() {
       if (!PL.loaded) await plLoad();
-      return { today: plIso(new Date()), items: PL.items.filter(x => !x.done).sort((x, y) => (x.due_at ? 0 : 1) - (y.due_at ? 0 : 1) || new Date(x.due_at) - new Date(y.due_at)).slice(0, 40).map(x => ({ title: x.title, when: plWhen(x) || 'күні жоқ' })) };
+      return { today: plIso(new Date()), items: PL.items.filter(x => !x.done).sort((x, y) => (x.due_at ? 0 : 1) - (y.due_at ? 0 : 1) || new Date(x.due_at) - new Date(y.due_at)).slice(0, 40).map(x => ({ title: x.title, when: plWhen(x) || 'күні жоқ', repeat: x.repeat_rule ? PL_REP[x.repeat_rule] : undefined })) };
     },
     async list_lesson_plans() {
       const r = await sb.from('lesson_plans').select('id,title,steps,updated_at').order('updated_at', { ascending: false }).limit(30); if (r.error) return { error: r.error.message };
@@ -8985,6 +9042,8 @@ function forcePw() {
   out.onclick = async () => { ov.remove(); await sb.auth.signOut(); };
   row.append(ok, out); bx.append(h, sub, a, b, m, row); ov.appendChild(bx); document.body.appendChild(ov); a.focus();
 }
+
+{ const k = $('keepMe'); if (k) { k.checked = ls.get('keep') === '1'; k.onchange = () => ls.set('keep', k.checked ? '1' : ''); } }
 </script>
 </body>
 </html>
