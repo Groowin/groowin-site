@@ -1602,7 +1602,7 @@ select option:disabled{color:#8a93b4}
     <div class="who" role="tablist" aria-label="Кім ретінде кіресің"><button type="button" id="whoT" role="tab" aria-selected="false">👩‍🏫 Мұғалім</button><button type="button" id="whoS" role="tab" aria-selected="true">🎓 Оқушы</button></div>
     <div id="pTeacher" hidden>
       <p class="whoh">Мұғалім мен админ тек Google аккаунтымен кіреді.</p>
-      <button class="go" id="gLogin" type="button" style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Google арқылы кіру</button>
+      <button class="go" id="gLogin" type="button" style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Мұғалім / админ: Google арқылы кіру</button>
       <button class="lk" id="accessBtn" type="button">Gmail тізімде жоқ па? Админнен рұқсат сұра</button>
     </div>
     <div id="pStudent">
@@ -2580,6 +2580,11 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '5.7', date: '09.11.2026', items: [
+    ['🚪', 'Жаңа кіру беті', 'Мұғалім / Оқушы батырмалары: оқушы логинмен, мұғалім Google-мен кіреді.'],
+    ['🔐', 'Оқушы құпия сөзін өзі қояды', 'Бірінші рет кіргенде жаңа құпия сөз қою керек. Кейін Баптаудан өзгертуге болады.'],
+    ['📲', 'Қосымшаны орнату', 'Телефонға немесе компьютерге орнатсаң, Groowin қосымша сияқты бірден ашылады.']
+  ] },
   { ver: '5.6', date: '08.11.2026', items: [
     ['🔑', 'Жаңа кіру жүйесі', 'Мұғалім мен админ Google аккаунтымен кіреді (құпия сөз керек емес). Оқушыны мұғалім өзі тіркейді: логин мен құпия сөз береді. Оқушы ұмытса, сынып мұғалімі жаңасын береді.'],
     ['📱', 'Менің құрылғыларым', 'Аккаунтқа кірген құрылғылар тізімі: «Менің аккаунтым» бетінде. Телефоннан басқасын қашықтан шығаруға болады.'],
@@ -2727,14 +2732,15 @@ const CHANGELOG = [
 const WN_VER = CHANGELOG[0].ver;
 function showWhatsNew(all) {
   const { box, close } = modal('✨ Не жаңа?'); const list = el('div', 'wn-list');
-  (all ? CHANGELOG : CHANGELOG.slice(0, 1)).forEach((v, vi) => {
-    const hd = el('div', 'wn-ver'); hd.append(el('b', '', 'Нұсқа ' + v.ver), el('small', '', v.date)); if (vi === 0) hd.firstChild.appendChild(el('span', 'wn-new', 'ЖАҢА')); list.appendChild(hd);
+  CHANGELOG.slice(0, 1).forEach((v, vi) => {
+    const hd = el('div', 'wn-ver'); hd.append(el('b', '', 'Нұсқа ' + v.ver), el('small', '', v.date)); list.appendChild(hd);
     v.items.forEach(([ic, t, d]) => { const r = el('div', 'wn-it'), tx = el('div', ''); tx.append(el('b', '', t), el('span', '', d)); r.append(el('span', 'ic', ic), tx); list.appendChild(r); });
   });
-  const ok = el('button', 'go', 'Түсінікті'); ok.type = 'button'; ok.style.cssText = 'width:auto;padding:10px 26px;margin:0'; ok.onclick = close; box.append(list, ok); ls.set('seenVer', WN_VER); SFX.pop();
+  const ok = el('button', 'go', 'Түсінікті'); ok.type = 'button'; ok.style.cssText = 'width:auto;padding:10px 26px;margin:0'; ok.onclick = () => { close(); if (!all) setTimeout(maybeInstall, 500); }; box.append(list, ok); ls.set('seenVer', WN_VER); SFX.pop();
 }
-function maybeWhatsNew() { if (ls.get('seenVer') !== WN_VER && !$('app').hidden && !document.querySelector('.qh-modal')) showWhatsNew(false); }
+function maybeWhatsNew() { if ($('app').hidden || document.querySelector('.qh-modal')) return; if (ls.get('seenVer') !== WN_VER) showWhatsNew(false); else maybeInstall(); }
 $('wnBtn').onclick = () => showWhatsNew(true);
+$('wnBtn').textContent = '✨ Не жаңа?';
 
 // ===== Аватар: эмодзи + түс. Серверде profiles.avatar (update-15.sql), қосымша осы құрылғыда сақталады =====
 const AV_E = ['🦊','🐼','🐯','🦁','🐸','🐵','🐧','🦉','🐙','🦄','🐲','🐬','🦋','🐢','🐰','🐨','🦖','🚀','👽','🤖','🧙','🥷','🦸','⚡','🔥','🌟','🎧','🎮','🧠','🍉','🌈','🪐'];
@@ -5595,6 +5601,26 @@ $('pwaBtn').onclick = async () => { if (!pwaEvt) return; pwaEvt.prompt(); try { 
 addEventListener('appinstalled', () => { $('pwaBtn').hidden = true; $('pwaHint').textContent = 'Қосымша орнатылды ✓'; });
 if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !matchMedia('(display-mode: standalone)').matches) $('pwaHint').textContent = 'iPhone/iPad: Safari-де «Бөлісу» батырмасын бас → «Басты экранға қосу».';
 if (matchMedia('(display-mode: standalone)').matches) $('pwaHint').textContent = 'Қосымша ретінде ашылған ✓';
+function maybeInstall() {
+  try {
+    if ($('app').hidden || document.querySelector('.qh-modal')) return;
+    if (matchMedia('(display-mode: standalone)').matches || navigator.standalone || ls.get('pwaDone')) return;
+    const last = +ls.get('pwaLater') || 0; if (Date.now() - last < 5 * 864e5) return;
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent), coarse = matchMedia('(pointer:coarse)').matches;
+    if (!pwaEvt && !ios) return;
+    const { box, close } = modal('📲 Groowin-ды орнат');
+    box.appendChild(el('p', 'sub', (coarse ? 'Телефонға' : 'Компьютерге') + ' орнатсаң, Groowin қосымша сияқты бірден ашылады, браузерде іздеудің керегі жоқ.'));
+    const acts = el('div', 'av-acts'), no = el('button', 'out', 'Кейін'); no.type = 'button';
+    no.onclick = () => { ls.set('pwaLater', String(Date.now())); close(); };
+    if (pwaEvt) {
+      const ok = el('button', 'go', 'Орнату'); ok.type = 'button'; ok.style.cssText = 'width:auto;padding:10px 22px;margin:0';
+      ok.onclick = async () => { close(); try { pwaEvt.prompt(); const r = await pwaEvt.userChoice; if (r && r.outcome === 'accepted') ls.set('pwaDone', '1'); else ls.set('pwaLater', String(Date.now())); } catch {} pwaEvt = null; $('pwaBtn').hidden = true; };
+      acts.append(ok, no);
+    } else { box.appendChild(el('p', '', 'Safari-де «Бөлісу» батырмасын бас → «Басты экранға қосу».')); const ok = el('button', 'go', 'Түсінікті'); ok.type = 'button'; ok.style.cssText = 'width:auto;padding:10px 22px;margin:0'; ok.onclick = () => { ls.set('pwaLater', String(Date.now())); close(); }; acts.append(ok); }
+    box.appendChild(acts);
+  } catch {}
+}
+addEventListener('appinstalled', () => ls.set('pwaDone', '1'));
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 
 
