@@ -50,6 +50,7 @@ input:focus,button:focus-visible{outline:3px solid var(--blue);outline-offset:2p
 #auth .sepl{display:flex;align-items:center;gap:10px;margin:16px 0 4px;font-size:.88rem;font-weight:700;color:#ffd166;letter-spacing:.02em}
 #auth .sepl::before,#auth .sepl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.28)}
 #auth #submit{background:linear-gradient(135deg,#ffb020,#ff7a18)!important;color:#1a1205!important;font-weight:800}
+#auth #rGo{background:linear-gradient(135deg,#ffb020,#ff7a18)!important;color:#1a1205!important;font-weight:800}
 #auth #accessBtn{display:block;text-align:center;width:100%;margin:8px 0 0;font-size:.85rem}
 .msg{min-height:1.4em;margin:12px 0 0;font-size:.92rem}
 .msg.err{color:var(--err)}.msg.ok{color:var(--blue)}
@@ -1535,6 +1536,19 @@ select option:disabled{color:#8a93b4}
 #credSheet th{background:#f1f1f1}#credSheet td.pw{font-family:ui-monospace,Consolas,monospace;font-weight:700;letter-spacing:.5px}
 #credSheet .crow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 @media print{body.printing>*:not(#credSheet){display:none!important}body.printing #credSheet{position:static;background:#fff;padding:0;display:block}body.printing #credSheet .cbox{box-shadow:none;max-width:none;padding:0}.nop{display:none!important}}
+
+#auth .who{display:flex;gap:6px;padding:5px;margin:0 0 14px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)}
+#auth .who button{flex:1;padding:11px 8px;border:0;border-radius:8px;background:transparent;color:#dbe6ff;font:inherit;font-weight:700;cursor:pointer;transition:background .15s,color .15s}
+#auth .who button:not([aria-selected=true]):hover{background:rgba(255,255,255,.14);color:#fff}
+#auth .who button[aria-selected=true]{background:linear-gradient(135deg,#ffb020,#ff7a18);color:#1a1205;box-shadow:0 2px 12px rgba(255,140,20,.35)}
+#auth .whoh{margin:0 0 12px;font-size:.88rem;color:#c8d6f2;text-align:center}
+#auth .lk{color:#cfe0ff;text-decoration:underline;text-underline-offset:3px}#auth .lk:hover{color:#fff}
+#auth #forgotBtn,#auth #accessBtn{text-align:center;width:100%;margin-top:12px;font-size:.88rem}
+#auth .orl{display:flex;align-items:center;gap:10px;margin:16px 0 10px;font-size:.8rem;color:#b9c8e6}
+#auth .orl::before,#auth .orl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.22)}
+#auth .qrb{display:block;width:100%;padding:12px;border-radius:8px;border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.08);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+#auth .qrb:hover{background:rgba(255,255,255,.18);border-color:#fff}
+#fpw .fpi{width:100%;margin:6px 0}
 </style>
 </head>
 <body>
@@ -1585,10 +1599,15 @@ select option:disabled{color:#8a93b4}
       <g id="pd_beansR" fill="#5b6074"><circle cx="0" cy="0" r="3.4"/><circle cx="-7" cy="-8" r="2.2"/><circle cx="0" cy="-10" r="2.2"/><circle cx="7" cy="-8" r="2.2"/></g>
     </g>
   </svg></div>
-    <button class="go" id="gLogin" type="button" style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Мұғалім / админ: Google арқылы кіру</button>
-    <button class="lk" id="accessBtn" type="button">Gmail тізімде жоқ па? Админнен рұқсат сұра</button>
-    <div class="sepl"><span>👩‍🎓 Тек оқушыға: логин және құпия сөз</span></div>
-    <div class="tabs" role="tablist" hidden>
+    <div class="who" role="tablist" aria-label="Кім ретінде кіресің"><button type="button" id="whoT" role="tab" aria-selected="false">👩‍🏫 Мұғалім</button><button type="button" id="whoS" role="tab" aria-selected="true">🎓 Оқушы</button></div>
+    <div id="pTeacher" hidden>
+      <p class="whoh">Мұғалім мен админ тек Google аккаунтымен кіреді.</p>
+      <button class="go" id="gLogin" type="button" style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Мұғалім / админ: Google арқылы кіру</button>
+      <button class="lk" id="accessBtn" type="button">Gmail тізімде жоқ па? Админнен рұқсат сұра</button>
+    </div>
+    <div id="pStudent">
+      <p class="whoh">Логин мен құпия сөзді сынып мұғалімің береді.</p>
+      <div class="tabs" role="tablist" hidden>
       <button role="tab" id="t-in" aria-selected="true">Кіру</button>
       <button role="tab" id="t-up" aria-selected="false">Тіркелу</button>
     </div>
@@ -1602,9 +1621,12 @@ select option:disabled{color:#8a93b4}
     <div class="pdFld"><input id="pass" type="password" autocomplete="new-password" name="gw-pass" data-lpignore="true"><button class="pdEye" id="pdEye" type="button" aria-label="Құпия сөзді көрсету" aria-pressed="false">👁</button></div>
     <p class="hint" id="passHint" hidden>Кемінде 6 таңба.</p>
     <button class="go" id="submit">Кіру</button>
+      <button class="lk" id="forgotBtn" type="button">Құпия сөзді ұмыттым</button>
+    </div>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
-    <button class="lk" id="qrLoginBtn" type="button">📱 QR арқылы кіру (үлкен экранға)</button>
-    <button class="lk" id="forgotBtn" type="button">Оқушы құпия сөзді ұмытты ма?</button>
+    <div class="orl"><span>немесе</span></div>
+    <button class="qrb" id="qrLoginBtn" type="button">📱 QR Groowin-Web (үлкен экранға)</button>
+
     
     <div id="qrBox">
       <h2 style="margin:0 0 6px;font-size:1.15rem;text-align:center">Телефонмен кіру</h2>
@@ -1616,7 +1638,7 @@ select option:disabled{color:#8a93b4}
     <div id="reqBox">
       <h2 id="rTitle" style="margin:0 0 6px;font-size:1.15rem"></h2>
       <p class="sub" id="rSub" style="margin:0 0 6px;font-size:.9rem"></p>
-      <label for="rName">Аты-жөні</label>
+      <label for="rName" id="rNameL">Аты-жөні</label>
       <input id="rName" autocomplete="name">
       <label for="rPhone">Логин (ескі аккаунт: телефон нөмірі)</label>
       <input id="rPhone" type="tel" inputmode="tel" placeholder="+7 700 123 45 67">
@@ -1624,8 +1646,6 @@ select option:disabled{color:#8a93b4}
         <label for="rRole">Кімсің?</label>
         <select id="rRole" style="width:100%;padding:11px 12px"><option value="student">Оқушы</option><option value="teacher">Мұғалім</option></select>
       </div>
-      <label for="rText">Хабар (міндетті емес)</label>
-      <input id="rText" maxlength="300" placeholder="Мысалы: 8А сыныбы">
       <button class="go" id="rGo" type="button">Жіберу</button>
       <p class="msg" id="rNote" role="status" aria-live="polite"></p>
       <button class="lk" id="rBack" type="button">← Артқа</button>
@@ -2125,6 +2145,7 @@ async function showApp(session) {
     await sb.auth.signOut();
     return;
   }
+  if (me && me.role === 'student' && me.must_change_pw) forcePw();
   meId = session.user.id; onlineStart(); devStart();
   const roles = { admin: 'Админ', teacher: 'Мұғалім', student: 'Оқушы' };
   const hi = 'Сәлем, ' + (me?.full_name || 'қонақ') + '!';
@@ -5071,7 +5092,7 @@ function openReq(kind) {
   const em = kind === 'access'; $('rTitle').textContent = em ? 'Мұғалім/админ: рұқсат сұрау' : 'Оқушы: құпия сөзді ұмыттым';
   document.querySelector('label[for=rPhone]').textContent = em ? 'Gmail (Google аккаунтың)' : 'Логин'; $('rPhone').type = em ? 'email' : 'text'; $('rPhone').placeholder = em ? 'teacher@gmail.com' : 'мысалы: asan7b'; $('rPhone').inputMode = em ? 'email' : 'text';
   $('rSub').textContent = em ? 'Gmail мекенжайыңды және аты-жөніңді жаз. Админ тізімге қосқан соң, «Google арқылы кіру» бас.' : 'Логиніңді жаз. Сынып мұғалімің жаңа құпия сөз береді.';
-  $('rRoleRow').hidden = true; $('rPhone').value = em ? '' : $('phone').value; note('rNote', '', '');
+  $('rNameL').hidden = $('rName').hidden = !em; $('rRoleRow').hidden = true; $('rPhone').value = em ? '' : $('phone').value; note('rNote', '', '');
 }
 $('forgotBtn').onclick = () => openReq('password');
 $('accessBtn').onclick = () => openReq('access');
@@ -5081,18 +5102,18 @@ $('rGo').onclick = async () => {
     const em = $('rPhone').value.trim().toLowerCase(), nm = $('rName').value.trim();
     if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(em)) return note('rNote', 'Gmail мекенжайын дұрыс жаз.', 'err');
     if (nm.length < 2) return note('rNote', 'Аты-жөніңді жаз.', 'err');
-    $('rGo').disabled = true; const { error } = await sb.rpc('submit_email_request', { p_email: em, p_name: nm, p_message: $('rText').value.trim() }); $('rGo').disabled = false;
+    $('rGo').disabled = true; const { error } = await sb.rpc('submit_email_request', { p_email: em, p_name: nm, p_message: '' }); $('rGo').disabled = false;
     return error ? note('rNote', error.message.includes('already') ? 'Бұл Gmail-мен аккаунт бар, «Google арқылы кіру» бас.' : error.message.includes('too many') ? 'Тым көп сұраныс, кейінірек байқа.' : error.message.includes('function') ? 'update-34.sql әлі іске қосылмаған.' : 'Қате: ' + error.message, 'err') : note('rNote', 'Жіберілді. Админ қосқан соң «Google арқылы кіру» бас.', 'ok');
   }
   if (reqKind === 'password' && /[a-zA-Z]/.test($('rPhone').value)) {
-    $('rGo').disabled = true; const { error } = await sb.rpc('submit_login_request', { p_login: $('rPhone').value, p_message: $('rText').value.trim() }); $('rGo').disabled = false;
+    $('rGo').disabled = true; const { error } = await sb.rpc('submit_login_request', { p_login: $('rPhone').value, p_message: '' }); $('rGo').disabled = false;
     return error ? note('rNote', error.message.includes('function') ? 'update-33.sql әлі іске қосылмаған.' : 'Қате: ' + error.message, 'err') : note('rNote', 'Жіберілді. Егер логин дұрыс болса, мұғалімің жаңа құпия сөз береді.', 'ok');
   }
   const phone = normPhone($('rPhone').value), name = $('rName').value.trim();
   if (phone.length !== 11) return note('rNote', 'Логинді латын әріптерімен жаз (мысалы asan7b).', 'err');
   if (reqKind === 'access' && !name) return note('rNote', 'Аты-жөніңді жаз.', 'err');
   $('rGo').disabled = true;
-  const { error } = await sb.rpc('submit_request', { p_kind: reqKind, p_name: name, p_phone: phone, p_role: reqKind === 'access' ? $('rRole').value : null, p_message: $('rText').value.trim() });
+  const { error } = await sb.rpc('submit_request', { p_kind: reqKind, p_name: name, p_phone: phone, p_role: reqKind === 'access' ? $('rRole').value : null, p_message: '' });
   $('rGo').disabled = false;
   if (error) return note('rNote', error.message.includes('not registered') ? 'Бұл нөмір тіркелмеген немесе бұғатталған. Рұқсат керек болса, мұғалімге не админге жаз.' : error.message.includes('too many') ? 'Тым көп сұраныс. Кейінірек қайталап көр.' : 'Жіберілмеді. Кейінірек қайталап көр.', 'err');
   note('rNote', 'Жіберілді. Админ жауап береді.', 'ok');
@@ -8772,6 +8793,44 @@ function credShow() {
   bx.append(h, sub, t, warn, row); ov.appendChild(bx); document.body.appendChild(ov);
 }
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('#credBtn')) credShow(); });
+
+// ===== Кіру беті: Мұғалім / Оқушы ауыстырғышы =====
+function setWho(w) {
+  const t = w === 'teacher';
+  $('pTeacher').hidden = !t; $('pStudent').hidden = t;
+  $('whoT').setAttribute('aria-selected', t); $('whoS').setAttribute('aria-selected', !t);
+  try { ls.set('who', w); } catch { }
+  say(''); if (!t) setMode('in');
+}
+$('whoT').onclick = () => setWho('teacher'); $('whoS').onclick = () => setWho('student');
+setWho((function () { try { return /error|access_denied/i.test(location.search + location.hash) ? 'teacher' : ls.get('who') === 'teacher' ? 'teacher' : 'student'; } catch { return 'student'; } })());
+
+// ===== Оқушы бірінші кіргенде өз құпия сөзін қояды =====
+function forcePw() {
+  if (document.getElementById('fpw')) return;
+  const ov = document.createElement('div'); ov.id = 'fpw'; ov.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(8,12,28,.85);display:flex;align-items:center;justify-content:center;padding:16px';
+  const bx = el('div', 'dbox'); bx.style.maxWidth = '420px'; bx.style.width = '100%';
+  const h = el('h2', '', '🔐 Өз құпия сөзіңді қой'); h.style.margin = '0 0 6px';
+  const sub = el('p', '', 'Қауіпсіздік үшін мұғалімің берген құпия сөздің орнына өзіңе ғана белгілі жаңа құпия сөз қой. Кемінде 8 таңба, әріп пен сан болсын.'); sub.style.cssText = 'margin:0 0 8px;font-size:.92rem';
+  const a = el('input', 'fpi'), b = el('input', 'fpi'); a.type = b.type = 'password'; a.placeholder = 'Жаңа құпия сөз'; b.placeholder = 'Қайта жаз'; a.autocomplete = b.autocomplete = 'new-password';
+  const m = el('p', 'msg'); m.setAttribute('role', 'status');
+  const row = el('div', 'drow'), ok = el('button', 'go', 'Сақтау'), out = el('button', 'out', 'Шығу'); ok.type = out.type = 'button'; ok.style.cssText = 'width:auto;margin:0'; 
+  const say2 = (t, c) => { m.textContent = t; m.className = 'msg ' + (c || ''); };
+  ok.onclick = async () => {
+    const x = a.value;
+    if (x.length < 8) return say2('Кемінде 8 таңба болсын.', 'err');
+    if (!/\p{L}/u.test(x) || !/\d/.test(x)) return say2('Әріп те, сан да болсын.', 'err');
+    if (x !== b.value) return say2('Екі өріс бірдей емес.', 'err');
+    ok.disabled = true; say2('Сақталып жатыр…');
+    const r = await sb.auth.updateUser({ password: x });
+    if (r.error) { ok.disabled = false; return say2(/same|different/i.test(r.error.message) ? 'Жаңа құпия сөз ескісінен басқа болсын.' : /weak|short|least/i.test(r.error.message) ? 'Құпия сөз тым оңай, күрделірек қой.' : 'Қате: ' + r.error.message, 'err'); }
+    const c = await sb.rpc('clear_must_change');
+    if (c.error) { ok.disabled = false; return say2(c.error.message.includes('function') ? 'update-37.sql әлі іске қосылмаған.' : 'Қате: ' + c.error.message, 'err'); }
+    ov.remove(); notify('Құпия сөз сақталды');
+  };
+  out.onclick = async () => { ov.remove(); await sb.auth.signOut(); };
+  row.append(ok, out); bx.append(h, sub, a, b, m, row); ov.appendChild(bx); document.body.appendChild(ov); a.focus();
+}
 </script>
 </body>
 </html>
