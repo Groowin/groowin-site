@@ -1,5 +1,5 @@
 // Groowin SW v2: нашар желіге төзімді. Supabase сұраныстарына тиіспейді (оларды беттің өзі кэштейді).
-const V = 'groowin-v3';
+const V = 'groowin-v4';
 const CDN = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 const SHELL = ['./', 'index.html', 'play.html', 'config.js', 'manifest.json', 'icon-192.png', 'glass-bg.jpg', 
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js'];
