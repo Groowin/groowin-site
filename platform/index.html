@@ -1601,11 +1601,75 @@ select option:disabled{color:#8a93b4}
   body.in-app .pl-rep{margin-left:0;flex:1 1 100%;min-height:42px;border-radius:12px;font-size:16px}
   body.in-app .pl-chips button{min-height:36px}
 }
+
+/* ===== Бүгін / Жоспар беті / Кесте ===== */
+.td{border:1px solid var(--line);border-radius:24px;padding:18px 20px 16px;background:var(--surf,var(--card));box-shadow:0 12px 30px -22px rgba(0,0,0,.5)}
+.td-hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}.td-hd h2{margin:0;font-size:1.25rem}.td-hd small{color:var(--mute);font-size:.9rem}
+.td-body{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.td-lab{margin:6px 2px 0;font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);font-weight:700}
+.td-ls{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+.td-ls time{flex:none;min-width:52px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent)}
+.td-lt{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+.td-ls em{flex:none;font-style:normal;font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.td-ls.now{border-color:var(--accent);background:var(--accent-soft)}.td-ls.now em{background:var(--accent);color:#fff}
+.td-ls.past{opacity:.5}
+.td-ft{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.td-ft button{width:auto;margin:0;padding:10px 18px;border-radius:12px;min-height:44px}
+.td-ft .out{background:transparent}
+.pl-note{margin:6px 2px 0;color:var(--mute);font-size:.9rem;line-height:1.45}
+#v-plan .pl+.pl{margin-top:16px}
+.sc-days{display:flex;gap:6px;margin-top:12px}
+.sc-days button{flex:1;min-width:0;position:relative;padding:9px 0;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--mute);font:inherit;font-size:.88rem;font-weight:700;cursor:pointer}
+.sc-days button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sc-days button.has:not([aria-pressed=true])::after{content:"";position:absolute;left:50%;bottom:4px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--accent)}
+.sc-add{grid-template-columns:120px 1fr 160px auto}
+.sc-it .sc-tm{flex:none;min-width:52px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent)}
+/* ===== Төменгі мәзір (телефон) ===== */
+#tabbar,#sheetBg{display:none}
+#nav .phoneOnly{display:none!important}
+@media (max-width:760px){
+  body.in-app #tabbar:not([hidden]){position:fixed;left:0;right:0;bottom:0;z-index:41;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line);box-shadow:0 -10px 28px -14px rgba(0,0,0,.55)}
+  #tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;min-width:0;height:56px;padding:4px 2px;border:0;border-radius:14px;background:none;color:var(--mute);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  #tabbar .ti{display:grid;place-items:center;width:52px;height:30px;border-radius:15px;transition:background .18s,color .18s}
+  #tabbar .tl{font-size:.7rem;font-weight:600;line-height:1.1;white-space:nowrap}
+  #tabbar button.on{color:var(--ink)}#tabbar button.on .ti{background:var(--accent-soft);color:var(--accent)}#tabbar button.on .tl{font-weight:800}
+  #tabbar button.ai .ti{background:linear-gradient(135deg,#3b6bff,#19b0dd);color:#fff;box-shadow:0 6px 16px -6px rgba(59,107,255,.8)}
+  #tabbar button.ai{color:var(--ink)}
+  #tabbar button:active .ti{transform:scale(.93)}
+  body.in-app.sheet #sheetBg{display:block;position:fixed;inset:0;z-index:29;background:rgba(2,6,20,.55)}
+  /* «Тағы» парағы: бұрынғы навигация тізімі */
+  body.in-app #nav{position:fixed;left:0;right:0;bottom:calc(68px + env(safe-area-inset-bottom));z-index:39;display:none;grid-template-columns:repeat(3,1fr);gap:8px;overflow-x:hidden;overflow-y:auto;max-height:min(62vh,520px);margin:0;padding:16px 14px;background:var(--bg);border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;box-shadow:0 -14px 40px -10px rgba(0,0,0,.6)}
+  body.in-app.sheet #nav{display:grid}
+  body.in-app #subjItems{display:contents!important}
+  body.in-app #nav button{flex:initial;min-width:0;width:auto;height:78px;padding:8px 4px;gap:6px;border:1px solid var(--line);border-radius:16px;background:var(--paper);font-size:.74rem;white-space:normal;text-align:center}
+  body.in-app #nav button:not(.on){color:var(--ink)}
+  body.in-app #nav button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  body.in-app #nav button .ni{width:24px;height:24px}
+  body.in-app #nav .phoneOnly{display:flex!important}
+  body.in-app #nav #navHome,body.in-app.staffTabs #nav #navPlan{display:none!important}
+  /* жоғарғы жол: бір-бірін баспайтын белгілер */
+  body.in-app #app .side.card{padding:8px 14px!important}
+  body.in-app .side .brand{margin-right:100px}
+  body.in-app #fsBtn,body.in-app .side .me #themeBtn{display:none!important}
+  body.in-app #srchBtn{top:10px;right:60px}
+  body.in-app #sndBtn{top:10px;right:108px}
+  /* ЖИ батырмасы төменгі мәзірге көшті */
+  body.in-app #aiFab{display:none!important}
+  body.in-app #aiNudge{bottom:calc(76px + env(safe-area-inset-bottom));right:12px}
+  body.in-app #aiPanel{bottom:calc(72px + env(safe-area-inset-bottom));height:calc(100vh - 150px)}
+  body.in-app .sc-add{grid-template-columns:1fr 1fr}
+  body.in-app .sc-add input[type=text],body.in-app .sc-add input:not([type=time]){grid-column:1/-1}
+  body.in-app .sc-add input,body.in-app .sc-add select{min-height:46px;font-size:16px}
+  body.in-app .sc-add .go{grid-column:1/-1;min-height:46px}
+  body.in-app .td,body.in-app .pl{border-radius:18px}body.in-app .td{padding:14px}
+  body.in-app .td-ft button{flex:1 1 140px}
+}
 #auth .keep{display:flex;align-items:center;gap:8px;margin:12px 0 0;font-size:.85rem;color:#cfe0ff;cursor:pointer}#auth .keep input{width:18px;height:18px;margin:0;accent-color:#ff9a18;flex:none}
 </style>
 </head>
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
+<nav id="tabbar" aria-label="Негізгі мәзір" hidden></nav>
 <button class="icon-btn" id="fsBtn" aria-label="Толық экран"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
 <button class="icon-btn sfxToggle" id="sndBtn" type="button" aria-label="Дыбыс" aria-pressed="true"></button>
 <button class="icon-btn" id="srchBtn" type="button" aria-label="Іздеу" title="Іздеу (Ctrl+K)" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
@@ -1709,10 +1773,12 @@ select option:disabled{color:#8a93b4}
 
 <!-- Кіргеннен кейін -->
 <section id="app" hidden>
+  <div id="sheetBg"></div>
   <aside class="side card">
     <div class="brand"><span class="bw" id="brandW"><b class="bt">Groowin</b></span><button class="icon-btn" id="sideClose" aria-label="Панельді жасыру" style="width:34px;height:34px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>
     <nav id="nav">
       <button data-v="home" id="navHome"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Басты бет</span></button>
+      <button data-v="plan" id="navPlan"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg><span class="nl">Жоспар</span></button>
       <button type="button" class="grphead" id="subjHead" aria-expanded="true"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2zM22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg><span class="nl">Пәндер</span><span id="subjArrow">▾</span></button>
       <div id="subjItems">
         <button data-v="physics" class="on"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1.4"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg><span class="nl">Физика</span></button>
@@ -1735,6 +1801,7 @@ select option:disabled{color:#8a93b4}
       <button data-v="classes" id="navClasses" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nl">Мектеп сыныптары</span></button>
       <button data-v="teachers" id="navTeachers" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg><span class="nl">Мұғалімдер</span></button>
       <button data-v="students" id="navStudents" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg><span class="nl">Оқушылар</span></button>
+      <button data-v="account" id="navAccount" class="phoneOnly"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="nl">Баптау</span></button>
     </nav>
     <div class="me"><button class="icon-btn" id="themeBtn" type="button" aria-label="Тема ауыстыру" title="Тема ауыстыру"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
       <button class="mecard" id="meCard" type="button" aria-label="Менің аккаунтым"><span class="av" id="meAv">?</span><span class="mt"><strong id="meNm"></strong><small id="meRl"></small></span><i class="od off" id="meDot" title="Байланыс"></i></button>
@@ -1745,6 +1812,7 @@ select option:disabled{color:#8a93b4}
     <div class="mainhead"><button class="icon-btn" id="sideBtn" aria-label="Панельді жасыру немесе көрсету" aria-expanded="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><h1 id="hello"></h1><span class="role" id="role"></span><span class="role" id="xp" hidden></span></div>
 
     <div id="v-home" hidden></div>
+    <div id="v-plan" hidden></div>
     <div id="v-room" hidden></div>
 
     <div id="v-catalog">
@@ -2215,6 +2283,7 @@ async function showApp(session) {
   $('accPhone').textContent = me?.login ? me.login : me?.email ? me.email : me?.phone ? '+' + me.phone : ''; $('accIdLab').textContent = me?.login ? 'Логин' : me?.email ? 'Gmail' : 'Телефон';
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isOwner = isAdmin && !!me?.is_owner; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff; $('nQuick').hidden = !isStaff;
+  try { buildTabbar(); } catch { }
   $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   if (isStaff) setTimeout(slidePre, 4000);
   try { window.aiInit && window.aiInit(); } catch (e) { }
@@ -2563,13 +2632,15 @@ $('vfs').onclick = () => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.body.classList.remove('vfake'); });
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 let rm = null; // Оқу бөлмесі күйі
-const VIEWS = ['home', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+const VIEWS = ['home', 'plan', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined') { const w = $('msWrap'); if (w) w.hidden = !isStaff; } if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
 function go(key, keep) {
+  document.body.classList.remove('sheet'); try { curView = key; tabSync(); } catch { }
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
   clearInterval(window.__qrDevT); if (key === 'account') { qrDevices(); devRender(); gLinkRender(); window.__qrDevT = setInterval(() => { if ($('v-account').hidden) clearInterval(window.__qrDevT); else qrDevices(); }, 15000); }
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === (key === 'quiz' ? 'play' : key)));
   if (key === 'home') { show('home'); renderHome(); return; }
+  if (key === 'plan') { show('plan'); renderPlan(); return; }
   if (key === 'physics' || key === 'math') {
     subj = key; if (!keep) gradeSel = null;
     renderGames(); show('catalog');
@@ -2643,6 +2714,8 @@ const CHANGELOG = [
     ['🗓', 'Менің жоспарым', 'Басты бетте жеке жоспар: тақырып, күні мен уақыты. Уақыт қойсаң, 10 минут бұрын телефонға еске салғыш келеді. Мұғалім ЖИ-ға да айта алады.'],
     ['🗓', 'Менің жоспарым', 'Басты бетте жеке жоспар: күні мен уақытын қойсаң, телефонға еске салғыш келеді. ЖИ-ға «ертең 3-сабақта … деп жазып қой» десең де болады.'],
     ['🔁', 'Қайталау', 'Жоспарда жазбаны күн сайын, апта сайын немесе ай сайын қайталатуға болады.'],
+    ['📲', 'Төменгі мәзір', 'Телефонда төменде 5 бөлім: Басты, Жоспар, QR, Тағы, ЖИ. Баптау «Тағы» ішінде.'],
+    ['📅', 'Сабақ кестесі', 'Апталық кестені толтыр, сабақтың алдында телефонға еске салғыш келеді. Басты бетте «Бүгін» картасы бар.'],
     ['📲', 'Қосымшаны орнату', 'Телефонға немесе компьютерге орнатсаң, Groowin қосымша сияқты бірден ашылады.']
   ] },
   { ver: '5.6', date: '08.11.2026', items: [
@@ -8293,6 +8366,7 @@ function plRow(it) {
   r.append(ck, tx, x); return r;
 }
 function plPaint() {
+  try { todayPaint(); } catch { }
   const box = $('plList'); if (!box) return; box.replaceChildren();
   const act = plSorted(false), done = plSorted(true), late = act.filter(plLate), rest = act.filter(x => !plLate(x));
   if (!act.length && !done.length) { box.appendChild(el('p', 'pl-empty', 'Әзірге бос. Жоғарыға жазып, «Қосу» бас.' + (isStaff ? ' Немесе ЖИ-ға айт: «ертең 3-сабақта 7А-да Ньютон заңдары, 10:30-да еске сал».' : ''))); return; }
@@ -8348,6 +8422,121 @@ function renderPlanner(v) {
   const list = el('div', 'pl-list'); list.id = 'plList'; sec.append(hd, f, ch, list); v.appendChild(sec);
   plPaint(); if (!PL.loaded) plLoad(); plBell();
 }
+
+// ===== Бүгін картасы, Жоспар беті, Сабақ кестесі, төменгі мәзір =====
+const KZ_DAYS = ['Жексенбі', 'Дүйсенбі', 'Сейсенбі', 'Сәрсенбі', 'Бейсенбі', 'Жұма', 'Сенбі'];
+const KZ_DAYS_S = ['Жс', 'Дс', 'Сс', 'Ср', 'Бс', 'Жм', 'Сн'];
+const KZ_MON = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан'];
+const SC = { items: [], loaded: false, day: new Date().getDay() || 7, missing: false };
+const scT = x => String(x.start_time).slice(0, 5);
+const scSorted = d => SC.items.filter(x => x.weekday === d).sort((a, b) => scT(a).localeCompare(scT(b)));
+async function scLoad() {
+  if (!sb || !meId) return;
+  const r = await sb.from('schedule_slots').select('*').order('start_time');
+  if (!r.error) { SC.items = r.data || []; SC.loaded = true; SC.missing = false; } else if (/schedule_slots/.test(r.error.message || '')) SC.missing = true;
+  scPaint(); todayPaint();
+}
+async function scAdd(day, t, title, rem) {
+  title = String(title || '').trim().slice(0, 120); if (!title || !t) return null;
+  const row = { weekday: day, start_time: t, title, remind_min: rem === '' || rem == null || isNaN(+rem) ? null : +rem };
+  const r = await sb.from('schedule_slots').insert(row).select().single();
+  if (r.error) { notify(/schedule_slots/.test(r.error.message) ? 'Кесте кестесі жоқ: update-40.sql іске қос' : r.error.message, 'err'); return null; }
+  SC.items.push(r.data); SC.loaded = true; scPaint(); todayPaint(); return r.data;
+}
+async function scDel(it) { SC.items = SC.items.filter(x => x !== it); scPaint(); todayPaint(); await sb.from('schedule_slots').delete().eq('id', it.id); }
+function scPaint() {
+  const tabs = $('scDays'), box = $('scList'); if (!tabs || !box) return;
+  [...tabs.children].forEach(b => { const d = +b.dataset.d; b.setAttribute('aria-pressed', String(d === SC.day)); b.classList.toggle('has', SC.items.some(x => x.weekday === d)); });
+  box.replaceChildren();
+  if (SC.missing) { box.appendChild(el('p', 'pl-empty', 'Кесте кестесі әлі жоқ. Supabase SQL Editor-де update-40.sql іске қос.')); return; }
+  const L = scSorted(SC.day);
+  if (!L.length) { box.appendChild(el('p', 'pl-empty', KZ_DAYS[SC.day % 7] + ' күні сабақ жоқ. Жоғарыдан уақыты мен атауын жазып қос.')); return; }
+  L.forEach(it => {
+    const r = el('div', 'pl-it sc-it'), tm = el('time', 'sc-tm', scT(it)), tx = el('div', 'pl-tx'), x = el('button', 'pl-x', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'Жою'); x.onclick = () => scDel(it);
+    tx.appendChild(el('b', '', it.title)); if (it.remind_min != null) tx.appendChild(el('small', '', '🔔 ' + plRemTxt(it.remind_min)));
+    r.append(tm, tx, x); box.appendChild(r);
+  });
+}
+function renderSchedule(v) {
+  const sec = el('section', 'pl sc'), hd = el('div', 'pl-hd'); hd.appendChild(el('h2', '', '🕘 Сабақ кестесі'));
+  const tabs = el('div', 'sc-days'); tabs.id = 'scDays'; tabs.setAttribute('role', 'group'); tabs.setAttribute('aria-label', 'Апта күні');
+  [1, 2, 3, 4, 5, 6, 7].forEach(d => { const b = el('button', '', KZ_DAYS_S[d % 7]); b.type = 'button'; b.dataset.d = d; b.setAttribute('aria-label', KZ_DAYS[d % 7]); b.onclick = () => { SC.day = d; scPaint(); }; tabs.appendChild(b); });
+  const f = el('form', 'pl-add sc-add'), tm = document.createElement('input'), ti = document.createElement('input'), sl = document.createElement('select'), go = el('button', 'go', 'Қосу');
+  tm.type = 'time'; tm.required = true; tm.setAttribute('aria-label', 'Сабақ уақыты'); ti.placeholder = 'Сынып және пән. Мысалы: 7А физика'; ti.maxLength = 120; ti.setAttribute('aria-label', 'Сабақ'); sl.setAttribute('aria-label', 'Еске салу'); go.type = 'submit';
+  [['10', '10 мин бұрын'], ['0', 'Уақытында'], ['5', '5 мин бұрын'], ['15', '15 мин бұрын'], ['', 'Еске салма']].forEach(([a, b]) => sl.append(new Option(b, a)));
+  f.append(tm, ti, sl, go);
+  f.onsubmit = async e => { e.preventDefault(); if (!tm.value) { tm.focus(); return; } if (!ti.value.trim()) { ti.focus(); return; } go.disabled = true; const r = await scAdd(SC.day, tm.value, ti.value, sl.value); go.disabled = false; if (r) { ti.value = ''; tm.value = ''; try { SFX.ok(); } catch { } tm.focus(); } };
+  sec.append(hd, el('p', 'pl-note', 'Күнді таңда да, сабақтарды қос. Сабақтың алдында телефонға еске салғыш келеді (жоспардағы «🔔» батырмасы қосулы болса).'), tabs, f);
+  const list = el('div', 'pl-list'); list.id = 'scList'; sec.appendChild(list); v.appendChild(sec);
+  scPaint(); if (!SC.loaded) scLoad();
+}
+function renderPlan() {
+  const v = $('v-plan'); v.replaceChildren();
+  const hd = el('div', 'hm-hero'); hd.append(el('h1', '', '🗓 Жоспар'), el('p', '', isStaff ? 'Жазбалар, еске салғыштар және сабақ кестесі.' : 'Жазбалар мен еске салғыштар.'));
+  v.appendChild(hd); renderPlanner(v); if (isStaff) renderSchedule(v);
+}
+function renderToday(v) {
+  const sec = el('section', 'td'); sec.id = 'tdBox';
+  const hd = el('div', 'td-hd'), h = el('h2', '', '🗓 Бүгін'), dt = el('small', ''); dt.id = 'tdDate'; hd.append(h, dt);
+  const body = el('div', 'td-body'); body.id = 'tdBody';
+  const ft = el('div', 'td-ft'), a = el('button', 'go', '＋ Жазба қосу'), b = el('button', 'out', 'Барлық жоспар →'); a.type = b.type = 'button'; a.onclick = b.onclick = () => go('plan');
+  ft.append(a, b); sec.append(hd, body, ft); v.appendChild(sec);
+  todayPaint(); if (!PL.loaded) plLoad(); if (isStaff && !SC.loaded) scLoad();
+}
+function todayPaint() {
+  const body = $('tdBody'); if (!body) return; body.replaceChildren();
+  const now = new Date(), wd = now.getDay() || 7, nm = now.getHours() * 60 + now.getMinutes();
+  $('tdDate').textContent = KZ_DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + KZ_MON[now.getMonth()];
+  const ls = isStaff ? scSorted(wd) : [];
+  const act = PL.items.filter(x => !x.done && x.due_at && (plLate(x) || plDay(new Date(x.due_at)) === plDay(now))).sort((a, b) => new Date(a.due_at) - new Date(b.due_at));
+  if (ls.length) {
+    body.appendChild(el('div', 'td-lab', 'Сабақтар'));
+    let nextDone = false;
+    ls.forEach(x => {
+      const [h, m] = scT(x).split(':').map(Number), st = h * 60 + m, cls = nm >= st + 45 ? 'past' : nm >= st ? 'now' : (!nextDone ? 'next' : '');
+      if (cls === 'next') nextDone = true;
+      const r = el('div', 'td-ls ' + cls), t = el('time', '', scT(x)), tx = el('span', 'td-lt', x.title); r.append(t, tx);
+      if (cls === 'now') r.appendChild(el('em', '', 'қазір')); else if (cls === 'next') r.appendChild(el('em', '', 'келесі'));
+      body.appendChild(r);
+    });
+  }
+  if (act.length) { body.appendChild(el('div', 'td-lab', 'Тапсырмалар')); act.slice(0, 5).forEach(x => body.appendChild(plRow(x))); if (act.length > 5) body.appendChild(el('p', 'pl-empty', 'Тағы ' + (act.length - 5) + ' жазба «Жоспар» бетінде')); }
+  if (!ls.length && !act.length) body.appendChild(el('p', 'pl-empty', 'Бүгін еш нәрсе жоспарланбаған.' + (isStaff ? ' Сабақ кестесін «Жоспар» бетінде толтырсаң, осында көрінеді.' : '')));
+}
+// ---- төменгі мәзір (телефон) ----
+let curView = 'home';
+const TB_IC = {
+  home: '<path d="M3 11 12 3l9 8M5 10v10h5v-6h4v6h5V10"/>',
+  plan: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
+  qr: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/>',
+  more: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+  ai: '<path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 17v4M17 19h4"/>',
+  room: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/>',
+  hw: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12l2 2 4-4"/>'
+};
+function buildTabbar() {
+  const tb = $('tabbar'); if (!tb) return; tb.replaceChildren();
+  const defs = isStaff ? [['home', 'Басты'], ['plan', 'Жоспар'], ['qr', 'QR'], ['more', 'Тағы'], ['ai', 'ЖИ']] : [['home', 'Басты'], ['room', 'Оқу'], ['hw', 'Тапсырма'], ['more', 'Тағы']];
+  defs.forEach(([k, l]) => {
+    const b = el('button', k === 'ai' ? 'ai' : ''); b.type = 'button'; b.dataset.t = k;
+    b.innerHTML = '<span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + TB_IC[k] + '</svg></span><span class="tl">' + l + '</span>';
+    b.onclick = () => tabGo(k); tb.appendChild(b);
+  });
+  document.body.classList.toggle('staffTabs', !!isStaff); tb.hidden = false; tabSync();
+}
+function tabGo(k) {
+  if (k === 'more') { document.body.classList.toggle('sheet'); tabSync(); return; }
+  document.body.classList.remove('sheet');
+  if (k === 'qr') { qrScan(); return; }
+  if (k === 'ai') { const f = $('aiFab'); if (f && !f.hidden) f.click(); tabSync(); return; }
+  go(k);
+}
+function tabSync() {
+  const tb = $('tabbar'); if (!tb) return; const keys = [...tb.children].map(b => b.dataset.t), sheet = document.body.classList.contains('sheet');
+  const inTabs = keys.includes(curView) && curView !== 'more';
+  [...tb.children].forEach(b => { const k = b.dataset.t; b.classList.toggle('on', k === 'more' ? (sheet || !inTabs) : (!sheet && k === curView)); b.setAttribute('aria-current', b.classList.contains('on') ? 'true' : 'false'); });
+}
+$('sheetBg').onclick = () => { document.body.classList.remove('sheet'); tabSync(); };
 const HM_ICON = {
   quiz: '<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 18h.01"/><circle cx="12" cy="12" r="9"/>',
   groups: '<circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M2 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1M12 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1"/>',
@@ -8372,7 +8561,7 @@ function renderHome() {
   const hd = el('div', 'hm-hero'); hd.append(el('h1', '', 'Қош келдің, ' + nm + '! 👋'), el('p', '', isStaff ? 'Бүгін сабақты не істейміз? Ең керектісін бір басумен аш.' : 'Бүгін не үйренеміз? Пән таңда не тапсырманы аш.'));
   v.appendChild(hd);
   const card = (cls, t, d, ic, fn) => { const b = el('button', 'hm-card ' + cls); b.type = 'button'; const i = el('span', 'hm-ic'); i.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + HM_ICON[ic] + '</svg>'; b.append(i, el('strong', '', t), el('small', '', d), el('em', '', 'Ашу →')); b.onclick = fn; return b; };
-  renderPlanner(v);
+  renderToday(v);
   if (isStaff) {
     v.appendChild(el('h2', 'hm-h', 'Жылдам бастау'));
     const g = el('div', 'hm-grid');
@@ -8708,9 +8897,17 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       const it = await plAdd(a.title, d, tm, rem, a.repeat); if (!it) return { error: 'Қосылмады (жоспар кестесін тексер)' };
       return { ok: true, title: it.title, when: plWhen(it) || 'күні жоқ', reminder: it.has_time && it.remind_min != null ? plRemTxt(it.remind_min) : 'жоқ', repeat: it.repeat_rule ? PL_REP[it.repeat_rule] : 'жоқ' };
     },
+    async add_schedule_slot(a) {
+      const wd = Math.round(+a.weekday); if (!(wd >= 1 && wd <= 7)) return { error: 'weekday 1-7 болуы керек' };
+      let tm = String(a.time || '').trim(); if (!/^\d{1,2}:\d{2}$/.test(tm)) return { error: 'time HH:MM болуы керек' }; tm = tm.padStart(5, '0');
+      const rem = a.remind_min === undefined || a.remind_min === null ? 10 : +a.remind_min;
+      const it = await scAdd(wd, tm, a.title, rem); if (!it) return { error: 'Қосылмады (update-40.sql іске қосылды ма?)' };
+      return { ok: true, day: KZ_DAYS[wd % 7], time: tm.slice(0, 5), title: it.title };
+    },
     async list_planner_items() {
-      if (!PL.loaded) await plLoad();
-      return { today: plIso(new Date()), items: PL.items.filter(x => !x.done).sort((x, y) => (x.due_at ? 0 : 1) - (y.due_at ? 0 : 1) || new Date(x.due_at) - new Date(y.due_at)).slice(0, 40).map(x => ({ title: x.title, when: plWhen(x) || 'күні жоқ', repeat: x.repeat_rule ? PL_REP[x.repeat_rule] : undefined })) };
+      if (!PL.loaded) await plLoad(); if (isStaff && !SC.loaded) await scLoad();
+      const wd0 = new Date().getDay() || 7;
+      return { today: plIso(new Date()), lessons_today: SC.items.filter(x => x.weekday === wd0).sort((x, y) => String(x.start_time).localeCompare(String(y.start_time))).map(x => String(x.start_time).slice(0, 5) + ' ' + x.title), items: PL.items.filter(x => !x.done).sort((x, y) => (x.due_at ? 0 : 1) - (y.due_at ? 0 : 1) || new Date(x.due_at) - new Date(y.due_at)).slice(0, 40).map(x => ({ title: x.title, when: plWhen(x) || 'күні жоқ', repeat: x.repeat_rule ? PL_REP[x.repeat_rule] : undefined })) };
     },
     async list_lesson_plans() {
       const r = await sb.from('lesson_plans').select('id,title,steps,updated_at').order('updated_at', { ascending: false }).limit(30); if (r.error) return { error: r.error.message };
@@ -8768,7 +8965,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       return { t, img: null, o, c, s: 20 };
     }).filter(q => q.t && (q.k === 'num' || (q.o.filter(Boolean).length >= 2 && q.o[q.c])));
   }
-  const LABEL = { add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+  const LABEL = { add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
 
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
