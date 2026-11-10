@@ -2310,7 +2310,7 @@ async function showApp(session) {
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
   $('navInbox').hidden = !isAdmin; if (isAdmin) loadReqs(); $('navRosters').hidden = !isStaff;
   $('navClasses').hidden = !isStaff; $('navTeachers').hidden = !isAdmin; $('navGames').hidden = !isAdmin; $('rankFilter').hidden = !isStaff;
-  loadClassList().then(() => { if (isStaff) fillTargets(); renderNews(); }); loadGames(); qrPingStart(); qrCheckPending(); qrDevices(); if (!$('v-home').hidden) renderHome();
+  loadClassList().then(() => { if (isStaff) fillTargets(); renderNews(); }); loadGames(); try { gwIntake(); } catch {} qrPingStart(); qrCheckPending(); qrDevices(); if (!$('v-home').hidden) renderHome();
   if (XP_ON && me?.role === 'student') { const { data: x } = await sb.rpc('my_xp'); setXP(x || 0); } else $('xp').hidden = true;
 }
 
@@ -2728,7 +2728,9 @@ applyGlass();
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
-  { ver: '5.7', date: '09.11.2026', items: [
+  { ver: '5.7', date: '10.11.2026', items: [
+    ['📤', 'Файл жүктеу мен бөлісу', 'Басты беттегі «＋ Файл жүктеу», Android-та «Бөлісу → Groowin», компьютерден іздеу. Папканы өзі ұсынады.'],
+    ['☀️', 'Таңертеңгі хабар', 'Сағат 7:30-да: «Бүгін 3 сабақ, 2 тапсырма».'],
     ['🚪', 'Жаңа кіру беті', 'Мұғалім / Оқушы батырмалары: оқушы логинмен, мұғалім Google-мен кіреді.'],
     ['🔐', 'Оқушы құпия сөзін өзі қояды', 'Бірінші рет кіргенде жаңа құпия сөз қою керек. Кейін Баптаудан өзгертуге болады.'],
     ['🗓', 'Менің жоспарым', 'Басты бетте жеке жоспар: тақырып, күні мен уақыты. Уақыт қойсаң, 10 минут бұрын телефонға еске салғыш келеді. Мұғалім ЖИ-ға да айта алады.'],
@@ -8647,7 +8649,10 @@ function renderHome() {
     rest.forEach(([c, t, d, k]) => more.appendChild(card(c, t, d, k, () => homeAct(k))));
     const mb = el('button', 'hm-moreb', 'Барлық құралдар ▾'); mb.type = 'button'; mb.setAttribute('aria-expanded', 'false');
     mb.onclick = () => { more.hidden = !more.hidden; mb.setAttribute('aria-expanded', String(!more.hidden)); mb.textContent = more.hidden ? 'Барлық құралдар ▾' : 'Жасыру ▴'; };
-    v.append(g, more, mb);
+    const ub = el('button', 'hm-moreb', '＋ Файл жүктеу'); ub.type = 'button'; ub.style.marginRight = '10px'; ub.onclick = () => pickUpload();
+    const pb = el('button', 'hm-moreb', '💻 Компьютерден іздеу'); pb.type = 'button'; pb.style.marginRight = '10px'; pb.hidden = !window.showDirectoryPicker; pb.onclick = () => pcSearch();
+    const row = el('div'); row.style.cssText = 'display:flex;flex-wrap:wrap'; row.append(ub, pb, mb); mb.style.margin = '14px 0 0'; ub.style.margin = pb.style.margin = '14px 10px 0 0';
+    v.append(g, more, row);
     void 0;
 
   } else {
@@ -8991,6 +8996,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       const it = await scAdd(wd, tm, a.title, rem); if (!it) return { error: 'Қосылмады (update-40.sql іске қосылды ма?)' };
       return { ok: true, day: KZ_DAYS[wd % 7], time: tm.slice(0, 5), title: it.title };
     },
+    async find_computer_files(a) { return await pcSearch(String((a && a.query) || ''), true); },
     async list_planner_items() {
       if (!PL.loaded) await plLoad(); if (isStaff && !SC.loaded) await scLoad();
       const wd0 = new Date().getDay() || 7;
@@ -9052,7 +9058,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       return { t, img: null, o, c, s: 20 };
     }).filter(q => q.t && (q.k === 'num' || (q.o.filter(Boolean).length >= 2 && q.o[q.c])));
   }
-  const LABEL = { add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+  const LABEL = { find_computer_files: 'Компьютерден іздеп жатыр…', add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
 
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
@@ -9329,5 +9335,115 @@ function forcePw() {
 
 { const k = $('keepMe'); if (k) { k.checked = ls.get('keep') === '1'; k.onchange = () => ls.set('keep', k.checked ? '1' : ''); } }
 </script>
+<script>
+// ===== Жылдам файл жүктеу: «＋ Файл жүктеу», «Бөлісу → Groowin», компьютер папкаларынан іздеу =====
+(() => {
+  const css = document.createElement('style');
+  css.textContent = '.qu-row{display:grid;grid-template-columns:1fr;gap:6px;padding:10px 0;border-bottom:1px solid var(--line)}.qu-row b{font-weight:600;word-break:break-all}.qu-row small{color:var(--mute)}.qu-row select,.qu-row input[type=text],.qu-all select{width:100%;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card,transparent);color:var(--ink);font:inherit}.qu-all{display:grid;gap:6px;margin:6px 0 4px}.qu-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.qu-btns button{padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}.qu-btns .go{background:var(--accent);border-color:var(--accent);color:#fff}.qu-btns button:disabled{opacity:.5}.qu-pc{display:grid;gap:8px;margin:8px 0}.qu-pc label{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line)}.qu-pc small{color:var(--mute);display:block}';
+  document.head.appendChild(css);
+  const ib = (s) => s.replace(/\.[^.]+$/, '');
+  async function folders() { const r = await sb.from('mat_folders').select('id,name,parent_id').order('name').limit(2000); return r.data || []; }
+  function labelOf(f, map) { const out = []; let c = f, n = 0; while (c && n++ < 6) { out.unshift(c.name); c = c.parent_id ? map[c.parent_id] : null; } return out.join(' › '); }
+  function guess(name, fs) {
+    const n = latSk(ib(name)); let best = null, bl = 2;
+    for (const f of fs) { const k = latSk(f.name).trim(); if (k.length > bl && n.includes(k)) { best = f; bl = k.length; } }
+    if (best) return best.id;
+    const last = ls.get('qfLast'); return last && fs.some(f => f.id === last) ? last : '';
+  }
+  // ---------- файл таңдау терезесі ----------
+  window.quickUpload = async function (files) {
+    files = [...files]; if (!files.length) return;
+    const fs = await folders(), map = Object.fromEntries(fs.map(f => [f.id, f]));
+    const m = modal('Файл жүктеу'), b = m.box;
+    b.appendChild(el('div', 'sub', files.length + ' файл. Қай папкаға салынатынын тексер де «Жүктеу» бас.'));
+    const mk = (val) => { const s = document.createElement('select'); s.append(new Option('Папкасыз (басты бет)', '')); fs.forEach(f => s.append(new Option(labelOf(f, map), f.id))); s.append(new Option('＋ Жаңа папка…', '__new')); s.value = val; return s; };
+    const rows = [];
+    const all = el('div', 'qu-all'); all.append(el('small', '', 'Барлығына бір папка:')); const as = mk(''); as.insertBefore(new Option('— өз папкасы (ұсыныс) —', '__keep'), as.firstChild); as.value = '__keep'; all.appendChild(as); if (files.length > 1) b.appendChild(all);
+    files.forEach(f => {
+      const r = el('div', 'qu-row'); const nm = el('b', '', f.name), st = el('small', '', fmtMb(f.size)), s = mk(guess(f.name, fs)), ni = document.createElement('input'); ni.type = 'text'; ni.placeholder = 'Жаңа папканың аты'; ni.hidden = true; ni.maxLength = 60;
+      s.onchange = () => { ni.hidden = s.value !== '__new'; if (!ni.hidden) ni.focus(); };
+      r.append(nm, st, s, ni); b.appendChild(r); rows.push({ f, s, ni, st });
+    });
+    as.onchange = () => { if (as.value === '__keep') return; rows.forEach(x => { x.s.value = as.value; x.ni.hidden = as.value !== '__new'; }); };
+    const bt = el('div', 'qu-btns'), go1 = el('button', 'go', 'Жүктеу'), no = el('button', '', 'Бас тарту'); go1.type = no.type = 'button'; bt.append(go1, no); b.appendChild(bt); no.onclick = m.close;
+    go1.onclick = async () => {
+      go1.disabled = no.disabled = true; const made = {}; const added = []; let ok = 0;
+      for (const x of rows) {
+        const f = x.f; if (f.size > 50 * 1048576) { x.st.textContent = '⚠ 50 МБ-тан үлкен'; continue; }
+        let fid = x.s.value || null;
+        if (fid === '__new') { const nn = x.ni.value.trim().slice(0, 60); if (!nn) { x.st.textContent = '⚠ папка атын жаз'; continue; } if (!made[nn]) { const r = await sb.from('mat_folders').insert({ name: nn, parent_id: null }).select().single(); if (r.error) { x.st.textContent = '⚠ ' + r.error.message; continue; } made[nn] = r.data.id; } fid = made[nn]; }
+        const path = meId + '/' + crypto.randomUUID() + (extOf(f.name) ? '.' + extOf(f.name) : '');
+        const job = uploadP('materials', path, f, (r) => { x.st.textContent = Math.round(100 * r) + '%'; }); const up = await job.promise;
+        if (up.error) { x.st.textContent = '⚠ ' + up.error.message; continue; }
+        const ins = await sb.from('mat_items').insert({ kind: 'file', title: f.name.slice(0, 120), storage_path: path, mime: f.type, size: f.size, folder_id: fid }).select().single();
+        if (ins.error) { await sb.storage.from('materials').remove([path]); x.st.textContent = '⚠ ' + ins.error.message; continue; }
+        x.st.textContent = '✅ жүктелді'; ok++; if (fid) ls.set('qfLast', fid); if (txtKind(ins.data)) added.push(ins.data);
+      }
+      go1.disabled = false; no.disabled = false; no.textContent = 'Жабу';
+      if (ok) { notify(ok + ' файл Материалдарға жүктелді'); go1.hidden = true; try { if (typeof loadMats === 'function' && !$('v-mats').hidden) loadMats(); } catch {} if (added.length) txtIndexMany(added, true); }
+    };
+  };
+  window.pickUpload = function () { const i = document.createElement('input'); i.type = 'file'; i.multiple = true; i.onchange = () => quickUpload(i.files); i.click(); };
+
+  // ---------- Бөлісу (Android) ----------
+  async function shareIntake() {
+    const q = new URLSearchParams(location.search); if (q.get('share') !== '1') return;
+    history.replaceState(null, '', location.pathname);
+    try {
+      const c = await caches.open('gw-share'), ks = await c.keys(), out = [];
+      for (const k of ks) { const rs = await c.match(k), bl = await rs.blob(), nm = decodeURIComponent(new URL(k.url).searchParams.get('n') || 'file'); out.push(new File([bl], nm, { type: bl.type })); await c.delete(k); }
+      if (out.length) quickUpload(out); else notify('Бөлісілген файл табылмады', 'err');
+    } catch (e) { notify('Бөлісу қатесі', 'err'); }
+  }
+  // ---------- Басты экран белгісінен жылдам әрекет ----------
+  function goIntake() {
+    const g = new URLSearchParams(location.search).get('go'); if (!g) return;
+    history.replaceState(null, '', location.pathname);
+    setTimeout(() => { try { if (g === 'plan') go('plan'); else if (g === 'qr') qrScan(); else if (g === 'ai') { const f = $('aiFab'); if (f && !f.hidden) f.click(); } } catch {} }, 400);
+  }
+  window.gwIntake = () => { if (!isStaff) return; shareIntake(); goIntake(); };
+
+  // ---------- Компьютер папкаларынан іздеу (Chrome/Edge) ----------
+  const DB = () => new Promise((res, rej) => { const r = indexedDB.open('gw-pc', 1); r.onupgradeneeded = () => r.result.createObjectStore('dirs'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  const dbAll = async () => { const d = await DB(); return new Promise(res => { const o = d.transaction('dirs').objectStore('dirs'), ks = o.getAllKeys(), vs = o.getAll(); vs.onsuccess = () => res(ks.result.map((k, i) => ({ k, h: vs.result[i] }))); }); };
+  const dbPut = async (k, h) => { const d = await DB(); return new Promise(res => { const t = d.transaction('dirs', 'readwrite'); t.objectStore('dirs').put(h, k); t.oncomplete = res; }); };
+  const dbDel = async k => { const d = await DB(); return new Promise(res => { const t = d.transaction('dirs', 'readwrite'); t.objectStore('dirs').delete(k); t.oncomplete = res; }); };
+  const SKIP = /^(\.|node_modules$|\$|appdata$)/i;
+  async function scan(dir, toks, out, st, depth) {
+    if (st.n > 8000 || out.length >= 40 || depth > 5) return;
+    for await (const [name, h] of dir.entries()) {
+      if (st.n++ > 8000 || out.length >= 40) return;
+      if (h.kind === 'directory') { if (!SKIP.test(name)) await scan(h, toks, out, st, depth + 1); }
+      else if (!toks.length || toks.every(t => matHit(name, t))) out.push({ name, h, dir: dir.name });
+    }
+  }
+  window.pcSearch = async function (query, auto) {
+    if (!window.showDirectoryPicker) { notify('Бұл мүмкіндік компьютердегі Chrome немесе Edge-те ғана істейді', 'err'); return { error: 'Бұл браузер қолдамайды (Chrome/Edge керек)' }; }
+    const m = modal('Компьютерден іздеу'), b = m.box, box = el('div', 'qu-pc');
+    b.append(el('div', 'sub', 'Рұқсат берген папкаларыңнан ғана іздейді. Файл өзі жүктелмейді, таңдап растайсың.'));
+    const list = el('div', 'qu-pc'), dirs = el('div', 'qu-pc'), qi = document.createElement('input'); qi.type = 'text'; qi.placeholder = 'Файл аты (мысалы: физика 7)'; qi.value = query || ''; qi.style.cssText = 'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit';
+    const addb = el('button', '', '＋ Папкаға рұқсат беру'), sb1 = el('button', 'go', 'Іздеу'), up = el('button', 'go', 'Таңдалғандарды қосу'); addb.type = sb1.type = up.type = 'button'; up.hidden = true;
+    const btn = el('div', 'qu-btns'); btn.append(addb, sb1); b.append(dirs, qi, btn, list, up);
+    async function paintDirs() { dirs.textContent = ''; const all = await dbAll(); if (!all.length) dirs.append(el('small', '', 'Әзірге папка жоқ. «Документы», «Загрузки», «Рабочий стол» қос.')); all.forEach(({ k, h }) => { const r = el('div', 'qu-row'); r.append(el('b', '', '📁 ' + h.name)); const x = el('button', '', 'Алып тастау'); x.type = 'button'; x.onclick = async () => { await dbDel(k); paintDirs(); }; r.appendChild(x); dirs.appendChild(r); }); return all; }
+    addb.onclick = async () => { try { const h = await showDirectoryPicker({ mode: 'read' }); await dbPut(h.name + '-' + Date.now(), h); paintDirs(); } catch {} };
+    let found = [];
+    async function run() {
+      list.textContent = ''; up.hidden = true; found = []; const all = await paintDirs(); if (!all.length) { list.append(el('small', '', 'Алдымен папкаға рұқсат бер.')); return 0; }
+      const toks = String(qi.value).trim().split(/\s+/).filter(Boolean), st = { n: 0 }; sb1.disabled = true; list.append(el('small', '', 'Іздеп жатыр…'));
+      for (const { h } of all) { try { if ((await h.queryPermission({ mode: 'read' })) !== 'granted' && (await h.requestPermission({ mode: 'read' })) !== 'granted') continue; await scan(h, toks, found, st, 0); } catch {} }
+      sb1.disabled = false; list.textContent = ''; if (!found.length) { list.append(el('small', '', 'Ештеңе табылмады.')); return 0; }
+      found.forEach((x, i) => { const l = document.createElement('label'), c = document.createElement('input'); c.type = 'checkbox'; c.checked = i < 5; x.c = c; const d = el('div'); d.append(el('b', '', x.name), el('small', '', '📁 ' + x.dir)); l.append(c, d); list.appendChild(l); });
+      up.hidden = false; return found.length;
+    }
+    sb1.onclick = run; qi.onkeydown = e => { if (e.key === 'Enter') run(); };
+    up.onclick = async () => { const fl = []; for (const x of found) if (x.c.checked) { try { fl.push(await x.h.getFile()); } catch {} } m.close(); if (fl.length) quickUpload(fl); };
+    paintDirs(); if (query) { const n = await run(); return { found: n, names: found.slice(0, 10).map(x => x.name), note: 'Тізім мұғалімге көрсетілді, ол өзі таңдап растайды' }; }
+    return { opened: true };
+  };
+  window.gwQuInit = () => { try { if (screen.orientation && screen.orientation.lock && matchMedia('(max-width:760px)').matches && matchMedia('(display-mode: standalone)').matches) screen.orientation.lock('portrait').catch(() => {}); } catch {} };
+  window.gwQuInit();
+})();
+</script>
+
 </body>
 </html>
