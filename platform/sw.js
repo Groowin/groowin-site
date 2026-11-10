@@ -1,5 +1,5 @@
 // Groowin SW v2: нашар желіге төзімді. Supabase сұраныстарына тиіспейді (оларды беттің өзі кэштейді).
-const V = 'groowin-v5';
+const V = 'groowin-v7';
 const CDN = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 const SHELL = ['./', 'index.html', 'play.html', 'config.js', 'manifest.json', 'icon-192.png', 'glass-bg.jpg', 
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js'];
@@ -18,6 +18,17 @@ const netFirst = (r, ms) => {
 };
 self.addEventListener('fetch', e => {
   const r = e.request, u = new URL(r.url);
+  if (r.method === 'POST' && u.pathname.endsWith('/share-target')) {
+    e.respondWith((async () => {
+      try {
+        const fd = await r.formData(), fs = fd.getAll('files').filter(f => f && f.name), c = await caches.open('gw-share');
+        for (const k of await c.keys()) await c.delete(k);
+        let i = 0; for (const f of fs) await c.put('share/' + (i++) + '?n=' + encodeURIComponent(f.name), new Response(f, { headers: { 'content-type': f.type || 'application/octet-stream' } }));
+      } catch (_) {}
+      return Response.redirect(new URL('./?share=1', self.registration.scope).href, 303);
+    })());
+    return;
+  }
   if (r.method !== 'GET') return;
   if (u.origin === location.origin) { e.respondWith(netFirst(r, 4000)); return; }
   if (CDN.includes(u.hostname)) {
@@ -31,7 +42,10 @@ self.addEventListener('fetch', e => {
 // Push: еске салғыш хабарламалары
 self.addEventListener('push', e => {
   let d = {}; try { d = e.data.json(); } catch { d = { title: 'Groowin', body: e.data ? e.data.text() : '' }; }
-  e.waitUntil(self.registration.showNotification(d.title || 'Groowin', { body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: d.tag || 'gw', data: { url: d.url || './' } }));
+  e.waitUntil(Promise.all([
+    self.registration.showNotification(d.title || 'Groowin', { body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: d.tag || 'gw', renotify: true, silent: false, vibrate: [250, 120, 250, 120, 400], data: { url: d.url || './' } }),
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(l => l.forEach(c => { if (c.visibilityState === 'visible') c.postMessage({ type: 'chime' }); }))
+  ]));
 });
 self.addEventListener('notificationclick', e => {
   e.notification.close();
