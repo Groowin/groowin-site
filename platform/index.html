@@ -2,7 +2,7 @@
 <html lang="kk">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#070B1E">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -598,7 +598,7 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
 .qh-zq{width:min(78vmin,860px)}.qh-zq svg{display:block;width:100%;height:auto}
 .qh-zc{font-size:clamp(2rem,8vmin,5rem);font-weight:800;letter-spacing:.12em;color:#14171F}.qh-zh{color:#6B7280}
 
-.qh-modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(0,0,0,.5);padding:16px;overflow:auto}
+.qh-modal{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:rgba(0,0,0,.5);padding:16px;overflow:auto}
 .qh-mc{width:min(560px,100%);background:var(--surf,var(--paper));color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:24px;max-height:94vh;overflow:auto}
 .qh-mc h2{margin:0 0 14px;font-size:1.3rem}.qh-mr{margin:0 0 14px}.qh-mr>label{display:block;margin:0 0 6px;font-weight:600}
 .qh-mc input,.qh-mc textarea,.qh-mc select{width:100%;max-width:none;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font:inherit}
@@ -1656,7 +1656,7 @@ select option:disabled{color:#8a93b4}
   /* ЖИ батырмасы төменгі мәзірге көшті */
   body.in-app #aiFab{display:none!important}
   body.in-app #aiNudge{bottom:calc(76px + env(safe-area-inset-bottom));right:12px}
-  body.in-app #aiPanel{bottom:calc(72px + env(safe-area-inset-bottom));height:calc(100vh - 150px)}
+  body.in-app #aiPanel{bottom:calc(72px + env(safe-area-inset-bottom));height:calc(100vh - 150px);height:calc(100dvh - 150px)}
   body.in-app .sc-add{grid-template-columns:1fr 1fr}
   body.in-app .sc-add input[type=text],body.in-app .sc-add input:not([type=time]){grid-column:1/-1}
   body.in-app .sc-add input,body.in-app .sc-add select{min-height:46px;font-size:16px}
@@ -1664,6 +1664,25 @@ select option:disabled{color:#8a93b4}
   body.in-app .td,body.in-app .pl{border-radius:18px}body.in-app .td{padding:14px}
   body.in-app .td-ft button{flex:1 1 140px}
 }
+
+/* ===== (!) белгісі, басты бет жаңа дизайны ===== */
+.tip{position:relative;display:inline-grid;place-items:center;width:20px;height:20px;margin-left:10px;padding:0;vertical-align:middle;top:-1px;border:1.5px solid var(--mute);border-radius:50%;background:transparent;color:var(--mute);font:700 12px/1 system-ui,sans-serif;cursor:pointer;opacity:.85;transition:color .15s,border-color .15s,opacity .15s}
+.tip::after{content:"";position:absolute;inset:-12px}
+.tip:hover,.tip[aria-expanded=true]{color:var(--accent);border-color:var(--accent);opacity:1}
+.tip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tipd{margin-bottom:16px}
+#tipPop{position:fixed;z-index:120;padding:12px 14px;border-radius:14px;background:var(--paper);color:var(--ink);border:1px solid var(--line);box-shadow:0 18px 40px -12px rgba(0,0,0,.6);font-size:.9rem;line-height:1.5;font-weight:400;text-transform:none;letter-spacing:0}
+#tipPop[hidden]{display:none}
+.td-cols{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;align-items:start}.td-cols.one{grid-template-columns:1fr}
+.td-col{display:flex;flex-direction:column;gap:8px;min-width:0}.td-col:empty{display:none}
+.td-stats{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}.td-stats[hidden]{display:none}
+.td-chip{padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:var(--paper);font-weight:700;font-size:.9rem}
+.td-chip.bad{border-color:#e5484d;color:#ff8a8d;background:rgba(229,72,77,.1)}
+.hm-more{margin-top:16px}.hm-more[hidden]{display:none}
+.hm-moreb{display:block;margin:14px 0 0;padding:10px 18px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--mute);font:inherit;font-weight:600;cursor:pointer}
+.hm-moreb:hover{color:var(--ink);border-color:var(--accent)}
+.hm-card{min-height:132px}
+@media (max-width:900px){.td-cols{grid-template-columns:1fr}}
 #auth .keep{display:flex;align-items:center;gap:8px;margin:12px 0 0;font-size:.85rem;color:#cfe0ff;cursor:pointer}#auth .keep input{width:18px;height:18px;margin:0;accent-color:#ff9a18;flex:none}
 </style>
 </head>
@@ -2284,6 +2303,7 @@ async function showApp(session) {
   $('accRole').textContent = roles[me?.role] || 'Оқушы';
   window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isOwner = isAdmin && !!me?.is_owner; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff; $('nQuick').hidden = !isStaff;
   try { buildTabbar(); } catch { }
+  setTimeout(() => { try { pushAuto(); } catch { } }, 2500);
   $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   if (isStaff) setTimeout(slidePre, 4000);
   try { window.aiInit && window.aiInit(); } catch (e) { }
@@ -8390,10 +8410,26 @@ async function pushOn() {
     const reg = await navigator.serviceWorker.ready; let sub = await reg.pushManager.getSubscription();
     if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(VAPID_PUB) });
     const j = sub.toJSON(); const r = await sb.rpc('save_push_sub', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth });
-    if (r.error) { notify(r.error.message, 'err'); return false; } return true;
+    if (r.error) { notify(r.error.message, 'err'); return false; } ls.set('pushOff', ''); return true;
   } catch (e) { notify('Қосылмады: ' + (e.message || e), 'err'); return false; }
 }
-async function pushOff() { const s = await pushSub(); if (s) { try { await sb.from('push_subscriptions').delete().eq('endpoint', s.endpoint); } catch {} try { await s.unsubscribe(); } catch {} } }
+async function pushOff() { ls.set('pushOff', '1'); const s = await pushSub(); if (s) { try { await sb.from('push_subscriptions').delete().eq('endpoint', s.endpoint); } catch {} try { await s.unsubscribe(); } catch {} } }
+async function pushEnsure() {
+  const reg = await navigator.serviceWorker.ready; let sub = await reg.pushManager.getSubscription();
+  if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(VAPID_PUB) });
+  const j = sub.toJSON(); await sb.rpc('save_push_sub', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth });
+}
+// қосымшаға кіргенде еске салғыш өзі қосылады (құрылғы сайын бір рет рұқсат сұрайды); өшіргісі келсе, Жоспар бетінде өшіреді
+let pushAutoDone = false;
+async function pushAuto() {
+  try {
+    if (pushAutoDone || !('Notification' in window) || !('PushManager' in window) || !('serviceWorker' in navigator)) return;
+    if (plIOS && !plStandalone()) return; if (Notification.permission === 'denied' || ls.get('pushOff') === '1') return;
+    pushAutoDone = true;
+    if (Notification.permission === 'granted') { await pushEnsure(); plBell(); return; }
+    document.addEventListener('pointerdown', async () => { if (Notification.permission === 'default' && ls.get('pushOff') !== '1' && await pushOn()) plBell(); }, { once: true });
+  } catch { }
+}
 async function plBell() {
   const b = $('plBell'); if (!b) return; const s = await pushSub(), on = !!s && typeof Notification !== 'undefined' && Notification.permission === 'granted';
   b.setAttribute('aria-pressed', String(on)); b.textContent = on ? '🔔 Телефонға еске салу: қосулы' : '🔕 Телефонға еске салуды қосу';
@@ -8413,7 +8449,7 @@ function renderPlanner(v) {
   hd.append(h, bell);
   const f = el('form', 'pl-add'), ti = document.createElement('input'), di = document.createElement('input'), tm = document.createElement('input'), sl = document.createElement('select'), go = el('button', 'go', 'Қосу');
   ti.placeholder = 'Не істеу керек? Мысалы: 7А-да Ньютон заңдары'; ti.maxLength = 200; ti.setAttribute('aria-label', 'Жазба'); di.type = 'date'; di.setAttribute('aria-label', 'Күні'); tm.type = 'time'; tm.setAttribute('aria-label', 'Уақыты'); go.type = 'submit'; sl.setAttribute('aria-label', 'Қашан еске салу');
-  [['10', '10 мин бұрын'], ['0', 'Уақытында'], ['5', '5 мин бұрын'], ['30', '30 мин бұрын'], ['60', '1 сағ бұрын'], ['1440', '1 күн бұрын'], ['', 'Еске салма']].forEach(([a, b]) => sl.append(new Option(b, a)));
+  [['0', 'Уақытында'], ['5', '5 мин бұрын'], ['10', '10 мин бұрын'], ['30', '30 мин бұрын'], ['60', '1 сағ бұрын'], ['1440', '1 күн бұрын'], ['', 'Еске салма']].forEach(([a, b]) => sl.append(new Option(b, a)));
   const rp = document.createElement('select'); rp.className = 'pl-rep'; rp.setAttribute('aria-label', 'Қайталау'); rp.append(new Option('🔁 Қайталанбайды', '')); Object.entries(PL_REP).forEach(([a, b]) => rp.append(new Option('🔁 ' + b, a)));
   f.append(ti, di, tm, sl, go);
   f.onsubmit = async e => { e.preventDefault(); if (!ti.value.trim()) { ti.focus(); return; } go.disabled = true; const r = await plAdd(ti.value, di.value, tm.value, sl.value, rp.value); go.disabled = false; if (r) { ti.value = ''; di.value = ''; tm.value = ''; rp.value = ''; SFX.ok(); ti.focus(); } };
@@ -8463,16 +8499,16 @@ function renderSchedule(v) {
   [1, 2, 3, 4, 5, 6, 7].forEach(d => { const b = el('button', '', KZ_DAYS_S[d % 7]); b.type = 'button'; b.dataset.d = d; b.setAttribute('aria-label', KZ_DAYS[d % 7]); b.onclick = () => { SC.day = d; scPaint(); }; tabs.appendChild(b); });
   const f = el('form', 'pl-add sc-add'), tm = document.createElement('input'), ti = document.createElement('input'), sl = document.createElement('select'), go = el('button', 'go', 'Қосу');
   tm.type = 'time'; tm.required = true; tm.setAttribute('aria-label', 'Сабақ уақыты'); ti.placeholder = 'Сынып және пән. Мысалы: 7А физика'; ti.maxLength = 120; ti.setAttribute('aria-label', 'Сабақ'); sl.setAttribute('aria-label', 'Еске салу'); go.type = 'submit';
-  [['10', '10 мин бұрын'], ['0', 'Уақытында'], ['5', '5 мин бұрын'], ['15', '15 мин бұрын'], ['', 'Еске салма']].forEach(([a, b]) => sl.append(new Option(b, a)));
+  [['0', 'Уақытында'], ['5', '5 мин бұрын'], ['10', '10 мин бұрын'], ['15', '15 мин бұрын'], ['', 'Еске салма']].forEach(([a, b]) => sl.append(new Option(b, a)));
   f.append(tm, ti, sl, go);
   f.onsubmit = async e => { e.preventDefault(); if (!tm.value) { tm.focus(); return; } if (!ti.value.trim()) { ti.focus(); return; } go.disabled = true; const r = await scAdd(SC.day, tm.value, ti.value, sl.value); go.disabled = false; if (r) { ti.value = ''; tm.value = ''; try { SFX.ok(); } catch { } tm.focus(); } };
-  sec.append(hd, el('p', 'pl-note', 'Күнді таңда да, сабақтарды қос. Сабақтың алдында телефонға еске салғыш келеді (жоспардағы «🔔» батырмасы қосулы болса).'), tabs, f);
+  sec.append(hd, el('p', 'pl-note', 'Күнді таңда да, сабақтарды қос. Сабақтың алдында телефонға еске салғыш келеді. Уақытын өзің өзгерте аласың.'), tabs, f);
   const list = el('div', 'pl-list'); list.id = 'scList'; sec.appendChild(list); v.appendChild(sec);
   scPaint(); if (!SC.loaded) scLoad();
 }
 function renderPlan() {
   const v = $('v-plan'); v.replaceChildren();
-  const hd = el('div', 'hm-hero'); hd.append(el('h1', '', '🗓 Жоспар'), el('p', '', isStaff ? 'Жазбалар, еске салғыштар және сабақ кестесі.' : 'Жазбалар мен еске салғыштар.'));
+  const hd = el('div', 'hm-hero'); hd.append(el('h1', '', '🗓 Жоспар'), el('p', 'sub', isStaff ? 'Жазбалар, еске салғыштар және сабақ кестесі.' : 'Жазбалар мен еске салғыштар.'));
   v.appendChild(hd); renderPlanner(v); if (isStaff) renderSchedule(v);
 }
 function renderToday(v) {
@@ -8489,19 +8525,25 @@ function todayPaint() {
   $('tdDate').textContent = KZ_DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + KZ_MON[now.getMonth()];
   const ls = isStaff ? scSorted(wd) : [];
   const act = PL.items.filter(x => !x.done && x.due_at && (plLate(x) || plDay(new Date(x.due_at)) === plDay(now))).sort((a, b) => new Date(a.due_at) - new Date(b.due_at));
+  const cols = el('div', 'td-cols'), c1 = el('div', 'td-col'), c2 = el('div', 'td-col');
+  const stEl = $('tdStats'); if (stEl) { stEl.replaceChildren(); const late = act.filter(plLate).length, today = act.length - late;
+    const chip = (cls, t) => { const c = el('span', 'td-chip ' + cls, t); stEl.appendChild(c); };
+    if (ls.length) chip('', '📘 ' + ls.length + ' сабақ'); if (today) chip('', '✅ ' + today + ' тапсырма'); if (late) chip('bad', '⚠ ' + late + ' кешіккен'); stEl.hidden = !stEl.children.length; }
+  body.appendChild(cols); cols.append(c1, c2);
   if (ls.length) {
-    body.appendChild(el('div', 'td-lab', 'Сабақтар'));
+    c1.appendChild(el('div', 'td-lab', 'Сабақтар'));
     let nextDone = false;
     ls.forEach(x => {
       const [h, m] = scT(x).split(':').map(Number), st = h * 60 + m, cls = nm >= st + 45 ? 'past' : nm >= st ? 'now' : (!nextDone ? 'next' : '');
       if (cls === 'next') nextDone = true;
       const r = el('div', 'td-ls ' + cls), t = el('time', '', scT(x)), tx = el('span', 'td-lt', x.title); r.append(t, tx);
       if (cls === 'now') r.appendChild(el('em', '', 'қазір')); else if (cls === 'next') r.appendChild(el('em', '', 'келесі'));
-      body.appendChild(r);
+      c1.appendChild(r);
     });
   }
-  if (act.length) { body.appendChild(el('div', 'td-lab', 'Тапсырмалар')); act.slice(0, 5).forEach(x => body.appendChild(plRow(x))); if (act.length > 5) body.appendChild(el('p', 'pl-empty', 'Тағы ' + (act.length - 5) + ' жазба «Жоспар» бетінде')); }
-  if (!ls.length && !act.length) body.appendChild(el('p', 'pl-empty', 'Бүгін еш нәрсе жоспарланбаған.' + (isStaff ? ' Сабақ кестесін «Жоспар» бетінде толтырсаң, осында көрінеді.' : '')));
+  if (act.length) { c2.appendChild(el('div', 'td-lab', 'Тапсырмалар')); act.slice(0, 5).forEach(x => c2.appendChild(plRow(x))); if (act.length > 5) c2.appendChild(el('p', 'pl-empty', 'Тағы ' + (act.length - 5) + ' жазба «Жоспар» бетінде')); }
+  if (!ls.length || !act.length) cols.classList.add('one');
+  if (!ls.length && !act.length) body.replaceChildren(el('p', 'pl-empty', 'Бүгін еш нәрсе жоспарланбаған.' + (isStaff ? ' Сабақ кестесін «Жоспар» бетінде толтырсаң, осында көрінеді.' : '')));
 }
 // ---- төменгі мәзір (телефон) ----
 let curView = 'home';
@@ -8537,6 +8579,37 @@ function tabSync() {
   [...tb.children].forEach(b => { const k = b.dataset.t; b.classList.toggle('on', k === 'more' ? (sheet || !inTabs) : (!sheet && k === curView)); b.setAttribute('aria-current', b.classList.contains('on') ? 'true' : 'false'); });
 }
 $('sheetBg').onclick = () => { document.body.classList.remove('sheet'); tabSync(); };
+
+// ===== (!) түсініктеме белгісі: сұр нұсқаулар минимал белгіге айналады =====
+(function () {
+  const pop = document.createElement('div'); pop.id = 'tipPop'; pop.hidden = true; pop.setAttribute('role', 'tooltip'); document.body.appendChild(pop);
+  let cur = null;
+  const hide = () => { pop.hidden = true; if (cur) { cur.setAttribute('aria-expanded', 'false'); cur = null; } };
+  function show(b) {
+    if (cur === b) { hide(); return; } hide(); cur = b; b.setAttribute('aria-expanded', 'true'); pop.textContent = b.dataset.tip; pop.hidden = false;
+    const r = b.getBoundingClientRect(), w = Math.min(320, innerWidth - 24); pop.style.width = w + 'px';
+    pop.style.left = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), innerWidth - w - 12) + 'px';
+    const h = pop.offsetHeight; let y = r.bottom + 8; if (y + h > innerHeight - 80) y = Math.max(12, r.top - h - 8); pop.style.top = y + 'px';
+  }
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.tip'); if (b) { e.preventDefault(); e.stopPropagation(); show(b); } else if (!e.target.closest('#tipPop')) hide(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') hide(); }); addEventListener('scroll', hide, true); addEventListener('resize', hide);
+  const HEAD = /^H[1-4]$/;
+  function tipify(root) {
+    root.querySelectorAll('p.sub:not([data-tp]),p.pl-note:not([data-tp])').forEach(p => {
+      if (p.id || p.hidden || p.closest('#auth,.qh-modal,#aiPanel')) return;
+      const t = p.textContent.trim(); if (t.length < 28) return;
+      const prev = p.previousElementSibling; if (!prev) return;
+      let h = null, box = prev;
+      if (HEAD.test(prev.tagName)) h = prev; else if (/hd$|head/.test(prev.className || '')) h = [...prev.children].find(c => HEAD.test(c.tagName));
+      if (!h) return;
+      p.dataset.tp = '1';
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tip'; b.textContent = '!'; b.dataset.tip = t; b.setAttribute('aria-label', 'Түсініктеме'); b.setAttribute('aria-expanded', 'false');
+      h.appendChild(b); box.classList.add('tipd'); p.remove();
+    });
+  }
+  window.tipify = tipify; tipify(document);
+  let raf = 0; new MutationObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => tipify(document)); }).observe(document.querySelector('main.wrap') || document.body, { childList: true, subtree: true });
+})();
 const HM_ICON = {
   quiz: '<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 18h.01"/><circle cx="12" cy="12" r="9"/>',
   groups: '<circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><path d="M2 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1M12 20v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1"/>',
@@ -8558,20 +8631,28 @@ function homeAct(k) {
 }
 function renderHome() {
   const v = $('v-home'); v.replaceChildren(); const np = (meName || '').trim().split(/\s+/), nm = np[1] || np[0] || 'қонақ';
-  const hd = el('div', 'hm-hero'); hd.append(el('h1', '', 'Қош келдің, ' + nm + '! 👋'), el('p', '', isStaff ? 'Бүгін сабақты не істейміз? Ең керектісін бір басумен аш.' : 'Бүгін не үйренеміз? Пән таңда не тапсырманы аш.'));
+  const hd = el('div', 'hm-hero'); const hr = new Date().getHours(), gr = hr >= 5 && hr < 12 ? 'Қайырлы таң' : hr >= 12 && hr < 18 ? 'Қайырлы күн' : hr >= 18 && hr < 23 ? 'Қайырлы кеш' : 'Қайырлы түн';
+  hd.append(el('h1', '', gr + ', ' + nm + '! 👋'), el('p', '', isStaff ? 'Бүгін сабақты не істейміз? Ең керектісін бір басумен аш.' : 'Бүгін не үйренеміз? Пән таңда не тапсырманы аш.'));
   v.appendChild(hd);
   const card = (cls, t, d, ic, fn) => { const b = el('button', 'hm-card ' + cls); b.type = 'button'; const i = el('span', 'hm-ic'); i.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + HM_ICON[ic] + '</svg>'; b.append(i, el('strong', '', t), el('small', '', d), el('em', '', 'Ашу →')); b.onclick = fn; return b; };
+  const st = el('div', 'td-stats'); st.id = 'tdStats'; v.appendChild(st);
   renderToday(v);
   if (isStaff) {
     v.appendChild(el('h2', 'hm-h', 'Жылдам бастау'));
-    const g = el('div', 'hm-grid');
-    [['c-orange', 'Викторина', 'Телефонмен ойнайтын сұрақтар', 'quiz'], ['c-violet', 'Топқа бөлу', 'Сынып не өз тізімің', 'groups'], ['c-pink', 'Кездейсоқ оқушы', 'Әділ таңдау', 'random'], ['c-cyan', 'Таймер', 'Үлкен экранға', 'timer'],
-      ['c-teal', 'Сабақ жоспары', 'Қадамдармен жүргіз', 'lessons'], ['c-amber', 'Ойын-сауық', 'Барлық ойын мен құрал', 'play'], ['c-indigo', 'Материалдар', 'PDF, презентация, сілтеме', 'mats'], ['c-rose', 'Үй тапсырмасы', 'Беру мен бағалау', 'hw'], ['c-green', 'Оқу бөлмесі', 'Сыныптың ортақ бөлмесі', 'room']]
-      .forEach(([c, t, d, k]) => g.appendChild(card(c, t, d, k, () => homeAct(k))));
-    v.appendChild(g);
+    const g = el('div', 'hm-grid'), more = el('div', 'hm-grid hm-more'); more.hidden = true;
+    const main = [['c-violet', 'Викторина', 'Телефонмен ойнайтын сұрақтар', 'quiz'], ['c-violet', 'Топқа бөлу', 'Сынып не өз тізімің', 'groups'], ['c-orange', 'Таймер', 'Үлкен экранға', 'timer'],
+      ['c-blue', 'Сабақ жоспары', 'Қадамдармен жүргіз', 'lessons'], ['c-blue', 'Материалдар', 'PDF, презентация, сілтеме', 'mats'], ['c-blue', 'Үй тапсырмасы', 'Беру мен бағалау', 'hw']];
+    const rest = [['c-orange', 'Кездейсоқ оқушы', 'Әділ таңдау', 'random'], ['c-violet', 'Ойын-сауық', 'Барлық ойын мен құрал', 'play'], ['c-blue', 'Оқу бөлмесі', 'Сыныптың ортақ бөлмесі', 'room']];
+    main.forEach(([c, t, d, k]) => g.appendChild(card(c, t, d, k, () => homeAct(k))));
+    rest.forEach(([c, t, d, k]) => more.appendChild(card(c, t, d, k, () => homeAct(k))));
+    const mb = el('button', 'hm-moreb', 'Барлық құралдар ▾'); mb.type = 'button'; mb.setAttribute('aria-expanded', 'false');
+    mb.onclick = () => { more.hidden = !more.hidden; mb.setAttribute('aria-expanded', String(!more.hidden)); mb.textContent = more.hidden ? 'Барлық құралдар ▾' : 'Жасыру ▴'; };
+    v.append(g, more, mb);
+    void 0;
+
   } else {
     v.appendChild(el('h2', 'hm-h', 'Тапсырмалар'));
-    const g = el('div', 'hm-grid hm-two'); g.append(card('c-teal', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-rose', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g);
+    const g = el('div', 'hm-grid hm-two'); g.append(card('c-blue', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-violet', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g);
   }
 }
 function verifyAnim() {
@@ -8736,11 +8817,17 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     g('aiProc').checked = showProc;
     g('aiProc').onchange = e => { showProc = e.target.checked; ls.set(PK, showProc ? '1' : '0'); };
     g('aiNg').checked = ls.get('gwAiNgOff') !== '1'; g('aiNg').onchange = e => { ls.set('gwAiNgOff', e.target.checked ? '0' : '1'); if (!e.target.checked) hideNudge(); };
-    const open = o => { p.hidden = !o; fab.hidden = o; if (o) hideNudge(); if (o) { if (!g('aiLog').children.length) welcome(); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
+    function fit() {
+      const vv = window.visualViewport; if (!vv || p.hidden || !matchMedia('(max-width:760px)').matches) { p.style.bottom = ''; p.style.height = ''; return; }
+      const kb = Math.round(window.innerHeight - vv.height - vv.offsetTop);
+      if (kb > 100) { p.style.bottom = (kb + 8) + 'px'; p.style.height = Math.max(260, vv.height - 16) + 'px'; } else { p.style.bottom = ''; p.style.height = ''; }
+    }
+    if (window.visualViewport) { visualViewport.addEventListener('resize', fit); visualViewport.addEventListener('scroll', fit); }
+    const open = o => { p.hidden = !o; fab.hidden = o; setTimeout(fit, 0); if (o) hideNudge(); if (o) { if (!g('aiLog').children.length) welcome(); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
     fab.onclick = () => open(true); g('aiX').onclick = () => open(false);
     p.addEventListener('keydown', e => { if (e.key === 'Escape') { if (!g('aiHist').hidden) g('aiHist').hidden = true; else open(false); } });
     g('aiClr').onclick = newChat; g('aiHis').onclick = toggleHist;
-    const ta = g('aiIn'); ta.oninput = () => { ta.style.height = '42px'; ta.style.height = Math.min(110, ta.scrollHeight) + 'px'; };
+    const ta = g('aiIn'); ta.addEventListener('focus', () => setTimeout(() => { fit(); scroll(); }, 320)); ta.oninput = () => { ta.style.height = '42px'; ta.style.height = Math.min(110, ta.scrollHeight) + 'px'; };
     ta.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); g('aiForm').requestSubmit(); } };
     g('aiForm').onsubmit = e => { e.preventDefault(); if (busy) { stop = true; return; } const t = ta.value.trim(); if (!t) return; ta.value = ''; ta.style.height = '42px'; run(t); };
     g('aiAdm').onclick = adminStats; g('aiAdm').hidden = !isAdmin;
@@ -8795,7 +8882,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     try {
       const r = await sb.rpc('ai_stats'); if (r.error || !r.data) { g('aiStat').textContent = ''; return; }
       const d = r.data, st = g('aiStat');
-      st.textContent = 'Бүгін: ' + d.today.requests + (isAdmin ? '' : '/' + LIM_T) + ' сұрау · ' + Number(d.today.tokens).toLocaleString('ru') + ' токен';
+      st.textContent = 'Бүгін: ' + d.today.requests + (isAdmin ? '' : '/' + LIM_T) + ' сұрау';
       if (skipped !== undefined) lastSkip = skipped || [];
       if (isAdmin && lastSkip.length) { const w = el('button', 'wn', ' ⚠ ' + lastSkip.length); w.type = 'button'; w.title = 'Өтпеген провайдерлер'; w.onclick = () => { const m = modal('Өтпеген провайдерлер'); m.box.append(el('p', '', 'Төмендегі модельдер бұл сұрауда жауап бермеді, сондықтан ЖИ келесісіне ауысты. Жауап дұрыс келсе, мазаланудың қажеті жоқ.')); lastSkip.forEach(x => m.box.append(el('p', 'msg', x))); const cl = el('button', 'out', 'Жабу'); cl.type = 'button'; cl.onclick = m.close; m.box.append(cl); }; st.append(w); }
     } catch { }
@@ -8893,14 +8980,14 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       if (d === 'today') d = plIso(now); else if (d === 'tomorrow') { const t = new Date(now); t.setDate(t.getDate() + 1); d = plIso(t); }
       if (d && !/^\d{4}-\d{2}-\d{2}$/.test(d)) d = '';
       let tm = String(a.time || '').trim(); if (!/^\d{1,2}:\d{2}$/.test(tm)) tm = ''; else tm = tm.padStart(5, '0');
-      const rem = tm ? (Number.isInteger(+a.remind_min) && a.remind_min !== null && a.remind_min !== undefined ? +a.remind_min : 10) : null;
+      const rem = tm ? (Number.isInteger(+a.remind_min) && a.remind_min !== null && a.remind_min !== undefined ? +a.remind_min : 0) : null;
       const it = await plAdd(a.title, d, tm, rem, a.repeat); if (!it) return { error: 'Қосылмады (жоспар кестесін тексер)' };
       return { ok: true, title: it.title, when: plWhen(it) || 'күні жоқ', reminder: it.has_time && it.remind_min != null ? plRemTxt(it.remind_min) : 'жоқ', repeat: it.repeat_rule ? PL_REP[it.repeat_rule] : 'жоқ' };
     },
     async add_schedule_slot(a) {
       const wd = Math.round(+a.weekday); if (!(wd >= 1 && wd <= 7)) return { error: 'weekday 1-7 болуы керек' };
       let tm = String(a.time || '').trim(); if (!/^\d{1,2}:\d{2}$/.test(tm)) return { error: 'time HH:MM болуы керек' }; tm = tm.padStart(5, '0');
-      const rem = a.remind_min === undefined || a.remind_min === null ? 10 : +a.remind_min;
+      const rem = a.remind_min === undefined || a.remind_min === null ? 0 : +a.remind_min;
       const it = await scAdd(wd, tm, a.title, rem); if (!it) return { error: 'Қосылмады (update-40.sql іске қосылды ма?)' };
       return { ok: true, day: KZ_DAYS[wd % 7], time: tm.slice(0, 5), title: it.title };
     },
