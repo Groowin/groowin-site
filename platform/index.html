@@ -1712,6 +1712,10 @@ html[data-bgs]:not([data-glass]) body::before{content:'';position:fixed;inset:0;
 #v-mats .mt-add>p.sub{margin:0}
 @media (max-width:760px){#v-mats .mtools,#v-mats .mtools.lk,#v-mats .mtools.up{grid-template-columns:1fr}#v-mats .mtools.up span{font-size:.82rem}}
 .qu-row button{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer;justify-self:start}
+
+.up-pill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom));z-index:130;padding:10px 18px;border-radius:99px;background:#1b2036;color:#fff;font-weight:600;font-size:.9rem;box-shadow:0 8px 28px rgba(0,0,0,.35);max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.up-pill.ok{background:#12A06B}.up-pill.err{background:#E5484D}
+@media (max-width:760px){body.in-app .up-pill{bottom:calc(84px + env(safe-area-inset-bottom))}}
+.app-ov .app-load{flex:1;display:grid;place-content:center;gap:14px;text-align:center;color:#cfd6ff;font-weight:600}.app-load i{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;margin:0 auto;animation:aspin .8s linear infinite}@keyframes aspin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -5226,6 +5230,7 @@ async function uploadMats(files) {
     const ins = await sb.from('mat_items').insert({ kind: 'file', title: f.name.slice(0, 120), storage_path: path, mime: f.type, size: f.size, folder_id: mCur }).select().single();
     if (ins.error) { await sb.storage.from('materials').remove([path]); mnote('Қате: ' + ins.error.message, 'err'); return; }
     if (txtKind(ins.data)) newIdx.push(ins.data);
+    loadMats();
   }
   mnote('Дайын.', 'ok'); loadMats(); if (newIdx.length) txtIndexMany(newIdx, true);
 }
@@ -5417,9 +5422,20 @@ async function appCover(it, remove) {
   };
   i.click();
 }
+const APPC = {}; let appOpening = false;
 async function openApp(it) {
-  const { data, error } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 3600); if (error) return notify('Ашылмады: ' + error.message, 'err');
-  let html; try { const r = await fetch(data.signedUrl); if (!r.ok) throw new Error(r.status); html = await r.text(); } catch (e) { return notify('Файл жүктелмеді: ' + e.message, 'err'); }
+  if (appOpening || document.querySelector('.app-ov')) return; appOpening = true;
+  const wait = el('div', 'app-ov'), wb = el('div', 'app-bar'), wc = el('button', 'x', '✕ Жабу'); wc.type = 'button'; let cancelled = false;
+  const ld = el('div', 'app-load'); ld.append(document.createElement('i'), el('span', '', '«' + it.title + '» ашылып жатыр…')); wb.append(el('b', '', it.title), wc); wait.append(wb, ld); document.body.appendChild(wait);
+  wc.onclick = () => { cancelled = true; wait.remove(); };
+  let html = APPC[it.id];
+  try {
+    if (!html) {
+      const { data, error } = await sb.storage.from('materials').createSignedUrl(it.storage_path, 3600); if (error) throw error;
+      const r = await fetch(data.signedUrl); if (!r.ok) throw new Error(r.status); html = await r.text(); APPC[it.id] = html;
+    }
+  } catch (e) { wait.remove(); appOpening = false; return notify('Ашылмады: ' + (e.message || e), 'err'); }
+  appOpening = false; if (cancelled) return; wait.remove();
   const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
   const ov = el('div', 'app-ov'), bar = el('div', 'app-bar'), tt = el('b', '', it.title), rot = el('button', '', '⟲ Бұру'), cl = el('button', 'x', '✕ Жабу'); rot.type = cl.type = 'button';
   const fr = document.createElement('iframe'); fr.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups allow-modals allow-pointer-lock allow-presentation'); fr.allow = 'fullscreen; autoplay'; fr.src = url; fr.title = it.title;
@@ -9598,23 +9614,40 @@ function forcePw() {
     });
     as.onchange = () => { if (as.value === '__keep') return; rows.forEach(x => { x.s.value = as.value; x.ni.hidden = as.value !== '__new'; }); };
     const bt = el('div', 'qu-btns'), go1 = el('button', 'go', 'Жүктеу'), no = el('button', '', 'Бас тарту'); go1.type = no.type = 'button'; bt.append(go1, no); b.appendChild(bt); no.onclick = m.close;
-    go1.onclick = async () => {
-      go1.disabled = no.disabled = true; const made = {}; const added = []; let ok = 0;
-      for (const x of rows) {
-        const f = x.f; if (f.size > 50 * 1048576) { x.st.textContent = '⚠ 50 МБ-тан үлкен'; continue; }
-        let fid = x.s.value || null;
-        if (fid === '__new') { const nn = x.ni.value.trim().slice(0, 60); if (!nn) { x.st.textContent = '⚠ папка атын жаз'; continue; } if (!made[nn]) { const r = await sb.from('mat_folders').insert({ name: nn, parent_id: null }).select().single(); if (r.error) { x.st.textContent = '⚠ ' + r.error.message; continue; } made[nn] = r.data.id; } fid = made[nn]; }
-        const path = meId + '/' + crypto.randomUUID() + (extOf(f.name) ? '.' + extOf(f.name) : '');
-        const job = uploadP('materials', path, f, (r) => { x.st.textContent = Math.round(100 * r) + '%'; }); const up = await job.promise;
-        if (up.error) { x.st.textContent = '⚠ ' + up.error.message; continue; }
-        const ins = await sb.from('mat_items').insert({ kind: 'file', title: f.name.slice(0, 120), storage_path: path, mime: f.type, size: f.size, folder_id: fid }).select().single();
-        if (ins.error) { await sb.storage.from('materials').remove([path]); x.st.textContent = '⚠ ' + ins.error.message; continue; }
-        x.st.textContent = '✅ жүктелді'; ok++; if (fid) ls.set('qfLast', fid); if (txtKind(ins.data)) added.push(ins.data);
+    go1.onclick = () => {
+      const jobs = []; for (const x of rows) {
+        if (x.f.size > 50 * 1048576) { x.st.textContent = '⚠ 50 МБ-тан үлкен'; continue; }
+        const v = x.s.value; if (v === '__new' && !x.ni.value.trim()) { x.st.textContent = '⚠ папка атын жаз'; x.ni.focus(); return; }
+        jobs.push({ f: x.f, fid: v === '__new' ? null : (v || null), nn: v === '__new' ? x.ni.value.trim().slice(0, 60) : '' });
       }
-      go1.disabled = false; no.disabled = false; no.textContent = 'Жабу';
-      if (ok) { notify(ok + ' файл Материалдарға жүктелді'); go1.hidden = true; try { if (typeof loadMats === 'function' && !$('v-mats').hidden) loadMats(); } catch {} if (added.length) txtIndexMany(added, true); }
+      if (!jobs.length) return; m.close(); runUploads(jobs);
     };
   };
+  // Фондық жүктеу: төменде шағын белгі көрінеді, бет ауыстыруға болады
+  let pill = null;
+  function pillSet(txt, cls, ms) {
+    if (!pill) { pill = el('div', 'up-pill'); pill.setAttribute('role', 'status'); document.body.appendChild(pill); }
+    pill.className = 'up-pill' + (cls ? ' ' + cls : ''); pill.textContent = txt; clearTimeout(pill._t);
+    if (ms) pill._t = setTimeout(() => { if (pill) { pill.remove(); pill = null; } }, ms);
+  }
+  async function runUploads(jobs) {
+    const made = {}, added = [], errs = []; let ok = 0;
+    for (let i = 0; i < jobs.length; i++) {
+      const { f, nn } = jobs[i]; let fid = jobs[i].fid; const tag = '⬆ Жүктелуде ' + (i + 1) + '/' + jobs.length;
+      pillSet(tag + ' · 0%');
+      if (nn) { if (!made[nn]) { const r = await sb.from('mat_folders').insert({ name: nn, parent_id: null }).select().single(); if (r.error) { errs.push(f.name + ': ' + r.error.message); continue; } made[nn] = r.data.id; } fid = made[nn]; }
+      const path = meId + '/' + crypto.randomUUID() + (extOf(f.name) ? '.' + extOf(f.name) : '');
+      const job = uploadP('materials', path, f, (r) => pillSet(tag + ' · ' + Math.round(100 * r) + '%')); const up = await job.promise;
+      if (up.error) { errs.push(f.name + ': ' + up.error.message); continue; }
+      const ins = await sb.from('mat_items').insert({ kind: 'file', title: f.name.slice(0, 120), storage_path: path, mime: f.type, size: f.size, folder_id: fid }).select().single();
+      if (ins.error) { await sb.storage.from('materials').remove([path]); errs.push(f.name + ': ' + ins.error.message); continue; }
+      ok++; if (fid) ls.set('qfLast', fid); if (txtKind(ins.data)) added.push(ins.data);
+      try { if (curView === 'mats') loadMats(); } catch {}
+    }
+    if (errs.length) { pillSet('⚠ ' + errs.length + ' файл жүктелмеді: ' + errs[0], 'err', 8000); } else pillSet('✅ ' + ok + ' файл Материалдарға жүктелді', 'ok', 3500);
+    try { if (curView === 'mats') loadMats(); } catch {}
+    if (added.length) txtIndexMany(added, true);
+  }
   window.pickUpload = function () { const i = document.createElement('input'); i.type = 'file'; i.multiple = true; i.onchange = () => quickUpload(i.files); i.click(); };
 
   // ---------- Бөлісу (Android) ----------
