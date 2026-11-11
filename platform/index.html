@@ -1865,6 +1865,7 @@ html[data-bgs]:not([data-glass]) body::before{content:'';position:fixed;inset:0;
     <div id="v-home" hidden></div>
     <div id="v-plan" hidden></div>
     <div id="v-projects" hidden></div>
+    <div id="v-qmj" hidden></div>
     <div id="v-room" hidden></div>
 
     <div id="v-catalog">
@@ -2688,7 +2689,7 @@ $('vfs').onclick = () => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.body.classList.remove('vfake'); });
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 let rm = null; // Оқу бөлмесі күйі
-const VIEWS = ['home', 'plan', 'projects', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+const VIEWS = ['home', 'plan', 'projects', 'qmj', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined') { const w = $('msWrap'); if (w) w.hidden = !isStaff; } if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
 function go(key, keep) {
   document.body.classList.remove('sheet'); try { curView = key; tabSync(); } catch { }
@@ -2700,7 +2701,7 @@ function go(key, keep) {
   if (key === 'physics' || key === 'math') {
     subj = key; if (!keep) gradeSel = null;
     renderGames(); show('catalog');
-  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'projects') loadProjects(); if (key === 'sites') loadSites(); if (key === 'path') loadMyPath(); if (key === 'hw') loadHw(); if (key === 'favs') loadFavsView(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
+  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'projects') loadProjects(); if (key === 'qmj') renderQmj(); if (key === 'sites') loadSites(); if (key === 'path') loadMyPath(); if (key === 'hw') loadHw(); if (key === 'favs') loadFavsView(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
 }
 document.querySelectorAll('#nav button[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 $('subjHead').onclick = () => { const h = $('subjItems').hidden = !$('subjItems').hidden; $('subjHead').setAttribute('aria-expanded', String(!h)); $('subjArrow').textContent = h ? '▸' : '▾'; };
@@ -2790,6 +2791,7 @@ applyStyle();
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
   { ver: '5.8', date: '11.11.2026', items: [
+    ['📄', 'ҚМЖ жасау', 'Басты беттегі жаңа батырма: тақырып пен сыныпты жазасың, ЖИ қысқа мерзімді жоспарды жазады. Ақ-қара кесте, Word файл болып жүктеледі де күн атты папкамен Материалдарға түседі.'],
     ['🖼', 'Оқушылар жобасы', 'Жаңа «Жобалар» бөлімі: оқушы сурет пен сипаттама жібереді, мұғалім «Жарияла» басқанда галереяға түседі.'],
     ['🎮', 'Ойынға мұқаба', 'Әр ойын мен зертхана өз суретімен көрінеді. Мұқабаны ойын қосқанда не кейін қоясың.'],
     ['🎨', 'Стиль', 'Баптауда «Стиль» батырмасы: тор, нүкте, толқын, жарық сияқты фон нұсқалары.'],
@@ -8887,9 +8889,10 @@ function renderHome() {
   if (isStaff) {
     v.appendChild(el('h2', 'hm-h', 'Жылдам бастау'));
     const g = el('div', 'hm-grid'), more = el('div', 'hm-grid hm-more'); more.hidden = true;
-    const main = [['c-violet', 'Викторина', 'Телефонмен ойнайтын сұрақтар', 'quiz'], ['c-violet', 'Топқа бөлу', 'Сынып не өз тізімің', 'groups'], ['c-violet', 'Таймер', 'Үлкен экранға', 'timer'],
+    const main = [['c-violet', 'Викторина', 'Телефонмен ойнайтын сұрақтар', 'quiz'], ['c-violet', 'Топқа бөлу', 'Сынып не өз тізімің', 'groups'], ['c-violet', 'ҚМЖ жасау', 'Word файл, стандартқа сай', 'qmj'],
       ['c-orange', 'Сабақ жоспары', 'Қадамдармен жүргіз', 'lessons'], ['c-blue', 'Материалдар', 'PDF, презентация, сілтеме', 'mats'], ['c-orange', 'Үй тапсырмасы', 'Беру мен бағалау', 'hw']];
-    const rest = [['c-violet', 'Кездейсоқ оқушы', 'Әділ таңдау', 'random'], ['c-violet', 'Ойын-сауық', 'Барлық ойын мен құрал', 'play'], ['c-teal', 'Оқу бөлмесі', 'Сыныптың ортақ бөлмесі', 'room']];
+    const rest = [['c-violet', 'Таймер', 'Үлкен экранға', 'timer'], ['c-violet', 'Кездейсоқ оқушы', 'Әділ таңдау', 'random'], ['c-violet', 'Ойын-сауық', 'Барлық ойын мен құрал', 'play'], ['c-teal', 'Оқу бөлмесі', 'Сыныптың ортақ бөлмесі', 'room']];
+    HM_ICON.qmj = '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>';
     HM_ICON.upload = '<path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>';
     HM_ICON.pcfind = '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><circle cx="11" cy="9.5" r="2.2"/><path d="M12.7 11.2L15 13.5"/>';
     main.forEach(([c, t, d, k]) => g.appendChild(card(c, t, d, k, () => homeAct(k))));
@@ -9709,6 +9712,146 @@ function forcePw() {
   };
   window.gwQuInit = () => { try { if (screen.orientation && screen.orientation.lock && matchMedia('(max-width:760px)').matches && matchMedia('(display-mode: standalone)').matches) screen.orientation.lock('portrait').catch(() => {}); } catch {} };
   window.gwQuInit();
+})();
+</script>
+
+<script>
+// ===== ҚМЖ жасау: ЖИ жоспар жазады, Word файл (A4, ақ-қара кесте) =====
+(() => {
+  const css = document.createElement('style');
+  css.textContent = '.qm-w{max-width:900px;margin:0 auto;display:grid;gap:12px}.qm-w h1{margin:4px 0 0}.qm-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}.qm-f{display:grid;gap:4px}.qm-f label{font-weight:600;font-size:.9rem}.qm-f input,.qm-f textarea{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;width:100%;box-sizing:border-box}.qm-f textarea{min-height:70px;resize:vertical}.qm-tip{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:.72rem;font-weight:800;cursor:pointer;margin-left:6px;border:0}.qm-tx{font-size:.88rem;color:var(--mute);background:var(--paper);border-radius:10px;padding:8px 10px}.qm-b{display:flex;gap:8px;flex-wrap:wrap}.qm-b button{padding:11px 18px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}.qm-b .go{background:var(--accent);border-color:var(--accent);color:#fff}.qm-b button:disabled{opacity:.55}.qm-pv{background:#fff;color:#000;border:1px solid #888;border-radius:6px;padding:14px;font-family:"Times New Roman",serif;overflow-x:auto}.qm-pv h2{text-align:center;font-size:1.15rem;margin:0 0 10px;color:#000}.qm-pv table{border-collapse:collapse;width:100%;margin-bottom:14px;table-layout:fixed}body .qm-pv table{background:#fff;border-radius:0;overflow:visible;width:100%}body .qm-pv td,body .qm-pv th{border:1px solid #000!important;padding:5px 7px;vertical-align:top;font-size:.95rem;word-break:break-word;white-space:normal;text-align:left;color:#000;background:#fff;font-weight:400}body .qm-pv th{text-align:center;font-weight:700}.qm-pv .l{font-weight:700!important}.qm-pv table.t1{min-width:680px}.qm-pv [contenteditable]{outline:0;min-height:1.2em;white-space:pre-wrap}.qm-pv [contenteditable]:focus{background:#fff8d6}.qm-pv .l{width:28%}@media(max-width:640px){.qm-pv{padding:8px}.qm-pv td,.qm-pv th{font-size:.8rem;padding:3px 4px}}';
+  document.head.appendChild(css);
+  const MIN = [3, 7, 10, 22, 3], NAMES = ['Ұйымдастыру кезеңі', 'Білімді жаңарту', 'Жаңа білімді меңгеру', 'Практикалық тапсырмалар мен есептер', 'Рефлексия (кері байланыс)'];
+  const today = () => { const d = new Date(); return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear(); };
+  let data = null, last = null;
+  const field = (lab, node, tip) => { const w = el('div', 'qm-f'), l = el('label', '', lab); if (tip) { const t = el('button', 'qm-tip', '!'); t.type = 'button'; t.onclick = () => notify(tip); l.appendChild(t); } w.append(l, node); return w; };
+  const inp = (v, ph) => { const i = document.createElement('input'); i.type = 'text'; i.value = v || ''; if (ph) i.placeholder = ph; return i; };
+  async function ai(body) {
+    const r = await sb.functions.invoke('teacher-agent', { body });
+    if (r.error) { let t = r.error.message || 'Қате'; try { const j = await r.error.context.json(); if (j && j.error) t = j.error; } catch { } throw new Error(t); }
+    if (!r.data || !r.data.message) throw new Error((r.data && r.data.error) || 'Бос жауап');
+    return r.data;
+  }
+  const jparse = t => { t = String(t || '').replace(/```json|```/g, ''); const a = t.indexOf('{'), b = t.lastIndexOf('}'); if (a < 0 || b < a) throw new Error('ЖИ жауабы түсініксіз, қайта бас'); return JSON.parse(t.slice(a, b + 1)); };
+  window.renderQmj = function () {
+    const v = $('v-qmj'); v.replaceChildren(); const w = el('div', 'qm-w'); v.appendChild(w);
+    const back = el('button', 'go', '← Басты бет'); back.type = 'button'; back.style.cssText = 'width:auto;margin:0;justify-self:start;padding:8px 14px;background:transparent;color:var(--ink);border:1px solid var(--line)'; back.onclick = () => go('home');
+    w.append(back, el('h1', '', 'ҚМЖ жасау'), el('div', 'qm-tx', 'Мақсат пен тақырыпты жаз, ЖИ қысқа мерзімді жоспарды жазады. Құндылық пен апта дәйексөзі бос қалады, оны өзің толтырасың.'));
+    const nm = (meName || '').trim().split(/\s+/); const short = nm.length > 1 ? nm[0] + ' ' + nm[1][0] + '.' : (nm[0] || '');
+    const fT = inp(last ? last.teacher : short), fD = inp(last ? last.date : today()), fG = inp(last ? last.grade : '', '9'), fS = inp(last ? last.subject : 'Физика'), fSec = inp(last ? last.section : '', 'мысалы: Динамика негіздері'), fTop = inp(last ? last.topic : '', 'Дененің салмағы. Салмақсыздық');
+    const fGoal = document.createElement('textarea'); fGoal.value = last ? last.goal : ''; fGoal.placeholder = 'Бағдарламадағы оқу мақсатын өзің жаз. Бос қалдырсаң, кестеде бос болады.';
+    const free = document.createElement('textarea'); free.placeholder = 'Мысалы: 9-сынып, физика, дененің салмағы, 12 қараша';
+    const g = el('div', 'qm-g'); g.append(field('Аты-жөні', fT), field('Күні', fD), field('Сынып', fG), field('Пән', fS), field('Бөлім', fSec), field('Сабақтың тақырыбы', fTop));
+    const fb = el('button', '', 'Өрістерді толтыр'); fb.type = 'button';
+    fb.onclick = async () => {
+      const t = free.value.trim(); if (!t) return notify('Алдымен бірнәрсе жаз');
+      fb.disabled = true; fb.textContent = 'Оқып жатыр…';
+      try {
+        const d = await ai({ turn: true, messages: [{ role: 'user', content: 'Мына мәтіннен өрістерді ал және тек JSON қайтар, құрал шақырма: {"grade":"","subject":"","topic":"","section":"","date":""}. Белгісіз өрісті бос қалдыр. Мәтін: ' + t }] });
+        const j = jparse(d.message.content); if (j.grade) fG.value = j.grade; if (j.subject) fS.value = j.subject; if (j.topic) fTop.value = j.topic; if (j.section) fSec.value = j.section; if (j.date) fD.value = j.date;
+      } catch (e) { notify(e.message || 'Қате', 'err'); }
+      fb.disabled = false; fb.textContent = 'Өрістерді толтыр';
+    };
+    const run = el('div', 'qm-b'), gen = el('button', 'go', '✨ ҚМЖ жаса'); gen.type = 'button'; run.append(gen);
+    const out = el('div'), st = el('div', 'qm-tx'); st.hidden = true;
+    w.append(g, field('Оқу бағдарламасына сәйкес оқу мақсаты', fGoal, 'Кодтарды ЖИ ойдан шығармайды. Өзің жазсаң, кестеге сол түседі, жазбасаң бос қалады.'), field('Немесе еркін жаз, ЖИ өрістерді өзі толтырады', free), el('div', 'qm-b'), run, st, out);
+    w.children[w.children.length - 4].appendChild(fb);
+    gen.onclick = async () => {
+      const q = { teacher: fT.value.trim(), date: fD.value.trim(), grade: fG.value.trim(), subject: fS.value.trim(), section: fSec.value.trim(), topic: fTop.value.trim(), goal: fGoal.value.trim() };
+      if (!q.topic) return notify('Сабақтың тақырыбын жаз', 'err');
+      last = q; let av = []; try { av = JSON.parse(ls.get('qmjAvoid') || '[]'); } catch { }
+      gen.disabled = true; st.hidden = false; st.textContent = '⏳ ЖИ жоспар жазып жатыр, 20–40 секунд…'; out.replaceChildren();
+      try {
+        const d = await ai({ mode: 'qmj', turn: true, qmj: { subject: q.subject, grade: q.grade, topic: q.topic, goal: q.goal, avoid: av.slice(-30) } });
+        const j = jparse(d.message.content);
+        if (!Array.isArray(j.stages) || j.stages.length < 5) throw new Error('ЖИ толық жоспар бермеді, қайта бас');
+        if (Array.isArray(d.methods)) ls.set('qmjAvoid', JSON.stringify(av.concat(d.methods).slice(-30)));
+        data = Object.assign({}, q, { goals: (j.goals || []).slice(0, 4), stages: j.stages.slice(0, 5).map(s => ({ teacher: s.teacher || '', student: s.student || '', assess: s.assess || '', resources: s.resources || '' })), homework: j.homework || '' });
+        st.hidden = true; paint(out);
+      } catch (e) { st.textContent = '⚠ ' + (e.message || 'Қате'); }
+      gen.disabled = false;
+    };
+  };
+  const ce = (txt, cls) => { const d = el('div', cls || ''); d.contentEditable = 'true'; d.textContent = txt || ''; return d; };
+  function paint(box) {
+    box.replaceChildren(); const pv = el('div', 'qm-pv'); pv.appendChild(el('h2', '', 'Қысқа мерзімді жоспар'));
+    const t0 = document.createElement('table'), E = {};
+    const r0 = (lab, key, val, ed) => { const tr = t0.insertRow(), a = tr.insertCell(), b = tr.insertCell(); a.className = 'l'; a.textContent = lab; if (ed === false) b.textContent = val; else { E[key] = ce(val); b.appendChild(E[key]); } };
+    r0('Бөлімі', 'section', data.section); r0('Педагогтің аты-жөні', 'teacher', data.teacher); r0('Күні', 'date', data.date); r0('Сыныбы', 'grade', data.grade); r0('Қатысушылар саны', 0, 'Қатысқандар: ___ / Қатыспағандар: ___', false); r0('Сабақтың тақырыбы', 'topic', data.topic); r0('Оқу бағдарламасына сәйкес оқу мақсаты', 'goal', data.goal);
+    r0('Сабақтың мақсаты', 'goals', (data.goals || []).map((x, i) => (i + 1) + ') ' + String(x).replace(/^\s*\d+[).]\s*/, '')).join('\n')); r0('Құндылықтарды дарыту', 'v1', ''); r0('Апта дәйексөзі', 'v2', '');
+    const t1 = document.createElement('table'), hr = t1.insertRow(); ['Кезең (уақыты, 45 мин)', 'Мұғалімнің іс-әрекеті', 'Оқушының іс-әрекеті', 'Бағалау', 'Ресурстар'].forEach(h => { const c = document.createElement('th'); c.textContent = h; hr.appendChild(c); });
+    const S = [];
+    data.stages.forEach((s, i) => { const tr = t1.insertRow(), a = tr.insertCell(); a.innerHTML = '<b></b>'; a.firstChild.textContent = (i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин)'; const o = { teacher: ce(s.teacher), student: ce(s.student), assess: ce(s.assess), resources: ce(s.resources) }; S.push(o); ['teacher', 'student', 'assess', 'resources'].forEach(k => tr.insertCell().appendChild(o[k])); });
+    const hw = t1.insertRow(), ha = hw.insertCell(); ha.innerHTML = '<b>6. Үй тапсырмасы</b>'; const HW = ce(data.homework); hw.insertCell().appendChild(HW); hw.insertCell().textContent = 'Тапсырманы дәптерге орындайды'; hw.insertCell().textContent = '—'; hw.insertCell().textContent = 'Оқулық, дәптер';
+    t1.className = 't1';
+    pv.append(t0, t1); box.appendChild(pv);
+    box.appendChild(el('div', 'qm-tx', 'Кез келген ұяшықты басып өзгерте аласың. Өз ойын сілтемелерің болса, Материалдарға салып қой, содан аламын. Құндылық пен апта дәйексөзі бос қалады.'));
+    const bt = el('div', 'qm-b'); bt.style.marginTop = '10px'; const dl = el('button', 'go', '⬇ Word-ке жүктеу'), re = el('button', '', '↻ Қайта жаса'); dl.type = re.type = 'button'; bt.append(dl, re); box.appendChild(bt);
+    re.onclick = () => $('v-qmj').querySelector('.qm-b .go').click();
+    const rd = e => (e ? e.innerText : '').replace(/ /g, ' ').trim();
+    dl.onclick = async () => {
+      dl.disabled = true; dl.textContent = 'Дайындалып жатыр…';
+      try {
+        Object.assign(data, { section: rd(E.section), teacher: rd(E.teacher), date: rd(E.date), grade: rd(E.grade), topic: rd(E.topic), goal: rd(E.goal), goals: rd(E.goals).split(/\n/).map(x => x.trim()).filter(Boolean), homework: rd(HW), stages: S.map(o => ({ teacher: rd(o.teacher), student: rd(o.student), assess: rd(o.assess), resources: rd(o.resources) })) });
+        const D = await loadDocx(), blob = await D.Packer.toBlob(qmjBuild(D, data));
+        const fn = ('ҚМЖ ' + (data.topic || 'жоспар')).replace(/[\\/:*?"<>|]/g, '').slice(0, 60) + '.docx';
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+        saveMat(blob, fn, data.date).then(ok => notify(ok ? 'Материалдарға да сақталды: ' + (data.date || 'күні') : 'Файл жүктелді (Материалдарға сақталмады)'));
+      } catch (e) { notify('Қате: ' + (e.message || e), 'err'); }
+      dl.disabled = false; dl.textContent = '⬇ Word-ке жүктеу';
+    };
+  }
+  let dp = null;
+  function loadDocx() {
+    if (window.docx) return Promise.resolve(window.docx);
+    return dp || (dp = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js'; s.onload = () => window.docx ? res(window.docx) : rej(new Error('docx жүктелмеді')); s.onerror = () => { dp = null; rej(new Error('Word кітапханасы жүктелмеді, интернетті тексер')); }; document.head.appendChild(s); }));
+  }
+  async function saveMat(blob, fn, date) {
+    try {
+      const nm = (date || today()).slice(0, 40); let f = (await sb.from('mat_folders').select('id').eq('name', nm).is('parent_id', null).limit(1)).data;
+      let fid = f && f[0] && f[0].id; if (!fid) { const r = await sb.from('mat_folders').insert({ name: nm, parent_id: null }).select().single(); if (r.error) return false; fid = r.data.id; }
+      const path = meId + '/' + crypto.randomUUID() + '.docx', mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      const up = await sb.storage.from('materials').upload(path, blob, { contentType: mime }); if (up.error) return false;
+      const ins = await sb.from('mat_items').insert({ kind: 'file', title: fn.slice(0, 120), storage_path: path, mime, size: blob.size, folder_id: fid }); if (ins.error) { await sb.storage.from('materials').remove([path]); return false; }
+      try { if (curView === 'mats') loadMats(); } catch { } return true;
+    } catch { return false; }
+  }
+// qmjBuild(D, data) -> Document. data: {section,teacher,date,grade,topic,goal,goals[],stages[{teacher,student,assess,resources}],homework}
+function qmjBuild(D, d) {
+  const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle, VerticalAlign } = D;
+  const F = 'Times New Roman', SZ = 24;
+  const MIN = [3, 7, 10, 22, 3], NAMES = ['Ұйымдастыру кезеңі', 'Білімді жаңарту', 'Жаңа білімді меңгеру', 'Практикалық тапсырмалар мен есептер', 'Рефлексия (кері байланыс)'];
+  const run = (t, o) => new TextRun(Object.assign({ text: t, font: F, size: SZ }, o || {}));
+  const paras = (txt, o) => { const L = String(txt || '').split(/\n/).map(x => x.trim()).filter(Boolean); if (!L.length) L.push(''); return L.map(l => new Paragraph({ spacing: { after: 40 }, children: [run(l, o)] })); };
+  const B = { style: BorderStyle.SINGLE, size: 6, color: '000000' }, borders = { top: B, bottom: B, left: B, right: B };
+  const cell = (w, kids, o) => new TableCell(Object.assign({ width: { size: w, type: WidthType.DXA }, borders, margins: { top: 60, bottom: 60, left: 100, right: 100 }, verticalAlign: VerticalAlign.TOP, children: kids }, o || {}));
+  const W0 = [2694, 8080], W1 = [1650, 3450, 2650, 1424, 1600];
+  const goals = (d.goals || []).filter(x => String(x || '').trim());
+  const goalP = [new Paragraph({ spacing: { after: 40 }, children: [run('Оқушылар:')] })].concat(goals.map((g, i) => new Paragraph({ spacing: { after: 40 }, children: [run((i + 1) + ') ' + String(g).replace(/^\s*\d+[).]\s*/, ''))] })));
+  const r0 = (a, kids) => new TableRow({ children: [cell(W0[0], [new Paragraph({ children: [run(a, { bold: true })] })]), cell(W0[1], kids)] });
+  const t0 = new Table({
+    width: { size: W0[0] + W0[1], type: WidthType.DXA }, columnWidths: W0, rows: [
+      r0('Бөлімі', paras(d.section)), r0('Педагогтің аты-жөні', paras(d.teacher)), r0('Күні', paras(d.date)), r0('Сыныбы', paras(d.grade)),
+      r0('Қатысушылар саны', paras('Қатысқандар: ___ / Қатыспағандар: ___')), r0('Сабақтың тақырыбы', paras(d.topic)),
+      r0('Оқу бағдарламасына сәйкес оқу мақсаты', paras(d.goal)), r0('Сабақтың мақсаты', goalP),
+      r0('Құндылықтарды дарыту', paras('')), r0('Апта дәйексөзі', paras(''))]
+  });
+  const hd = ['Кезең (уақыты, 45 мин)', 'Мұғалімнің іс-әрекеті', 'Оқушының іс-әрекеті', 'Бағалау', 'Ресурстар'];
+  const rows = [new TableRow({ tableHeader: true, children: hd.map((h, i) => cell(W1[i], [new Paragraph({ alignment: AlignmentType.CENTER, children: [run(h, { bold: true })] })])) })];
+  const st = d.stages || [];
+  for (let i = 0; i < 5; i++) {
+    const s = st[i] || {};
+    rows.push(new TableRow({ cantSplit: false, children: [cell(W1[0], [new Paragraph({ children: [run((i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин)', { bold: true })] })]), cell(W1[1], paras(s.teacher)), cell(W1[2], paras(s.student)), cell(W1[3], paras(s.assess)), cell(W1[4], paras(s.resources))] }));
+  }
+  rows.push(new TableRow({ children: [cell(W1[0], [new Paragraph({ children: [run('6. Үй тапсырмасы', { bold: true })] })]), cell(W1[1], paras(d.homework)), cell(W1[2], paras('Тапсырманы дәптерге орындайды')), cell(W1[3], paras('—')), cell(W1[4], paras('Оқулық, дәптер'))] }));
+  const t1 = new Table({ width: { size: 10774, type: WidthType.DXA }, columnWidths: W1, rows });
+  const doc = new Document({
+    styles: { default: { document: { run: { font: F, size: SZ } } } },
+    sections: [{ properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 566, bottom: 566, left: 566, right: 566 } } }, children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 160 }, children: [run('Қысқа мерзімді жоспар', { bold: true, size: 28 })] }), t0, new Paragraph({ spacing: { after: 120 }, children: [] }), t1] }]
+  });
+  return doc;
+}
+
 })();
 </script>
 
