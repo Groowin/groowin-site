@@ -1699,6 +1699,19 @@ html[data-bgs]:not([data-glass]) body::before{content:'';position:fixed;inset:0;
 .pj-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin:12px 0 22px}.pj-c{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;text-align:left;color:var(--ink);font:inherit;padding:0;cursor:pointer}.pj-c .im{aspect-ratio:4/3;background:var(--paper) center/cover no-repeat;display:grid;place-items:center;color:var(--mute);font-size:2rem}.pj-c .im.no{aspect-ratio:16/6}.pj-c .tx{padding:12px 14px 14px;display:grid;gap:4px}.pj-c b{font-weight:700}.pj-c small{color:var(--mute)}.pj-c p{margin:2px 0 0;font-size:.9rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.pj-c .bd{align-self:flex-start;font-size:.75rem;font-weight:700;padding:3px 9px;border-radius:99px;background:color-mix(in srgb,#D89E00 22%,transparent);color:#D89E00}.pj-ac{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 14px}.pj-ac button{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}.pj-ac .ok{background:var(--accent);border-color:var(--accent);color:#fff}.pj-ac .no{color:#E5484D;border-color:#E5484D}
 .pj-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.pj-top button.go{padding:11px 18px;border-radius:12px;border:0;background:var(--accent);color:#fff;font:inherit;font-weight:700;cursor:pointer}
 .pj-f{display:grid;gap:8px}.pj-f input[type=text],.pj-f textarea{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit}.pj-f img{max-width:100%;border-radius:12px}
+
+/* Материалдар: тегіс тор */
+#v-mats .mt-add{display:grid;gap:12px;padding:16px 18px}
+#v-mats .mtools{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:stretch;margin:0}
+#v-mats .mtools.lk{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) auto}
+#v-mats .mtools.up{grid-template-columns:auto minmax(0,1fr);align-items:center}
+#v-mats .mtools>input{width:100%!important;min-width:0;height:46px;box-sizing:border-box;border-radius:14px}
+#v-mats .mtools>button,#v-mats .mtools>label{height:46px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 18px;margin:0;white-space:nowrap;border-radius:14px}
+#v-mats .mtools .upl{background:#12A06B;border-color:#12A06B;color:#fff;font-weight:700}
+#v-mats .mtools .upl:hover{filter:brightness(1.06)}
+#v-mats .mt-add>p.sub{margin:0}
+@media (max-width:760px){#v-mats .mtools,#v-mats .mtools.lk,#v-mats .mtools.up{grid-template-columns:1fr}#v-mats .mtools.up span{font-size:.82rem}}
+.qu-row button{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer;justify-self:start}
 </style>
 </head>
 <body>
@@ -1821,7 +1834,6 @@ html[data-bgs]:not([data-glass]) body::before{content:'';position:fixed;inset:0;
       <button data-v="play" id="navPlay" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg><span class="nl">Ойын-сауық</span></button>
       <button data-v="rank" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20V11M12 20V4M18 20v-6"/></svg><span class="nl">Рейтинг</span></button>
       <button data-v="news"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg><span class="nl">Хабарландыру</span><span id="badge" hidden></span></button>
-      <button data-v="projects" id="navProjects"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3L16 12l4 4"/></svg><span>Жобалар</span></button>
       <button data-v="path" id="navPath" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span class="nl">Менің жолым</span></button>
       <button data-v="hw" id="navHw" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1zM8 6H6a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2M9 14l2 2 4-4"/></svg><span class="nl">Үй тапсырмасы</span><span id="hwBadge" hidden></span></button>
       <button data-v="room" id="navRoom"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/></svg><span class="nl">Оқу бөлмесі</span></button>
@@ -1923,8 +1935,8 @@ html[data-bgs]:not([data-glass]) body::before{content:'';position:fixed;inset:0;
       <div class="crumbs" id="mCrumbs"></div>
       <div class="mt-add">
         <div class="mtools"><input id="mFolder" placeholder="Жаңа папка атауы"><button class="out" id="mFolderAdd">Папка жасау</button><button class="out" id="mFolderPro" type="button">🎨 Түсімен, белгісімен</button></div>
-        <div class="mtools"><label class="out upl">⬆ Файл жүктеу<input type="file" id="mFile" multiple hidden></label><span class="sub" style="margin:0;font-size:.85rem">Бір файл 50 МБ-қа дейін. Файлды осы бетке сүйреп әкелуге де болады.</span></div>
-        <div class="mtools"><input id="mLTitle" placeholder="Сілтеме атауы (мысалы, PhET маятник)"><input id="mLUrl" placeholder="https://..."><button class="out" id="mLinkAdd">🔗 Сілтеме қосу</button></div>
+        <div class="mtools up"><label class="out upl">⬆ Файл жүктеу<input type="file" id="mFile" multiple hidden></label><span class="sub" style="margin:0;font-size:.85rem">Бір файл 50 МБ-қа дейін. Файлды осы бетке сүйреп әкелуге де болады.</span></div>
+        <div class="mtools lk"><input id="mLTitle" spellcheck="false" placeholder="Сілтеме атауы (мысалы, PhET маятник)"><input id="mLUrl" spellcheck="false" placeholder="https://..."><button class="out" id="mLinkAdd">🔗 Сілтеме қосу</button></div>
         <div class="mtools"><input id="mTextQ" placeholder="Файл ішінен іздеу (мысалы: Ньютон заңдары)" maxlength="80"><button class="out" id="mTextGo" type="button">🔎 Файл ішінен іздеу</button><button class="out" id="mTextIdx" type="button">⚙️ Іздеуге дайындау</button></div>
         <p class="sub" style="margin:2px 0 0;font-size:.82rem">PDF және Word (.docx) ішінен мәтін іздейді, қай бетте екенін көрсетеді. Жаңа жүктелген файл өзі дайындалады. Сканерленген (сурет) PDF-те мәтін болмайды.</p>
       </div>
@@ -3202,6 +3214,10 @@ function showRosterHome() { curRoster = null; $('rsHome').hidden = false; $('rsD
 async function loadRosters() {
   const { data } = await sb.from('rosters').select('*, roster_students(count)').order('created_at');
   const box = $('rsList'); box.replaceChildren();
+  try {
+    const pc = await sb.from('student_projects').select('id', { count: 'exact', head: true }).eq('status', 'pending');
+    if (!pc.error) { const t = el('button', 'hm-card'); t.type = 'button'; t.style.setProperty('--a', '#D97706'); t.style.setProperty('--b', '#FBBF24'); t.append(el('span', 'hm-ic', '🖼️'), el('strong', '', 'Оқушылар жобалары'), el('small', '', pc.count ? pc.count + ' жоба тексеруді күтуде' : 'Галерея'), el('em', '', 'Ашу →')); t.onclick = () => go('projects'); box.appendChild(t); }
+  } catch {}
   (data || []).forEach(r => {
     const pl = [['#3B6BFF', '#7CA0FF'], ['#10B981', '#6EE7B7'], ['#F59E0B', '#FCD34D'], ['#EC4899', '#F9A8D4'], ['#8B5CF6', '#C4B5FD'], ['#0EA5E9', '#67E8F9']][(box.children.length) % 6];
     const b = el('button', 'hm-card'); b.type = 'button'; b.style.setProperty('--a', pl[0]); b.style.setProperty('--b', pl[1]); const n = r.roster_students?.[0]?.count || 0; b.append(el('span', 'hm-ic', '👥'), el('strong', '', r.name), el('small', '', n + ' оқушы'), el('em', '', 'Ашу →'));
@@ -5350,6 +5366,7 @@ async function pjDel(p) {
 }
 function paintProjects(U) {
   const v = $('v-projects'); v.replaceChildren();
+  if (isStaff) { const bk = el('button', 'out', '← Менің тізімдерім'); bk.type = 'button'; bk.style.margin = '0 0 12px'; bk.onclick = () => go('rosters'); v.appendChild(bk); }
   const top = el('div', 'pj-top'), h = el('div'); h.append(el('h2', '', 'Жобалар'), el('p', 'sub', 'Оқушылардың өз жұмыстары. Мұғалім тексеріп жариялағаннан кейін барлығына көрінеді.')); top.appendChild(h);
   if (!isStaff) { const b = el('button', 'go', '＋ Жоба қосу'); b.type = 'button'; b.onclick = projectForm; top.appendChild(b); }
   v.appendChild(top);
@@ -7871,7 +7888,7 @@ addEventListener('message', async e => {
 // Supabase-тің ішкі callback-інде басқа сұраныс жіберуге болмайды (қатып қалады), сондықтан setTimeout
 // ===== Иконка стилі: бір басумен «минимал / эмодзи / түсті» =====
 const ICON_ST = ['line', 'emoji', 'color'];
-const NAV_EMO = { physics: '⚛️', math: '📐', play: '🎮', rank: '🏆', news: '🔔', favs: '⭐', lessons: '📚', mats: '📁', sites: '🌐', students: '🎓', rosters: '📋', classes: '🏫', teachers: '👩‍🏫', games: '🕹️', hw: '📝', path: '🧭', inbox: '📥' };
+const NAV_EMO = { physics: '⚛️', math: '📐', play: '🎮', rank: '🏆', news: '🔔', favs: '⭐', lessons: '📚', mats: '📁', sites: '🌐', students: '🎓', rosters: '📋', classes: '🏫', teachers: '👩‍🏫', games: '🕹️', hw: '📝', path: '🧭', inbox: '📥', plan: '🗓️', room: '🏠', projects: '🖼️' };
 const TOOL_EMO = { lessons: '🗓️', quiz: '❓', race: '🚀', cloud: '☁️', poll: '📊', ask: '💬', wheel: '🎡', potato: '🥔', random: '🎲', groups: '👥', timer: '⏱️', refl: '🪞', team: '🏅', games: '🎮', spy: '🕵️', detective: '🕵️', bet: '🎲' };
 const IC_PAL = ['#3B6BFF', '#1FA971', '#F28C28', '#E8559A', '#7C5CFF', '#19B5D6', '#E5484D', '#D89E00'];
 function applyIcons() {
@@ -8854,13 +8871,13 @@ function renderHome() {
   if (isStaff) {
     v.appendChild(el('h2', 'hm-h', 'Жылдам бастау'));
     const g = el('div', 'hm-grid'), more = el('div', 'hm-grid hm-more'); more.hidden = true;
-    const main = [['c-violet', 'Викторина', 'Телефонмен ойнайтын сұрақтар', 'quiz'], ['c-violet', 'Топқа бөлу', 'Сынып не өз тізімің', 'groups'], ['c-orange', 'Таймер', 'Үлкен экранға', 'timer'],
-      ['c-blue', 'Сабақ жоспары', 'Қадамдармен жүргіз', 'lessons'], ['c-blue', 'Материалдар', 'PDF, презентация, сілтеме', 'mats'], ['c-blue', 'Үй тапсырмасы', 'Беру мен бағалау', 'hw']];
-    const rest = [['c-orange', 'Кездейсоқ оқушы', 'Әділ таңдау', 'random'], ['c-violet', 'Ойын-сауық', 'Барлық ойын мен құрал', 'play'], ['c-blue', 'Оқу бөлмесі', 'Сыныптың ортақ бөлмесі', 'room']];
+    const main = [['c-violet', 'Викторина', 'Телефонмен ойнайтын сұрақтар', 'quiz'], ['c-violet', 'Топқа бөлу', 'Сынып не өз тізімің', 'groups'], ['c-violet', 'Таймер', 'Үлкен экранға', 'timer'],
+      ['c-orange', 'Сабақ жоспары', 'Қадамдармен жүргіз', 'lessons'], ['c-blue', 'Материалдар', 'PDF, презентация, сілтеме', 'mats'], ['c-orange', 'Үй тапсырмасы', 'Беру мен бағалау', 'hw']];
+    const rest = [['c-violet', 'Кездейсоқ оқушы', 'Әділ таңдау', 'random'], ['c-violet', 'Ойын-сауық', 'Барлық ойын мен құрал', 'play'], ['c-teal', 'Оқу бөлмесі', 'Сыныптың ортақ бөлмесі', 'room']];
     HM_ICON.upload = '<path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>';
     HM_ICON.pcfind = '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><circle cx="11" cy="9.5" r="2.2"/><path d="M12.7 11.2L15 13.5"/>';
     main.forEach(([c, t, d, k]) => g.appendChild(card(c, t, d, k, () => homeAct(k))));
-    g.appendChild(card('c-blue', 'Файл жүктеу', 'Фото, PDF — Материалдарға', 'upload', () => pickUpload()));
+    g.appendChild(card('c-green', 'Файл жүктеу', 'Фото, PDF — Материалдарға', 'upload', () => pickUpload()));
     if (window.showDirectoryPicker) g.appendChild(card('c-blue', 'Компьютерден іздеу', 'Рұқсат берген папкалардан', 'pcfind', () => pcSearch()));
     rest.forEach(([c, t, d, k]) => more.appendChild(card(c, t, d, k, () => homeAct(k))));
     const mb = el('button', 'hm-moreb', 'Барлық құралдар ▾'); mb.type = 'button'; mb.setAttribute('aria-expanded', 'false');
@@ -8870,7 +8887,7 @@ function renderHome() {
 
   } else {
     v.appendChild(el('h2', 'hm-h', 'Тапсырмалар'));
-    const g = el('div', 'hm-grid hm-two'); g.append(card('c-blue', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-violet', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g);
+    const g = el('div', 'hm-grid hm-two'); g.append(card('c-teal', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-orange', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g);
   }
 }
 function verifyAnim() {
@@ -9635,7 +9652,7 @@ function forcePw() {
   window.pcSearch = async function (query, auto) {
     if (!window.showDirectoryPicker) { notify('Бұл мүмкіндік компьютердегі Chrome немесе Edge-те ғана істейді', 'err'); return { error: 'Бұл браузер қолдамайды (Chrome/Edge керек)' }; }
     const m = modal('Компьютерден іздеу'), b = m.box, box = el('div', 'qu-pc');
-    b.append(el('div', 'sub', 'Рұқсат берген папкаларыңнан ғана іздейді. Файл өзі жүктелмейді, таңдап растайсың.'));
+    b.append(el('div', 'sub', 'Рұқсат берген папкаларыңнан ғана іздейді. Файл өзі жүктелмейді, таңдап растайсың. Атын екі рет бассаң, PDF мен сурет жаңа қойындыда ашылады.'));
     const list = el('div', 'qu-pc'), dirs = el('div', 'qu-pc'), qi = document.createElement('input'); qi.type = 'text'; qi.placeholder = 'Файл аты (мысалы: физика 7)'; qi.value = query || ''; qi.style.cssText = 'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit';
     const addb = el('button', '', '＋ Папкаға рұқсат беру'), sb1 = el('button', 'go', 'Іздеу'), up = el('button', 'go', 'Таңдалғандарды қосу'); addb.type = sb1.type = up.type = 'button'; up.hidden = true;
     const btn = el('div', 'qu-btns'); btn.append(addb, sb1); b.append(dirs, qi, btn, list, up);
@@ -9647,7 +9664,9 @@ function forcePw() {
       const toks = String(qi.value).trim().split(/\s+/).filter(Boolean), st = { n: 0 }; sb1.disabled = true; list.append(el('small', '', 'Іздеп жатыр…'));
       for (const { h } of all) { try { if ((await h.queryPermission({ mode: 'read' })) !== 'granted' && (await h.requestPermission({ mode: 'read' })) !== 'granted') continue; await scan(h, toks, found, st, 0); } catch {} }
       sb1.disabled = false; list.textContent = ''; if (!found.length) { list.append(el('small', '', 'Ештеңе табылмады.')); return 0; }
-      found.forEach((x, i) => { const l = el('div', 'qu-it'), c = document.createElement('input'); c.type = 'checkbox'; c.checked = i < 5; x.c = c; const d = el('div'); d.append(el('b', '', x.name), el('small', '', '📁 ' + x.dir)); l.append(c, d); l.onclick = e => { if (e.target !== c) c.checked = !c.checked; }; list.appendChild(l); });
+      found.forEach((x, i) => { const l = el('div', 'qu-it'), c = document.createElement('input'); c.type = 'checkbox'; c.checked = i < 5; x.c = c; const d = el('div'); d.append(el('b', '', x.name), el('small', '', '📁 ' + x.dir)); l.append(c, d); l.onclick = e => { if (e.target !== c) c.checked = !c.checked; };
+        l.title = 'Екі рет бас: PDF/суретті көру'; l.ondblclick = async e => { e.preventDefault(); try { const f = await x.h.getFile(), ex = (f.name.split('.').pop() || '').toLowerCase(); if (/^(pdf|jpe?g|png|webp|gif|txt)$/.test(ex)) window.open(URL.createObjectURL(f), '_blank'); else notify('Word/PowerPoint файлды браузерде көрсету мүмкін емес. Жүктегеннен кейін Материалдардан аша аласың.'); } catch { notify('Файл ашылмады', 'err'); } };
+        list.appendChild(l); });
       up.hidden = false; return found.length;
     }
     sb1.onclick = run; qi.onkeydown = e => { if (e.key === 'Enter') run(); };
