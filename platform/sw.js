@@ -1,5 +1,5 @@
 // Groowin SW v2: нашар желіге төзімді. Supabase сұраныстарына тиіспейді (оларды беттің өзі кэштейді).
-const V = 'groowin-v7';
+const V = 'groowin-v8';
 const CDN = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 const SHELL = ['./', 'index.html', 'play.html', 'config.js', 'manifest.json', 'icon-192.png', 'glass-bg.jpg', 
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js'];
@@ -43,11 +43,16 @@ self.addEventListener('fetch', e => {
 self.addEventListener('push', e => {
   let d = {}; try { d = e.data.json(); } catch { d = { title: 'Groowin', body: e.data ? e.data.text() : '' }; }
   e.waitUntil(Promise.all([
-    self.registration.showNotification(d.title || 'Groowin', { body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: d.tag || 'gw', renotify: true, silent: false, vibrate: [250, 120, 250, 120, 400], data: { url: d.url || './' } }),
+    self.registration.showNotification(d.title || 'Groowin', { body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: d.tag || 'gw', renotify: true, silent: false, vibrate: [250, 120, 250, 120, 400], actions: d.api ? [{ action: 'done', title: '✓ Орындалды' }, { action: 'snooze', title: '⏰ +10 мин' }] : [], data: { url: d.url || './', api: d.api || '', ak: d.ak || '' } }),
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(l => l.forEach(c => { if (c.visibilityState === 'visible') c.postMessage({ type: 'chime' }); }))
   ]));
 });
 self.addEventListener('notificationclick', e => {
   e.notification.close();
+  const dt = e.notification.data || {};
+  if ((e.action === 'done' || e.action === 'snooze') && dt.api) {
+    e.waitUntil(fetch(dt.api + '&act=' + e.action, { method: 'POST', headers: { Authorization: 'Bearer ' + dt.ak, apikey: dt.ak } }).catch(() => {}));
+    return;
+  }
   e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(l => { for (const c of l) if ('focus' in c) return c.focus(); return clients.openWindow((e.notification.data && e.notification.data.url) || './'); }));
 });
