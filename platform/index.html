@@ -9276,6 +9276,10 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       if (quiz && !quiz.questions.length) return { error: 'Викторинадағы сұрақтар жарамсыз.' };
       card_plan({ title: trunc(a.title, 120) || 'Сабақ жоспары', steps, quiz }); return { ok: true, note: 'Жоспар жобасы көрсетілді, растауын күтіп тұр.' };
     },
+    async open_qmj(a) {
+      window.qmjPrefill && window.qmjPrefill({ grade: trunc(a.grade, 10), subject: trunc(a.subject, 40), topic: trunc(a.topic, 160) });
+      const x = g('aiX'); if (x) x.click(); go('qmj'); return { ok: true, note: 'ҚМЖ беті ашылды, өрістер толтырылды. Мұғалім «ҚМЖ жаса» басады.' };
+    },
     async go_to(a) {
       const ok = ['home', 'mats', 'lessons', 'quiz', 'hw', 'students', 'rosters', 'news', 'account', 'play', 'sites']; if (!ok.includes(a.view)) return { error: 'Белгісіз бөлім' };
       if (!showProc) return { ok: true, note: 'Процесс көрсету өшірулі, бөлім ашылмады.' };
@@ -9308,7 +9312,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       return { t, img: null, o, c, s: 20 };
     }).filter(q => q.t && (q.k === 'num' || (q.o.filter(Boolean).length >= 2 && q.o[q.c])));
   }
-  const LABEL = { find_computer_files: 'Компьютерден іздеп жатыр…', add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+  const LABEL = { open_qmj: 'ҚМЖ бетін ашып жатыр…', find_computer_files: 'Компьютерден іздеп жатыр…', add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
 
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
@@ -9719,7 +9723,7 @@ function forcePw() {
 // ===== ҚМЖ жасау: ЖИ жоспар жазады, Word файл (A4, ақ-қара кесте) =====
 (() => {
   const css = document.createElement('style');
-  css.textContent = '.qm-w{max-width:900px;margin:0 auto;display:grid;gap:12px}.qm-w h1{margin:4px 0 0}.qm-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}.qm-f{display:grid;gap:4px}.qm-f label{font-weight:600;font-size:.9rem}.qm-f input,.qm-f textarea{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;width:100%;box-sizing:border-box}.qm-f textarea{min-height:70px;resize:vertical}.qm-tip{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:.72rem;font-weight:800;cursor:pointer;margin-left:6px;border:0}.qm-tx{font-size:.88rem;color:var(--mute);background:var(--paper);border-radius:10px;padding:8px 10px}.qm-b{display:flex;gap:8px;flex-wrap:wrap}.qm-b button{padding:11px 18px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}.qm-b .go{background:var(--accent);border-color:var(--accent);color:#fff}.qm-b button:disabled{opacity:.55}.qm-pv{background:#fff;color:#000;border:1px solid #888;border-radius:6px;padding:14px;font-family:"Times New Roman",serif;overflow-x:auto}.qm-pv h2{text-align:center;font-size:1.15rem;margin:0 0 10px;color:#000}.qm-pv table{border-collapse:collapse;width:100%;margin-bottom:14px;table-layout:fixed}body .qm-pv table{background:#fff;border-radius:0;overflow:visible;width:100%}body .qm-pv td,body .qm-pv th{border:1px solid #000!important;padding:5px 7px;vertical-align:top;font-size:.95rem;word-break:break-word;white-space:normal;text-align:left;color:#000;background:#fff;font-weight:400}body .qm-pv th{text-align:center;font-weight:700}.qm-lk{display:flex;flex-direction:column;gap:3px;margin-top:4px}.qm-ch{display:flex;align-items:flex-start;gap:4px;font-size:.85rem}.qm-ch a{color:#1a56db!important;text-decoration:underline;word-break:break-word}.qm-ch .x{border:0;background:transparent;color:#888;cursor:pointer;padding:0 2px;font-size:1rem;line-height:1}.qm-pv .l{font-weight:700!important}.qm-pv table.t1{min-width:680px}.qm-pv [contenteditable]{outline:0;min-height:1.2em;white-space:pre-wrap}.qm-pv [contenteditable]:focus{background:#fff8d6}.qm-pv .l{width:28%}@media(max-width:640px){.qm-pv{padding:8px}.qm-pv td,.qm-pv th{font-size:.8rem;padding:3px 4px}}';
+  css.textContent = '.qm-w{max-width:900px;margin:0 auto;display:grid;gap:12px;padding-bottom:96px}.qm-w h1{margin:4px 0 0}.qm-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}.qm-f{display:grid;gap:4px}.qm-f label{font-weight:600;font-size:.9rem}.qm-f input,.qm-f textarea{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;width:100%;box-sizing:border-box}.qm-f textarea{min-height:70px;resize:vertical}.qm-tip{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:.72rem;font-weight:800;cursor:pointer;margin-left:6px;border:0}.qm-tx{font-size:.88rem;color:var(--mute);background:var(--paper);border-radius:10px;padding:8px 10px}.qm-b{display:flex;gap:8px;flex-wrap:wrap}.qm-b button{padding:11px 18px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}.qm-b .go{background:var(--accent);border-color:var(--accent);color:#fff}.qm-b button:disabled{opacity:.55}.qm-pv{background:#fff;color:#000;border:1px solid #888;border-radius:6px;padding:14px;font-family:"Times New Roman",serif;overflow-x:auto}.qm-pv h2{text-align:center;font-size:1.15rem;margin:0 0 10px;color:#000}.qm-pv table{border-collapse:collapse;width:100%;margin-bottom:14px;table-layout:fixed}body .qm-pv table{background:#fff;border-radius:0;overflow:visible;width:100%}body .qm-pv td,body .qm-pv th{border:1px solid #000!important;padding:5px 7px;vertical-align:top;font-size:.95rem;word-break:break-word;white-space:normal;text-align:left;color:#000;background:#fff;font-weight:400}body .qm-pv th{text-align:center;font-weight:700}.qm-rg{display:block;margin-top:6px;border:1px solid #888;background:#fff;color:#000;border-radius:6px;font:inherit;font-size:.75rem;padding:2px 6px;cursor:pointer}.qm-nx{margin-top:14px;display:grid;gap:8px}.qm-nx h3{margin:0}.qm-lk{display:flex;flex-direction:column;gap:3px;margin-top:4px}.qm-ch{display:flex;align-items:flex-start;gap:4px;font-size:.85rem}.qm-ch a{color:#1a56db!important;text-decoration:underline;word-break:break-word}.qm-ch .x{border:0;background:transparent;color:#888;cursor:pointer;padding:0 2px;font-size:1rem;line-height:1}.qm-pv .l{font-weight:700!important}.qm-pv table.t1{min-width:680px}.qm-pv [contenteditable]{outline:0;min-height:1.2em;white-space:pre-wrap}.qm-pv [contenteditable]:focus{background:#fff8d6}.qm-pv .l{width:28%}@media(max-width:640px){.qm-pv{padding:8px}.qm-pv td,.qm-pv th{font-size:.8rem;padding:3px 4px}}';
   document.head.appendChild(css);
   const MIN = [3, 7, 10, 22, 3], NAMES = ['Ұйымдастыру кезеңі', 'Білімді жаңарту', 'Жаңа білімді меңгеру', 'Практикалық тапсырмалар мен есептер', 'Рефлексия (кері байланыс)'];
   const today = () => { const d = new Date(); return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear(); };
@@ -9778,7 +9782,7 @@ function forcePw() {
         const nz = t => String(t || '').replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').trim();
         const stg = j1.stages.slice(0, 3).concat(j2.stages.slice(0, 2)).map(x => ({ teacher: nz(x.teacher), student: nz(x.student), assess: nz(x.assess), resources: nz(x.resources) }));
         const goals = (j1.goals || []).slice(0, 4).map(x => String(x).replace(/^\s*\d+[).]\s*/, '').replace(/^\s*Оқушылар\s*:?\s*/i, '').trim()).filter(Boolean);
-        data = Object.assign({}, q, { goals, stages: stg, homework: 'Оқулық: ___ бет, №___.' + (j2.homework ? '\n' + nz(j2.homework) : '') });
+        data = Object.assign({}, q, { methods: d1.methods || [], goals, stages: stg, homework: 'Оқулық: ___ бет, №___.' + (j2.homework ? '\n' + nz(j2.homework) : '') });
         data.stages.forEach(o => { o.assess = tidy(o.assess); o.resources = tidy(o.resources); });
         addLinks(data, q.links, d1.methods, j2.picks, quizzes);
         let fixes = [];
@@ -9801,6 +9805,9 @@ function forcePw() {
       gen.disabled = false;
     };
   };
+  const NZ = t => String(t || '').replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').trim();
+  const shortName = () => { const nm = (meName || '').trim().split(/\s+/); return nm.length > 1 ? nm[0] + ' ' + nm[1][0] + '.' : (nm[0] || ''); };
+  window.qmjPrefill = o => { last = { teacher: ls.get('qmjName') || shortName(), date: today(), grade: o.grade || '', subject: o.subject || 'Физика', section: '', topic: o.topic || '', goal: '', links: '' }; };
   const BASE = 'https://groowin.github.io/groowin-site/platform/';
   const short = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
   function addLinks(d, raw, methods, picks, quizzes) {
@@ -9824,8 +9831,8 @@ function forcePw() {
     r0('Бөлімі', 'section', data.section); r0('Педагогтің аты-жөні', 'teacher', data.teacher); r0('Күні', 'date', data.date); r0('Сыныбы', 'grade', data.grade); r0('Қатысушылар саны', 0, 'Қатысқандар: ___ / Қатыспағандар: ___', false); r0('Сабақтың тақырыбы', 'topic', data.topic); r0('Оқу бағдарламасына сәйкес оқу мақсаты', 'goal', data.goal);
     r0('Сабақтың мақсаты', 'goals', (data.goals || []).map((x, i) => (i + 1) + ') ' + String(x).replace(/^\s*\d+[).]\s*/, '')).join('\n')); r0('Құндылықтарды дарыту', 'v1', ''); r0('Апта дәйексөзі', 'v2', '');
     const t1 = document.createElement('table'), hr = t1.insertRow(); ['Кезең (уақыты, 45 мин)', 'Мұғалімнің іс-әрекеті', 'Оқушының іс-әрекеті', 'Бағалау', 'Ресурстар'].forEach(h => { const c = document.createElement('th'); c.textContent = h; hr.appendChild(c); });
-    const S = [];
-    data.stages.forEach((s, i) => { const tr = t1.insertRow(), a = tr.insertCell(); a.innerHTML = '<b></b>'; a.firstChild.textContent = (i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин)'; const o = { teacher: ce(s.teacher), student: ce(s.student), assess: ce(s.assess), resources: ce(s.resources), links: (s.links || []).slice() }; S.push(o); ['teacher', 'student', 'assess'].forEach(k => tr.insertCell().appendChild(o[k])); const rc = tr.insertCell(); rc.appendChild(o.resources); const lk = el('div', 'qm-lk'); rc.appendChild(lk); const drawL = () => { lk.replaceChildren(); o.links.forEach((l, j) => { const a = document.createElement('a'); a.href = l.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = l.label; const x = el('button', 'x', '×'); x.type = 'button'; x.title = 'Алып тастау'; x.onclick = () => { o.links.splice(j, 1); drawL(); }; const w = el('span', 'qm-ch'); w.append(a, x); lk.appendChild(w); }); }; drawL(); });
+    const S = [], REG = [];
+    data.stages.forEach((s, i) => { const tr = t1.insertRow(), a = tr.insertCell(); a.innerHTML = '<b></b>'; a.firstChild.textContent = (i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин)'; const rg = el('button', 'qm-rg', '↻ Қайта жаса'); rg.type = 'button'; rg.onclick = () => regen(i, rg); a.appendChild(rg); REG[i] = rg; const o = { teacher: ce(s.teacher), student: ce(s.student), assess: ce(s.assess), resources: ce(s.resources), links: (s.links || []).slice() }; S.push(o); ['teacher', 'student', 'assess'].forEach(k => tr.insertCell().appendChild(o[k])); const rc = tr.insertCell(); rc.appendChild(o.resources); const lk = el('div', 'qm-lk'); rc.appendChild(lk); const drawL = () => { lk.replaceChildren(); o.links.forEach((l, j) => { const a = document.createElement('a'); a.href = l.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = l.label; const x = el('button', 'x', '×'); x.type = 'button'; x.title = 'Алып тастау'; x.onclick = () => { o.links.splice(j, 1); drawL(); }; const w = el('span', 'qm-ch'); w.append(a, x); lk.appendChild(w); }); }; drawL(); });
     const hw = t1.insertRow(), ha = hw.insertCell(); ha.innerHTML = '<b>6. Үй тапсырмасы</b>'; const HW = ce(data.homework); hw.insertCell().appendChild(HW); hw.insertCell().textContent = 'Тапсырманы дәптерге орындайды'; hw.insertCell().textContent = '—'; hw.insertCell().textContent = 'Оқулық, дәптер';
     t1.className = 't1';
     pv.append(t0, t1); box.appendChild(pv);
@@ -9835,11 +9842,45 @@ function forcePw() {
     box.appendChild(el('div', 'qm-tx', 'Кез келген ұяшықты басып өзгерте аласың. Өз ойын сілтемелерің болса, Материалдарға салып қой, содан аламын. Құндылық пен апта дәйексөзі бос қалады.'));
     const bt = el('div', 'qm-b'); bt.style.marginTop = '10px'; const dl = el('button', 'go', '⬇ Word-ке жүктеу'), re = el('button', '', '↻ Қайта жаса'); dl.type = re.type = 'button'; bt.append(dl, re); box.appendChild(bt);
     re.onclick = () => $('v-qmj').querySelector('.qm-b .go').click();
+    const rd0 = e => (e ? e.innerText : '').replace(/\u00a0/g, ' ').trim();
+    async function regen(i, btn) {
+      btn.disabled = true; btn.textContent = '⏳…';
+      try {
+        const ctx = S.map((o, k) => k === i ? '' : rd0(o.teacher).replace(/\s+/g, ' ').slice(0, 140)).join(' | ');
+        const d = await ai({ mode: 'qmj', turn: false, qmj: { part: 6, stage: i + 1, avoid: [(data.methods || [])[i] || ''], subject: data.subject, grade: data.grade, topic: data.topic, goal: data.goal, ctx } });
+        const j = jparse(d.message.content), x = j.stage || (Array.isArray(j.stages) ? j.stages[0] : null); if (!x) throw new Error('Бос жауап');
+        const o = S[i]; o.teacher.textContent = NZ(x.teacher); o.student.textContent = NZ(x.student); o.assess.textContent = tidy(NZ(x.assess)); o.resources.textContent = tidy(NZ(x.resources));
+        if (Array.isArray(d.methods)) { data.methods = data.methods || []; data.methods[i] = d.methods[i]; }
+        notify((i + 1) + '-кезең жаңартылды');
+      } catch (e) { notify(e.message || 'Қате', 'err'); }
+      btn.disabled = false; btn.textContent = '↻ Қайта жаса';
+    }
+    const draftOf = () => { sync(); return JSON.stringify({ goals: data.goals, stages: data.stages.map((o, i) => ({ name: NAMES[i], teacher: String(o.teacher).slice(0, 1100), assess: String(o.assess).slice(0, 300), resources: String(o.resources).slice(0, 200) })), homework: data.homework }).slice(0, 9500); };
+    const nx = el('div', 'qm-nx'); nx.append(el('h3', '', 'Келесі қадам'), el('div', 'qm-tx', 'ҚМЖ дайын болды. Керек болса, соған сай мынаны да жасай аламын:'));
+    const nb = el('div', 'qm-b'), bP = el('button', '', '📊 Презентация (PowerPoint)'), bW = el('button', '', '📝 Жұмыс парағы (2 нұсқа)'), bL = el('button', '', '📚 Groowin сабақ жоспары');
+    [bP, bW, bL].forEach(b => { b.type = 'button'; nb.appendChild(b); });
+    const run2 = (b, txt, fn) => async () => { const o = b.textContent; b.disabled = true; b.textContent = '⏳ ' + txt + '…'; try { await fn(); } catch (e) { notify(e.message || 'Қате', 'err'); } b.disabled = false; b.textContent = o; };
+    bP.onclick = run2(bP, 'Жасап жатыр', async () => {
+      const dr = draftOf(), d = await ai({ mode: 'qmj', turn: false, qmj: { part: 4, subject: data.subject, grade: data.grade, topic: data.topic, draft: dr } });
+      const j = jparse(d.message.content); if (!Array.isArray(j.slides) || j.slides.length < 5) throw new Error('Слайдтар шықпады, қайта бас');
+      const P = await loadPptx(), blob = await pptBuild(P, data, j.slides), fn = ('Презентация ' + (data.topic || '')).replace(/[\\/:*?"<>|]/g, '').slice(0, 60) + '.pptx';
+      dlBlob(blob, fn); saveMat(blob, fn, data.date, 'application/vnd.openxmlformats-officedocument.presentationml.presentation').then(ok => notify(ok ? 'Презентация Материалдарға да сақталды' : 'Файл жүктелді'));
+    });
+    bW.onclick = run2(bW, 'Жасап жатыр', async () => {
+      const dr = draftOf(), d = await ai({ mode: 'qmj', turn: false, qmj: { part: 5, subject: data.subject, grade: data.grade, topic: data.topic, draft: dr } });
+      const j = jparse(d.message.content); if (!Array.isArray(j.variants) || j.variants.length < 2) throw new Error('Жұмыс парағы шықпады, қайта бас');
+      const D = await loadDocx(), blob = await D.Packer.toBlob(wsBuild(D, data, j.variants)), fn = ('Жұмыс парағы ' + (data.topic || '')).replace(/[\\/:*?"<>|]/g, '').slice(0, 60) + '.docx';
+      dlBlob(blob, fn); saveMat(blob, fn, data.date).then(ok => notify(ok ? 'Жұмыс парағы Материалдарға да сақталды' : 'Файл жүктелді'));
+    });
+    bL.onclick = () => { sync(); const t = 'Мына ҚМЖ негізінде Groowin сабақ жоспарының жобасын жаса (кезеңдер мен уақыты сақталсын, таймер қос). Тақырып: ' + data.topic + ', ' + data.grade + '-сынып, ' + data.subject + '. Кезеңдер:\n' + data.stages.map((o, i) => (i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин): ' + String(o.teacher).replace(/\s+/g, ' ').slice(0, 260)).join('\n'); if (window.aiAsk) window.aiAsk(t); };
+    nx.append(nb, el('div', 'qm-tx', 'Өз ойын сілтемелерің болса, Материалдарға салып қой, содан аламын. Құндылық пен апта дәйексөзі бос қалады.'));
+    box.appendChild(nx);
     const rd = e => (e ? e.innerText : '').replace(/ /g, ' ').trim();
+    const sync = () => Object.assign(data, { section: rd(E.section), teacher: rd(E.teacher), date: rd(E.date), grade: rd(E.grade), topic: rd(E.topic), goal: rd(E.goal), goals: rd(E.goals).split(/\n/).map(x => x.trim()).filter(Boolean), homework: rd(HW), stages: S.map(o => ({ teacher: rd(o.teacher), student: rd(o.student), assess: rd(o.assess), resources: rd(o.resources), links: o.links })) });
     dl.onclick = async () => {
       dl.disabled = true; dl.textContent = 'Дайындалып жатыр…';
       try {
-        Object.assign(data, { section: rd(E.section), teacher: rd(E.teacher), date: rd(E.date), grade: rd(E.grade), topic: rd(E.topic), goal: rd(E.goal), goals: rd(E.goals).split(/\n/).map(x => x.trim()).filter(Boolean), homework: rd(HW), stages: S.map(o => ({ teacher: rd(o.teacher), student: rd(o.student), assess: rd(o.assess), resources: rd(o.resources), links: o.links })) });
+        sync(); void ({ section: rd(E.section), teacher: rd(E.teacher), date: rd(E.date), grade: rd(E.grade), topic: rd(E.topic), goal: rd(E.goal), goals: rd(E.goals).split(/\n/).map(x => x.trim()).filter(Boolean), homework: rd(HW), stages: S.map(o => ({ teacher: rd(o.teacher), student: rd(o.student), assess: rd(o.assess), resources: rd(o.resources), links: o.links })) });
         const D = await loadDocx(), blob = await D.Packer.toBlob(qmjBuild(D, data));
         const fn = ('ҚМЖ ' + (data.topic || 'жоспар')).replace(/[\\/:*?"<>|]/g, '').slice(0, 60) + '.docx';
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
@@ -9853,11 +9894,68 @@ function forcePw() {
     if (window.docx) return Promise.resolve(window.docx);
     return dp || (dp = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js'; s.onload = () => window.docx ? res(window.docx) : rej(new Error('docx жүктелмеді')); s.onerror = () => { dp = null; rej(new Error('Word кітапханасы жүктелмеді, интернетті тексер')); }; document.head.appendChild(s); }));
   }
-  async function saveMat(blob, fn, date) {
+  const dlBlob = (blob, fn) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000); };
+  let pp = null;
+  function loadPptx() {
+    if (window.PptxGenJS) return Promise.resolve(window.PptxGenJS);
+    return pp || (pp = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'; s.onload = () => window.PptxGenJS ? res(window.PptxGenJS) : rej(new Error('PowerPoint кітапханасы жүктелмеді')); s.onerror = () => { pp = null; rej(new Error('PowerPoint кітапханасы жүктелмеді, интернетті тексер')); }; document.head.appendChild(s); }));
+  }
+  function pptBuild(P, d, slides) {
+    const p = new P(); p.layout = 'LAYOUT_16x9'; p.title = 'Презентация: ' + (d.topic || '');
+    const NAVY = '1F2A5A', ACC = '4F6BED', INK = '1B1F33', MUTE = '6B7280', F = 'Arial';
+    slides.slice(0, 14).forEach((x, i) => {
+      const s = p.addSlide(), bl = (Array.isArray(x.bullets) ? x.bullets : []).map(b => String(b).replace(/^\s*[–—•-]\s*/, '')).filter(Boolean).slice(0, 7), vis = String(x.visual || '').trim();
+      if (i === 0) {
+        s.background = { color: NAVY };
+        s.addShape('rect', { x: 0.6, y: 2.1, w: 0.12, h: 1.5, fill: { color: ACC } });
+        s.addText(String(x.title || d.topic || ''), { x: 0.95, y: 1.9, w: 8.4, h: 1.7, fontFace: F, fontSize: 34, bold: true, color: 'FFFFFF', valign: 'middle', fit: 'shrink' });
+        s.addText(bl.join('  ·  ') || (d.subject + ', ' + d.grade + '-сынып'), { x: 0.95, y: 3.7, w: 8.4, h: 0.6, fontFace: F, fontSize: 18, color: 'C7D0FF' });
+        s.addText((d.teacher ? d.teacher + '  ·  ' : '') + (d.date || ''), { x: 0.95, y: 4.9, w: 8.4, h: 0.4, fontFace: F, fontSize: 12, color: '9FB0F5' });
+      } else {
+        s.background = { color: 'FFFFFF' };
+        s.addShape('rect', { x: 0, y: 0, w: 10, h: 0.12, fill: { color: ACC } });
+        s.addText(String(x.title || ''), { x: 0.6, y: 0.35, w: 8.8, h: 0.8, fontFace: F, fontSize: 28, bold: true, color: NAVY, valign: 'middle', fit: 'shrink' });
+        const w = vis ? 5.9 : 8.8;
+        s.addText(bl.map(b => ({ text: b, options: { bullet: { indent: 18 }, breakLine: true, paraSpaceAfter: 8 } })), { x: 0.6, y: 1.3, w, h: 3.7, fontFace: F, fontSize: bl.length > 5 ? 18 : 22, color: INK, valign: 'top', fit: 'shrink' });
+        if (vis) {
+          s.addShape('rect', { x: 6.8, y: 1.4, w: 2.7, h: 3.4, fill: { color: 'F3F5FF' }, line: { color: ACC, width: 1.25, dashType: 'dash' } });
+          s.addText('Сурет: ' + vis, { x: 6.9, y: 1.5, w: 2.5, h: 3.2, fontFace: F, fontSize: 13, italic: true, color: MUTE, align: 'center', valign: 'middle', fit: 'shrink' });
+        }
+        s.addText('Groowin  ·  ' + (d.topic || ''), { x: 0.6, y: 5.2, w: 7.5, h: 0.3, fontFace: F, fontSize: 10, color: MUTE });
+        s.addText(String(i + 1), { x: 8.9, y: 5.2, w: 0.6, h: 0.3, fontFace: F, fontSize: 10, color: MUTE, align: 'right' });
+      }
+      if (x.note) s.addNotes(String(x.note));
+    });
+    return p.write({ outputType: 'blob' });
+  }
+  function wsBuild(D, d, vars) {
+    const { Document, Paragraph, TextRun, AlignmentType, PageBreak } = D, F = 'Times New Roman';
+    const R = (t, o) => new TextRun(Object.assign({ text: String(t), font: F, size: 24 }, o || {}));
+    const P = (t, o, po) => new Paragraph(Object.assign({ spacing: { after: 80 }, children: [R(t, o)] }, po || {}));
+    const kids = [];
+    vars.slice(0, 2).forEach((v, vi) => {
+      if (vi) kids.push(new Paragraph({ children: [new PageBreak()] }));
+      kids.push(P('Жұмыс парағы. ' + (vi + 1) + '-нұсқа', { bold: true, size: 30 }, { alignment: AlignmentType.CENTER, spacing: { after: 120 } }));
+      kids.push(P('Тақырып: ' + (d.topic || ''), { italics: true }, { alignment: AlignmentType.CENTER }));
+      kids.push(P('Аты-жөні: ______________________________   Сынып: ______   Күні: ____________', {}, { spacing: { after: 200 } }));
+      (v.tasks || []).forEach((t, i) => {
+        kids.push(P((i + 1) + '. ' + String(t.text || '') + '  (' + (t.points || 1) + ' балл)', { bold: true }, { spacing: { before: 120, after: 60 } }));
+        (Array.isArray(t.options) ? t.options : []).forEach(o => kids.push(P(String(o), {}, { indent: { left: 400 }, spacing: { after: 30 } })));
+        if (t.type === 'calc') { kids.push(P('Берілгені:', {}, { indent: { left: 400 } })); kids.push(P('Шешуі:', {}, { indent: { left: 400 } })); for (let k = 0; k < 4; k++) kids.push(P('', {}, { indent: { left: 400 } })); kids.push(P('Жауабы: ____________', {}, { indent: { left: 400 } })); }
+        else if (t.type === 'match') kids.push(P('Жауабы: 1 – ___, 2 – ___, 3 – ___, 4 – ___', {}, { indent: { left: 400 } }));
+        else kids.push(P('Жауабы: ____________', {}, { indent: { left: 400 } }));
+      });
+    });
+    kids.push(new Paragraph({ children: [new PageBreak()] }));
+    kids.push(P('Мұғалімге: жауаптары мен баға', { bold: true, size: 28 }, { alignment: AlignmentType.CENTER, spacing: { after: 160 } }));
+    vars.slice(0, 2).forEach((v, vi) => { kids.push(P((vi + 1) + '-нұсқа', { bold: true }, { spacing: { before: 160 } })); (v.tasks || []).forEach((t, i) => kids.push(P((i + 1) + '. ' + String(t.answer || '') + '  [' + (t.points || 1) + ' балл]'))); });
+    return new Document({ styles: { default: { document: { run: { font: F, size: 24 } } } }, sections: [{ properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 850, bottom: 850, left: 1000, right: 1000 } } }, children: kids }] });
+  }
+  async function saveMat(blob, fn, date, mimeIn) {
     try {
       const nm = (date || today()).slice(0, 40); let f = (await sb.from('mat_folders').select('id').eq('name', nm).is('parent_id', null).limit(1)).data;
       let fid = f && f[0] && f[0].id; if (!fid) { const r = await sb.from('mat_folders').insert({ name: nm, parent_id: null }).select().single(); if (r.error) return false; fid = r.data.id; }
-      const path = meId + '/' + crypto.randomUUID() + '.docx', mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      const ext = (fn.match(/\.(\w+)$/) || [, 'docx'])[1], path = meId + '/' + crypto.randomUUID() + '.' + ext, mime = mimeIn || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       const up = await sb.storage.from('materials').upload(path, blob, { contentType: mime }); if (up.error) return false;
       const ins = await sb.from('mat_items').insert({ kind: 'file', title: fn.slice(0, 120), storage_path: path, mime, size: blob.size, folder_id: fid }); if (ins.error) { await sb.storage.from('materials').remove([path]); return false; }
       try { if (curView === 'mats') loadMats(); } catch { } return true;
