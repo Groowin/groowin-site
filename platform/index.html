@@ -521,6 +521,7 @@ body.in-app hr{border-color:var(--line)}
 /* ===== Ойын-сауық / викторина ===== */
 body:not(.in-app) #sndBtn{display:none}
 #sndBtn{position:fixed;top:14px;right:62px;z-index:40}
+#webBtn{position:fixed;top:14px;right:158px;z-index:40}#webBtn[hidden]{display:none}body:not(.in-app) #webBtn{display:none}
 .sfxToggle.off .w{display:none}
 .plc .gi{color:var(--accent)}
 .plc{min-height:130px}
@@ -1653,6 +1654,7 @@ select option:disabled{color:#8a93b4}
   body.in-app #fsBtn,body.in-app .side .me #themeBtn{display:none!important}
   body.in-app #srchBtn{top:10px;right:60px}
   body.in-app #sndBtn{top:10px;right:108px}
+  body.in-app #webBtn{top:10px;right:156px}
   /* ЖИ батырмасы төменгі мәзірге көшті */
   body.in-app #aiFab{display:none!important}
   body.in-app #aiNudge{bottom:calc(76px + env(safe-area-inset-bottom));right:12px}
@@ -1723,6 +1725,7 @@ html[data-bgs]:not([data-glass]) body::before{content:'';position:fixed;inset:0;
 <nav id="tabbar" aria-label="Негізгі мәзір" hidden></nav>
 <button class="icon-btn" id="fsBtn" aria-label="Толық экран"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
 <button class="icon-btn sfxToggle" id="sndBtn" type="button" aria-label="Дыбыс" aria-pressed="true"></button>
+<button class="icon-btn" id="webBtn" type="button" aria-label="Web тақта" title="Web тақта қосулы" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><i style="position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:#22C55E;box-shadow:0 0 0 2px var(--card)"></i></button>
 <button class="icon-btn" id="srchBtn" type="button" aria-label="Іздеу" title="Іздеу (Ctrl+K)" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
 <div id="qzHost" hidden></div>
 <div id="stage" hidden><button class="icon-btn" id="stClose" aria-label="Жабу" style="position:fixed;top:14px;right:14px;font-size:1.2rem">✕</button><div id="stageBody"></div></div>
@@ -7993,6 +7996,7 @@ async function qrApprove(id) {
   const ok = await ask('Үлкен экранға осы аккаунтпен кіруге рұқсат бересің бе? Тек өзің көріп тұрған экранға ғана рұқсат бер. Бейтаныс QR болса, «Жоқ» бас.', 'Рұқсат беру', 'Жоқ');
   if (!ok) { sb.rpc('qr_deny', { p_id: id }); return; }
   const { data } = await sb.rpc('qr_approve', { p_id: id });
+  if (data === 'ok') { setTimeout(webRefresh, 3500); setTimeout(webRefresh, 9000); }
   notify(data === 'ok' ? 'Рұқсат берілді, экран кіріп жатыр.' : data === 'expired' ? 'QR ескірді. Экранда жаңасы шығады, қайта сканерле.' : data === 'used' ? 'Бұл QR қолданылып қойған.' : 'Қате: ' + (data || 'байланыс жоқ'), data === 'ok' ? '' : 'err'); qrDevices();
 }
 async function qrDevices() {
@@ -8018,6 +8022,20 @@ async function qrScan() {
 }
 (() => { try { const q = new URLSearchParams(location.search).get('qr'); if (q && /^[0-9a-f-]{36}$/i.test(q)) { sessionStorage.setItem('gwqrp', q); history.replaceState(null, '', location.pathname); } } catch { } })();
 function qrCheckPending() { try { const q = sessionStorage.getItem('gwqrp'); if (q) { sessionStorage.removeItem('gwqrp'); setTimeout(() => qrApprove(q), 700); } } catch { } }
+// ===== Web тақта белгісі (телефонда): QR арқылы кірген тақта бар болса көрінеді =====
+let webDev = [];
+async function webRefresh() {
+  const b = $('webBtn'); if (!b) return;
+  if (qrGet() || !meId || document.hidden) { if (qrGet() || !meId) b.hidden = true; return; }
+  try { const { data } = await sb.rpc('qr_devices'); webDev = Array.isArray(data) ? data : []; } catch { webDev = []; }
+  b.hidden = !webDev.length; b.title = webDev.length ? 'Web тақта қосулы: ' + (webDev[0].device || '') : '';
+}
+$('webBtn').onclick = async () => {
+  const ok = await ask('Тақтадан шығып кетейін бе?', 'Иә', 'Жоқ'); if (!ok) return;
+  for (const d of webDev) { try { await sb.rpc('qr_revoke', { p_id: d.id }); } catch { } }
+  webDev = []; $('webBtn').hidden = true; notify('Тақтадан шығару жіберілді (10 секундқа дейін).');
+};
+setInterval(webRefresh, 20000); setTimeout(webRefresh, 4000); document.addEventListener('visibilitychange', () => { if (!document.hidden) webRefresh(); });
 $('qrLoginBtn').onclick = qrStart; $('qrBack').onclick = qrClose; $('qrScan').onclick = qrScan;
 
 
@@ -9281,7 +9299,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       const x = g('aiX'); if (x) x.click(); go('qmj'); return { ok: true, note: 'ҚМЖ беті ашылды, өрістер толтырылды. Мұғалім «ҚМЖ жаса» басады.' };
     },
     async go_to(a) {
-      const ok = ['home', 'mats', 'lessons', 'quiz', 'hw', 'students', 'rosters', 'news', 'account', 'play', 'sites']; if (!ok.includes(a.view)) return { error: 'Белгісіз бөлім' };
+      const ok = ['home', 'mats', 'lessons', 'quiz', 'hw', 'students', 'rosters', 'news', 'account', 'play', 'sites', 'qmj', 'projects', 'plan']; if (!ok.includes(a.view)) return { error: 'Белгісіз бөлім' };
       if (!showProc) return { ok: true, note: 'Процесс көрсету өшірулі, бөлім ашылмады.' };
       if (a.view === 'quiz') go('play'); else go(a.view); return { ok: true };
     }
@@ -9723,7 +9741,7 @@ function forcePw() {
 // ===== ҚМЖ жасау: ЖИ жоспар жазады, Word файл (A4, ақ-қара кесте) =====
 (() => {
   const css = document.createElement('style');
-  css.textContent = '.qm-w{max-width:900px;margin:0 auto;display:grid;gap:12px;padding-bottom:96px}.qm-w h1{margin:4px 0 0}.qm-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}.qm-f{display:grid;gap:4px}.qm-f label{font-weight:600;font-size:.9rem}.qm-f input,.qm-f textarea{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;width:100%;box-sizing:border-box}.qm-f textarea{min-height:70px;resize:vertical}.qm-tip{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:.72rem;font-weight:800;cursor:pointer;margin-left:6px;border:0}.qm-tx{font-size:.88rem;color:var(--mute);background:var(--paper);border-radius:10px;padding:8px 10px}.qm-b{display:flex;gap:8px;flex-wrap:wrap}.qm-b button{padding:11px 18px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}.qm-b .go{background:var(--accent);border-color:var(--accent);color:#fff}.qm-b button:disabled{opacity:.55}.qm-pv{background:#fff;color:#000;border:1px solid #888;border-radius:6px;padding:14px;font-family:"Times New Roman",serif;overflow-x:auto}.qm-pv h2{text-align:center;font-size:1.15rem;margin:0 0 10px;color:#000}.qm-pv table{border-collapse:collapse;width:100%;margin-bottom:14px;table-layout:fixed}body .qm-pv table{background:#fff;border-radius:0;overflow:visible;width:100%}body .qm-pv td,body .qm-pv th{border:1px solid #000!important;padding:5px 7px;vertical-align:top;font-size:.95rem;word-break:break-word;white-space:normal;text-align:left;color:#000;background:#fff;font-weight:400}body .qm-pv th{text-align:center;font-weight:700}.qm-rg{display:block;margin-top:6px;border:1px solid #888;background:#fff;color:#000;border-radius:6px;font:inherit;font-size:.75rem;padding:2px 6px;cursor:pointer}.qm-nx{margin-top:14px;display:grid;gap:8px}.qm-nx h3{margin:0}.qm-lk{display:flex;flex-direction:column;gap:3px;margin-top:4px}.qm-ch{display:flex;align-items:flex-start;gap:4px;font-size:.85rem}.qm-ch a{color:#1a56db!important;text-decoration:underline;word-break:break-word}.qm-ch .x{border:0;background:transparent;color:#888;cursor:pointer;padding:0 2px;font-size:1rem;line-height:1}.qm-pv .l{font-weight:700!important}.qm-pv table.t1{min-width:680px}.qm-pv [contenteditable]{outline:0;min-height:1.2em;white-space:pre-wrap}.qm-pv [contenteditable]:focus{background:#fff8d6}.qm-pv .l{width:28%}@media(max-width:640px){.qm-pv{padding:8px}.qm-pv td,.qm-pv th{font-size:.8rem;padding:3px 4px}}';
+  css.textContent = '.qm-w{max-width:900px;margin:0 auto;display:grid;gap:12px;padding-bottom:96px}.qm-w h1{margin:4px 0 0}.qm-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.qm-f{display:grid;gap:4px}.qm-f label{font-weight:600;font-size:.9rem}.qm-f input,.qm-f textarea{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;width:100%;box-sizing:border-box}.qm-f textarea{min-height:70px;resize:vertical}.qm-tip{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:.72rem;font-weight:800;cursor:pointer;margin-left:6px;border:0}.qm-tx{font-size:.88rem;color:var(--mute);background:var(--paper);border-radius:10px;padding:8px 10px}.qm-b{display:flex;gap:8px;flex-wrap:wrap}.qm-b button{padding:11px 18px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}.qm-b .go{background:var(--accent);border-color:var(--accent);color:#fff}.qm-b button:disabled{opacity:.55}.qm-pv{background:#fff;color:#000;border:1px solid #888;border-radius:6px;padding:14px;font-family:"Times New Roman",serif;overflow-x:auto}.qm-pv h2{text-align:center;font-size:1.15rem;margin:0 0 10px;color:#000}.qm-pv table{border-collapse:collapse;width:100%;margin-bottom:14px;table-layout:fixed}body .qm-pv table{background:#fff;border-radius:0;overflow:visible;width:100%}body .qm-pv td,body .qm-pv th{border:1px solid #000!important;padding:5px 7px;vertical-align:top;font-size:.95rem;word-break:break-word;white-space:normal;text-align:left;color:#000;background:#fff;font-weight:400}body .qm-pv th{text-align:center;font-weight:700}.qm-hero{min-height:0!important;cursor:default;padding:22px 22px 20px}.qm-hero:hover{transform:none}.qm-hero strong{font-size:1.5rem}.qm-card{border-radius:24px;border:1px solid var(--line);background:var(--card);overflow:hidden;box-shadow:0 14px 34px -26px var(--a)}.qm-card>h3{margin:0;padding:12px 18px;color:#fff;font-size:1rem;background:linear-gradient(145deg,var(--a),var(--b))}.qm-card>.in{padding:14px 18px 16px;display:grid;gap:12px}.qm-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.qm-t{min-height:96px!important}.qm-gen{min-height:104px!important;grid-column:1/-1}.qm-tiles .hm-card:disabled{opacity:.6;cursor:wait}.qm-rg{display:block;margin-top:6px;border:1px solid #888;background:#fff;color:#000;border-radius:6px;font:inherit;font-size:.75rem;padding:2px 6px;cursor:pointer}.qm-nx{margin-top:14px;display:grid;gap:8px}.qm-nx h3{margin:0}.qm-lk{display:flex;flex-direction:column;gap:3px;margin-top:4px}.qm-ch{display:flex;align-items:flex-start;gap:4px;font-size:.85rem}.qm-ch a{color:#1a56db!important;text-decoration:underline;word-break:break-word}.qm-ch .x{border:0;background:transparent;color:#888;cursor:pointer;padding:0 2px;font-size:1rem;line-height:1}.qm-pv .l{font-weight:700!important}.qm-pv table.t1{min-width:680px}.qm-pv [contenteditable]{outline:0;min-height:1.2em;white-space:pre-wrap}.qm-pv [contenteditable]:focus{background:#fff8d6}.qm-pv .l{width:28%}@media(max-width:640px){.qm-pv{padding:8px}.qm-pv td,.qm-pv th{font-size:.8rem;padding:3px 4px}}';
   document.head.appendChild(css);
   const MIN = [3, 7, 10, 22, 3], NAMES = ['Ұйымдастыру кезеңі', 'Білімді жаңарту', 'Жаңа білімді меңгеру', 'Практикалық тапсырмалар мен есептер', 'Рефлексия (кері байланыс)'];
   const today = () => { const d = new Date(); return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear(); };
@@ -9740,27 +9758,22 @@ function forcePw() {
   window.renderQmj = function () {
     const v = $('v-qmj'); v.replaceChildren(); const w = el('div', 'qm-w'); v.appendChild(w);
     const back = el('button', 'go', '← Басты бет'); back.type = 'button'; back.style.cssText = 'width:auto;margin:0;justify-self:start;padding:8px 14px;background:transparent;color:var(--ink);border:1px solid var(--line)'; back.onclick = () => go('home');
-    w.append(back, el('h1', '', 'ҚМЖ жасау'), el('div', 'qm-tx', 'Мақсат пен тақырыпты жаз, ЖИ қысқа мерзімді жоспарды жазады. Құндылық пен апта дәйексөзі бос қалады, оны өзің толтырасың.'));
+    w.append(back);
     const nm = (meName || '').trim().split(/\s+/); const short = nm.length > 1 ? nm[0] + ' ' + nm[1][0] + '.' : (nm[0] || '');
     const fT = inp(last ? last.teacher : (ls.get('qmjName') || short)), fD = inp(last ? last.date : today()), fG = inp(last ? last.grade : '', '9'), fS = inp(last ? last.subject : 'Физика'), fSec = inp(last ? last.section : '', 'мысалы: Динамика негіздері'), fTop = inp(last ? last.topic : '', 'Дененің салмағы. Салмақсыздық');
     const fGoal = document.createElement('textarea'); fGoal.value = last ? last.goal : ''; fGoal.placeholder = 'Бағдарламадағы оқу мақсатын өзің жаз. Бос қалдырсаң, кестеде бос болады.';
     const fLn = document.createElement('textarea'); fLn.value = last ? last.links : ''; fLn.placeholder = 'Әр жолға біреуі. Мысалы:\n5: https://forms.gle/...  (5 = кезең нөмірі)\nТопқа бөлу: https://...';
-    const free = document.createElement('textarea'); free.placeholder = 'Мысалы: 9-сынып, физика, дененің салмағы, 12 қараша';
-    const g = el('div', 'qm-g'); g.append(field('Аты-жөні', fT), field('Күні', fD), field('Сынып', fG), field('Пән', fS), field('Бөлім', fSec), field('Сабақтың тақырыбы', fTop));
-    const fb = el('button', '', 'Өрістерді толтыр'); fb.type = 'button';
-    fb.onclick = async () => {
-      const t = free.value.trim(); if (!t) return notify('Алдымен бірнәрсе жаз');
-      fb.disabled = true; fb.textContent = 'Оқып жатыр…';
-      try {
-        const d = await ai({ turn: true, messages: [{ role: 'user', content: 'Мына мәтіннен өрістерді ал және тек JSON қайтар, құрал шақырма: {"grade":"","subject":"","topic":"","section":"","date":""}. Белгісіз өрісті бос қалдыр. Мәтін: ' + t }] });
-        const j = jparse(d.message.content); if (j.grade) fG.value = j.grade; if (j.subject) fS.value = j.subject; if (j.topic) fTop.value = j.topic; if (j.section) fSec.value = j.section; if (j.date) fD.value = j.date;
-      } catch (e) { notify(e.message || 'Қате', 'err'); }
-      fb.disabled = false; fb.textContent = 'Өрістерді толтыр';
-    };
-    const run = el('div', 'qm-b'), gen = el('button', 'go', '✨ ҚМЖ жаса'); gen.type = 'button'; run.append(gen);
+    const card = (cls, title, ...kids) => { const c = el('section', 'qm-card ' + cls), h = el('h3', '', title), i = el('div', 'in'); i.append(...kids); c.append(h, i); return c; };
+    const gen = el('button', 'hm-card c-violet qm-gen'); gen.type = 'button'; gen.append(el('strong', '', '✨ ҚМЖ жаса'), el('small', '', 'ЖИ жоспарды жазады, шамамен 40 секунд'));
+    const run = el('div', 'qm-tiles'); run.appendChild(gen);
     const out = el('div'), st = el('div', 'qm-tx'); st.hidden = true;
-    w.append(g, field('Оқу бағдарламасына сәйкес оқу мақсаты', fGoal, 'Кодтарды ЖИ ойдан шығармайды. Өзің жазсаң, кестеге сол түседі, жазбасаң бос қалады.'), field('Өз сілтемелерің (міндетті емес)', fLn, 'Кезең нөмірін алдына жазсаң, сол кезеңнің «Ресурстар» ұяшығына түседі, жазбасаң 4-кезеңге. Сілтеме жазбасаң, Groowin ішкі сілтемелері (Таймер, Топқа бөлу, ойын) өзі қосылады.'), field('Немесе еркін жаз, ЖИ өрістерді өзі толтырады', free), el('div', 'qm-b'), run, st, out);
-    w.children[w.children.length - 4].appendChild(fb);
+    const row2 = (...f) => { const d = el('div', 'qm-g'); d.append(...f); return d; };
+    const hero = el('div', 'hm-card c-violet qm-hero'); hero.append(el('strong', '', '📄 ҚМЖ жасау'), el('small', '', 'Қысқа мерзімді жоспар, Word файл. Құндылық пен апта дәйексөзі бос қалады, оны өзің толтырасың.'));
+    w.append(card('c-blue', '📘 Сабақ', row2(field('Сынып', fG), field('Пән', fS)), field('Бөлім', fSec), field('Сабақтың тақырыбы', fTop)),
+      card('c-green', '🎯 Оқу мақсаты', field('Оқу бағдарламасына сәйкес оқу мақсаты', fGoal, 'Кодтарды ЖИ ойдан шығармайды. Өзің жазсаң, кестеге сол түседі, жазбасаң бос қалады.')),
+      card('c-orange', '🔗 Сілтемелер', field('Өз сілтемелерің (міндетті емес)', fLn, 'Кезең нөмірін алдына жазсаң, сол кезеңнің «Ресурстар» ұяшығына түседі, жазбасаң 4-кезеңге. Сілтеме жазбасаң, Groowin ішкі сілтемелері (Таймер, Топқа бөлу, ойын, викторина) өзі қосылады.')),
+      card('c-pink', '👤 Мұғалім', row2(field('Аты-жөні', fT), field('Күні', fD))), run, st, out);
+    back.after(hero);
     gen.onclick = async () => {
       const q = { teacher: fT.value.trim(), date: fD.value.trim(), grade: fG.value.trim(), subject: fS.value.trim(), section: fSec.value.trim(), topic: fTop.value.trim(), goal: fGoal.value.trim(), links: fLn.value.trim() };
       if (!q.topic) return notify('Сабақтың тақырыбын жаз', 'err');
@@ -9777,10 +9790,10 @@ function forcePw() {
         try { if (typeof GAMES !== 'undefined' && GAMES.length < 3) await loadGames(); } catch { }
         const d2 = await ai({ mode: 'qmj', turn: false, qmj: Object.assign({ part: 2, methods: d1.methods, ctx, quizzes }, base) });
         const j2 = jparse(d2.message.content);
-        if (!Array.isArray(j2.stages) || j2.stages.length < 2) throw new Error('ЖИ 4–5 кезеңді жазбады, қайта бас');
+        const s45 = [j2.stage4 || (j2.stages || [])[0], j2.stage5 || (j2.stages || [])[1]]; if (!s45[0] || !s45[1]) throw new Error('ЖИ 4–5 кезеңді жазбады, қайта бас');
         if (Array.isArray(d1.methods)) ls.set('qmjAvoid', JSON.stringify(av.concat(d1.methods).slice(-30)));
         const nz = t => String(t || '').replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').trim();
-        const stg = j1.stages.slice(0, 3).concat(j2.stages.slice(0, 2)).map(x => ({ teacher: nz(x.teacher), student: nz(x.student), assess: nz(x.assess), resources: nz(x.resources) }));
+        const stg = j1.stages.slice(0, 3).concat(s45).map(x => ({ teacher: nz(x.teacher), student: nz(x.student), assess: nz(x.assess), resources: nz(x.resources) }));
         const goals = (j1.goals || []).slice(0, 4).map(x => String(x).replace(/^\s*\d+[).]\s*/, '').replace(/^\s*Оқушылар\s*:?\s*/i, '').trim()).filter(Boolean);
         data = Object.assign({}, q, { methods: d1.methods || [], goals, stages: stg, homework: 'Оқулық: ___ бет, №___.' + (j2.homework ? '\n' + nz(j2.homework) : '') });
         data.stages.forEach(o => { o.assess = tidy(o.assess); o.resources = tidy(o.resources); });
@@ -9840,8 +9853,8 @@ function forcePw() {
     if (data.fixes === null) box.appendChild(el('div', 'qm-tx', '⚠ Автоматты тексеру істемеді. Фактілер мен есептерді өзің қарап шық.'));
     else if (data.fixes) box.appendChild(el('div', 'qm-tx', data.fixes.length ? '✔ Тексеру: ' + data.fixes.length + ' түзету енгізілді:\n• ' + data.fixes.join('\n• ') : '✔ Тексеру өтті, түзетілетін қате табылмады. Бәрібір өзің қарап шық.')).style.whiteSpace = 'pre-line';
     box.appendChild(el('div', 'qm-tx', 'Кез келген ұяшықты басып өзгерте аласың. Өз ойын сілтемелерің болса, Материалдарға салып қой, содан аламын. Құндылық пен апта дәйексөзі бос қалады.'));
-    const bt = el('div', 'qm-b'); bt.style.marginTop = '10px'; const dl = el('button', 'go', '⬇ Word-ке жүктеу'), re = el('button', '', '↻ Қайта жаса'); dl.type = re.type = 'button'; bt.append(dl, re); box.appendChild(bt);
-    re.onclick = () => $('v-qmj').querySelector('.qm-b .go').click();
+    const bt = el('div', 'qm-tiles'); bt.style.marginTop = '10px'; const dl = el('button', 'hm-card c-blue qm-t'), re = el('button', 'hm-card c-teal qm-t'); dl.type = re.type = 'button'; dl.append(el('strong', '', '⬇ Word-ке жүктеу'), el('small', '', 'A4, ақ-қара кесте')); re.append(el('strong', '', '↻ Қайта жаса'), el('small', '', 'толығымен жаңа жоспар')); bt.append(dl, re); box.appendChild(bt);
+    re.onclick = () => $('v-qmj').querySelector('.qm-gen').click();
     const rd0 = e => (e ? e.innerText : '').replace(/\u00a0/g, ' ').trim();
     async function regen(i, btn) {
       btn.disabled = true; btn.textContent = '⏳…';
@@ -9857,15 +9870,9 @@ function forcePw() {
     }
     const draftOf = () => { sync(); return JSON.stringify({ goals: data.goals, stages: data.stages.map((o, i) => ({ name: NAMES[i], teacher: String(o.teacher).slice(0, 1100), assess: String(o.assess).slice(0, 300), resources: String(o.resources).slice(0, 200) })), homework: data.homework }).slice(0, 9500); };
     const nx = el('div', 'qm-nx'); nx.append(el('h3', '', 'Келесі қадам'), el('div', 'qm-tx', 'ҚМЖ дайын болды. Керек болса, соған сай мынаны да жасай аламын:'));
-    const nb = el('div', 'qm-b'), bP = el('button', '', '📊 Презентация (PowerPoint)'), bW = el('button', '', '📝 Жұмыс парағы (2 нұсқа)'), bL = el('button', '', '📚 Groowin сабақ жоспары');
-    [bP, bW, bL].forEach(b => { b.type = 'button'; nb.appendChild(b); });
-    const run2 = (b, txt, fn) => async () => { const o = b.textContent; b.disabled = true; b.textContent = '⏳ ' + txt + '…'; try { await fn(); } catch (e) { notify(e.message || 'Қате', 'err'); } b.disabled = false; b.textContent = o; };
-    bP.onclick = run2(bP, 'Жасап жатыр', async () => {
-      const dr = draftOf(), d = await ai({ mode: 'qmj', turn: false, qmj: { part: 4, subject: data.subject, grade: data.grade, topic: data.topic, draft: dr } });
-      const j = jparse(d.message.content); if (!Array.isArray(j.slides) || j.slides.length < 5) throw new Error('Слайдтар шықпады, қайта бас');
-      const P = await loadPptx(), blob = await pptBuild(P, data, j.slides), fn = ('Презентация ' + (data.topic || '')).replace(/[\\/:*?"<>|]/g, '').slice(0, 60) + '.pptx';
-      dlBlob(blob, fn); saveMat(blob, fn, data.date, 'application/vnd.openxmlformats-officedocument.presentationml.presentation').then(ok => notify(ok ? 'Презентация Материалдарға да сақталды' : 'Файл жүктелді'));
-    });
+    const nb = el('div', 'qm-tiles'), tl = (cls, t, sm) => { const b = el('button', 'hm-card qm-t ' + cls); b.type = 'button'; b.append(el('strong', '', t), el('small', '', sm)); nb.appendChild(b); return b; };
+    const bW = tl('c-green', '📝 Жұмыс парағы', '2 нұсқа, жауаптарымен, Word'), bL = tl('c-blue', '📚 Groowin сабақ жоспары', 'кезеңдері мен таймерімен'), bQ = tl('c-orange', '🎯 Викторина', 'тақырып бойынша, Groowin-ге');
+    const run2 = (b, txt, fn) => async () => { const o = b.querySelector('strong').textContent; b.disabled = true; b.querySelector('strong').textContent = '⏳ ' + txt + '…'; try { await fn(); } catch (e) { notify(e.message || 'Қате', 'err'); } b.disabled = false; b.querySelector('strong').textContent = o; };
     bW.onclick = run2(bW, 'Жасап жатыр', async () => {
       const dr = draftOf(), d = await ai({ mode: 'qmj', turn: false, qmj: { part: 5, subject: data.subject, grade: data.grade, topic: data.topic, draft: dr } });
       const j = jparse(d.message.content); if (!Array.isArray(j.variants) || j.variants.length < 2) throw new Error('Жұмыс парағы шықпады, қайта бас');
@@ -9873,12 +9880,13 @@ function forcePw() {
       dlBlob(blob, fn); saveMat(blob, fn, data.date).then(ok => notify(ok ? 'Жұмыс парағы Материалдарға да сақталды' : 'Файл жүктелді'));
     });
     bL.onclick = () => { sync(); const t = 'Мына ҚМЖ негізінде Groowin сабақ жоспарының жобасын жаса (кезеңдер мен уақыты сақталсын, таймер қос). Тақырып: ' + data.topic + ', ' + data.grade + '-сынып, ' + data.subject + '. Кезеңдер:\n' + data.stages.map((o, i) => (i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин): ' + String(o.teacher).replace(/\s+/g, ' ').slice(0, 260)).join('\n'); if (window.aiAsk) window.aiAsk(t); };
+    bQ.onclick = () => { sync(); const t = 'Мына тақырып бойынша Groowin викторинасының жобасын жаса (8 сұрақ, 4 жауап нұсқасы, бір дұрыс жауап): ' + data.topic + ', ' + data.grade + '-сынып, ' + data.subject + '. Негізгі ұғымдар: ' + (data.goals || []).join(' ').slice(0, 300); if (window.aiAsk) window.aiAsk(t); };
     nx.append(nb, el('div', 'qm-tx', 'Өз ойын сілтемелерің болса, Материалдарға салып қой, содан аламын. Құндылық пен апта дәйексөзі бос қалады.'));
     box.appendChild(nx);
     const rd = e => (e ? e.innerText : '').replace(/ /g, ' ').trim();
     const sync = () => Object.assign(data, { section: rd(E.section), teacher: rd(E.teacher), date: rd(E.date), grade: rd(E.grade), topic: rd(E.topic), goal: rd(E.goal), goals: rd(E.goals).split(/\n/).map(x => x.trim()).filter(Boolean), homework: rd(HW), stages: S.map(o => ({ teacher: rd(o.teacher), student: rd(o.student), assess: rd(o.assess), resources: rd(o.resources), links: o.links })) });
     dl.onclick = async () => {
-      dl.disabled = true; dl.textContent = 'Дайындалып жатыр…';
+      dl.disabled = true; dl.querySelector('strong').textContent = 'Дайындалып жатыр…';
       try {
         sync(); void ({ section: rd(E.section), teacher: rd(E.teacher), date: rd(E.date), grade: rd(E.grade), topic: rd(E.topic), goal: rd(E.goal), goals: rd(E.goals).split(/\n/).map(x => x.trim()).filter(Boolean), homework: rd(HW), stages: S.map(o => ({ teacher: rd(o.teacher), student: rd(o.student), assess: rd(o.assess), resources: rd(o.resources), links: o.links })) });
         const D = await loadDocx(), blob = await D.Packer.toBlob(qmjBuild(D, data));
@@ -9886,7 +9894,7 @@ function forcePw() {
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
         saveMat(blob, fn, data.date).then(ok => notify(ok ? 'Материалдарға да сақталды: ' + (data.date || 'күні') : 'Файл жүктелді (Материалдарға сақталмады)'));
       } catch (e) { notify('Қате: ' + (e.message || e), 'err'); }
-      dl.disabled = false; dl.textContent = '⬇ Word-ке жүктеу';
+      dl.disabled = false; dl.querySelector('strong').textContent = '⬇ Word-ке жүктеу';
     };
   }
   let dp = null;
