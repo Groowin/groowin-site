@@ -9667,7 +9667,7 @@ function forcePw() {
   function goIntake() {
     const g = new URLSearchParams(location.search).get('go'); if (!g) return;
     history.replaceState(null, '', location.pathname);
-    setTimeout(() => { try { if (g === 'plan') go('plan'); else if (g === 'qr') qrScan(); else if (g === 'ai') { const f = $('aiFab'); if (f && !f.hidden) f.click(); } } catch {} }, 400);
+    setTimeout(() => { try { if (g === 'plan') go('plan'); else if (g === 'qr') qrScan(); else if (g === 'groups') playTool({ k: 'groups', cls: false }); else if (g === 'timer') playTool({ k: 'timer' }); else if (g === 'play') go('play'); else if (g === 'ai') { const f = $('aiFab'); if (f && !f.hidden) f.click(); } } catch {} }, 400);
   }
   window.gwIntake = () => { if (!isStaff) return; shareIntake(); goIntake(); };
 
@@ -9738,8 +9738,9 @@ function forcePw() {
     const back = el('button', 'go', '← Басты бет'); back.type = 'button'; back.style.cssText = 'width:auto;margin:0;justify-self:start;padding:8px 14px;background:transparent;color:var(--ink);border:1px solid var(--line)'; back.onclick = () => go('home');
     w.append(back, el('h1', '', 'ҚМЖ жасау'), el('div', 'qm-tx', 'Мақсат пен тақырыпты жаз, ЖИ қысқа мерзімді жоспарды жазады. Құндылық пен апта дәйексөзі бос қалады, оны өзің толтырасың.'));
     const nm = (meName || '').trim().split(/\s+/); const short = nm.length > 1 ? nm[0] + ' ' + nm[1][0] + '.' : (nm[0] || '');
-    const fT = inp(last ? last.teacher : short), fD = inp(last ? last.date : today()), fG = inp(last ? last.grade : '', '9'), fS = inp(last ? last.subject : 'Физика'), fSec = inp(last ? last.section : '', 'мысалы: Динамика негіздері'), fTop = inp(last ? last.topic : '', 'Дененің салмағы. Салмақсыздық');
+    const fT = inp(last ? last.teacher : (ls.get('qmjName') || short)), fD = inp(last ? last.date : today()), fG = inp(last ? last.grade : '', '9'), fS = inp(last ? last.subject : 'Физика'), fSec = inp(last ? last.section : '', 'мысалы: Динамика негіздері'), fTop = inp(last ? last.topic : '', 'Дененің салмағы. Салмақсыздық');
     const fGoal = document.createElement('textarea'); fGoal.value = last ? last.goal : ''; fGoal.placeholder = 'Бағдарламадағы оқу мақсатын өзің жаз. Бос қалдырсаң, кестеде бос болады.';
+    const fLn = document.createElement('textarea'); fLn.value = last ? last.links : ''; fLn.placeholder = 'Әр жолға біреуі. Мысалы:\n5: https://forms.gle/...  (5 = кезең нөмірі)\nТопқа бөлу: https://...';
     const free = document.createElement('textarea'); free.placeholder = 'Мысалы: 9-сынып, физика, дененің салмағы, 12 қараша';
     const g = el('div', 'qm-g'); g.append(field('Аты-жөні', fT), field('Күні', fD), field('Сынып', fG), field('Пән', fS), field('Бөлім', fSec), field('Сабақтың тақырыбы', fTop));
     const fb = el('button', '', 'Өрістерді толтыр'); fb.type = 'button';
@@ -9754,24 +9755,43 @@ function forcePw() {
     };
     const run = el('div', 'qm-b'), gen = el('button', 'go', '✨ ҚМЖ жаса'); gen.type = 'button'; run.append(gen);
     const out = el('div'), st = el('div', 'qm-tx'); st.hidden = true;
-    w.append(g, field('Оқу бағдарламасына сәйкес оқу мақсаты', fGoal, 'Кодтарды ЖИ ойдан шығармайды. Өзің жазсаң, кестеге сол түседі, жазбасаң бос қалады.'), field('Немесе еркін жаз, ЖИ өрістерді өзі толтырады', free), el('div', 'qm-b'), run, st, out);
+    w.append(g, field('Оқу бағдарламасына сәйкес оқу мақсаты', fGoal, 'Кодтарды ЖИ ойдан шығармайды. Өзің жазсаң, кестеге сол түседі, жазбасаң бос қалады.'), field('Өз сілтемелерің (міндетті емес)', fLn, 'Кезең нөмірін алдына жазсаң, сол кезеңнің «Ресурстар» ұяшығына түседі, жазбасаң 4-кезеңге. Сілтеме жазбасаң, Groowin ішкі сілтемелері (Таймер, Топқа бөлу, ойын) өзі қосылады.'), field('Немесе еркін жаз, ЖИ өрістерді өзі толтырады', free), el('div', 'qm-b'), run, st, out);
     w.children[w.children.length - 4].appendChild(fb);
     gen.onclick = async () => {
-      const q = { teacher: fT.value.trim(), date: fD.value.trim(), grade: fG.value.trim(), subject: fS.value.trim(), section: fSec.value.trim(), topic: fTop.value.trim(), goal: fGoal.value.trim() };
+      const q = { teacher: fT.value.trim(), date: fD.value.trim(), grade: fG.value.trim(), subject: fS.value.trim(), section: fSec.value.trim(), topic: fTop.value.trim(), goal: fGoal.value.trim(), links: fLn.value.trim() };
       if (!q.topic) return notify('Сабақтың тақырыбын жаз', 'err');
-      last = q; let av = []; try { av = JSON.parse(ls.get('qmjAvoid') || '[]'); } catch { }
-      gen.disabled = true; st.hidden = false; st.textContent = '⏳ ЖИ жоспар жазып жатыр, 20–40 секунд…'; out.replaceChildren();
+      last = q; ls.set('qmjName', q.teacher); let av = []; try { av = JSON.parse(ls.get('qmjAvoid') || '[]'); } catch { }
+      gen.disabled = true; st.hidden = false; st.textContent = '⏳ 1/2: мақсаттар мен алғашқы 3 кезең жазылып жатыр…'; out.replaceChildren();
       try {
-        const d = await ai({ mode: 'qmj', turn: true, qmj: { subject: q.subject, grade: q.grade, topic: q.topic, goal: q.goal, avoid: av.slice(-30) } });
-        const j = jparse(d.message.content);
-        if (!Array.isArray(j.stages) || j.stages.length < 5) throw new Error('ЖИ толық жоспар бермеді, қайта бас');
-        if (Array.isArray(d.methods)) ls.set('qmjAvoid', JSON.stringify(av.concat(d.methods).slice(-30)));
-        data = Object.assign({}, q, { goals: (j.goals || []).slice(0, 4), stages: j.stages.slice(0, 5).map(s => ({ teacher: s.teacher || '', student: s.student || '', assess: s.assess || '', resources: s.resources || '' })), homework: j.homework || '' });
+        const base = { subject: q.subject, grade: q.grade, topic: q.topic, goal: q.goal };
+        const d1 = await ai({ mode: 'qmj', turn: true, qmj: Object.assign({ avoid: av.slice(-30) }, base) });
+        const j1 = jparse(d1.message.content);
+        if (!Array.isArray(j1.stages) || j1.stages.length < 3) throw new Error('ЖИ толық жоспар бермеді, қайта бас');
+        st.textContent = '⏳ 2/2: практикалық тапсырмалар мен рефлексия жазылып жатыр…';
+        const ctx = (j1.goals || []).join(' ') + ' | ' + j1.stages.slice(0, 3).map(x => String(x.teacher || '').replace(/\s+/g, ' ').slice(0, 160)).join(' | ');
+        const d2 = await ai({ mode: 'qmj', turn: false, qmj: Object.assign({ part: 2, methods: d1.methods, ctx }, base) });
+        const j2 = jparse(d2.message.content);
+        if (!Array.isArray(j2.stages) || j2.stages.length < 2) throw new Error('ЖИ 4–5 кезеңді жазбады, қайта бас');
+        if (Array.isArray(d1.methods)) ls.set('qmjAvoid', JSON.stringify(av.concat(d1.methods).slice(-30)));
+        const nz = t => String(t || '').replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').trim();
+        const stg = j1.stages.slice(0, 3).concat(j2.stages.slice(0, 2)).map(x => ({ teacher: nz(x.teacher), student: nz(x.student), assess: nz(x.assess), resources: nz(x.resources) }));
+        const goals = (j1.goals || []).slice(0, 4).map(x => String(x).replace(/^\s*\d+[).]\s*/, '').replace(/^\s*Оқушылар\s*:?\s*/i, '').trim()).filter(Boolean);
+        data = Object.assign({}, q, { goals, stages: stg, homework: 'Оқулық: ___ бет, №___.' + (j2.homework ? '\n' + nz(j2.homework) : '') });
+        addLinks(data, q.links, d1.methods, d1.games);
         st.hidden = true; paint(out);
       } catch (e) { st.textContent = '⚠ ' + (e.message || 'Қате'); }
       gen.disabled = false;
     };
   };
+  const BASE = 'https://groowin.github.io/groowin-site/platform/';
+  function addLinks(d, raw, methods, games) {
+    const add = (i, line) => { const o = d.stages[i]; if (o) o.resources = (o.resources ? o.resources + '\n' : '') + line; };
+    let mine = '';
+    String(raw || '').split(/\n/).map(x => x.trim()).filter(Boolean).forEach(l => { const m = l.match(/^([1-5])\s*[:.)]\s*(.+)$/); mine += ' ' + l; if (m) add(+m[1] - 1, m[2]); else add(3, l); });
+    (games || []).slice(0, 2).forEach(t => add(3, '[Groowin → Ойын-сауық: «' + t + '»](' + BASE + '?go=play)'));
+    if (/Топтық|Станция|Джигсо|Сарапшы/i.test((methods || [])[3] || '') && !/топ/i.test(mine)) add(3, '[Groowin → Топқа бөлу](' + BASE + '?go=groups)');
+    if (!/таймер/i.test(mine)) add(3, '[Groowin → Таймер](' + BASE + '?go=timer)');
+  }
   const ce = (txt, cls) => { const d = el('div', cls || ''); d.contentEditable = 'true'; d.textContent = txt || ''; return d; };
   function paint(box) {
     box.replaceChildren(); const pv = el('div', 'qm-pv'); pv.appendChild(el('h2', '', 'Қысқа мерзімді жоспар'));
@@ -9822,10 +9842,11 @@ function qmjBuild(D, d) {
   const F = 'Times New Roman', SZ = 24;
   const MIN = [3, 7, 10, 22, 3], NAMES = ['Ұйымдастыру кезеңі', 'Білімді жаңарту', 'Жаңа білімді меңгеру', 'Практикалық тапсырмалар мен есептер', 'Рефлексия (кері байланыс)'];
   const run = (t, o) => new TextRun(Object.assign({ text: t, font: F, size: SZ }, o || {}));
-  const paras = (txt, o) => { const L = String(txt || '').split(/\n/).map(x => x.trim()).filter(Boolean); if (!L.length) L.push(''); return L.map(l => new Paragraph({ spacing: { after: 40 }, children: [run(l, o)] })); };
+  const piece = (l, o) => String(l).split(/(\[[^\]]+\]\(https?:\/\/[^)\s]+\)|https?:\/\/[^\s)»]+)/).filter(x => x !== '').map(x => { const m = x.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/), u = m ? m[2] : /^https?:\/\//.test(x) ? x : null; return u ? new D.ExternalHyperlink({ link: u, children: [run(m ? m[1] : x, Object.assign({ underline: {} }, o || {}))] }) : run(x, o); });
+  const paras = (txt, o) => { const L = String(txt || '').split(/\n/).map(x => x.trim()).filter(Boolean); if (!L.length) L.push(''); return L.map(l => new Paragraph({ spacing: { after: 40 }, children: piece(l, o) })); };
   const B = { style: BorderStyle.SINGLE, size: 6, color: '000000' }, borders = { top: B, bottom: B, left: B, right: B };
   const cell = (w, kids, o) => new TableCell(Object.assign({ width: { size: w, type: WidthType.DXA }, borders, margins: { top: 60, bottom: 60, left: 100, right: 100 }, verticalAlign: VerticalAlign.TOP, children: kids }, o || {}));
-  const W0 = [2694, 8080], W1 = [1650, 3450, 2650, 1424, 1600];
+  const W0 = [2694, 8080], W1 = [1900, 3300, 2500, 1424, 1650];
   const goals = (d.goals || []).filter(x => String(x || '').trim());
   const goalP = [new Paragraph({ spacing: { after: 40 }, children: [run('Оқушылар:')] })].concat(goals.map((g, i) => new Paragraph({ spacing: { after: 40 }, children: [run((i + 1) + ') ' + String(g).replace(/^\s*\d+[).]\s*/, ''))] })));
   const r0 = (a, kids) => new TableRow({ children: [cell(W0[0], [new Paragraph({ children: [run(a, { bold: true })] })]), cell(W0[1], kids)] });
