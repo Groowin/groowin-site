@@ -9876,7 +9876,7 @@ function forcePw() {
     const add = (i, label, url) => { const o = d.stages[i]; if (!o) return; o.links = o.links || []; if (!o.links.some(l => l.url === url)) o.links.push({ label, url }); };
     let mine = '';
     String(raw || '').split(/\n/).map(x => x.trim()).filter(Boolean).forEach(l => { mine += ' ' + l; const m = l.match(/^(?:([1-5])\s*[:.)]\s*)?(?:(.*?)[:\s]\s*)?(https?:\/\/\S+)$/); if (m) add((m[1] ? +m[1] : 4) - 1, (m[2] || '').trim() || short(m[3]), m[3]); });
-    (picks || []).slice(0, 3).forEach(p => {
+    (picks || []).slice(0, 3).filter(p => !(rs && rs.quiz && /^Q:/.test(String(p && p.id || '')))).forEach(p => {
       const id = String(p && p.id || ''), st = Math.min(5, Math.max(2, parseInt(p && p.stage) || 4)) - 1;
       if (/^G:/.test(id)) { const g = (typeof GAMES !== 'undefined' ? GAMES : []).find(z => z.id === id.slice(2)); if (g) add(st, 'Groowin → ' + (SUBJ_KK[g.subj] || 'Ойын-сауық') + ': «' + g.title + '»', BASE + '?go=game&id=' + g.id); }
       else if (/^Q:/.test(id)) { const z = (quizzes || []).find(x => x.id === id.slice(2)); if (z) add(st, 'Groowin → Викторина: «' + z.title + '»', BASE + '?go=quiz&id=' + z.id); }
@@ -9884,6 +9884,7 @@ function forcePw() {
     if (/Топтық|Станция|Джигсо|Сарапшы/i.test((methods || [])[3] || '') && !/топ/i.test(mine)) add(3, 'Groowin → Топқа бөлу', BASE + '?go=groups');
     if (!/таймер/i.test(mine)) add(3, 'Groowin → Таймер', BASE + '?go=timer');
     if (rs) {
+      if (rs.quiz) d.stages.forEach(o => { if (o.links) o.links = o.links.filter(l => !/go=quiz/.test(l.url)); });
       add(1, 'Groowin → Кездейсоқ оқушы', BASE + '?go=random');
       (rs.games || []).forEach(g => add(3, 'Groowin → ' + (SUBJ_KK[g.subj] || 'Ойын-сауық') + ': «' + g.title + '»', BASE + '?go=game&id=' + g.id));
       (rs.sites || []).forEach(x => add(2, 'Сайт: ' + x.title, x.url));
