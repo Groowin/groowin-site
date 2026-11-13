@@ -9826,7 +9826,7 @@ function forcePw() {
         if (!s45[0] || !s45[1]) throw new Error('ЖИ 4–5 кезеңді жазбады, қайта бас');
         { const a = s45[0], b = s45[1]; if (/\d\s*-\s*тапсырма/i.test(String(b.teacher || ''))) { ['teacher', 'student', 'assess', 'resources'].forEach(k => { a[k] = String(a[k] || '').trim() + '\n' + String(b[k] || '').trim(); b[k] = ''; }); } }
         if (Array.isArray(d1.methods)) ls.set('qmjAvoid', JSON.stringify(av.concat(d1.methods).slice(-30)));
-        const nz = t => String(t || '').replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').trim();
+        const nz = t => String(t || '').replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').replace(/студент(тер)?/gi, m => m.length > 7 ? 'оқушылар' : 'оқушы').replace(/\b75\d\s*нм/g, '760 нм').trim();
         const stg = j1.stages.slice(0, 3).concat(s45).map(x => ({ teacher: nz(x.teacher), student: nz(x.student), assess: nz(x.assess), resources: nz(x.resources) }));
         const goals = (j1.goals || []).slice(0, 4).map(x => String(x).replace(/^\s*\d+[).]\s*/, '').replace(/^\s*Оқушылар\s*:?\s*/i, '').trim()).filter(Boolean);
         data = Object.assign({}, q, { facts: facts.slice(0, 2200), methods: d1.methods || [], goals, stages: stg, homework: 'Оқулық: ___ бет, №___.' + (j2.homework ? '\n' + nz(j2.homework) : '') });
@@ -9859,6 +9859,7 @@ function forcePw() {
         }
         addLinks(data, '', null, [], [], rs);
         data.autoWs = cW.checked;
+        { const o = data.stages[1]; let L = String(o.teacher || '').split('\n').filter(x => !/^\s*[–-]?\s*Үй жұмысын тексеру/i.test(x)); L.unshift('– Үй жұмысын тексеру: ___ бет, №___ (2 мин)'); o.teacher = L.join('\n'); }
         const parts = String(q.topic).split(/[,;]|\s+және\s+/).filter(x => x.trim().length > 2);
         data.wide = parts.length > 3;
         st.hidden = true; persist(); paint(out); persist();
