@@ -1718,6 +1718,40 @@ html[data-bgs]:not([data-glass]) body::before{content:'';position:fixed;inset:0;
 .up-pill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom));z-index:130;padding:10px 18px;border-radius:99px;background:#1b2036;color:#fff;font-weight:600;font-size:.9rem;box-shadow:0 8px 28px rgba(0,0,0,.35);max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.up-pill.ok{background:#12A06B}.up-pill.err{background:#E5484D}
 @media (max-width:760px){body.in-app .up-pill{bottom:calc(84px + env(safe-area-inset-bottom))}}
 .app-ov .app-load{flex:1;display:grid;place-content:center;gap:14px;text-align:center;color:#cfd6ff;font-weight:600}.app-load i{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;margin:0 auto;animation:aspin .8s linear infinite}@keyframes aspin{to{transform:rotate(360deg)}}
+
+/* ===== Fresh стилі: ашық пастель, домалақ ақ карточка, жұмсақ көлеңке, иллюстрациялар ===== */
+html[data-theme=fresh]{--bg:#EEF6F8;--surf:#FFFFFF;--paper:#F3F8FA;--card:#FFFFFF;--line:#E1ECF1;--grid:#E1ECF1;--ink:#16202B;--mute:#64748B;--err:#C62828;--hover:rgba(22,32,43,.05)}
+html[data-theme=fresh]:not([data-glass]){color-scheme:light}
+html[data-theme=fresh]:not([data-glass]) select option,html[data-theme=fresh]:not([data-glass]) select optgroup{background-color:#fff;color:#16202b}
+html[data-theme=fresh] body.in-app{background:radial-gradient(900px 520px at 92% -8%,rgba(124,92,255,.14),transparent 60%),radial-gradient(800px 520px at -4% 104%,rgba(25,181,214,.17),transparent 60%),radial-gradient(600px 400px at 50% 40%,rgba(18,160,107,.06),transparent 70%),var(--bg)!important}
+html[data-theme=fresh]:not([data-glass]) :is(.main.card,.card,.game,.plc,.news,.qc,.qcard,.mt-it,.mt-fold,.lpcard,.gcard){border-radius:22px;box-shadow:0 14px 34px -22px rgba(30,64,90,.45);border-color:var(--line)}
+html[data-theme=fresh]:not([data-glass]) .side.card{border-radius:0 26px 26px 0;box-shadow:10px 0 34px -26px rgba(30,64,90,.5)}
+html[data-theme=fresh]:not([data-glass]) :is(input,select,textarea){border-radius:12px}
+html[data-theme=fresh] .hm-card{box-shadow:0 18px 36px -22px var(--a),0 2px 0 rgba(255,255,255,.35) inset}
+.hm-ill{position:absolute;right:8px;bottom:6px;width:112px;height:94px;pointer-events:none;transform:rotate(-3deg);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.hm-card:hover .hm-ill{transform:rotate(2deg) scale(1.07)}
+html:not([data-illu=off]) .hm-card:has(.hm-ill) small{max-width:62%}
+html[data-illu=off] .hm-ill{display:none}
+@media (max-width:760px){.hm-ill{width:78px;height:66px;right:4px;bottom:4px}html:not([data-illu=off]) .hm-card:has(.hm-ill) small{max-width:72%}}
+@media (prefers-reduced-motion:reduce){.hm-ill{transition:none}}
+
+.gl-bar{display:flex;gap:10px;margin:12px 0;flex-wrap:wrap}.gl-bar select{flex:0 0 auto}.gl-bar input{flex:1;min-width:180px}
+.gl-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.gl-card{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--line);border-radius:20px;background:var(--surf,var(--paper));box-shadow:0 12px 30px -24px rgba(30,64,90,.5)}
+.gl-card strong{font-size:1.05rem;line-height:1.3}.gl-card small{color:var(--mute)}
+.gl-top{display:flex;justify-content:space-between;gap:8px;align-items:center}.gl-m{color:var(--mute);font-size:.85rem}
+.gl-k{padding:3px 10px;border-radius:99px;font-size:.8rem;font-weight:700;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}.gl-k.quiz{background:rgba(242,129,42,.15);color:#D97706}
+.gl-bt{display:flex;gap:8px;margin-top:auto;padding-top:8px}
+.mp-sub{margin:18px 0 6px;font-size:1.05rem}.mp-prog{color:var(--mute);font-size:.9rem;margin:0 0 10px}
+.mp-path{position:relative;display:flex;flex-direction:column;gap:14px;padding:6px 0 6px}
+.mp-path::before{content:'';position:absolute;left:50%;top:20px;bottom:20px;width:6px;margin-left:-3px;border-radius:99px;background:repeating-linear-gradient(var(--line) 0 10px,transparent 10px 18px)}
+.mp-n{position:relative;display:flex;align-items:center;gap:12px;width:min(300px,70%);padding:10px 14px;border-radius:20px;border:2px solid var(--line);background:var(--surf,var(--paper));cursor:pointer;font:inherit;color:inherit;text-align:left;box-shadow:0 10px 24px -20px rgba(30,64,90,.55);transition:transform .2s}
+.mp-n:hover{transform:translateY(-2px)}.mp-n:nth-child(odd){align-self:flex-start;margin-left:6%}.mp-n:nth-child(even){align-self:flex-end;margin-right:6%}
+.mp-n.done{border-color:color-mix(in srgb,var(--accent) 70%,transparent);background:color-mix(in srgb,var(--accent) 9%,var(--surf,var(--paper)))}
+.mp-n.next{border-color:#F59E0B;box-shadow:0 0 0 4px rgba(245,158,11,.22)}
+.mp-i{font-size:1.7rem;flex:none}.mp-t{display:flex;flex-direction:column;min-width:0}.mp-t b{font-size:.95rem;line-height:1.25}.mp-t small{color:var(--mute)}.mp-st{letter-spacing:2px;color:#F59E0B;font-size:.9rem}
+@media (max-width:760px){.mp-n{width:86%}.mp-n:nth-child(n){align-self:center;margin:0}.mp-path::before{left:22px;margin:0}}
+.es-box{width:100%;box-sizing:border-box;grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:34px 16px;margin:14px 0;border:1px dashed var(--line);border-radius:22px;text-align:center}.es-ill{width:150px;height:126px}.es-ill [fill='#fff']{fill:color-mix(in srgb,var(--accent) 24%,var(--surf,#fff));fill-opacity:1}.es-box strong{font-size:1.05rem}.es-box small{color:var(--mute)}
 </style>
 </head>
 <body>
@@ -1869,6 +1903,7 @@ html[data-bgs]:not([data-glass]) body::before{content:'';position:fixed;inset:0;
     <div id="v-plan" hidden></div>
     <div id="v-projects" hidden></div>
     <div id="v-qmj" hidden></div>
+    <div id="v-gallery" hidden></div>
     <div id="v-room" hidden></div>
 
     <div id="v-catalog">
@@ -2144,9 +2179,10 @@ html[data-bgs]:not([data-glass]) body::before{content:'';position:fixed;inset:0;
       <h3 style="margin:22px 0 8px;font-size:1.05rem">Аватар</h3>
       <div id="accAv" style="display:flex;align-items:center;gap:14px;margin:0 0 4px"></div>
       <h3 style="margin:22px 0 8px;font-size:1.05rem">Көрініс</h3>
-      <div class="thm" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="dark" style="--tb:#0E1117;--ts:#151A23;--ta:#3B6BFF"><span class="pv"></span>Қараңғы</button><button type="button" data-t="light" style="--tb:#F6F7F9;--ts:#FFFFFF;--ta:#3B6BFF"><span class="pv"></span>Жарық</button><button type="button" data-t="milk" style="--tb:#FAF5EC;--ts:#FFFDF8;--ta:#F28C28"><span class="pv"></span>Сүтті</button><button type="button" data-t="ocean" style="--tb:#06161F;--ts:#0C2330;--ta:#19B5D6"><span class="pv"></span>Теңіз</button><button type="button" data-t="sunset" style="--tb:#1A0F1F;--ts:#251529;--ta:#FF7A5A"><span class="pv"></span>Күннің батуы</button><button type="button" data-t="forest" style="--tb:#0A1510;--ts:#112019;--ta:#1FA971"><span class="pv"></span>Орман</button><button type="button" data-t="amoled" style="--tb:#000000;--ts:#0A0A0A;--ta:#7C5CFF"><span class="pv"></span>Қара</button></div>
+      <div class="thm" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="fresh" style="--tb:#EEF6F8;--ts:#FFFFFF;--ta:#7C5CFF"><span class="pv"></span>Fresh</button><button type="button" data-t="dark" style="--tb:#0E1117;--ts:#151A23;--ta:#3B6BFF"><span class="pv"></span>Қараңғы</button><button type="button" data-t="light" style="--tb:#F6F7F9;--ts:#FFFFFF;--ta:#3B6BFF"><span class="pv"></span>Жарық</button><button type="button" data-t="milk" style="--tb:#FAF5EC;--ts:#FFFDF8;--ta:#F28C28"><span class="pv"></span>Сүтті</button><button type="button" data-t="ocean" style="--tb:#06161F;--ts:#0C2330;--ta:#19B5D6"><span class="pv"></span>Теңіз</button><button type="button" data-t="sunset" style="--tb:#1A0F1F;--ts:#251529;--ta:#FF7A5A"><span class="pv"></span>Күннің батуы</button><button type="button" data-t="forest" style="--tb:#0A1510;--ts:#112019;--ta:#1FA971"><span class="pv"></span>Орман</button><button type="button" data-t="amoled" style="--tb:#000000;--ts:#0A0A0A;--ta:#7C5CFF"><span class="pv"></span>Қара</button></div>
       <p class="hint" style="margin:14px 0 8px">Акцент түсі</p>
       <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button><button type="button" data-a="cyan" style="--c:#19B5D6" aria-label="Көгілдір"></button><button type="button" data-a="pink" style="--c:#E8559A" aria-label="Қызғылт"></button></div>
+      <div class="st-row" style="margin-top:14px"><button type="button" id="illuBtn" aria-pressed="true">🎨 Суреттер: қосулы</button></div>
       <p class="hint" style="margin:14px 0 8px">Шыны режимі: фонда сурет, үстінде бұлыңғыр шыны панельдер</p>
       <div class="st-row"><button type="button" id="glassBtn" aria-pressed="false">🪟 Шыны режимі: өшірулі</button><button type="button" id="styleBtn" aria-expanded="false">🎨 Стиль: Әдепкі</button></div>
       <div id="styleOpts" hidden><p class="hint" style="margin:0 0 8px">Фон нұсқасы. Шыны режимі қосулы кезде фон шынының сурет-фонынан алынады.</p><div class="st-g" id="styleGrid" role="group" aria-label="Стиль"></div></div>
@@ -2661,6 +2697,7 @@ function renderGames() {
 }
 let curGame = null;
 function openGame(g) {
+  try { const k = JSON.parse(ls.get('gwSeen') || '{}') || {}; k[g.id] = (k[g.id] || 0) + 1; ls.set('gwSeen', JSON.stringify(k)); } catch { }
   curGame = g; $('vmsg').textContent = '';
   $('vtitle').textContent = g.title;
   gameSrc(g.url).then(r => { if (curGame !== g) return; r.sb ? $('frame').setAttribute('sandbox', 'allow-scripts allow-pointer-lock allow-fullscreen allow-forms allow-popups') : $('frame').removeAttribute('sandbox'); $('frame').src = r.src; }).catch(() => { $('vmsg').textContent = 'Ойын файлын ашу мүмкін болмады. Интернетті тексер.'; });
@@ -2692,7 +2729,7 @@ $('vfs').onclick = () => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.body.classList.remove('vfake'); });
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 let rm = null; // Оқу бөлмесі күйі
-const VIEWS = ['home', 'plan', 'projects', 'qmj', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+const VIEWS = ['home', 'plan', 'projects', 'qmj', 'gallery', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined') { const w = $('msWrap'); if (w) w.hidden = !isStaff; } if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
 function go(key, keep) {
   document.body.classList.remove('sheet'); try { curView = key; tabSync(); } catch { }
@@ -2704,7 +2741,7 @@ function go(key, keep) {
   if (key === 'physics' || key === 'math') {
     subj = key; if (!keep) gradeSel = null;
     renderGames(); show('catalog');
-  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'projects') loadProjects(); if (key === 'qmj') renderQmj(); if (key === 'sites') loadSites(); if (key === 'path') loadMyPath(); if (key === 'hw') loadHw(); if (key === 'favs') loadFavsView(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
+  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'projects') loadProjects(); if (key === 'qmj') renderQmj(); if (key === 'gallery') loadGallery(); if (key === 'sites') loadSites(); if (key === 'path') loadMyPath(); if (key === 'hw') loadHw(); if (key === 'favs') loadFavsView(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
 }
 document.querySelectorAll('#nav button[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 $('subjHead').onclick = () => { const h = $('subjItems').hidden = !$('subjItems').hidden; $('subjHead').setAttribute('aria-expanded', String(!h)); $('subjArrow').textContent = h ? '▸' : '▾'; };
@@ -2712,16 +2749,18 @@ renderGames();
 
 // ===== Тема =====
 const ls = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
-const THEMES = ['dark', 'light', 'milk', 'ocean', 'sunset', 'forest', 'amoled'], ACCENTS = ['blue', 'green', 'violet', 'orange', 'cyan', 'pink'];
-let pref = ls.get('theme'); if (!THEMES.includes(pref)) pref = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-let acc = ls.get('accent'); if (!ACCENTS.includes(acc)) acc = pref === 'milk' ? 'orange' : 'blue';
+const THEMES = ['fresh', 'dark', 'light', 'milk', 'ocean', 'sunset', 'forest', 'amoled'], ACCENTS = ['blue', 'green', 'violet', 'orange', 'cyan', 'pink'];
+let pref = ls.get('theme'); if (!THEMES.includes(pref)) pref = 'fresh';
+let acc = ls.get('accent'); if (!ACCENTS.includes(acc)) acc = pref === 'milk' ? 'orange' : pref === 'fresh' ? 'violet' : 'blue';
+function applyIllu() { const on = ls.get('illu') !== 'off'; document.documentElement.dataset.illu = on ? 'on' : 'off'; const b = document.getElementById('illuBtn'); if (b) { b.setAttribute('aria-pressed', String(on)); b.textContent = '🎨 Суреттер: ' + (on ? 'қосулы' : 'өшірулі'); } }
 function applyTheme(inApp) {
+  applyIllu();
   document.documentElement.dataset.theme = inApp ? pref : 'dark';
   document.documentElement.dataset.accent = acc;
   document.querySelectorAll('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === pref)));
   document.querySelectorAll('#accSw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.a === acc)));
 }
-function setTheme(t) { ls.set('gwAutoDark', ''); pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'orange'; applyTheme(true); }
+function setTheme(t) { ls.set('gwAutoDark', ''); pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'orange'; if (t === 'fresh' && !ls.get('accent')) acc = 'violet'; applyTheme(true); }
 // Кешке ЖИ қараңғыға ауыстырса, таңертең бұрынғы тақырыпты өзі қайтарады. Күй localStorage-та, сондықтан сеанс аяқталып, қайта кірсең де жұмыс істейді.
 window.autoDarkOn = () => { const b = pref; setTheme('dark'); ls.set('gwAutoDark', '1'); ls.set('gwThemeBefore', b === 'dark' ? 'light' : b); };
 function autoThemeRestore() {
@@ -2733,6 +2772,7 @@ setInterval(autoThemeRestore, 300000); document.addEventListener('visibilitychan
 setTimeout(autoThemeRestore, 3000);
 $('themeBtn').onclick = () => setTheme(THEMES[(THEMES.indexOf(pref) + 1) % THEMES.length]);
 document.querySelectorAll('#themeSeg button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
+if ($('illuBtn')) $('illuBtn').onclick = () => { ls.set('illu', ls.get('illu') === 'off' ? 'on' : 'off'); applyIllu(); };
 document.querySelectorAll('#accSw button').forEach(b => b.onclick = () => { acc = b.dataset.a; ls.set('accent', acc); applyTheme(true); });
 
 // ===== Шыны режимі =====
@@ -4215,7 +4255,7 @@ async function loadQuizzes() {
       mini('Жою', async () => { if (!(await ask('«' + z.title + '» викторинасы жойылсын ба?'))) return; await sb.from('quizzes').delete().eq('id', z.id); loadQuizzes(); }));
     c.append(top, row, favBtn('quiz', z.id)); box.appendChild(c);
   });
-  if (!quizzes.length) box.appendChild(el('p', 'sub', 'Әзірге викторина жоқ. «Жаңа викторина» батырмасын бас.'));
+  if (!quizzes.length) box.appendChild(emptyState('quiz', 'Әзірге викторина жоқ', '«Жаңа викторина» батырмасын бас'));
   const rb = $('qzRuns'); rb.replaceChildren();
   (r.data || []).forEach(x => {
     const d = document.createElement('details'), s = document.createElement('summary'), res = x.results || [];
@@ -5707,7 +5747,7 @@ async function loadSites() {
     if (isAdmin) row.append(mini('Өзгерту', () => fillSite(s)), mini('Жою', async () => { if (!(await ask('«' + s.title + '» сайты жойылсын ба?'))) return; await sb.from('sites').delete().eq('id', s.id); loadSites(); }));
     c.append(top, row, favBtn('site', s.id)); box.appendChild(c);
   });
-  if (!SITES.length) box.appendChild(el('p', 'sub', isAdmin ? 'Әзірге сайт жоқ. Жоғарыдағы форма арқылы қос.' : 'Әзірге сайт қосылмаған.'));
+  if (!SITES.length) box.appendChild(emptyState('pcfind', 'Әзірге сайт жоқ', isAdmin ? 'Жоғарыдағы форма арқылы қос' : 'Мұғалім қосқанда осында көрінеді'));
 }
 function fillSite(s) { siteEdit = s ? s.id : null; $('siteTitle').value = s ? s.title : ''; $('siteUrl').value = s ? s.url : ''; $('siteDesc').value = s ? (s.descr || '') : ''; $('siteIcon').value = s ? (s.icon || '🌐') : '🌐'; $('siteAdd').textContent = s ? 'Сақтау' : 'Қосу'; $('siteCancel').hidden = !s; if (s) $('siteTitle').focus(); }
 $('siteCancel').onclick = () => fillSite(null);
@@ -6345,6 +6385,28 @@ async function loadMyPath() {
   const d = await fetchPathData(meId);
   if (d.err) { box.replaceChildren(el('p', 'msg err', d.err.message.includes('student_results') ? 'update-12.sql әлі іске қосылмаған. Оны Supabase → SQL Editor ішінде іске қос.' : 'Қате: ' + d.err.message)); return; }
   renderPath(box, meName || 'Оқушы', d, true);
+  try { await renderLessonMap(box); } catch { }
+}
+async function renderLessonMap(box) {
+  if (!GAMES || GAMES.length < 3) { try { await loadGames(); } catch { } }
+  let seen = {}; try { seen = JSON.parse(ls.get('gwSeen') || '{}') || {}; } catch { }
+  const SN = { physics: 'Физика', math: 'Математика' }, by = {};
+  (GAMES || []).forEach(g => { (by[g.subj] = by[g.subj] || []).push(g); });
+  const wrap = el('div', 'pth-card'); wrap.append(el('h3', '', '🗺️ Сабақ картасы'));
+  const keys = Object.keys(by); if (!keys.length) return;
+  const total = GAMES.length, done = GAMES.filter(g => seen[g.id]).length;
+  wrap.append(el('p', 'mp-prog', done + ' / ' + total + ' ойын ашылды. Жұлдызшаны көбейту үшін қайта ойна: 1 рет – ★, 2 рет – ★★, 3 рет – ★★★. Сары жиекті ойыннан баста.'));
+  keys.forEach(k => {
+    wrap.append(el('h4', 'mp-sub', SN[k] || k));
+    const path = el('div', 'mp-path'); let nxt = true;
+    by[k].slice().sort((a, b) => (parseInt(a.grade) || 0) - (parseInt(b.grade) || 0) || String(a.topic || '').localeCompare(String(b.topic || ''))).forEach(g => {
+      const n = seen[g.id] || 0, st = Math.min(3, n), b = el('button', 'mp-n' + (n ? ' done' : '') + (!n && nxt ? ' next' : '')); b.type = 'button'; if (!n && nxt) nxt = false;
+      const t = el('span', 'mp-t'); t.append(el('b', '', g.title), el('small', '', [g.grade, g.topic].filter(Boolean).join(' · ')), el('span', 'mp-st', n ? '★'.repeat(st) + '☆'.repeat(3 - st) : '☆☆☆'));
+      b.append(el('span', 'mp-i', g.icon || '🎮'), t); b.onclick = () => { go('physics' === g.subj ? 'physics' : g.subj === 'math' ? 'math' : 'home', true); openGame(g); }; path.appendChild(b);
+    });
+    wrap.append(path);
+  });
+  box.appendChild(wrap);
 }
 async function showStudentPath(uid, name) {
   const m = modal('Оқушы прогресі'); m.box.style.width = 'min(820px,100%)'; m.box.appendChild(el('p', 'sub', 'Жүктелуде…'));
@@ -8890,6 +8952,77 @@ const HM_ICON = {
   math: '<path d="M4 13h3l3 7 4-16h6"/>',
   room: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/>'
 };
+const HM_ILL = (() => {
+  const W = '#fff', Y = '#FFD84D', f = (b, o) => `fill="${W}" fill-opacity="${o || 1}"`;
+  const svg = b => `<svg class="hm-ill" viewBox="0 0 120 100" aria-hidden="true">${b}</svg>`;
+  return {
+    quiz: svg(`<rect x="22" y="12" width="76" height="76" rx="14" ${f(0, .95)}/><circle cx="60" cy="34" r="11" fill="${Y}"/><path d="M56 31a4 4 0 1 1 6 3.4c-1.6 1-2 1.7-2 3" stroke="#B45309" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle cx="60" cy="42" r="1.6" fill="#B45309"/><rect x="34" y="52" width="52" height="8" rx="4" style="fill:var(--a)" fill-opacity=".28"/><rect x="34" y="66" width="52" height="8" rx="4" style="fill:var(--a)" fill-opacity=".16"/>`),
+    groups: svg(`<circle cx="30" cy="38" r="11" ${f(0, .95)}/><circle cx="60" cy="30" r="13" fill="${Y}"/><circle cx="90" cy="38" r="11" ${f(0, .95)}/><path d="M12 82c0-14 8-22 18-22s18 8 18 22zM42 82c0-17 8-26 18-26s18 9 18 26zM72 82c0-14 8-22 18-22s18 8 18 22z" ${f(0, .9)}/>`),
+    random: svg(`<g transform="rotate(-10 60 50)"><rect x="26" y="18" width="60" height="60" rx="14" ${f(0, .97)}/><circle cx="43" cy="35" r="5" style="fill:var(--a)" fill-opacity=".55"/><circle cx="69" cy="35" r="5" style="fill:var(--a)" fill-opacity=".55"/><circle cx="56" cy="48" r="5" fill="${Y}"/><circle cx="43" cy="61" r="5" style="fill:var(--a)" fill-opacity=".55"/><circle cx="69" cy="61" r="5" style="fill:var(--a)" fill-opacity=".55"/></g><circle cx="98" cy="22" r="6" fill="${Y}"/>`),
+    timer: svg(`<rect x="50" y="8" width="20" height="8" rx="4" ${f(0, .9)}/><circle cx="60" cy="56" r="34" ${f(0, .97)}/><circle cx="60" cy="56" r="26" style="fill:var(--a)" fill-opacity=".12"/><path d="M60 56V38M60 56l13 8" style="stroke:var(--a)" stroke-opacity=".7" stroke-width="5" stroke-linecap="round"/><circle cx="60" cy="56" r="4" fill="${Y}"/>`),
+    lessons: svg(`<rect x="12" y="14" width="96" height="62" rx="12" ${f(0, .96)}/><path d="M52 32l24 14-24 14z" fill="${Y}"/><rect x="28" y="84" width="64" height="6" rx="3" ${f(0, .7)}/>`),
+    play: svg(`<rect x="12" y="28" width="96" height="52" rx="26" ${f(0, .96)}/><path d="M34 42v24M22 54h24" style="stroke:var(--a)" stroke-opacity=".6" stroke-width="7" stroke-linecap="round"/><circle cx="80" cy="47" r="7" fill="${Y}"/><circle cx="94" cy="61" r="7" style="fill:var(--a)" fill-opacity=".45"/>`),
+    mats: svg(`<path d="M10 28a8 8 0 0 1 8-8h24l10 12h42a8 8 0 0 1 8 8v40a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" ${f(0, .55)}/><rect x="24" y="22" width="44" height="36" rx="5" ${f(0, .95)} transform="rotate(-6 46 40)"/><path d="M10 48h100v32a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8z" ${f(0, .97)}/><circle cx="92" cy="36" r="7" fill="${Y}"/>`),
+    hw: svg(`<rect x="26" y="12" width="68" height="80" rx="12" ${f(0, .97)}/><rect x="46" y="6" width="28" height="14" rx="7" fill="${Y}"/><path d="M38 40l5 5 9-10M38 62l5 5 9-10" style="stroke:var(--a)" stroke-opacity=".7" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="60" y="38" width="22" height="6" rx="3" style="fill:var(--a)" fill-opacity=".25"/><rect x="60" y="60" width="22" height="6" rx="3" style="fill:var(--a)" fill-opacity=".25"/>`),
+    qmj: svg(`<rect x="22" y="10" width="64" height="82" rx="10" ${f(0, .97)}/><rect x="34" y="26" width="40" height="6" rx="3" style="fill:var(--a)" fill-opacity=".35"/><rect x="34" y="40" width="40" height="6" rx="3" style="fill:var(--a)" fill-opacity=".2"/><rect x="34" y="54" width="28" height="6" rx="3" style="fill:var(--a)" fill-opacity=".2"/><g transform="rotate(35 88 62)"><rect x="82" y="30" width="12" height="46" rx="3" fill="${Y}"/><path d="M82 76h12l-6 12z" fill="#fff"/></g>`),
+    upload: svg(`<path d="M28 78a20 20 0 0 1 4-39 26 26 0 0 1 50-4 20 20 0 0 1 8 43z" ${f(0, .97)}/><path d="M60 82V48M46 60l14-14 14 14" stroke="${Y}" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`),
+    pcfind: svg(`<rect x="10" y="16" width="86" height="56" rx="10" ${f(0, .96)}/><rect x="40" y="76" width="26" height="8" rx="3" ${f(0, .8)}/><rect x="30" y="84" width="46" height="6" rx="3" ${f(0, .8)}/><circle cx="82" cy="58" r="15" fill="${Y}" fill-opacity=".95"/><circle cx="82" cy="58" r="8" fill="#fff"/><path d="M93 69l12 12" stroke="#fff" stroke-width="6" stroke-linecap="round"/>`),
+    gallery: svg(`<rect x="10" y="14" width="44" height="34" rx="9" ${f(0, .97)}/><rect x="62" y="20" width="44" height="34" rx="9" ${f(0, .75)}/><rect x="26" y="56" width="44" height="34" rx="9" ${f(0, .9)}/><circle cx="32" cy="31" r="7" fill="${Y}"/><path d="M84 50l8-10 6 7" style="stroke:var(--a)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M100 66l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z" fill="${Y}"/>`),
+    room: svg(`<path d="M12 50L60 14l48 36v38a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4z" ${f(0, .97)}/><rect x="48" y="58" width="24" height="34" rx="6" style="fill:var(--a)" fill-opacity=".3"/><rect x="22" y="56" width="16" height="16" rx="4" fill="${Y}"/><rect x="82" y="56" width="16" height="16" rx="4" fill="${Y}"/>`)
+  };
+})();
+async function shareQmj(x) {
+  try {
+    const p = JSON.parse(JSON.stringify(x)); ['_k', '_t', 'wsId', 'autoWs', 'teacher', 'date'].forEach(k => delete p[k]);
+    if (x.quizId) { const r = await sb.from('quizzes').select('title,questions').eq('id', x.quizId).maybeSingle(); if (r.data) p.quiz = { title: r.data.title, questions: r.data.questions, oldId: x.quizId }; }
+    delete p.quizId;
+    const ins = await sb.from('shared_items').insert({ owner_name: meName || '', kind: 'qmj', title: String(x.topic || 'ҚМЖ').slice(0, 120), subject: x.subject || null, grade: x.grade || null, topic: x.topic || null, payload: p });
+    if (ins.error) return notify(ins.error.message.includes('shared_items') ? 'update-45.sql әлі іске қосылмаған' : 'Қате: ' + ins.error.message, 'err');
+    notify('Галереяға салынды. Басқа мұғалімдер алып қолдана алады');
+  } catch (e) { notify('Қате: ' + e.message, 'err'); }
+}
+async function takeShared(row) {
+  const r = await sb.from('shared_items').select('payload,kind,title').eq('id', row.id).maybeSingle();
+  if (r.error || !r.data) return notify('Ашылмады', 'err');
+  const pl = r.data.payload || {};
+  try { sb.rpc('take_shared', { p_id: row.id }); } catch { }
+  if (r.data.kind === 'quiz') {
+    const ins = await sb.from('quizzes').insert({ title: r.data.title, questions: pl.questions || [], updated_at: new Date().toISOString() }).select('id').single();
+    return notify(ins.error ? 'Қате: ' + ins.error.message : 'Викторина «Викторина» бөліміне қосылды');
+  }
+  const d = JSON.parse(JSON.stringify(pl)); const q = d.quiz; delete d.quiz;
+  d.teacher = ls.get('qmjName') || meName || ''; d.date = today();
+  if (q) { const ins = await sb.from('quizzes').insert({ title: q.title, questions: q.questions, updated_at: new Date().toISOString() }).select('id').single(); if (!ins.error && ins.data) { d.quizId = ins.data.id; (d.stages || []).forEach(o => (o.links || []).forEach(l => { if (q.oldId && String(l.url).includes('id=' + q.oldId)) l.url = String(l.url).replace(q.oldId, ins.data.id); })); } }
+  window.qmjLoad(d); go('qmj'); notify('ҚМЖ өз бетіңе алынды, өңдей аласың');
+}
+async function loadGallery() {
+  const v = $('v-gallery'); v.replaceChildren();
+  v.append(el('h2', '', 'Галерея'), el('p', 'sub', 'Мұғалімдер бөліскен ҚМЖ мен викториналар. «Алу» бассаң, өз бетіңе көшіріледі, өзгертуге болады.'));
+  const bar = el('div', 'gl-bar'), sel = document.createElement('select'); [['', 'Барлығы'], ['qmj', 'ҚМЖ'], ['quiz', 'Викторина']].forEach(([k, t]) => { const o = document.createElement('option'); o.value = k; o.textContent = t; sel.appendChild(o); });
+  const q = document.createElement('input'); q.placeholder = 'Іздеу: тақырып, пән, сынып…'; bar.append(sel, q);
+  const list = el('div', 'gl-list'); v.append(bar, list);
+  list.append(el('p', 'sub', 'Жүктелуде…'));
+  const r = await sb.from('shared_items').select('id,owner,owner_name,kind,title,subject,grade,topic,takes,created_at').order('created_at', { ascending: false }).limit(150);
+  if (r.error) { list.replaceChildren(el('p', 'msg err', r.error.message.includes('shared_items') ? 'update-45.sql әлі іске қосылмаған. Оны Supabase → SQL Editor ішінде іске қос.' : 'Қате: ' + r.error.message)); return; }
+  const rows = r.data || [];
+  const draw = () => {
+    list.replaceChildren(); const t = q.value.trim().toLowerCase();
+    const f = rows.filter(x => (!sel.value || x.kind === sel.value) && (!t || [x.title, x.subject, x.grade, x.owner_name].join(' ').toLowerCase().includes(t)));
+    if (!f.length) { list.append(el('p', 'sub', rows.length ? 'Ештеңе табылмады.' : 'Галерея әзірге бос. ҚМЖ-ны «Менің ҚМЖ-ларым» ішінен «🌐 Галереяға» батырмасымен бөлісіп, бірінші бол!')); return; }
+    f.forEach(x => {
+      const c = el('div', 'gl-card'), top = el('div', 'gl-top'); top.append(el('span', 'gl-k ' + x.kind, x.kind === 'qmj' ? '📄 ҚМЖ' : '🎯 Викторина'), el('span', 'gl-m', [x.grade && x.grade + '-сынып', x.subject].filter(Boolean).join(' · ')));
+      const b = el('div', 'gl-bt'), take = el('button', 'qm-rg', 'Алу'); take.type = 'button'; take.onclick = () => takeShared(x); b.append(take);
+      if (x.owner === meId) { const del = el('button', 'qm-rg', 'Жою'); del.type = 'button'; del.onclick = async () => { if (!(await ask('Галереядан жоямыз ба?', 'Жою', 'Жоқ'))) return; await sb.from('shared_items').delete().eq('id', x.id); loadGallery(); }; b.append(del); }
+      c.append(top, el('strong', '', x.title), el('small', '', (x.owner_name || 'Мұғалім') + ' · ' + new Date(x.created_at).toLocaleDateString('ru-RU') + (x.takes ? ' · ' + x.takes + ' рет алынды' : '')), b);
+      list.appendChild(c);
+    });
+  };
+  sel.onchange = draw; q.oninput = draw; draw();
+}
+function emptyState(k, t, sub) {
+  const d = el('div', 'es-box'); d.style.setProperty('--a', 'var(--accent)'); d.insertAdjacentHTML('beforeend', (HM_ILL[k] || HM_ILL.mats).replace('class="hm-ill"', 'class="es-ill"'));
+  d.append(el('strong', '', t)); if (sub) d.append(el('small', '', sub)); return d;
+}
 function homeAct(k) {
   if (k === 'quiz' || k === 'timer') return playTool({ k });
   if (k === 'groups') return playTool({ k: 'groups', cls: false });
@@ -8901,15 +9034,16 @@ function renderHome() {
   const hd = el('div', 'hm-hero'); const hr = new Date().getHours(), gr = hr >= 5 && hr < 12 ? 'Қайырлы таң' : hr >= 12 && hr < 18 ? 'Қайырлы күн' : hr >= 18 && hr < 23 ? 'Қайырлы кеш' : 'Қайырлы түн';
   hd.append(el('h1', '', gr + ', ' + nm + '! 👋'), el('p', '', isStaff ? 'Бүгін сабақты не істейміз? Ең керектісін бір басумен аш.' : 'Бүгін не үйренеміз? Пән таңда не тапсырманы аш.'));
   v.appendChild(hd);
-  const card = (cls, t, d, ic, fn) => { const b = el('button', 'hm-card ' + cls); b.type = 'button'; const i = el('span', 'hm-ic'); i.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + HM_ICON[ic] + '</svg>'; b.append(i, el('strong', '', t), el('small', '', d), el('em', '', 'Ашу →')); b.onclick = fn; return b; };
+  const card = (cls, t, d, ic, fn) => { const b = el('button', 'hm-card ' + cls); b.type = 'button'; const i = el('span', 'hm-ic'); i.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + HM_ICON[ic] + '</svg>'; if (HM_ILL[ic]) b.insertAdjacentHTML('beforeend', HM_ILL[ic]); b.append(i, el('strong', '', t), el('small', '', d), el('em', '', 'Ашу →')); b.onclick = fn; return b; };
   const st = el('div', 'td-stats'); st.id = 'tdStats'; v.appendChild(st);
   renderToday(v);
   if (isStaff) {
     v.appendChild(el('h2', 'hm-h', 'Жылдам бастау'));
     const g = el('div', 'hm-grid'), more = el('div', 'hm-grid hm-more'); more.hidden = true;
     const main = [['c-violet', 'Викторина', 'Телефонмен ойнайтын сұрақтар', 'quiz'], ['c-violet', 'Топқа бөлу', 'Сынып не өз тізімің', 'groups'], ['c-violet', 'ҚМЖ жасау', 'Word файл, стандартқа сай', 'qmj'],
-      ['c-orange', 'Сабақ жоспары', 'Қадамдармен жүргіз', 'lessons'], ['c-blue', 'Материалдар', 'PDF, презентация, сілтеме', 'mats'], ['c-orange', 'Үй тапсырмасы', 'Беру мен бағалау', 'hw']];
+      ['c-orange', 'Сабақ жоспары', 'Қадамдармен жүргіз', 'lessons'], ['c-blue', 'Материалдар', 'PDF, презентация, сілтеме', 'mats'], ['c-orange', 'Үй тапсырмасы', 'Беру мен бағалау', 'hw'], ['c-pink', 'Галерея', 'Мұғалімдер бөліскен ҚМЖ, викторина', 'gallery']];
     const rest = [['c-violet', 'Таймер', 'Үлкен экранға', 'timer'], ['c-violet', 'Кездейсоқ оқушы', 'Әділ таңдау', 'random'], ['c-violet', 'Ойын-сауық', 'Барлық ойын мен құрал', 'play'], ['c-teal', 'Оқу бөлмесі', 'Сыныптың ортақ бөлмесі', 'room']];
+    HM_ICON.gallery = '<rect x="3" y="4" width="7" height="7" rx="2"/><rect x="14" y="4" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><path d="M14 17.5h7M17.5 14v7"/>';
     HM_ICON.qmj = '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>';
     HM_ICON.upload = '<path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>';
     HM_ICON.pcfind = '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><circle cx="11" cy="9.5" r="2.2"/><path d="M12.7 11.2L15 13.5"/>';
@@ -9299,7 +9433,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       const x = g('aiX'); if (x) x.click(); go('qmj'); return { ok: true, note: 'ҚМЖ беті ашылды, өрістер толтырылды. Мұғалім «ҚМЖ жаса» басады.' };
     },
     async go_to(a) {
-      const ok = ['home', 'mats', 'lessons', 'quiz', 'hw', 'students', 'rosters', 'news', 'account', 'play', 'sites', 'qmj', 'projects', 'plan']; if (!ok.includes(a.view)) return { error: 'Белгісіз бөлім' };
+      const ok = ['home', 'mats', 'lessons', 'quiz', 'hw', 'students', 'rosters', 'news', 'account', 'play', 'sites', 'qmj', 'gallery', 'projects', 'plan']; if (!ok.includes(a.view)) return { error: 'Белгісіз бөлім' };
       if (!showProc) return { ok: true, note: 'Процесс көрсету өшірулі, бөлім ашылмады.' };
       if (a.view === 'quiz') go('play'); else go(a.view); return { ok: true };
     }
@@ -9786,9 +9920,9 @@ function forcePw() {
     const nwB = el('button', 'hm-card c-teal qm-t'), arB = el('button', 'hm-card c-amber qm-t'); nwB.type = arB.type = 'button'; nwB.append(el('strong', '', '＋ Жаңа ҚМЖ'), el('small', '', 'өрісті тазалау')); arB.append(el('strong', '', '📁 Менің ҚМЖ-ларым'), el('small', '', 'сақталғандар, ашу / жою')); run.append(nwB, arB);
     const arBox = el('div'); arBox.hidden = true;
     nwB.onclick = () => { data = null; last = null; ls.set(PK, ''); renderQmj(); };
-    const drawAr = () => { arBox.replaceChildren(); const a = lsj(AK, []); if (!a.length) { arBox.append(el('div', 'qm-tx', 'Әзірге сақталған ҚМЖ жоқ. Жасаған сайын осында автоматты түседі.')); return; } a.forEach((x, i) => { const r = el('div', 'qm-tx'); r.style.cssText = 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px'; const t = el('span', '', (x.date || '') + ' · ' + (x.grade || '') + ' сынып · ' + (x.topic || '')); t.style.flex = '1 1 200px'; const o = el('button', 'qm-rg', 'Ашу'), d = el('button', 'qm-rg', 'Жою'); o.type = d.type = 'button'; o.onclick = () => { data = x; last = x; ls.set(PK, JSON.stringify(x)); renderQmj(); }; d.onclick = async () => { if (!(await ask('«' + (x.topic || '') + '» ҚМЖ-ны жоямыз ба? (үй тапсырмасы ҚМЖ-мен бірге кетеді)', 'Жою', 'Жоқ'))) return;
+    const drawAr = () => { arBox.replaceChildren(); const a = lsj(AK, []); if (!a.length) { arBox.append(el('div', 'qm-tx', 'Әзірге сақталған ҚМЖ жоқ. Жасаған сайын осында автоматты түседі.')); return; } a.forEach((x, i) => { const r = el('div', 'qm-tx'); r.style.cssText = 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px'; const t = el('span', '', (x.date || '') + ' · ' + (x.grade || '') + ' сынып · ' + (x.topic || '')); t.style.flex = '1 1 200px'; const o = el('button', 'qm-rg', 'Ашу'), d = el('button', 'qm-rg', 'Жою'), sh = el('button', 'qm-rg', '🌐 Галереяға'); o.type = d.type = sh.type = 'button'; sh.onclick = () => shareQmj(x); o.onclick = () => { data = x; last = x; ls.set(PK, JSON.stringify(x)); renderQmj(); }; d.onclick = async () => { if (!(await ask('«' + (x.topic || '') + '» ҚМЖ-ны жоямыз ба? (үй тапсырмасы ҚМЖ-мен бірге кетеді)', 'Жою', 'Жоқ'))) return;
           if (x.quizId && await ask('Осы ҚМЖ-мен жасалған викторинаны да жоямыз ба? (Groowin → Викторина)', 'Иә, жою', 'Жоқ, қалсын')) { try { await sb.from('quizzes').delete().eq('id', x.quizId); } catch { } }
-          if (x.wsId && await ask('Жұмыс парағын да жоямыз ба? (Материалдар)', 'Иә, жою', 'Жоқ, қалсын')) { try { const r = await sb.from('mat_items').select('storage_path').eq('id', x.wsId).maybeSingle(); if (r.data && r.data.storage_path) await sb.storage.from('materials').remove([r.data.storage_path]); await sb.from('mat_items').delete().eq('id', x.wsId); try { if (curView === 'mats') loadMats(); } catch { } } catch { } } const b = lsj(AK, []).filter(z => z._k !== x._k); ls.set(AK, JSON.stringify(b)); if (data && data._k === x._k) { data = null; ls.set(PK, ''); } drawAr(); }; r.append(t, o, d); arBox.appendChild(r); }); };
+          if (x.wsId && await ask('Жұмыс парағын да жоямыз ба? (Материалдар)', 'Иә, жою', 'Жоқ, қалсын')) { try { const r = await sb.from('mat_items').select('storage_path').eq('id', x.wsId).maybeSingle(); if (r.data && r.data.storage_path) await sb.storage.from('materials').remove([r.data.storage_path]); await sb.from('mat_items').delete().eq('id', x.wsId); try { if (curView === 'mats') loadMats(); } catch { } } catch { } } const b = lsj(AK, []).filter(z => z._k !== x._k); ls.set(AK, JSON.stringify(b)); if (data && data._k === x._k) { data = null; ls.set(PK, ''); } drawAr(); }; r.append(t, o, sh, d); arBox.appendChild(r); }); };
     arB.onclick = () => { arBox.hidden = !arBox.hidden; if (!arBox.hidden) drawAr(); };
     const out = el('div'), st = el('div', 'qm-tx'); st.hidden = true;
     const row2 = (...f) => { const d = el('div', 'qm-g'); d.append(...f); return d; };
@@ -9871,6 +10005,9 @@ function forcePw() {
   };
   const NZ = t => String(t || '').replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').trim();
   const shortName = () => { const nm = (meName || '').trim().split(/\s+/); return nm.length > 1 ? nm[0] + ' ' + nm[1][0] + '.' : (nm[0] || ''); };
+  window.qmjLoad = d => { data = d; last = d; ls.set(PK, JSON.stringify(d)); };
+  window.qmjGet = () => data;
+  window.qmjAr = () => lsj(AK, []);
   window.qmjPrefill = o => { last = { teacher: ls.get('qmjName') || shortName(), date: today(), grade: o.grade || '', subject: o.subject || 'Физика', section: '', topic: o.topic || '', goal: '', links: '' }; };
   const BASE = 'https://groowin.github.io/groowin-site/platform/';
   const short = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
