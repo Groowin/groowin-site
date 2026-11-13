@@ -9819,7 +9819,7 @@ function forcePw() {
         if (Array.isArray(j2.tasks) && j2.tasks.length >= 3) {
           const T = j2.tasks.slice(0, 3); let mins = T.map(t => Math.max(2, parseInt(t.min) || 7)); const sm = mins.reduce((a, b) => a + b, 0); if (sm !== 22) { mins = [7, 7, 8]; }
           const pts = T.map(t => Math.max(1, parseInt(t.points) || 4)), tot = pts.reduce((a, b) => a + b, 0);
-          const cl = v => String(v || '').trim().replace(/^\s*\d\s*-\s*тапсырма[^\n]*\n?/i, '');
+          const cl = v => String(v || '').trim().replace(/^(\s*[–-]?\s*\d\s*-\s*тапсырма[^\n]*\n?)+/i, '').replace(/^\s*Критерий:?\s*\n/i, 'Критерий:\n');
           const j = (k, f) => T.map((t, i) => (i + 1) + '-тапсырма' + f(i) + '.\n' + cl(t[k])).join('\n');
           s45 = [{ teacher: j('teacher', i => ' (' + mins[i] + ' мин)'), student: j('student', () => ''), assess: T.map((t, i) => (i + 1) + '-тапсырма.\n' + cl(t.assess).replace(/\n?\s*Жалпы[^\n]*$/i, '') + '\nЖалпы ' + pts[i] + ' балл').join('\n') + '\nБарлығы: ' + tot + ' балл', resources: j('resources', () => '') }, j2.stage5 || (j2.stages || [])[1]];
         } else s45 = [j2.stage4 || (j2.stages || [])[0], j2.stage5 || (j2.stages || [])[1]];
@@ -9846,8 +9846,9 @@ function forcePw() {
         } catch { fixes = null; }
         data.fixes = fixes;
         st.textContent = '⏳ Бос ұяшықтарды тексеріп жатыр…';
+        const minSum = t => (String(t || '').match(/(\d+)\s*мин/g) || []).reduce((a, m) => a + parseInt(m), 0);
         const nT = o => (String(o.teacher || '').match(/\d\s*-\s*тапсырма/gi) || []).length;
-        const bad = i => { const o = data.stages[i]; if (!String(o.teacher || '').trim() || !String(o.student || '').trim()) return true; if (i === 2 && !/критери/i.test(String(o.assess))) return true; if (i === 3 && nT(o) < 3) return true; if (i === 4 && (nT(o) > 0 || String(o.teacher).length < 60)) return true; return false; };
+        const bad = i => { const o = data.stages[i]; if (!String(o.teacher || '').trim() || !String(o.student || '').trim()) return true; if (i === 2 && !/критери/i.test(String(o.assess))) return true; if ([0, 1, 2, 4].includes(i) && minSum(o.teacher) > MIN[i] + 1) return true; if (i === 3 && nT(o) < 3) return true; if (i === 4 && (nT(o) > 0 || String(o.teacher).length < 60)) return true; return false; };
         for (let rd = 0; rd < 2; rd++) for (let i = 0; i < 5; i++) { if (!bad(i)) continue; st.textContent = '⏳ ' + (i + 1) + '-кезеңді түзетіп жатыр…'; const o = data.stages[i]; try { const dd = await ai({ mode: 'qmj', turn: false, qmj: { part: 6, stage: i + 1, facts: data.facts || '', avoid: [(data.methods || [])[i] || ''], subject: q.subject, grade: q.grade, topic: q.topic, goal: q.goal, ctx: data.stages.map((z, k) => k === i ? '' : String(z.teacher || '').replace(/\s+/g, ' ').slice(0, 120)).join(' | ') } }); const jj = jparse(dd.message.content), x = jj.stage || (jj.stages || [])[0]; if (x) { const full = i === 3 || i === 4 || !String(o.teacher || '').trim(); ['teacher', 'student', 'assess', 'resources'].forEach(k => { if (full || !String(o[k] || '').trim()) o[k] = k === 'assess' || k === 'resources' ? tidy(nz(x[k])) : nz(x[k]); }); } } catch { } }
         data.stages.forEach(o => { if (!String(o.student || '').trim()) o.student = '– Тыңдайды, сұрақтарға жауап береді, дәптерге жазады'; if (!String(o.assess || '').trim()) o.assess = 'Ауызша мадақтау, кері байланыс'; if (!String(o.resources || '').trim()) o.resources = 'Оқулық, тақта, маркер'; });
         st.textContent = '⏳ Groowin ойындары, сайттар және материалдарыңнан сілтеме іздеп жатыр…';
