@@ -9689,7 +9689,7 @@ function forcePw() {
   function goIntake() {
     const q0 = location.search, g = new URLSearchParams(q0).get('go'); if (!g) return;
     history.replaceState(null, '', location.pathname);
-    setTimeout(() => { try { if (g === 'plan') go('plan'); else if (g === 'qr') qrScan(); else if (g === 'groups') playTool({ k: 'groups', cls: false }); else if (g === 'timer') playTool({ k: 'timer' }); else if (g === 'random') playTool({ k: 'random', cls: true }); else if (g === 'play') go('play'); else if (g === 'game' || g === 'quiz') { const id = new URLSearchParams(q0).get('id'); (async () => { if (g === 'game') { if (!GAMES.length || !GAMES.some(z => z.id === id)) await loadGames(); const x = GAMES.find(z => z.id === id); if (x) openGame(x); else notify('Ойын табылмады', 'err'); } else { const r = await sb.from('quizzes').select('*').eq('id', id).maybeSingle(); if (r.data) hostQuiz(r.data); else notify('Викторина табылмады', 'err'); } })(); } else if (g === 'ai') { const f = $('aiFab'); if (f && !f.hidden) f.click(); } } catch {} }, 400);
+    setTimeout(() => { try { if (g === 'plan') go('plan'); else if (g === 'qr') qrScan(); else if (g === 'groups') playTool({ k: 'groups', cls: false }); else if (g === 'timer') playTool({ k: 'timer' }); else if (g === 'random') playTool({ k: 'random', cls: true }); else if (g === 'tool') { const k = new URLSearchParams(q0).get('k'), t = PLAY_TOOLS.find(z => z.k === k); if (t) playTool(t); else notify('Құрал табылмады', 'err'); } else if (g === 'play') go('play'); else if (g === 'game' || g === 'quiz') { const id = new URLSearchParams(q0).get('id'); (async () => { if (g === 'game') { if (!GAMES.length || !GAMES.some(z => z.id === id)) await loadGames(); const x = GAMES.find(z => z.id === id); if (x) openGame(x); else notify('Ойын табылмады', 'err'); } else { const r = await sb.from('quizzes').select('*').eq('id', id).maybeSingle(); if (r.data) hostQuiz(r.data); else notify('Викторина табылмады', 'err'); } })(); } else if (g === 'ai') { const f = $('aiFab'); if (f && !f.hidden) f.click(); } } catch {} }, 400);
   }
   window.gwIntake = () => { if (!isStaff) return; shareIntake(); goIntake(); };
 
@@ -9786,7 +9786,9 @@ function forcePw() {
     const nwB = el('button', 'hm-card c-teal qm-t'), arB = el('button', 'hm-card c-amber qm-t'); nwB.type = arB.type = 'button'; nwB.append(el('strong', '', '＋ Жаңа ҚМЖ'), el('small', '', 'өрісті тазалау')); arB.append(el('strong', '', '📁 Менің ҚМЖ-ларым'), el('small', '', 'сақталғандар, ашу / жою')); run.append(nwB, arB);
     const arBox = el('div'); arBox.hidden = true;
     nwB.onclick = () => { data = null; last = null; ls.set(PK, ''); renderQmj(); };
-    const drawAr = () => { arBox.replaceChildren(); const a = lsj(AK, []); if (!a.length) { arBox.append(el('div', 'qm-tx', 'Әзірге сақталған ҚМЖ жоқ. Жасаған сайын осында автоматты түседі.')); return; } a.forEach((x, i) => { const r = el('div', 'qm-tx'); r.style.cssText = 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px'; const t = el('span', '', (x.date || '') + ' · ' + (x.grade || '') + ' сынып · ' + (x.topic || '')); t.style.flex = '1 1 200px'; const o = el('button', 'qm-rg', 'Ашу'), d = el('button', 'qm-rg', 'Жою'); o.type = d.type = 'button'; o.onclick = () => { data = x; last = x; ls.set(PK, JSON.stringify(x)); renderQmj(); }; d.onclick = async () => { if (!(await ask('«' + (x.topic || '') + '» ҚМЖ-ны жоямыз ба?', 'Жою', 'Жоқ'))) return; const b = lsj(AK, []).filter(z => z._k !== x._k); ls.set(AK, JSON.stringify(b)); if (data && data._k === x._k) { data = null; ls.set(PK, ''); } drawAr(); }; r.append(t, o, d); arBox.appendChild(r); }); };
+    const drawAr = () => { arBox.replaceChildren(); const a = lsj(AK, []); if (!a.length) { arBox.append(el('div', 'qm-tx', 'Әзірге сақталған ҚМЖ жоқ. Жасаған сайын осында автоматты түседі.')); return; } a.forEach((x, i) => { const r = el('div', 'qm-tx'); r.style.cssText = 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px'; const t = el('span', '', (x.date || '') + ' · ' + (x.grade || '') + ' сынып · ' + (x.topic || '')); t.style.flex = '1 1 200px'; const o = el('button', 'qm-rg', 'Ашу'), d = el('button', 'qm-rg', 'Жою'); o.type = d.type = 'button'; o.onclick = () => { data = x; last = x; ls.set(PK, JSON.stringify(x)); renderQmj(); }; d.onclick = async () => { if (!(await ask('«' + (x.topic || '') + '» ҚМЖ-ны жоямыз ба? (үй тапсырмасы ҚМЖ-мен бірге кетеді)', 'Жою', 'Жоқ'))) return;
+          if (x.quizId && await ask('Осы ҚМЖ-мен жасалған викторинаны да жоямыз ба? (Groowin → Викторина)', 'Иә, жою', 'Жоқ, қалсын')) { try { await sb.from('quizzes').delete().eq('id', x.quizId); } catch { } }
+          if (x.wsId && await ask('Жұмыс парағын да жоямыз ба? (Материалдар)', 'Иә, жою', 'Жоқ, қалсын')) { try { const r = await sb.from('mat_items').select('storage_path').eq('id', x.wsId).maybeSingle(); if (r.data && r.data.storage_path) await sb.storage.from('materials').remove([r.data.storage_path]); await sb.from('mat_items').delete().eq('id', x.wsId); try { if (curView === 'mats') loadMats(); } catch { } } catch { } } const b = lsj(AK, []).filter(z => z._k !== x._k); ls.set(AK, JSON.stringify(b)); if (data && data._k === x._k) { data = null; ls.set(PK, ''); } drawAr(); }; r.append(t, o, d); arBox.appendChild(r); }); };
     arB.onclick = () => { arBox.hidden = !arBox.hidden; if (!arBox.hidden) drawAr(); };
     const out = el('div'), st = el('div', 'qm-tx'); st.hidden = true;
     const row2 = (...f) => { const d = el('div', 'qm-g'); d.append(...f); return d; };
@@ -9857,7 +9859,7 @@ function forcePw() {
           st.textContent = '⏳ Викторина жасап жатыр…';
           try { const dq = await ai({ mode: 'qmj', turn: false, qmj: { part: 7, subject: q.subject, grade: q.grade, topic: q.topic, ctx: (data.goals || []).join(' ') } }); const jq = jparse(dq.message.content); const qs = (Array.isArray(jq.questions) ? jq.questions : []).filter(x => x && x.t && Array.isArray(x.o) && x.o.length === 4 && x.c >= 0 && x.c < 4).slice(0, 10).map(x => ({ t: String(x.t).slice(0, 200), img: null, o: x.o.map(z => String(z).replace(/^\s*[A-DА-Г][).]\s*/, '').slice(0, 100)), c: x.c | 0, s: 20 })); if (qs.length >= 4) { const ins = await sb.from('quizzes').insert({ title: (String(jq.title || '').trim() || (String(q.topic).slice(0, 45) + ': викторина')).slice(0, 80), questions: qs, updated_at: new Date().toISOString() }).select('id').single(); if (!ins.error && ins.data) rs.quiz = { id: ins.data.id, title: (String(jq.title || '').trim() || (String(q.topic).slice(0, 45) + ': викторина')).slice(0, 80) }; } } catch { }
         }
-        addLinks(data, '', null, [], [], rs);
+        addLinks(data, '', null, [], [], rs); data.quizId = rs.quiz ? rs.quiz.id : null;
         data.autoWs = cW.checked;
         { const o = data.stages[1]; let L = String(o.teacher || '').split('\n').filter(x => !/^\s*[–-]?\s*Үй жұмысын тексеру/i.test(x)); L.unshift('– Үй жұмысын тексеру: ___ бет, №___ (2 мин)'); o.teacher = L.join('\n'); }
         const parts = String(q.topic).split(/[,;]|\s+және\s+/).filter(x => x.trim().length > 2);
@@ -9889,6 +9891,11 @@ function forcePw() {
       (rs.games || []).forEach(g => add(3, 'Groowin → ' + (SUBJ_KK[g.subj] || 'Ойын-сауық') + ': «' + g.title + '»', BASE + '?go=game&id=' + g.id));
       (rs.sites || []).forEach(x => add(2, 'Сайт: ' + x.title, x.url));
       (rs.links || []).forEach(x => add(2, 'Материал: ' + x.title, x.url));
+      try {
+        const used = new Set(['quiz', 'games', 'lessons', 'random', 'groups', 'timer', 'refl']), pick = tag => { const c = PLAY_TOOLS.filter(t => !used.has(t.k) && String(PL_MAP[t.k] || '').split(',').includes(tag)); if (!c.length) return null; const t = c[Math.floor(Math.random() * c.length)]; used.add(t.k); return t; };
+        [[1, 'start'], [2, 'teach'], [3, 'fix']].forEach(([st, tag]) => { const t = pick(tag); if (t) add(st, 'Groowin → ' + t.t, BASE + '?go=tool&k=' + t.k); });
+        add(4, 'Groowin → Рефлексия (12 тәсілдің бірі)', BASE + '?go=tool&k=refl');
+      } catch { }
       if (rs.quiz) add(4, 'Groowin → Рефлексия викторинасы: «' + (rs.quiz.title.length > 50 ? rs.quiz.title.slice(0, 48) + '…' : rs.quiz.title) + '»', BASE + '?go=quiz&id=' + rs.quiz.id);
     }
   }
@@ -9935,7 +9942,7 @@ function forcePw() {
       const dr = draftOf(), d = await ai({ mode: 'qmj', turn: false, qmj: { part: 5, subject: data.subject, grade: data.grade, topic: data.topic, draft: dr } });
       const j = jparse(d.message.content); if (!Array.isArray(j.variants) || j.variants.length < 2) throw new Error('Жұмыс парағы шықпады, қайта бас');
       const D = await loadDocx(), blob = await D.Packer.toBlob(wsBuild(D, data, j.variants)), fn = ('Жұмыс парағы ' + (data.topic || '')).replace(/[\\/:*?"<>|]/g, '').slice(0, 60) + '.docx';
-      if (download) dlBlob(blob, fn); saveMat(blob, fn, data.date).then(ok => notify(ok ? 'Жұмыс парағы Материалдарға ' + (download ? 'да ' : '') + 'сақталды: ' + (data.date || '') : 'Файл жүктелді'));
+      if (download) dlBlob(blob, fn); saveMat(blob, fn, data.date).then(ok => { if (ok && ok !== true) { data.wsId = ok; persist(); } notify(ok ? 'Жұмыс парағы Материалдарға ' + (download ? 'да ' : '') + 'сақталды: ' + (data.date || '') : 'Файл жүктелді'); });
     };
     bW.onclick = run2(bW, 'Жасап жатыр', () => doWs(true));
     if (data.autoWs) setTimeout(() => { data.autoWs = false; persist(); run2(bW, 'Автоматты жасап жатыр', () => doWs(false))(); }, 80);
@@ -10025,8 +10032,8 @@ function forcePw() {
       let fid = f && f[0] && f[0].id; if (!fid) { const r = await sb.from('mat_folders').insert({ name: nm, parent_id: null }).select().single(); if (r.error) return false; fid = r.data.id; }
       const ext = (fn.match(/\.(\w+)$/) || [, 'docx'])[1], path = meId + '/' + crypto.randomUUID() + '.' + ext, mime = mimeIn || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       const up = await sb.storage.from('materials').upload(path, blob, { contentType: mime }); if (up.error) return false;
-      const ins = await sb.from('mat_items').insert({ kind: 'file', title: fn.slice(0, 120), storage_path: path, mime, size: blob.size, folder_id: fid }); if (ins.error) { await sb.storage.from('materials').remove([path]); return false; }
-      try { if (curView === 'mats') loadMats(); } catch { } return true;
+      const ins = await sb.from('mat_items').insert({ kind: 'file', title: fn.slice(0, 120), storage_path: path, mime, size: blob.size, folder_id: fid }).select('id').single(); if (ins.error) { await sb.storage.from('materials').remove([path]); return false; }
+      try { if (curView === 'mats') loadMats(); } catch { } return (ins.data && ins.data.id) || true;
     } catch { return false; }
   }
 // qmjBuild(D, data) -> Document. data: {section,teacher,date,grade,topic,goal,goals[],stages[{teacher,student,assess,resources}],homework}
