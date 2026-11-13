@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Мах–Цендер интерферометрі · 3D</title>
+<style>
+:root{--bg:#050a12;--panel:rgba(9,16,26,.84);--line:rgba(255,255,255,.12);--ink:#e8f0f7;--mut:#93a9bd;--teal:#3fd3c6;--vio:#aa9fff;--ora:#ff8f60}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,Segoe UI,Roboto,sans-serif;overflow:hidden}
+#stage{position:fixed;inset:0}
+canvas{display:block}
+.lab{position:absolute;z-index:1;transform:translate(-50%,-100%);font-weight:600;font-size:13px;color:var(--ink);background:rgba(6,12,20,.62);border:1px solid var(--line);padding:2px 9px;border-radius:999px;white-space:nowrap;pointer-events:none;backdrop-filter:blur(4px)}
+.lab.hide{display:none}
+#top{z-index:3;position:fixed;left:14px;top:12px;right:14px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}
+#top>*{pointer-events:auto}
+.brand b{display:block;font-size:16px;letter-spacing:.01em}
+.brand span{color:var(--mut);font-size:13px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--panel);backdrop-filter:blur(8px);padding:3px}
+.seg button{all:unset;cursor:pointer;padding:6px 14px;border-radius:999px;font-weight:600;font-size:13px;color:var(--mut)}
+.seg button.on{background:var(--teal);color:#06201e}
+#read{z-index:3;position:fixed;right:14px;top:62px;width:min(300px,calc(100vw - 28px));background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px 16px;backdrop-filter:blur(10px)}
+#read h4{margin:0 0 10px;font-size:12px;letter-spacing:.16em;color:var(--mut);font-weight:600}
+.m{margin:8px 0}
+.m .r{display:flex;justify-content:space-between;font-weight:600;font-size:14px}
+.m .r span:last-child{font-family:ui-monospace,Consolas,monospace}
+.bar{height:8px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;width:0;transition:width .12s}
+#budget{display:flex;height:12px;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.08);margin-top:12px}
+#budget i{display:block;height:100%}
+.sum{display:flex;justify-content:space-between;margin-top:8px;font:600 13px ui-monospace,Consolas,monospace;color:var(--mut)}
+#plot{width:100%;height:70px;display:block;margin-top:10px;border-radius:10px;background:rgba(255,255,255,.04)}
+#ctrl{z-index:3;position:fixed;left:14px;bottom:14px;width:min(440px,calc(100vw - 28px));background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:14px 16px;backdrop-filter:blur(10px)}
+.row{margin:8px 0}
+.row label{display:flex;justify-content:space-between;font-weight:600;font-size:14px}
+.row label span:last-child{font-family:ui-monospace,Consolas,monospace;color:var(--teal)}
+input[type=range]{width:100%;accent-color:var(--teal);height:28px;margin:0}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.btns button{all:unset;cursor:pointer;font-weight:600;font-size:13px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;color:var(--ink);background:rgba(255,255,255,.04)}
+.btns button:hover{border-color:var(--teal);color:var(--teal)}
+.hint{color:var(--mut);font-size:13px;margin:6px 0 0}
+.res{display:none}
+body.res-on .res{display:block}
+#cams{z-index:3;position:fixed;right:14px;bottom:14px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:min(420px,calc(100vw - 28px))}
+#cams button{all:unset;cursor:pointer;font-weight:600;font-size:13px;padding:7px 13px;border:1px solid var(--line);border-radius:999px;background:var(--panel);backdrop-filter:blur(8px)}
+#cams button:hover{border-color:var(--teal);color:var(--teal)}
+#load{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:9;transition:opacity .5s}
+#load.gone{opacity:0;pointer-events:none}
+#load div{text-align:center;color:var(--mut)}
+#load b{display:block;color:var(--ink);font-size:20px;margin-bottom:6px}
+#err{position:fixed;inset:auto 14px 14px 14px;background:#3a1620;border:1px solid #a33;padding:10px 14px;border-radius:12px;display:none;z-index:10}
+@media(max-width:760px){
+ #read{top:58px;right:12px;left:12px;width:auto;padding:8px 12px;display:flex;gap:14px;border-radius:14px}
+ #read h4,#budget,.sum,#plot,#cnt,.bar,.res{display:none!important}
+ #read .m{flex:1;margin:0}
+ #read .m .r{flex-direction:column;font-size:12px;line-height:1.3}
+ #read .m .r span:last-child{font-size:20px}
+ #cams{display:none}
+ #ctrl{left:12px;right:12px;bottom:12px;width:auto;padding:8px 14px;border-radius:16px}
+ #ctrl .hint{display:none}
+ body.res-on #ctrl .res{display:block!important}
+ .row{margin:2px 0}.row label{font-size:13px}
+ .btns{margin-top:4px;gap:5px}.btns button{padding:5px 10px;font-size:12px}
+ .brand span{display:none}.brand b{font-size:14px}
+}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="top">
+  <div class="brand"><b>Мах–Цендер интерферометрі</b><span>Толқын–бөлшек дуализмі · 3D модель</span></div>
+  <div class="seg" id="mode"><button class="on" data-m="s">Оқушы</button><button data-m="r">Зерттеуші</button></div>
+</div>
+
+<div id="read">
+  <h4>НӘТИЖЕ</h4>
+  <div class="m"><div class="r"><span style="color:var(--teal)">Жолақтардың айқындығы (C)</span><span id="vC">100%</span></div><div class="bar"><i id="bC" style="background:var(--teal)"></i></div></div>
+  <div class="m"><div class="r"><span style="color:var(--vio)">Жолды білу (D)</span><span id="vD">0%</span></div><div class="bar"><i id="bD" style="background:var(--vio)"></i></div></div>
+  <div class="m res"><div class="r"><span style="color:var(--ora)">Шудан жоғалған</span><span id="vL">0%</span></div><div class="bar"><i id="bL" style="background:var(--ora)"></i></div></div>
+  <div id="budget"><i id="gC" style="background:var(--teal)"></i><i id="gD" style="background:var(--vio)"></i><i id="gL" style="background:var(--ora)"></i></div>
+  <div class="sum"><span>C + D</span><span id="vS">= 100%</span></div>
+  <canvas id="plot" width="560" height="140"></canvas>
+  <div class="hint" id="cnt">Экранға түскен фотон: 0</div>
+</div>
+
+<div id="ctrl">
+  <div class="row"><label><span>Детектор күші (жолды біледі)</span><span id="kv">0%</span></label><input type="range" id="k" min="0" max="100" value="0"></div>
+  <div class="row"><label><span>Жол айырымы (фаза)</span><span id="pv">0°</span></label><input type="range" id="p" min="0" max="360" value="0"></div>
+  <div class="row res"><label><span>Шу (когеренттілікті бұзады)</span><span id="lv">0%</span></label><input type="range" id="l" min="0" max="100" value="0"></div>
+  <div class="btns" id="pre">
+    <button data-k="0">Детектор өшірулі</button>
+    <button data-k="46">Жартылай</button>
+    <button data-k="100">Толық қосулы</button>
+    <button id="reset">Қайта бастау</button>
+    <button id="lblbtn">Жазулар</button>
+  </div>
+  <div class="hint" id="tip">Детекторды қосып, экрандағы жолақтар қалай солғындайтынын қара.</div>
+</div>
+
+<div id="cams"><button data-c="0">Жалпы</button><button data-c="1">Детекторлар</button><button data-c="2">Экран</button><button data-c="3">Үстінен</button></div>
+<div id="load"><div><b>Модель жүктелуде…</b>3D құрылғы</div></div>
+<div id="err"></div>
+
+<script src="libs/three.min.js"></script>
+<script src="libs/GLTFLoader.js"></script>
+<script src="libs/OrbitControls.js"></script>
+<script src="libs/Pass.js"></script>
+<script src="libs/EffectComposer.js"></script>
+<script src="libs/RenderPass.js"></script>
+<script src="libs/ShaderPass.js"></script>
+<script src="libs/CopyShader.js"></script>
+<script src="libs/LuminosityHighPassShader.js"></script>
+<script src="libs/UnrealBloomPass.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(i){return document.getElementById(i)};
+function showErr(m){var e=$('err');e.textContent=m;e.style.display='block'}
+
+/* ---------- state ---------- */
+var S={kappa:0,phase:0,lam:0,research:false,hits:0,labels:true};
+function gam(){return Math.cos(Math.PI*S.kappa/2)}
+function cc(){return (1-S.lam)*gam()}
+var NF=5; // number of fringes across the screen
+function env(u){return Math.exp(-Math.pow(u/0.95,2))}
+function fring(u){return 0.5*(1+cc()*Math.cos(Math.PI*NF*u+S.phase))}
+
+/* ---------- renderer ---------- */
+var stage=$('stage');
+var renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+var PR=Math.min(window.devicePixelRatio||1,window.innerWidth<760?1.5:2);
+renderer.setPixelRatio(PR);
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
+stage.appendChild(renderer.domElement);
+
+var scene=new THREE.Scene();
+scene.background=new THREE.Color(0x050a12);
+scene.fog=new THREE.Fog(0x050a12,34,70);
+var camera=new THREE.PerspectiveCamera(window.innerWidth/window.innerHeight<1?62:36,window.innerWidth/window.innerHeight,0.1,200);
+var controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=.08;
+controls.maxPolarAngle=Math.PI*0.49;controls.minDistance=3;controls.maxDistance=34;
+controls.autoRotate=false;
+
+/* camera presets (three coords: x, y(up), z) */
+var CAMS=[
+ {p:[-1.5,9.6,17.2],t:[0.4,0.3,0.2]},
+ {p:[-3.0,3.6,6.6],t:[-0.6,1.0,0.0]},
+ {p:[2.6,2.6,5.6],t:[7.2,1.3,1.6]},
+ {p:[0.3,19,2.6],t:[0.3,0,0.1]}
+];
+var camAnim=null;
+function goCam(i){
+  var c=CAMS[i];camAnim={t:0,fp:camera.position.clone(),ft:controls.target.clone(),tp:new THREE.Vector3().fromArray(c.p),tt:new THREE.Vector3().fromArray(c.t)};
+}
+(function(){var c=CAMS[0];camera.position.fromArray(window.innerWidth/window.innerHeight<1?[0.3,15,27]:c.p);controls.target.fromArray(c.t);controls.update()})();
+
+/* ---------- environment (procedural, for metal reflections) ---------- */
+(function(){
+  var es=new THREE.Scene();
+  es.background=new THREE.Color(0x03060c);
+  function panel(w,h,pos,col,k){
+    var m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(col).multiplyScalar(k),side:THREE.DoubleSide}));
+    m.position.set(pos[0],pos[1],pos[2]);m.lookAt(0,0,0);es.add(m);
+  }
+  panel(30,10,[-12,16,14],0xcfe2ff,2.2);
+  panel(14,8,[18,6,-6],0x9f7bff,1.8);
+  panel(14,8,[-18,5,-8],0x2fe0cf,1.6);
+  panel(40,6,[0,22,0],0x24456b,0.35);
+  panel(20,6,[0,6,-24],0xff9a6a,0.5);
+  var pm=new THREE.PMREMGenerator(renderer);
+  scene.environment=pm.fromScene(es,0.02).texture;
+  pm.dispose();
+})();
+var key=new THREE.DirectionalLight(0xd5e6ff,0.35);key.position.set(-6,12,9);scene.add(key);
+scene.add(new THREE.HemisphereLight(0x4a6a9a,0x080c12,0.18));
+
+/* ---------- post: bloom + filmic ---------- */
+var composer=null,bloom=null;
+function buildComposer(){
+  try{
+    var W=window.innerWidth,H=window.innerHeight;
+    var rt=new THREE.WebGLRenderTarget(W*PR,H*PR,{type:THREE.HalfFloatType,format:THREE.RGBAFormat,encoding:THREE.LinearEncoding});
+    composer=new THREE.EffectComposer(renderer,rt);
+    composer.setPixelRatio(PR);composer.setSize(W,H);
+    composer.addPass(new THREE.RenderPass(scene,camera));
+    bloom=new THREE.UnrealBloomPass(new THREE.Vector2(W,H),0.7,0.5,1.15);
+    composer.addPass(bloom);
+    var fin=new THREE.ShaderPass({
+      uniforms:{tDiffuse:{value:null},exposure:{value:1.0}},
+      vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+      fragmentShader:'uniform sampler2D tDiffuse;uniform float exposure;varying vec2 vUv;'+
+        'vec3 aces(vec3 x){const float a=2.51,b=0.03,c=2.43,d=0.59,e=0.14;return clamp((x*(a*x+b))/(x*(c*x+d)+e),0.0,1.0);}'+
+        'void main(){vec4 t=texture2D(tDiffuse,vUv);vec3 c=aces(t.rgb*exposure);c=pow(c,vec3(1.0/2.2));'+
+        'vec2 q=vUv-0.5;c*=1.0-0.38*smoothstep(0.35,0.85,length(q*vec2(1.2,1.0)));gl_FragColor=vec4(c,1.0);}'
+    });
+    composer.addPass(fin);
+  }catch(e){composer=null;console.warn('composer off',e)}
+}
+buildComposer();
+
+/* ---------- geometry constants (three coords) ---------- */
+var Y=1.0;
+var P={
+ src:new THREE.Vector3(-6.62,Y,-1.6), bs1:new THREE.Vector3(-4,Y,-1.6),
+ ma:new THREE.Vector3(3,Y,-1.6), bs2:new THREE.Vector3(3,Y,1.6), mb:new THREE.Vector3(-4,Y,1.6),
+ dA:new THREE.Vector3(-0.6,Y,-1.6), dB:new THREE.Vector3(-0.6,Y,1.6)
+};
+var SCR_X=7.24, SCR_Y=1.35, SCR_W=3.8, SCR_H=2.06, SCR_Z=1.6;
+
+/* ---------- screen canvas ---------- */
+var SC=document.createElement('canvas');SC.width=1024;SC.height=556;
+var sx=SC.getContext('2d');
+function clearScreen(){
+  sx.globalCompositeOperation='source-over';
+  var g=sx.createLinearGradient(0,0,0,SC.height);g.addColorStop(0,'#07101b');g.addColorStop(1,'#050b14');
+  sx.fillStyle=g;sx.fillRect(0,0,SC.width,SC.height);
+  sx.strokeStyle='rgba(120,160,200,.07)';sx.lineWidth=1;
+  for(var x=0;x<=SC.width;x+=64){sx.beginPath();sx.moveTo(x,0);sx.lineTo(x,SC.height);sx.stroke()}
+  for(var y=0;y<=SC.height;y+=64){sx.beginPath();sx.moveTo(0,y);sx.lineTo(SC.width,y);sx.stroke()}
+}
+clearScreen();
+var scrTex=new THREE.CanvasTexture(SC);scrTex.encoding=THREE.sRGBEncoding;scrTex.anisotropy=8;
+var scrMat=new THREE.MeshBasicMaterial({map:scrTex,toneMapped:false});
+var scr=new THREE.Mesh(new THREE.PlaneGeometry(SCR_W,SCR_H),scrMat);
+scr.rotation.y=-Math.PI/2;scr.position.set(SCR_X,SCR_Y,SCR_Z);scene.add(scr);
+function dot(u,v,coh){
+  var x=(u*0.5+0.5)*SC.width, y=v*SC.height;
+  var r=coh?12:10;
+  var g=sx.createRadialGradient(x,y,0,x,y,r);
+  if(coh){g.addColorStop(0,'rgba(210,255,250,.95)');g.addColorStop(.35,'rgba(63,211,198,.55)');g.addColorStop(1,'rgba(63,211,198,0)')}
+  else{g.addColorStop(0,'rgba(235,225,255,.9)');g.addColorStop(.35,'rgba(170,159,255,.5)');g.addColorStop(1,'rgba(170,159,255,0)')}
+  sx.globalCompositeOperation='lighter';sx.fillStyle=g;sx.beginPath();sx.arc(x,y,r,0,6.2832);sx.fill();
+  scrTex.needsUpdate=true;
+}
+
+/* ---------- beams ---------- */
+var beamGroup=new THREE.Group();scene.add(beamGroup);
+var beamMats=[];
+function seg(a,b){
+  var d=new THREE.Vector3().subVectors(b,a),len=d.length();
+  var q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize());
+  var mid=new THREE.Vector3().addVectors(a,b).multiplyScalar(.5);
+  var core=new THREE.MeshBasicMaterial({color:new THREE.Color(1.6,0.62,0.3),toneMapped:false});
+  var halo=new THREE.MeshBasicMaterial({color:new THREE.Color(1.0,0.35,0.15),transparent:true,opacity:.16,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false});
+  var m1=new THREE.Mesh(new THREE.CylinderGeometry(0.024,0.024,len,10,1),core);
+  var m2=new THREE.Mesh(new THREE.CylinderGeometry(0.085,0.085,len,14,1),halo);
+  [m1,m2].forEach(function(m){m.position.copy(mid);m.quaternion.copy(q);beamGroup.add(m)});
+  beamMats.push(core,halo);
+}
+var SCRN=new THREE.Vector3(SCR_X-0.02,Y,P.bs2.z);
+seg(P.src,P.bs1);seg(P.bs1,P.ma);seg(P.ma,P.bs2);seg(P.bs1,P.mb);seg(P.mb,P.bs2);seg(P.bs2,SCRN);
+
+/* ---------- photons ---------- */
+function glowTex(){
+  var c=document.createElement('canvas');c.width=c.height=64;var x=c.getContext('2d');
+  var g=x.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.25,'rgba(255,255,255,.65)');g.addColorStop(.6,'rgba(255,255,255,.12)');g.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=g;x.fillRect(0,0,64,64);
+  var t=new THREE.CanvasTexture(c);return t;
+}
+var GT=glowTex();
+function sprite(col,size){
+  var m=new THREE.SpriteMaterial({map:GT,color:col,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false});
+  var s=new THREE.Sprite(m);s.scale.set(size,size,1);s.visible=false;scene.add(s);return s;
+}
+var CW=new THREE.Color(1.5,1.2,0.9), CA=new THREE.Color(0.35,1.7,1.5), CB=new THREE.Color(1.0,0.65,2.0);
+var L1=P.src.distanceTo(P.bs1), LA=P.bs1.distanceTo(P.ma)+P.ma.distanceTo(P.bs2), L3=4.3;
+var DET_S=L1+P.bs1.distanceTo(P.dA);
+var VEL=7.2;
+var pool=[];
+for(var i=0;i<46;i++){pool.push({live:false,s1:sprite(CW,0.5),s2:sprite(CW,0.5)})}
+var emitT=0;
+function pickU(coh){
+  for(var n=0;n<400;n++){
+    var u=Math.random()*2-1;
+    var pdf=env(u)*(coh?0.5*(1+Math.cos(Math.PI*NF*u+S.phase)):1);
+    if(Math.random()<pdf) return u;
+  }
+  return 0;
+}
+function emit(){
+  var p=null;for(var i=0;i<pool.length;i++){if(!pool[i].live){p=pool[i];break}}
+  if(!p) return;
+  var coh=Math.random()<cc();
+  p.live=true;p.t=0;p.coh=coh;p.arm=Math.random()<0.5?'A':'B';
+  var u=pickU(coh);
+  p.u=u;p.v=0.14+Math.random()*0.72;p.flash=false;
+  p.tx=new THREE.Vector3(SCR_X-0.02,SCR_Y+(p.v-0.5)*SCR_H*0.9,SCR_Z+u*SCR_W/2);
+  p.s1.material.color.copy(coh?CW:(p.arm==='A'?CA:CB));
+  p.s2.material.color.copy(CW);
+  p.s1.scale.set(coh?0.34:0.3,coh?0.34:0.3,1);p.s2.scale.set(0.34,0.34,1);
+}
+var ringA=null,ringB=null,glowA=0,glowB=0;
+function pathPos(s,arm,out){
+  var tmp=new THREE.Vector3();
+  if(s<L1){return out.lerpVectors(P.src,P.bs1,s/L1)}
+  var s2=s-L1;
+  if(s2<LA){
+    var a=arm==='A'?P.ma:P.mb, d1=P.bs1.distanceTo(a);
+    if(s2<d1) return out.lerpVectors(P.bs1,a,s2/d1);
+    return out.lerpVectors(a,P.bs2,(s2-d1)/(LA-d1));
+  }
+  return null;
+}
+function updPhotons(dt){
+  for(var i=0;i<pool.length;i++){
+    var p=pool[i];if(!p.live) continue;
+    p.t+=dt;var s=p.t*VEL;
+    var tot=L1+LA+L3;
+    if(s>=tot){
+      p.live=false;p.s1.visible=p.s2.visible=false;
+      dot(p.u,p.v,p.coh);S.hits++;continue;
+    }
+    if(s<L1+LA){
+      if(p.coh && s>L1){
+        pathPos(s,'A',p.s1.position);p.s1.visible=true;p.s1.material.opacity=.8;
+        pathPos(s,'B',p.s2.position);p.s2.visible=true;p.s2.material.opacity=.8;
+      }else{
+        pathPos(s,p.arm,p.s1.position);p.s1.visible=true;p.s1.material.opacity=1;p.s2.visible=false;
+      }
+      if(!p.coh && !p.flash && s>DET_S){p.flash=true;if(p.arm==='A')glowA=1;else glowB=1}
+    }else{
+      var f=(s-L1-LA)/L3;f=f*f*(3-2*f)*0.0+f;
+      p.s1.position.lerpVectors(P.bs2,p.tx,f);p.s1.visible=true;p.s1.material.opacity=1;p.s2.visible=false;
+      if(p.coh){p.s1.material.color.copy(CW)}
+    }
+  }
+}
+
+/* ---------- load GLB ---------- */
+var ringMatA=new THREE.MeshBasicMaterial({color:new THREE.Color(0.2,1.6,1.4),toneMapped:false});
+var ringMatB=new THREE.MeshBasicMaterial({color:new THREE.Color(1.0,0.55,2.0),toneMapped:false});
+var loaded=false;
+var gl=new THREE.GLTFLoader();
+gl.load('interferometer_pro.glb',function(g){
+  g.scene.traverse(function(o){
+    if(o.isMesh){
+      var n=o.name||'';
+      if(n.indexOf('Screen_Display')===0){o.visible=false}
+      else if(n.indexOf('DetA_Ring')===0){o.material=ringMatA}
+      else if(n.indexOf('DetB_Ring')===0){o.material=ringMatB}
+      else if(o.material){ if(o.material.map){o.material.map.anisotropy=8}; o.material.envMapIntensity=0.65; if(n==='Table'){o.material.metalness=0.2;o.material.roughness=0.55;o.material.envMapIntensity=0.35} }
+    }
+  });
+  scene.add(g.scene);loaded=true;
+  $('load').classList.add('gone');
+},undefined,function(e){showErr('3D файл жүктелмеді (interferometer_pro.glb). Файл Model3D.html жанында тұруы керек.');$('load').classList.add('gone')});
+
+/* ---------- labels ---------- */
+var LBL=[
+ ['Фотон көзі',[-7.3,2.0,-1.6]],['Бөлгіш 1',[-4,2.0,-1.6]],['Айна',[3,2.0,-1.6]],
+ ['Детектор 1',[-0.6,2.0,-1.6]],['Детектор 2',[-0.6,2.0,1.6]],['Айна',[-4,2.0,1.6]],
+ ['Біріктіргіш',[3,2.0,1.6]],['Экран',[7.3,2.75,1.6]]
+].map(function(a){var d=document.createElement('div');d.className='lab';d.textContent=a[0];document.body.appendChild(d);return {el:d,v:new THREE.Vector3().fromArray(a[1])}});
+function placeLabels(){
+  var w=window.innerWidth,h=window.innerHeight;
+  LBL.forEach(function(l){
+    var p=l.v.clone().project(camera);
+    if(!S.labels||p.z>1||Math.abs(p.x)>1.1||Math.abs(p.y)>1.1){l.el.classList.add('hide');return}
+    l.el.classList.remove('hide');
+    l.el.style.left=((p.x*.5+.5)*w)+'px';l.el.style.top=((-p.y*.5+.5)*h)+'px';
+  });
+}
+
+/* ---------- UI ---------- */
+var plot=$('plot'),px=plot.getContext('2d');
+function drawPlot(){
+  var W=plot.width,H=plot.height;px.clearRect(0,0,W,H);
+  px.strokeStyle='rgba(255,255,255,.1)';px.lineWidth=1;px.beginPath();px.moveTo(0,H-8.5);px.lineTo(W,H-8.5);px.stroke();
+  px.beginPath();
+  for(var i=0;i<=W;i++){var u=i/W*2-1;var y=H-8-(fring(u)*env(u))*(H-22);if(i===0)px.moveTo(i,y);else px.lineTo(i,y)}
+  px.strokeStyle='#3fd3c6';px.lineWidth=2.5;px.stroke();
+  px.fillStyle='#93a9bd';px.font='600 15px system-ui';px.fillText('экранда күтілетін жарықтық',10,16);
+}
+function upd(){
+  var g=gam(),c=cc(),D=1-g,L=S.lam*g;
+  var pc=Math.round(c*100),pd=Math.round(D*100),pl=Math.round(L*100);
+  $('vC').textContent=pc+'%';$('vD').textContent=pd+'%';$('vL').textContent=pl+'%';
+  $('bC').style.width=pc+'%';$('bD').style.width=pd+'%';$('bL').style.width=pl+'%';
+  $('gC').style.width=c*100+'%';$('gD').style.width=D*100+'%';$('gL').style.width=L*100+'%';
+  $('vS').textContent=S.research?('C + D = '+(c+D).toFixed(2)+' ≤ 1'):('= '+Math.round((c+D)*100)+'%');
+  $('kv').textContent=Math.round(S.kappa*100)+'%';
+  $('pv').textContent=Math.round(S.phase*180/Math.PI)+'°';
+  $('lv').textContent=Math.round(S.lam*100)+'%';
+  var tip;
+  if(S.kappa<0.04) tip='Детектор өшірулі: жол белгісіз, жолақтар ең анық.';
+  else if(S.kappa>0.96) tip='Жол толық белгілі: әр фотон бір жолмен өтеді, жолақтар жоқ.';
+  else tip='Жолды көбірек білсең (D өседі), жолақтар (C) солғындайды.';
+  if(S.lam>0.04) tip+=' Шу когеренттілікті бұзып, жолақтарды қосымша әлсіретті.';
+  $('tip').textContent=tip;
+  drawPlot();
+}
+function resetHits(){clearScreen();S.hits=0;scrTex.needsUpdate=true}
+$('k').addEventListener('input',function(e){S.kappa=e.target.value/100;resetHits();upd()});
+$('p').addEventListener('input',function(e){S.phase=e.target.value*Math.PI/180;resetHits();upd()});
+$('l').addEventListener('input',function(e){S.lam=e.target.value/100;resetHits();upd()});
+$('pre').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  if(b.dataset.k!==undefined){S.kappa=b.dataset.k/100;$('k').value=b.dataset.k;resetHits();upd()}
+});
+$('reset').addEventListener('click',function(){resetHits()});
+$('lblbtn').addEventListener('click',function(){S.labels=!S.labels});
+$('cams').addEventListener('click',function(e){var b=e.target.closest('button');if(b)goCam(+b.dataset.c)});
+$('mode').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  S.research=b.dataset.m==='r';
+  [].forEach.call($('mode').children,function(x){x.classList.toggle('on',x===b)});
+  document.body.classList.toggle('res-on',S.research);
+  if(!S.research){S.lam=0;$('l').value=0;resetHits()}
+  upd();layout();
+});
+function layout(){
+  var h=$('ctrl').offsetHeight;document.documentElement.style.setProperty('--ch',h+'px');
+}
+window.addEventListener('resize',function(){
+  var W=window.innerWidth,H=window.innerHeight;
+  camera.aspect=W/H;camera.fov=W/H<1?62:36;camera.updateProjectionMatrix();
+  renderer.setSize(W,H);if(composer){composer.setSize(W,H)}
+  layout();
+});
+
+/* ---------- loop ---------- */
+var clock=new THREE.Clock();
+function frame(){
+  requestAnimationFrame(frame);
+  var dt=Math.min(clock.getDelta(),0.05);
+  emitT+=dt;var rate=0.11;
+  while(emitT>rate){emitT-=rate;emit()}
+  updPhotons(dt);
+  glowA*=Math.pow(0.02,dt);glowB*=Math.pow(0.02,dt);
+  var base=0.18+0.82*S.kappa;
+  var ka=base*(0.55+0.9*glowA), kb=base*(0.55+0.9*glowB);
+  ringMatA.color.setRGB(0.2*ka*1.6,1.6*ka,1.4*ka);
+  ringMatB.color.setRGB(1.0*kb,0.55*kb,2.0*kb);
+  if(camAnim){
+    camAnim.t=Math.min(1,camAnim.t+dt/1.3);var e=camAnim.t;e=e*e*(3-2*e);
+    camera.position.lerpVectors(camAnim.fp,camAnim.tp,e);controls.target.lerpVectors(camAnim.ft,camAnim.tt,e);
+    if(camAnim.t>=1)camAnim=null;
+  }
+  controls.update();
+  $('cnt').textContent='Экранға түскен фотон: '+S.hits;
+  if(composer)composer.render();else renderer.render(scene,camera);
+  placeLabels();
+}
+upd();layout();frame();
+function sim(sec){var n=Math.round(sec/0.05);for(var i=0;i<n;i++){emitT+=0.05;while(emitT>0.11){emitT-=0.11;emit()}updPhotons(0.05)}}
+window.__app={sim:sim,S:S,upd:upd,reset:resetHits,hits:function(){return S.hits},loaded:function(){return loaded},goCam:goCam};
+})();
+</script>
+</body>
+</html>

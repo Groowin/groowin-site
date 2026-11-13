@@ -1,0 +1,995 @@
+<title>Кванттық интерферометр</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=PT+Sans:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+:root{
+  /* Layout: header with mode switch; sticky dark 3D optical bench on the left (budget bar C | D | lost under it); controls and tabbed results on the right; one column on phones.
+     Colour roles: teal = fringe clarity C, violet = which-path knowledge D, orange = lost to environment, red = laser and photons, blue = interface accent. */
+  --bg:#eef2f7; --panel:#ffffff; --ink:#0f1c2a; --muted:#52657a; --line:#d3dce7; --soft:#e7edf4;
+  --clear:#0b7a70; --know:#5b45c7; --lost:#c2410c; --alt:#a8590b; --beam:#d6342b; --accent:#2150c9;
+  --st0:#060b11; --st1:#0f1c2b; --st-ink:#dbe7f3; --st-mut:#8da3b9; --st-line:#233549;
+  --ui:'PT Sans',system-ui,'Segoe UI',Roboto,Arial,sans-serif;
+  --num:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --math:'PT Serif',Georgia,'Times New Roman',serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a121b; --panel:#121d2a; --ink:#e6eef6; --muted:#8ea2b6; --line:#25364a; --soft:#192738;
+    --clear:#3fd3c6; --know:#aa9fff; --lost:#ff8f60; --alt:#f2a65e; --beam:#ff6f61; --accent:#7ea6ff; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a121b; --panel:#121d2a; --ink:#e6eef6; --muted:#8ea2b6; --line:#25364a; --soft:#192738;
+  --clear:#3fd3c6; --know:#aa9fff; --lost:#ff8f60; --alt:#f2a65e; --beam:#ff6f61; --accent:#7ea6ff; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5}
+i{font-family:var(--math);font-style:italic}
+[data-ui="pupil"] .t-only{display:none!important}
+.wrap{max-width:1360px;margin:0 auto;padding-block:18px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.mark{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(145deg,#2150c9,#5b45c7 60%,#0b7a70)}
+.mark svg{width:28px;height:28px}
+h1{margin:0;font:700 clamp(1.35rem,3vw,1.9rem)/1.1 var(--ui);letter-spacing:-.01em;text-wrap:balance}
+.tag{margin:3px 0 0;font-size:13.5px;color:var(--muted)}
+.modes{display:flex;gap:3px;padding:3px;border:1px solid var(--line);border-radius:11px;background:var(--panel)}
+.modes button{border:0;background:transparent;padding:7px 16px;border-radius:8px;font-weight:700}
+.modes button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+.lead{margin:0 0 16px;max-width:78ch;color:var(--muted)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1.38fr) minmax(0,1fr);gap:20px;align-items:start}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:980px){.grid{grid-template-columns:minmax(0,1fr)}}
+
+.stage{display:flex;flex-direction:column;border:1px solid var(--st-line);border-radius:16px;overflow:hidden;color:var(--st-ink);
+  background:radial-gradient(120% 90% at 50% 0%,var(--st1) 0%,var(--st0) 70%);height:clamp(420px,calc(100vh - 150px),760px);min-width:0}
+@media (max-width:980px){.stage{height:auto;aspect-ratio:1/1.08}.hint{display:none}}
+@media (min-width:981px){.stage{position:sticky;top:14px}}
+.stage-view{position:relative;flex:1;min-height:0}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;outline-offset:-3px}
+#gl:active{cursor:grabbing}
+.chip{position:absolute;left:12px;top:12px;font:600 12px var(--num);letter-spacing:.02em;padding:5px 10px;border-radius:999px;
+  background:rgba(255,255,255,.07);border:1px solid var(--st-line);color:var(--st-ink);pointer-events:none}
+.tools{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.tools .row{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tools button{background:rgba(255,255,255,.08);border-color:var(--st-line);color:var(--st-ink)}
+.tools button:hover{border-color:var(--st-mut)}
+.hint{font-size:12px;color:var(--st-mut);pointer-events:none;text-align:right}
+.fallback{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--st-mut)}
+.dock{border-top:1px solid var(--st-line);padding:11px 14px 12px;background:rgba(0,0,0,.22)}
+.bud-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:7px;font-size:12.5px;color:var(--st-mut)}
+.bud-head b{font:600 13.5px var(--num);color:var(--st-ink);font-variant-numeric:tabular-nums}
+.bud-bar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.08)}
+.bud-bar i{display:block;height:100%;width:0;transition:width .18s}
+#bC{background:#3fd3c6} #bD{background:#aa9fff} #bL{background:#ff8f60}
+.bud-key{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:8px;font-size:12.5px;color:var(--st-mut)}
+.bud-key span{display:flex;align-items:center;gap:7px}
+.bud-key b{font:600 12.5px var(--num);color:var(--st-ink);font-variant-numeric:tabular-nums}
+.sw{width:10px;height:10px;border-radius:3px;flex:none}
+.bud-leg{display:flex;flex-wrap:wrap;gap:3px 16px;margin-top:8px;padding-top:8px;border-top:1px solid var(--st-line);font-size:12px;color:var(--st-mut)}
+.bud-leg span{display:flex;align-items:center;gap:7px}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.dot.r{background:#ff6a5a;box-shadow:0 0 8px #ff6a5a}
+.dot.m{background:conic-gradient(#3b82f6 0 25%,#f59e0b 0 50%,#a855f7 0 75%,#10b981 0)}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.card h2{margin:0 0 4px;font:700 15px/1.3 var(--ui)}
+.why{margin:0 0 12px;font-size:13.5px;color:var(--muted)}
+button{font:inherit;font-size:13.5px;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:focus-visible,input:focus-visible,#gl:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button[aria-pressed="true"]:not(.plain){background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0}
+.sub-label{font-weight:700;display:block;margin:14px 0 4px}
+.ctl{margin-bottom:14px}
+.ctl-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.ctl label{font-weight:700}
+.ctl output{font-family:var(--num);font-size:13.5px;font-variant-numeric:tabular-nums}
+.ctl input[type=range]{width:100%;margin:6px 0 0;accent-color:var(--accent)}
+.ctl.k input{accent-color:var(--know)} .ctl.l input{accent-color:var(--lost)}
+.note{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.send{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px}
+button.go{background:var(--accent);border-color:var(--accent);color:var(--panel);font-weight:700}
+
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:9px 14px;font-weight:700;color:var(--muted);white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.panel{display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel[hidden]{display:none}
+
+.counter{font-family:var(--num);font-variant-numeric:tabular-nums;font-size:13.5px;color:var(--muted);margin:0 0 12px}
+.counter b{color:var(--ink)}
+.meter{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;margin-bottom:12px}
+.meter .nm{font-weight:700}
+.meter .sub{grid-column:1;font-size:12.5px;color:var(--muted)}
+.meter .val{grid-column:2;grid-row:1;font-family:var(--num);font-variant-numeric:tabular-nums;font-size:15px}
+.bar{grid-column:1/-1;height:9px;border-radius:5px;background:var(--soft);overflow:hidden;margin-top:3px}
+.bar span{display:block;height:100%;width:0;border-radius:5px}
+.meter.c1 .bar span{background:var(--clear)} .meter.c2 .bar span{background:var(--alt)} .meter.d .bar span{background:var(--know)}
+.status{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--soft);font-size:13.5px}
+.sumrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:14px}
+.sumrow .v{font-family:var(--num);font-variant-numeric:tabular-nums;text-align:right}
+.sumrow .lostv{color:var(--lost)}
+
+canvas.plot{display:block;width:100%;max-width:100%}
+#hist{height:190px} #map,#noise{height:290px}
+.check{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:13.5px}
+.check input{accent-color:var(--accent)}
+.lg{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+.lg span{display:flex;align-items:center;gap:7px}
+.ln{width:18px;height:0;border-top:3px solid;flex:none}
+.ln.d{border-top-style:dashed;border-top-width:2px}
+.ln.c1{border-color:var(--clear)} .ln.c2{border-color:var(--alt)} .ln.k{border-color:var(--know)} .ln.m{border-color:var(--muted)} .ln.o{border-color:var(--lost)}
+.dotk{width:10px;height:10px;border-radius:50%;background:var(--accent);flex:none}
+
+.state{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.mwrap{overflow-x:auto}
+table.mx{border-collapse:separate;border-spacing:4px;margin:0}
+table.mx th{font:600 12px var(--num);color:var(--muted);padding:2px 4px;text-align:center}
+table.mx td{min-width:56px;height:48px;border-radius:7px;text-align:center;font:600 13px var(--num);font-variant-numeric:tabular-nums;border:1px solid var(--line)}
+.mx-cap{margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+
+.mis{display:grid;gap:12px}
+.mis article{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.mis h3{margin:0 0 4px;font:700 14.5px/1.3 var(--ui)}
+.mis p{margin:0 0 8px;font-size:13.5px}
+.mis .q{color:var(--muted);font-size:13px}
+.mis button{font-size:13px}
+.formulas{display:grid;gap:8px;margin:0 0 10px;padding:0;list-style:none;font-family:var(--math);font-size:15.5px}
+.formulas li{overflow-x:auto}
+@media (prefers-reduced-motion:reduce){.bud-bar i{transition:none}}
+</style>
+
+<div class="wrap" id="app" data-ui="pupil">
+  <header class="top">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 16c3-9 6-9 9 0s6 9 9 0 6-9 10-4"/><path d="M2 22c3-5 6-5 9 0s6 5 9 0 6-5 10-2" opacity=".55"/></svg></span>
+      <div><h1>Кванттық интерферометр</h1><p class="tag">Толқын–бөлшек дуализмі: айқындық пен жол туралы білім</p></div>
+    </div>
+    <div class="modes" role="group" aria-label="Режим">
+      <button type="button" data-ui="pupil" aria-pressed="true">Оқушы</button>
+      <button type="button" data-ui="teacher" aria-pressed="false">Зерттеуші</button>
+    </div>
+  </header>
+  <p class="lead" id="lead"></p>
+
+  <div class="grid">
+    <div class="stage" id="stage">
+      <div class="stage-view">
+        <canvas id="gl" tabindex="0" role="img" aria-label="Интерферометрдің 3D моделі. Бұру үшін сүйреңіз немесе көрсеткі пернелерін басыңыз."></canvas>
+        <span class="chip" id="chip">Мах–Цендер · 2 жол</span>
+        <div class="tools">
+          <div class="row"><button id="viewTop" type="button">Үстінен</button><button id="reset" type="button">Көрініс</button></div>
+          <span class="hint">Бұру: сүйреңіз немесе ← ↑ → ↓</span>
+        </div>
+        <div class="fallback" id="glfail" hidden>WebGL қолжетімсіз, сондықтан 3D көрініс ашылмады. Оң жақтағы есептеулер жұмыс істейді.</div>
+      </div>
+      <div class="dock">
+        <div class="bud-head"><span>Дуализм бюджеті: бәрі 100%</span><b id="budTxt">100% + 0%</b></div>
+        <div class="bud-bar" role="img" aria-label="Айқындық, жолды білу және ортаға кеткен үлес"><i id="bC"></i><i id="bD"></i><i id="bL"></i></div>
+        <div class="bud-key">
+          <span><i class="sw" style="background:#3fd3c6"></i>Айқындық <b id="bCv">100%</b></span>
+          <span><i class="sw" style="background:#aa9fff"></i>Жолды білу <b id="bDv">0%</b></span>
+          <span class="t-only"><i class="sw" style="background:#ff8f60"></i>Ортаға кеткен <b id="bLv">0%</b></span>
+        </div>
+        <div class="bud-leg" aria-hidden="true">
+          <span><i class="dot r"></i>Фотон: барлық жолмен бір мезгілде</span>
+          <span><i class="dot m"></i>Түрлі түс: детектор жолды белгілеген</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <section class="card" aria-labelledby="h-exp">
+        <h2 id="h-exp">Тәжірибе</h2>
+        <div class="ctl">
+          <div class="ctl-top"><label for="n">Жол саны <i>N</i></label><output id="nv" for="n">2</output></div>
+          <input id="n" type="range" min="2" max="5" step="1" value="2">
+          <p class="note" id="nnote">2 жол: Мах–Цендер интерферометрі.</p>
+        </div>
+        <div class="ctl k">
+          <div class="ctl-top"><label for="k">Жол детекторы</label><output id="kv" for="k">0%</output></div>
+          <input id="k" type="range" min="0" max="100" step="1" value="0">
+          <p class="note">0%: детектор өшірулі. 100%: детектор әр фотонның жолын толық анықтайды.<span class="t-only"> <span id="gv" style="font-family:var(--num)">γ = 1.000</span></span></p>
+        </div>
+        <div class="ctl">
+          <div class="ctl-top"><label for="f">Фаза</label><output id="fv" for="f">0°</output></div>
+          <input id="f" type="range" min="0" max="360" step="1" value="0">
+          <p class="note">Жолақтарды бүйірге жылжытады. Нақты құрылғыда айнаны сәл еңкейту осындай әсер береді.</p>
+        </div>
+        <div class="ctl l t-only">
+          <div class="ctl-top"><label for="l">Шуыл <i>λ</i></label><output id="lv" for="l">0%</output></div>
+          <input id="l" type="range" min="0" max="100" step="1" value="0">
+          <p class="note">Қоршаған орта жолдар арасындағы фазалық байланысты қаншалықты бұзады. 3D көріністе қызғылт сары нүктелер ретінде көрінеді.</p>
+        </div>
+        <div class="t-only">
+          <span class="sub-label" id="lbl-pre">Дайын жағдайлар</span>
+          <div class="seg" role="group" aria-labelledby="lbl-pre">
+            <button type="button" data-k="0" data-l="0">Таза күй</button>
+            <button type="button" data-k="60" data-l="0">Тек детектор</button>
+            <button type="button" data-k="0" data-l="50">Тек шуыл</button>
+            <button type="button" data-k="40" data-l="30">Екеуі де</button>
+            <button type="button" id="sweep" aria-pressed="false">▶ Шуылды жүргізу</button>
+          </div>
+        </div>
+        <span class="sub-label" id="lbl-send">Фотондар</span>
+        <div class="send" role="group" aria-labelledby="lbl-send">
+          <button type="button" id="play" class="go" aria-pressed="false">▶ Жіберу</button>
+          <button type="button" id="clear">Экранды тазалау</button>
+        </div>
+        <div class="seg" role="group" aria-label="Жіберу жылдамдығы">
+          <button type="button" data-speed="one" aria-pressed="true">Бір-бірлеп</button>
+          <button type="button" data-speed="fast" aria-pressed="false">Жылдам</button>
+          <button type="button" data-speed="burst" aria-pressed="false">Өте жылдам</button>
+        </div>
+      </section>
+
+      <div>
+        <div class="tabs" role="tablist" aria-label="Бөлімдер">
+          <button type="button" role="tab" id="tR" aria-controls="pR" aria-selected="true">Нәтиже</button>
+          <button type="button" role="tab" id="tM" aria-controls="pM" aria-selected="false">Тапсырмалар</button>
+          <button type="button" role="tab" id="tA" class="t-only" aria-controls="pA" aria-selected="false">Талдау</button>
+          <button type="button" role="tab" id="tT" class="t-only" aria-controls="pT" aria-selected="false">Теория</button>
+        </div>
+      </div>
+
+      <div class="panel" id="pR" role="tabpanel" aria-labelledby="tR">
+        <section class="card" aria-labelledby="h-res">
+          <h2 id="h-res">Нәтиже</h2>
+          <p class="counter">Экранға түскен фотон: <b id="cnt">0</b></p>
+          <div class="meter c1"><span class="nm">Жолақтардың айқындығы</span><span class="val" id="Cv">100%</span><span class="sub">жолақтар қаншалықты анық көрінеді</span><div class="bar"><span id="Cb"></span></div></div>
+          <div class="meter d"><span class="nm">Жолды білу</span><span class="val" id="Dv">0%</span><span class="sub">детектор жолды қателіксіз анықтайтын жағдайлар үлесі</span><div class="bar"><span id="Db"></span></div></div>
+          <p class="status" id="status" aria-live="polite"></p>
+        </section>
+        <section class="card" aria-labelledby="h-hist">
+          <h2 id="h-hist">Фотондардың экранда таралуы</h2>
+          <canvas class="plot" id="hist" role="img" aria-label="Экранның әр жеріне түскен фотондар саны"></canvas>
+          <label class="check"><input type="checkbox" id="theory"> Теориялық қисықты көрсету</label>
+          <p class="note">Бағандар: тәжірибеде түскен фотондар саны. Теорияны алдымен өзіңіз болжап, сосын тексеріңіз.</p>
+        </section>
+      </div>
+
+      <div class="panel" id="pM" role="tabpanel" aria-labelledby="tM" hidden>
+        <section class="card">
+          <h2>Болжа, бақыла, түсіндір</h2>
+          <p class="why">Әр тапсырмада алдымен жауабыңызды болжаңыз, содан кейін параметрлерді қойып, бақылаңыз.</p>
+          <div class="mis" id="mis"></div>
+        </section>
+      </div>
+
+      <div class="panel t-only" id="pA" role="tabpanel" aria-labelledby="tA" hidden>
+        <section class="card" aria-labelledby="h-st">
+          <h2 id="h-st">Күй және оның өлшемдері</h2>
+          <p class="why">Жол күйінің тығыздық матрицасы және одан алынатын шамалар.</p>
+          <div class="state">
+            <div>
+              <div class="mwrap"><table class="mx" id="mx" aria-label="Тығыздық матрицасы ρ"></table></div>
+              <p class="mx-cap" id="mxcap"></p>
+            </div>
+            <div>
+              <div class="meter c1"><span class="nm">Айқындық <i>C</i> (<i>l</i>₁-норма)</span><span class="val" id="C1v">0</span><span class="sub">диагональ сыртындағы мәндердің орташасы</span><div class="bar"><span id="C1b"></span></div></div>
+              <div class="meter c2"><span class="nm">Айқындық <i>C</i> (салыстырмалы энтропия)</span><span class="val" id="C2v">0</span><span class="sub">сол ұғымның энтропиямен өлшенген нұсқасы</span><div class="bar"><span id="C2b"></span></div></div>
+              <div class="meter d"><span class="nm">Жолды білу <i>D</i></span><span class="val" id="DDv">0</span><span class="sub">детектордың жол туралы ақпараты</span><div class="bar"><span id="DDb"></span></div></div>
+              <div class="sumrow">
+                <span><i>C</i> + <i>D</i> (<i>l</i>₁ бойынша)</span><span class="v" id="sum">0</span>
+                <span>Ортаға кеткен бөлігі, 1 − (<i>C</i> + <i>D</i>)</span><span class="v lostv" id="lost">0</span>
+                <span>Күйдің таза болу дәрежесі, Tr ρ²</span><span class="v" id="pur">0</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="card" aria-labelledby="h-map">
+          <h2 id="h-map">Дуализм картасы</h2>
+          <p class="why">Әр күй осы жазықтықта бір нүкте. Шуылсыз нүкте шекті сызықта жатады.</p>
+          <canvas class="plot" id="map" role="img" aria-label="C және D жазықтығындағы нүкте және C + D = 1 шегі"></canvas>
+          <div class="lg">
+            <span><i class="ln m"></i><i>C</i> + <i>D</i> = 1 шегі</span>
+            <span><i class="dotk"></i>ағымдағы күй</span>
+            <span><i class="ln o"></i>шуылдан кеткен бөлігі</span>
+          </div>
+        </section>
+        <section class="card" aria-labelledby="h-noise">
+          <h2 id="h-noise">Шуыл күшейгенде</h2>
+          <p class="why">Детектор мен <i>N</i> бұрынғыша қалады, тек шуыл 0%-дан 100%-ға дейін өседі.</p>
+          <canvas class="plot" id="noise" role="img" aria-label="Шуылға қатысты когеренттілік қисықтары"></canvas>
+          <div class="lg">
+            <span><i class="ln c1"></i><i>C</i> (<i>l</i>₁)</span>
+            <span><i class="ln c2"></i><i>C</i> (салыстырмалы энтропия)</span>
+            <span><i class="ln k d"></i><i>D</i> (шуылға тәуелсіз)</span>
+          </div>
+        </section>
+      </div>
+
+      <div class="panel t-only" id="pT" role="tabpanel" aria-labelledby="tT" hidden>
+        <section class="card">
+          <h2>Формулалар</h2>
+          <ul class="formulas">
+            <li>|Ψ⟩ = (1/√<i>N</i>) Σ<sub><i>j</i></sub> |<i>j</i>⟩|<i>d<sub>j</sub></i>⟩, &nbsp;<i>γ</i> = |⟨<i>d<sub>i</sub></i>|<i>d<sub>j</sub></i>⟩| = cos(π<i>κ</i>/2)</li>
+            <li>Шуыл (дефазация): ρ → (1 − <i>λ</i>)ρ + <i>λ</i>·diag(ρ), &nbsp;ρ<sub><i>ij</i></sub> = <i>c</i>/<i>N</i> (<i>i</i> ≠ <i>j</i>), ρ<sub><i>jj</i></sub> = 1/<i>N</i>, &nbsp;<i>c</i> = (1 − <i>λ</i>)<i>γ</i></li>
+            <li><i>C</i><sub><i>l</i>₁</sub> = (1/(<i>N</i>−1)) Σ<sub><i>i</i>≠<i>j</i></sub> |ρ<sub><i>ij</i></sub>| = <i>c</i></li>
+            <li><i>C</i><sub>rel</sub> = 1 − <i>S</i>(ρ)/ln <i>N</i>, &nbsp;ρ-дың меншікті мәндері: (1 + (<i>N</i>−1)<i>c</i>)/<i>N</i> (бір рет) және (1 − <i>c</i>)/<i>N</i> (<i>N</i>−1 рет)</li>
+            <li><i>D</i> = 1 − (1/(<i>N</i>−1)) Σ<sub><i>i</i>≠<i>j</i></sub> √(<i>p<sub>i</sub>p<sub>j</sub></i>)·|⟨<i>d<sub>i</sub></i>|<i>d<sub>j</sub></i>⟩| = 1 − <i>γ</i></li>
+            <li><i>C</i><sub><i>l</i>₁</sub> + <i>D</i> = 1 − <i>λγ</i> ≤ 1</li>
+            <li><i>I</i>(θ) = (1 − <i>c</i>) + <i>c</i>·sin²(<i>N</i>θ/2) / (<i>N</i>·sin²(θ/2))</li>
+          </ul>
+          <p class="note">Барлық жолдың ықтималдығы тең (1/<i>N</i>), детектордың күйлері симметриялы (қабаттасуы бірдей). Дефазация қоршаған ортаның жолды ішінара өлшеуімен пара-пар, сондықтан <i>C</i> + <i>D</i> шектен төмен түскенде, айырма қоршаған ортаға кетті деп оқуға болады. Қарастырылған модельде <i>C</i><sub>rel</sub> ≤ <i>C</i><sub><i>l</i>₁</sub>, екеуі де 0 және 1 мәндерінде сәйкес келеді. Дуализм қатынасы: Bera және т.б. (2015); когеренттілік өлшемдері: Baumgratz және т.б. (2014). <i>N</i> = 2 болғанда <i>I</i>(θ) = 1 + <i>c</i>·cosθ.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var TAU=Math.PI*2, SPAN=6*Math.PI, NB=72;
+var S={N:2,kappa:0,lambda:0,phi:0,speed:'one',playing:false,teacher:false};
+var PATHCOL=['#3b82f6','#f59e0b','#a855f7','#10b981','#ec4899'];
+var G=null;
+
+function tok(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888888'}
+function gam(){return Math.cos(S.kappa*Math.PI/2)}
+function cEff(){return (1-S.lambda)*gam()}
+function phr(){return S.phi*Math.PI/180}
+function f3(v){return v.toFixed(3)}
+function xlx(p){return p<=1e-15?0:p*Math.log(p)}
+function creOf(N,c){
+  var m1=(1+(N-1)*c)/N,m2=(1-c)/N,s=-(xlx(m1)+(N-1)*xlx(m2));
+  return Math.max(0,Math.min(1,1-s/Math.log(N)));
+}
+function calc(N,k,l){
+  var g=Math.cos(k*Math.PI/2),c=(1-l)*g;
+  return {g:g,c:c,C1:c,C2:creOf(N,c),D:1-g,sum:c+1-g,lost:l*g,pur:(1+(N-1)*c*c)/N};
+}
+function Fn(th,N){
+  var s=Math.sin(th/2);
+  return Math.abs(s)<1e-7?N:Math.pow(Math.sin(N*th/2),2)/(N*s*s);
+}
+/* Screen intensity for N equally weighted paths: (1-c)+c*F, mean over a period = 1. */
+function Pt(theta,N,c){return (1-c)+c*Fn(theta,N)}
+function sampleU(){
+  var N=S.N,c=cEff(),ph=phr(),pmax=(1-c)+c*N;
+  for(var k=0;k<300;k++){
+    var u=Math.random()*2-1;
+    if(Math.random()*pmax<=Pt(SPAN*u+ph,N,c))return u;
+  }
+  return Math.random()*2-1;
+}
+
+/* ---------- screen data (shared by the 3D screen and the histogram) ---------- */
+var SW=1024,SH=576;
+var scrCanvas=document.createElement('canvas');scrCanvas.width=SW;scrCanvas.height=SH;
+var sc=scrCanvas.getContext('2d');
+var bins=new Uint32Array(NB),count=0,dotsDirty=true;
+function clearScreen(){
+  sc.globalCompositeOperation='source-over';
+  sc.fillStyle='#070c12';sc.fillRect(0,0,SW,SH);
+  sc.globalCompositeOperation='lighter';
+  bins.fill(0);count=0;dotsDirty=true;
+}
+function addHit(u,v){
+  var x=(u+1)/2*SW,y=(0.5-v/2)*SH;
+  var g=sc.createRadialGradient(x,y,0,x,y,7);
+  g.addColorStop(0,'rgba(255,120,100,0.85)');g.addColorStop(1,'rgba(255,120,100,0)');
+  sc.fillStyle=g;sc.fillRect(x-7,y-7,14,14);
+  var b=Math.min(NB-1,Math.max(0,Math.floor((u+1)/2*NB)));
+  bins[b]++;count++;dotsDirty=true;
+}
+function quickFill(n){for(var i=0;i<n;i++)addHit(sampleU(),(Math.random()*2-1)*0.92)}
+
+/* ---------- 3D scene ---------- */
+function initGL(){
+  if(typeof THREE==='undefined')throw new Error('three.js not loaded');
+  var cv=$('gl');
+  var renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.setClearColor(0x000000,0);
+  var scene=new THREE.Scene();
+  scene.fog=new THREE.Fog(0x070d14,24,52);
+  var camera=new THREE.PerspectiveCamera(36,1,0.1,120);
+  var UP=new THREE.Vector3(0,1,0);
+  var V=function(x,y,z){return new THREE.Vector3(x,y,z)};
+  var Y0=0.9,needs=true;
+  scene.add(new THREE.AmbientLight(0xffffff,0.75));
+  var sun=new THREE.DirectionalLight(0xbfd4ff,0.7);sun.position.set(6,12,9);scene.add(sun);
+
+  var ADD=THREE.AdditiveBlending;
+  var M={
+    table:new THREE.MeshStandardMaterial({color:0x0d1824,roughness:0.9,metalness:0.1}),
+    grid:new THREE.LineBasicMaterial({color:0x1c2e42,transparent:true,opacity:0.9}),
+    body:new THREE.MeshStandardMaterial({color:0x3a4a5d,roughness:0.55,metalness:0.3}),
+    post:new THREE.MeshStandardMaterial({color:0x8997a8,roughness:0.45,metalness:0.5}),
+    mirror:new THREE.MeshStandardMaterial({color:0xe3ebf4,roughness:0.2,metalness:0.4}),
+    glass:new THREE.MeshStandardMaterial({color:0x8fc8ff,transparent:true,opacity:0.34,roughness:0.1}),
+    beam:new THREE.MeshBasicMaterial({color:0xff6a5a,transparent:true,opacity:0.95}),
+    beamDim:new THREE.MeshBasicMaterial({color:0xff6a5a,transparent:true,opacity:0.45}),
+    halo:new THREE.MeshBasicMaterial({color:0xff4a3a,transparent:true,opacity:0.12,blending:ADD,depthWrite:false}),
+    frame:new THREE.MeshStandardMaterial({color:0x1b2634,roughness:0.6,metalness:0.3})
+  };
+  var glow=(function(){
+    var c=document.createElement('canvas');c.width=c.height=64;var x=c.getContext('2d');
+    var g=x.createRadialGradient(32,32,0,32,32,32);
+    g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(0.35,'rgba(255,255,255,0.45)');g.addColorStop(1,'rgba(255,255,255,0)');
+    x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);
+  })();
+  var ghostMats=[0,1,2,3,4].map(function(){return new THREE.MeshBasicMaterial({transparent:true,opacity:1})});
+  var glowMats=[0,1,2,3,4].map(function(){return new THREE.SpriteMaterial({map:glow,transparent:true,blending:ADD,depthWrite:false,opacity:0.9})});
+  var sphGeo=new THREE.SphereGeometry(0.13,18,14);
+
+  var table=new THREE.Mesh(new THREE.BoxGeometry(26,0.3,11),M.table);table.position.y=-0.15;scene.add(table);
+  var gp=[],gx,gz;
+  for(gx=-13;gx<=13;gx++)gp.push(V(gx,0.004,-5.5),V(gx,0.004,5.5));
+  for(gz=-5;gz<=5;gz++)gp.push(V(-13,0.004,gz),V(13,0.004,gz));
+  scene.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gp),M.grid));
+
+  /* environment (noise) particles */
+  var NE=150,envPos=new Float32Array(NE*3),i0;
+  for(i0=0;i0<NE;i0++){envPos[i0*3]=-8+Math.random()*17;envPos[i0*3+1]=0.2+Math.random()*2.3;envPos[i0*3+2]=-3.4+Math.random()*6.8}
+  var envGeo=new THREE.BufferGeometry();envGeo.setAttribute('position',new THREE.BufferAttribute(envPos,3));
+  var envMat=new THREE.PointsMaterial({color:0xff9a55,size:0.24,map:glow,transparent:true,opacity:0,depthWrite:false,blending:ADD,sizeAttenuation:true});
+  var env=new THREE.Points(envGeo,envMat);env.visible=false;scene.add(env);
+  function stepEnv(){
+    var l=S.lambda;
+    if(l<0.005){if(env.visible){env.visible=false;needs=true}return}
+    env.visible=true;envMat.opacity=0.2+0.75*l;
+    var k;
+    for(k=0;k<NE;k++){
+      var j=k*3;
+      envPos[j]+=(Math.random()-0.5)*0.05*(0.4+l);envPos[j+1]+=(Math.random()-0.5)*0.03;envPos[j+2]+=(Math.random()-0.5)*0.05*(0.4+l);
+      if(envPos[j]<-8)envPos[j]=9;if(envPos[j]>9)envPos[j]=-8;
+      if(envPos[j+1]<0.15)envPos[j+1]=2.5;if(envPos[j+1]>2.5)envPos[j+1]=0.2;
+      if(envPos[j+2]<-3.4)envPos[j+2]=3.4;if(envPos[j+2]>3.4)envPos[j+2]=-3.4;
+    }
+    envGeo.attributes.position.needsUpdate=true;needs=true;
+  }
+
+  /* screen */
+  var scrTex=new THREE.CanvasTexture(scrCanvas);
+  var scrGroup=new THREE.Group();scene.add(scrGroup);
+  var scrMesh=new THREE.Mesh(new THREE.PlaneGeometry(3.56,2.0),new THREE.MeshBasicMaterial({map:scrTex,side:THREE.DoubleSide,fog:false}));
+  scrMesh.rotation.y=-Math.PI/2;scrGroup.add(scrMesh);
+  var scrBack=new THREE.Mesh(new THREE.BoxGeometry(0.1,2.16,3.72),M.frame);scrBack.position.x=0.07;scrGroup.add(scrBack);
+  var scr={x:7.4,z:0};
+  function placeScreen(x,z){scr.x=x;scr.z=z;scrGroup.position.set(x,1.0,z);needs=true}
+
+  var rig=null,R=null;
+  function disposeRig(){
+    if(!rig)return;
+    scene.remove(rig);
+    rig.traverse(function(o){
+      if(o.geometry)o.geometry.dispose();
+      if(o.material&&o.isSprite&&o.material.map)o.material.map.dispose();
+    });
+    rig=null;
+  }
+  function seg(parent,a,b,mat,r){
+    var d=b.clone().sub(a),L=d.length(),q=new THREE.Quaternion().setFromUnitVectors(UP,d.clone().normalize());
+    var m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,L,8),mat);
+    m.position.copy(a).addScaledVector(d,0.5);m.quaternion.copy(q);parent.add(m);
+    var h=new THREE.Mesh(new THREE.CylinderGeometry(r*5,r*5,L,10),M.halo);
+    h.position.copy(m.position);h.quaternion.copy(q);parent.add(h);
+    return m;
+  }
+  function post(parent,x,z,h){
+    var m=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,h,10),M.post);
+    m.position.set(x,h/2,z);parent.add(m);
+  }
+  function mirror(parent,x,z){
+    post(parent,x,z,Y0-0.35);
+    var m=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.7,0.07),M.mirror);
+    m.position.set(x,Y0,z);m.rotation.y=Math.PI/4;parent.add(m);
+  }
+  function splitter(parent,x,z){
+    post(parent,x,z,Y0-0.4);
+    var c=new THREE.Mesh(new THREE.BoxGeometry(0.75,0.75,0.75),M.glass);
+    c.position.set(x,Y0,z);parent.add(c);
+    var p=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.72,0.03),M.mirror);
+    p.position.set(x,Y0,z);p.rotation.y=Math.PI/4;parent.add(p);
+  }
+  function source(parent,z){
+    var b=new THREE.Mesh(new THREE.BoxGeometry(1.4,1.2,0.9),M.body);b.position.set(-7.95,0.6,z);parent.add(b);
+    var e=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.13,0.5,14),M.mirror);
+    e.rotation.z=Math.PI/2;e.position.set(-7.25,Y0,z);parent.add(e);
+  }
+  function detector(parent,x,z,j,rings){
+    var sup=new THREE.Mesh(new THREE.BoxGeometry(0.2,Y0-0.34,0.2),M.body);sup.position.set(x,(Y0-0.34)/2,z);parent.add(sup);
+    var mat=new THREE.MeshBasicMaterial({color:0x6b7785});
+    var t=new THREE.Mesh(new THREE.TorusGeometry(0.34,0.07,10,32),mat);
+    t.rotation.y=Math.PI/2;t.position.set(x,Y0,z);parent.add(t);
+    rings[j]=mat;
+  }
+  var labels=[];
+  function label(parent,text,pos,muted){
+    var c=document.createElement('canvas');c.width=420;c.height=100;
+    var tex=new THREE.CanvasTexture(c);
+    var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false,fog:false}));
+    sp.position.copy(pos);sp.scale.set(2.5,0.6,1);sp.renderOrder=10;parent.add(sp);
+    labels.push({c:c,tex:tex,text:text,muted:muted});
+  }
+  function paintLabels(){
+    labels.forEach(function(L){
+      var x=L.c.getContext('2d');x.clearRect(0,0,L.c.width,L.c.height);
+      x.font='700 50px "PT Sans",system-ui,sans-serif';x.textAlign='center';x.textBaseline='middle';
+      x.shadowColor='rgba(0,0,0,0.85)';x.shadowBlur=10;
+      x.fillStyle=L.muted?'#8da3b9':'#e3edf7';x.fillText(L.text,L.c.width/2,L.c.height/2+2);
+      L.tex.needsUpdate=true;
+    });
+    needs=true;
+  }
+  function pathData(paths,exits,rings){
+    var cum=[],len=[];
+    paths.forEach(function(p){
+      var c=[0],i;
+      for(i=1;i<p.length;i++)c.push(c[i-1]+p[i].distanceTo(p[i-1]));
+      cum.push(c);len.push(c[c.length-1]);
+    });
+    return {paths:paths,exits:exits,rings:rings,cum:cum,len:len};
+  }
+
+  function buildMZ(){
+    disposeRig();labels=[];
+    var g=new THREE.Group(),z1=1.6,z2=-1.6;
+    var P0=V(-7.2,Y0,z1),BS1=V(-4,Y0,z1),MA=V(3,Y0,z1),BS2=V(3,Y0,z2),MB=V(-4,Y0,z2),H=V(7.4,Y0,z2);
+    var rings=[];
+    source(g,z1);splitter(g,-4,z1);mirror(g,3,z1);mirror(g,-4,z2);splitter(g,3,z2);
+    [[P0,BS1],[BS1,MA],[MA,BS2],[BS1,MB],[MB,BS2]].forEach(function(s){seg(g,s[0],s[1],M.beam,0.03)});
+    seg(g,BS2,H,M.beamDim,0.03);
+    detector(g,-0.5,z1,0,rings);detector(g,-0.5,z2,1,rings);
+    label(g,'Фотон көзі',V(-7.9,2.0,z1));
+    label(g,'Бөлгіш',V(-4,1.9,z1));
+    label(g,'Айна',V(3,1.9,z1));
+    label(g,'Айна',V(-4,1.9,z2));
+    label(g,'Біріктіргіш',V(3,1.95,z2));
+    label(g,'Детектор',V(-0.5,1.7,z1),true);
+    label(g,'Детектор',V(-0.5,1.7,z2),true);
+    label(g,'1-жол',V(0.2,0.5,z1+0.9),true);
+    label(g,'2-жол',V(0.2,0.5,z2-0.9),true);
+    label(g,'Экран',V(7.4,2.25,z2));
+    scene.add(g);rig=g;
+    R=pathData([[P0,BS1,MA,BS2],[P0,BS1,MB,BS2]],[BS2,BS2],rings);
+    placeScreen(7.4,z2);
+    tgt.set(-0.3,0.1,0);baseDist=17.5;
+  }
+  function buildMulti(N){
+    disposeRig();labels=[];
+    var g=new THREE.Group(),rings=[],paths=[],exits=[];
+    var P0=V(-7.2,Y0,0),Sp=V(-4.2,Y0,0),H=V(5.4,Y0,0),j;
+    source(g,0);splitter(g,-4.2,0);
+    seg(g,P0,Sp,M.beam,0.03);
+    for(j=0;j<N;j++){
+      var zj=(j-(N-1)/2)*0.9;
+      var A=V(-1.6,Y0,zj),E=V(1.2,Y0,zj);
+      seg(g,Sp,A,M.beam,0.03);seg(g,A,E,M.beam,0.03);seg(g,E,H,M.beamDim,0.025);
+      detector(g,-0.3,zj,j,rings);
+      var end=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.3,10),M.body);
+      end.rotation.z=Math.PI/2;end.position.set(1.3,Y0,zj);g.add(end);
+      paths.push([P0,Sp,A,E]);exits.push(E);
+    }
+    label(g,'Фотон көзі',V(-7.9,2.0,0));
+    label(g,'Бөлгіш',V(-4.2,1.9,0));
+    label(g,'Детекторлар',V(-0.3,1.75,0),true);
+    label(g,'Экран',V(5.4,2.4,0));
+    scene.add(g);rig=g;
+    R=pathData(paths,exits,rings);
+    placeScreen(5.4,0);
+    tgt.set(-1.2,0.1,0);baseDist=17;
+  }
+
+  /* camera */
+  var AZ0=-0.45,EL0=0.62,az=AZ0,el=EL0,baseDist=21,dist=baseDist,tgt=V(-0.3,0.5,0);
+  function fit(){dist=baseDist*Math.max(1,1.6/camera.aspect)}
+  function place(){
+    camera.position.set(tgt.x+dist*Math.cos(el)*Math.sin(az),tgt.y+dist*Math.sin(el),tgt.z+dist*Math.cos(el)*Math.cos(az));
+    camera.lookAt(tgt);needs=true;
+  }
+  function resize(){
+    var w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
+    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+    fit();place();
+  }
+  if(window.ResizeObserver)new ResizeObserver(resize).observe(cv);
+  window.addEventListener('resize',resize);
+
+  var drag=null;
+  cv.addEventListener('pointerdown',function(e){drag={x:e.clientX,y:e.clientY};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+  cv.addEventListener('pointermove',function(e){
+    if(!drag)return;
+    az-=(e.clientX-drag.x)*0.007;
+    el=Math.max(0.12,Math.min(1.5,el+(e.clientY-drag.y)*0.007));
+    drag.x=e.clientX;drag.y=e.clientY;place();
+  });
+  function endDrag(){drag=null}
+  cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+  cv.addEventListener('keydown',function(e){
+    var k=e.key,s=0.08,used=true;
+    if(k==='ArrowLeft')az+=s;else if(k==='ArrowRight')az-=s;
+    else if(k==='ArrowUp')el=Math.min(1.5,el+s);else if(k==='ArrowDown')el=Math.max(0.12,el-s);
+    else used=false;
+    if(used){e.preventDefault();place()}
+  });
+  $('reset').addEventListener('click',function(){az=AZ0;el=EL0;place()});
+  $('viewTop').addEventListener('click',function(){az=0;el=1.5;place()});
+
+  /* photons */
+  var photons=[],flashes=[],FA=0.8;
+  var flashGeo=new THREE.CircleGeometry(0.16,24);
+  function pointAlong(j,d){
+    var p=R.paths[j],c=R.cum[j],i=1;
+    while(i<p.length-1&&c[i]<d)i++;
+    var t=(d-c[i-1])/(c[i]-c[i-1]);
+    return p[i-1].clone().lerp(p[i],Math.max(0,Math.min(1,t)));
+  }
+  function launch(dur,now){
+    var N=R.paths.length,u=sampleU(),v=(Math.random()*2-1)*0.92,sp=[],j;
+    var H=V(scr.x-0.03,1.0+v*1.0,scr.z+u*1.78);
+    for(j=0;j<N;j++){
+      var m=new THREE.Mesh(sphGeo,ghostMats[j]);
+      var s=new THREE.Sprite(glowMats[j]);s.scale.set(1.0,1.0,1);m.add(s);
+      scene.add(m);sp.push(m);
+    }
+    photons.push({t0:now,dur:dur,H:H,u:u,v:v,sp:sp});
+  }
+  function flash(pos){
+    var mat=new THREE.MeshBasicMaterial({color:0xff7a66,transparent:true,opacity:0.9,depthWrite:false,blending:ADD,side:THREE.DoubleSide});
+    var m=new THREE.Mesh(flashGeo,mat);
+    m.rotation.y=-Math.PI/2;m.position.copy(pos);m.position.x-=0.02;scene.add(m);
+    flashes.push({m:m,t0:performance.now()});
+  }
+  function clearPhotons(){
+    photons.forEach(function(p){p.sp.forEach(function(m){scene.remove(m)})});photons.length=0;
+    flashes.forEach(function(f){scene.remove(f.m);f.m.material.dispose()});flashes.length=0;
+  }
+  function stepPhotons(now){
+    var i;
+    for(i=photons.length-1;i>=0;i--){
+      var p=photons[i],f=(now-p.t0)/p.dur;
+      if(f>=1){
+        p.sp.forEach(function(m){scene.remove(m)});
+        addHit(p.u,p.v);flash(p.H);photons.splice(i,1);continue;
+      }
+      p.sp.forEach(function(m,j){
+        if(f<FA)m.position.copy(pointAlong(j,f/FA*R.len[j]));
+        else m.position.copy(R.exits[j]).lerp(p.H,(f-FA)/(1-FA));
+        m.scale.setScalar(f>0.94?1-(f-0.94)/0.06*0.55:1);
+      });
+    }
+    for(i=flashes.length-1;i>=0;i--){
+      var fl=flashes[i],q=(performance.now()-fl.t0)/550;
+      if(q>=1){scene.remove(fl.m);fl.m.material.dispose();flashes.splice(i,1);continue}
+      fl.m.scale.setScalar(1+q*2.4);fl.m.material.opacity=0.9*(1-q);
+    }
+    if(photons.length||flashes.length)needs=true;
+  }
+
+  function applyKappa(){
+    var base=new THREE.Color(0xff6a5a),muted=new THREE.Color(0x6b7785),j;
+    for(j=0;j<5;j++){
+      var pc=new THREE.Color(PATHCOL[j]);
+      ghostMats[j].color.copy(base).lerp(pc,S.kappa);
+      glowMats[j].color.copy(base).lerp(pc,S.kappa);
+      if(R&&R.rings[j])R.rings[j].color.copy(muted).lerp(pc,S.kappa);
+    }
+    needs=true;
+  }
+  function setRig(){
+    clearPhotons();
+    if(S.N===2)buildMZ();else buildMulti(S.N);
+    applyKappa();paintLabels();fit();place();
+  }
+
+  place();resize();
+  return {
+    setRig:setRig,applyKappa:applyKappa,repaint:paintLabels,clearPhotons:clearPhotons,
+    launch:launch,step:function(now){stepPhotons(now);stepEnv()},
+    draw:function(){
+      if(dotsDirty){scrTex.needsUpdate=true;dotsDirty=false;needs=true}
+      if(needs){renderer.render(scene,camera);needs=false}
+    }
+  };
+}
+
+/* ---------- canvas helpers ---------- */
+function fitCv(cv){
+  var dpr=Math.min(window.devicePixelRatio||1,2),w=cv.clientWidth,h=cv.clientHeight;
+  if(!w||!h)return null;
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
+  var x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,w,h);
+  return {x:x,w:w,h:h};
+}
+var MONO='11px "JetBrains Mono",ui-monospace,monospace',UI='12.5px "PT Sans",system-ui,sans-serif';
+function colors(){
+  return {line:tok('--line'),muted:tok('--muted'),ink:tok('--ink'),panel:tok('--panel'),c1:tok('--clear'),c2:tok('--alt'),k:tok('--know'),o:tok('--lost'),acc:tok('--accent'),beam:tok('--beam')};
+}
+function gridUnit(c,m,xTicks,yTicks,xl,yl,col){
+  var x=c.x,pw=c.w-m.l-m.r,ph=c.h-m.t-m.b;
+  x.font=MONO;x.textBaseline='middle';x.lineWidth=1;
+  yTicks.forEach(function(t){
+    var yy=Math.round(m.t+(1-t.p)*ph)+.5;
+    x.strokeStyle=col.line;x.beginPath();x.moveTo(m.l,yy);x.lineTo(m.l+pw,yy);x.stroke();
+    x.fillStyle=col.muted;x.textAlign='right';x.fillText(t.s,m.l-6,yy);
+  });
+  xTicks.forEach(function(t){
+    var xx=Math.round(m.l+t.p*pw)+.5;
+    x.strokeStyle=col.line;x.beginPath();x.moveTo(xx,m.t);x.lineTo(xx,m.t+ph);x.stroke();
+    x.fillStyle=col.muted;x.textAlign='center';x.textBaseline='top';x.fillText(t.s,xx,m.t+ph+5);x.textBaseline='middle';
+  });
+  x.font=UI;x.fillStyle=col.muted;x.textAlign='center';x.textBaseline='alphabetic';
+  x.fillText(xl,m.l+pw/2,c.h-6);
+  x.save();x.translate(13,m.t+ph/2);x.rotate(-Math.PI/2);x.fillText(yl,0,0);x.restore();
+  x.textBaseline='middle';
+}
+var unitTicks=[{p:0,s:'0'},{p:0.25,s:'0.25'},{p:0.5,s:'0.5'},{p:0.75,s:'0.75'},{p:1,s:'1'}];
+
+/* ---------- histogram (pupil view) ---------- */
+function drawHist(){
+  var cv=$('hist');if(!cv)return;
+  var c=fitCv(cv);if(!c)return;
+  var x=c.x,w=c.w,h=c.h,col=colors();
+  var L=36,Rr=6,T=8,B=22,pw=w-L-Rr,ph=h-T-B,N=S.N,ce=cEff(),p0=phr(),k;
+  var mx=1;for(k=0;k<NB;k++)if(bins[k]>mx)mx=bins[k];
+  var ex=null;
+  if($('theory').checked&&count>0){
+    ex=[];for(k=0;k<NB;k++){var u=(k+0.5)/NB*2-1,e=count/NB*Pt(SPAN*u+p0,N,ce);ex.push(e);if(e>mx)mx=e}
+  }
+  mx*=1.12;
+  x.font=MONO;x.textAlign='right';x.textBaseline='middle';
+  for(k=0;k<=2;k++){
+    var yy=T+ph-k/2*ph;
+    x.strokeStyle=col.line;x.lineWidth=1;x.beginPath();x.moveTo(L,Math.round(yy)+.5);x.lineTo(L+pw,Math.round(yy)+.5);x.stroke();
+    x.fillStyle=col.muted;x.fillText(String(Math.round(mx*k/2)),L-6,yy);
+  }
+  x.fillStyle=col.beam;x.globalAlpha=0.9;
+  for(k=0;k<NB;k++){var bh=bins[k]/mx*ph;x.fillRect(L+k*pw/NB+0.5,T+ph-bh,Math.max(1,pw/NB-1),bh)}
+  x.globalAlpha=1;
+  if(ex){
+    x.beginPath();
+    for(k=0;k<NB;k++){var px=L+(k+0.5)*pw/NB,py=T+ph-ex[k]/mx*ph;if(k===0)x.moveTo(px,py);else x.lineTo(px,py)}
+    x.setLineDash([5,4]);x.strokeStyle=col.ink;x.lineWidth=1.6;x.stroke();x.setLineDash([]);
+  }
+  x.font=UI;x.textAlign='center';x.fillStyle=col.muted;x.fillText('экрандағы орын',L+pw/2,h-8);
+}
+
+/* ---------- teacher analysis ---------- */
+var mxN=0;
+function buildMx(N){
+  var h='<thead><tr><th scope="col"></th>',i,j;
+  for(j=0;j<N;j++)h+='<th scope="col">'+(j+1)+'</th>';
+  h+='</tr></thead><tbody>';
+  for(i=0;i<N;i++){
+    h+='<tr><th scope="row">'+(i+1)+'</th>';
+    for(j=0;j<N;j++)h+='<td data-d="'+(i===j?1:0)+'"></td>';
+    h+='</tr>';
+  }
+  $('mx').innerHTML=h+'</tbody>';mxN=N;
+}
+function paintMx(N,c){
+  if(mxN!==N)buildMx(N);
+  Array.prototype.forEach.call($('mx').querySelectorAll('td'),function(td){
+    var diag=td.getAttribute('data-d')==='1',v=diag?1/N:c/N,st=Math.max(0,Math.min(1,v*N));
+    td.textContent=v.toFixed(3);
+    td.style.background='color-mix(in srgb, '+(diag?'var(--accent)':'var(--clear)')+' '+Math.round((diag?0.55:0.75)*st*100)+'%, var(--panel))';
+  });
+  $('mxcap').innerHTML='Диагональ әрқашан 1/<i>N</i> = '+(1/N).toFixed(3)+'. Диагональ сыртындағы ұяшықтар <i>c</i>/<i>N</i> = '+(c/N).toFixed(3)+', мұндағы <i>c</i> = (1 − <i>λ</i>)·<i>γ</i> = '+c.toFixed(3)+'. Олар нөлге жақындаса, жолдар арасында байланыс жоқ.';
+}
+function drawMap(){
+  var c=fitCv($('map'));if(!c)return;
+  var col=colors(),x=c.x,m={l:46,r:12,t:12,b:38},pw=c.w-m.l-m.r,ph=c.h-m.t-m.b;
+  var X=function(v){return m.l+v*pw},Y=function(v){return m.t+(1-v)*ph};
+  gridUnit(c,m,unitTicks,unitTicks,'D: жолды білу','C: айқындық (l₁)',col);
+  var r=calc(S.N,S.kappa,S.lambda);
+  x.beginPath();x.moveTo(X(0),Y(1));x.lineTo(X(1),Y(1));x.lineTo(X(1),Y(0));x.closePath();
+  x.globalAlpha=0.14;x.fillStyle=col.muted;x.fill();x.globalAlpha=1;
+  x.font=UI;x.fillStyle=col.muted;x.textAlign='center';
+  x.fillText('C + D > 1',X(0.76),Y(0.90));x.fillText('мүмкін емес',X(0.76),Y(0.82));
+  x.strokeStyle=col.ink;x.lineWidth=2;x.beginPath();x.moveTo(X(0),Y(1));x.lineTo(X(1),Y(0));x.stroke();
+  x.setLineDash([5,4]);x.lineWidth=1.3;x.strokeStyle=col.muted;
+  x.beginPath();x.moveTo(X(0),Y(1-S.lambda));x.lineTo(X(1),Y(0));x.stroke();
+  x.beginPath();x.moveTo(X(r.D),Y(r.g));x.lineTo(X(r.D),Y(0));x.stroke();
+  x.setLineDash([]);
+  if(r.lost>0.002){
+    x.strokeStyle=col.o;x.lineWidth=3.5;x.beginPath();x.moveTo(X(r.D),Y(r.g));x.lineTo(X(r.D),Y(r.c));x.stroke();
+    x.beginPath();x.arc(X(r.D),Y(r.g),4,0,TAU);x.fillStyle=col.panel;x.fill();x.lineWidth=2;x.strokeStyle=col.ink;x.stroke();
+  }
+  x.beginPath();x.arc(X(r.D),Y(r.c),7,0,TAU);x.fillStyle=col.acc;x.fill();x.lineWidth=2.5;x.strokeStyle=col.panel;x.stroke();
+  x.font='700 12.5px "PT Sans",system-ui,sans-serif';x.fillStyle=col.ink;
+  var left=X(r.D)>m.l+pw*0.62;x.textAlign=left?'right':'left';
+  x.fillText('күйіңіз',X(r.D)+(left?-12:12),Y(r.c)+(r.c<0.12?-14:0));
+}
+function drawNoise(){
+  var c=fitCv($('noise'));if(!c)return;
+  var col=colors(),x=c.x,m={l:46,r:12,t:12,b:38},pw=c.w-m.l-m.r,ph=c.h-m.t-m.b;
+  var X=function(v){return m.l+v*pw},Y=function(v){return m.t+(1-v)*ph};
+  gridUnit(c,m,[{p:0,s:'0%'},{p:0.25,s:'25%'},{p:0.5,s:'50%'},{p:0.75,s:'75%'},{p:1,s:'100%'}],unitTicks,'λ: шуыл','C және D',col);
+  var g=gam(),i,n=80;
+  x.setLineDash([6,4]);x.lineWidth=2;x.strokeStyle=col.k;x.beginPath();x.moveTo(X(0),Y(1-g));x.lineTo(X(1),Y(1-g));x.stroke();x.setLineDash([]);
+  x.lineWidth=2.5;x.strokeStyle=col.c2;x.beginPath();
+  for(i=0;i<=n;i++){var l=i/n,py=Y(creOf(S.N,(1-l)*g));if(i===0)x.moveTo(X(l),py);else x.lineTo(X(l),py)}
+  x.stroke();
+  x.strokeStyle=col.c1;x.beginPath();x.moveTo(X(0),Y(g));x.lineTo(X(1),Y(0));x.stroke();
+  var r=calc(S.N,S.kappa,S.lambda);
+  x.setLineDash([3,3]);x.lineWidth=1.2;x.strokeStyle=col.muted;x.beginPath();x.moveTo(X(S.lambda),Y(0));x.lineTo(X(S.lambda),Y(1));x.stroke();x.setLineDash([]);
+  [[r.C1,col.c1],[r.C2,col.c2],[r.D,col.k]].forEach(function(p){
+    x.beginPath();x.arc(X(S.lambda),Y(p[0]),5,0,TAU);x.fillStyle=p[1];x.fill();x.lineWidth=2;x.strokeStyle=col.panel;x.stroke();
+  });
+}
+function redrawAnalysis(){if(S.teacher&&!$('pA').hidden){drawMap();drawNoise()}}
+
+/* ---------- DOM ---------- */
+function statusText(){
+  var N=S.N,k=S.kappa,l=S.lambda,g=gam();
+  if(!S.teacher){
+    if(k<0.005)return N===2
+      ?'Детектор өшірулі: жол белгісіз, жолақтар толық айқын. Бір фотон екі жолмен де өткендей әрекет етеді.'
+      :'Детектор өшірулі: жол белгісіз, жарық негізгі жіңішке жолақтарға жиналады.';
+    if(k>0.995)return 'Детектор жолды толық анықтайды. Интерференция жоқ, экранда жолақтар көрінбейді.';
+    return 'Детектор жолды ішінара анықтайды. Жолды көбірек білген сайын жолақтар солғындай береді.';
+  }
+  if(k<0.005&&l<0.005)return 'Таза күй: жол белгісіз, шуыл жоқ. Айқындық ең жоғары, C + D = 1.';
+  if(g<0.005)return 'Детектор жолды толық анықтады: C = 0, интерференция жоқ. Шуыл енді ештеңені өзгертпейді.';
+  if(l<0.005)return 'Тек детектор: жол туралы ақпарат өсті, айқындық азайды. C + D әлі 1-ге тең.';
+  if(k<0.005)return 'Тек шуыл: фазалық байланыс бұзылды, бірақ детектор ештеңе білген жоқ (D = 0). C + D < 1, айырма қоршаған ортаға кетті.';
+  return 'Детектор да, шуыл да бар: айқындық екі себептен азайды. C + D < 1, айырма шуылдан.';
+}
+function pct(v){return Math.round(v*100)}
+function sync(){
+  var r=calc(S.N,S.kappa,S.lambda),Cp=pct(r.C1),Dp=pct(r.D),Lp=Math.max(0,100-Cp-Dp);
+  if(Cp+Dp+Lp>100)Cp=100-Dp-Lp;
+  $('nv').textContent=String(S.N);$('kv').textContent=Math.round(S.kappa*100)+'%';$('fv').textContent=Math.round(S.phi)+'°';$('lv').textContent=Math.round(S.lambda*100)+'%';
+  $('gv').textContent='γ = '+r.g.toFixed(3);
+  $('nnote').textContent=S.N===2?'2 жол: Мах–Цендер интерферометрі.':S.N+' жол: көп жолды интерферометр.';
+  $('chip').textContent=(S.N===2?'Мах–Цендер':'Көп жолды')+' · '+S.N+' жол';
+  $('Cv').textContent=Cp+'%';$('Dv').textContent=Dp+'%';
+  $('Cb').style.width=Cp+'%';$('Db').style.width=Dp+'%';
+  $('bC').style.width=Cp+'%';$('bD').style.width=Dp+'%';$('bL').style.width=Lp+'%';
+  $('bCv').textContent=Cp+'%';$('bDv').textContent=Dp+'%';$('bLv').textContent=Lp+'%';
+  $('budTxt').textContent=S.teacher&&Lp>0?Cp+'% + '+Dp+'% + '+Lp+'%':Cp+'% + '+Dp+'%'+(S.teacher?'':' = 100%');
+  $('status').textContent=statusText();
+  if(S.teacher){
+    $('C1v').textContent=f3(r.C1);$('C2v').textContent=f3(r.C2);$('DDv').textContent=f3(r.D);
+    $('C1b').style.width=(r.C1*100)+'%';$('C2b').style.width=(r.C2*100)+'%';$('DDb').style.width=(r.D*100)+'%';
+    $('sum').textContent=f3(r.sum);$('lost').textContent=f3(Math.max(0,1-r.sum));$('pur').textContent=f3(r.pur);
+    paintMx(S.N,r.c);redrawAnalysis();
+  }
+}
+function paramChanged(){
+  sync();
+  if(G){G.applyKappa();G.clearPhotons()}
+  clearScreen();quickFill(800);drawHist();$('cnt').textContent=String(count);
+}
+function setSliders(){
+  $('n').value=S.N;$('k').value=Math.round(S.kappa*100);$('f').value=Math.round(S.phi);$('l').value=Math.round(S.lambda*100);
+}
+
+/* ---------- tabs ---------- */
+var TABS=[['tR','pR'],['tM','pM'],['tA','pA'],['tT','pT']];
+function showTab(id){
+  TABS.forEach(function(t){
+    var on=t[0]===id;$(t[0]).setAttribute('aria-selected',on?'true':'false');$(t[1]).hidden=!on;
+  });
+  if(id==='tA'){setTimeout(function(){sync()},0)}
+  if(id==='tR')setTimeout(drawHist,0);
+}
+TABS.forEach(function(t){$(t[0]).addEventListener('click',function(){showTab(t[0])})});
+
+/* ---------- missions ---------- */
+var MIS=[
+ {t:'1. Жолақтар қайдан шығады?',set:{N:2,k:0,l:0},body:'Детектор өшірулі. Алдымен болжаңыз: фотондар бір-бірлеп түссе, экранда не пайда болады? Содан кейін «Бір-бірлеп» режимінде 30–40 фотонды бақылаңыз да, «Жылдам» режимін қосыңыз.',q:'Бір фотон екі жолмен де өтті ме, әлде біреуімен ғана ма? Жолақтар не үшін пайда болды?'},
+ {t:'2. Детекторды қосыңыз',set:{N:2,k:50,l:0},body:'Детекторды 0%-дан 100%-ға дейін жайлап жылжытыңыз. «Айқындық» пен «Жолды білу» қалай өзгереді?',q:'Жол туралы білім көбейгенде жолақтарға не болады? Неге?'},
+ {t:'3. Екі көрсеткіштің қосындысы',set:{N:2,k:30,l:0},body:'Детекторды 30%, 60%, 90% қылып қойып, айқындық пен жолды білудің қосындысын жазып алыңыз.',q:'Қосынды неге өзгермейді? Бұл дуализм туралы не айтады?'},
+ {t:'4. Жол саны',set:{N:3,k:0,l:0},body:'N = 3, 4, 5 таңдаңыз (детектор өшірулі). Жарық жолақтары мен олардың арасындағы қараңғы аралықтарды салыстырыңыз.',q:'Жол көбейгенде жарық жолақтары қалай өзгереді?'},
+ {t:'5. Шуыл',teacher:true,set:{N:3,k:0,l:50},body:'Детекторды өшіріп, шуылды 0%-дан 100%-ға дейін өсіріңіз. «Талдау» бетінде C + D қосындысына қараңыз.',q:'Детектор ештеңе білмесе де, неге C + D < 1 болады? Айырма қайда кетті?'},
+ {t:'6. Айқындық өлшемдерін салыстыру',teacher:true,set:{N:5,k:40,l:30},body:'«Талдау» бетінде C (l₁) мен C (салыстырмалы энтропия) қисықтарын салыстырыңыз.',q:'Екі өлшем қай жағдайда сәйкес келеді, қай жағдайда айырылады?'}
+];
+(function buildMis(){
+  $('mis').innerHTML=MIS.map(function(m,i){
+    return '<article'+(m.teacher?' class="t-only"':'')+'><h3>'+m.t+'</h3><p>'+m.body+'</p><p class="q">'+m.q+'</p><button type="button" data-m="'+i+'">Параметрлерді қою</button></article>';
+  }).join('');
+  Array.prototype.forEach.call($('mis').querySelectorAll('button[data-m]'),function(b){
+    b.addEventListener('click',function(){
+      var m=MIS[+b.getAttribute('data-m')];stopSweep();
+      var rig=S.N!==m.set.N;
+      S.N=m.set.N;S.kappa=m.set.k/100;S.lambda=S.teacher?m.set.l/100:0;S.phi=0;setSliders();
+      if(G&&rig)G.setRig();paramChanged();
+    });
+  });
+})();
+
+/* ---------- mode ---------- */
+function setUi(t){
+  S.teacher=t;
+  $('app').setAttribute('data-ui',t?'teacher':'pupil');
+  Array.prototype.forEach.call(document.querySelectorAll('.modes button'),function(b){b.setAttribute('aria-pressed',(b.getAttribute('data-ui')==='teacher')===t?'true':'false')});
+  $('lead').textContent=t
+    ?'Зерттеуші режимі: оқушылар нұсқасына қоса шуыл, тығыздық матрицасы және айқындықтың екі өлшемі қосылады. Нәтижесінде когеренттілік пен жол ажыратымдылығының арасындағы теңсіздік C + D ≤ 1 көзбен көрінеді.'
+    :'Фотондарды бір-бірлеп жіберіп, экранда жолақтардың қалай пайда болатынын бақылаңыз. Детектор жолды көбірек анықтаған сайын жолақтар солғындай береді.';
+  if(!t){stopSweep();S.lambda=0;setSliders();var cur=document.querySelector('.tabs [aria-selected="true"]');if(cur&&cur.classList.contains('t-only'))showTab('tR')}
+  paramChanged();
+}
+Array.prototype.forEach.call(document.querySelectorAll('.modes button'),function(b){
+  b.addEventListener('click',function(){setUi(b.getAttribute('data-ui')==='teacher')});
+});
+
+/* ---------- controls ---------- */
+$('n').addEventListener('input',function(e){S.N=+e.target.value;if(G)G.setRig();paramChanged()});
+$('k').addEventListener('input',function(e){S.kappa=+e.target.value/100;paramChanged()});
+$('f').addEventListener('input',function(e){S.phi=+e.target.value;paramChanged()});
+$('l').addEventListener('input',function(e){stopSweep();S.lambda=+e.target.value/100;paramChanged()});
+var sweeping=false,sdir=1;
+function stopSweep(){sweeping=false;$('sweep').setAttribute('aria-pressed','false');$('sweep').textContent='▶ Шуылды жүргізу'}
+Array.prototype.forEach.call(document.querySelectorAll('.seg button[data-k]'),function(b){
+  b.addEventListener('click',function(){
+    stopSweep();S.kappa=+b.getAttribute('data-k')/100;S.lambda=+b.getAttribute('data-l')/100;setSliders();paramChanged();
+  });
+});
+$('sweep').addEventListener('click',function(){
+  sweeping=!sweeping;
+  this.setAttribute('aria-pressed',sweeping?'true':'false');
+  this.textContent=sweeping?'❚❚ Тоқтату':'▶ Шуылды жүргізу';
+});
+Array.prototype.forEach.call(document.querySelectorAll('[data-speed]'),function(b){
+  b.addEventListener('click',function(){
+    S.speed=b.getAttribute('data-speed');
+    Array.prototype.forEach.call(document.querySelectorAll('[data-speed]'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  });
+});
+function setPlaying(v){
+  S.playing=v;$('play').setAttribute('aria-pressed',v?'true':'false');
+  $('play').textContent=v?'❚❚ Тоқтату':'▶ Жіберу';
+}
+$('play').addEventListener('click',function(){setPlaying(!S.playing)});
+$('clear').addEventListener('click',function(){if(G)G.clearPhotons();clearScreen();drawHist();$('cnt').textContent='0'});
+$('theory').addEventListener('change',drawHist);
+
+var last=performance.now(),lastEmit=0,burstAcc=0,lastCount=-1,sweepAcc=0;
+function frame(now){
+  var dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(sweeping){
+    S.lambda+=sdir*dt*0.25;
+    if(S.lambda>=1){S.lambda=1;sdir=-1}else if(S.lambda<=0){S.lambda=0;sdir=1}
+    $('l').value=Math.round(S.lambda*100);
+    sweepAcc+=dt;if(sweepAcc>0.08){sweepAcc=0;sync()}
+  }
+  if(S.playing){
+    if(S.speed==='burst'){
+      burstAcc+=700*dt;
+      while(burstAcc>=1){addHit(sampleU(),(Math.random()*2-1)*0.92);burstAcc-=1}
+    }else{
+      var gap=S.speed==='one'?1500:150,dur=S.speed==='one'?2700:1100;
+      if(now-lastEmit>gap){
+        if(G)G.launch(dur,now);else addHit(sampleU(),(Math.random()*2-1)*0.92);
+        lastEmit=now;
+      }
+    }
+  }
+  if(G)G.step(now);
+  if(count!==lastCount){lastCount=count;$('cnt').textContent=String(count);drawHist()}
+  if(G)G.draw();
+  requestAnimationFrame(frame);
+}
+
+function onTheme(){drawHist();redrawAnalysis()}
+if(window.matchMedia){
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');
+  if(mq.addEventListener)mq.addEventListener('change',onTheme);else if(mq.addListener)mq.addListener(onTheme);
+}
+new MutationObserver(onTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+if(window.ResizeObserver){var ro=new ResizeObserver(function(){drawHist();redrawAnalysis()});['hist','map','noise'].forEach(function(id){ro.observe($(id))})}
+
+clearScreen();
+try{G=initGL()}catch(err){console.error(err&&err.stack||err);$('glfail').hidden=false;$('reset').hidden=true;$('viewTop').hidden=true;G=null}
+if(G)G.setRig();
+setUi(false);setSliders();quickFill(1200);drawHist();$('cnt').textContent=String(count);
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+setPlaying(!reduce);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){if(G)G.repaint();drawHist();redrawAnalysis()});
+requestAnimationFrame(frame);
+})();
+</script>

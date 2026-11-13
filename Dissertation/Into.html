@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Толқын–бөлшек дуализмі · Виртуалды интерферометр</title>
+<style>
+:root{--bg:#070d15;--card:#0d1621;--line:#1e2d3d;--ink:#e6eef6;--mut:#9ab0c4;--teal:#3fd3c6;--vio:#aa9fff;--ora:#ff8f60}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 Inter,system-ui,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:5;background:rgba(7,13,21,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:6px;overflow-x:auto;padding:10px 20px}
+nav a{color:var(--mut);text-decoration:none;font-size:14px;font-weight:600;padding:6px 14px;border-radius:999px;white-space:nowrap}
+nav a:hover{color:var(--ink);background:var(--card)}
+header{padding:64px 0 24px}
+.tag{color:var(--teal);font-weight:600;font-size:13px;letter-spacing:.18em;text-transform:uppercase}
+h1{font-size:clamp(32px,6vw,62px);line-height:1.08;margin:14px 0;letter-spacing:-.02em}
+.sub{color:var(--mut);max-width:780px;font-size:19px}
+.eq{margin-top:22px;font:700 clamp(28px,5.5vw,48px)/1 ui-monospace,Consolas,monospace}
+.eq .c{color:var(--teal)}.eq .d{color:var(--vio)}
+section{padding:42px 0 6px}
+h2{font-size:clamp(24px,3.4vw,32px);margin:0 0 8px;letter-spacing:-.01em}
+.lead{color:var(--mut);margin:0 0 20px;max-width:780px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.card img,.card video{display:block;width:100%;height:auto}
+.cap{padding:14px 18px;border-top:1px solid var(--line);font-size:15px;color:var(--mut)}
+.cap b{color:var(--ink)}
+.steps{display:grid;gap:22px}
+.step{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:center}
+.step .txt{padding:4px 4px}
+.num{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--teal);color:#06201e;font-weight:800;margin-bottom:10px}
+.step h3{margin:0 0 8px;font-size:22px}
+.step p{margin:0 0 10px;color:var(--mut)}
+.meter{display:grid;gap:8px;margin-top:12px;font:600 14px ui-monospace,Consolas,monospace}
+.bar{height:10px;border-radius:6px;background:#ffffff1a;overflow:hidden}
+.bar i{display:block;height:100%}
+.row{display:flex;justify-content:space-between;color:var(--ink)}
+@media(max-width:820px){.step{grid-template-columns:1fr}}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.legend .card{padding:16px 18px}
+.legend b{display:block;margin-bottom:4px}
+.legend span{color:var(--mut);font-size:15px}
+model-viewer{width:100%;height:min(62vh,560px);background:radial-gradient(circle at 50% 30%,#12202f,#070d15)}
+iframe{display:block;width:100%;height:min(82vh,760px);border:0;background:#05090f}
+.dl{display:flex;flex-wrap:wrap;gap:10px}
+.dl a,.btn{color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--card);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600}
+.dl a:hover,.btn:hover{border-color:var(--teal);color:var(--teal)}
+footer{padding:34px 0 64px;color:var(--mut);font-size:14px;border-top:1px solid var(--line);margin-top:50px}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a href="#idea">Идея</a><a href="#steps">3 қадам</a><a href="#film">Анимация</a><a href="#live">Интерактив 3D модель</a><a href="#files">Файлдар</a>
+</div></nav>
+
+<div class="wrap">
+<header>
+  <div class="tag">Магистрлік диссертация · Физика</div>
+  <h1>Толқын–бөлшек дуализмі</h1>
+  <p class="sub">Фотон бір мезгілде толқын да, бөлшек те бола ала ма? Мұны виртуалды интерферометр арқылы қадам-қадаммен көреміз.</p>
+  <div class="eq"><span class="c">C</span> + <span class="d">D</span> ≤ 1</div>
+</header>
+
+<section id="idea">
+  <h2>Идея бір сөйлемде</h2>
+  <p class="lead">Фотон қай жолмен өткенін қаншалықты көбірек білсек, экрандағы жолақтар соншалықты солғын болады. Екеуін бірдей толық біле алмаймыз.</p>
+  <div class="legend">
+    <div class="card"><b style="color:var(--teal)">C — жолақтардың айқындығы</b><span>Экранда интерференциялық жолақтар қаншалықты анық көрінеді (толқындық қасиет).</span></div>
+    <div class="card"><b style="color:var(--vio)">D — жолды білу</b><span>Детектор фотон қай жолмен өткенін қаншалықты анық айырады (бөлшектік қасиет).</span></div>
+    <div class="card"><b>C + D ≤ 1</b><span>Біреуі өссе, екіншісі кемиді. Қосындысы 1-ден (100%) аспайды.</span></div>
+  </div>
+</section>
+
+<section id="steps">
+  <h2>Тәжірибе үш қадамда</h2>
+  <p class="lead">Құрылғы: көз → бөлгіш → екі жол (айналар мен детекторлар) → біріктіргіш → экран. Әр қадамда экранда не болатынын қара.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="card"><img src="step_1.jpg" alt="Жол белгісіз: экранда жолақтар" loading="lazy"><div class="cap">Детекторлар өшірулі</div></div>
+      <div class="txt">
+        <div class="num">1</div><h3>Жол белгісіз</h3>
+        <p>Фотон екі жолмен де бірдей өтеді. Экранға түскен нүктелер жиналып, жолақтар (интерференция) пайда болады.</p>
+        <div class="meter">
+          <div><div class="row"><span style="color:var(--teal)">C айқындық</span><span>100%</span></div><div class="bar"><i style="width:100%;background:var(--teal)"></i></div></div>
+          <div><div class="row"><span style="color:var(--vio)">D жолды білу</span><span>0%</span></div><div class="bar"><i style="width:0%;background:var(--vio)"></i></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="card"><img src="step_2.jpg" alt="Детектор жартылай қосылған" loading="lazy"><div class="cap">Детекторлар жартылай қосулы</div></div>
+      <div class="txt">
+        <div class="num">2</div><h3>Детектор қосылады</h3>
+        <p>Детектор жолды білуге бастайды. Фотондар түске боялады, жолақтар солғындай береді.</p>
+        <div class="meter">
+          <div><div class="row"><span style="color:var(--teal)">C айқындық</span><span>≈ 75%</span></div><div class="bar"><i style="width:75%;background:var(--teal)"></i></div></div>
+          <div><div class="row"><span style="color:var(--vio)">D жолды білу</span><span>≈ 25%</span></div><div class="bar"><i style="width:25%;background:var(--vio)"></i></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="card"><img src="step_3.jpg" alt="Жол толық белгілі: біркелкі экран" loading="lazy"><div class="cap">Детекторлар толық қосулы</div></div>
+      <div class="txt">
+        <div class="num">3</div><h3>Жол толық белгілі</h3>
+        <p>Әр фотон бір ғана жолмен өтеді. Экрандағы нүктелер біркелкі таралады, интерференция жоқ.</p>
+        <div class="meter">
+          <div><div class="row"><span style="color:var(--teal)">C айқындық</span><span>0%</span></div><div class="bar"><i style="width:0%;background:var(--teal)"></i></div></div>
+          <div><div class="row"><span style="color:var(--vio)">D жолды білу</span><span>100%</span></div><div class="bar"><i style="width:100%;background:var(--vio)"></i></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="film">
+  <h2>Анимация</h2>
+  <p class="lead">Үш қадамның барлығы 15 секундта, Blender-де жасалған 3D анимация (алдыңғы нұсқа).</p>
+  <div class="card">
+    <video src="interferometer_film.mp4" poster="hero.jpg" controls playsinline preload="metadata"></video>
+  </div>
+</section>
+
+<section id="live">
+  <h2>Интерактив 3D модель</h2>
+  <p class="lead">Өзің сынап көр: детектор күшін өзгертіп, экрандағы жолақтар қалай солғындайтынын қара. Фотондар жолмен ұшады, детектор жолды «біледі». Тінтуірмен айналдыр, төмендегі батырмалармен камераны ауыстыр.</p>
+  <div class="card"><iframe src="Model3D.html" title="Интерактив 3D интерферометр" allowfullscreen loading="lazy"></iframe></div>
+  <p style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="Model3D.html" target="_blank" rel="noopener">Толық экранда ашу ↗</a><a class="btn" href="Model.html" target="_blank" rel="noopener">N жолды нұсқа (3–5 жол) ↗</a></p>
+</section>
+
+<section id="files">
+  <h2>Файлдар</h2>
+  <div class="dl">
+    <a href="interferometer_pro.glb" download>3D модель (.glb)</a>
+    <a href="interferometer_pro.blend" download>Blender жобасы (.blend)</a>
+    <a href="interferometer_film.mp4" download>Анимация (.mp4)</a>
+    <a href="hero.jpg" download>Құрылғы суреті (.jpg)</a>
+  </div>
+</section>
+
+<footer>Аскеров Алмас · 7М01504 Физика · М. Өтемісов атындағы Батыс Қазақстан университеті</footer>
+</div>
+</body>
+</html>
