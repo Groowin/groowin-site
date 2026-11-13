@@ -9754,7 +9754,7 @@ function forcePw() {
     const stems = [...new Set(words(q.topic + ' ' + q.section).concat(words((goals || []).join(' '))))]; const out = { games: [], sites: [], links: [] };
     if (!stems.length) return out;
     const sc = t => { t = String(t || '').toLowerCase(); return stems.reduce((n, w) => n + (t.includes(w) ? 1 : 0), 0); };
-    const top = (arr, f) => arr.map(x => [sc(f(x)), x]).filter(z => z[0] >= 1).sort((a, b) => b[0] - a[0]).slice(0, 2).map(z => z[1]);
+    const need = Math.min(2, stems.length), top = (arr, f) => arr.map(x => [sc(f(x)), x]).filter(z => z[0] >= need).sort((a, b) => b[0] - a[0]).slice(0, 2).map(z => z[1]);
     try { out.games = top(typeof GAMES !== 'undefined' ? GAMES : [], g => g.title + ' ' + (g.topic || '')); } catch { }
     try { const r = await sb.from('sites').select('title,url,descr').limit(100); out.sites = top(r.data || [], x => x.title + ' ' + (x.descr || '')); } catch { }
     try { const r = await sb.from('mat_items').select('title,url').eq('kind', 'link').limit(300); out.links = top((r.data || []).filter(x => x.url), x => x.title); } catch { }
@@ -9814,6 +9814,7 @@ function forcePw() {
         const d2 = await ai({ mode: 'qmj', turn: false, qmj: Object.assign({ part: 2, methods: d1.methods, ctx, quizzes }, base) });
         const j2 = jparse(d2.message.content);
         const s45 = [j2.stage4 || (j2.stages || [])[0], j2.stage5 || (j2.stages || [])[1]]; if (!s45[0] || !s45[1]) throw new Error('ЖИ 4–5 кезеңді жазбады, қайта бас');
+        { const a = s45[0], b = s45[1]; if (/\d\s*-\s*тапсырма/i.test(String(b.teacher || ''))) { ['teacher', 'student', 'assess', 'resources'].forEach(k => { a[k] = String(a[k] || '').trim() + '\n' + String(b[k] || '').trim(); b[k] = ''; }); } }
         if (Array.isArray(d1.methods)) ls.set('qmjAvoid', JSON.stringify(av.concat(d1.methods).slice(-30)));
         const nz = t => String(t || '').replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').trim();
         const stg = j1.stages.slice(0, 3).concat(s45).map(x => ({ teacher: nz(x.teacher), student: nz(x.student), assess: nz(x.assess), resources: nz(x.resources) }));
@@ -9835,13 +9836,15 @@ function forcePw() {
         } catch { fixes = null; }
         data.fixes = fixes;
         st.textContent = '⏳ Бос ұяшықтарды тексеріп жатыр…';
-        for (let i = 0; i < 5; i++) { const o = data.stages[i]; if (String(o.teacher || '').trim() && String(o.student || '').trim()) continue; try { const dd = await ai({ mode: 'qmj', turn: false, qmj: { part: 6, stage: i + 1, avoid: [(data.methods || [])[i] || ''], subject: q.subject, grade: q.grade, topic: q.topic, goal: q.goal, ctx: data.stages.map((z, k) => k === i ? '' : String(z.teacher || '').replace(/\s+/g, ' ').slice(0, 120)).join(' | ') } }); const jj = jparse(dd.message.content), x = jj.stage || (jj.stages || [])[0]; if (x) ['teacher', 'student', 'assess', 'resources'].forEach(k => { if (!String(o[k] || '').trim()) o[k] = nz(x[k]); }); } catch { } }
+        const nT = o => (String(o.teacher || '').match(/\d\s*-\s*тапсырма/gi) || []).length;
+        const bad = i => { const o = data.stages[i]; if (!String(o.teacher || '').trim() || !String(o.student || '').trim()) return true; if (i === 3 && nT(o) < 3) return true; if (i === 4 && (nT(o) > 0 || String(o.teacher).length < 60)) return true; return false; };
+        for (let rd = 0; rd < 2; rd++) for (let i = 0; i < 5; i++) { if (!bad(i)) continue; st.textContent = '⏳ ' + (i + 1) + '-кезеңді түзетіп жатыр…'; const o = data.stages[i]; try { const dd = await ai({ mode: 'qmj', turn: false, qmj: { part: 6, stage: i + 1, avoid: [(data.methods || [])[i] || ''], subject: q.subject, grade: q.grade, topic: q.topic, goal: q.goal, ctx: data.stages.map((z, k) => k === i ? '' : String(z.teacher || '').replace(/\s+/g, ' ').slice(0, 120)).join(' | ') } }); const jj = jparse(dd.message.content), x = jj.stage || (jj.stages || [])[0]; if (x) { const full = i === 3 || i === 4 || !String(o.teacher || '').trim(); ['teacher', 'student', 'assess', 'resources'].forEach(k => { if (full || !String(o[k] || '').trim()) o[k] = k === 'assess' || k === 'resources' ? tidy(nz(x[k])) : nz(x[k]); }); } } catch { } }
         data.stages.forEach(o => { if (!String(o.student || '').trim()) o.student = '– Тыңдайды, сұрақтарға жауап береді, дәптерге жазады'; if (!String(o.assess || '').trim()) o.assess = 'Ауызша мадақтау, кері байланыс'; if (!String(o.resources || '').trim()) o.resources = 'Оқулық, тақта, маркер'; });
         st.textContent = '⏳ Groowin ойындары, сайттар және материалдарыңнан сілтеме іздеп жатыр…';
         const rs = await findRes(q, data.goals); rs.quiz = null;
         if (cQ.checked) {
           st.textContent = '⏳ Викторина жасап жатыр…';
-          try { const dq = await ai({ mode: 'qmj', turn: false, qmj: { part: 7, subject: q.subject, grade: q.grade, topic: q.topic, ctx: (data.goals || []).join(' ') } }); const jq = jparse(dq.message.content); const qs = (Array.isArray(jq.questions) ? jq.questions : []).filter(x => x && x.t && Array.isArray(x.o) && x.o.length === 4 && x.c >= 0 && x.c < 4).slice(0, 10).map(x => ({ t: String(x.t).slice(0, 200), img: null, o: x.o.map(z => String(z).replace(/^\s*[A-DА-Г][).]\s*/, '').slice(0, 100)), c: x.c | 0, s: 20 })); if (qs.length >= 4) { const ins = await sb.from('quizzes').insert({ title: String(jq.title || q.topic + ': викторина').slice(0, 80), questions: qs, updated_at: new Date().toISOString() }).select('id').single(); if (!ins.error && ins.data) rs.quiz = { id: ins.data.id, title: String(jq.title || q.topic + ': викторина').slice(0, 80) }; } } catch { }
+          try { const dq = await ai({ mode: 'qmj', turn: false, qmj: { part: 7, subject: q.subject, grade: q.grade, topic: q.topic, ctx: (data.goals || []).join(' ') } }); const jq = jparse(dq.message.content); const qs = (Array.isArray(jq.questions) ? jq.questions : []).filter(x => x && x.t && Array.isArray(x.o) && x.o.length === 4 && x.c >= 0 && x.c < 4).slice(0, 10).map(x => ({ t: String(x.t).slice(0, 200), img: null, o: x.o.map(z => String(z).replace(/^\s*[A-DА-Г][).]\s*/, '').slice(0, 100)), c: x.c | 0, s: 20 })); if (qs.length >= 4) { const ins = await sb.from('quizzes').insert({ title: (String(jq.title || '').trim() || (String(q.topic).slice(0, 45) + ': викторина')).slice(0, 80), questions: qs, updated_at: new Date().toISOString() }).select('id').single(); if (!ins.error && ins.data) rs.quiz = { id: ins.data.id, title: (String(jq.title || '').trim() || (String(q.topic).slice(0, 45) + ': викторина')).slice(0, 80) }; } } catch { }
         }
         addLinks(data, '', null, [], [], rs);
         data.autoWs = cW.checked;
@@ -9873,7 +9876,7 @@ function forcePw() {
       (rs.games || []).forEach(g => add(3, 'Groowin → ' + (SUBJ_KK[g.subj] || 'Ойын-сауық') + ': «' + g.title + '»', BASE + '?go=game&id=' + g.id));
       (rs.sites || []).forEach(x => add(2, 'Сайт: ' + x.title, x.url));
       (rs.links || []).forEach(x => add(2, 'Материал: ' + x.title, x.url));
-      if (rs.quiz) add(4, 'Groowin → Рефлексия викторинасы: «' + rs.quiz.title + '»', BASE + '?go=quiz&id=' + rs.quiz.id);
+      if (rs.quiz) add(4, 'Groowin → Рефлексия викторинасы: «' + (rs.quiz.title.length > 50 ? rs.quiz.title.slice(0, 48) + '…' : rs.quiz.title) + '»', BASE + '?go=quiz&id=' + rs.quiz.id);
     }
   }
   const tidy = t => { const seen = new Set(); return String(t || '').split(/\n/).map(x => x.replace(/^\s*[–—-]\s+/, '').trim()).filter(x => { const k = x.toLowerCase(); if (!x || seen.has(k)) return false; seen.add(k); return true; }).join('\n'); };
