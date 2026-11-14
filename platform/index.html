@@ -1779,6 +1779,13 @@ html[data-theme=amoled] #aiPanel{background:#05060A}
 
 .hm-3d{object-fit:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.28));width:96px!important;height:96px!important;right:10px!important;bottom:8px!important}
 @media (max-width:760px){.hm-3d{width:64px!important;height:64px!important}}
+
+#aiHist{background:#fff;color:#12233D}
+html[data-theme=dark] #aiHist,html[data-theme=ocean] #aiHist,html[data-theme=sunset] #aiHist,html[data-theme=forest] #aiHist,html[data-theme=amoled] #aiHist,html[data-glass] #aiHist{background:#141A2E;color:#ECF1FF}
+html[data-theme=amoled] #aiHist{background:#05060A}
+.ai-hbar{display:flex;gap:6px;margin:0 0 10px;flex-wrap:wrap}.ai-hbar button{border:1px solid rgba(127,127,127,.4);background:transparent;color:inherit;border-radius:99px;padding:6px 12px;font:inherit;font-size:.84rem;font-weight:600;cursor:pointer}
+.ai-hbar .dg{border-color:#E5484D;color:#E5484D}.ai-hbar .dg:disabled{opacity:.4}
+.ai-hi .ai-ck{width:20px;height:20px;accent-color:#E5484D;flex:none}
 </style>
 </head>
 <body>
@@ -9284,7 +9291,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     built = true;
     const fab = el('button'); fab.id = 'aiFab'; fab.type = 'button'; fab.innerHTML = PANDA; fab.setAttribute('aria-label', 'Groowin ЖИ ашу'); fab.hidden = true;
     const p = el('div'); p.id = 'aiPanel'; p.hidden = true; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Groowin ЖИ');
-    p.innerHTML = '<div class="ai-h"><div class="av">' + PANDA + '</div><div class="tt"><b>Groowin ЖИ</b><small>Мұғалім көмекшісі</small></div><button type="button" id="aiHis" title="Тарих" aria-label="Әңгіме тарихы">🕘</button><button type="button" id="aiClr" title="Жаңа әңгіме" aria-label="Жаңа әңгіме">＋</button><button type="button" id="aiDel" title="Тазалау" aria-label="Чатты тазалау">🧹</button><button type="button" id="aiMem" title="ЖИ мені не біледі" aria-label="ЖИ жадысы">🧠</button><button type="button" id="aiX" aria-label="Жабу">✕</button></div>' +
+    p.innerHTML = '<div class="ai-h"><div class="av">' + PANDA + '</div><div class="tt"><b>Groowin ЖИ</b><small>Мұғалім көмекшісі</small></div><button type="button" id="aiHis" title="Тарих" aria-label="Әңгіме тарихы">🕘</button><button type="button" id="aiClr" title="Жаңа әңгіме" aria-label="Жаңа әңгіме">＋</button><button type="button" id="aiMem" title="ЖИ мені не біледі" aria-label="ЖИ жадысы">🧠</button><button type="button" id="aiX" aria-label="Жабу">✕</button></div>' +
       '<label class="ai-proc" title="Қосулы болса, ЖИ сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді"><input type="checkbox" id="aiProc"> Процесті көрсету</label>' +
       '<label class="ai-proc" title="ЖИ сенің уақытыңа қарай кейде ұсыныс айтады (күніне бір реттен көп емес)"><input type="checkbox" id="aiNg"> Ұсыныстар айтып тұр</label>' +
       '<div id="aiLog" aria-live="polite"></div><div id="aiHist" hidden></div>' +
@@ -9303,7 +9310,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     const open = o => { p.hidden = !o; fab.hidden = o; setTimeout(fit, 0); if (o) hideNudge(); if (o) { if (!g('aiLog').children.length) welcome(); ls.set(WK(), '1'); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
     fab.onclick = () => open(true); g('aiX').onclick = () => open(false);
     p.addEventListener('keydown', e => { if (e.key === 'Escape') { if (!g('aiHist').hidden) g('aiHist').hidden = true; else open(false); } });
-    g('aiClr').onclick = newChat; g('aiHis').onclick = toggleHist; g('aiDel').onclick = clearMenu; g('aiMem').onclick = memEditor;
+    g('aiClr').onclick = newChat; g('aiHis').onclick = () => toggleHist(); g('aiMem').onclick = memEditor;
     const ta = g('aiIn'); ta.addEventListener('focus', () => setTimeout(() => { fit(); scroll(); }, 320)); ta.oninput = () => { ta.style.height = '42px'; ta.style.height = Math.min(110, ta.scrollHeight) + 'px'; };
     ta.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); g('aiForm').requestSubmit(); } };
     g('aiForm').onsubmit = e => { e.preventDefault(); if (busy) { stop = true; return; } const t = ta.value.trim(); if (!t) return; ta.value = ''; ta.style.height = '42px'; run(t); };
@@ -9333,45 +9340,6 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     if (matchMedia('(max-width:760px)').matches && g('aiX')) g('aiX').click();
   }
   window.gwSpot = spot;
-
-  // ---- тазалау: барлығы / таңдап ----
-  function clearMenu() {
-    const log = g('aiLog'); if (log.querySelector('.ai-sel-bar')) { exitSel(); return; }
-    const old = g('aiClrMenu'); if (old) { old.remove(); return; }
-    const m = el('div', 'ai-clrm'); m.id = 'aiClrMenu';
-    const a = el('button', '', '🗑 Барлығын тазалау'), b = el('button', '', '☑️ Таңдап өшіру'), c = el('button', 'x', 'Болдырмау');
-    a.type = b.type = c.type = 'button';
-    a.onclick = async () => { m.remove(); if (!msgs.length) { notify('Чат бос'); return; } if (!await ask('Бұл чаттағы барлық хабарлама өшіріледі. Жалғастырамыз ба?', 'Өшіру')) return; const id = chatId; newChat(); if (id) { try { await sb.from('ai_chats').delete().eq('id', id); } catch { } } notify('Чат тазаланды'); };
-    b.onclick = () => { m.remove(); selMode(); };
-    c.onclick = () => m.remove();
-    m.append(a, b, c); g('aiPanel').append(m);
-  }
-  function groups() {
-    const out = []; let cur = null;
-    [...g('aiLog').children].forEach(n => { if (n.classList.contains('ai-m') && n.classList.contains('u')) { cur = { nodes: [n], ck: null }; out.push(cur); } else if (cur && !n.classList.contains('ai-sel-bar')) cur.nodes.push(n); });
-    return out;
-  }
-  function selMode() {
-    if (busy) { notify('ЖИ жауап беріп жатыр, күтіңіз'); return; }
-    const gs = groups(); if (!gs.length) { notify('Таңдайтын хабарлама жоқ'); return; }
-    gs.forEach(gr => { const ck = el('input'); ck.type = 'checkbox'; ck.className = 'ai-ck'; ck.setAttribute('aria-label', 'Таңда'); gr.nodes[0].before(ck); gr.ck = ck; ck.onchange = upd; });
-    const bar = el('div', 'ai-sel-bar'); const n = el('span'), all = el('button', '', 'Бәрі'), del = el('button', 'dl', 'Өшіру'), no = el('button', '', 'Бас тарту'); all.type = del.type = no.type = 'button';
-    bar.append(n, all, del, no); g('aiPanel').insertBefore(bar, g('aiForm')); bar.classList.add('ai-sel-bar');
-    function upd() { const k = gs.filter(x => x.ck.checked).length; n.textContent = k + ' таңдалды'; del.disabled = !k; }
-    all.onclick = () => { const v = !gs.every(x => x.ck.checked); gs.forEach(x => x.ck.checked = v); upd(); };
-    no.onclick = exitSel; upd();
-    del.onclick = async () => {
-      const pick = gs.map((x, i) => x.ck.checked ? i : -1).filter(i => i >= 0); if (!pick.length) return;
-      if (!await ask(pick.length + ' хабарлама (жауабымен) өшіріледі. Жалғастырамыз ба?', 'Өшіру')) return;
-      const ui = []; msgs.forEach((m, i) => { if (m.role === 'user') ui.push(i); });
-      const ranges = pick.map(k => [ui[k], k + 1 < ui.length ? ui[k + 1] : msgs.length]).filter(a => a[0] != null).sort((a, b) => b[0] - a[0]);
-      ranges.forEach(([a, b]) => msgs.splice(a, b - a));
-      pick.forEach(k => gs[k].nodes.forEach(x => x.remove())); exitSel();
-      if (!msgs.length) { const id = chatId; newChat(); if (id) { try { await sb.from('ai_chats').delete().eq('id', id); } catch { } } } else save();
-      notify('Өшірілді');
-    };
-  }
-  function exitSel() { document.querySelectorAll('.ai-sel-bar').forEach(x => x.remove()); document.querySelectorAll('#aiLog .ai-ck').forEach(x => x.remove()); }
 
   // ---- ЖИ жадысы: келесі чаттарда да сақталады ----
   let memCache = '';
@@ -9415,21 +9383,30 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       else await sb.from('ai_chats').update({ messages: m, updated_at: new Date().toISOString() }).eq('id', chatId);
     } catch { }
   }
-  async function toggleHist() {
-    const h = g('aiHist'); if (!h.hidden) { h.hidden = true; return; }
+  async function toggleHist(selecting) {
+    const h = g('aiHist'); if (!h.hidden && selecting !== 'redraw') { h.hidden = true; return; }
     h.hidden = false; h.replaceChildren(el('div', 'ai-hh', 'Тарих'), el('p', 'ai-empty', 'Жүктелуде…'));
-    const r = await sb.from('ai_chats').select('id,title,updated_at').order('updated_at', { ascending: false }).limit(40);
+    const r = await sb.from('ai_chats').select('id,title,updated_at').order('updated_at', { ascending: false }).limit(60);
     h.replaceChildren(el('div', 'ai-hh', 'Әңгіме тарихы'));
     if (r.error) { h.append(el('p', 'ai-empty', 'Тарихты ашу мүмкін болмады. update-29.sql іске қосылды ма?')); return; }
-    if (!(r.data || []).length) { h.append(el('p', 'ai-empty', 'Әзірге бос. Әңгімелер осында сақталады.')); return; }
-    r.data.forEach(c => {
-      const row = el('div', 'ai-hi' + (c.id === chatId ? ' on' : '')), b = el('button', 'ti'), d = el('button', 'dl', '🗑');
-      const dt = new Date(c.updated_at); b.append(el('span', '', c.title), el('small', '', dt.toLocaleString('kk-KZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })));
-      b.type = d.type = 'button'; d.title = 'Жою'; d.setAttribute('aria-label', 'Әңгімені жою');
-      b.onclick = () => openChat(c.id);
-      d.onclick = async () => { if (!await ask('Бұл әңгіме жойылсын ба?')) return; await sb.from('ai_chats').delete().eq('id', c.id); if (c.id === chatId) newChat(); else { h.hidden = true; toggleHist(); } };
-      row.append(b, d); h.append(row);
-    });
+    const list = r.data || [];
+    if (!list.length) { h.append(el('p', 'ai-empty', 'Әзірге бос. Әңгімелер осында сақталады.')); return; }
+    const sel = new Set(); let mode = false;
+    const bar = el('div', 'ai-hbar'), bSel = el('button', '', '☑ Таңдап өшіру'), bAll = el('button', 'dg', '🗑 Бәрін тазалау'), bDel = el('button', 'dg', 'Өшіру (0)'); bSel.type = bAll.type = bDel.type = 'button'; bDel.hidden = true;
+    bar.append(bSel, bAll, bDel); h.append(bar);
+    const rows = el('div'); h.append(rows);
+    const upd = () => { bDel.textContent = 'Өшіру (' + sel.size + ')'; bDel.disabled = !sel.size; bSel.textContent = mode ? '✖ Бас тарту' : '☑ Таңдап өшіру'; bDel.hidden = !mode; bAll.hidden = mode; };
+    const draw = () => { rows.replaceChildren(); list.forEach(c => {
+      const row = el('div', 'ai-hi' + (c.id === chatId ? ' on' : '')), b = el('button', 'ti');
+      const dt = new Date(c.updated_at); b.append(el('span', '', c.title), el('small', '', dt.toLocaleString('kk-KZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }))); b.type = 'button';
+      if (mode) { const ck = el('input'); ck.type = 'checkbox'; ck.className = 'ai-ck'; ck.checked = sel.has(c.id); ck.onchange = () => { ck.checked ? sel.add(c.id) : sel.delete(c.id); upd(); }; b.onclick = () => { ck.checked = !ck.checked; ck.onchange(); }; row.append(ck, b); }
+      else { const d = el('button', 'dl', '🗑'); d.type = 'button'; d.title = 'Жою'; d.setAttribute('aria-label', 'Әңгімені жою'); b.onclick = () => openChat(c.id);
+        d.onclick = async () => { if (!await ask('Бұл әңгіме жойылсын ба?')) return; await sb.from('ai_chats').delete().eq('id', c.id); if (c.id === chatId) newChat(); toggleHist('redraw'); }; row.append(b, d); }
+      rows.append(row); }); };
+    bSel.onclick = () => { mode = !mode; sel.clear(); draw(); upd(); };
+    bAll.onclick = async () => { if (!await ask('Барлық әңгіме тарихы өшіріледі (' + list.length + '). Жалғастырамыз ба?', 'Бәрін өшіру')) return; const ids = list.map(x => x.id); await sb.from('ai_chats').delete().in('id', ids); newChat(); h.hidden = true; notify('Тарих тазаланды'); };
+    bDel.onclick = async () => { if (!sel.size) return; if (!await ask(sel.size + ' әңгіме өшіріледі. Жалғастырамыз ба?', 'Өшіру')) return; const ids = [...sel]; await sb.from('ai_chats').delete().in('id', ids); if (ids.includes(chatId)) newChat(); notify('Өшірілді'); toggleHist('redraw'); };
+    draw(); upd();
   }
   async function openChat(id) {
     const r = await sb.from('ai_chats').select('id,messages').eq('id', id).single(); if (r.error || !r.data) { notify('Әңгіме ашылмады', 'err'); return; }
