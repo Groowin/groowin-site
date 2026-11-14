@@ -520,7 +520,7 @@ body.in-app hr{border-color:var(--line)}
 
 /* ===== Ойын-сауық / викторина ===== */
 body:not(.in-app) #wxBtn{display:none}
-#wxBtn{position:fixed;top:14px;right:110px;z-index:40;width:auto;min-width:44px;padding:0 12px;font:inherit;font-size:.86rem;font-weight:700;white-space:nowrap}#wxBtn[hidden]{display:none}
+#wxBtn{position:fixed;top:14px;right:110px;z-index:40;width:auto;height:38px;min-width:0;padding:0 11px;gap:4px;font:inherit;font-size:.8rem;font-weight:700;letter-spacing:.2px;white-space:nowrap;border-radius:99px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent,#7C5CFF) 30%,transparent),rgba(127,127,127,.12));border:1px solid color-mix(in srgb,var(--accent,#7C5CFF) 45%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 6px 18px -8px rgba(0,0,0,.45)}#wxBtn:hover{transform:translateY(-1px)}#wxBtn[hidden]{display:none}
 #webBtn{position:fixed;top:14px;right:208px;z-index:40}#webBtn[hidden]{display:none}body:not(.in-app) #webBtn{display:none}
 .sfxToggle.off .w{display:none}
 .plc .gi{color:var(--accent)}
@@ -1653,7 +1653,7 @@ select option:disabled{color:#8a93b4}
   body.in-app .side .brand{margin-right:100px}
   body.in-app #fsBtn,body.in-app .side .me #themeBtn{display:none!important}
   body.in-app #srchBtn{top:10px;right:60px}
-  body.in-app #wxBtn{top:10px;right:108px}
+  body.in-app #wxBtn{top:10px;right:104px;height:36px}
   body.in-app #webBtn{top:10px;right:204px}
   /* ЖИ батырмасы төменгі мәзірге көшті */
   body.in-app #aiFab{display:none!important}
@@ -1800,6 +1800,7 @@ html[data-theme=amoled] #aiHist{background:#05060A}
 .wx-days{display:grid;gap:6px;margin-top:12px}.wx-d{display:grid;grid-template-columns:90px 1fr auto auto;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;background:rgba(127,127,127,.12);font-size:.9rem}.wx-d small{opacity:.7}
 
 .sp-m{padding:10px 12px;border-radius:12px;background:rgba(127,127,127,.12);margin:8px 0;display:grid;gap:4px;font-size:.9rem}.sp-m.done{opacity:.6}.sp-m small{opacity:.7}.sp-r{padding:6px 10px;border-left:3px solid var(--accent,#7C5CFF);background:rgba(127,127,127,.1);border-radius:6px}
+.wx-push{display:flex;gap:10px;align-items:center;margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(127,127,127,.12);font-size:.88rem;cursor:pointer}.wx-push input{width:20px;height:20px;accent-color:var(--accent,#7C5CFF);flex:none}
 </style>
 </head>
 <body>
@@ -9009,10 +9010,18 @@ async function wxData(force) {
   if (!r.ok) throw new Error('weather'); const d = await r.json(); ls.set('wxCache', JSON.stringify({ k: L.lat + ',' + L.lon, t: Date.now(), d })); return d;
 }
 async function wxName(lat, lon) {
-  try { const r = await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=kk'); const j = await r.json(); return j.city || j.locality || j.principalSubdivision || ''; } catch { return ''; }
+  try { const r = await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=ru'); const j = await r.json(); const n = j.city || j.locality || j.principalSubdivision || ''; return /[\u0600-\u06FF]/.test(n) ? '' : n; } catch { return ''; }
+}
+async function wxPushState() { try { const r = await sb.from('weather_push').select('enabled').maybeSingle(); return !!(r.data && r.data.enabled); } catch { return false; } }
+async function wxPushSave(on) {
+  const L = wxLoc(); if (!L) return false;
+  if (on && !(await pushSub())) { if (!(await pushOn())) return false; }
+  const r = await sb.from('weather_push').upsert({ user_id: meId, enabled: on, lat: L.lat, lon: L.lon, name: L.name || '', updated_at: new Date().toISOString() });
+  if (r.error) { notify(/weather_push/.test(r.error.message) ? 'update-49.sql орындалмаған' : r.error.message, 'err'); return false; } return true;
 }
 async function wxPaintChip() {
   const b = $('wxBtn'); if (!b) return; const L = wxLoc();
+  if (L && (!L.name || /[\u0600-\u06FF]/.test(L.name))) { const n = await wxName(L.lat, L.lon); L.name = n || 'Сіздің орныңыз'; ls.set('wxLoc', JSON.stringify(L)); }
   if (!L) { b.textContent = '🌡 Ауа райы'; return; }
   try { const d = await wxData(); b.textContent = WX(d.current.weather_code)[0] + ' ' + Math.round(d.current.temperature_2m) + '°'; b.title = (L.name || 'Ауа райы') + ': ' + WX(d.current.weather_code)[1]; } catch { b.textContent = '🌡 Ауа райы'; }
 }
@@ -9020,7 +9029,7 @@ function wxAsk(after) {
   const { box, close } = modal('📍 Ауа райы үшін қалаңыз керек');
   box.append(el('p', 'sub', 'Орналасуға бір рет рұқсат берсеңіз жеткілікті: сайт қалаңызды есте сақтап, бүгінгі ауа райын лупаның қасында көрсетеді. Орналасу тек ауа райы үшін, серверге жіберілмейді.'));
   const msg = el('p', 'msg', ''), go1 = el('button', 'go', '📍 Рұқсат беру'); go1.type = 'button';
-  const save = async (lat, lon, name) => { ls.set('wxLoc', JSON.stringify({ lat: +(+lat).toFixed(3), lon: +(+lon).toFixed(3), name })); ls.set('wxCache', ''); close(); await wxPaintChip(); if (after) after(); };
+  const save = async (lat, lon, name) => { ls.set('wxLoc', JSON.stringify({ lat: +(+lat).toFixed(3), lon: +(+lon).toFixed(3), name })); ls.set('wxCache', ''); close(); await wxPaintChip(); if (await wxPushState()) wxPushSave(true); if (after) after(); };
   go1.onclick = () => { if (!navigator.geolocation) { msg.textContent = 'Браузер орналасуды қолдамайды. Қаланы жазыңыз.'; return; } msg.textContent = '⏳ Күтіңіз…'; navigator.geolocation.getCurrentPosition(async p => save(p.coords.latitude, p.coords.longitude, await wxName(p.coords.latitude, p.coords.longitude) || 'Сіздің орныңыз'), () => { msg.textContent = 'Рұқсат берілмеді. Төмендегіге қала атын жазыңыз.'; }, { timeout: 12000, maximumAge: 3600e3 }); };
   const ci = el('input'); ci.placeholder = 'Немесе қала атын жазыңыз (мысалы: Астана)'; ci.style.cssText = 'width:100%;margin-top:12px';
   const cb = el('button', 'out', 'Қаланы табу'); cb.type = 'button'; cb.style.marginTop = '8px';
@@ -9038,6 +9047,9 @@ async function wxOpen() {
     d.time.forEach((t, i) => { const dt = new Date(t + 'T12:00'), r = el('div', 'wx-d'); r.append(el('b', '', i === 0 ? 'Бүгін' : i === 1 ? 'Ертең' : days[dt.getDay()]), el('span', '', WX(d.weather_code[i])[0] + ' ' + WX(d.weather_code[i])[1]), el('span', '', Math.round(d.temperature_2m_min[i]) + '…' + Math.round(d.temperature_2m_max[i]) + '°'), el('small', '', '☔ ' + (d.precipitation_probability_max[i] ?? 0) + '%')); lst.append(r); });
     box.append(lst);
     if (isStaff) { const L1 = dgLessons(1); if (L1.length) { const b = el('div', 'dg-pl'); b.append(el('b', '', '📚 Ертең сабақ'), el('span', '', L1.join('  ·  '))); box.append(b); } }
+    const pr = el('label', 'wx-push'), pc = el('input'); pc.type = 'checkbox'; pr.append(pc, el('span', '', '🔔 Күнде таңертең 7:00-де ауа райын push-хабарлама арқылы жіберу')); box.append(pr);
+    wxPushState().then(v => { pc.checked = v; });
+    pc.onchange = async () => { const want = pc.checked; pc.disabled = true; const ok = await wxPushSave(want); pc.disabled = false; if (!ok) pc.checked = !want; else notify(want ? 'Ертең таңертең 7:00-де келеді' : 'Хабарлама өшірілді'); };
     const ch = el('button', 'out', '📍 Қаланы өзгерту'); ch.type = 'button'; ch.style.marginTop = '12px'; ch.onclick = () => wxAsk(); box.append(ch);
   } catch { box.replaceChildren(el('p', 'msg err', 'Ауа райы жүктелмеді. Интернетті тексеріңіз.')); }
 }
