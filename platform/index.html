@@ -519,9 +519,9 @@ body.in-app hr{border-color:var(--line)}
 @media (max-width:760px){body.in-app #nav button{white-space:nowrap;width:auto}body.in-app #subjItems{margin:0;padding:0;border:0;flex-direction:row}}
 
 /* ===== Ойын-сауық / викторина ===== */
-body:not(.in-app) #sndBtn{display:none}
-#sndBtn{position:fixed;top:14px;right:62px;z-index:40}
-#webBtn{position:fixed;top:14px;right:158px;z-index:40}#webBtn[hidden]{display:none}body:not(.in-app) #webBtn{display:none}
+body:not(.in-app) #wxBtn{display:none}
+#wxBtn{position:fixed;top:14px;right:110px;z-index:40;width:auto;min-width:44px;padding:0 12px;font:inherit;font-size:.86rem;font-weight:700;white-space:nowrap}#wxBtn[hidden]{display:none}
+#webBtn{position:fixed;top:14px;right:208px;z-index:40}#webBtn[hidden]{display:none}body:not(.in-app) #webBtn{display:none}
 .sfxToggle.off .w{display:none}
 .plc .gi{color:var(--accent)}
 .plc{min-height:130px}
@@ -715,7 +715,7 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
 #slides .sl-blk{position:fixed;inset:0;background:#000}
 #slides .sl-msg{position:fixed;color:#fff;font-size:1.1rem}
 
-#srchBtn{position:fixed;top:14px;right:110px;z-index:40}
+#srchBtn{position:fixed;top:14px;right:62px;z-index:40}
 body:not(.in-app) #srchBtn{display:none}
 #srch{position:fixed;inset:0;z-index:85;background:rgba(3,6,18,.55);backdrop-filter:blur(3px);display:flex;justify-content:center;align-items:flex-start;padding:10vh 12px 0}
 #srch .sb{width:min(620px,100%);background:var(--surf,var(--paper));color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.45);overflow:hidden;animation:rise .18s ease both}
@@ -1653,8 +1653,8 @@ select option:disabled{color:#8a93b4}
   body.in-app .side .brand{margin-right:100px}
   body.in-app #fsBtn,body.in-app .side .me #themeBtn{display:none!important}
   body.in-app #srchBtn{top:10px;right:60px}
-  body.in-app #sndBtn{top:10px;right:108px}
-  body.in-app #webBtn{top:10px;right:156px}
+  body.in-app #wxBtn{top:10px;right:108px}
+  body.in-app #webBtn{top:10px;right:204px}
   /* ЖИ батырмасы төменгі мәзірге көшті */
   body.in-app #aiFab{display:none!important}
   body.in-app #aiNudge{bottom:calc(76px + env(safe-area-inset-bottom));right:12px}
@@ -1796,13 +1796,17 @@ html[data-theme=amoled] #aiHist{background:#05060A}
 .dg-rf{justify-self:start;border:1px solid rgba(127,127,127,.4);background:transparent;color:inherit;border-radius:99px;padding:6px 14px;font:inherit;font-size:.84rem;cursor:pointer}
 .dg-cont{margin-bottom:14px;display:grid;gap:8px}.dg-cont h2{margin:0;font-size:1.05rem}
 .dg-c{display:flex;flex-direction:column;gap:2px;text-align:left;border:1px solid color-mix(in srgb,var(--accent,#7C5CFF) 55%,transparent);background:color-mix(in srgb,var(--accent,#7C5CFF) 14%,transparent);color:inherit;border-radius:14px;padding:10px 14px;font:inherit;cursor:pointer}.dg-c small{opacity:.7}
+
+.wx-days{display:grid;gap:6px;margin-top:12px}.wx-d{display:grid;grid-template-columns:90px 1fr auto auto;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;background:rgba(127,127,127,.12);font-size:.9rem}.wx-d small{opacity:.7}
+
+.sp-m{padding:10px 12px;border-radius:12px;background:rgba(127,127,127,.12);margin:8px 0;display:grid;gap:4px;font-size:.9rem}.sp-m.done{opacity:.6}.sp-m small{opacity:.7}.sp-r{padding:6px 10px;border-left:3px solid var(--accent,#7C5CFF);background:rgba(127,127,127,.1);border-radius:6px}
 </style>
 </head>
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
 <nav id="tabbar" aria-label="Негізгі мәзір" hidden></nav>
 <button class="icon-btn" id="fsBtn" aria-label="Толық экран"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
-<button class="icon-btn sfxToggle" id="sndBtn" type="button" aria-label="Дыбыс" aria-pressed="true"></button>
+<button class="icon-btn" id="wxBtn" type="button" aria-label="Ауа райы" title="Ауа райы" hidden>🌡 Ауа райы</button>
 <button class="icon-btn" id="webBtn" type="button" aria-label="Web тақта" title="Web тақта қосулы" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><i style="position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:#22C55E;box-shadow:0 0 0 2px var(--card)"></i></button>
 <button class="icon-btn" id="srchBtn" type="button" aria-label="Іздеу" title="Іздеу (Ctrl+K)" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
 <div id="qzHost" hidden></div>
@@ -2243,6 +2247,7 @@ html[data-theme=amoled] #aiHist{background:#05060A}
       <button type="button" id="musBtn" style="margin-top:10px">🎵 Фондық музыка: өшірулі</button>
       <hr style="border:0;border-top:1px solid var(--line);margin:22px 0 6px;max-width:460px">
       <button class="out" id="wnBtn" type="button" style="margin-right:8px">✨ Не жаңа?</button>
+      <button class="out" id="spBtn" type="button" style="margin-right:8px">🆘 Қолдау қызметі</button><button class="out" id="spInbox" type="button" style="margin-right:8px" hidden>📥 Қолдау хабарлары</button>
       <button class="out" id="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:8px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Шығу</button>
     </div>
 
@@ -2424,7 +2429,7 @@ async function showApp(session) {
   window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isOwner = isAdmin && !!me?.is_owner; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff; $('nQuick').hidden = !isStaff;
   try { buildTabbar(); } catch { }
   setTimeout(() => { try { pushAuto(); } catch { } }, 2500);
-  $('navPlay').hidden = !isStaff; $('sndBtn').hidden = !isStaff; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
+  $('navPlay').hidden = !isStaff; $('wxBtn').hidden = false; wxPaintChip(); $('spInbox').hidden = !isAdmin; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   if (isStaff) setTimeout(slidePre, 4000);
   try { window.aiInit && window.aiInit(); } catch (e) { }
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
@@ -2741,7 +2746,7 @@ function renderGames() {
 }
 let curGame = null;
 function openGame(g) {
-  try { const k = JSON.parse(ls.get('gwSeen') || '{}') || {}; k[g.id] = (k[g.id] || 0) + 1; ls.set('gwSeen', JSON.stringify(k)); } catch { }
+  try { const k = JSON.parse(ls.get('gwSeen') || '{}') || {}; k[g.id] = (k[g.id] || 0) + 1; ls.set('gwSeen', JSON.stringify(k)); if (typeof sb !== 'undefined' && meId) sb.from('game_seen').upsert({ game_id: String(g.id), n: k[g.id], updated_at: new Date().toISOString() }).then(() => { }, () => { }); } catch { }
   curGame = g; $('vmsg').textContent = '';
   $('vtitle').textContent = g.title;
   gameSrc(g.url).then(r => { if (curGame !== g) return; r.sb ? $('frame').setAttribute('sandbox', 'allow-scripts allow-pointer-lock allow-fullscreen allow-forms allow-popups') : $('frame').removeAttribute('sandbox'); $('frame').src = r.src; }).catch(() => { $('vmsg').textContent = 'Ойын файлын ашу мүмкін болмады. Интернетті тексер.'; });
@@ -6186,6 +6191,7 @@ async function openSearch() {
   inp.oninput = () => { sel = 0; draw(); }; draw();
   await srchLoad(); if ($('srch')) { all = srchItems(); draw(); }
 }
+$('wxBtn').onclick = wxOpen; $('spBtn').onclick = supportOpen; $('spInbox').onclick = supportInbox;
 $('srchBtn').onclick = openSearch;
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && window.__staff) { e.preventDefault(); $('srch') ? $('srch').remove() : openSearch(); } });
 
@@ -6473,8 +6479,52 @@ async function loadMyPath() {
   renderPath(box, meName || 'Оқушы', d, true);
   try { await renderLessonMap(box); } catch { }
 }
+
+// ---- Қолдау қызметі: мұғалім/оқушы админге жазады ----
+function supportOpen() {
+  const { box, close } = modal('🆘 Қолдау қызметі');
+  box.append(el('p', 'sub', 'Файл жоғалса, кіре алмасаң, қате шықса не ұсыныс болса, осында жаз. Админ көріп, жауап береді.'));
+  const cat = el('select'); [['file', '📁 Файл/материал жоғалды'], ['login', '🔑 Кіре алмай жатырмын'], ['bug', '🐞 Қате шықты'], ['idea', '💡 Ұсыныс'], ['other', 'Басқа']].forEach(([v, t]) => { const o = el('option', '', t); o.value = v; cat.append(o); }); cat.style.cssText = 'width:100%;margin:8px 0';
+  const ta = el('textarea'); ta.rows = 6; ta.maxLength = 2000; ta.placeholder = 'Не болғанын қысқаша жаз. Мысалы: «Физика 8 папкасындағы файл жоқ болып кетті».'; ta.style.width = '100%';
+  const msg = el('p', 'msg', ''), sd = el('button', 'go', 'Жіберу'); sd.type = 'button'; sd.style.marginTop = '10px';
+  sd.onclick = async () => { const b = ta.value.trim(); if (b.length < 5) { msg.textContent = 'Кемінде бірнеше сөз жаз'; return; } sd.disabled = true;
+    const r = await sb.from('support_msgs').insert({ name: meName || '', role: isAdmin ? 'admin' : isStaff ? 'teacher' : 'student', category: cat.value, body: b });
+    if (r.error) { sd.disabled = false; msg.textContent = /support_msgs/.test(r.error.message) ? 'update-48.sql орындалмаған' : 'Қате: ' + r.error.message; return; } notify('Жіберілді. Рақмет!'); close(); };
+  box.append(cat, ta, sd, msg);
+  const mine = el('div'); box.append(mine);
+  sb.from('support_msgs').select('category,body,status,reply,created_at').eq('user_id', meId).order('created_at', { ascending: false }).limit(5).then(r => { if (r.error || !(r.data || []).length) return; mine.append(el('h4', '', 'Менің хабарларым')); r.data.forEach(x => { const c = el('div', 'sp-m'); c.append(el('small', '', new Date(x.created_at).toLocaleDateString('kk-KZ') + ' · ' + (x.status === 'done' ? '✅ шешілді' : '⏳ күтуде')), el('div', '', x.body)); if (x.reply) c.append(el('div', 'sp-r', '↳ Админ: ' + x.reply)); mine.append(c); }); });
+}
+async function supportInbox() {
+  const { box } = modal('📥 Қолдау хабарлары'); box.append(el('p', 'sub', '⏳ Жүктеліп жатыр…'));
+  const draw = async () => {
+    const r = await sb.from('support_msgs').select('*').order('created_at', { ascending: false }).limit(60); box.replaceChildren();
+    if (r.error) { box.append(el('p', 'msg err', /support_msgs/.test(r.error.message) ? 'update-48.sql орындалмаған' : r.error.message)); return; }
+    if (!(r.data || []).length) { box.append(el('p', 'sub', 'Әзірге хабар жоқ.')); return; }
+    const CT = { file: '📁 Файл', login: '🔑 Кіру', bug: '🐞 Қате', idea: '💡 Ұсыныс', other: 'Басқа' };
+    r.data.forEach(x => { const c = el('div', 'sp-m' + (x.status === 'done' ? ' done' : '')); c.append(el('b', '', (CT[x.category] || x.category) + ' · ' + (x.name || 'Атаусыз') + ' (' + x.role + ')'), el('small', '', new Date(x.created_at).toLocaleString('kk-KZ')), el('div', '', x.body)); if (x.reply) c.append(el('div', 'sp-r', '↳ ' + x.reply));
+      const row = el('div', 'mtools'), rp = el('button', 'out', '💬 Жауап'), dn = el('button', 'out', x.status === 'done' ? '↩ Қайта ашу' : '✅ Шешілді'), dl = el('button', 'out', '🗑'); rp.type = dn.type = dl.type = 'button';
+      rp.onclick = async () => { const t = prompt('Жауап (жазған адам өз қолдау бетінде көреді):', x.reply || ''); if (t == null) return; await sb.from('support_msgs').update({ reply: t.trim().slice(0, 1000), status: 'done' }).eq('id', x.id); draw(); };
+      dn.onclick = async () => { await sb.from('support_msgs').update({ status: x.status === 'done' ? 'new' : 'done' }).eq('id', x.id); draw(); };
+      dl.onclick = async () => { if (!await ask('Хабар өшірілсін бе?')) return; await sb.from('support_msgs').delete().eq('id', x.id); draw(); };
+      row.append(rp, dn, dl); c.append(row); box.append(c); });
+  };
+  draw();
+}
+// Ойын жұлдыздары серверде: құрылғы ауысса да қалады (көп мәнді таңдаймыз)
+let _seenSynced = '';
+async function syncSeen() {
+  if (_seenSynced === meId || !meId) return; _seenSynced = meId;
+  try {
+    const r = await sb.from('game_seen').select('game_id,n'); if (r.error) return;
+    let k = {}; try { k = JSON.parse(ls.get('gwSeen') || '{}') || {}; } catch { }
+    const up = []; const srv = {}; (r.data || []).forEach(x => { srv[x.game_id] = x.n; if ((k[x.game_id] || 0) < x.n) k[x.game_id] = x.n; });
+    Object.keys(k).forEach(id => { if ((srv[id] || 0) < k[id]) up.push({ game_id: id, n: k[id], updated_at: new Date().toISOString() }); });
+    ls.set('gwSeen', JSON.stringify(k)); if (up.length) await sb.from('game_seen').upsert(up);
+  } catch { }
+}
 async function renderLessonMap(box) {
   if (!GAMES || GAMES.length < 3) { try { await loadGames(); } catch { } }
+  await syncSeen();
   let seen = {}; try { seen = JSON.parse(ls.get('gwSeen') || '{}') || {}; } catch { }
   const SN = { physics: 'Физика', math: 'Математика' }, by = {};
   (GAMES || []).forEach(g => { (by[g.subj] = by[g.subj] || []).push(g); });
@@ -8934,12 +8984,6 @@ function syncPut(kind, key, title, data) {
   clearTimeout(_sy[kind + key]);
   _sy[kind + key] = setTimeout(async () => { try { await sb.from('sync_items').upsert({ user_id: meId, kind, key: String(key).slice(0, 120), title: String(title || '').slice(0, 80), data: data || null, device: devId(), updated_at: new Date().toISOString() }); } catch { } }, 1500);
 }
-const DG_TOPICS = {
-  edu: { ic: '🎓', t: 'Білім', q: 'мұғалім OR "білім министрлігі" OR аттестация when:7d' },
-  law: { ic: '⚖️', t: 'Заң, жалақы', q: '"білім туралы" заң OR "педагог мәртебесі" OR мұғалім жалақы when:14d' },
-  deals: { ic: '🏷', t: 'Жеңілдік', q: 'жеңілдік OR акция OR скидка киім OR авиабилет OR "темір жол" Қазақстан when:3d' }
-};
-const dgCfg = () => { try { const c = JSON.parse(ls.get('dgCfg') || '{}'); return { city: c.city || '', on: Object.assign({ edu: true, law: true, deals: true }, c.on || {}), custom: c.custom || '' }; } catch { return { city: '', on: { edu: true, law: true, deals: true }, custom: '' }; } };
 const WX = c => c === 0 ? ['☀️', 'ашық'] : c <= 2 ? ['🌤', 'жартылай бұлтты'] : c === 3 ? ['☁️', 'бұлтты'] : c <= 48 ? ['🌫', 'тұман'] : c <= 57 ? ['🌦', 'сіркіреген жаңбыр'] : c <= 67 ? ['🌧', 'жаңбыр'] : c <= 77 ? ['❄️', 'қар'] : c <= 82 ? ['🌧', 'нөсер'] : c <= 86 ? ['❄️', 'қар'] : ['⛈', 'найзағай'];
 function dgTips(w) {
   const t = [], d = w && w.daily; if (!d) return t; const c = w.current || {};
@@ -8956,48 +9000,46 @@ function dgTips(w) {
 const dgDay = off => { const n = new Date(); n.setDate(n.getDate() + off); return n.getDay() || 7; };
 const dgLessons = off => (typeof SC !== 'undefined' ? scSorted(dgDay(off)) : []).map(x => scT(x) + ' ' + (x.title || x.subject || 'Сабақ') + (x.class_name ? ' · ' + x.class_name : ''));
 const dgDue = () => (typeof PL !== 'undefined' ? PL.items : []).filter(x => !x.done && x.due_at && new Date(x.due_at) - Date.now() < 48 * 3600e3).slice(0, 5).map(x => x.title);
-async function dgLoad(force) {
-  const cfg = dgCfg(), key = JSON.stringify([cfg.city, cfg.on, cfg.custom]);
-  try { const c = JSON.parse(ls.get('dgCache') || 'null'); if (!force && c && c.key === key && Date.now() - c.t < 30 * 60e3) return c.data; } catch { }
-  const topics = Object.keys(DG_TOPICS).filter(k => cfg.on[k]).map(k => ({ k, q: DG_TOPICS[k].q }));
-  if (cfg.custom.trim()) topics.push({ k: 'custom', q: cfg.custom.trim() + ' when:7d' });
-  const r = await sb.functions.invoke('teacher-agent', { body: { mode: 'digest', digest: { city: cfg.city, topics } } });
-  if (r.error || !r.data || r.data.error) throw new Error((r.data && r.data.error) || 'Қосылмады');
-  ls.set('dgCache', JSON.stringify({ key, t: Date.now(), data: r.data })); return r.data;
+// ---- Ауа райы: лупаның қасындағы батырма, орналасуды бір рет сұрайды ----
+const wxLoc = () => { try { const c = JSON.parse(ls.get('wxLoc') || 'null'); return c && Math.abs(c.lat) <= 90 && Math.abs(c.lon) <= 180 ? c : null; } catch { return null; } };
+async function wxData(force) {
+  const L = wxLoc(); if (!L) return null;
+  try { const c = JSON.parse(ls.get('wxCache') || 'null'); if (!force && c && c.k === L.lat + ',' + L.lon && Date.now() - c.t < 20 * 60e3) return c.d; } catch { }
+  const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + L.lat + '&longitude=' + L.lon + '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code,wind_speed_10m_max&timezone=auto&forecast_days=4');
+  if (!r.ok) throw new Error('weather'); const d = await r.json(); ls.set('wxCache', JSON.stringify({ k: L.lat + ',' + L.lon, t: Date.now(), d })); return d;
 }
-function renderDigest(v) {
-  const sec = el('section', 'td dg'), hd = el('div', 'td-hd'), h = el('h2', '', '☀️ Күн дайджесті'), gear = el('button', 'dg-gear', '⚙'); gear.type = 'button'; gear.title = 'Баптау'; gear.setAttribute('aria-label', 'Дайджест баптауы');
-  hd.append(h, gear); const body = el('div', 'dg-body'); sec.append(hd, body); v.appendChild(sec);
-  const paint = d => {
-    body.replaceChildren();
-    const w = d.weather;
-    if (w && w.current) {
-      const c = w.current, dd = w.daily, [ic, tx] = WX(c.weather_code), [ic2, tx2] = WX(dd.weather_code[1] ?? c.weather_code);
-      const box = el('div', 'dg-w'); box.append(el('div', 'dg-ic', ic), el('div', 'dg-wt'));
-      box.lastChild.append(el('strong', '', d.city + ': ' + Math.round(c.temperature_2m) + '°, ' + tx), el('small', '', 'Бүгін ' + Math.round(dd.temperature_2m_min[0]) + '…' + Math.round(dd.temperature_2m_max[0]) + '° · жауын ' + (dd.precipitation_probability_max[0] ?? 0) + '% · ертең ' + ic2 + ' ' + Math.round(dd.temperature_2m_min[1]) + '…' + Math.round(dd.temperature_2m_max[1]) + '°'));
-      body.append(box); const tips = dgTips(w); if (tips.length) { const tp = el('div', 'dg-tips'); tips.forEach(x => tp.append(el('span', '', x))); body.append(tp); }
-    } else body.append(el('p', 'dg-mute', 'Ауа райы жүктелмеді'));
-    const L1 = dgLessons(1), D = dgDue();
-    if (L1.length || D.length) { const b = el('div', 'dg-pl'); if (L1.length) { b.append(el('b', '', '📚 Ертең сабақ'), el('span', '', L1.join('  ·  '))); } if (D.length) { b.append(el('b', '', '⏰ Жақын тапсырма'), el('span', '', D.join('  ·  '))); } body.append(b); }
-    const keys = Object.keys(d.news || {});
-    keys.forEach(k => { const arr = d.news[k]; const m = DG_TOPICS[k] || { ic: '🔎', t: dgCfg().custom || 'Өз тақырыбың' }; const bx = el('div', 'dg-n'); bx.append(el('h3', '', m.ic + ' ' + m.t));
-      if (!arr || !arr.length) bx.append(el('p', 'dg-mute', arr === null ? 'Жүктелмеді' : 'Жаңа хабар жоқ'));
-      else arr.slice(0, 3).forEach(n => { const a = el('a', '', n.title); a.href = n.link; a.target = '_blank'; a.rel = 'noopener noreferrer'; const s2 = el('small', '', n.src || ''); const row = el('div', 'dg-nr'); row.append(a, s2); bx.append(row); });
-      body.append(bx); });
-    if (keys.includes('deals')) body.append(el('p', 'dg-mute', 'Жеңілдік: тек хабар тақырыптары. Баға мен мерзімді сілтемеден тексеріңіз.'));
-    const q = el('div', 'dg-q'); [['✈️ Арзан авиабилет', 'арзан авиабилет'], ['🚆 Пойыз билеті', 'пойыз билеті Қазақстан'], ['👕 Киім жеңілдігі', 'киім жеңілдік акция']].forEach(([t, k]) => { const a = el('a', '', t); a.href = 'https://www.google.com/search?q=' + encodeURIComponent(k); a.target = '_blank'; a.rel = 'noopener noreferrer'; q.append(a); }); body.append(q);
-    const rf = el('button', 'dg-rf', '↻ Жаңарту'); rf.type = 'button'; rf.onclick = () => load(true); body.append(rf);
-  };
-  const load = async force => { body.replaceChildren(el('p', 'dg-mute', '⏳ Жүктеліп жатыр…')); try { paint(await dgLoad(force)); } catch (e) { body.replaceChildren(el('p', 'dg-mute', 'Жүктелмеді. Функцияны (teacher-agent) қайта deploy жасадыңыз ба?'), (() => { const b = el('button', 'dg-rf', '↻ Қайта көру'); b.type = 'button'; b.onclick = () => load(true); return b; })()); } };
-  gear.onclick = () => {
-    const cfg = dgCfg(), { box, close } = modal('⚙ Дайджест баптауы');
-    const ci = el('input'); ci.placeholder = 'Қала (мысалы: Астана)'; ci.value = cfg.city; ci.style.width = '100%';
-    box.append(el('label', 'hint', 'Қала (ауа райы үшін, бос болса Қызылорда)'), ci, el('p', 'hint', 'Жаңалық тақырыптары'));
-    const ck = {}; Object.keys(DG_TOPICS).forEach(k => { const l = el('label'); l.style.cssText = 'display:flex;gap:8px;align-items:center;margin:6px 0'; const c = el('input'); c.type = 'checkbox'; c.checked = !!cfg.on[k]; ck[k] = c; l.append(c, el('span', '', DG_TOPICS[k].ic + ' ' + DG_TOPICS[k].t)); box.append(l); });
-    const cu = el('input'); cu.placeholder = 'Өз тақырыбың (мысалы: физика олимпиадасы)'; cu.value = cfg.custom; cu.style.cssText = 'width:100%;margin-top:6px'; box.append(cu);
-    const sv = el('button', 'go2', 'Сақтау'); sv.type = 'button'; sv.style.marginTop = '12px'; sv.onclick = () => { const on = {}; Object.keys(ck).forEach(k => on[k] = ck[k].checked); ls.set('dgCfg', JSON.stringify({ city: ci.value.trim().slice(0, 60), on, custom: cu.value.trim().slice(0, 80) })); close(); load(true); }; box.append(sv);
-  };
-  load(false); if (typeof SC !== 'undefined' && !SC.loaded && isStaff) scLoad().then(() => { try { const d = JSON.parse(ls.get('dgCache') || 'null'); if (d) paint(d.data); } catch { } });
+async function wxName(lat, lon) {
+  try { const r = await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=kk'); const j = await r.json(); return j.city || j.locality || j.principalSubdivision || ''; } catch { return ''; }
+}
+async function wxPaintChip() {
+  const b = $('wxBtn'); if (!b) return; const L = wxLoc();
+  if (!L) { b.textContent = '🌡 Ауа райы'; return; }
+  try { const d = await wxData(); b.textContent = WX(d.current.weather_code)[0] + ' ' + Math.round(d.current.temperature_2m) + '°'; b.title = (L.name || 'Ауа райы') + ': ' + WX(d.current.weather_code)[1]; } catch { b.textContent = '🌡 Ауа райы'; }
+}
+function wxAsk(after) {
+  const { box, close } = modal('📍 Ауа райы үшін қалаңыз керек');
+  box.append(el('p', 'sub', 'Орналасуға бір рет рұқсат берсеңіз жеткілікті: сайт қалаңызды есте сақтап, бүгінгі ауа райын лупаның қасында көрсетеді. Орналасу тек ауа райы үшін, серверге жіберілмейді.'));
+  const msg = el('p', 'msg', ''), go1 = el('button', 'go', '📍 Рұқсат беру'); go1.type = 'button';
+  const save = async (lat, lon, name) => { ls.set('wxLoc', JSON.stringify({ lat: +(+lat).toFixed(3), lon: +(+lon).toFixed(3), name })); ls.set('wxCache', ''); close(); await wxPaintChip(); if (after) after(); };
+  go1.onclick = () => { if (!navigator.geolocation) { msg.textContent = 'Браузер орналасуды қолдамайды. Қаланы жазыңыз.'; return; } msg.textContent = '⏳ Күтіңіз…'; navigator.geolocation.getCurrentPosition(async p => save(p.coords.latitude, p.coords.longitude, await wxName(p.coords.latitude, p.coords.longitude) || 'Сіздің орныңыз'), () => { msg.textContent = 'Рұқсат берілмеді. Төмендегіге қала атын жазыңыз.'; }, { timeout: 12000, maximumAge: 3600e3 }); };
+  const ci = el('input'); ci.placeholder = 'Немесе қала атын жазыңыз (мысалы: Астана)'; ci.style.cssText = 'width:100%;margin-top:12px';
+  const cb = el('button', 'out', 'Қаланы табу'); cb.type = 'button'; cb.style.marginTop = '8px';
+  cb.onclick = async () => { const q = ci.value.trim(); if (!q) return; msg.textContent = '⏳'; try { const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=kk&name=' + encodeURIComponent(q)); const j = await r.json(), x = j.results && j.results[0]; if (!x) { msg.textContent = 'Қала табылмады'; return; } save(x.latitude, x.longitude, x.name); } catch { msg.textContent = 'Желі қатесі'; } };
+  box.append(go1, ci, cb, msg);
+}
+async function wxOpen() {
+  if (!wxLoc()) { wxAsk(wxOpen); return; }
+  const L = wxLoc(), { box } = modal('☀️ Ауа райы'); box.append(el('p', 'sub', '⏳ Жүктеліп жатыр…'));
+  try {
+    const w = await wxData(true), c = w.current, d = w.daily, [ic, tx] = WX(c.weather_code); box.replaceChildren();
+    const top = el('div', 'dg-w'); top.append(el('div', 'dg-ic', ic)); const wt = el('div', 'dg-wt'); wt.append(el('strong', '', (L.name || 'Ауа райы') + ': ' + Math.round(c.temperature_2m) + '°, ' + tx), el('small', '', 'Сезілуі ' + Math.round(c.apparent_temperature) + '° · жел ' + Math.round(c.wind_speed_10m) + ' км/сағ')); top.append(wt); box.append(top);
+    const tips = dgTips(w); if (tips.length) { const tp = el('div', 'dg-tips'); tips.forEach(x => tp.append(el('span', '', x))); box.append(tp); }
+    const days = ['Жексенбі', 'Дүйсенбі', 'Сейсенбі', 'Сәрсенбі', 'Бейсенбі', 'Жұма', 'Сенбі'], lst = el('div', 'wx-days');
+    d.time.forEach((t, i) => { const dt = new Date(t + 'T12:00'), r = el('div', 'wx-d'); r.append(el('b', '', i === 0 ? 'Бүгін' : i === 1 ? 'Ертең' : days[dt.getDay()]), el('span', '', WX(d.weather_code[i])[0] + ' ' + WX(d.weather_code[i])[1]), el('span', '', Math.round(d.temperature_2m_min[i]) + '…' + Math.round(d.temperature_2m_max[i]) + '°'), el('small', '', '☔ ' + (d.precipitation_probability_max[i] ?? 0) + '%')); lst.append(r); });
+    box.append(lst);
+    if (isStaff) { const L1 = dgLessons(1); if (L1.length) { const b = el('div', 'dg-pl'); b.append(el('b', '', '📚 Ертең сабақ'), el('span', '', L1.join('  ·  '))); box.append(b); } }
+    const ch = el('button', 'out', '📍 Қаланы өзгерту'); ch.type = 'button'; ch.style.marginTop = '12px'; ch.onclick = () => wxAsk(); box.append(ch);
+  } catch { box.replaceChildren(el('p', 'msg err', 'Ауа райы жүктелмеді. Интернетті тексеріңіз.')); }
 }
 async function renderContinue(v) {
   const box = el('section', 'td dg-cont'); box.hidden = true; v.appendChild(box);
@@ -9210,7 +9252,6 @@ function renderHome() {
   const st = el('div', 'td-stats'); st.id = 'tdStats'; v.appendChild(st);
   if (isStaff) renderContinue(v);
   renderToday(v);
-  if (isStaff) renderDigest(v);
   if (isStaff) {
     v.appendChild(el('h2', 'hm-h', 'Жылдам бастау'));
     const g = el('div', 'hm-grid'), more = el('div', 'hm-grid hm-more'); more.hidden = true;
@@ -9668,9 +9709,10 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       return { ok: true, note: 'Бөлім ашылды' + (a.focus ? ', элемент жарқырап көрсетілді' : '') + '.' };
     },
     async get_digest() {
-      let w = null, news = {}; try { const d = await dgLoad(false); w = d.weather; Object.keys(d.news || {}).forEach(k => { news[k] = (d.news[k] || []).slice(0, 3).map(x => x.title); }); } catch { }
-      const out = { bugin_sabak: dgLessons(0), erten_sabak: dgLessons(1), zhaqyn_tapsyrma: dgDue(), zhanalyq: news };
-      if (w && w.daily) { out.aua_rayy = { bugin: Math.round(w.daily.temperature_2m_min[0]) + '…' + Math.round(w.daily.temperature_2m_max[0]) + '°', zhauyn_pct: w.daily.precipitation_probability_max[0], erten: Math.round(w.daily.temperature_2m_min[1]) + '…' + Math.round(w.daily.temperature_2m_max[1]) + '°' }; out.kenes = dgTips(w); }
+      let w = null; try { w = await wxData(false); } catch { }
+      const out = { bugin_sabak: dgLessons(0), erten_sabak: dgLessons(1), zhaqyn_tapsyrma: dgDue() };
+      if (!wxLoc()) out.aua_rayy = 'Қала белгісіз: мұғалімге лупаның қасындағы ауа райы батырмасын басып орналасуға рұқсат беруін айт.';
+      else if (w && w.daily) { out.qala = wxLoc().name; out.aua_rayy = { bugin: Math.round(w.daily.temperature_2m_min[0]) + '…' + Math.round(w.daily.temperature_2m_max[0]) + '°', zhauyn_pct: w.daily.precipitation_probability_max[0], erten: Math.round(w.daily.temperature_2m_min[1]) + '…' + Math.round(w.daily.temperature_2m_max[1]) + '°' }; out.kenes = dgTips(w); }
       return out;
     },
     async save_memory(a) {
