@@ -196,6 +196,12 @@ math[display="block"]{display:block;margin:.35em 0}
   <section class="intro" id="intro" hidden></section>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script>
+(function(){var why='';
+if(!window.THREE)why='3D кітапханасы (three.js) жүктелмеді. Интернет байланысын тексеріп, бетті жаңартыңыз.';
+else{try{var c=document.createElement('canvas');if(!(c.getContext('webgl2')||c.getContext('webgl')||c.getContext('experimental-webgl')))why='Браузеріңіз WebGL-ді қолдамайды немесе ол өшірілген. Chrome, Edge, Firefox немесе Safari-дің жаңа нұсқасын ашып көріңіз, аппараттық үдетуді қосыңыз.';}catch(e){why='WebGL тексерілмеді.';}}
+if(why){var d=document.createElement('div');d.setAttribute('role','alert');d.style.cssText='position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;padding:24px;background:#10261a;color:#e9f0f6;font:16px/1.5 sans-serif;text-align:center';d.innerHTML='<b style="font-size:22px">ФизЛаб 3D іске қосылмады</b><span style="max-width:520px">'+why+'</span>';document.body.appendChild(d);window.__fizlabStop=true;}
+})();
+</script><script>if(!window.__fizlabStop){
 'use strict';
 var T=THREE,PI=Math.PI,G=9.8,R=String.raw;
 function f(n,d){d=(d==null)?1:d;return Number(n).toFixed(d).replace('.',',').replace('-','−');}
@@ -205,7 +211,7 @@ function nice(x){var p=Math.pow(10,Math.floor(Math.log10(x))),m=x/p;return (m<1.
 function hex(n){return '#'+('000000'+n.toString(16)).slice(-6);}
 
 /* ---------- tex-lite to MathML ---------- */
-var GREEK={alpha:'α',beta:'β',gamma:'γ',delta:'δ',Delta:'Δ',mu:'μ',rho:'ρ',pi:'π',omega:'ω',Omega:'Ω',theta:'θ',varphi:'φ',lambda:'λ',nu:'ν',tau:'τ',eta:'η',sigma:'σ',epsilon:'ε'};
+var GREEK={alpha:'α',beta:'β',gamma:'γ',delta:'δ',Delta:'Δ',mu:'μ',rho:'ρ',pi:'π',omega:'ω',Omega:'Ω',theta:'θ',varphi:'φ',lambda:'λ',nu:'ν',tau:'τ',eta:'η',sigma:'σ',epsilon:'ε',varepsilon:'ε',phi:'φ',Phi:'Φ',Gamma:'Γ',Sigma:'Σ',kappa:'κ',psi:'ψ',Psi:'Ψ',xi:'ξ',zeta:'ζ',chi:'χ',Lambda:'Λ',Theta:'Θ',Pi:'Π'};var CAL={E:'ℰ',F:'ℱ',H:'ℋ',L:'ℒ',R:'ℛ',I:'ℐ',B:'ℬ',M:'ℳ'};
 function tex(s,block){
   var i=0;
   function group(){i++;var r=seq('}');i++;return '<mrow>'+r+'</mrow>';}
@@ -230,6 +236,19 @@ function tex(s,block){
       if(nm==='sqrt'){return '<msqrt>'+group()+'</msqrt>';}
       if(nm==='text'){i++;var k=s.indexOf('}',i);var tx=s.slice(i,k);i=k+1;return '<mtext>'+tx+'</mtext>';}
       if(nm==='circ')return '<mo>°</mo>';
+      if(nm==='mathcal'){var g0=s[i]==='{'?(i++,s[i++]):s[i++];if(s[i]==='}')i++;return '<mi>'+(CAL[g0]||g0)+'</mi>';}
+      if(nm==='rightarrow'||nm==='to')return '<mo>→</mo>';
+      if(nm==='leftarrow')return '<mo>←</mo>';
+      if(nm==='sum')return '<mo largeop="true">∑</mo>';
+      if(nm==='partial')return '<mo>∂</mo>';
+      if(nm==='infty')return '<mo>∞</mo>';
+      if(nm==='qquad')return '<mspace width="2.6em"></mspace>';
+      if(nm==='left'||nm==='right')return '';
+      if(nm==='gg')return '<mo>≫</mo>';
+      if(nm==='ll')return '<mo>≪</mo>';
+      if(nm==='sim')return '<mo>∼</mo>';
+      if(nm==='bar'){return '<mover>'+group()+'<mo>¯</mo></mover>';}
+      if(nm==='max'||nm==='min')return '<mi>'+nm+'</mi>';
       if(nm==='ldots')return '<mo>…</mo>';
       if(nm==='vec'){return '<mover>'+group()+'<mo>→</mo></mover>';}
       if(nm==='quad')return '<mspace width="1.3em"></mspace>';
@@ -273,10 +292,10 @@ renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=T.PCFSoftShadowMap;
 var scene=new T.Scene();
 var camera=new T.PerspectiveCamera(45,1,.1,300);
-var hemi=new T.HemisphereLight(0xffffff,0x223344,.6);scene.add(hemi);
-var sun=new T.DirectionalLight(0xffffff,.85);sun.position.set(12,26,16);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+var hemi=new T.HemisphereLight(0xffffff,0x223344,.34);scene.add(hemi);
+var sun=new T.DirectionalLight(0xffffff,.55);sun.position.set(12,26,16);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
 sun.shadow.camera.left=-30;sun.shadow.camera.right=30;sun.shadow.camera.top=30;sun.shadow.camera.bottom=-30;sun.shadow.bias=-.0004;sun.shadow.radius=3;scene.add(sun);
-var rim=new T.PointLight(0xffffff,.45,90);rim.position.set(-16,12,-14);scene.add(rim);
+var rim=new T.PointLight(0xffffff,.12,90);rim.position.set(-16,12,-14);scene.add(rim);
 var floorMesh=new T.Mesh(new T.CircleGeometry(80,64),new T.MeshBasicMaterial({transparent:true,depthWrite:false}));
 floorMesh.rotation.x=-PI/2;floorMesh.position.y=-.012;scene.add(floorMesh);
 var shadowPlane=new T.Mesh(new T.PlaneGeometry(160,160),new T.ShadowMaterial({opacity:.3}));
@@ -312,7 +331,7 @@ function scenery(g){
     }
   });
   var cv=document.createElement('canvas');cv.width=cv.height=128;var x=cv.getContext('2d');
-  var gr=x.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,248,205,1)');gr.addColorStop(.25,'rgba(255,240,180,.9)');gr.addColorStop(1,'rgba(255,240,180,0)');
+  var gr=x.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,248,205,.7)');gr.addColorStop(.25,'rgba(255,240,180,.4)');gr.addColorStop(1,'rgba(255,240,180,0)');
   x.fillStyle=gr;x.fillRect(0,0,128,128);
   var sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(cv),transparent:true,depthWrite:false,fog:false}));
   sp.scale.set(46,46,1);sp.position.set(70,62,-120);scen.add(sp);
@@ -320,7 +339,7 @@ function scenery(g){
   [[60,58,34],[104,48,40],[150,56,36],[196,60,28],[130,66,44]].forEach(function(b){y.beginPath();y.arc(b[0],b[1],b[2]*.75,0,PI*2);y.fill();});
   var ct=new T.CanvasTexture(cc);
   [[-60,48,-95,70],[20,58,-110,90],[95,44,-60,60],[-100,52,10,80],[40,50,100,70]].forEach(function(p){
-    var c=new T.Sprite(new T.SpriteMaterial({map:ct,transparent:true,opacity:.7,depthWrite:false,fog:false}));c.scale.set(p[3],p[3]*.375,1);c.position.set(p[0],p[1],p[2]);scen.add(c);
+    var c=new T.Sprite(new T.SpriteMaterial({map:ct,transparent:true,opacity:.5,depthWrite:false,fog:false}));c.scale.set(p[3],p[3]*.375,1);c.position.set(p[0],p[1],p[2]);scen.add(c);
   });
 }
 function applyPalette(){
@@ -366,11 +385,12 @@ function look(name,o){
   if(!texBase[name])texBase[name]=drawTex(L.t,L.c);
   var t=texBase[name].clone();t.needsUpdate=true;t.userData={keep:false};
   var rep=o.rep||[1,1];t.repeat.set(rep[0],rep[1]);
-  var m=new T.MeshStandardMaterial({map:t,color:0xffffff,roughness:L.r,metalness:L.m,envMapIntensity:.7});
+  var m=new T.MeshStandardMaterial({map:t,color:0xdedede,roughness:L.r,metalness:L.m,envMapIntensity:L.m>.5?.8:.32});
   if(L.op){m.transparent=true;m.opacity=L.op;}
   return m;
 }
-function mat(c,o){return new T.MeshStandardMaterial(Object.assign({color:c,roughness:.5,metalness:.08,envMapIntensity:.6},o||{}));}
+function soft(c){if(typeof c!=='number')return c;var r=c>>16&255,g=c>>8&255,b=c&255,mx=Math.max(r,g,b);if(mx<=222)return c;var k=222/mx;return (Math.round(r*k)<<16)|(Math.round(g*k)<<8)|Math.round(b*k);}
+function mat(c,o){o=o||{};var mt=o.metalness!=null?o.metalness:.08;return new T.MeshStandardMaterial(Object.assign({color:soft(c),roughness:.5,metalness:mt,envMapIntensity:mt>.5?.8:.32},o));}
 function M(c,o){if(typeof c==='string')return look(c,o);if(c&&c.isMaterial)return c;return mat(c,o);}
 
 /* ---------- builders ---------- */
@@ -393,22 +413,45 @@ var UP=new T.Vector3(0,1,0);
 function between(m,a,b,r){var d=b.clone().sub(a),L=d.length();m.position.copy(a).addScaledVector(d,.5);m.scale.set(r,Math.max(L,.001),r);m.quaternion.setFromUnitVectors(UP,d.normalize());}
 function line(points,color,op){var l=new T.Line(new T.BufferGeometry().setFromPoints(points),new T.LineBasicMaterial({color:color,transparent:op!=null,opacity:op==null?1:op}));l.frustumCulled=false;world.add(l);return l;}
 function setLine(l,points){l.geometry.setFromPoints(points);}
-function arrow(color){var a=new T.ArrowHelper(new T.Vector3(1,0,0),new T.Vector3(),1,color,.34,.2);world.add(a);return a;}
+function arrow(color,label){var a=new T.ArrowHelper(new T.Vector3(1,0,0),new T.Vector3(),1,color,.34,.2);world.add(a);if(label){a.userData.lab=tag(label,.62);a.userData.lab.visible=false;}return a;}
 function setArrow(a,o,d,len){
-  if(len<.06||!isFinite(len)){a.visible=false;return;}
-  a.visible=true;a.position.copy(o);a.setDirection(d.clone().normalize());a.setLength(len,Math.min(.46,len*.4),.2);
+  var lb=a.userData&&a.userData.lab;
+  if(len<.06||!isFinite(len)){a.visible=false;if(lb)lb.visible=false;return;}
+  a.visible=true;a.position.copy(o);var dn=d.clone().normalize();a.setDirection(dn);a.setLength(len,Math.min(.46,len*.4),.2);
+  if(lb){lb.visible=len>=.8;var nn=Math.abs(dn.y)>.6?new T.Vector3(1,0,0):new T.Vector3(0,1,0);lb.position.copy(o).addScaledVector(dn,len*.5).addScaledVector(nn,1.05);}
+}
+var TAGS=[];
+function fitTags(){
+  var i,cp=camera.position,list=[];
+  for(i=TAGS.length-1;i>=0;i--){var sp=TAGS[i];if(!sp.parent){TAGS.splice(i,1);continue;}var k=clamp(cp.distanceTo(sp.position)/34,.8,2.1)*1.3,b=sp.userData.base;sp.scale.set(b[0]*k,b[1]*k,1);}
+  /* қабаттасқан жазуларды экранда жоғары жылжыту */
+  try{
+   var o=orb,sph_=Math.sin(o.ph),px=o.t.x+o.r*sph_*Math.sin(o.th),py=o.t.y+o.r*Math.cos(o.ph),pz=o.t.z+o.r*sph_*Math.cos(o.th);
+   var fx=o.t.x-px,fy=o.t.y-py,fz=o.t.z-pz,fl=Math.hypot(fx,fy,fz);fx/=fl;fy/=fl;fz/=fl;
+   var rx=-fz,rz=fx,rl=Math.hypot(rx,rz)||1;rx/=rl;rz/=rl;
+   var ux=-(fy*rz),uy=rz*fx-rx*fz,uz=fy*rx,th=Math.tan(camera.fov*PI/360),asp=camera.aspect||1;
+   for(i=0;i<TAGS.length;i++){var t=TAGS[i];t.center.set(.5,.5);if(!t.visible||!t.userData.txt)continue;
+    var vx=t.position.x-px,vy=t.position.y-py,vz=t.position.z-pz,z=vx*fx+vy*fy+vz*fz;if(!(z>.5))continue;
+    var X=(vx*rx+vz*rz)/(z*th*asp),Y=(vx*ux+vy*uy+vz*uz)/(z*th),sh=t.scale.y/(z*th),tw=t.userData.tw||.8;
+    if(!isFinite(X+Y+sh))continue;
+    list.push({t:t,X:X,Y:Y,z:z,hw:t.scale.x*tw/2/(z*th*asp)+.01,hh:sh*.3,sh:sh});}
+   list.sort(function(a,b){return a.z-b.z;});var placed=[];
+   list.forEach(function(e){var n=0,ok=false;
+    while(n<8&&!ok){var Yn=e.Y+n*e.sh*.62;ok=!placed.some(function(q){return Math.abs(e.X-q.X)<e.hw+q.hw&&Math.abs(Yn-q.Y)<e.hh+q.hh;});if(!ok)n++;}
+    e.t.center.set(.5,.5-n*.62);placed.push({X:e.X,Y:e.Y+n*e.sh*.62,hw:e.hw,hh:e.hh});});
+  }catch(err){}
 }
 function tag(txt,size,color){
   var cv=document.createElement('canvas');cv.width=512;cv.height=160;
   var sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(cv),transparent:true,depthTest:false}));
-  sp.renderOrder=20;size=size||.5;sp.scale.set(6.4*size,2*size,1);sp.userData={cv:cv,color:color,txt:null};
+  sp.renderOrder=20;size=size||.5;sp.scale.set(6.4*size,2*size,1);sp.userData={cv:cv,color:color,txt:null,base:[6.4*size,2*size]};TAGS.push(sp);
   setTag(sp,txt);world.add(sp);return sp;
 }
 function setTag(sp,txt){
   if(sp.userData.txt===txt)return;sp.userData.txt=txt;
   var cv=sp.userData.cv,x=cv.getContext('2d');x.clearRect(0,0,512,160);
-  x.font='italic 600 74px "STIX Two Text","Times New Roman",serif';x.textAlign='center';x.textBaseline='middle';
-  x.lineWidth=12;x.lineJoin='round';x.strokeStyle=C().halo;x.strokeText(txt,256,84);
+  var fs=78;x.font='italic 700 '+fs+'px "STIX Two Text","Times New Roman",serif';var tw0=x.measureText(txt).width;if(tw0>470){fs=Math.max(30,Math.floor(fs*470/tw0));x.font='italic 700 '+fs+'px "STIX Two Text","Times New Roman",serif';tw0=x.measureText(txt).width;}sp.userData.tw=Math.min(1,(tw0+16)/512);x.textAlign='center';x.textBaseline='middle';
+  x.lineWidth=16;x.lineJoin='round';x.strokeStyle=C().halo;x.strokeText(txt,256,84);
   x.fillStyle=sp.userData.color||C().ink;x.fillText(txt,256,84);sp.material.map.needsUpdate=true;
 }
 function makeCar(look1){
@@ -622,7 +665,7 @@ add({id:'press1',grade:7,name:'Қатты дененің қысымы',hint:'К�
   var c=C(),dims=[null,[2,.5,1],[2,1,.5],[1,2,.5]][p.face],s={k:this.calc(p,0),cur:0,dims:dims,extra:0,held:false,y0:0,py:0};
   box(9,2.4,6,'foam',[0,1.2,0],{rep:[3,2]});
   s.brick=box(dims[0],dims[1],dims[2],'brick',[0,0,0],{rep:[1,1]});
-  s.tg=tag('',.5);s.aF=arrow(c.c4);s.aH=arrow(c.c2);
+  s.tg=tag('',.5);s.aF=arrow(c.c4,'F');s.aH=arrow(c.c2,'F қол');
   return s;
  },
  step:function(dt,p,s){
@@ -632,7 +675,7 @@ add({id:'press1',grade:7,name:'Қатты дененің қысымы',hint:'К�
   var top=2.4,h=s.dims[1],yb=top-s.cur;
   s.brick.position.set(0,yb+h/2,0);
   s.tg.position.set(0,yb+h+1.7,0);setTag(s.tg,'F = '+f(k.F,0)+' Н');
-  setArrow(s.aF,new T.Vector3(1.2,yb+h+1.1,0),new T.Vector3(0,-1,0),.9);
+  setArrow(s.aF,new T.Vector3(1.2,yb+h+1.1,0),new T.Vector3(0,-1,0),clamp(k.F*.01,.4,5));
   setArrow(s.aH,new T.Vector3(-1.2,yb+h+.4+clamp(s.extra*.01,0,3),0),new T.Vector3(0,-1,0),clamp(s.extra*.01,0,3));
  },
  grab:{plane:'xy',meshes:function(S){return [S.brick];},on:function(ph,pt,S){
@@ -691,7 +734,7 @@ add({id:'arch',grade:7,name:'Архимед күші',hint:'Денені ұст�
   def:'Сұйыққа (немесе газға) батырылған денеге жоғары бағытталған итеруші күш әсер етеді. Ол дене ығыстырып шығарған сұйықтың салмағына тең. Күштерді салыстыру арқылы дененің жүзетіні немесе батқаны анықталады.',
   formulas:[{tex:R`F_A=\rho_{\text{с}}\,g\,V`,note:'Архимед күші'},{tex:R`P=\rho\,g\,V`,note:'дененің салмағы'},{tex:R`\rho<\rho_{\text{с}}\;\Rightarrow\;\text{жүзеді}`,note:'жүзу шарты'}],
   vars:[['F_A','Архимед күші','Н'],['\\rho_{\\text{с}}','сұйық тығыздығы','кг/м³'],['V','батқан көлем','м³']],
-  sci:{name:'Архимед',years:'шамамен б.з.д. 287–212',text:'Сиракузадан шыққан грек ғалымы. Аңыз бойынша патша тәжінің алтыннан екенін ваннада отырып тексерудің жолын тауып, «Эврика!» деп айқайлаған. Гидростатиканың негізін қалады.'}},
+  sci:{name:'Архимед',years:'б.з.д. 287–212',text:'Сиракузадан шыққан грек ғалымы. Аңыз бойынша патша тәжінің алтыннан екенін ваннада отырып тексерудің жолын тауып, «Эврика!» деп айқайлаған. Гидростатиканың негізін қалады.'}},
  params:[
   {k:'rb',l:'Дене заты',sel:matSel(),num:{min:100,max:22000,step:50,u:'кг/м³'},val:500},
   {k:'V',l:'Дене көлемі',min:100,max:1000,step:50,val:400,u:'см³',hi:1500},
@@ -767,7 +810,7 @@ add({id:'lever',grade:7,name:'Иінтірек және теңдік ереже�
   def:'Иінтірек — бекітілген тірек нүктесінің айналасында айнала алатын қатты дене. Иінтірек теңдікте тұрса, күштер мен олардың иіндерінің көбейтінділері тең болады. Ұзын иінге аз күш түссе де ол ауыр жүкті көтере алады.',
   formulas:[{tex:R`F_1\,l_1=F_2\,l_2`,note:'иінтірек теңдігі'},{tex:R`\frac{F_1}{F_2}=\frac{l_2}{l_1}`,note:'күштер қатынасы'},{tex:R`M=F\,l`,note:'күш моменті'}],
   vars:[['F','күш','Н'],['l','күш иіні','м'],['M','күш моменті','Н·м']],
-  sci:{name:'Архимед',years:'шамамен б.з.д. 287–212',text:'Иінтірек заңын математикалық түрде дәлелдеген. «Маған тірек нүкте беріңдер, мен Жерді орнынан қозғалтамын» деген сөз осы ғалымға телінеді.'}},
+  sci:{name:'Архимед',years:'б.з.д. 287–212',text:'Иінтірек заңын математикалық түрде дәлелдеген. «Маған тірек нүкте беріңдер, мен Жерді орнынан қозғалтамын» деген сөз осы ғалымға телінеді.'}},
  params:[
   {k:'m1',l:'Сол жақ жүк m₁',min:1,max:10,step:.5,val:4,u:'кг',hi:30},
   {k:'l1',l:'Сол жақ иін l₁',min:.5,max:3,step:.1,val:2,u:'м',nr:true},
@@ -823,7 +866,7 @@ add({id:'bio',grade:7,name:'Тірі дене. Білек иінтірек ре�
   s.up=unitCyl(skin);between(s.up,s.sh,s.E,.55);sph(.7,skin,[0,8,0]);sph(.5,c.struct,[0,2,0]);
   s.fore=unitCyl(skin);s.hand=sph(.4,skin,[0,0,0]);
   s.load=sph(1,'iron',[0,0,0]);
-  s.bic=unitCyl(c.c4);s.pin=sph(.16,c.neu,[0,0,0]);s.aW=arrow(c.neu);s.aF=arrow(c.c1);
+  s.bic=unitCyl(c.c4);s.pin=sph(.16,c.neu,[0,0,0]);s.aW=arrow(c.neu,'P');s.aF=arrow(c.c1,'F');
   return s;
  },
  step:function(dt,p,s){
@@ -1192,7 +1235,7 @@ add({id:'accel',grade:9,name:'Бірқалыпты үдемелі қозғалы
   var span=Math.max(1,hi-lo),K=28/span,x0=-14-lo*K,st=nice(span/6),s={t:0,hold:0,K:K,x0:x0,dots:[]};
   box(40,.3,6,c.struct,[0,-.15,0]);box(38,.12,5.4,'concrete',[0,.06,0],{rep:[10,1.4]});
   for(var m=Math.ceil(lo/st)*st;m<=hi+1e-6;m+=st){var x=x0+m*K;box(.08,.8,.08,c.neu,[x,.4,-3.5]);var tg=tag(f(m,st<1?1:0)+' м',.36);tg.position.set(x,1.4,-3.5);}
-  s.car=makeCar(c.c1);s.car.position.set(x0,0,0);s.aV=arrow(c.c2);s.aA=arrow(c.c4);
+  s.car=makeCar(c.c1);s.car.position.set(x0,0,0);s.aV=arrow(c.c2,'v');s.aA=arrow(c.c4,'a');
   for(i=1;i<=p.T;i++){var x1=x0+(p.v0*i+.5*p.a*i*i)*K;var d=add3(new T.CylinderGeometry(.2,.2,.05,24),new T.MeshStandardMaterial({color:c.c2,transparent:true,opacity:.3}),[x1,.14,-2]);d.castShadow=false;d.userData.k=i;s.dots.push(d);}
   return s;
  },
@@ -1243,7 +1286,7 @@ add({id:'fall',grade:9,name:'Еркін түсу',hint:'Допты ұстап к
   if(ph==='start'){S.held=true;S.ph='wait';S.v=0;S.ts=0;}
   if(ph==='start'||ph==='move'){S.y=clamp((pt.y-.8)/S.u,0,S.cap);}
   if(ph==='end'){S.held=false;api.setP({h:Math.max(1,Math.round(S.y*10)/10)},false);S.ph='wait';S.wait=.4;}}},
- read:function(p,s){var tf=Math.sqrt(2*p.h/p.g);return [['Түсу уақыты t',f(s.ts,2),'с'],['Жылдамдық v',f(s.v,1),'м/с'],['Биіктік',f(s.y,1),'м'],['Толық түсу уақыты',f(tf,2),'с'],['Жерге жылдамдығы',f(p.g*tf,1),'м/с']];},
+ read:function(p,s){var tf=Math.sqrt(2*p.h/p.g);return [['Түсу уақыты t',f(s.ts,2),'с'],['Жылдамдық v',f(s.v,1),'м/с'],['Биіктік y',f(s.y,1),'м'],['Түскен жол s',f(p.h-s.y,1),'м'],['Толық түсу уақыты',f(tf,2),'с'],['Жерге жылдамдығы',f(p.g*tf,1),'м/с']];},
  live:function(p,s){var tf=Math.sqrt(2*p.h/p.g);return R`t=\sqrt{\frac{2h}{g}}=\sqrt{\frac{2\cdot${f(p.h,1)}}{${f(p.g,2)}}}=${f(tf,2)}\,\text{с}`;},
  tips:['Үлкен және кіші доп бірге түседі: ауасыз ортада масса түсу уақытына әсер етпейді.','Допты ұстап қалаған биіктікке көтер, жібергенде сол биіктіктен түседі.','Ай мен Юпитерді таңдап, түсу уақытының қалай өзгеретінін қара. Өз g мәніңді де жазуға болады.']
 });
@@ -1271,7 +1314,7 @@ add({id:'proj',grade:9,name:'Көкжиекке бұрыштап лақтыру'
   var ap=sph(.24,c.c4,[x0+k.vx*k.tf/2*sc,.2+k.H*sc,0]);
   line([new T.Vector3(ap.position.x,0,0),ap.position.clone()],c.neu,.5);
   var ring=add3(new T.RingGeometry(.4,.65,40),new T.MeshBasicMaterial({color:c.c1,side:T.DoubleSide}),[x0+k.L*sc,.03,0]);ring.rotation.x=-PI/2;
-  s.ball=sph(.4,c.c1,[0,0,0],{roughness:.25});s.aT=arrow(c.neu);s.aX=arrow(c.c2);s.aY=arrow(c.c4);
+  s.ball=sph(.4,c.c1,[0,0,0],{roughness:.25});s.aT=arrow(c.neu,'v');s.aX=arrow(c.c2,'vₓ');s.aY=arrow(c.c4,'v_y');
   var hd=Math.min(14,p.v*.5);
   s.handle=sph(.6,c.c3,[x0+Math.cos(a)*hd,.2+Math.sin(a)*hd,0],{transparent:true,opacity:.85,emissive:c.c3,emissiveIntensity:.35});
   s.aimLine=line([new T.Vector3(x0,.2,0),s.handle.position.clone()],c.c3,.8);
@@ -1292,7 +1335,7 @@ add({id:'proj',grade:9,name:'Көкжиекке бұрыштап лақтыру'
    S.tAim.position.set(S.handle.position.x,S.handle.position.y+1.3,0);setTag(S.tAim,'v₀ = '+f(v,1)+' м/с, α = '+f(a,0)+'°');
    S.pv=v;S.pa=a;}
   if(ph==='end'&&S.pv!=null){api.setP({v:S.pv,a:S.pa},true);}}},
- read:function(p,s){var k=s.k;return [['Ұшу уақыты',f(k.tf,2),'с'],['Қашықтық L',f(k.L,1),'м'],['Ең үлкен биіктік H',f(k.H,1),'м'],['vₓ (тұрақты)',f(k.vx,1),'м/с'],['v_y (басында)',f(k.vy,1),'м/с']];},
+ read:function(p,s){var k=s.k,t=s.t||0,yy=Math.max(0,k.vy*t-p.g*t*t/2),vyy=k.vy-p.g*t;return [['Лақтыру бұрышы α',f(p.a,0),'°'],['Қазіргі уақыт t',f(t,2),'с'],['Қашықтық x (көлденең)',f(k.vx*t,1),'м'],['Биіктік y',f(yy,1),'м'],['Қазіргі жылдамдық v',f(Math.hypot(k.vx,vyy),1),'м/с'],['Жылдамдық бағыты',f(Math.atan2(vyy,k.vx)*180/PI,0),'° (көкжиектен)'],['Ұшу уақыты (барлығы)',f(k.tf,2),'с'],['Қашықтық L',f(k.L,1),'м'],['Ең үлкен биіктік H',f(k.H,1),'м'],['vₓ (тұрақты)',f(k.vx,1),'м/с'],['v_y (басында)',f(k.vy,1),'м/с']];},
  live:function(p,s){var k=s.k;return R`L=\frac{v_0^2\sin2\alpha}{g}=\frac{${f(p.v,1)}^2\cdot${f(Math.sin(2*p.a*PI/180),2)}}{${f(p.g,2)}}=${f(k.L,1)}\,\text{м}`;},
  tips:['Көк тұтқаны сүйреп бағытты және жылдамдықты бер: тұтқа неғұрлым алыс болса, жылдамдық соғұрлым үлкен. Жібергенде доп лақтырылады.','Ақ нүктелер уақыттың тең аралығындағы орынды көрсетеді: көлденең қашықтық тең, тік қашықтық әр түрлі.','Ең алыс ұшу 45° бұрышта болады. 30° және 60° бұрыштар бірдей қашықтыққа апарады. Ай бетінде доп алты есе алыс ұшады.']
 });
@@ -1324,8 +1367,8 @@ add({id:'incl',grade:9,name:'Көлбеу жазықтық. Ньютон заң�
  },
  step:function(dt,p,s){
   var k=s.k;
-  if(s.stop>0){s.stop-=dt;if(s.stop<=0){s.pos=12.2;s.v=0;}}
-  else if(!s.held){if(k.slide){s.v+=k.acc*dt;s.pos-=s.v*dt;}else s.v=0;if(s.pos<=1){s.pos=1;s.v=0;s.stop=1.3;}}
+  if(s.stop>0){s.stop-=dt;if(s.stop<=0){s.pos=12.2;s.v=0;s.t=0;}}
+  else if(!s.held){if(k.slide){s.v+=k.acc*dt;s.pos-=s.v*dt;s.t=(s.t||0)+dt;}else s.v=0;if(s.pos<=1){s.pos=1;s.v=0;s.stop=1.3;}}
   var cen=s.P.clone().addScaledVector(s.tan,s.pos).addScaledVector(s.nor,.82);
   s.blk.position.copy(cen);var kk=.07,Ff=k.slide?k.Fm:k.gp;
   setArrow(s.aG,cen,new T.Vector3(0,-1,0),clamp(k.mg*kk,0,6));setArrow(s.aN,cen,s.nor,clamp(k.N*kk,0,6));setArrow(s.aF,cen,s.tan,clamp(Ff*kk,0,6));
@@ -1335,7 +1378,7 @@ add({id:'incl',grade:9,name:'Көлбеу жазықтық. Ньютон заң�
   if(ph==='start'){S.held=true;S.stop=0;}
   if(ph==='start'||ph==='move'){var d=(pt.x-S.P.x)*S.tan.x+(pt.y-S.P.y)*S.tan.y;S.pos=clamp(d,1,12.3);S.v=0;}
   if(ph==='end')S.held=false;}},
- read:function(p,s){var k=s.k;return [['Үдеу a',k.slide?f(k.acc,2):'0','м/с²'],['Жылдамдық',f(s.v,2),'м/с'],['Тірек реакциясы N',f(k.N,1),'Н'],['Үйкеліс күші',f(k.slide?k.Fm:k.gp,1),'Н'],['Ауырлық күші mg',f(k.mg,1),'Н'],['Күй',k.slide?'сырғиды':'тыныштықта','']];},
+ read:function(p,s){var k=s.k;return [['Уақыт t',f(s.t||0,2),'с'],['Жүрген жол s',f(12.2-s.pos,2),'м'],['Еңіс бұрышы α',f(p.a,0),'°'],['Үдеу a',k.slide?f(k.acc,2):'0','м/с²'],['Жылдамдық',f(s.v,2),'м/с'],['Тірек реакциясы N',f(k.N,1),'Н'],['Үйкеліс күші',f(k.slide?k.Fm:k.gp,1),'Н'],['Ауырлық күші mg',f(k.mg,1),'Н'],['Күй',k.slide?'сырғиды':'тыныштықта','']];},
  live:function(p,s){var k=s.k;return k.slide?R`a=g(\sin\alpha-\mu\cos\alpha)=${f(k.acc,2)}\,\text{м/с}^2`:R`\tan\alpha=${f(Math.tan(k.a),2)}\le\mu=${f(p.mu,2)}\quad\Rightarrow\quad a=0`;},
  tips:['Блокты ұстап еңістің кез келген жеріне қойып жіберсең, ол сырғанай ма, жоқ па, соны көресің.','Сырғанамайтын шарт: tgα ≤ μ. Бұрышты біртіндеп өсіріп, дене қай мәнде қозғала бастайтынын тап.','Массаны өзгерткенде үдеу өзгермейді, бірақ күштер өседі. Материалдарды ауыстырсаң блок пен жазықтық автоматты өзгереді.']
 });
@@ -1364,7 +1407,7 @@ add({id:'circ',grade:9,name:'Шеңбер бойымен қозғалыс. Це�
   return s;
  },
  step:function(dt,p,s){
-  var rs=p.r*s.K;if(!s.held)s.th+=p.v/p.r*dt;
+  var rs=p.r*s.K;if(!s.held){s.th+=p.v/p.r*dt;s.t=(s.t||0)+dt;}
   var cs=Math.cos(s.th),sn=Math.sin(s.th),bp=new T.Vector3(rs*cs,.82,rs*sn);
   s.ball.position.copy(bp);between(s.str,new T.Vector3(0,1.3,0),bp,.04);
   if(s.rr!==p.r){var cp=[];for(var j=0;j<=96;j++){cp.push(new T.Vector3(rs*Math.cos(j/96*PI*2),0,rs*Math.sin(j/96*PI*2)));}s.orb.position.set(0,.25,0);setLine(s.orb,cp);s.rr=p.r;}
@@ -1379,7 +1422,7 @@ add({id:'circ',grade:9,name:'Шеңбер бойымен қозғалыс. Це�
   if(ph==='start')S.held=true;
   if(ph==='start'||ph==='move'){var rs=Math.hypot(pt.x,pt.z);S.th=Math.atan2(pt.z,pt.x);api.setP({r:clamp(rnd(rs/S.K,.1),.5,10)},false);}
   if(ph==='end')S.held=false;}},
- read:function(p){var a=p.v*p.v/p.r,w=p.v/p.r,Tp=2*PI*p.r/p.v;return [['Үдеу a = v²/r',f(a,2),'м/с²'],['Центрге тартқыш күш F',f(p.m*a,2),'Н'],['Бұрыштық жылдамдық ω',f(w,2),'рад/с'],['Период T',f(Tp,2),'с'],['Жиілік ν',f(1/Tp,2),'Гц'],['a мен g қатынасы',f(a/G,2),'есе']];},
+ read:function(p,s){var a=p.v*p.v/p.r,w=p.v/p.r,Tp=2*PI*p.r/p.v;return [['Уақыт t',f(s.t||0,1),'с'],['Бұрылу бұрышы φ',f((((s.th||0)*180/PI)%360+360)%360,0),'°'],['Айналым саны',f((s.th||0)/(2*PI),2),''],['Үдеу a = v²/r',f(a,2),'м/с²'],['Центрге тартқыш күш F',f(p.m*a,2),'Н'],['Бұрыштық жылдамдық ω',f(w,2),'рад/с'],['Период T',f(Tp,2),'с'],['Жиілік ν',f(1/Tp,2),'Гц'],['a мен g қатынасы',f(a/G,2),'есе']];},
  live:function(p){var a=p.v*p.v/p.r;return R`a=\frac{v^2}{r}=\frac{${f(p.v,1)}^2}{${f(p.r,1)}}=${f(a,2)}\,\text{м/с}^2\qquad F=ma=${f(p.m,1)}\cdot${f(a,2)}=${f(p.m*a,2)}\,\text{Н}`;},
  tips:['Көк көрсеткі жылдамдық, қызғылт көрсеткі центрге тартқыш үдеу. Жылдамдық үнемі жанама бойымен, ал үдеу центрге қарай бағытталған.','Допты ұстап центрге жақындатсаң, радиус кемиді де, үдеу артады. Радиусты 2 есе азайтсаң, a екі есе көбейеді.','Жылдамдықты 2 есе арттырсаң, үдеу 4 есе артады, себебі a = v²/r. Жіптің керілуі де сонша есе өседі.']
 });
@@ -1405,7 +1448,7 @@ add({id:'imp',grade:9,name:'Импульс және соқтығыс',hint:'Ар
   s.w1=.9+.3*Math.cbrt(p.m1);s.w2=.9+.3*Math.cbrt(p.m2);
   box(46,.3,3.2,c.struct,[0,.05,0]);box(44,.1,2.8,'steel',[0,.22,0],{rep:[11,1]});
   s.c1=box(s.w1*2,s.w1*1.3,s.w1*1.6,c.c1,[0,0,0],{roughness:.3,metalness:.25});s.c2=box(s.w2*2,s.w2*1.3,s.w2*1.6,c.c2,[0,0,0],{roughness:.3,metalness:.25});
-  s.a1=arrow(c.c1);s.a2=arrow(c.c2);
+  s.a1=arrow(c.c1,'v₁');s.a2=arrow(c.c2,'v₂');
   return s;
  },
  step:function(dt,p,s){
@@ -1424,7 +1467,7 @@ add({id:'imp',grade:9,name:'Импульс және соқтығыс',hint:'Ар
   if(ph==='start'){S.held=pt.x<(S.x1+S.x2)/2?1:2;if(S.held===1)S.v1=0;else S.v2=0;}
   if((ph==='start'||ph==='move')&&S.held){if(S.held===1)S.x1=clamp(pt.x,-21,S.x2-S.w1-S.w2-.3);else S.x2=clamp(pt.x,S.x1+S.w1+S.w2+.3,21);}
   if(ph==='end'){if(S.held===1)S.v1=S.tv1;else if(S.held===2)S.v2=S.tv2;S.held=0;}}},
- read:function(p,s){var k=s.k;return [['Импульс (дейін)',f(k.P,1),'кг·м/с'],['Импульс (кейін)',f(k.P,1),'кг·м/с'],['Энергия (дейін)',f(k.K0,1),'Дж'],['Энергия (кейін)',f(k.K1,1),'Дж'],['v₁ кейін',f(k.u1,2),'м/с'],['v₂ кейін',f(k.u2,2),'м/с']];},
+ read:function(p,s){var k=s.k;return [['Уақыт t',f(s.t,2),'с'],['v₁ қазір',f(s.v1,2),'м/с'],['v₂ қазір',f(s.v2,2),'м/с'],['Қазіргі импульс',f(p.m1*s.v1+p.m2*s.v2,2),'кг·м/с'],['Импульс (дейін)',f(k.P,1),'кг·м/с'],['Импульс (кейін)',f(k.P,1),'кг·м/с'],['Энергия (дейін)',f(k.K0,1),'Дж'],['Энергия (кейін)',f(k.K1,1),'Дж'],['v₁ кейін',f(k.u1,2),'м/с'],['v₂ кейін',f(k.u2,2),'м/с']];},
  live:function(p,s){var k=s.k;return R`p=m_1v_1+m_2v_2=${f(p.m1,1)}\cdot${f(p.v1,1)}+${f(p.m2,1)}\cdot(${f(p.v2,1)})=${f(k.P,1)}\,\text{кг·м/с}`;},
  tips:['Импульс әрдайым сақталады. Серпімді соқтығыста энергия да сақталады, ал жабысқанда бір бөлігі жылуға кетеді.','Арбаны ұстап орнын өзгертуге болады. Жібергенде ол берілген жылдамдықпен жүріп кетеді.','Массалары тең арбаларды серпімді соқтығыстырсаң, олар жылдамдықтарымен алмасады.']
 });
@@ -1459,7 +1502,7 @@ add({id:'pend',grade:9,name:'Маятник және тербеліс',hint:'Д�
   if(ph==='start')S.held=true;
   if(ph==='start'||ph==='move'){S.th=clamp(Math.atan2(pt.x,12-pt.y),-1.45,1.45);S.om=0;S.prev=S.th;S.lastUp=null;S.Tm=null;S.t=0;}
   if(ph==='end')S.held=false;}},
- read:function(p,s){var k=s.k;return [['Период T (формула)',f(k.T0,2),'с'],['Период (өлшенген)',s.Tm?f(s.Tm,2):'өлшенуде','с'],['Жиілік ν',f(k.f,2),'Гц'],['Циклдік жиілік ω',f(k.w,2),'рад/с'],['Ең үлкен v',f(k.vmax,2),'м/с']];},
+ read:function(p,s){var k=s.k;return [['Уақыт t',f(s.t,1),'с'],['Қазіргі бұрыш θ',f(s.th*180/PI,1),'°'],['Қазіргі жылдамдық v',f(Math.abs(s.om)*p.l,2),'м/с'],['Период T (формула)',f(k.T0,2),'с'],['Период (өлшенген)',s.Tm?f(s.Tm,2):'өлшенуде','с'],['Жиілік ν',f(k.f,2),'Гц'],['Циклдік жиілік ω',f(k.w,2),'рад/с'],['Ең үлкен v',f(k.vmax,2),'м/с']];},
  live:function(p,s){var k=s.k;return R`T=2\pi\sqrt{\frac{l}{g}}=2\pi\sqrt{\frac{${f(p.l)}}{${f(p.g,2)}}}=${f(k.T0,2)}\,\text{с}`;},
  tips:['Допты ұстап қалаған бұрышқа ауытқытып жіберсең, маятник тербеле бастайды. Период массаға да, бұрышқа да тәуелді емес (кіші бұрышта).','Ұзындықты 4 есе арттырсаң, период 2 есе артады. Тексер.','Бұрышты 70°-қа жақындатсаң, өлшенген период формуладағыдан үлкен болады: формула кіші бұрыштарға ғана дәл.']
 });
@@ -2102,7 +2145,7 @@ add({id:'magnet',grade:11,name:'Лоренц күші. Магнит өрісін
   }
   s.part=sph(.5,pt[2]<0?c.c3:c.c1,[0,0,0],{roughness:.2,emissive:pt[2]<0?c.c3:c.c1,emissiveIntensity:.3});
   s.ring=line([V3(0,.4,0),V3(0,.4,0)],c.neu,.5);s.tr=line([V3(0,.4,0),V3(0,.4,0)],0xe0a030);
-  s.av=arrow(c.c2);s.af=arrow(c.c4);s.tr_=tag('',.55);
+  s.av=arrow(c.c2,'v');s.af=arrow(c.c4);s.tr_=tag('',.55);
   s.nom=(2e6)/(.01*pt[1]);
   return s;
  },
@@ -2121,7 +2164,7 @@ add({id:'magnet',grade:11,name:'Лоренц күші. Магнит өрісін
  grab:{plane:'xz',y:.8,meshes:function(S){return [S.part];},on:function(ph,pt,S,p){
   if(ph==='start'||ph==='move'){var r=clamp(Math.hypot(pt.x,pt.z),.6,8.4),pt0=PART[p.typ]||PART[0],sc=4.5/S.nom;api.setP({v:clamp(Math.round(r/sc*(p.B*1e-3)*pt0[1]/1e3/100)*100,100,50000)},false);}}},
  read:function(p,s){var k=this.calc(p),r=unitLen(k.r),T_=unitT(k.T),q=PART[p.typ]||PART[0];
-  return [['Радиус r',f(r[0],2),r[1]],['Период T',f(T_[0],2),T_[1]],['q/m',f(q[1]/1e7,2),'·10⁷ Кл/кг'],['Заряд таңбасы',q[2]<0?'теріс':'оң',''],['Айналу бағыты',(k.sgn*p.dirB)>0?'сағат тіліне қарсы':'сағат тілімен','']];},
+  return [['Радиус r',f(r[0],2),r[1]],['Период T',f(T_[0],2),T_[1]],['q/m',sci(q[1],'Кл/кг'),''],['Заряд таңбасы',q[2]<0?'теріс':'оң',''],['Айналу бағыты',(k.sgn*p.dirB)>0?'сағат тіліне қарсы':'сағат тілімен','']];},
  live:function(p,s){var k=this.calc(p),r=unitLen(k.r);return R`r=\frac{m v}{|q| B}=\frac{v}{(q/m)\,B}=${f(r[0],2)}\,\text{${r[1]}}`;},
  tips:['Магнит индукциясын арттырсаң, орбита тарылады, ал бөлшек жылдамдығын арттырсаң, орбита кеңейеді. Период жылдамдыққа тәуелді емес.','Электрон мен протон қарама-қарсы бағытта айналады, өйткені заряд таңбалары әр түрлі.','Протон электроннан 1836 есе ауыр, сондықтан бірдей жылдамдықта радиусы шамамен 1836 есе үлкен. Модельде көрінісі үшін әр бөлшек өз масштабымен салынған.']
 });
@@ -2469,6 +2512,1524 @@ add({id:'spring',grade:9,name:'Серіппелі маятник. Гармони
  live:function(p,s){var T0=2*PI*Math.sqrt(p.m/p.k);return R`T=2\pi\sqrt{\frac{m}{k}}=2\pi\sqrt{\frac{${f(p.m,1)}}{${f(p.k,0)}}}=${f(T0,2)}\,\text{с}`;},
  tips:['Массаны 4 есе арттырсаң, период 2 есе артады. Серіппені қатайтсаң, период кемиді.','Амплитуданы өзгерткенде период өзгермейді. Арбаны аз немесе көп созып көр.','Үйкелісті қоссаң, тербеліс баяу өшеді: график амплитудасы кішірейеді.']
 });
+/* ===== Жаңа зертханалар (1): толқын, жаңғырық, жай механизмдер ===== */
+
+/* ---- Механикалық толқын ---- */
+add({id:'wave',grade:9,name:'Механикалық толқын. Толқын ұзындығы',hint:'«▶ Іске қосу» түймесін бас: толқын жүгіреді, бірақ қызыл бөлшек өз орнында ғана тербеледі',
+ theory:{
+  def:'Толқын — тербелістің ортада таралуы. Толқын энергия мен тербеліс күйін тасымалдайды, ал ортаның бөлшектері өз тепе-теңдік орнының төңірегінде ғана тербеледі. Көлденең толқында бөлшектер таралу бағытына перпендикуляр, бойлық толқында (дыбыс, серіппедегі сығылу) бағыт бойымен тербеледі. Толқын ұзындығы λ — бір период ішінде толқынның жүретін жолы.',
+  formulas:[{tex:R`\lambda=vT=\frac{v}{\nu}`,note:'толқын ұзындығы'},{tex:R`v=\lambda\nu`,note:'толқын жылдамдығы'},{tex:R`T=\frac{1}{\nu}`,note:'период'},{tex:R`y=A\sin(\omega t-kx),\ k=\frac{2\pi}{\lambda}`,note:'жүгіруші толқын теңдеуі'}],
+  vars:[['\\lambda','толқын ұзындығы','м'],['v','толқын жылдамдығы','м/с'],['\\nu','жиілік','Гц'],['T','период','с'],['A','амплитуда','м']],
+  sci:{name:'Христиан Гюйгенс',years:'1629–1695',text:'1678 жылы жарықтың толқындық теориясын жасады. Оның принципі бойынша толқынның әр нүктесі жаңа толқындардың көзі болады.'}},
+ params:[
+  {k:'mode',l:'Толқын түрі',sel:[['Көлденең (жіпте)',0],['Бойлық (сығылу мен сирену)',1]],val:0},
+  {k:'nu',l:'Жиілік ν',min:.5,max:2.5,step:.1,val:1,u:'Гц',hi:10,nr:true},
+  {k:'v',l:'Толқын жылдамдығы v',min:2,max:8,step:.5,val:4,u:'м/с',hi:50,nr:true},
+  {k:'A',l:'Амплитуда A (көрнекілік үшін үлкейтілген)',min:.3,max:1.5,step:.1,val:.9,u:'м',hi:2,nr:true}],
+ cam:{th:0,ph:1.3,r:34,t:[0,3,0]},
+ build:function(p){
+  var c=C(),s={t:0,N:64,xs:[],bs:[],rows:p.mode===1?3:1};
+  box(34,.3,8,'pine',[0,.15,0]);
+  var i,r;
+  for(r=0;r<s.rows;r++){s.bs.push([]);for(i=0;i<s.N;i++){var x=-15+30*i/(s.N-1);if(r===0)s.xs.push(x);
+   var m=sph(p.mode===1?.16:.2,c.c2,[x,3+(p.mode===1?(r-1)*.9:0),0]);m.castShadow=false;s.bs[r].push(m);}}
+  if(p.mode===0)s.ln=line([V3(-15,3,0),V3(15,3,0)],c.c2);
+  s.mark=sph(.4,c.c1,[0,3,0]);
+  s.axis=line([V3(-15,3,0),V3(15,3,0)],c.neu,.35);
+  s.lm=line([V3(0,5.2,0),V3(1,5.2,0)],c.c4);s.lt=tag('λ',.5);s.lt.position.set(0,5.9,0);
+  s.dir=arrow(c.c3);setArrow(s.dir,V3(-3,6.8,0),V3(1,0,0),3);s.dt=tag('v',.5);s.dt.position.set(0,7,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  s.t+=Math.min(dt,.05);var w=2*PI*p.nu,lam=p.v/p.nu,k=2*PI/lam,i,r;
+  var xm=0;
+  for(i=0;i<s.N;i++){var x=s.xs[i],ph=w*s.t-k*x,u=p.A*Math.sin(ph);
+   if(p.mode===0){s.bs[0][i].position.set(x,3+u,0);}
+   else for(r=0;r<s.rows;r++)s.bs[r][i].position.set(x+u*.9,3+(r-1)*.9,0);}
+  if(p.mode===0){
+   var pts=[];for(i=0;i<s.N;i++)pts.push(s.bs[0][i].position.clone());setLine(s.ln,pts);
+   var xc=((w*s.t-PI/2)/k)%lam;xc=xc-lam*Math.floor((xc+15)/lam);
+   s.lm.visible=s.lt.visible=true;setLine(s.lm,[V3(xc,5.2,0),V3(xc+lam,5.2,0)]);s.lt.position.set(xc+lam/2,5.9,0);setTag(s.lt,'λ = '+f(lam,1)+' м');
+  }else{s.lm.visible=s.lt.visible=true;var x0=-15+(((w*s.t-0)/k)%lam+lam)%lam-lam;setLine(s.lm,[V3(x0,5.2,0),V3(x0+lam,5.2,0)]);s.lt.position.set(x0+lam/2,5.9,0);setTag(s.lt,'λ = '+f(lam,1)+' м');}
+  var mi=Math.round((0+15)/30*(s.N-1));s.mark.position.copy(s.bs[0][mi].position);if(p.mode===1)s.mark.position.y=3;
+  setTag(s.dt,'v = '+f(p.v,1)+' м/с');
+ },
+ read:function(p,s){var lam=p.v/p.nu;return [['Толқын ұзындығы λ',f(lam,2),'м'],['Период T',f(1/p.nu,2),'с'],['Жиілік ν',f(p.nu,1),'Гц'],['Жылдамдық v = λν',f(lam*p.nu,1),'м/с'],['Циклдік жиілік ω',f(2*PI*p.nu,2),'рад/с'],['Түрі',p.mode===0?'көлденең':'бойлық','']];},
+ live:function(p){var lam=p.v/p.nu;return R`\lambda=\frac{v}{\nu}=\frac{${f(p.v,1)}}{${f(p.nu,1)}}=${f(lam,2)}\,\text{м}`;},
+ tips:['Жиілікті арттырсаң, толқын ұзындығы қысқарады: жылдамдық тұрақты болса λ = v/ν.','Қызыл шарик толқынмен бірге жүгірмейді, тек жоғары-төмен тербеледі. Толқын заттарды емес, энергияны тасымалдайды.','Бойлық толқынға ауыстыр: бөлшектер бағыт бойымен тербеліп, қоюлану мен сирену аймақтары пайда болады. Дыбыс осындай толқын.']
+});
+
+/* ---- Дыбыс және жаңғырық ---- */
+add({id:'echo',grade:9,name:'Дыбыс жылдамдығы. Жаңғырық',hint:'«▶ Іске қосу» түймесін бас: дыбыс қабырғаға барып, кері қайтады',
+ theory:{
+  def:'Дыбыс — серпімді ортада таралатын бойлық механикалық толқын. Вакуумда дыбыс таралмайды. Дыбыстың жылдамдығы ортаға тәуелді: газда баяу, сұйықта жылдамырақ, қатты денеде ең жылдам. Дыбыс бөгеттен шағылып қайтса, жаңғырық естіледі. Адам құлағы 0,1 с-тан артық кідірген дыбысты бөлек естиді.',
+  formulas:[{tex:R`s=vt`,note:'дыбыс жүрген жол'},{tex:R`t=\frac{2d}{v}`,note:'жаңғырық уақыты'},{tex:R`d=\frac{vt}{2}`,note:'бөгетке дейінгі қашықтық'}],
+  vars:[['v','дыбыс жылдамдығы','м/с'],['d','бөгетке дейінгі қашықтық','м'],['t','жаңғырықтың кешігуі','с']],
+  sci:{name:'Марен Мерсенн',years:'1588–1648',text:'1636 жылы жаңғырық әдісімен дыбыс жылдамдығын бірінші рет өлшеді. Ол ауада шамамен 316 м/с деп тапты.'}},
+ params:[
+  {k:'v',l:'Орта',sel:[['Ауа (20 °C) · 343 м/с',343],['Су · 1480 м/с',1480],['Болат · 5000 м/с',5000]],val:343},
+  {k:'d',l:'Қабырғаға дейінгі қашықтық d',min:20,max:500,step:10,val:170,u:'м',hi:2000},
+  {k:'sl',l:'Баяулату коэффициенті',min:.05,max:1,step:.05,val:.5,u:'×',nr:true,hi:1}],
+ cam:{th:0,ph:1.15,r:36,t:[0,1,0]},
+ build:function(p){
+  var c=C(),s={tm:0,done:false,x0:-13,x1:13};
+  box(34,.3,10,'pine',[0,.15,0]);
+  cyl(.5,.6,2.2,c.c2,[s.x0-.5,1.4,0]);sph(.55,c.c1,[s.x0-.5,2.9,0]);
+  box(.8,7,10,'brick',[s.x1+.4,3.5,0]);
+  s.front=cyl(3.4,3.4,.12,c.c3,[s.x0,3,0],{transparent:true,opacity:.45});s.front.rotation.z=PI/2;
+  s.pos=0;s.tag=tag('Дыбыс',.5);s.tag.position.set(0,7.4,0);
+  s.tag2=tag('',.5);s.tag2.position.set((s.x0+s.x1)/2,5.4,0);
+  s.ln=line([V3(s.x0,.35,3),V3(s.x1,.35,3)],c.neu);s.dl=tag('d = '+f(p.d,0)+' м',.5);s.dl.position.set(0,-.2,3.2);
+  return s;
+ },
+ step:function(dt,p,s){
+  var T=2*p.d/p.v;
+  if(dt>0&&!s.done){s.tm+=Math.min(dt,.05)*p.sl;if(s.tm>=T){s.tm=T;s.done=true;}}
+  var fr=s.tm/T,u=fr<.5?fr*2:2-fr*2;s.front.position.x=s.x0+(s.x1-s.x0)*u;
+  s.front.visible=s.tm>0&&!(s.done);
+  setTag(s.tag,s.tm===0?'Дыбыс шығарылмаған':(fr<.5?'→ дыбыс барады':(s.done?'':'← жаңғырық қайтады')));
+  setTag(s.tag2,s.done?'Жаңғырық естілді: t = '+f(T,2)+' с':'');
+  s.T=T;
+ },
+ read:function(p,s){var T=2*p.d/p.v,tm=s.tm||0,heard=T>.1;return [['Жаңғырық уақыты t = 2d/v',f(T,3),'с'],['Модельдік уақыт',f(tm,3),'с'],['Қашықтық d',f(p.d,0),'м'],['Дыбыс жылдамдығы v',f(p.v,0),'м/с'],['Жүрген жол 2d',f(2*p.d,0),'м'],['Жаңғырық',heard?'бөлек естіледі (t > 0,1 с)':'дыбыспен қосылып кетеді','']];},
+ live:function(p){return R`t=\frac{2d}{v}=\frac{2\cdot${f(p.d,0)}}{${f(p.v,0)}}=${f(2*p.d/p.v,3)}\,\text{с}`;},
+ tips:['Орта ауаны суға ауыстыр: дыбыс 4 есеге жуық жылдам, жаңғырық тез қайтады.','Қашықтықты 20 м-ге дейін азайтсаң, t < 0,1 с болады да, жаңғырық дыбыспен қосылып кетеді.','Жаңғырықтың кешігуін өлшеп, қашықтықты табуға болады: d = vt/2. Эхолот осылай жұмыс істейді.']
+});
+
+/* ---- Жай механизмдер және ПӘК ---- */
+add({id:'machine',grade:7,name:'Жай механизмдер. «Механиканың алтын ережесі» және ПӘК',hint:'«▶ Іске қосу» түймесін бас: жүк көтеріледі. Үйкелісті өзгертіп ПӘК-ті салыстыр',
+ theory:{
+  def:'Жай механизмдер (көлбеу жазықтық, блок) күштен ұтыс береді, бірақ жолда сонша ұтылтады. Жұмыстан ешбір механизм ұтыс бермейді: бұл «механиканың алтын ережесі». Жүкті көтеруге жұмсалған пайдалы жұмыс әрқашан толық жұмыстан аз, өйткені үйкеліс пен механизм салмағы жұмыс жасатады. Пайдалы жұмыстың толық жұмысқа қатынасы — пайдалы әсер коэффициенті (ПӘК).',
+  formulas:[{tex:R`A_\text{п}=mgh`,note:'пайдалы жұмыс'},{tex:R`A_\text{т}=Fs`,note:'толық жұмыс'},{tex:R`\eta=\frac{A_\text{п}}{A_\text{т}}\cdot100\%`,note:'ПӘК'},{tex:R`F=\frac{mgh}{s}`,note:'идеал механизм: күштен ұтыс — жолдан ұтылыс'}],
+  vars:[['m','жүк массасы','кг'],['h','көтеру биіктігі','м'],['F','қолданылатын күш','Н'],['s','күш түсірілген нүктенің жолы','м'],['\\eta','ПӘК','%']],
+  sci:{name:'Архимед',years:'б.з.д. 287–212',text:'Иінтірек пен блок жүйелерінің заңдарын зерттеді. «Маған тірек беріңдер, мен Жерді көтеремін» деген сөзі аңыз болып қалған.'}},
+ params:[
+  {k:'typ',l:'Механизм',sel:[['Көлбеу жазықтық',0],['Қозғалмайтын блок',1],['Қозғалмалы блок',2]],val:0},
+  {k:'m',l:'Жүк массасы m',min:1,max:20,step:1,val:10,u:'кг',hi:100,nr:true},
+  {k:'h',l:'Көтеру биіктігі h',min:.5,max:2,step:.1,val:1,u:'м',hi:3},
+  {k:'L',l:'Жазықтық ұзындығы L (көлбеу жазықтықта)',min:1,max:5,step:.5,val:3,u:'м',hi:8},
+  {k:'mu',l:'Үйкеліс коэффициенті μ',min:0,max:.5,step:.05,val:.1,u:'',hi:1,nr:true},
+  {k:'mb',l:'Қозғалмалы блоктың массасы',min:0,max:5,step:.5,val:1,u:'кг',hi:20,nr:true}],
+ cam:{th:0,ph:1.25,r:34,t:[0,4,0]},
+ calc:function(p){
+  var h=p.h,Lf=0,F,sx,Fid,ang=0;
+  if(p.typ===0){Lf=Math.max(p.L,h*1.2);var sa=h/Lf,ca=Math.sqrt(1-sa*sa);ang=Math.asin(sa);F=p.m*G*(sa+p.mu*ca);sx=Lf;Fid=p.m*G*sa;}
+  else if(p.typ===1){F=p.m*G*(1+p.mu);sx=h;Fid=p.m*G;}
+  else{F=(p.m+p.mb)*G/2*(1+p.mu);sx=2*h;Fid=p.m*G/2;}
+  var Ap=p.m*G*h,At=F*sx;return {F:F,s:sx,Fid:Fid,Ap:Ap,At:At,eta:Ap/At*100,Lf:Lf,ang:ang,gain:p.m*G/F};
+ },
+ build:function(p){
+  var c=C(),k=this.calc(p),sc=p.typ===0?2:1.5,s={u:0,k:k,sc:sc};
+  box(34,.3,12,'pine',[0,.15,0]);
+  if(p.typ===0){
+   var H=p.h*sc,Lx=Math.sqrt(k.Lf*k.Lf-p.h*p.h)*sc,sh=new T.Shape();sh.moveTo(0,0);sh.lineTo(Lx,0);sh.lineTo(Lx,H);sh.closePath();
+   var g=new T.ExtrudeGeometry(sh,{depth:5,bevelEnabled:false});g.translate(0,0,-2.5);
+   add3(g,M('concrete'),[-9,.3,0]);s.x0=-9;s.Lx=Lx;s.H=H;s.ang=k.ang;s.len=Math.sqrt(Lx*Lx+H*H);
+   s.blk=box(2.2,1.4,2.2,'wood',[0,0,0]);
+   s.ar=arrow(c.c1);s.ft=tag('F',.5);
+   var lbl=tag('h = '+f(p.h,1)+' м',.45);lbl.position.set(-9+Lx+2,.3+H/2,0);
+   var l2=tag('L = '+f(k.Lf,1)+' м',.45);l2.position.set(-9+Lx/2-1.5,.3+H/2+1.8,2.9);
+  }else{
+   var by=11.5,rd=1.1;box(14,.8,2.4,c.struct,[0,by+.4,0]);box(.5,by,.5,c.neu,[-6.6,by/2,0]);box(.5,by,.5,c.neu,[6.6,by/2,0]);
+   s.by=by;s.py=by-1.6;s.rd=rd;
+   s.hand=sph(.55,c.c1,[0,0,0]);s.blk=box(2.2,1.6,2.2,'iron',[0,1.1,0]);
+   s.rope=line([V3(0,0,0),V3(0,1,0)],0xe8d9a8);
+   if(p.typ===1){s.fp=cyl(rd,rd,.7,'steel',[0,s.py,0]);s.fp.rotation.x=PI/2;box(.3,1.6,.3,c.neu,[0,by-.8,0]);}
+   else{s.fp=cyl(rd,rd,.7,'steel',[-2.2,s.py,0]);s.fp.rotation.x=PI/2;box(.3,1.6,.3,c.neu,[-2.2,by-.8,0]);
+    s.mp=cyl(rd,rd,.7,'steel',[0,3.3,0]);s.mp.rotation.x=PI/2;box(.4,.4,.4,c.neu,[1.1,by-.2,0]);}
+   s.ar=arrow(c.c1);s.ft=tag('F',.5);
+  }
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p),sc=s.sc;s.k=k;if(dt>0)s.u=Math.min(1,s.u+Math.min(dt,.05)/6);var u=s.u,c=C();
+  if(p.typ===0){
+   var a=s.ang,sd=1.2+u*(s.len-2.4),X=s.x0+sd*Math.cos(a),Y=.3+sd*Math.sin(a),n=V3(-Math.sin(a),Math.cos(a)),d=V3(Math.cos(a),Math.sin(a));
+   s.blk.rotation.z=a;s.blk.position.set(X+n.x*.7,Y+n.y*.7,0);
+   var o=V3(X+n.x*.7+d.x*1.1,Y+n.y*.7+d.y*1.1,0),len=Math.min(6,k.F/15);setArrow(s.ar,o,d,len);
+   s.ft.position.set(o.x+d.x*len+.4,o.y+d.y*len+1,0);setTag(s.ft,'F = '+f(k.F,0)+' Н');
+  }else{
+   var hh=u*p.h*sc,rd=s.rd,py=s.py,pts,hy,hx,ly;
+   if(p.typ===1){
+    ly=1.1+hh;hy=7.6-hh;hx=rd;s.blk.position.set(-rd,ly,0);
+    pts=[V3(-rd,ly+.8,0),V3(-rd,py,0),V3(-.78,py+.78,0),V3(0,py+rd,0),V3(.78,py+.78,0),V3(rd,py,0),V3(rd,hy,0)];
+   }else{
+    var my=3.3+hh;ly=my-rd-.3-.8;hy=7.6-2*hh;hx=-2.2-rd;s.mp.position.set(0,my,0);s.blk.position.set(0,ly,0);
+    pts=[V3(1.1,s.by,0),V3(1.1,my,0),V3(.78,my-.78,0),V3(0,my-rd,0),V3(-.78,my-.78,0),V3(-1.1,my,0),V3(-1.1,py,0),V3(-1.6,py+.9,0),V3(-2.2,py+rd,0),V3(-2.8,py+.9,0),V3(-3.3,py,0),V3(-3.3,hy,0)];
+   }
+   setLine(s.rope,pts);s.hand.position.set(hx,hy-.3,0);
+   var len2=Math.min(5,k.F/18);setArrow(s.ar,V3(hx,hy-.9,0),V3(0,-1,0),len2);
+   s.ft.position.set(hx+1.6,hy-1.3,0);setTag(s.ft,'F = '+f(k.F,0)+' Н');
+  }
+ },
+ read:function(p,s){var k=this.calc(p);return [['Қолданылатын күш F',f(k.F,1),'Н'],['Идеал күш (үйкеліссіз)',f(k.Fid,1),'Н'],['Күштен ұтыс (mg/F)',f(k.gain,2),'есе'],['Күш жүрген жол s',f(k.s,2),'м'],['Пайдалы жұмыс Aп = mgh',f(k.Ap,1),'Дж'],['Толық жұмыс Aт = Fs',f(k.At,1),'Дж'],['ПӘК η',f(k.eta,1),'%']];},
+ live:function(p){var k=this.calc(p);return R`\eta=\frac{mgh}{Fs}=\frac{${f(k.Ap,1)}}{${f(k.At,1)}}=${f(k.eta,1)}\%`;},
+ tips:['Үйкелісті 0 ет (және блок массасын 0): ПӘК 100 % болады, A = mgh. Күштен қанша ұтсаң, жолдан сонша ұтыласың.','Қозғалмалы блок күшті 2 есе азайтады, бірақ арқанды 2 есе ұзын тартасың. Қозғалмайтын блок тек күштің бағытын өзгертеді.','Көлбеу жазықтықты ұзартсаң, күш азаяды, ал жол ұзарады. Жұмыс (үйкеліссіз) өзгермейді.']
+});
+
+/* ---- Атмосфералық қысым. Торричелли тәжірибесі ---- */
+add({id:'torr',grade:7,name:'Атмосфералық қысым. Торричелли тәжірибесі',hint:'Биіктікті өзгертіп, сұйық бағанасы қалай төмендейтінін қара',
+ theory:{
+  def:'Жерді қоршаған ауа қабаты (атмосфера) өз салмағымен барлық денелерге қысым түсіреді. Торричелли ұшы жабық түтікті сынапқа толтырып, ашық ыдысқа төңкерді. Сынап бағанасы түтікте белгілі биіктікте тұрып қалады: оның гидростатикалық қысымы атмосфералық қысыммен теңеседі. Теңіз деңгейінде бұл 760 мм сынап бағанасы (101 325 Па). Көтерілген сайын қысым азаяды: шамамен әр 12 м биіктікке 1 мм сын. бағ.',
+  formulas:[{tex:R`p_\text{атм}=\rho gh`,note:'бағана қысымы атмосфералық қысымға тең'},{tex:R`h=\frac{p_\text{атм}}{\rho g}`,note:'бағана биіктігі'},{tex:R`1\ \text{мм сын. бағ.}\approx133{,}3\ \text{Па}`,note:'қысым бірлігі'},{tex:R`\Delta p\approx1\ \text{мм сын. бағ. / 12 м}`,note:'биіктікпен кему (шамамен)'}],
+  vars:[['p_\\text{атм}','атмосфералық қысым','Па'],['\\rho','сұйық тығыздығы','кг/м³'],['g','еркін түсу үдеуі','9,8 м/с²'],['h','бағана биіктігі','м']],
+  sci:{name:'Эванджелиста Торричелли',years:'1608–1647',text:'1643 жылы алғаш рет атмосфералық қысымды өлшеді және түтік ішінде бос кеңістік (вакуум) пайда болатынын көрсетті. Барометр осыдан шықты.'}},
+ params:[
+  {k:'liq',l:'Сұйық',sel:[['Сынап · 13 600 кг/м³',13600],['Су · 1000 кг/м³',1000],['Спирт · 800 кг/м³',800]],val:13600},
+  {k:'alt',l:'Теңіз деңгейінен биіктік',min:0,max:3000,step:100,val:0,u:'м',hi:3000,nr:true}],
+ cam:{th:.15,ph:1.35,r:34,t:[0,6,0]},
+ calc:function(p){var mm=760-p.alt/12,pa=mm*133.322,H=pa/(p.liq*G);return {mm:mm,pa:pa,H:H};},
+ build:function(p){
+  var c=C(),k=this.calc(p),s={};
+  box(18,.3,12,'pine',[0,.15,0]);
+  s.cup=cyl(4,3.6,2,0xcfe6ee,[0,1.3,0],{transparent:true,opacity:.3,roughness:.1});
+  s.pool=cyl(3.4,3.4,1.2,p.liq===13600?0x9aa6b2:p.liq===1000?0x4f9ac8:0xd9c88a,[0,1,0],p.liq===13600?{metalness:.9,roughness:.2}:{transparent:true,opacity:.85});
+  var tube=cyl(.9,.9,11,0xdff0f6,[0,7,0],{transparent:true,opacity:.22,roughness:.05});
+  s.col=cyl(.7,.7,1,p.liq===13600?0x9aa6b2:p.liq===1000?0x4f9ac8:0xd9c88a,[0,3,0],p.liq===13600?{metalness:.9,roughness:.2}:{transparent:true,opacity:.85});
+  s.vac=tag('вакуум',.5);s.vac.position.set(0,12.8,0);
+  s.pa=arrow(c.c4,'p');setArrow(s.pa,V3(-2.4,5,0),V3(0,-1,0),2.4);s.pa2=arrow(c.c4);setArrow(s.pa2,V3(2.4,5,0),V3(0,-1,0),2.4);
+  s.pt=tag('p атм',.5);s.pt.position.set(4.5,4.6,0);
+  s.rl=line([V3(1.6,1.6,0),V3(1.6,10.6,0)],c.neu);
+  s.ht=tag('',.5);s.ht.position.set(4.3,6,0);
+  s.hm=line([V3(1.2,1.6,0),V3(2,1.6,0)],c.c1);
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p),sea=101325/(p.liq*G),Hd=9*k.H/sea;
+  s.col.scale.y=Math.max(.01,Hd);s.col.position.y=1.6+Hd/2;s.hm.position.y=Hd;
+  var u=p.liq===13600?k.mm:k.H;setTag(s.ht,p.liq===13600?'h = '+f(k.mm,0)+' мм':'h = '+f(k.H,2)+' м');
+  setTag(s.pt,'p = '+f(k.pa/1000,1)+' кПа');
+ },
+ read:function(p,s){var k=this.calc(p);return [['Атмосфералық қысым',f(k.pa/1000,2),'кПа'],['Қысым (мм сын. бағ.)',f(k.mm,0),'мм'],['Қысым (атм.)',f(k.pa/101325,3),'атм'],['Бағана биіктігі h = p/ρg',f(k.H,3),'м'],['Сұйық тығыздығы',f(p.liq,0),'кг/м³'],['Биіктік',f(p.alt,0),'м']];},
+ live:function(p){var k=this.calc(p);return R`h=\frac{p}{\rho g}=\frac{${f(k.pa,0)}}{${f(p.liq,0)}\cdot9{,}8}=${f(k.H,3)}\,\text{м}`;},
+ tips:['Сынапты суға ауыстыр: су бағанасы 10 м-ден асады, сондықтан Торричелли ауыр сынапты алған.','Биіктікті 3000 м-ге дейін арттыр: қысым азаяды, бағана төмендейді. Альпинистердің барометрі осылай биіктікті көрсетеді.','Түтіктің ішінде сұйықтан жоғары бос кеңістік бар: оны вакуум дейміз, ол қысым түсірмейді.']
+});
+
+/* ---- Паскаль заңы. Гидравликалық пресс ---- */
+add({id:'pascal',grade:7,name:'Паскаль заңы. Гидравликалық пресс',hint:'«▶ Іске қосу» түймесін бас: кіші поршень төмен басылады, үлкені жүкті көтереді',
+ theory:{
+  def:'Паскаль заңы: сұйыққа немесе газға түсірілген қысым барлық бағытта өзгермей беріледі. Гидравликалық пресс осы заңға негізделген. Кіші поршеньге түсірілген күш сұйықта қысым туғызады, ал сол қысым үлкен поршеньге әсер етіп, күшті үлкен ауданға қатынасындай есе арттырады. Бірақ күштен қанша есе ұтсақ, жолдан сонша есе ұтыламыз: жұмыс өзгермейді.',
+  formulas:[{tex:R`p=\frac{F_1}{S_1}=\frac{F_2}{S_2}`,note:'Паскаль заңы'},{tex:R`\frac{F_2}{F_1}=\frac{S_2}{S_1}`,note:'күштен ұтыс'},{tex:R`\frac{s_2}{s_1}=\frac{S_1}{S_2}`,note:'жолдан ұтылыс'},{tex:R`F_1s_1=F_2s_2`,note:'жұмыс тең'}],
+  vars:[['F_1','кіші поршеньге түсетін күш','Н'],['F_2','үлкен поршеньнің күші','Н'],['S_1,S_2','поршеньдердің аудандары','см²'],['s_1,s_2','поршеньдердің жүрген жолдары','см']],
+  sci:{name:'Блез Паскаль',years:'1623–1662',text:'1653 жылы сұйықтың қысымы барлық бағытқа бірдей берілетінін тұжырымдады. Гидравликалық пресс пен тежегіштердің негізі осы заң.'}},
+ params:[
+  {k:'F1',l:'Кіші поршеньге күш F₁',min:10,max:200,step:10,val:50,u:'Н',hi:1000,nr:true},
+  {k:'S1',l:'Кіші поршень ауданы S₁',min:1,max:10,step:1,val:2,u:'см²',hi:50},
+  {k:'S2',l:'Үлкен поршень ауданы S₂',min:10,max:200,step:10,val:100,u:'см²',hi:500}],
+ cam:{th:0,ph:1.3,r:32,t:[0,5,0]},
+ calc:function(p){var p1=p.F1/(p.S1*1e-4),F2=p1*p.S2*1e-4,s1=10,s2=s1*p.S1/p.S2;return {p:p1,F2:F2,gain:p.S2/p.S1,s1:s1,s2:s2,A1:p.F1*s1/100,A2:F2*s2/100};},
+ build:function(p){
+  var c=C(),s={u:0},r1=Math.sqrt(p.S1)*.26,r2=Math.sqrt(p.S2)*.26,x1=-7,x2=3.5;
+  box(34,.3,12,'pine',[0,.15,0]);
+  box(Math.abs(x2-x1)+r1+r2+2,1.2,Math.max(2,2*r2*.9),c.struct,[(x1+x2)/2,.9,0]);
+  var fl=0x4f9ac8;
+  cyl(r1+.12,r1+.12,7,0xdff0f6,[x1,5,0],{transparent:true,opacity:.2});cyl(r2+.12,r2+.12,7,0xdff0f6,[x2,5,0],{transparent:true,opacity:.2});
+  cyl(r1,r1,5.5,fl,[x1,3.75,0],{transparent:true,opacity:.8});cyl(r2,r2,5.5,fl,[x2,3.75,0],{transparent:true,opacity:.8});
+  s.x1=x1;s.x2=x2;s.r1=r1;s.r2=r2;
+  s.p1=cyl(r1,r1,.6,'steel',[x1,6.8,0]);s.p2=cyl(r2,r2,.6,'steel',[x2,6.8,0]);
+  s.load=box(Math.min(2*r2*.9,4),2,Math.min(2*r2*.9,4),'iron',[x2,8.1,0]);
+  s.a1=arrow(c.c1);s.t1=tag('F₁',.5);s.t2=tag('F₂',.5);
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p);if(dt>0)s.u=Math.min(1,s.u+Math.min(dt,.05)/5);var u=s.u,d1=3,d2=d1*p.S1/p.S2;
+  s.p1.position.y=6.8-d1*u;s.p2.position.y=6.8+d2*u;s.load.position.y=8.1+d2*u;
+  setArrow(s.a1,V3(s.x1,s.p1.position.y+3.2,0),V3(0,-1,0),Math.min(3,.6+p.F1/80));
+  s.t1.position.set(s.x1+2.2,s.p1.position.y+3,0);setTag(s.t1,'F₁ = '+f(p.F1,0)+' Н');
+  s.t2.position.set(s.x2+(s.r2>2?s.r2+1.2:2.8),s.load.position.y+1.6,0);setTag(s.t2,'F₂ = '+f(k.F2,0)+' Н');
+ },
+ read:function(p,s){var k=this.calc(p),u=s?s.u||0:0;return [['Қысым p = F₁/S₁',f(k.p/1000,1),'кПа'],['Үлкен поршень күші F₂',f(k.F2,0),'Н'],['Күштен ұтыс',f(k.gain,1),'есе'],['Кіші поршень жолы s₁',f(k.s1*u,1),'см'],['Үлкен поршень жолы s₂',f(k.s2*u,2),'см'],['Жұмыс F₁s₁',f(k.A1*u,2),'Дж'],['Жұмыс F₂s₂',f(k.A2*u,2),'Дж']];},
+ live:function(p){var k=this.calc(p);return R`F_2=F_1\frac{S_2}{S_1}=${f(p.F1,0)}\cdot\frac{${f(p.S2,0)}}{${f(p.S1,0)}}=${f(k.F2,0)}\,\text{Н}`;},
+ tips:['Үлкен поршеньнің ауданын арттыр: күштен ұтыс көбейеді, бірақ үлкен поршень өте аз жылжиды.','Іске қосып, соңында екі жұмысты салыстыр: F₁s₁ мен F₂s₂ тең. Күштен ұтсақ та, жұмыстан ұтпаймыз.','Гидравликалық домкрат, тежегіш және экскаватор осы принциппен жұмыс істейді.']
+});
+
+/* ---- Жылу өткізгіштік ---- */
+var COND=[['Мыс',1.1e-4,0xc9774a,401],['Болат',1.2e-5,0x9aa4ae,50],['Шыны',5e-7,0xbfe3ea,1]];
+add({id:'cond',grade:8,name:'Жылу өткізгіштік. Жылу берудің түрлері',hint:'«▶ Іске қосу» түймесін бас: таяқтарды қыздырғанда балауыз шариктері кімде бұрын түседі?',
+ theory:{
+  def:'Жылу берудің үш түрі бар. Жылу өткізгіштік кезінде энергия заттың бөлшектерінен бөлшектеріне беріледі, зат тасымалданбайды: металдар жақсы, шыны, ағаш, ауа нашар өткізеді. Конвекцияда жылу сұйық пен газдың ағындарымен тасымалданады (жылы ауа көтеріледі). Сәулеленуде жылу электромагниттік толқындармен беріледі, ортасыз да, мысалы Күннен Жерге вакуум арқылы келеді.',
+  formulas:[{tex:R`Q=\frac{\lambda S\,\Delta T}{l}\,t`,note:'жылу өткізгіштік (Фурье заңы)'},{tex:R`\frac{\partial T}{\partial t}=a\frac{\partial^2T}{\partial x^2}`,note:'температура өткізгіштік теңдеуі'}],
+  vars:[['\\lambda','жылу өткізгіштік коэффициенті','Вт/(м·К)'],['a','температура өткізгіштік','м²/с'],['S','көлденең қима ауданы','м²'],['l','таяқ ұзындығы','м']],
+  sci:{name:'Жан Батист Фурье',years:'1768–1830',text:'1822 жылы «Жылудың аналитикалық теориясы» кітабында жылу өткізгіштіктің математикалық теориясын жасады.'}},
+ params:[
+  {k:'Tf',l:'Қыздырғыш температурасы',min:100,max:400,step:50,val:300,u:'°C',hi:800,nr:true},
+  {k:'L',l:'Таяқ ұзындығы',min:10,max:40,step:5,val:20,u:'см',hi:100},
+  {k:'ac',l:'Уақытты жылдамдату',min:20,max:400,step:20,val:100,u:'×',hi:1000,nr:true}],
+ cam:{th:.25,ph:1.05,r:36,t:[0,2,0]},
+ build:function(p){
+  var c=C(),N=24,NB=6,s={t:0,N:N,NB:NB,rods:[]},Lw=22,zs=[-5,0,5],y0=3.2;
+  box(30,.3,16,'pine',[0,.15,0]);
+  box(2.6,2.8,15,'iron',[-Lw/2-1.6,1.7,0]);
+  s.fl=[];
+  COND.forEach(function(m,ri){
+   var z=zs[ri],r={T:[],seg:[],beads:[],base:new T.Color(m[2]),hot:new T.Color(0xff4a1c)};
+   for(var i=0;i<N;i++){r.T.push(20);var sg=cyl(.55,.55,Lw/N+.02,m[2],[-Lw/2+Lw*(i+.5)/N,y0,z]);sg.rotation.z=PI/2;r.seg.push(sg);}
+   box(.5,y0-.5,.5,c.neu,[-Lw/2+2,(y0-.5)/2+.15,z]);box(.5,y0-.5,.5,c.neu,[Lw/2-2,(y0-.5)/2+.15,z]);
+   for(var b=0;b<NB;b++){var bx=-Lw/2+Lw*(b+1)/(NB+1)*1;var bd=sph(.34,0xf4e4a0,[bx,y0-.55-.2,z]);r.beads.push({m:bd,x:bx,i:Math.min(N-1,Math.floor((bx+Lw/2)/Lw*N)),fall:false,vy:0,yr:y0-.75,tf:null});}
+   var tg=tag(m[0],.5);tg.position.set(Lw/2+2.4,y0,z);r.name=m[0];
+   s.rods.push(r);
+  });
+  s.Lw=Lw;s.y0=y0;s.fa=tag('қыздырғыш',.45);s.fa.position.set(-Lw/2-1.6,4.5,0);
+  s.flame=sph(.7,0xff8a2a,[-Lw/2-1,y0,0],{emissive:0xff6a10,emissiveIntensity:.8});
+  return s;
+ },
+ step:function(dt,p,s){
+  var h=Math.min(dt,.05),N=s.N,L=p.L/100,dx=L/N;
+  if(h>0){s.t+=h;
+   s.rods.forEach(function(r,ri){
+    var a=COND[ri][1],tr=h*p.ac,dtm=.4*dx*dx/a,n=Math.max(1,Math.ceil(tr/dtm)),dd=tr/n,T=r.T,i,j,Tn=T.slice();
+    for(j=0;j<n;j++){
+     T[0]=p.Tf;
+     for(i=1;i<N-1;i++)Tn[i]=T[i]+a*dd/(dx*dx)*(T[i+1]-2*T[i]+T[i-1]);
+     Tn[0]=p.Tf;Tn[N-1]=T[N-1]+a*dd/(dx*dx)*(T[N-2]-T[N-1]);
+     for(i=0;i<N;i++)T[i]=Tn[i];
+    }
+   });
+  }
+  s.rods.forEach(function(r,ri){
+   var i;for(i=0;i<N;i++){var fr=clamp((r.T[i]-20)/Math.max(1,p.Tf-20),0,1);r.seg[i].material.color.copy(r.base).lerp(r.hot,fr);}
+   r.beads.forEach(function(b){
+    var Tb=r.T[Math.min(N-1,Math.floor(b.i))];
+    if(!b.fall&&Tb>=60){b.fall=true;b.tf=s.t*p.ac;}
+    if(b.fall&&b.yr>.65){b.vy+=30*h;b.yr=Math.max(.65,b.yr-b.vy*h);b.m.position.y=b.yr;}
+   });
+  });
+  s.flame.scale.setScalar(1+.08*Math.sin(s.t*14));
+ },
+ read:function(p,s){
+  var rows=[],N=s.N;
+  s.rods.forEach(function(r,ri){var n=r.beads.filter(function(b){return b.fall;}).length;rows.push([COND[ri][0]+': түскен шарик',n+' / '+r.beads.length,'']);});
+  var tm=(s.t||0)*p.ac;rows.push(['Модельдік уақыт',f(tm,0),'с']);
+  rows.push(['Мыстың ұшы',f(s.rods[0].T[N-1],0),'°C']);rows.push(['Болаттың ұшы',f(s.rods[1].T[N-1],0),'°C']);rows.push(['Шыныдың ұшы',f(s.rods[2].T[N-1],0),'°C']);
+  return rows;
+ },
+ live:function(p,s){return R`\lambda_{\text{Cu}}\approx401\ \gg\ \lambda_{\text{болат}}\approx50\ \gg\ \lambda_{\text{шыны}}\approx1\ \text{Вт/(м·К)}`;},
+ tips:['Мыс таяғында шариктер бірінен соң бірі түседі, шынымен таяқта түспейді. Жақсы өткізгіштің жылу өткізгіштігі көп есе жоғары.','Таяқты қысқартсаң (10 см), жылу тезірек жетеді. Жылу өткізгіштік уақыты ұзындықтың квадратына пропорционал.','Үйдің терезесі қос шынылы: шыны мен ауа жылуды нашар өткізеді. Конвекция мен сәулелену да жылуды береді, бірақ бұл таяқта тек жылу өткізгіштік жұмыс істейді.']
+});
+
+/* ---- Конденсатор ---- */
+var EPS0=8.854e-12;
+function eng(x,u){var a=Math.abs(x),P=[[1e3,'к'],[1,''],[1e-3,'м'],[1e-6,'мк'],[1e-9,'н'],[1e-12,'п'],[1e-15,'ф']],i;
+  if(a===0)return [f(0,0),u];for(i=0;i<P.length;i++)if(a>=P[i][0]*.9995)return [f(x/P[i][0],a/P[i][0]<10?2:1),P[i][1]+u];return [f(x/1e-15,2),'ф'+u];}
+add({id:'cap',grade:10,name:'Конденсатор. Электр сыйымдылығы',hint:'«▶ Іске қосу» түймесін бас: кілт жабылып, конденсатор зарядталады',
+ theory:{
+  def:'Конденсатор — екі өткізгіш (астар) мен олардың арасындағы диэлектриктен тұратын электр зарядын жинайтын құрылғы. Астарларға кернеу берілгенде олар қарама-қарсы зарядталады, арасында біртекті электр өрісі пайда болады. Сыйымдылық астар ауданына тура пропорционал, олардың арақашықтығына кері пропорционал және диэлектрик өтімділігіне байланысты. Заряд резистор арқылы біртіндеп, экспонента бойынша жиналады.',
+  formulas:[{tex:R`C=\frac{q}{U}`,note:'сыйымдылық'},{tex:R`C=\frac{\varepsilon\varepsilon_0S}{d}`,note:'жазық конденсатор'},{tex:R`W=\frac{CU^2}{2}=\frac{qU}{2}`,note:'өрістің энергиясы'},{tex:R`E=\frac{U}{d}`,note:'өріс кернеулігі'},{tex:R`q(t)=CU\left(1-e^{-t/RC}\right)`,note:'зарядталу, τ = RC'}],
+  vars:[['C','сыйымдылық','Ф'],['\\varepsilon','диэлектрик өтімділігі','—'],['\\varepsilon_0','8,85·10⁻¹²','Ф/м'],['S','астар ауданы','м²'],['d','астарлар арақашықтығы','м']],
+  sci:{name:'Пітер ван Мушенбрук',years:'1692–1761',text:'1745–1746 жылдары Лейден банкасын, алғашқы конденсаторды, жасады. Электр зарядын банкада жинауға болатынын көрсетті.'}},
+ params:[
+  {k:'U',l:'Кернеу U',min:1,max:100,step:1,val:50,u:'В',hi:1000,nr:true},
+  {k:'S',l:'Астар ауданы S',min:10,max:200,step:10,val:100,u:'см²',hi:1000},
+  {k:'d',l:'Астарлар арақашықтығы d',min:1,max:10,step:1,val:3,u:'мм',hi:50},
+  {k:'eps',l:'Диэлектрик',sel:[['Ауа · ε = 1',1],['Парафин · ε = 2,1',2.1],['Слюда · ε = 6',6],['Керамика · ε = 10',10]],val:1},
+  {k:'R',l:'Резистор кедергісі R',min:1,max:100,step:1,val:10,u:'кОм',hi:1000,nr:true}],
+ cam:{th:.3,ph:1.15,r:34,t:[0,3.5,0]},
+ calc:function(p){var C_=p.eps*EPS0*p.S*1e-4/(p.d*1e-3),q=C_*p.U;return {C:C_,q:q,W:q*p.U/2,E:p.U/(p.d*1e-3),tau:p.R*1e3*C_};},
+ build:function(p){
+  var c=C(),k=this.calc(p),s={u:0},side=Math.sqrt(p.S)*.55,gap=1+p.d*.45;
+  box(34,.3,14,'pine',[0,.15,0]);
+  s.y0=2.6;s.gap=gap;s.side=side;
+  box(side,.3,side,'alu',[0,s.y0,0]);s.top=box(side,.3,side,'alu',[0,s.y0+gap,0]);
+  if(p.eps>1)box(side*.96,gap-.4,side*.96,p.eps>5?0xd8c8a0:0xe9dfb4,[0,s.y0+gap/2,0],{transparent:true,opacity:.5});
+  box(.4,s.y0+gap,.4,c.neu,[side/2+1,(s.y0+gap)/2+.15,0]);
+  s.dp=[];s.dm=[];var n=4,i,j,pm=mat(0xd64a4a,{roughness:.4}),mm=mat(0x3d6fd1,{roughness:.4});
+  for(i=0;i<n;i++)for(j=0;j<n;j++){var px=(i-(n-1)/2)*side/(n+.3),pz=(j-(n-1)/2)*side/(n+.3);
+   var a=new T.Mesh(new T.SphereGeometry(.22,14,10),pm);a.position.set(px,s.y0+gap-.35,pz);world.add(a);s.dp.push(a);
+   var b=new T.Mesh(new T.SphereGeometry(.22,14,10),mm);b.position.set(px,s.y0+.35,pz);world.add(b);s.dm.push(b);}
+  s.ars=[];for(i=0;i<5;i++){var ar=arrow(c.c1,i===2?'E':null);var px2=(i-2)*side/6;setArrow(ar,V3(px2,s.y0+gap-.25,((i%2)-.5)*side*.3),V3(0,-1,0),gap-.5);s.ars.push(ar);}
+  box(2.2,2,1.2,c.struct,[-side/2-5.5,1.15,0]);s.bt=tag('U',.5);s.bt.position.set(-side/2-5.5,3.6,0);
+  line([V3(-side/2-5.5,2.2,0),V3(-side/2-5.5,s.y0+gap,0),V3(0,s.y0+gap,0)],c.neu);line([V3(-side/2-5.5,.3,0),V3(-side/2-3,.3,0),V3(-side/2-3,s.y0,0),V3(0,s.y0,0)],c.neu);
+  s.qt=tag('',.5);s.qt.position.set(side/2+4,s.y0+gap/2,0);s.pt=tag('',.45);s.pt.position.set(0,s.y0+gap+2.2,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p);if(dt>0)s.u=Math.min(1,s.u+Math.min(dt,.05)/5);
+  var tm=s.u*5*k.tau,fr=1-Math.exp(-tm/k.tau),q=k.q*fr,n=s.dp.length,vis=q>0?Math.max(1,Math.ceil(n*Math.pow(Math.min(1,q/1e-7),.4))):0,i;
+  for(i=0;i<n;i++){s.dp[i].visible=i<vis;s.dm[i].visible=i<vis;}
+  s.ars.forEach(function(a){a.visible=fr>.02;if(a.userData.lab)a.userData.lab.visible=fr>.02;});
+  setTag(s.bt,'U = '+f(p.U,0)+' В');var e=eng(q,'Кл');setTag(s.qt,'q = '+e[0]+' '+e[1]);
+  setTag(s.pt,'C = '+eng(k.C,'Ф').join(' '));s.fr=fr;s.tm=tm;
+ },
+ read:function(p,s){var k=this.calc(p),fr=s?s.fr||0:0,tm=s?s.tm||0:0,a=eng(k.C,'Ф'),q=eng(k.q*fr,'Кл'),w=eng(k.W*fr,'Дж'),t=eng(k.tau,'с'),tt=eng(tm,'с');
+  return [['Сыйымдылық C',a[0],a[1]],['Заряд q = CU',q[0],q[1]],['Энергия W',w[0],w[1]],['Өріс кернеулігі E = U/d',f(k.E/1000,1),'кВ/м'],['Уақыт тұрақтысы τ = RC',t[0],t[1]],['Өткен уақыт',tt[0],tt[1]],['Зарядталу',f(fr*100,0),'%']];},
+ live:function(p){var k=this.calc(p),a=eng(k.C,'Ф');return R`C=\frac{\varepsilon\varepsilon_0S}{d}=${a[0]}\,\text{${a[1]}}`;},
+ tips:['Астарлар арасын азайтсаң, сыйымдылық артады: C ∼ 1/d. Ауданын үлкейтсең де C артады.','Ауаны слюда не керамикамен ауыстыр: диэлектрик ε есе сыйымдылықты арттырады.','R-ді арттыр: τ = RC артады, конденсатор баяу зарядталады. Ал соңғы заряд q = CU кедергіге тәуелді емес.']
+});
+
+/* ---- Толық тізбек үшін Ом заңы ---- */
+add({id:'emf',grade:10,name:'Толық тізбек үшін Ом заңы. ЭҚК және ішкі кедергі',hint:'Кедергіні өзгертіп, ток пен қуаттың қалай өзгеретінін қара. R = r болғанда қуат ең көп',
+ theory:{
+  def:'Нақты ток көзінің ішкі кедергісі r болады. Тізбектегі ток көздің ЭҚК-не тура және тізбектің толық кедергісіне (сыртқы R мен ішкі r қосындысына) кері пропорционал. Көздің қысқышындағы кернеу ЭҚК-тен ішкі кедергідегі кернеу түсуіне кем. Қысқа тұйықталуда (R = 0) ток өте үлкен болады, ол қауіпті. Сыртқы кедергіде бөлінетін қуат R = r болғанда ең үлкен, бірақ ПӘК сонда 50 % ғана.',
+  formulas:[{tex:R`I=\frac{\mathcal{E}}{R+r}`,note:'толық тізбек үшін Ом заңы'},{tex:R`U=IR=\mathcal{E}-Ir`,note:'қысқыштағы кернеу'},{tex:R`I_\text{қ.т.}=\frac{\mathcal{E}}{r}`,note:'қысқа тұйықталу тогы'},{tex:R`P=I^2R,\quad\eta=\frac{R}{R+r}`,note:'пайдалы қуат және ПӘК'}],
+  vars:[['\\mathcal{E}','ЭҚК','В'],['r','ішкі кедергі','Ом'],['R','сыртқы кедергі','Ом'],['I','ток күші','А'],['U','қысқыштағы кернеу','В']],
+  sci:{name:'Георг Ом',years:'1789–1854',text:'1826–1827 жылдары тізбектегі ток, кернеу және кедергі арасындағы байланысты тәжірибе арқылы тапты. Оның еңбегін алғашында мойындамады.'}},
+ params:[
+  {k:'E',l:'ЭҚК ℰ',min:1.5,max:12,step:.5,val:9,u:'В',hi:100,nr:true},
+  {k:'r',l:'Ішкі кедергі r',min:.1,max:3,step:.1,val:1,u:'Ом',hi:20,nr:true},
+  {k:'R',l:'Сыртқы кедергі R',min:.5,max:20,step:.5,val:4,u:'Ом',hi:200,nr:true}],
+ cam:{th:0,ph:1.3,r:32,t:[0,6,0]},
+ calc:function(p){var I=p.E/(p.R+p.r),U=I*p.R;return {I:I,U:U,Ur:I*p.r,P:I*I*p.R,Pt:p.E*I,eta:p.R/(p.R+p.r)*100,Isc:p.E/p.r,Pm:p.E*p.E/(4*p.r)};},
+ build:function(p){
+  var c=C(),s={ph:0,N:36};
+  box(34,.3,12,'pine',[0,.15,0]);
+  s.path=[V3(-9,3,0),V3(9,3,0),V3(9,10,0),V3(-9,10,0)];
+  line(s.path.concat([s.path[0]]),c.neu);
+  box(2.8,4.6,1.6,0x5a8f6a,[-9,6.5,0]);box(1.2,.7,.7,c.c3,[-9,8.6,0]);
+  box(1.6,1.2,1.6,0xc9774a,[-9,4.1,0]);
+  var t1=tag('ℰ',.55);t1.position.set(-11.6,6.5,0);var t2=tag('r',.55);t2.position.set(-11.4,4.1,0);
+  s.rb=box(2.2,4.2,1.6,0xc9774a,[9,6.5,0]);var t3=tag('R',.55);t3.position.set(11.8,6.5,0);
+  s.dots=[];for(var i=0;i<s.N;i++)s.dots.push(sph(.17,c.c3,[0,0,0]));
+  s.tt=tag('',.5);s.tt.position.set(0,12.6,0);
+  s.dv=cyl(1.5,1.5,.4,0xf2efe6,[-3,6.5,0]);s.dv.rotation.x=PI/2;s.nv=line([V3(-3,6.5,.3),V3(-3,7.5,.3)],c.c4);var tv=tag('V',.4);tv.position.set(-3,8.6,0);
+  s.da=cyl(1.5,1.5,.4,0xf2efe6,[3,6.5,0]);s.da.rotation.x=PI/2;s.na=line([V3(3,6.5,.3),V3(3,7.5,.3)],c.c1);var ta=tag('A',.4);ta.position.set(3,8.6,0);
+  s.tv=tag('',.42);s.tv.position.set(-3,4.3,0);s.ta=tag('',.42);s.ta.position.set(3,4.3,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p),h=Math.min(dt,.05),sp=Math.min(.6,k.I*.035);s.ph=(s.ph+h*sp*60)%1;
+  var pts=s.path.concat([s.path[0]]),lens=[],tot=0,i;for(i=0;i<4;i++){lens.push(Math.hypot(s.path[(i+1)%4].x-s.path[i].x,s.path[(i+1)%4].y-s.path[i].y));tot+=lens[i];}
+  for(i=0;i<s.N;i++){var d=((i/s.N+s.ph)%1)*tot,j=0;while(j<3&&d>lens[j]){d-=lens[j];j++;}
+   var a=s.path[j],b=s.path[(j+1)%4],u=d/lens[j];s.dots[i].position.set(a.x+(b.x-a.x)*u,a.y+(b.y-a.y)*u,.5);}
+  var av=-PI*.75+clamp(k.U/p.E,0,1)*PI*1.5,aa=-PI*.75+clamp(k.I/(p.E/p.r),0,1)*PI*1.5;
+  setLine(s.nv,[V3(-3,6.5,.3),V3(-3+1.3*Math.sin(av),6.5+1.3*Math.cos(av),.3)]);setLine(s.na,[V3(3,6.5,.3),V3(3+1.3*Math.sin(aa),6.5+1.3*Math.cos(aa),.3)]);
+  setTag(s.tv,f(k.U,2)+' В');setTag(s.ta,f(k.I,2)+' А');setTag(s.tt,'I = ℰ/(R + r) = '+f(k.I,2)+' А');
+ },
+ read:function(p){var k=this.calc(p);return [['Ток күші I',f(k.I,2),'А'],['Қысқыштағы кернеу U = IR',f(k.U,2),'В'],['Ішкі кернеу түсуі Ir',f(k.Ur,2),'В'],['Пайдалы қуат P = I²R',f(k.P,2),'Вт'],['Толық қуат ℰI',f(k.Pt,2),'Вт'],['ПӘК η = R/(R+r)',f(k.eta,1),'%'],['Қысқа тұйықталу тогы ℰ/r',f(k.Isc,1),'А']];},
+ live:function(p){var k=this.calc(p);return R`I=\frac{\mathcal{E}}{R+r}=\frac{${f(p.E,1)}}{${f(p.R,1)}+${f(p.r,1)}}=${f(k.I,2)}\,\text{А}`;},
+ tips:['Сыртқы кедергіні азайтсаң, ток артады, ал қысқыштағы кернеу ЭҚК-тен алшақтайды. Ішкі кедергіде кернеу түседі.','R = r болғанда пайдалы қуат ең көп (ℰ²/4r), бірақ ПӘК тек 50 %. Көпшілік құрылғыда R ≫ r етіп, ПӘК-ті жоғары ұстайды.','R-ді 0,5 Ом-ға жақындат: ток ℰ/r-ге жақындайды. Бұл қысқа тұйықталу, сымдар қызады, сақтандырғыш сондықтан керек.']
+});
+
+/* ---- Тербелмелі контур ---- */
+add({id:'lc',grade:11,name:'Тербелмелі контур. Электромагниттік тербеліс',hint:'«▶ Іске қосу» түймесін бас: зарядталған конденсатор катушка арқылы разрядталады',
+ theory:{
+  def:'Тербелмелі контур — конденсатор мен катушкадан тұратын тізбек. Зарядталған конденсатор катушка арқылы разрядталғанда ток пайда болады, катушкада магнит өрісі туады. Конденсатор толық разрядталған сәтте ток ең үлкен: электр өрісінің энергиясы магнит өрісінің энергиясына айналады. Содан кейін өздік индукция тоғы конденсаторды қайта зарядтайды. Энергия электр және магнит түрінде кезектесіп отырады. Кедергі болса, тербеліс өшеді.',
+  formulas:[{tex:R`T=2\pi\sqrt{LC}`,note:'Томсон формуласы'},{tex:R`\omega=\frac{1}{\sqrt{LC}}`,note:'циклдік жиілік'},{tex:R`W=\frac{q^2}{2C}+\frac{Li^2}{2}=\text{const}`,note:'толық энергия (R = 0)'},{tex:R`q=q_0\cos\omega t`,note:'заряд өзгеруі'}],
+  vars:[['L','катушка индуктивтілігі','Гн'],['C','конденсатор сыйымдылығы','Ф'],['T','период','с'],['q_0','бастапқы заряд','Кл']],
+  sci:{name:'Генрих Герц',years:'1857–1894',text:'1887–1888 жылдары тербелмелі контур мен ашық вибратор көмегімен электромагниттік толқындарды алды және тіркеді. Осы жұмыс радионың негізі болды.'}},
+ params:[
+  {k:'L',l:'Индуктивтілік L',min:5,max:100,step:5,val:20,u:'мГн',hi:1000,nr:true},
+  {k:'Cc',l:'Сыйымдылық C',min:5,max:100,step:5,val:20,u:'мкФ',hi:1000,nr:true},
+  {k:'U0',l:'Бастапқы кернеу U₀',min:1,max:10,step:1,val:5,u:'В',hi:100,nr:true},
+  {k:'Rr',l:'Кедергі R (өшу)',min:0,max:20,step:1,val:0,u:'Ом',hi:100,nr:true}],
+ cam:{th:.1,ph:1.0,r:36,t:[0,2,-1]},
+ build:function(p){
+  var c=C(),s={q:p.Cc*1e-6*p.U0,j:0,t:0,hist:[],kw:300};
+  box(32,.3,20,'pine',[0,.15,0]);
+  s.pm=mat(0xd64a4a,{roughness:.4});s.mm=mat(0x3d6fd1,{roughness:.4});
+  box(.3,3.4,4.2,'alu',[-9.7,2.3,0]);box(.3,3.4,4.2,'alu',[-8.3,2.3,0]);box(.4,.4,.4,c.neu,[-9,.5,0]);
+  s.dl=[];s.dr=[];for(var i=0;i<3;i++)for(var j=0;j<4;j++){var z=(j-1.5)*1,y=1.4+i*1;
+   var a=new T.Mesh(new T.SphereGeometry(.2,12,8),s.mm);a.position.set(-10,y+.5,z);world.add(a);s.dl.push(a);
+   var b=new T.Mesh(new T.SphereGeometry(.2,12,8),s.pm);b.position.set(-8,y+.5,z);world.add(b);s.dr.push(b);}
+  var pts=[],N=160,turns=9;for(var u=0;u<=N;u++){var th=u/N*turns*PI*2;pts.push(V3(3+u/N*7,2.3+Math.cos(th)*1.3,Math.sin(th)*1.3));}
+  line(pts,0xcd7b4d);
+  line([V3(-8,2.3,0),V3(-8,2.3,-3.2),V3(10.6,2.3,-3.2),V3(10.6,2.3,0),V3(10,2.3,0)],c.neu);
+  line([V3(-10,2.3,0),V3(-10,2.3,3.2),V3(2.4,2.3,3.2),V3(2.4,2.3,0),V3(3,2.3,0)],c.neu);
+  s.fa=arrow(c.c2,'i');s.ca=arrow(c.c1);
+  s.ch=chartBoard(0,-8,24,6.2,'t','');
+  s.cu=line([V3(0,0),V3(0,0)],c.c4);s.ci=line([V3(0,0),V3(0,0)],c.c2);
+  line([s.ch.pt(0,.5),s.ch.pt(1,.5)],c.neu,.4);
+  var l1=tag('u',.42);l1.position.copy(s.ch.pt(.04,.95));var l2=tag('i',.42);l2.position.copy(s.ch.pt(.1,.95));
+  s.eb=[box(1.2,1,1.2,c.c4,[-3,.8,6.6]),box(1.2,1,1.2,c.c2,[-1.2,.8,6.6])];s.et=tag('',.42);s.et.position.set(-2.1,3.6,6.6);
+  var tc=tag('Wэл',.4);tc.position.set(-3,.0,7.9);var tl=tag('Wмаг',.4);tl.position.set(-1.2,.0,7.9);
+  s.tt=tag('',.5);s.tt.position.set(0,6.6,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var L=p.L*1e-3,Cf=p.Cc*1e-6,R_=p.Rr,T0=2*PI*Math.sqrt(L*Cf),h=Math.min(dt,.05),q0=Cf*p.U0,j0=p.U0*Math.sqrt(Cf/L);
+  if(h>0){var tr=h/1000,n=Math.max(1,Math.ceil(tr/(T0/400))),dd=tr/n,i;
+   for(i=0;i<n;i++){s.j+=(s.q/Cf-R_*s.j)/L*dd;s.q-=s.j*dd;}
+   s.t+=tr;s.hist.push([s.t,s.q/Cf,s.j]);if(s.hist.length>900)s.hist.shift();}
+  var fr=q0>0?s.q/q0:0,n2=s.dl.length,vis=Math.ceil(n2*Math.min(1,Math.abs(fr))-1e-9),k;
+  for(k=0;k<n2;k++){var on=k<vis;s.dl[k].visible=s.dr[k].visible=on;s.dr[k].material=fr>=0?s.pm:s.mm;s.dl[k].material=fr>=0?s.mm:s.pm;}
+  var jr=j0>0?s.j/j0:0;setArrow(s.fa,V3(4,2.3,0),V3(jr>=0?1:-1,0,0),Math.abs(jr)*5);
+  s.ca.visible=false;
+  var win=3*T0,t0=s.t-win,pu=[],pj=[];
+  s.hist.forEach(function(e){if(e[0]>=t0){var x=(e[0]-t0)/win;pu.push(s.ch.pt(x,.5+e[1]/p.U0*.42));}});
+  var pj2=[];s.hist.forEach(function(e){if(e[0]>=t0){var x=(e[0]-t0)/win;pj2.push(s.ch.pt(x,.5+(j0>0?e[2]/j0:0)*.42));}});
+  if(pu.length<2){pu=[s.ch.pt(0,.5),s.ch.pt(.001,.5)];pj2=pu;}
+  setLine(s.cu,pu);setLine(s.ci,pj2);
+  var Ec=s.q*s.q/(2*Cf),El=L*s.j*s.j/2,E0=q0*q0/(2*Cf),sc=4/Math.max(E0,1e-12);
+  s.eb[0].scale.y=Math.max(.02,Ec*sc);s.eb[0].position.y=.3+Math.max(.02,Ec*sc)*.5;
+  s.eb[1].scale.y=Math.max(.02,El*sc);s.eb[1].position.y=.3+Math.max(.02,El*sc)*.5;
+  setTag(s.et,'W = '+f((Ec+El)*1000,3)+' мДж');setTag(s.tt,'T = 2π√(LC) = '+f(T0*1000,2)+' мс');
+  s.Ec=Ec;s.El=El;
+ },
+ read:function(p,s){var L=p.L*1e-3,Cf=p.Cc*1e-6,T0=2*PI*Math.sqrt(L*Cf),q=s?s.q:Cf*p.U0,j=s?s.j:0,Rc=2*Math.sqrt(L/Cf);
+  return [['Период T',f(T0*1000,2),'мс'],['Жиілік ν',f(1/T0,0),'Гц'],['Циклдік жиілік ω',f(1/Math.sqrt(L*Cf),0),'рад/с'],['Конденсатор кернеуі u',f(q/Cf,2),'В'],['Ток i',f(j*1000,1),'мА'],['W электр / магнит',f((s&&s.Ec||Cf*p.U0*p.U0/2)*1000,2)+' / '+f((s&&s.El||0)*1000,2),'мДж'],['Өшу',p.Rr===0?'жоқ (R = 0)':(p.Rr>=Rc?'тербеліс болмайды, R ≥ '+f(Rc,1)+' Ом':'өшетін тербеліс'),'']];},
+ live:function(p){var T0=2*PI*Math.sqrt(p.L*1e-3*p.Cc*1e-6);return R`T=2\pi\sqrt{LC}=2\pi\sqrt{${f(p.L,0)}\cdot10^{-3}\cdot${f(p.Cc,0)}\cdot10^{-6}}=${f(T0*1000,2)}\,\text{мс}`;},
+ tips:['Сыйымдылықты 4 есе арттырсаң, период 2 есе артады: T = 2π√(LC). Графиктегі тербеліс баяулайды.','Конденсатор разрядталған сәтте ток ең үлкен, сол кезде электр энергиясы толық магнит энергиясына айналады. Төмендегі бағандардан көр.','Кедергіні арттыр: тербеліс өшеді, энергия жылуға айналады. Үлкен кедергіде тербеліс мүлде болмайды.']
+});
+/* ===== Жаңа зертханалар (2): зарядтау, электромагнит, жазық айна, тартылыс, ЭМ толқын, ядролық реакция ===== */
+
+/* ---- Денелерді зарядтау ---- */
+add({id:'charge',grade:8,name:'Денелерді зарядтау. Электроскоп',hint:'«▶ Іске қосу» түймесін бас: таяқшаны үйкелеп, электроскопты зарядта',
+ theory:{
+  def:'Екі дене үйкелгенде электрондар бір денеден екіншісіне өтеді: артық электрон алған дене теріс, электрон жоғалтқан дене оң зарядталады. Зарядтар жоғалмайды, тек қайта бөлінеді (зарядтың сақталу заңы). Электроскоп зарядты тіркейді: жапырақшалар бірдей зарядталып, бір-бірінен тебіледі. Зарядталған дене жанаспай да (индукция арқылы) электроскоптағы зарядтарды қайта бөледі.',
+  formulas:[{tex:R`q=Ne,\quad e=1{,}6\cdot10^{-19}\ \text{Кл}`,note:'заряд электрон санына тең, дискретті'},{tex:R`q_1+q_2=\text{const}`,note:'зарядтың сақталу заңы (тұйық жүйе)'},{tex:R`F=k\frac{|q_1q_2|}{r^2}`,note:'Кулон заңы'}],
+  vars:[['N','артық немесе жетіспейтін электрон саны','—'],['e','элементар заряд','Кл'],['q','дененің заряды','Кл']],
+  sci:{name:'Шарль Кулон',years:'1736–1806',text:'1785 жылы бұралма таразы көмегімен зарядтардың әсерлесу заңын тағайындады. Электр зарядының бірлігі оның құрметіне аталған.'}},
+ params:[
+  {k:'pair',l:'Үйкелетін жұп',sel:[['Шыны таяқша + жібек (таяқша «+»)',1],['Эбонит таяқша + жүн (таяқша «−»)',-1]],val:1},
+  {k:'mode',l:'Зарядтау тәсілі',sel:[['Жанасу арқылы',0],['Индукция (жанаспай)',1]],val:0},
+  {k:'d',l:'Индукцияда таяқшаға дейінгі қашықтық',min:1,max:10,step:1,val:3,u:'см',hi:30,nr:true}],
+ cam:{th:0,ph:1.3,r:30,t:[0,5.5,0]},
+ build:function(p){
+  var c=C(),s={u:0};
+  box(26,.3,10,'pine',[0,.15,0]);
+  box(3,.6,3,c.struct,[0,.6,0]);cyl(.25,.25,3.5,'steel',[0,2.6,0]);s.rod=cyl(.18,.18,2.2,'steel',[0,5,0]);s.ball=sph(.7,'alu',[0,6.4,0]);
+  var cnt=0;s.lf=[];[-1,1].forEach(function(sg){var g=new T.Group();g.position.set(0,4.5,0);var l=box(.08,2.4,.9,'gold',[0,-1.2,0]);world.remove(l);g.add(l);world.add(g);s.lf.push(g);});
+  s.glass=cyl(.9,.9,.22,0xcfe6ee,[0,4.2,0],{transparent:true,opacity:.18});s.glass.rotation.x=PI/2;
+  s.bar=cyl(.45,.45,7,p.pair>0?0xd9efe9:0x2b2b30,[0,0,0],p.pair>0?{transparent:true,opacity:.7,roughness:.1}:{roughness:.4});s.bar.rotation.z=PI/2;
+  s.cloth=box(3,.35,2.4,p.pair>0?0xe7d7a8:0x8a6a48,[-9,.5,2.5]);
+  s.dots=[];for(var i=0;i<10;i++)s.dots.push(sph(.18,p.pair>0?0xd64a4a:0x3d6fd1,[0,0,0]));
+  s.et=tag('',.5);s.et.position.set(0,9.6,0);s.qt=tag('',.45);s.qt.position.set(0,8.4,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  if(dt>0)s.u=Math.min(1,s.u+Math.min(dt,.05)/8);var u=s.u,sg=p.pair,i,th=0,qe=0,bx,by,bz;
+  if(p.mode===0){
+   if(u<.5){bx=-9+Math.sin(u*40)*1.2;by=1.3;bz=2.5;}
+   else{var mv=clamp((u-.5)/.2,0,1);bx=-9+(-4.2+9)*mv;by=1.3+(6.4-1.3)*mv;bz=2.5*(1-mv);}
+   var tr=clamp((u-.7)/.3,0,1);qe=tr*.5*3e10*1.6e-19;th=.95*Math.sqrt(tr*clamp(1,0,1));
+  }else{
+   var ap=clamp(u/.6,0,1),endx=-(.7+.4*p.d);bx=-16+(endx-3.5+16)*ap;by=6.4;bz=0;
+   th=Math.min(1.1,1.0*ap/(1+Math.pow(p.d/3,2)));
+  }
+  s.bar.position.set(bx,by,bz);
+  s.lf[0].rotation.z=th;s.lf[1].rotation.z=-th;
+  var nd=s.dots.length;for(i=0;i<nd;i++){var d=s.dots[i],on=th>.03&&i<Math.ceil(nd*Math.min(1,th/1.0)),side=i%2?1:-1,rr=.8+(i%5)*.45;
+   d.visible=on;if(!on)continue;
+   if(p.mode===1&&i<2)d.position.set(-.5,6.9,0);else if(p.mode===0&&i<2)d.position.set(side*.4,7.0,0);else d.position.set(side*Math.sin(th)*rr,4.5-Math.cos(th)*rr,.5);}
+  s.th=th;s.qe=qe;
+  setTag(s.et,p.mode===0?(u<.5?'Үйкеліс: электрондар өтуде':u<.7?'Таяқша электроскопқа жақындауда':u<1?'Заряд электроскопқа беріледі':'Электроскоп зарядталды'):(u<.6?'Таяқша жақындауда':'Индукция: таяқша жанаспай әсер етеді'));
+  setTag(s.qt,'жапырақша бұрышы '+f(th*180/PI,0)+'°');
+ },
+ read:function(p,s){var u=s?s.u||0:0,n=p.mode===0?clamp(u/.5,0,1)*3e10:3e10,q=n*1.6e-19;
+  return [['Таяқшадағы заряд',f(Math.abs(q)*1e9,2),'нКл ('+(p.pair>0?'+':'−')+')'],['Артық/жетіспейтін электрон N',f(n/1e10,2)+'·10¹⁰',''],['Матаның заряды',f(Math.abs(q)*1e9,2),'нКл ('+(p.pair>0?'−':'+')+')'],['Электроскоп жапырақшасы',f((s&&s.th||0)*180/PI,0),'°'],['Тәсіл',p.mode===0?'жанасу':'индукция','']];},
+ live:function(p,s){var n=3e10;return R`q=Ne=3\cdot10^{10}\cdot1{,}6\cdot10^{-19}=4{,}8\cdot10^{-9}\,\text{Кл}`;},
+ tips:['Шыны мен жібек үйкелгенде шыны оң, жібек теріс зарядталады. Үйкелгенде жалпы заряд сақталады: бір денеде қанша артса, екіншіде сонша кемиді.','Индукцияда таяқшаны жақындат: электроскоптың доп жағында таяқшаға қарама-қарсы заряд, жапырақшаларда таяқшамен аттас заряд жиналып, жапырақшалар ашылады. Таяқша жақындаған сайын ашылу артады.','Эбонитке ауыстыр: таяқша теріс зарядталады, ал электроскоп жапырақшасы бірдей ашылады, электроскоп таңбаны ажыратпайды.']
+});
+
+/* ---- Электромагнит ---- */
+add({id:'emag',grade:8,name:'Электромагнит. Тоқ магнит өрісі',hint:'Токты, орам санын және өзекті өзгертіп, электромагнит қанша қыстырғышты көтеретінін қара',
+ theory:{
+  def:'Тогы бар өткізгіштің айналасында магнит өрісі пайда болады (Эрстед тәжірибесі). Катушканың ішінде өріс күшейеді, ал темір өзек оны жүздеген есе арттырады, мұндай құрылғы электромагнит деп аталады. Электромагниттің магнит өрісі ток күші мен орам санына пропорционал, токты өшірсе, өріс жоғалады. Полюсін бұрғы (оң қол) ережесімен табады: төрт саусақ тоқ бағытымен, бас бармақ N полюсті көрсетеді.',
+  formulas:[{tex:R`B=\mu_0\mu\frac{NI}{l}`,note:'соленоидтың өрісі'},{tex:R`\mu_0=4\pi\cdot10^{-7}\ \text{Гн/м}`,note:'магнит тұрақтысы'}],
+  vars:[['B','магнит индукциясы','Тл'],['N','орам саны','—'],['I','ток күші','А'],['l','катушка ұзындығы','м'],['\\mu','өзектің магнит өтімділігі (шамамен)','—']],
+  sci:{name:'Ханс Кристиан Эрстед',years:'1777–1851',text:'1820 жылы ток өткен сымның жанындағы магнит тілшесінің бұрылатынын байқады. Бұл электр мен магнетизмнің байланысын көрсеткен тұңғыш тәжірибе.'}},
+ params:[
+  {k:'I',l:'Ток күші I',min:0,max:5,step:.5,val:2,u:'А',hi:20,nr:true},
+  {k:'N',l:'Орам саны N',min:100,max:1000,step:100,val:400,u:'',hi:5000,nr:true},
+  {k:'mu',l:'Өзек',sel:[['Өзексіз (ауа)',1],['Темір өзек (μ ≈ 100)',100]],val:100},
+  {k:'dir',l:'Ток бағыты',sel:[['Сағат тілімен',1],['Сағат тіліне қарсы',-1]],val:1}],
+ cam:{th:.15,ph:1.3,r:30,t:[0,6,0]},
+ calc:function(p){var B=4e-7*PI*p.mu*p.N*p.I/.1;if(p.mu>1)B=Math.min(B,1.8);var lift=clamp(Math.floor(B/.12),0,10);if(p.mu===1)lift=B>.12?lift:0;return {B:B,lift:lift};},
+ build:function(p){
+  var c=C(),s={};
+  box(26,.3,12,'pine',[0,.15,0]);
+  box(5,.5,5,c.struct,[0,.5,-3]);box(.8,8,.8,c.struct,[0,4.5,-3]);box(8,.8,.8,c.struct,[0,8.9,-3]);
+  s.core=cyl(.7,.7,6,p.mu>1?'iron':0xd9d9d9,[0,6,-.4],p.mu>1?{}:{transparent:true,opacity:.15});
+  var pts=[],N=120,turns=18;for(var u=0;u<=N;u++){var th=u/N*turns*PI*2;pts.push(V3(Math.cos(th)*1.1,7.5+u/N*3.6-1.8,-.4+Math.sin(th)*1.1));}
+  line(pts,0xcd7b4d);
+  s.cl=[];for(var i=0;i<10;i++){s.cl.push(box(.25,.9,.25,'steel',[0,1,0]));}
+  s.arr=arrow(c.c4,'B');s.nt=tag('N',.6);s.st=tag('S',.6);
+  s.bt=tag('',.5);s.bt.position.set(0,12.6,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p),i,botN=p.dir>0?0:1;
+  for(i=0;i<10;i++){var m=s.cl[i];if(i<k.lift){m.position.set(0,3-.85*i-.3,-.4);m.rotation.set(0,0,0);}
+   else{m.position.set(-6+(i%5)*2.8+((i*37)%7)*.2,.52,2.5-Math.floor(i/5)*2.4);m.rotation.set(PI/2,0,(i*13)%3*.5);}}
+  setTag(s.nt,'N');setTag(s.st,'S');
+  var top=p.dir>0?s.st:s.nt,bot=p.dir>0?s.nt:s.st;top.position.set(2.4,9.2,-.4);bot.position.set(2.4,3.4,-.4);
+  setArrow(s.arr,V3(-2.6,3.2,-.4),V3(0,1,0),p.I>0?Math.min(6,.8+k.B*3):0);
+  setTag(s.bt,'B = '+f(k.B*1000,0)+' мТл · көтерілді: '+k.lift);
+ },
+ read:function(p){var k=this.calc(p);return [['Магнит индукциясы B',f(k.B*1000,1),'мТл'],['Көтерілген қыстырғыш',f(k.lift,0),'дана / 10'],['Ток күші I',f(p.I,1),'А'],['Орам саны N',f(p.N,0),''],['Өзек',p.mu>1?'темір':'өзексіз',''],['Төменгі полюс',p.I===0?'өріс жоқ':(p.dir>0?'N':'S'),'']];},
+ live:function(p){var k=this.calc(p);return R`B=\mu_0\mu\frac{NI}{l}=${f(k.B*1000,1)}\,\text{мТл}`;},
+ tips:['Токты өшірсең (0 А), барлық қыстырғыш түседі. Электромагниттің басты артықшылығы: өрісті қосып-өшіруге болады.','Өзекті алып таста: B жүздеген есе кемиді, қыстырғыш көтерілмейді. Темір өзек магнит өрісін күшейтеді.','Ток бағытын ауыстыр: N және S полюстер орнын ауыстырады. Қыстырғыш екі полюске де тартылады.']
+});
+
+/* ---- Жазық айна ---- */
+add({id:'mirror',grade:8,name:'Жазық айна. Шағылу заңы',hint:'Шамды айнадан алыстат, көз биіктігін өзгерт: кескін қайда пайда болады?',
+ theory:{
+  def:'Жазық айнада нысанның жалған, тура, нысанға тең кескіні пайда болады. Кескін айнаның артында нысан айнадан қандай қашықтықта тұрса, сондай қашықтықта орналасады. Жарық шағылғанда шағылу бұрышы түсу бұрышына тең, ал түскен сәуле, шағылған сәуле және түсу нүктесіндегі перпендикуляр бір жазықтықта жатады.',
+  formulas:[{tex:R`\alpha=\gamma`,note:'шағылу заңы'},{tex:R`f=d`,note:'кескін мен нысан айнадан бірдей қашықтықта'},{tex:R`H=h`,note:'кескіннің өлшемі нысанға тең'}],
+  vars:[['\\alpha','түсу бұрышы','°'],['\\gamma','шағылу бұрышы','°'],['d','нысаннан айнаға дейінгі қашықтық','м'],['f','кескіннен айнаға дейінгі қашықтық','м']],
+  sci:{name:'Евклид',years:'б.з.д. ≈ 300 жж.',text:'Оған жатқызылатын «Катоптрика» еңбегінде жарықтың түзу сызықпен таралуы мен шағылу заңы баяндалған.'}},
+ params:[
+  {k:'d',l:'Шамнан айнаға дейін d',min:2,max:10,step:.5,val:5,u:'м',hi:30},
+  {k:'h',l:'Шам биіктігі h',min:1,max:3,step:.5,val:2,u:'м',hi:5},
+  {k:'e',l:'Көз биіктігі',min:1,max:4,step:.5,val:3,u:'м',hi:6,nr:true},
+  {k:'a',l:'Лазер сәулесінің түсу бұрышы α',min:0,max:80,step:5,val:40,u:'°',hi:89,nr:true}],
+ cam:{th:0,ph:1.35,r:34,t:[0,3,0]},
+ build:function(p){
+  var c=C(),s={};
+  box(34,.3,8,'pine',[0,.15,0]);
+  box(.25,8,5,0xbfe3ea,[0,4.3,0],{transparent:true,opacity:.45,metalness:.8,roughness:.05});box(.5,.3,5.2,c.neu,[0,.4,0]);
+  s.ob=cyl(.35,.35,p.h,0xe9dfb4,[-p.d,.3+p.h/2,0]);s.fl=sph(.35,0xffb347,[-p.d,.3+p.h+.4,0],{emissive:0xff9a20,emissiveIntensity:.7});
+  s.im=cyl(.35,.35,p.h,0xe9dfb4,[p.d,.3+p.h/2,0],{transparent:true,opacity:.35});s.if_=sph(.35,0xffb347,[p.d,.3+p.h+.4,0],{transparent:true,opacity:.4});
+  s.ey=sph(.45,c.c2,[-14,3,0]);cyl(.5,.6,2.8,c.c2,[-14,1.7,0]);
+  s.r1=line([V3(0,0),V3(1,0)],0xe8d24a);s.r2=line([V3(0,0),V3(1,0)],0xe8d24a);s.d1=line([V3(0,0),V3(1,0)],0xe8d24a,.45);s.d2=line([V3(0,0),V3(1,0)],0xe8d24a,.45);
+  s.n=line([V3(0,4,0),V3(0,5,0)],c.neu,.6);s.l1=line([V3(0,0),V3(1,0)],c.c4);s.l2=line([V3(0,0),V3(1,0)],c.c4);s.nl=line([V3(0,0),V3(1,0)],c.neu,.6);
+  s.at=tag('',.42);s.gt=tag('',.42);s.dt=tag('d',.45);s.dt.position.set(-p.d/2,-.3,2.5);s.ft=tag('f = d',.45);s.ft.position.set(p.d/2,-.3,2.5);
+  return s;
+ },
+ step:function(dt,p,s){
+  var ty=.3+p.h+.4,ex=-14,ey=p.e,xm=0;s.ey.position.y=ey;
+  var hy=ty+(ey-ty)*(p.d/(p.d+14));
+  setLine(s.r1,[V3(-p.d,ty,0),V3(xm,hy,0),V3(ex,ey,0)]);setLine(s.d1,[V3(xm,hy,0),V3(p.d,ty,0)]);
+  setLine(s.r2,[V3(-p.d,ty,.2),V3(xm,ty,.2)]);setLine(s.d2,[V3(xm,ty,.2),V3(p.d,ty,.2)]);
+  var a=p.a*PI/180,P0=V3(0,7,0),L=5;setLine(s.n,[V3(-L,7,0),V3(L,7,0)]);
+  var dx=-Math.sin(a)*L,dy=Math.cos(a)*L;
+  setLine(s.l1,[V3(dx*1,7+dy,0),P0]);setLine(s.l2,[P0,V3(-dx,7+dy,0)]);setLine(s.nl,[P0,V3(0,7+L+.2,0)]);
+  s.at.position.set(dx*.55-.9,7+dy*.55+.9,0);setTag(s.at,'α = '+f(p.a,0)+'°');s.gt.position.set(-dx*.55+.9,7+dy*.55+.9,0);setTag(s.gt,'γ = '+f(p.a,0)+'°');
+ },
+ read:function(p){return [['Нысаннан айнаға d',f(p.d,1),'м'],['Кескіннен айнаға f',f(p.d,1),'м'],['Нысан мен кескін арасы',f(2*p.d,1),'м'],['Кескін биіктігі H',f(p.h,1),'м'],['Түсу бұрышы α',f(p.a,0),'°'],['Шағылу бұрышы γ',f(p.a,0),'°'],['Кескін','жалған, тура, нысанға тең','']];},
+ live:function(p){return R`\alpha=\gamma=${f(p.a,0)}^\circ,\quad f=d=${f(p.d,1)}\,\text{м}`;},
+ tips:['Шамды айнадан алыстат: кескін де сонша алыстайды. Кескіннің өлшемі өзгермейді.','Айнадағы сәуленің жолы: көзге шағылған сәулені айнаның артына қарай ұзартсаң, ұзартулар кескіннің нүктесінде қиылысады. Сондықтан кескін жалған.','Түсу бұрышын арттыр: шағылу бұрышы да сонша артады. Бұрыштар перпендикулярдан өлшенеді.']
+});
+
+/* ---- Бүкіл әлемдік тартылыс. Жасанды серік ---- */
+var GM=3.986e5,RE=6371;
+add({id:'grav',grade:9,name:'Бүкіл әлемдік тартылыс. Серіктің орбитасы мен ғарыштық жылдамдықтар',hint:'«▶ Іске қосу» түймесін бас: серік берілген жылдамдықпен Жерді айнала ұшады',
+ theory:{
+  def:'Массасы бар кез келген екі дене бір-біріне тартылады. Тартылыс күші массалардың көбейтіндісіне тура, ара қашықтықтың квадратына кері пропорционал. Серік Жерге құлай береді, бірақ жеткілікті көлденең жылдамдығы болғандықтан ол Жерге түспей орбитамен айналады. Бірінші ғарыштық жылдамдықта (≈ 7,9 км/с) серік дөңгелек орбитамен жер бетіне жақын айналады, екінші ғарыштық жылдамдықта (≈ 11,2 км/с) Жердің тартылысынан мәңгі кетеді.',
+  formulas:[{tex:R`F=G\frac{m_1m_2}{r^2}`,note:'бүкіл әлемдік тартылыс заңы'},{tex:R`v_1=\sqrt{\frac{GM}{r}}`,note:'дөңгелек орбита жылдамдығы'},{tex:R`v_2=\sqrt2\,v_1`,note:'екінші ғарыштық жылдамдық'},{tex:R`T=2\pi\sqrt{\frac{r^3}{GM}}`,note:'айналу периоды'}],
+  vars:[['G','гравитациялық тұрақты 6,67·10⁻¹¹','Н·м²/кг²'],['M','Жер массасы 6·10²⁴','кг'],['r','орбита радиусы (Жер центрінен)','км'],['v_1','бірінші ғарыштық жылдамдық','км/с']],
+  sci:{name:'Исаак Ньютон',years:'1643–1727',text:'1687 жылы «Табиғи философияның математикалық бастамалары» кітабында бүкіл әлемдік тартылыс заңын жариялады. Ол Жердегі тартылыс пен аспан денелерінің қозғалысын біріктірді.'}},
+ params:[
+  {k:'h',l:'Бастапқы биіктік',sel:[['Төмен орбита · 400 км',400],['1000 км',1000],['ГЛОНАСС · 19 100 км',19100],['Геостационар · 35 786 км',35786]],val:400},
+  {k:'v',l:'Бастапқы жылдамдық v (орбитаға жанамалай)',min:1,max:14,step:.1,val:7.7,u:'км/с',hi:20},
+  {k:'ac',l:'Уақытты жылдамдату',min:500,max:6000,step:500,val:2000,u:'×',hi:20000,nr:true}],
+ cam:{th:0,ph:.45,r:78,t:[0,0,0]},
+ build:function(p){
+  var c=C(),sc=4/RE,r0=RE+p.h,s={x:r0,z:0,vx:0,vz:p.v,t:0,sc:sc,trail:[],crash:false,gone:false,rmin:r0,rmax:r0};
+  var ea=sph(4,0x3d78b8,[0,0,0]);ea.castShadow=false;
+  var rg=[];for(var i=0;i<=64;i++){var a=i/64*PI*2;rg.push(V3(Math.cos(a)*4.02,0,Math.sin(a)*4.02));}line(rg,0xe8f1f5,.7);
+  s.sat=box(.9,.5,.5,'gold',[0,0,0]);s.pan=box(.2,.1,2,0x3d5aa8,[0,0,0]);s.sat.castShadow=false;
+  s.tr=line([V3(r0*sc,0,0),V3(r0*sc,0,.01)],c.c1);s.g=arrow(c.c4,'F');
+  s.tt=tag('',.7);s.tt.position.set(0,6.5,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var h=Math.min(dt,.05),sc=s.sc;
+  if(h>0&&!s.crash&&!s.gone){var tr=h*p.ac,n=Math.max(1,Math.ceil(tr/10)),dd=tr/n,i;
+   for(i=0;i<n;i++){var r=Math.hypot(s.x,s.z),ax=-GM*s.x/(r*r*r),az=-GM*s.z/(r*r*r);
+    s.vx+=ax*dd*.5;s.vz+=az*dd*.5;s.x+=s.vx*dd;s.z+=s.vz*dd;
+    r=Math.hypot(s.x,s.z);ax=-GM*s.x/(r*r*r);az=-GM*s.z/(r*r*r);s.vx+=ax*dd*.5;s.vz+=az*dd*.5;s.t+=dd;
+    s.rmin=Math.min(s.rmin,r);s.rmax=Math.max(s.rmax,r);
+    if(r<=RE){s.crash=true;break;}if(r>60000){s.gone=true;break;}}
+   s.trail.push(V3(s.x*sc,0,s.z*sc));if(s.trail.length>1400)s.trail.shift();
+  }
+  var X=s.x*sc,Z=s.z*sc;s.sat.position.set(X,0,Z);s.pan.position.set(X,0,Z);
+  if(s.trail.length>1)setLine(s.tr,s.trail);
+  var r2=Math.hypot(s.x,s.z);setArrow(s.g,V3(X,0,Z),V3(-s.x,0,-s.z),clamp(3.4*(RE/r2)*(RE/r2),.25,3.4));
+  s.tt.visible=true;setTag(s.tt,s.crash?'Серік Жерге құлады':s.gone?'Серік Жерді тастап кетті':'');
+ },
+ read:function(p,s){var r0=RE+p.h,v1=Math.sqrt(GM/r0),v2=Math.sqrt(2)*v1,r=Math.hypot(s.x||r0,s.z||0),v=Math.hypot(s.vx||0,s.vz===undefined?p.v:s.vz),en=v*v/2-GM/r;
+  var kind=s.crash?'Жерге құлады':p.v<v1*.995?(p.v<Math.sqrt(GM/r0*(2*RE/(RE+r0+0)))? 'эллипс, перигейі төмен':'эллипс (v < v₁)'):p.v<v1*1.005?'дөңгелек орбита':p.v<v2?'эллипс (v₁ < v < v₂)':'ашық траектория, Жерден кетеді';
+  var Tc=2*PI*Math.sqrt(r0*r0*r0/GM);
+  var gg=GM/(r*r)*1000;return [['Уақыт t',f((s.t||0)/3600,2),'сағат'],['Қазіргі r (центрден)',f(r,0),'км'],['Тартылыс үдеуі g(r) = GM/r²',f(gg,2),'м/с²'],['Тартылыс күші F (m = 1000 кг)',f(gg*1000,0),'Н'],['Орбита радиусы r',f(r0,0),'км'],['v₁ осы биіктікте',f(v1,2),'км/с'],['v₂ = √2·v₁',f(v2,2),'км/с'],['Берілген жылдамдық',f(p.v,1),'км/с'],['Қазіргі қашықтық',f(r-RE,0),'км (бетінен)'],['Қазіргі жылдамдық',f(v,2),'км/с'],['Дөңгелек орбита периоды',f(Tc/3600,2),'сағат'],['Орбита түрі',kind,'']];},
+ live:function(p){var r0=RE+p.h;return R`v_1=\sqrt{\frac{GM}{r}}=\sqrt{\frac{398600}{${f(r0,0)}}}=${f(Math.sqrt(GM/r0),2)}\,\text{км/с}`;},
+ tips:['v = v₁ (≈ 7,7 км/с, 400 км биіктікте): серік дөңгелек орбитамен айналады. Жылдамдықты азайтсаң, орбита эллипске айналып, серік Жерге жақындайды, тым аз болса құлайды.','v₁-ден артық, бірақ v₂-ден аз болса, орбита созылыңқы эллипс. v₂-ден (≈ 11 км/с) асырсаң, серік Жерді тастап кетеді.','Биіктік артса, v₁ кемиді, ал период артады. Геостационар орбитада период 24 сағат, серік Жердің айналуымен бірге «қалқып тұрады».']
+});
+
+/* ---- Электромагниттік толқындар ---- */
+var EMREG=[['Радиотолқын · λ ≈ 100 м',100],['Микротолқын · λ ≈ 3 см',.03],['Инфрақызыл · λ ≈ 10 мкм',1e-5],['Көрінетін жарық · λ ≈ 550 нм',5.5e-7],['Ультракүлгін · λ ≈ 100 нм',1e-7],['Рентген · λ ≈ 0,1 нм',1e-10]];
+add({id:'emwave',grade:11,name:'Электромагниттік толқындар. Спектр',hint:'«▶ Іске қосу» түймесін бас: E мен B өрістері тербеліп, толқын таралады. Спектр аймағын таңда',
+ theory:{
+  def:'Өзгеретін электр өрісі магнит өрісін, өзгеретін магнит өрісі электр өрісін туғызады. Осылай электромагниттік толқын вакуумда жарық жылдамдығымен таралады. Толқын көлденең: E және B векторлары бір-біріне және таралу бағытына перпендикуляр. Радиотолқыннан рентгенге дейінгі барлық сәулелер бір табиғатты, олар тек толқын ұзындығымен ажыратылады. Толқын ұзындығы қысқарған сайын фотонның энергиясы артады.',
+  formulas:[{tex:R`c=\lambda\nu=3\cdot10^8\ \text{м/с}`,note:'толқын ұзындығы мен жиілік'},{tex:R`c=\frac{1}{\sqrt{\varepsilon_0\mu_0}}`,note:'Максвелл тұжырымы'},{tex:R`\frac{E}{B}=c`,note:'өрістердің қатынасы'},{tex:R`E_\text{ф}=h\nu=\frac{hc}{\lambda}`,note:'фотон энергиясы'}],
+  vars:[['c','жарық жылдамдығы','м/с'],['\\lambda','толқын ұзындығы','м'],['\\nu','жиілік','Гц'],['h','Планк тұрақтысы 6,63·10⁻³⁴','Дж·с']],
+  sci:{name:'Джеймс Клерк Максвелл',years:'1831–1879',text:'1860-шы жылдары электромагниттік өріс теңдеулерін жазып, электромагниттік толқындардың бар екенін болжады. Генрих Герц оларды 1888 жылы тәжірибе жүзінде алды.'}},
+ params:[
+  {k:'reg',l:'Спектр аймағы',sel:EMREG,val:5.5e-7},
+  {k:'A',l:'Амплитуда (көрнекілік)',min:1,max:4,step:.5,val:2.5,u:'',hi:5,nr:true}],
+ cam:{th:.5,ph:1.2,r:42,t:[0,3,0]},
+ build:function(p){
+  var c=C(),s={t:0,N:48,E:[],B:[]};
+  box(40,.3,12,'pine',[0,.15,0]);
+  for(var i=0;i<s.N;i++){s.E.push(line([V3(0,3,0),V3(0,3,0)],c.c1));s.B.push(line([V3(0,3,0),V3(0,3,0)],c.c3));}
+  s.ce=line([V3(0,3,0),V3(1,3,0)],c.c1);s.cb=line([V3(0,3,0),V3(1,3,0)],c.c3);
+  s.ax=line([V3(-17,3,0),V3(17,3,0)],c.neu,.5);s.pa=arrow(c.neu);setArrow(s.pa,V3(14,3,0),V3(1,0,0),3.6);
+  var te=tag('E',.6);te.position.set(-15,8,0);var tb=tag('B',.6);tb.position.set(-15,3,6.5);var tc=tag('c',.6);tc.position.set(17.5,4.2,0);
+  s.lt=tag('',.45);s.lt.position.set(0,9.6,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  if(dt>0)s.t+=Math.min(dt,.05);var k=2*PI/10,w=2*PI/3,ptsE=[],ptsB=[],i;
+  for(i=0;i<s.N;i++){var x=-16+32*i/(s.N-1),a=Math.sin(k*x-w*s.t)*p.A;setLine(s.E[i],[V3(x,3,0),V3(x,3+a,0)]);setLine(s.B[i],[V3(x,3,0),V3(x,3,a)]);}
+  for(i=0;i<=80;i++){var x2=-16+32*i/80,a2=Math.sin(k*x2-w*s.t)*p.A;ptsE.push(V3(x2,3+a2,0));ptsB.push(V3(x2,3,a2));}
+  setLine(s.ce,ptsE);setLine(s.cb,ptsB);
+  setTag(s.lt,'толқын ұзындығы: '+(p.reg>=1?f(p.reg,0)+' м':p.reg>=1e-3?f(p.reg*100,1)+' см':p.reg>=1e-6?f(p.reg*1e6,0)+' мкм':p.reg>=1e-9?f(p.reg*1e9,p.reg>1e-8?0:1)+' нм':f(p.reg*1e12,0)+' пм')+' (көрсету үшін масштабталған)');
+ },
+ read:function(p){var lam=p.reg,nu=3e8/lam,E=6.626e-34*nu/1.602e-19,nm=['радиотолқын','микротолқын','инфрақызыл','көрінетін жарық','ультракүлгін','рентген'][EMREG.map(function(x){return x[1];}).indexOf(lam)];
+  var eg=E>=1e3?f(E/1e3,1)+' кэВ':E>=1?f(E,2)+' эВ':E>=1e-3?f(E*1e3,2)+' мэВ':E>=1e-6?f(E*1e6,2)+' мкэВ':f(E*1e9,2)+' нэВ';
+  var nus=nu>=1e15?f(nu/1e15,2)+'·10¹⁵ Гц':nu>=1e12?f(nu/1e12,1)+'·10¹² Гц':nu>=1e9?f(nu/1e9,1)+'·10⁹ Гц':f(nu/1e6,1)+'·10⁶ Гц';
+  return [['Аймақ',nm,''],['Толқын ұзындығы λ',lam>=1?f(lam,0):lam>=1e-3?f(lam*100,1):lam>=1e-6?f(lam*1e6,0):lam>=1e-9?f(lam*1e9,lam>1e-8?0:1):f(lam*1e12,0),lam>=1?'м':lam>=1e-3?'см':lam>=1e-6?'мкм':lam>=1e-9?'нм':'пм'],['Жиілік ν = c/λ',nus,''],['Фотон энергиясы hν',eg,''],['Жылдамдық c','3,00·10⁸','м/с (барлығы үшін бірдей)']];},
+ live:function(p){var nu=3e8/p.reg;return R`\nu=\frac{c}{\lambda}=\frac{3\cdot10^8}{${p.reg.toExponential(1).replace('e','\\cdot10^{').replace('+','')+'}'}}=${(nu).toExponential(1).replace('e','\\cdot10^{').replace('+','')+'}'}\,\text{Гц}`;},
+ tips:['E (қызыл) мен B (көк) бір фазада тербеледі және бір-біріне перпендикуляр. Толқын осьтің бойымен жылжиды.','Аймақты радиотолқыннан рентгенге ауыстыр: толқын ұзындығы 10¹² есе кемиді, жиілік пен фотон энергиясы сонша артады, ал жылдамдық өзгермейді.','Радиотолқын байланыс пен теледидарда, микротолқын пеште, инфрақызыл пультте, ультракүлгін күнге күюде, рентген медицинада қолданылады.']
+});
+
+/* ---- Ядролық реакциялар. Тізбекті реакция ---- */
+add({id:'nuclear',grade:11,name:'Ядроның бөлінуі. Тізбекті реакция',hint:'«▶ Іске қосу» түймесін бас: үш нейтрон ядроларды бөліп, тізбекті реакция бастайды',
+ theory:{
+  def:'Ауыр ядро (уран-235) нейтронды жұтқанда екі жеңіл ядроға (жарықшаққа) бөлініп, 2–3 жаңа нейтрон мен өте көп энергия бөледі. Жаңа нейтрондар басқа ядроларды бөлсе, тізбекті реакция басталады. Егер әр бөліністен кейін келесі бөліністі шақыратын нейтрон орташа 1-ден көп болса, реакция өседі (жарылыс), 1-ге тең болса, тұрақты жүреді (реактор), аз болса өшеді. Реакторда нейтрондарды басқарушы өзектер жұтып, реакцияны реттейді. Табиғи ураннан тек 0,7 % уран-235, ал реакторға 3–5 % байытады.',
+  formulas:[{tex:R`{}^{235}_{92}\text{U}+{}^1_0n\rightarrow{}^{141}_{56}\text{Ba}+{}^{92}_{36}\text{Kr}+3\,{}^1_0n`,note:'бөліну реакциясы'},{tex:R`E=\Delta m\,c^2`,note:'энергия бөліну үшін масса айырымынан'},{tex:R`k=\frac{n_{i+1}}{n_i}`,note:'көбейту коэффициенті: k > 1 өседі, k = 1 тұрақты, k < 1 өшеді'}],
+  vars:[['\\Delta m','масса ақауы','кг'],['k','нейтрондарды көбейту коэффициенті','—'],['E','бір бөліністегі энергия ≈ 200','МэВ']],
+  sci:{name:'Отто Ган',years:'1879–1968',text:'1938 жылы Фриц Штрассманмен бірге уранды нейтронмен атқанда барийдің пайда болатынын байқады. Лиза Мейтнер бұл ядроның бөлінуі екенін түсіндірді.'}},
+ params:[
+  {k:'enr',l:'Уран-235 байытылуы',min:5,max:100,step:5,val:80,u:'%',hi:100},
+  {k:'rod',l:'Басқарушы өзектер (нейтрон жұтуы)',min:0,max:100,step:5,val:20,u:'%',hi:100,nr:true}],
+ cam:{th:0,ph:.55,r:34,t:[0,0,0]},
+ build:function(p){
+  var c=C(),s={nu:[],ne:[],pool:[],fis:0,t:0,fired:false,hist:[],absorbed:0,out:0,peak:0};
+  box(30,.3,18,'pine',[0,.15,0]);box(28,.3,.4,c.neu,[0,.5,7.6]);box(28,.3,.4,c.neu,[0,.5,-7.6]);box(.4,.3,15.6,c.neu,[14,.5,0]);box(.4,.3,15.6,c.neu,[-14,.5,0]);
+  var i,j;for(i=0;i<12;i++)for(j=0;j<6;j++){var x=-11+i*2,z=-5+j*2,isU=Math.random()*100<p.enr;
+   var m=sph(.6,isU?c.c1:0x8a939c,[x,.95,z]);m.castShadow=false;s.nu.push({m:m,x:x,z:z,u:isU,done:false,sh:0});}
+  for(i=0;i<3;i++){var rd=cyl(.28,.28,3,0x2b2b30,[-8+i*8,3,0],{transparent:true,opacity:.35+.4*p.rod/100});s.rodm=s.rodm||[];s.rodm.push(rd);}
+  for(i=0;i<160;i++){var n=sph(.2,0xf4e4a0,[0,-5,0],{emissive:0xf4d44a,emissiveIntensity:.8});n.castShadow=false;n.visible=false;s.pool.push(n);}
+  s.tt=tag('',.5);s.tt.position.set(0,6.8,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var h=Math.min(dt,.05),i,c=C();
+  if(h>0){
+   if(!s.fired){s.fired=true;[-3,1,3].forEach(function(zz){s.ne.push({x:-13.5,z:zz,vx:7,vz:0});});}
+   s.t+=h;var newN=[];
+   s.ne.forEach(function(n){
+    n.x+=n.vx*h;n.z+=n.vz*h;
+    if(Math.abs(n.x)>14.2||Math.abs(n.z)>7.6){s.out++;return;}
+    if(Math.random()<h*p.rod/100*5){s.absorbed++;return;}
+    var hit=null;for(var k=0;k<s.nu.length;k++){var q=s.nu[k];if(q.done)continue;if(Math.hypot(q.x-n.x,q.z-n.z)<.8){hit=q;break;}}
+    if(hit){
+     if(hit.u){hit.done=true;s.fis++;var cnt=Math.random()<.5?2:3;for(var j=0;j<cnt;j++){var a=Math.random()*PI*2,sp=6+Math.random()*2;newN.push({x:hit.x,z:hit.z,vx:Math.cos(a)*sp,vz:Math.sin(a)*sp});}}
+     else{if(Math.random()<.25){s.absorbed++;return;}}
+    }
+    newN.push(n);
+   });
+   s.ne=newN.slice(0,160);s.peak=Math.max(s.peak,s.ne.length);
+   s.hist.push([s.t,s.ne.length]);if(s.hist.length>200)s.hist.shift();
+  }
+  for(i=0;i<s.pool.length;i++){var m=s.pool[i];if(i<s.ne.length){m.visible=true;m.position.set(s.ne[i].x,1,s.ne[i].z);}else m.visible=false;}
+  s.nu.forEach(function(q){if(q.done){q.sh=Math.min(1,q.sh+h*2);q.m.scale.setScalar(Math.max(.3,1-.6*q.sh));q.m.material.color.setHex(0x6b4a3a);}});
+  if(s.rodm)s.rodm.forEach(function(r){r.material.opacity=.35+.4*p.rod/100;r.material.transparent=true;});
+  var trend=s.hist.length>20?s.ne.length-s.hist[Math.max(0,s.hist.length-20)][1]:0;
+  s.state=!s.fired?'басталмаған':s.ne.length===0?'реакция тоқтады':(s.t<1?'басталуда':trend>3?'өсуде (k > 1)':trend<-3?'өшуде (k < 1)':'тұрақты (k ≈ 1)');
+  setTag(s.tt,s.state==='реакция тоқтады'?'Реакция тоқтады: Қайта бастау үшін «Қайта» батырмасын бас':'');
+ },
+ read:function(p,s){var fi=s.fis||0;return [['Бөлінген ядролар',f(fi,0),''],['Бос нейтрондар',f((s.ne||[]).length,0),''],['Бөлінген энергия',f(fi*200,0),'МэВ'],['Өзектер жұтқан',f(s.absorbed||0,0),'нейтрон'],['Реакция күйі',s.state||'басталмаған',''],['Байытылу',f(p.enr,0),'%']];},
+ live:function(p){return R`E=\Delta m\,c^2\approx200\ \text{МэВ}\ /\ \text{бір ядро}`;},
+ tips:['Байытуды 5–10 %-ға түсір: бөлінетін ядро аз, нейтрондар жаңа ядроны таппай, реакция тез өшеді. Байытуды арттырсаң, реакция өседі.','Басқарушы өзектерді 100 %-ға жақындат: нейтрондар көп жұтылады, реакция басылады. Реакторда осылай қуат басқарылады.','Сұр шарлар — уран-238, олар бөлінбейді. Нейтрондардың бір бөлігі реактордан тыс ұшып кетеді, бұл да k-ны азайтады.']
+});
+/* ===== Жаңа зертханалар (3): өлшеу, тұтас ыдыстар, ылғалдылық, жылу қозғалтқышы, кедергі, көлеңке, айнымалы ток, салыстырмалылық ===== */
+
+/* ---- Өлшеу: мензурка ---- */
+add({id:'measure',grade:7,name:'Өлшеу құралдары. Мензурка және дененің көлемі',hint:'«▶ Іске қосу» түймесін бас: тасты суға батыр да, судың деңгейін екі рет оқы',
+ theory:{
+  def:'Өлшеу — шаманы бірлікпен салыстыру. Мензурка сұйықтың көлемін өлшейді. Алдымен бөлік бағасын табады: көрші екі белгінің айырымын олардың арасындағы бөліктер санына бөледі. Көзді сұйық бетінің деңгейінде ұстап оқиды. Өлшеу қатесі бөлік бағасының жартысына тең. Дұрыс пішінсіз дененің көлемін оны суға батырып, судың деңгейінің өзгерісінен табады.',
+  formulas:[{tex:R`c=\frac{V_2-V_1}{n}`,note:'бөлік бағасы'},{tex:R`V=V_2-V_1`,note:'батырылған дененің көлемі'},{tex:R`\rho=\frac{m}{V}`,note:'тығыздық'},{tex:R`\Delta=\frac{c}{2}`,note:'аспаптың абсолют қатесі'}],
+  vars:[['V_1','тасты батырғанға дейінгі көлем','мл'],['V_2','тасты батырғаннан кейінгі көлем','мл'],['m','дене массасы','г'],['c','бөлік бағасы','мл']],
+  sci:{name:'Дмитрий Менделеев',years:'1834–1907',text:'Өлшеу ғылымының негізін қалаушылардың бірі, 1893 жылдан Салмақ пен өлшем палатасын басқарды. Орыс империясында метрлік жүйені енгізуге зор үлес қосты.'}},
+ params:[
+  {k:'V0',l:'Судың бастапқы көлемі V₁',min:40,max:120,step:10,val:60,u:'мл',hi:140},
+  {k:'Vs',l:'Тастың көлемі',min:10,max:40,step:5,val:25,u:'мл',hi:60},
+  {k:'m',l:'Тастың массасы',min:20,max:200,step:10,val:70,u:'г',hi:1000,nr:true},
+  {k:'div',l:'Мензурканың бөлік бағасы',sel:[['1 мл',1],['2 мл',2],['5 мл',5]],val:2}],
+ cam:{th:.15,ph:1.35,r:30,t:[0,6.5,0]},
+ build:function(p){
+  var c=C(),s={u:0,lvl:p.V0},k=10/150,R_=2.4,y0=.9,i;
+  box(18,.3,12,'pine',[0,.15,0]);cyl(R_+.6,R_+.6,.5,0xcfe6ee,[0,.55,0],{transparent:true,opacity:.5});
+  cyl(R_,R_,10.6,0xdff0f6,[0,y0+5.3,0],{transparent:true,opacity:.16,roughness:.05});
+  s.w=cyl(R_-.05,R_-.05,1,0x4f9ac8,[0,y0,0],{transparent:true,opacity:.75});
+  for(i=0;i<=150;i+=p.div){var big=i%10===0,y=y0+i*k;line([V3(R_+.02,y,0),V3(R_+(big?.7:.4),y,0)],c.ink==null?0x333333:0x2b3a36);}
+  [0,50,100,150].forEach(function(v){var t=tag(String(v),.4);t.position.set(R_+1.8,y0+v*k,0);});
+  var um=tag('мл',.45);um.position.set(R_+1.8,y0+156*k,0);
+  s.r=Math.pow(3*p.Vs*(Math.PI*R_*R_*k)/(4*PI),1/3);s.R=R_;s.k=k;s.y0=y0;
+  s.st=sph(s.r,'concrete',[0,14,0]);s.th=line([V3(0,14,0),V3(0,20,0)],c.neu);
+  s.t1=tag('',.5);s.t1.position.set(-6,12,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  if(dt>0)s.u=Math.min(1,s.u+Math.min(dt,.05)/5);var u=s.u,k=s.k,top=s.y0+s.lvl*k;
+  var yEnd=s.y0+s.r+.05,yS=15-(15-yEnd)*(u<.15?0:(u-.15)/.85);yS=Math.max(yEnd,yS);
+  var fr=clamp((top-(yS-s.r))/(2*s.r),0,1);fr=fr*fr*(3-2*fr);
+  s.lvl=p.V0+p.Vs*fr;s.w.scale.y=Math.max(.01,s.lvl*k);s.w.position.y=s.y0+s.lvl*k/2;
+  s.st.position.y=yS;setLine(s.th,[V3(0,yS+s.r*.9,0),V3(0,21,0)]);s.th.visible=yS>yEnd+.05;
+  s.V2=s.lvl;setTag(s.t1,'V = '+f(s.lvl,0)+' мл');
+ },
+ read:function(p,s){var V2=s?s.V2||p.V0:p.V0,V=V2-p.V0,ok=s&&s.u>=1;return [['Бөлік бағасы c',f(p.div,0),'мл'],['Қате Δ = c/2','±'+f(p.div/2,1),'мл'],['V₁ (алдымен)',f(p.V0,0),'мл'],['V₂ (қазір)',f(V2,0),'мл'],['Тастың көлемі V = V₂ − V₁',f(V,1),'мл = см³'],['Тығыздық ρ = m/V',V>1?f(p.m/V,2):'—','г/см³'],['Қорытынды',ok?'өлшеу аяқталды':'тасты батыр','']];},
+ live:function(p,s){var V2=s?s.V2||p.V0:p.V0;return R`V=V_2-V_1=${f(V2,0)}-${f(p.V0,0)}=${f(V2-p.V0,1)}\,\text{см}^3`;},
+ tips:['Бөлік бағасын 5 мл-ге ауыстыр: аспап дәлдігі төмендейді, қате Δ = 2,5 мл болады. Дәлірек өлшеу үшін бөлігі кіші құрал алу керек.','Тас суға батқанда су деңгейі V₂-ге дейін көтеріледі. Көлем V₂ − V₁ тастың өз көлеміне тең, пішіні қандай болса да.','Массаны өзгертіп көр: ρ = m/V. Зат тығыздығын кестемен салыстырсаң, тастың не екенін болжауға болады.']
+});
+
+/* ---- Тұтас ыдыстар ---- */
+add({id:'vessels',grade:7,name:'Тұтас ыдыстар. Сұйық бағаналарының биіктігі',hint:'Оң жақ сұйықты ауыстыр: тығыздығы аз сұйықтың бағанасы биік болады',
+ theory:{
+  def:'Түбі қосылған ыдыстар тұтас ыдыстар деп аталады. Оларда біртекті сұйықтың беттері бірдей деңгейде орнығады. Тығыздықтары әртүрлі араласпайтын сұйықтар құйылса, сұйықтардың бағаналарының биіктігі тығыздыққа кері пропорционал: тығыздығы аз сұйықтың бағанасы биік. Бөлу деңгейіндегі қысымдар тең болады.',
+  formulas:[{tex:R`p=\rho gh`,note:'сұйық бағанасының қысымы'},{tex:R`\rho_1gh_1=\rho_2gh_2`,note:'бөлу деңгейінде қысымдар тең'},{tex:R`\frac{h_1}{h_2}=\frac{\rho_2}{\rho_1}`,note:'биіктіктердің қатынасы'}],
+  vars:[['\\rho','сұйық тығыздығы','кг/м³'],['h','бөлу деңгейінен бағана биіктігі','см'],['p','гидростатикалық қысым','Па']],
+  sci:{name:'Симон Стевин',years:'1548–1620',text:'Сұйықтың қысымы ыдыстың пішініне емес, сұйық бағанасының биіктігіне тәуелді екенін көрсетті (гидростатикалық парадокс).'}},
+ params:[
+  {k:'rho',l:'Оң жақтағы сұйық',sel:[['Су · 1000',1000],['Спирт · 800',800],['Глицерин · 1260',1260],['Сынап · 13 600',13600]],val:800},
+  {k:'h',l:'Жеңіл сұйық бағанасы h',min:4,max:16,step:1,val:10,u:'см',hi:30}],
+ cam:{th:0,ph:1.35,r:30,t:[0,6,0]},
+ calc:function(p){var rw=1000,r2=p.rho,hl,hh,h2,h1;
+  if(r2===rw){return {rw:rw,r2:r2,h1:p.h,h2:p.h,same:true,light:'—'};}
+  if(r2<rw){return {rw:rw,r2:r2,h1:p.h*r2/rw,h2:p.h,same:false,light:'сұйық'};}
+  return {rw:rw,r2:r2,h1:p.h,h2:p.h*rw/r2,same:false,light:'су'};},
+ build:function(p){
+  var c=C(),k=this.calc(p),s={},y0=.95,yi=3.2,sc=.5,xl=-4,xr=4,R_=1;
+  box(20,.3,10,'pine',[0,.15,0]);
+  cyl(R_+.12,R_+.12,15,0xdff0f6,[xl,y0+7.5,0],{transparent:true,opacity:.15});cyl(R_+.12,R_+.12,15,0xdff0f6,[xr,y0+7.5,0],{transparent:true,opacity:.15});
+  var W=0x4f9ac8,Lq={800:0xe8d98c,1260:0xd8b58a,13600:0x9aa6b2,1000:0x4f9ac8}[p.rho],o={transparent:true,opacity:.8};
+  function col(x,y1,y2,c1){if(y2-y1<.02)return;cyl(R_,R_,y2-y1,c1,[x,(y1+y2)/2,0],c1===0x9aa6b2?{metalness:.9,roughness:.2}:o);}
+  var conn=cyl(.9,.9,8,k.r2>1000?Lq:W,[0,y0+.4,0],{transparent:true,opacity:.8});conn.rotation.z=PI/2;
+  var h1u=k.h1*sc,h2u=k.h2*sc;
+  if(k.same){col(xl,y0,yi+h1u,W);col(xr,y0,yi+h2u,W);}
+  else if(k.r2<1000){col(xl,y0,yi+h1u,W);col(xr,y0,yi,W);col(xr,yi,yi+h2u,Lq);}
+  else{col(xl,y0,yi,Lq);col(xl,yi,yi+h1u,W);col(xr,y0,yi+h2u,Lq);}
+  line([V3(xl-1.6,yi,0),V3(xr+1.6,yi,0)],c.c4,.8);var tl=tag('бөлу деңгейі',.4);tl.position.set(0,yi-.5,1.5);
+  s.top=[yi+h1u,yi+h2u];
+  var a=tag('h = '+f(k.h1,1)+' см',.5);a.position.set(xl,yi+h1u+1.1,0);var b=tag('h = '+f(k.h2,1)+' см',.5);b.position.set(xr,yi+h2u+1.1,0);
+  var a2=tag(k.same?'су':'су · 1000',.4);a2.position.set(xl,y0+.2-.9,1.5);var b2=tag(f(k.r2,0)+' кг/м³',.4);b2.position.set(xr,y0-.7,1.5);
+  return s;
+ },
+ step:function(dt,p,s){},
+ read:function(p){var k=this.calc(p);return [['Сол жақ: су ρ₁',f(1000,0),'кг/м³'],['Оң жақ ρ₂',f(p.rho,0),'кг/м³'],['Су бағанасы h₁',f(k.h1,2),'см'],['Оң жақ бағана h₂',f(k.h2,2),'см'],['Қысым ρ₁gh₁',f(1000*G*k.h1/100,1),'Па'],['Қысым ρ₂gh₂',f(p.rho*G*k.h2/100,1),'Па']];},
+ live:function(p){var k=this.calc(p);return R`\rho_1h_1=\rho_2h_2\Rightarrow ${f(1000,0)}\cdot${f(k.h1,1)}=${f(p.rho,0)}\cdot${f(k.h2,1)}`;},
+ tips:['Оң жаққа суды құй: сұйықтар біртекті болғандықтан, екі жақтағы деңгей бірдей болады. Бұл тұтас ыдыстардың заңы.','Спиртті таңда: тығыздығы аз, сондықтан оның бағанасы судан биік. Сынапта керісінше: сынап бағанасы өте аласа.','Екі жақтағы қысымдар бөлу деңгейінде тең болғандықтан сұйықтар қозғалмай тұрады.']
+});
+
+/* ---- Ылғалдылық. Булану және конденсация ---- */
+add({id:'humid',grade:8,name:'Булану. Ауа ылғалдылығы және шық нүктесі',hint:'«▶ Іске қосу» түймесін бас: су буы қозғалады. Стақан суығанда шық пайда бола ма?',
+ theory:{
+  def:'Булану — сұйықтың бетінен бөлшектердің ұшып шығуы, ол кез келген температурада жүреді. Ауадағы су буының мөлшері ылғалдылықты анықтайды. Салыстырмалы ылғалдылық — ауадағы будың қысымының сол температурадағы қаныққан бу қысымына қатынасы. Ауа суыған сайын қаныққан бу қысымы кемиді, белгілі температурада бу қанығады, одан әрі суыса шық түзіледі. Бұл температура шық нүктесі деп аталады.',
+  formulas:[{tex:R`\varphi=\frac{p}{p_\text{қ}}\cdot100\%`,note:'салыстырмалы ылғалдылық'},{tex:R`\rho=\frac{pM}{RT}`,note:'абсолют ылғалдылық (бу тығыздығы)'},{tex:R`p(t_\text{ш})=p_\text{қ}(t_\text{ш})`,note:'шық нүктесінде бу қаныққан'}],
+  vars:[['\\varphi','салыстырмалы ылғалдылық','%'],['p','су буының қысымы','Па'],['p_\\text{қ}','қаныққан бу қысымы','Па'],['t_\\text{ш}','шық нүктесі','°C']],
+  sci:{name:'Анри Реньо',years:'1810–1878',text:'Су буының қаныққан қысымын әртүрлі температурада дәл өлшеді және ылғалдылықты өлшеуге арналған гигрометр жасады.'}},
+ params:[
+  {k:'T',l:'Ауа температурасы',min:5,max:35,step:1,val:25,u:'°C',hi:50,nr:true},
+  {k:'phi',l:'Салыстырмалы ылғалдылық φ',min:10,max:100,step:5,val:60,u:'%',hi:100,nr:true},
+  {k:'Tg',l:'Стақандағы судың температурасы',min:0,max:25,step:1,val:12,u:'°C',hi:40,nr:true}],
+ cam:{th:.35,ph:1.15,r:30,t:[0,3,0]},
+ calc:function(p){var ps=6.112*Math.exp(17.62*p.T/(243.12+p.T)),pv=ps*p.phi/100,g=Math.log(p.phi/100)+17.62*p.T/(243.12+p.T),Td=243.12*g/(17.62-g),rho=216.7*pv/(p.T+273.15);return {ps:ps,pv:pv,Td:Td,rho:rho};},
+ build:function(p){
+  var c=C(),s={ps:[],N:70,dr:[]},i;
+  box(30,.3,16,'pine',[0,.15,0]);
+  box(.15,8,8,0xdff0f6,[-8,4.3,0],{transparent:true,opacity:.12});box(.15,8,8,0xdff0f6,[8,4.3,0],{transparent:true,opacity:.12});
+  s.gl=cyl(1.5,1.4,3.4,0xdff0f6,[0,2,0],{transparent:true,opacity:.35,roughness:.05});cyl(1.35,1.3,2.6,0x4f9ac8,[0,1.7,0],{transparent:true,opacity:.7});
+  for(i=0;i<s.N;i++){var m=sph(.2,0x8fc1ff,[(Math.random()*2-1)*7.5,.6+Math.random()*7,(Math.random()*2-1)*3.5]);m.castShadow=false;s.ps.push({m:m,vx:Math.random()*2-1,vy:Math.random()*2-1,vz:Math.random()*2-1});}
+  for(i=0;i<24;i++){var a=Math.random()*PI*2,y=.9+Math.random()*2.4,d=sph(.13,0xe9f6fb,[Math.cos(a)*1.52,y,Math.sin(a)*1.52],{transparent:true,opacity:.85});d.castShadow=false;s.dr.push(d);}
+  s.tt=tag('',.5);s.tt.position.set(0,9.4,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p),h=Math.min(dt,.05),sp=Math.sqrt((p.T+273)/298)*3,vis=Math.round(s.N*Math.min(1,k.rho/30)),i;
+  s.ps.forEach(function(q,idx){var m=q.m;m.visible=idx<vis;if(h>0){m.position.x+=q.vx*sp*h;m.position.y+=q.vy*sp*h;m.position.z+=q.vz*sp*h;
+   if(Math.abs(m.position.x)>7.6)q.vx*=-1;if(m.position.y<.5||m.position.y>7.6)q.vy*=-1;if(Math.abs(m.position.z)>3.6)q.vz*=-1;}});
+  var dew=p.Tg<=k.Td,n=dew?Math.ceil(s.dr.length*clamp((k.Td-p.Tg)/6,.1,1)):0;
+  s.dr.forEach(function(d,idx){d.visible=idx<n;});
+  setTag(s.tt,dew?'Стақанда шық пайда болды (Tст ≤ Tш)':'Шық түзілмейді (Tст > Tш)');
+ },
+ read:function(p){var k=this.calc(p);return [['Қаныққан бу қысымы pқ',f(k.ps/10,2),'кПа'],['Бу қысымы p = φ·pқ',f(k.pv/10,2),'кПа'],['Абсолют ылғалдылық ρ',f(k.rho,1),'г/м³'],['Шық нүктесі tш',f(k.Td,1),'°C'],['Стақан температурасы',f(p.Tg,0),'°C'],['Шық',p.Tg<=k.Td?'түзіледі':'түзілмейді','']];},
+ live:function(p){var k=this.calc(p);return R`\varphi=\frac{p}{p_\text{қ}}=${f(p.phi,0)}\%,\quad t_\text{ш}=${f(k.Td,1)}\,^\circ\text{C}`;},
+ tips:['Ылғалдылықты арттыр: шық нүктесі ауа температурасына жақындайды, стақанды сәл суытсаң да шық түзіледі.','Стақан температурасын шық нүктесінен төмен түсір: ауадағы бу тамшыға айналады. Қыста терезенің терлеуі де осылай.','Температураны көтер: бөлшектер жылдамырақ қозғалады, ал қаныққан бу қысымы өседі. Сондықтан бірдей φ кезінде жылы ауада су көп болады.']
+});
+
+/* ---- Жылу қозғалтқышы ---- */
+add({id:'engine',grade:8,name:'Жылу қозғалтқышы. ПӘК',hint:'«▶ Іске қосу» түймесін бас: поршень жұмыс істейді. Қыздырғыш пен тоңазытқыш температурасын өзгерт',
+ theory:{
+  def:'Жылу қозғалтқышы отынның жану энергиясын механикалық жұмысқа айналдырады. Ол қыздырғыштан Q₁ жылу алады, бір бөлігін пайдалы жұмысқа A жұмсайды, қалғанын Q₂ тоңазытқышқа береді. Қозғалтқыштың пайдалы әсер коэффициенті әрқашан 100 %-дан кіші. Ең үлкен ПӘК-ке Карно циклі жетеді, ол тек қыздырғыш пен тоңазытқыш температураларына тәуелді.',
+  formulas:[{tex:R`A=Q_1-Q_2`,note:'энергияның сақталуы'},{tex:R`\eta=\frac{A}{Q_1}=\frac{Q_1-Q_2}{Q_1}`,note:'ПӘК'},{tex:R`\eta_\text{max}=1-\frac{T_2}{T_1}`,note:'Карно формуласы (T — Кельвинмен)'}],
+  vars:[['Q_1','қыздырғыштан алынған жылу','кДж'],['Q_2','тоңазытқышқа берілген жылу','кДж'],['A','пайдалы жұмыс','кДж'],['T_1,T_2','қыздырғыш пен тоңазытқыш температурасы','К']],
+  sci:{name:'Сади Карно',years:'1796–1832',text:'1824 жылы «Оттың қозғаушы күші туралы» еңбегінде жылу қозғалтқышының ПӘК-і тек қыздырғыш пен тоңазытқыштың температураларына байланысты екенін көрсетті.'}},
+ params:[
+  {k:'T1',l:'Қыздырғыш температурасы T₁',min:400,max:900,step:50,val:600,u:'К',hi:2000,nr:true},
+  {k:'T2',l:'Тоңазытқыш температурасы T₂',min:250,max:400,step:10,val:300,u:'К',hi:399,nr:true},
+  {k:'Q1',l:'Бір циклде алынған жылу Q₁',min:1,max:10,step:1,val:5,u:'кДж',hi:100,nr:true},
+  {k:'kk',l:'Нақты қозғалтқыш Карно ПӘК-інен',min:40,max:100,step:5,val:70,u:'%',hi:100,nr:true}],
+ cam:{th:.3,ph:1.15,r:32,t:[0,5,0]},
+ calc:function(p){var em=1-p.T2/p.T1,e=em*p.kk/100,A=e*p.Q1;return {em:em,eta:e,A:A,Q2:p.Q1-A};},
+ build:function(p){
+  var c=C(),s={ph:0,n:0};
+  box(30,.3,14,'pine',[0,.15,0]);
+  box(4,.9,4,c.struct,[0,.6,0]);cyl(1.7,1.7,6,0xdff0f6,[0,4,0],{transparent:true,opacity:.2,roughness:.05});
+  s.gas=cyl(1.55,1.55,1,0xf2a65a,[0,2,0],{transparent:true,opacity:.35});
+  s.pis=cyl(1.65,1.65,.5,'steel',[0,5,0]);s.rod=cyl(.18,.18,4,'steel',[0,7.5,0]);
+  s.fly=cyl(1.6,1.6,.5,'iron',[0,10,0]);s.fly.rotation.x=PI/2;s.dot=sph(.25,c.c1,[0,10,.4]);
+  box(5,1.8,5,0xc9774a,[-9,1.1,0]);s.t1=tag('T₁',.5);s.t1.position.set(-9,3.2,0);
+  box(5,1.8,5,0x6c88c8,[9,1.1,0]);s.t2=tag('T₂',.5);s.t2.position.set(9,3.2,0);
+  s.a1=arrow(c.c4);s.a2=arrow(c.c3);s.a3=arrow(c.c2);s.ta=tag('',.45);s.tq=tag('',.45);s.tw=tag('',.45);
+  s.tt=tag('',.5);s.tt.position.set(0,12.5,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p);if(dt>0){s.ph+=Math.min(dt,.05)*2.4;if(s.ph>=2*PI){s.ph-=2*PI;s.n++;}}
+  var y=5-1.6*(1-Math.cos(s.ph))/2*1.0-0;s.pis.position.y=y;s.rod.position.y=y+2.4;s.gas.scale.y=Math.max(.1,y-1.8);s.gas.position.y=1.5+(y-1.8)/2;
+  s.fly.rotation.y=s.ph;s.dot.position.set(1.2*Math.cos(s.ph),10+0*Math.sin(s.ph),.4);s.dot.position.y=10+1.2*Math.sin(s.ph);
+  var L=function(q){return .8+q/p.Q1*3.2;};
+  setArrow(s.a1,V3(-6.3,3.2,0),V3(1,.3,0),L(p.Q1));setArrow(s.a2,V3(2,3.2,0),V3(1,-.3,0),L(k.Q2));setArrow(s.a3,V3(0,8.6,1),V3(0,1,0),.8+k.A/p.Q1*5);
+  s.ta.position.set(-6,5,0);setTag(s.ta,'Q₁ = '+f(p.Q1,1)+' кДж');s.tq.position.set(6,5.2,0);setTag(s.tq,'Q₂ = '+f(k.Q2,2)+' кДж');s.tw.position.set(3,9.5,1);setTag(s.tw,'A = '+f(k.A,2)+' кДж');
+  setTag(s.t1,'T₁ = '+f(p.T1,0)+' К');setTag(s.t2,'T₂ = '+f(p.T2,0)+' К');setTag(s.tt,'η = '+f(k.eta*100,1)+' %');s.wk=s.n*k.A;
+ },
+ read:function(p,s){var k=this.calc(p),n=s?s.n||0:0;return [['Карно ПӘК-і ηmax',f(k.em*100,1),'%'],['Қозғалтқыш ПӘК-і η',f(k.eta*100,1),'%'],['Пайдалы жұмыс A',f(k.A,2),'кДж/цикл'],['Тоңазытқышқа Q₂',f(k.Q2,2),'кДж/цикл'],['Цикл саны',f(n,0),''],['Жиынтық жұмыс',f(n*k.A,2),'кДж']];},
+ live:function(p){var k=this.calc(p);return R`\eta_\text{max}=1-\frac{T_2}{T_1}=1-\frac{${f(p.T2,0)}}{${f(p.T1,0)}}=${f(k.em*100,1)}\%`;},
+ tips:['Қыздырғыш температурасын арттыр: ПӘК өседі. ПӘК-ті арттырудың жолы: T₁ жоғары, T₂ төмен болсын.','Q₁-ді өзгерт: A = ηQ₁ мен Q₂ пропорционалды өзгереді, ал ПӘК өзгермейді.','T₂ = T₁ болса, η = 0: температура айырымы жоқ жерде жұмыс алуға болмайды. 100 %-дық ПӘК мүмкін емес, өйткені Q₂ әрқашан нөлден үлкен.']
+});
+
+/* ---- Өткізгіштің кедергісі ---- */
+var RES=[['Мыс · ρ = 0,017',.017],['Алюминий · ρ = 0,028',.028],['Темір · ρ = 0,10',.10],['Нихром · ρ = 1,1',1.1]];
+add({id:'resist',grade:8,name:'Өткізгіштің кедергісі. Меншікті кедергі',hint:'Сымның ұзындығын, қимасын және затын өзгертіп, кедергінің қалай өзгеретінін қара',
+ theory:{
+  def:'Өткізгіштің кедергісі оның ұзындығына тура, көлденең қима ауданына кері пропорционал және заттың түріне байланысты. Заттың түрін меншікті кедергі ρ сипаттайды: ол ұзындығы 1 м, қимасы 1 мм² өткізгіштің кедергісіне тең. Мыс пен алюминийдің меншікті кедергісі аз, сондықтан сымдар солардан жасалады, ал нихромның кедергісі үлкен, ол қыздыру аспаптарына қолданылады.',
+  formulas:[{tex:R`R=\rho\frac{l}{S}`,note:'өткізгіштің кедергісі'},{tex:R`\rho\ [\text{Ом·мм}^2/\text{м}]`,note:'меншікті кедергі'},{tex:R`I=\frac{U}{R}`,note:'Ом заңы'}],
+  vars:[['\\rho','меншікті кедергі','Ом·мм²/м'],['l','сымның ұзындығы','м'],['S','көлденең қима ауданы','мм²'],['R','кедергі','Ом']],
+  sci:{name:'Георг Ом',years:'1789–1854',text:'Өткізгіштің кедергісі оның ұзындығы мен қимасына байланысты екенін тәжірибемен анықтады. Кедергі бірлігі Омның құрметіне аталған.'}},
+ params:[
+  {k:'rho',l:'Сым материалы',sel:RES,val:.017},
+  {k:'l',l:'Ұзындығы l',min:1,max:10,step:1,val:4,u:'м',hi:100},
+  {k:'S',l:'Қимасы S',min:.1,max:2,step:.1,val:.5,u:'мм²',hi:10},
+  {k:'U',l:'Кернеу U',min:1,max:12,step:1,val:6,u:'В',hi:220,nr:true}],
+ cam:{th:0,ph:1.3,r:34,t:[0,3.5,0]},
+ calc:function(p){var R_=p.rho*p.l/p.S;return {R:R_,I:p.U/R_,P:p.U*p.U/R_};},
+ build:function(p){
+  var c=C(),s={ph:0,N:40},L=p.l*2,r=Math.sqrt(p.S)*.28,col=[0xc9774a,0xbfc6cd,0x8a939c,0x6d5a52][RES.map(function(x){return x[1];}).indexOf(p.rho)];
+  box(34,.3,10,'pine',[0,.15,0]);
+  var w=cyl(r,r,L,col,[0,3.5,0],{metalness:.7,roughness:.35});w.rotation.z=PI/2;s.L=L;s.r=r;
+  box(2.4,3,2.4,c.struct,[-L/2-1.2,2,0]);box(2.4,3,2.4,c.struct,[L/2+1.2,2,0]);
+  s.dots=[];for(var i=0;i<s.N;i++)s.dots.push(sph(Math.max(.05,r*.6),0x8fc1ff,[0,3.5,0]));
+  s.t1=tag('',.5);s.t1.position.set(0,7.2,0);s.t2=tag('',.45);s.t2.position.set(0,5.6,0);
+  var lt=tag('l = '+f(p.l,0)+' м',.4);lt.position.set(0,1.2,2.4);return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p),h=Math.min(dt,.05),sp=Math.min(.5,k.I*.008);s.ph=(s.ph+h*sp*3)%1;
+  for(var i=0;i<s.N;i++){var u=(i/s.N+s.ph)%1;s.dots[i].position.set(-s.L/2+u*s.L,3.5+((i%3)-1)*s.r*.4,((i*7)%5-2)*s.r*.3);}
+  setTag(s.t1,'R = ρl/S = '+f(k.R,3)+' Ом');setTag(s.t2,'I = '+f(k.I,2)+' А');
+ },
+ read:function(p){var k=this.calc(p);return [['Кедергі R = ρl/S',f(k.R,3),'Ом'],['Ток күші I = U/R',f(k.I,2),'А'],['Қуат P = U²/R',f(k.P,1),'Вт'],['Меншікті кедергі ρ',f(p.rho,3),'Ом·мм²/м'],['Ұзындық l',f(p.l,0),'м'],['Қима S',f(p.S,1),'мм²']];},
+ live:function(p){var k=this.calc(p);return R`R=\rho\frac{l}{S}=${f(p.rho,3)}\cdot\frac{${f(p.l,0)}}{${f(p.S,1)}}=${f(k.R,3)}\,\text{Ом}`;},
+ tips:['Ұзындықты екі есе арттыр: кедергі екі есе артады. Қиманы екі есе арттырсаң, кедергі екі есе кемиді.','Мысты нихромға ауыстыр: кедергі шамамен 65 есе артады. Сондықтан қыздыру спиральдарын нихромнан жасайды.','Кедергі артқанда бірдей кернеуде ток кемиді. Жіңішке ұзын сым тізбектің тоғын шектейді.']
+});
+
+/* ---- Жарықтың түзу сызықты таралуы. Көлеңке ---- */
+add({id:'shadow',grade:8,name:'Жарықтың түзу сызықты таралуы. Көлеңке және жарым көлеңке',hint:'Жарық көзінің өлшемін үлкейт: көлеңкенің айналасында жарым көлеңке пайда болады',
+ theory:{
+  def:'Біртекті ортада жарық түзу сызықпен таралады. Сондықтан мөлдір емес дененің артында көлеңке пайда болады. Нүктелік көзден тек толық көлеңке түседі. Көз өлшемді болса, толық көлеңкенің (сәуле мүлде түспейтін аймақ) айналасында жарым көлеңке (көздің тек бір бөлігі көрінетін аймақ) түзіледі. Күн және Ай тұтылуы осы құбылыстың мысалы.',
+  formulas:[{tex:R`\frac{H}{h}=\frac{d_1+d_2}{d_1}`,note:'нүктелік көздің көлеңкесі (ұқсас үшбұрыштар)'},{tex:R`U=\frac{h(d_1+d_2)-s\,d_2}{d_1}`,note:'толық көлеңке өлшемі'},{tex:R`P=\frac{h(d_1+d_2)+s\,d_2}{d_1}`,note:'жарым көлеңке сыртқы өлшемі'}],
+  vars:[['h','дененің өлшемі','м'],['s','көздің өлшемі','м'],['d_1','көзден денеге дейін','м'],['d_2','денеден экранға дейін','м']],
+  sci:{name:'Эратосфен',years:'б.з.д. ≈ 276–194',text:'Күн сәулесінің екі қалада түсетін бұрыштарының айырымы мен көлеңкенің ұзындығына қарап, Жер шарының радиусын өлшеді.'}},
+ params:[
+  {k:'s',l:'Жарық көзінің өлшемі s',min:0,max:3,step:.5,val:1.5,u:'м',hi:6},
+  {k:'h',l:'Дененің өлшемі h',min:1,max:3,step:.5,val:2,u:'м',hi:6},
+  {k:'d1',l:'Көзден денеге дейін d₁',min:2,max:8,step:1,val:4,u:'м',hi:20},
+  {k:'d2',l:'Денеден экранға дейін d₂',min:2,max:8,step:1,val:5,u:'м',hi:20}],
+ cam:{th:.9,ph:1.15,r:36,t:[2,3.5,0]},
+ calc:function(p){var Pf=(p.h*(p.d1+p.d2)+p.s*p.d2)/p.d1,Uf=(p.h*(p.d1+p.d2)-p.s*p.d2)/p.d1;return {P:Pf,U:Math.max(0,Uf),pnt:p.h*(p.d1+p.d2)/p.d1};},
+ build:function(p){
+  var c=C(),k=this.calc(p),s={},x0=-p.d1-1,y=4.2,xo=x0+p.d1,xs=xo+p.d2;
+  box(30,.3,12,'pine',[0,.15,0]);
+  s.src=sph(Math.max(.2,p.s*.5),0xffd54a,[x0,y,0],{emissive:0xffc21a,emissiveIntensity:.9});s.src.scale.set(.5,1,.5);
+  box(.35,p.h,p.h*.6,c.c4,[xo,y,0]);
+  box(.3,10,10,0xe9e5d8,[xs,5,0]);
+  var ra=function(y1,y2,col,op){return line([V3(x0,y1,0),V3(xs,y2,0)],col,op);};
+  var sh=p.s/2,ho=p.h/2;
+  line([V3(x0,y+sh,0),V3(xo,y+ho,0),V3(xs,y+ho+(ho-sh)*p.d2/p.d1,0)],0xe8d24a);
+  line([V3(x0,y-sh,0),V3(xo,y-ho,0),V3(xs,y-ho-(ho-sh)*p.d2/p.d1,0)],0xe8d24a);
+  line([V3(x0,y-sh,0),V3(xo,y+ho,0),V3(xs,y+ho+(ho+sh)*p.d2/p.d1,0)],0xe89a4a,.8);
+  line([V3(x0,y+sh,0),V3(xo,y-ho,0),V3(xs,y-ho-(ho+sh)*p.d2/p.d1,0)],0xe89a4a,.8);
+  var pen=box(.2,k.P,k.P*.9,0x6b7570,[xs-.2,y,0],{transparent:true,opacity:.35}),um=null;
+  if(k.U>.05)um=box(.22,k.U,k.U*.9,0x1d1f22,[xs-.25,y,0],{transparent:true,opacity:.85});
+  var t=tag('толық көлеңке '+f(k.U,2)+' м',.4);t.position.set(xs+2.6,y+1.2,0);var t2=tag('жарым көлеңке '+f(k.P,2)+' м',.4);t2.position.set(xs+2.9,y-1.4,0);
+  return s;
+ },
+ step:function(dt,p,s){},
+ read:function(p){var k=this.calc(p);return [['Толық көлеңке U',f(k.U,2),'м'],['Жарым көлеңкенің сыртқы өлшемі P',f(k.P,2),'м'],['Нүктелік көз көлеңкесі H',f(k.pnt,2),'м'],['Көз өлшемі s',f(p.s,1),'м'],['Жарым көлеңке жолағы',f((k.P-k.U)/2,2),'м (әр жақта)'],['Көлеңке түрі',p.s===0?'тек толық':(k.U>0?'толық + жарым':'тек жарым (тұтылу сақинасы)'),'']];},
+ live:function(p){var k=this.calc(p);return R`H=h\frac{d_1+d_2}{d_1}=${f(p.h,1)}\cdot\frac{${f(p.d1+p.d2,0)}}{${f(p.d1,0)}}=${f(k.pnt,2)}\,\text{м}`;},
+ tips:['Көздің өлшемін 0-ге түсір: жарым көлеңке жоғалады, көлеңке айқын болады.','Экранды денеден алыстат: көлеңке де, жарым көлеңке де үлкейеді. Көздің өлшемі үлкен болса, жарым көлеңке тез кеңейеді.','Көлеңке мүлде жоғалатын жағдай бар: толық көлеңке нөлге жетсе, дененің артында тек жарым көлеңке қалады. Ай көлеңкесі Жерге осылай түскенде толық тұтылу болады.']
+});
+
+/* ---- Айнымалы ток генераторы ---- */
+add({id:'ac',grade:11,name:'Айнымалы ток. Генератордағы индукциялық ЭҚК',hint:'«▶ Іске қосу» түймесін бас: рамка магнит өрісінде айналады, ЭҚК синус заңымен өзгереді',
+ theory:{
+  def:'Магнит өрісінде айналатын рамкада магнит ағыны өзгереді, сондықтан электромагниттік индукция ЭҚК-і пайда болады. Рамка бірқалыпты айналғанда ЭҚК уақыт бойынша синус заңымен өзгереді, ол айнымалы ток генераторының жұмыс принципі. Айнымалы токтың әсерлік мәні амплитудалық мәнінен √2 есе кіші: ол тұрақты токтың сондай қуат беретін мәніне тең. Қазақстанда стандартты жиілік 50 Гц.',
+  formulas:[{tex:R`e=\mathcal{E}_m\sin\omega t,\quad\mathcal{E}_m=NBS\omega`,note:'индукциялық ЭҚК'},{tex:R`\omega=2\pi\nu=\frac{2\pi}{T}`,note:'циклдік жиілік'},{tex:R`U=\frac{U_m}{\sqrt2}`,note:'әсерлік мән'},{tex:R`\Phi=BS\cos\omega t`,note:'магнит ағыны'}],
+  vars:[['N','рамка орамдарының саны','—'],['B','магнит индукциясы','Тл'],['S','рамка ауданы','м²'],['\\nu','айналу жиілігі','Гц']],
+  sci:{name:'Никола Тесла',years:'1856–1943',text:'Көпфазалы айнымалы ток жүйесін жасап, электр энергиясын алыс қашықтыққа тасымалдауды мүмкін етті. Магнит индукциясының бірлігі оның құрметіне аталған.'}},
+ params:[
+  {k:'N',l:'Орам саны N',min:10,max:100,step:10,val:50,u:'',hi:1000,nr:true},
+  {k:'B',l:'Магнит индукциясы B',min:.1,max:1,step:.1,val:.5,u:'Тл',hi:3,nr:true},
+  {k:'S',l:'Рамка ауданы S',min:100,max:500,step:50,val:200,u:'см²',hi:2000,nr:true},
+  {k:'nu',l:'Айналу жиілігі ν',min:10,max:100,step:10,val:50,u:'Гц',hi:400,nr:true}],
+ cam:{th:.1,ph:1.0,r:36,t:[0,2,-1]},
+ build:function(p){
+  var c=C(),s={t:0,th:0,hist:[]},g=new T.Group();
+  box(30,.3,20,'pine',[0,.15,0]);
+  box(3,4.4,5,0xd64a4a,[-6.5,4.5,0]);box(3,4.4,5,0x3d6fd1,[6.5,4.5,0]);
+  var n1=tag('N',.6);n1.position.set(-6.5,7.4,0);var s1=tag('S',.6);s1.position.set(6.5,7.4,0);
+  [3.3,4.5,5.7].forEach(function(y){var a=arrow(c.c4,y===4.5?'B':null);setArrow(a,V3(-4.8,y,1.8),V3(1,0,0),9.6);});
+  var fm=mat(0xc9774a,{metalness:.7,roughness:.35}),mk=function(w,h,d,x,y,z){var m=new T.Mesh(new T.BoxGeometry(w,h,d),fm);m.position.set(x,y,z);m.castShadow=true;g.add(m);};
+  mk(.2,.2,3.6,0,2,0);mk(.2,.2,3.6,0,-2,0);mk(.2,4.2,.2,0,0,1.8);mk(.2,4.2,.2,0,0,-1.8);
+  g.position.set(0,4.5,0);world.add(g);s.g=g;
+  var ax=cyl(.1,.1,6.6,'steel',[0,4.5,0]);
+  s.ch=chartBoard(0,-8,24,6.2,'t','e');
+  s.cv=line([V3(0,0),V3(0,0)],c.c1);line([s.ch.pt(0,.5),s.ch.pt(1,.5)],c.neu,.4);
+  s.tt=tag('',.5);s.tt.position.set(0,9.2,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var w=2*PI*p.nu,Em=p.N*p.B*p.S*1e-4*w,h=Math.min(dt,.05);
+  if(h>0){s.t+=h/50;s.hist.push([s.t,Em*Math.sin(w*s.t)]);if(s.hist.length>900)s.hist.shift();}
+  var th=w*s.t;s.g.rotation.y=th;
+  var T0=1/p.nu,win=3*T0,t0=s.t-win,pts=[];
+  s.hist.forEach(function(e){if(e[0]>=t0)pts.push(s.ch.pt((e[0]-t0)/win,.5+e[1]/Em*.42));});
+  if(pts.length<2)pts=[s.ch.pt(0,.5),s.ch.pt(.001,.5)];setLine(s.cv,pts);
+  s.e=Em*Math.sin(th);setTag(s.tt,'e = '+f(s.e,1)+' В');
+ },
+ read:function(p,s){var w=2*PI*p.nu,Em=p.N*p.B*p.S*1e-4*w,th=w*(s?s.t||0:0);return [['Амплитуда ℰₘ = NBSω',f(Em,1),'В'],['Әсерлік мән ℰ = ℰₘ/√2',f(Em/Math.sqrt(2),1),'В'],['Қазіргі ЭҚК e',f(Em*Math.sin(th),1),'В'],['Период T',f(1000/p.nu,1),'мс'],['Циклдік жиілік ω',f(w,0),'рад/с'],['Магнит ағыны Φ',f(p.B*p.S*1e-4*Math.cos(th)*1000,2),'мВб']];},
+ live:function(p){var w=2*PI*p.nu,Em=p.N*p.B*p.S*1e-4*w;return R`\mathcal{E}_m=NBS\omega=${f(p.N,0)}\cdot${f(p.B,1)}\cdot${f(p.S*1e-4,3)}\cdot${f(w,0)}=${f(Em,1)}\,\text{В}`;},
+ tips:['Рамка магнит өрісіне перпендикуляр болғанда ағын ең көп, ал ЭҚК нөл. Рамка өріске параллель болғанда ағын нөл, ал ЭҚК ең көп.','Жиілікті арттыр: ЭҚК амплитудасы да артады (ℰₘ ∼ ω), ал график жиілей түседі. Модель 50 есе баяулатылған.','Орам санын, B-ны немесе ауданды екі есе арттыр: амплитуда екі есе артады.']
+});
+
+/* ---- Салыстырмалылық. Уақыттың баяулауы ---- */
+add({id:'relat',grade:11,name:'Салыстырмалылық теориясының негіздері. Уақыттың баяулауы',hint:'«▶ Іске қосу» түймесін бас: қозғалатын жарық сағатының тиктері сирейді',
+ theory:{
+  def:'Эйнштейннің арнайы салыстырмалылық теориясының екі постулаты бар: физика заңдары барлық инерциалды санақ жүйесінде бірдей, ал жарықтың вакуумдағы жылдамдығы барлық бақылаушыға бірдей және жарық көзінің қозғалысына тәуелсіз. Одан қозғалатын дененің уақыты баяу жүретіні, ұзындығы қозғалыс бағытында қысқаратыны шығады. Бұл әсерлер жарық жылдамдығына жақындағанда ғана байқалады. Жарық сағатында сәуле екі айна арасында қайта-қайта шағылады: қозғалатын сағатта сәуленің жолы ұзарады, ал жылдамдық өзгермейді, сондықтан тик сирейді.',
+  formulas:[{tex:R`\gamma=\frac{1}{\sqrt{1-v^2/c^2}}`,note:'Лоренц-факторы'},{tex:R`\Delta t=\gamma\,\Delta t_0`,note:'уақыттың баяулауы'},{tex:R`l=\frac{l_0}{\gamma}`,note:'ұзындықтың қысқаруы'},{tex:R`E=mc^2,\quad E_k=(\gamma-1)mc^2`,note:'толық және кинетикалық энергия'}],
+  vars:[['c','жарық жылдамдығы 3·10⁸','м/с'],['v','қозғалыс жылдамдығы','м/с'],['\\Delta t_0','өзіндік уақыт (сағатпен бірге қозғалатын)','с'],['\\gamma','Лоренц-факторы','—']],
+  sci:{name:'Альберт Эйнштейн',years:'1879–1955',text:'1905 жылы арнайы салыстырмалылық теориясын жариялады. Одан масса мен энергияның эквиваленттілігі E = mc² шықты.'}},
+ params:[
+  {k:'beta',l:'Жылдамдық v/c',min:0,max:.95,step:.05,val:.6,u:'c',hi:.999,nr:true}],
+ cam:{th:0,ph:1.3,r:34,t:[2,3.2,0]},
+ build:function(p){
+  var c=C(),s={t:0,p0:0,p1:0,x:-3,trail:[]},gap=3.6;
+  box(36,.3,10,'pine',[0,.15,0]);s.gap=gap;
+  box(2.4,.2,1,c.struct,[-9,1.35-.1,0]);box(2.4,.2,1,c.struct,[-9,1.5+gap+.1,0]);box(.1,gap,.1,c.neu,[-10,1.5+gap/2,0]);
+  s.ph0=sph(.28,0xffd54a,[-9,1.5,0],{emissive:0xffc21a,emissiveIntensity:.9});
+  s.m1=box(2.4,.2,1,c.struct,[0,1.4,0]);s.m2=box(2.4,.2,1,c.struct,[0,1.5+gap+.1,0]);s.ph1=sph(.28,0xffd54a,[0,1.5,0],{emissive:0xffc21a,emissiveIntensity:.9});
+  s.tr=line([V3(0,1.5),V3(1,1.5)],0xe89a4a);
+  var a=tag('тыныш сағат',.45);a.position.set(-9,6.8,0);var b=tag('қозғалатын сағат',.45);b.position.set(2,6.8,0);
+  s.n0=tag('',.5);s.n0.position.set(-9,8,0);s.n1=tag('',.5);s.n1.position.set(2,8,0);
+  s.ar=arrow(c.c3);return s;
+ },
+ step:function(dt,p,s){
+  var h=Math.min(dt,.05),gap=s.gap,b=p.beta,cv=3.6,g=1/Math.sqrt(1-b*b),vy=cv*Math.sqrt(1-b*b);
+  if(h>0){s.t+=h;s.p0+=cv*h/gap;s.p1+=vy*h/gap;s.x+=b*cv*h;
+   if(s.x>14){s.x=-3;s.trail=[];}
+   var fr=function(ph){var m=ph%2;return m<1?m:2-m;};
+   s.y1=1.5+gap*fr(s.p1);s.trail.push(V3(s.x,s.y1,0));if(s.trail.length>500)s.trail.shift();}
+  var fr0=function(ph){var m=ph%2;return m<1?m:2-m;};
+  s.ph0.position.y=1.5+gap*fr0(s.p0);var y1=1.5+gap*fr0(s.p1);
+  s.m1.position.x=s.x;s.m2.position.x=s.x;s.ph1.position.set(s.x,y1,0);
+  if(s.trail.length>1)setLine(s.tr,s.trail);
+  setArrow(s.ar,V3(s.x-1.2,6,0),V3(1,0,0),b>0?.6+b*2.4:0);
+  s.N0=Math.floor(s.p0);s.N1=Math.floor(s.p1);setTag(s.n0,'тик: '+s.N0);setTag(s.n1,'тик: '+s.N1);
+ },
+ read:function(p,s){var b=p.beta,g=1/Math.sqrt(1-b*b),N0=s?s.N0||0:0,N1=s?s.N1||0:0;return [['Жылдамдық v',f(b*3e5,0),'км/с'],['Лоренц-факторы γ',f(g,3),''],['Тыныш сағат тигі',f(N0,0),''],['Қозғалатын сағат тигі',f(N1,0),''],['Уақыт қатынасы Δt/Δt₀',f(g,3),''],['1 м таяқтың ұзындығы',f(1/g,3),'м (қозғалыста)'],['Электронның Eₖ',f((g-1)*.511,3),'МэВ']];},
+ live:function(p){var g=1/Math.sqrt(1-p.beta*p.beta);return R`\gamma=\frac{1}{\sqrt{1-${f(p.beta,2)}^2}}=${f(g,3)}`;},
+ tips:['v/c = 0,6 болғанда γ = 1,25: қозғалатын сағаттың 4 тигіне тыныш сағаттың 5 тигі келеді. Бұл әсер ұзақ сағатта жиналады.','Жылдамдықты 0,95c-ге жеткіз: γ ≈ 3,2. Сағат үш есе баяу жүреді. Жарық жылдамдығына жақындаған сайын γ шексіз өседі.','Қозғалмайтын нысан (v = 0) үшін екі сағат бірдей жүреді. Төмен жылдамдықта (v ≪ c) айырма байқалмайды, сондықтан тұрмыста біз оны сезбейміз.']
+});
+/* ===== Жаңа тақырыптар (G): Кеплер, Кирхгоф, трансформатор, дифракциялық тор, поляризация ===== */
+
+/* ---- Кеплер заңдары ---- */
+add({id:'kepler',grade:9,name:'Кеплер заңдары. Планета орбитасы',hint:'«▶ Іске қосу» түймесін бас: планета эллипс бойымен қозғалады. Эксцентриситетті өзгертіп көр',
+ theory:{
+  def:'Кеплердің үш заңы планеталардың Күнді айнала қозғалысын сипаттайды. I заң: әр планета Күнді эллипс бойымен айналады, Күн эллипстің бір фокусында тұрады. II заң: планетаның радиус-векторы тең уақытта тең аудан сызады (планета Күнге жақындағанда жылдамырақ қозғалады). III заң: планеталардың айналу периодтарының квадраттары орбиталарының үлкен жарты осьтерінің кубтарына қатысты.',
+  formulas:[{tex:R`\frac{r^2}{a^2}+\ldots=1\;\Rightarrow\;r_{\min}=a(1-e),\; r_{\max}=a(1+e)`,note:'перигелий және афелий'},{tex:R`\frac{\Delta S}{\Delta t}=\text{const}`,note:'II заң: аудандық жылдамдық'},{tex:R`\frac{T_1^2}{T_2^2}=\frac{a_1^3}{a_2^3}`,note:'III заң'},{tex:R`T^2=a^3\quad(T\text{ — жыл, }a\text{ — а.б.})`,note:'Күн жүйесі үшін'},{tex:R`v=\sqrt{GM\left(\frac{2}{r}-\frac{1}{a}\right)}`,note:'орбита бойымен жылдамдық'}],
+  vars:[['a','орбитаның үлкен жарты осі','а.б.'],['e','орбитаның эксцентриситеті',''],['T','айналу периоды','жыл'],['r','Күнге дейінгі қашықтық','а.б.']],
+  sci:{name:'Иоганн Кеплер',years:'1571–1630',text:'Неміс астрономы. Тихо Брагенің көп жылғы бақылауларын өңдеп, 1609 жылы алғашқы екі заңды, 1619 жылы үшінші заңды шығарды. Бұл заңдар кейін Ньютонның бүкіләлемдік тартылыс заңына жол ашты.'}},
+ params:[
+  {k:'a',l:'Үлкен жарты ось a',min:.5,max:5,step:.1,val:1.5,u:'а.б.',hi:30},
+  {k:'e',l:'Эксцентриситет e',min:0,max:.9,step:.05,val:.5,u:'',hi:.95}],
+ cam:{th:0,ph:.35,r:36,t:[-2,0,0]},
+ build:function(p){
+  var c=C(),s={M:0},a=p.a,e=p.e,b=a*Math.sqrt(1-e*e),k=10/(a*(1+e)),i,pts=[];
+  s.k=k;s.a=a;s.e=e;s.b=b;
+  box(40,.3,26,'pine',[-2,-.2,0]);
+  for(i=0;i<=120;i++){var E=i/120*2*PI;pts.push(V3(a*(Math.cos(E)-e)*k,.5,b*Math.sin(E)*k));}
+  line(pts,c.neu);
+  sph(1.1,0xf2c14e,[0,.6,0],{emissive:0xf2c14e,emissiveIntensity:.55,roughness:.5});
+  var tg=tag('Күн',.5);tg.position.set(0,2.4,0);
+  s.pl=sph(.5,c.c3,[a*(1-e)*k,.7,0]);
+  s.rv=line([V3(0,.5,0),V3(1,.5,0)],c.c1);
+  for(i=0;i<12;i++){var Mj=i/12*2*PI,Ej=Mj,q;for(q=0;q<12;q++)Ej=Ej-(Ej-e*Math.sin(Ej)-Mj)/(1-e*Math.cos(Ej));
+   var mx=a*(Math.cos(Ej)-e)*k,mz=b*Math.sin(Ej)*k;sph(.2,c.c2,[mx,.55,mz]);line([V3(0,.5,0),V3(mx,.5,mz)],c.neu,.35);}
+  var tp=tag('перигелий',.4);tp.position.set(a*(1-e)*k+1.6,.5,1.5);
+  var ta=tag('афелий',.4);ta.position.set(-a*(1+e)*k-1.4,.5,1.5);
+  s.t1=tag('',.45);s.t1.position.set(0,.6,-12);
+  return s;
+ },
+ step:function(dt,p,s){
+  if(dt>0)s.M=(s.M+Math.min(dt,.05)*2*PI/12)%(2*PI);
+  var e=s.e,E=s.M,q;for(q=0;q<14;q++)E=E-(E-e*Math.sin(E)-s.M)/(1-e*Math.cos(E));
+  var x=s.a*(Math.cos(E)-e),z=s.b*Math.sin(E);s.r=s.a*(1-e*Math.cos(E));
+  s.pl.position.set(x*s.k,.7,z*s.k);setLine(s.rv,[V3(0,.5,0),V3(x*s.k,.5,z*s.k)]);
+  s.v=29.78*Math.sqrt(Math.max(0,2/s.r-1/s.a));s.th=((Math.atan2(z,x)*180/PI)%360+360)%360;
+  setTag(s.t1,'r = '+f(s.r,2)+' а.б.   v = '+f(s.v,1)+' км/с');
+ },
+ read:function(p,s){var T=Math.pow(p.a,1.5),r=s?s.r:p.a*(1-p.e),v=s?s.v:29.78*Math.sqrt(2/r-1/p.a);
+  return [['Модель уақыты t',f((s?s.M:0)/(2*PI)*T,2),'жыл'],['Күннен бағыт бұрышы θ',f(s?s.th||0:0,0),'°'],['Период T',f(T,2),'жыл'],['Перигелий',f(p.a*(1-p.e),2),'а.б.'],['Афелий',f(p.a*(1+p.e),2),'а.б.'],['Қазіргі r',f(r,2),'а.б.'],['Жылдамдық v',f(v,1),'км/с'],['Аудандық жылдамдық',f(PI*p.a*p.a*Math.sqrt(1-p.e*p.e)/T,2),'а.б.²/жыл']];},
+ live:function(p){var T=Math.pow(p.a,1.5);return R`\frac{T^2}{a^3}=\frac{${f(T*T,2)}}{${f(p.a*p.a*p.a,2)}}=1`;},
+ tips:['Эксцентриситетті 0-ге жақындат: орбита шеңберге айналады, жылдамдық тұрақты болады.','Сары нүктелер — бірдей уақыт аралығындағы орны. Перигелийде олар жиі, афелийде сирек: планета жақында жылдам қозғалады.','Үлкен жарты осьті 4 есе арттырсаң, период 8 есе өседі: T² = a³.']
+});
+
+/* ---- Кирхгоф ережелері ---- */
+add({id:'kirch',grade:10,name:'Кирхгоф ережелері. Тармақталған тізбек',hint:'Кедергілерді өзгертіп, түйіндегі токтар қосындысын тексер: I = I₂ + I₃',
+ theory:{
+  def:'Күрделі тізбектерді Кирхгоф ережелері арқылы есептейді. I ереже (түйін ережесі): түйінге кіретін токтардың қосындысы одан шығатын токтардың қосындысына тең, өйткені заряд жиналмайды. II ереже (контур ережесі): тұйық контурдағы кернеулер түсуінің алгебралық қосындысы сол контурдағы ЭҚК-тердің алгебралық қосындысына тең.',
+  formulas:[{tex:R`\sum I_{\text{кіреді}}=\sum I_{\text{шығады}}\;\Rightarrow\; I=I_2+I_3`,note:'I ереже'},{tex:R`\sum I_kR_k=\sum\mathcal{E}_k\;\Rightarrow\;\mathcal{E}=IR_1+I_2R_2`,note:'II ереже'},{tex:R`R_{23}=\frac{R_2R_3}{R_2+R_3}`,note:'параллель қосылу'},{tex:R`I=\frac{\mathcal{E}}{R_1+R_{23}}`,note:'жалпы ток'},{tex:R`I_2R_2=I_3R_3`,note:'тармақтарда кернеу бірдей'}],
+  vars:[['\\mathcal{E}','ЭҚК','В'],['I','жалпы ток','А'],['I_2,\\,I_3','тармақтардағы токтар','А'],['R_1,R_2,R_3','кедергілер','Ом']],
+  sci:{name:'Густав Кирхгоф',years:'1824–1887',text:'Неміс физигі. 1845 жылы, әлі студент кезінде, электр тізбектерінің екі ережесін тұжырымдады. Кейін Бунзенмен бірге спектрлік талдау әдісін жасады.'}},
+ params:[
+  {k:'E',l:'Көздің ЭҚК-і',min:2,max:24,step:1,val:12,u:'В',hi:100,nr:true},
+  {k:'R1',l:'Кедергі R₁',min:1,max:50,step:1,val:4,u:'Ом',hi:1000,nr:true},
+  {k:'R2',l:'Кедергі R₂',min:1,max:50,step:1,val:12,u:'Ом',hi:1000,nr:true},
+  {k:'R3',l:'Кедергі R₃',min:1,max:50,step:1,val:6,u:'Ом',hi:1000,nr:true}],
+ cam:{th:0,ph:.75,r:34,t:[-1,0,0]},
+ calc:function(p){var R23=p.R2*p.R3/(p.R2+p.R3),I=p.E/(p.R1+R23),U23=I*R23;return {R23:R23,I:I,U1:I*p.R1,U23:U23,I2:U23/p.R2,I3:U23/p.R3};},
+ build:function(p){
+  var c=C(),s={t:0,dots:[]},i;
+  box(32,.3,15,'pine',[-1,-.2,0]);
+  var P1=[[-10,0],[-10,-4],[4,-4]],P2=[[4,-4],[4,4]],P3=[[4,-4],[9,-4],[9,4],[4,4]],P4=[[4,4],[-10,4],[-10,0]];
+  s.paths=[P1,P2,P3,P4].map(function(pa){var L=0,cum=[0],j;for(j=1;j<pa.length;j++){L+=Math.hypot(pa[j][0]-pa[j-1][0],pa[j][1]-pa[j-1][1]);cum.push(L);}return {pts:pa,L:L,cum:cum};});
+  s.paths.forEach(function(pa,pi){
+   line(pa.pts.map(function(q){return V3(q[0],.5,q[1]);}),c.neu);
+   var n=Math.max(2,Math.round(pa.L/2.6)),j;pa.dots=[];
+   for(j=0;j<n;j++)pa.dots.push(sph(.2,pi===1?c.c2:pi===2?c.c3:c.c1,[0,.5,0]));
+   pa.n=n;});
+  box(1.2,1.6,3.4,0x6d7a72,[-10,.9,0]);box(.5,2.4,1.4,0xd9825b,[-10.9,.9,0]);
+  var tb=tag('',.5);tb.position.set(-10,3.4,0);s.tb=tb;
+  var tp=tag('+',.5);tp.position.set(-10,1.6,-2.6);var tm=tag('−',.5);tm.position.set(-10,1.6,2.6);
+  [[-4,-4,'R₁'],[4,0,'R₂'],[9,0,'R₃']].forEach(function(r,j){
+   if(j===0)box(3,.9,1.6,c.c1,[r[0],.8,r[1]]);else box(1.6,.9,3,c.c1,[r[0],.8,r[1]]);
+   var t=tag('',.45);t.position.set(r[0]+(j===0?0:1.7),2.2,r[1]+(j===0?-1.7:0));s['tr'+j]=t;});
+  var ja=tag('A',.45);ja.position.set(3,1.2,-5.2);var jb=tag('B',.45);jb.position.set(3,1.2,5.2);
+  sph(.3,c.neu,[4,.5,-4]);sph(.3,c.neu,[4,.5,4]);
+  s.a1=arrow(c.c1,'I');s.a2=arrow(c.c2,'I₂');s.a3=arrow(c.c3,'I₃');
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p);s.k=k;if(dt>0)s.t+=Math.min(dt,.05);
+  var cur=[k.I,k.I2,k.I3,k.I];
+  s.paths.forEach(function(pa,pi){var v=cur[pi]*1.4,j;
+   for(j=0;j<pa.n;j++){var d=((j/pa.n)*pa.L+s.t*v)%pa.L,q=1;while(q<pa.cum.length-1&&d>pa.cum[q])q++;
+    var u=(d-pa.cum[q-1])/(pa.cum[q]-pa.cum[q-1]||1),A=pa.pts[q-1],B=pa.pts[q];
+    pa.dots[j].position.set(A[0]+(B[0]-A[0])*u,.5,A[1]+(B[1]-A[1])*u);}});
+  setTag(s.tb,'ε = '+f(p.E,0)+' В');setTag(s.tr0,'R₁ = '+f(p.R1,0)+' Ом');setTag(s.tr1,'R₂ = '+f(p.R2,0)+' Ом');setTag(s.tr2,'R₃ = '+f(p.R3,0)+' Ом');
+  var L=function(i){return clamp(.8+i*.7,.8,4);};
+  setArrow(s.a1,V3(-8,1.4,-4.9),V3(1,0,0),L(k.I));setArrow(s.a2,V3(5.4,1.4,-2.6),V3(0,0,1),L(k.I2));setArrow(s.a3,V3(10.4,1.4,-2.6),V3(0,0,1),L(k.I3));
+ },
+ read:function(p,s){var k=this.calc(p);return [['Жалпы ток I',f(k.I,2),'А'],['Ток I₂',f(k.I2,2),'А'],['Ток I₃',f(k.I3,2),'А'],['I₂ + I₃',f(k.I2+k.I3,2),'А'],['U₁ = I·R₁',f(k.U1,2),'В'],['U₂₃ (тармақтарда)',f(k.U23,2),'В'],['ε − U₁ − U₂₃',f(p.E-k.U1-k.U23,2),'В']];},
+ live:function(p){var k=this.calc(p);return R`I=I_2+I_3:\;${f(k.I,2)}=${f(k.I2,2)}+${f(k.I3,2)}\;\text{А}`;},
+ tips:['Түйін A-да ток екіге бөлінеді. Үлкен кедергісі бар тармақта ток аз болады.','Соңғы жолдағы ε − U₁ − U₂₃ әрқашан нөл: бұл контур ережесі.','R₂ = R₃ жасасаң, жалпы токтың жартысынан тармақтарға тарайды.']
+});
+
+/* ---- Трансформатор ---- */
+add({id:'transf',grade:11,name:'Трансформатор. Кернеуді түрлендіру',hint:'Орам сандарын өзгертіп, төмендеткіш пен жоғарылатқышты салыстыр',
+ theory:{
+  def:'Трансформатор — айнымалы токтың кернеуін өзгертетін құрылғы. Ол болат өзекке оралған екі орауыштан тұрады. Бірінші орауыштағы айнымалы ток өзекте өзгеретін магнит ағынын туғызады, ал электромагниттік индукция заңы бойынша екінші орауышта ЭҚК пайда болады. Орам саны көп орауыш жоғары кернеу береді. Тұрақты токпен трансформатор жұмыс істемейді.',
+  formulas:[{tex:R`\frac{U_1}{U_2}=\frac{N_1}{N_2}=k`,note:'трансформация коэффициенті'},{tex:R`\frac{I_1}{I_2}=\frac{N_2}{N_1}`,note:'идеал трансформатор тоғы'},{tex:R`\eta=\frac{P_2}{P_1}=\frac{U_2I_2}{U_1I_1}`,note:'ПӘК'},{tex:R`I_2=\frac{U_2}{R}`,note:'жүктеме тоғы'}],
+  vars:[['U_1,U_2','бастапқы және екінші орауыш кернеуі','В'],['N_1,N_2','орам саны',''],['k','трансформация коэффициенті',''],['\\eta','ПӘК','%']],
+  sci:{name:'Павел Яблочков',years:'1847–1894',text:'Ресей өнертапқышы. 1876 жылы айнымалы токты түрлендіруге арналған индукциялық орауышқа (алғашқы трансформаторға) патент алды. Кейінгі жылдары трансформаторларды Ганц зауытының инженерлері Зиперновский, Дери, Блати жетілдірді.'}},
+ params:[
+  {k:'U1',l:'Кернеу U₁',min:5,max:250,step:5,val:100,u:'В',hi:1000,nr:true},
+  {k:'N1',l:'Бастапқы орам N₁',min:100,max:1000,step:50,val:200,u:'',hi:5000},
+  {k:'N2',l:'Екінші орам N₂',min:50,max:2000,step:50,val:400,u:'',hi:10000},
+  {k:'Rl',l:'Жүктеме кедергісі R',min:5,max:200,step:5,val:50,u:'Ом',hi:2000,nr:true},
+  {k:'eta',l:'ПӘК η',min:80,max:100,step:1,val:100,u:'%',hi:100,nr:true}],
+ cam:{th:.1,ph:1.3,r:34,t:[3,5.5,0]},
+ calc:function(p){var U2=p.U1*p.N2/p.N1,I2=U2/p.Rl,P2=U2*I2,P1=P2/(p.eta/100);return {k:p.N1/p.N2,U2:U2,I2:I2,P2:P2,P1:P1,I1:P1/p.U1};},
+ build:function(p){
+  var c=C(),s={ph:0},i;
+  box(32,.3,12,'pine',[3,-.2,0]);
+  var core=0x8e979c;s.cm=[];
+  [[-3.5,6,1.8,11,2],[3.5,6,1.8,11,2],[0,11.1,9,1.8,2],[0,.9,9,1.8,2]].forEach(function(b){s.cm.push(box(b[2],b[3],b[4],core,[b[0],b[1],0],{metalness:.5,emissive:0x4f9d8f,emissiveIntensity:0}));});
+  var n1=clamp(Math.round(p.N1/60),2,16),n2=clamp(Math.round(p.N2/60),2,24),H=7;
+  [[-3.5,n1,c.c1],[3.5,n2,c.c3]].forEach(function(cl){var dy=H/cl[1];for(i=0;i<cl[1];i++)cyl(1.75,1.75,Math.max(.1,dy*.62),cl[2],[cl[0],6-H/2+dy*(i+.5),0]);});
+  var t1=tag('N₁ = '+p.N1,.45);t1.position.set(-3.5,12.8,0);var t2=tag('N₂ = '+p.N2,.45);t2.position.set(3.5,12.8,0);
+  s.u1=tag('',.5);s.u1.position.set(-8.5,6,0);s.u2=tag('',.5);s.u2.position.set(8.5,2.5,0);
+  line([V3(5.3,3,0),V3(12,3,0),V3(12,4,0)],c.neu);line([V3(5.3,9,0),V3(14,9,0),V3(14,6.6,0)],c.neu);line([V3(12,3,0),V3(14,3,0),V3(14,4.2,0)],c.neu);
+  s.bulb=sph(1.3,0xf6e7a8,[13,5.5,0],{emissive:0xffe08a,emissiveIntensity:0,transparent:true,opacity:.9});
+  cyl(.8,.9,1,0x6d7a72,[13,3.8,0]);
+  var tb=tag('жүктеме',.4);tb.position.set(13,8.2,0);
+  line([V3(-5.3,3,0),V3(-12,3,0),V3(-12,6,0)],c.neu);line([V3(-5.3,9,0),V3(-12,9,0),V3(-12,6,0)],c.neu);
+  var tg=tag('~ көз',.45);tg.position.set(-12.5,7.3,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  if(dt>0)s.ph+=Math.min(dt,.05)*6;var k=this.calc(p);s.k=k;
+  var a=Math.abs(Math.sin(s.ph))*.55;s.cm.forEach(function(m){m.material.emissiveIntensity=a;});
+  s.bulb.material.emissiveIntensity=clamp(k.P2/80,0,1.1);
+  setTag(s.u1,'U₁ = '+f(p.U1,0)+' В');setTag(s.u2,'U₂ = '+f(k.U2,1)+' В');
+ },
+ read:function(p,s){var k=this.calc(p);return [['Түрі',k.k>1?'төмендеткіш':(k.k<1?'жоғарылатқыш':'1 : 1'),''],['k = N₁/N₂',f(k.k,2),''],['U₂',f(k.U2,1),'В'],['I₂',f(k.I2,2),'А'],['I₁',f(k.I1,2),'А'],['P₂ (пайдалы)',f(k.P2,1),'Вт'],['P₁ (көзден)',f(k.P1,1),'Вт']];},
+ live:function(p){var k=this.calc(p);return R`\frac{U_1}{U_2}=\frac{${f(p.N1,0)}}{${f(p.N2,0)}}\;\Rightarrow\;U_2=${f(k.U2,1)}\,\text{В}`;},
+ tips:['Екінші орамды арттырсаң, кернеу өседі, бірақ ток азаяды: қуат шамамен сақталады.','ПӘК-ті азайтсаң, көзден алынатын қуат артады, бұл өзектегі және орамдардағы жылу шығыны.','Өзек пен орамдар тұрақты токта жұмыс істемейді: магнит ағыны өзгермесе, ЭҚК туындамайды.']
+});
+
+/* ---- Дифракциялық тор ---- */
+add({id:'grating',grade:11,name:'Дифракциялық тор. Спектрлер',hint:'Толқын ұзындығын немесе штрих санын өзгерт. Режимді «Ақ жарық» қылсаң, спектр көрінеді',
+ theory:{
+  def:'Дифракциялық тор — өте жіңішке, бір-біріне өте жақын жырықтардың жүйесі. Тордан өткен жарық дифракцияға ұшырап, интерференциялайды: жол айырымы толқын ұзындығына еселі болатын бағыттарда жарық күшейеді (максимумдар). Ақ жарық тордан өткенде әр түсті сәуле әр бұрышқа ауытқып, спектр береді. Қызыл жарықтың бұрышы ең үлкен, күлгіннің ең кіші.',
+  formulas:[{tex:R`d=\frac{1}{N}`,note:'тор периоды'},{tex:R`d\sin\varphi_k=k\lambda,\quad k=0,\pm1,\pm2,\ldots`,note:'максимум шарты'},{tex:R`k_{\max}\le\frac{d}{\lambda}`,note:'ең үлкен реті'},{tex:R`x_k=L\tan\varphi_k`,note:'экрандағы орны'}],
+  vars:[['d','тор периоды','мкм'],['N','1 мм-дегі штрих саны',''],['\\lambda','толқын ұзындығы','нм'],['k','спектр реті',''],['L','тордан экранға дейінгі қашықтық','м']],
+  sci:{name:'Йозеф Фраунгофер',years:'1787–1826',text:'Неміс оптигі. 1821 жылы жіңішке сымдардан алғашқы дифракциялық тор жасап, Күн спектріндегі қара сызықтарды (Фраунгофер сызықтарын) өлшеді.'}},
+ params:[
+  {k:'N',l:'Штрих саны N',min:50,max:1000,step:10,val:300,u:'1/мм',hi:5000},
+  {k:'lam',l:'Толқын ұзындығы λ',min:380,max:780,step:10,val:550,u:'нм',hi:780},
+  {k:'L',l:'Экранға дейінгі қашықтық L',min:.5,max:5,step:.1,val:2,u:'м',hi:10},
+  {k:'mode',l:'Жарық',sel:[['Монохромат',0],['Ақ жарық',1]],val:0}],
+ cam:{th:.2,ph:.5,r:40,t:[0,0,0]},
+ build:function(p){
+  var c=C(),s={},u=3.5,xg=-9,xs=xg+p.L*u,d=1000/p.N,i,j;
+  s.d=d;
+  box(36,.3,26,'pine',[0,-.2,0]);
+  box(2.4,1.4,2.4,0x6d7a72,[-15,.8,0]);var tl=tag('жарық көзі',.4);tl.position.set(-15,3,0);
+  line([V3(-13.8,.8,0),V3(xg,.8,0)],mode0(p.lam,p.mode));
+  box(.3,2,6,0xcfe6ee,[xg,1.2,0],{transparent:true,opacity:.35});
+  for(i=-6;i<=6;i++)line([V3(xg,.2,i*.45),V3(xg,2.2,i*.45)],c.neu,.5);
+  var tg=tag('тор',.4);tg.position.set(xg,3.4,0);
+  box(.3,2.4,24,0xf2f0e6,[xs,1.2,0],{roughness:.9});var ts=tag('экран',.4);ts.position.set(xs,3.6,-13);
+  var lams=p.mode?[400,450,500,550,600,650,700]:[p.lam];
+  var kmax=Math.floor(d*1000/(p.mode?400:p.lam)+1e-9);s.kmax=Math.floor(d*1000/p.lam+1e-9);
+  var shown=0;
+  for(var k=-Math.min(kmax,p.mode?4:9);k<=Math.min(kmax,p.mode?4:9);k++){
+   lams.forEach(function(lm){
+    var sn=k*lm/(d*1000);if(Math.abs(sn)>=1)return;
+    var th=Math.asin(sn),z=p.L*Math.tan(th)*u;if(Math.abs(z)>11.6)return;
+    var col=rgbHex(wl2rgb(lm)),sz=(p.mode?.34:.55)/(1+.12*Math.abs(k));
+    var sp=sph(sz,col,[xs-.2,1.2,z],{emissive:col,emissiveIntensity:.7,roughness:.4});sp.scale.x=.4;shown++;
+    if(!p.mode)line([V3(xg,.8,0),V3(xs,1.2,z)],col,.55);
+   });
+   if(Math.abs(k)<=Math.min(kmax,p.mode?4:9)&&Math.abs(k)<=3){var tk=tag('k='+k,.34);tk.position.set(xs+1.2,3.4,Math.max(-11,Math.min(11,p.L*Math.tan(Math.asin(clamp(k*(p.mode?550:p.lam)/(d*1000),-.999,.999)))*u)));}
+  }
+  return s;
+ },
+ step:function(){},
+ read:function(p){var d=1000/p.N,lm=p.mode?550:p.lam,sn=lm/(d*1000),ph=sn<1?Math.asin(sn):NaN;
+  if(p.mode){var a=Math.asin(clamp(400/(d*1000),0,1)),b=Math.asin(clamp(700/(d*1000),0,1));return [['Период d',f(d,2),'мкм'],['φ₁ күлгін (400 нм)',f(a*180/PI,1),'°'],['φ₁ қызыл (700 нм)',f(b*180/PI,1),'°'],['Спектр ені (1-рет)',f(p.L*100*(Math.tan(b)-Math.tan(a)),1),'см']];}
+  return [['Период d',f(d,2),'мкм'],['sin φ₁',f(sn,3),''],['φ₁',isNaN(ph)?'жоқ':f(ph*180/PI,1),'°'],['x₁ экранда',isNaN(ph)?'жоқ':f(p.L*100*Math.tan(ph),1),'см'],['Ең үлкен рет k',f(Math.floor(d*1000/p.lam+1e-9),0),'']];},
+ live:function(p){var d=1000/p.N;return R`d\sin\varphi=k\lambda,\quad d=${f(d,2)}\,\text{мкм}`;},
+ tips:['Штрих санын арттырсаң, максимумдар бір-бірінен алыстайды: период кішірейеді, бұрыш өседі.','Ақ жарықта қызыл сәуле күлгіннен көбірек ауытқиды. Нөлінші максимум ақ болып қалады.','λ үлкейсе, максимум саны азаяды: sin φ ≤ 1 болуы керек.']
+});
+function mode0(lam,mode){return mode?0xf3f3ee:rgbHex(wl2rgb(lam));}
+
+/* ---- Поляризация ---- */
+add({id:'polar',grade:11,name:'Жарықтың поляризациясы. Малюс заңы',hint:'Анализатордың бұрышын өзгерт: бұрыш 90° болғанда жарық өтпейді',
+ theory:{
+  def:'Жарық — көлденең электромагниттік толқын: E векторы тарау бағытына перпендикуляр тербеледі. Табиғи жарықта тербеліс бағыттары хаосты. Поляризатор тек бір бағыттағы тербелісті өткізеді. Екінші сүзгі (анализатор) өткен жарықтың қарқындылығын Малюс заңы бойынша өзгертеді. Бұл құбылыс жарықтың көлденең толқын екенін дәлелдейді.',
+  formulas:[{tex:R`I_1=\frac{I_0}{2}`,note:'табиғи жарық поляризатордан өткен соң'},{tex:R`I=I_1\cos^2\theta`,note:'Малюс заңы'},{tex:R`E=E_1\cos\theta`,note:'өткен тербеліс амплитудасы'},{tex:R`I=\frac{I_0}{2}\cos^4\frac{\theta}{2}`,note:'ортаңғы сүзгі θ/2 бұрышында тұрса'}],
+  vars:[['I_0','табиғи жарықтың қарқындылығы',''],['\\theta','сүзгілердің өту осьтері арасындағы бұрыш','°'],['I','өткен жарық қарқындылығы','']],
+  sci:{name:'Этьен Малюс',years:'1775–1812',text:'Француз физигі және инженері. 1808 жылы шағылған жарықтың поляризациясын ашты, ал 1809 жылы поляризацияланған жарық қарқындылығының заңын тұжырымдады.'}},
+ params:[
+  {k:'th',l:'Анализатор бұрышы θ',min:0,max:180,step:1,val:30,u:'°',hi:360,nr:true},
+  {k:'mid',l:'Ортаңғы сүзгі',sel:[['Жоқ',0],['Бар (θ/2 бұрышында)',1]],val:0}],
+ cam:{th:.55,ph:1.25,r:36,t:[0,6,0]},
+ calc:function(p){var t=p.th*PI/180,m=p.mid;
+  var I=m?.5*Math.pow(Math.cos(t/2),4):.5*Math.cos(t)*Math.cos(t);return {I:I,E:m?.7071*Math.cos(t/2)*Math.cos(t/2):.7071*Math.cos(t),t:t};},
+ build:function(p){
+  var c=C(),s={ph:0},y=6,i;
+  box(36,.3,14,'pine',[0,-.2,0]);
+  sph(1.1,0xf6e7a8,[-15,y,0],{emissive:0xffe08a,emissiveIntensity:.8});var tl=tag('табиғи жарық',.4);tl.position.set(-15,y+2.6,0);
+  s.fx=[];var xs=p.mid?[-8,-2.5,3]:[-8,3];
+  xs.forEach(function(x,j){cyl(3.2,3.2,.15,0xcfe6ee,[x,y,0],{transparent:true,opacity:.28}).rotation.z=PI/2;
+   var ls=[];for(i=-2;i<=2;i++)ls.push(line([V3(0,-3,i*1.1),V3(0,3,i*1.1)],c.neu,.7));
+   ls.forEach(function(l){l.position.set(x+.1,y,0);});s.fx.push(ls);
+   var t=tag(j===0?'поляризатор':(j===xs.length-1?'анализатор':'ортаңғы сүзгі'),.38);t.position.set(x,y+4.4,0);});
+  s.scr=cyl(3.2,3.2,.2,0xf2f0e6,[12,y,0],{roughness:.9});s.scr.rotation.z=PI/2;var ts=tag('экран',.4);ts.position.set(12,y+4.4,0);
+    s.segs=[];var ends=[-15].concat(xs).concat([12]);
+  for(i=0;i<ends.length-1;i++){var L=ends[i+1]-ends[i];var b=cyl(1,1,L,0xffe9a8,[(ends[i]+ends[i+1])/2,y,0],{transparent:true,opacity:.3,emissive:0xffe9a8,emissiveIntensity:.5});b.rotation.z=PI/2;s.segs.push({m:b,x0:ends[i],x1:ends[i+1]});}
+  s.vib=[];
+  s.segs.forEach(function(sg,si){var n=Math.max(3,Math.round((sg.x1-sg.x0)/2.2)),arr=[];
+   for(i=0;i<n;i++){arr.push({x:sg.x0+(i+.5)*(sg.x1-sg.x0)/n,ln:line([V3(0,0,0),V3(0,1,0)],c.c1),rnd:Math.random()*PI});}
+   s.vib.push(arr);});
+  s.nx=xs.length;s.tt=tag('',.5);s.tt.position.set(0,1.2,5);
+  return s;
+ },
+ step:function(dt,p,s){
+  if(dt>0)s.ph+=Math.min(dt,.05)*5;var k=this.calc(p),t=k.t,m=p.mid,y=6,j;s.k=k;
+  var ang=[0].concat(m?[t/2]:[]).concat([t]);
+  s.fx[s.fx.length-1].forEach(function(l){l.rotation.x=t;});if(m)s.fx[1].forEach(function(l){l.rotation.x=t/2;});
+  var I=[1,.5];for(j=2;j<s.segs.length;j++){var dc=Math.cos(ang[j-1]-ang[j-2]);I.push(I[j-1]*dc*dc);}
+  s.segs.forEach(function(sg,si){sg.m.scale.x=sg.m.scale.z=.25+.8*I[si];sg.m.material.opacity=.12+.3*I[si];});
+  s.vib.forEach(function(arr,si){var E=Math.sqrt(I[si]);
+   arr.forEach(function(v){var al=si===0?v.rnd+s.ph*.2:ang[si-1],sn=Math.sin(s.ph-v.x*.9)*E*2.2,cy=Math.cos(al),sz=Math.sin(al);
+    setLine(v.ln,[V3(v.x,y-sn*cy,-sn*sz),V3(v.x,y+sn*cy,sn*sz)]);});});
+  var Iend=k.I,b=clamp(.12+.88*Iend/.5,0,1);s.scr.material.color.setRGB(b,b*.97,b*.88);
+  setTag(s.tt,'I/I₀ = '+f(Iend,3));
+ },
+ read:function(p,s){var k=this.calc(p);return [['θ',f(p.th,0),'°'],['I / I₀',f(k.I,3),''],['I / (I₀/2)',f(2*k.I,3),''],['Амплитуда E',f(k.E/.7071,2),'E₁'],['Экран',k.I<.005?'қараңғы':(k.I>.45?'толық жарық':'қарайған'),'']];},
+ live:function(p){var k=this.calc(p);return p.mid?R`I=\frac{I_0}{2}\cos^4\frac{\theta}{2}=${f(k.I,3)}\,I_0`:R`I=\frac{I_0}{2}\cos^2\theta=${f(k.I,3)}\,I_0`;},
+ tips:['θ = 0° болса, екі сүзгінің осьтері бірдей: жарықтың жартысы (I₀/2) өтеді.','θ = 90° болғанда жарық өтпейді. Енді ортаңғы сүзгі қос: экран қайта жарықтанады (I₀/8).','Қысқа сызықтар E векторының тербеліс бағытын көрсетеді: поляризатордан кейін олар бір жазықтықта.']
+});
+/* ===== Жаңа тақырыптар (H): де Бройль, лазер, конденсаторлар, ұлғаю, ауа шары, Ай фазалары ===== */
+
+function mixHex(a,b,t){var ar=a>>16&255,ag=a>>8&255,ab=a&255,br=b>>16&255,bg=b>>8&255,bb=b&255;return (Math.round(ar+(br-ar)*t)<<16)|(Math.round(ag+(bg-ag)*t)<<8)|Math.round(ab+(bb-ab)*t);}
+function sci(x,u){if(!isFinite(x)||x<=0)return '—';var e=Math.floor(Math.log10(x)),m=x/Math.pow(10,e);if(m>=9.995){m=1;e++;}return f(m,2)+'·10<sup>'+String(e).replace('-','−')+'</sup>'+(u?' '+u:'');}
+
+/* ---- Де Бройль толқыны ---- */
+add({id:'debro',grade:11,name:'Де Бройль толқыны. Бөлшектің толқындық қасиеті',hint:'Бөлшекті таңда да, жылдамдықтың көрсеткішін өзгерт: толқын ұзындығы қай мөлшерде екенін көр',
+ theory:{
+  def:'Де Бройль болжамы бойынша қозғалып бара жатқан кез келген бөлшек толқындық қасиет көрсетеді. Оған толқын ұзындығы λ = h/p сәйкес келеді. Электрон мен протон үшін λ атом өлшемімен шамалас, сондықтан кристалда электрондардың дифракциясы байқалады. Үлкен денелер үшін λ өте кішкентай, сондықтан олардың толқындық қасиеті сезілмейді.',
+  formulas:[{tex:R`\lambda=\frac{h}{p}=\frac{h}{mv}`,note:'де Бройль толқын ұзындығы'},{tex:R`h=6{,}63\cdot10^{-34}\,\text{Дж·с}`,note:'Планк тұрақтысы'},{tex:R`\lambda=\frac{h}{\sqrt{2meU}}`,note:'U кернеуінде үдетілген электрон'},{tex:R`2d\sin\theta=k\lambda`,note:'кристалдағы дифракция шарты'}],
+  vars:[['\\lambda','де Бройль толқын ұзындығы','м'],['p','бөлшектің импульсі','кг·м/с'],['m','масса','кг'],['v','жылдамдық','м/с']],
+  sci:{name:'Луи де Бройль',years:'1892–1987',text:'Француз физигі. 1924 жылы диссертациясында заттың бөлшектері де толқындық қасиетке ие деген батыл болжам жасады. 1927 жылы электрондардың дифракциясын Дэвиссон мен Джермер тәжірибе жүзінде көрсетті. Де Бройль 1929 жылы Нобель сыйлығын алды.'}},
+ params:[
+  {k:'m',l:'Бөлшек',sel:[['Электрон',9.109e-31],['Протон',1.673e-27],['Альфа-бөлшек',6.645e-27],['Шаң түйірі · 1 мкг',1e-9],['Теннис добы · 57 г',.057]],val:9.109e-31},
+  {k:'lg',l:'Жылдамдық көрсеткіші x (v = 10ˣ м/с)',min:0,max:7.4,step:.1,val:6,u:'',hi:7.4,nr:true}],
+ cam:{th:0,ph:1.15,r:34,t:[0,2,0]},
+ calc:function(p){var v=Math.pow(10,p.lg),pp=p.m*v,lam=6.626e-34/pp;return {v:v,p:pp,lam:lam,e:Math.log10(lam)};},
+ build:function(p){
+  var c=C(),s={},i,X=function(e){return -14+(clamp(e,-34,0)+34)/34*28;};
+  s.X=X;
+  box(34,.3,12,'pine',[0,-.2,0]);box(30,.3,.5,c.struct,[0,.4,0]);
+  for(i=-34;i<=0;i+=2){var big=i%10===0;line([V3(X(i),.55,0),V3(X(i),big?1.6:1.1,0)],c.neu);}
+  [-30,-20,-10,0].forEach(function(e){var t=tag('10'+(e<0?'⁻':'')+String(Math.abs(e)).split('').map(function(d){return '⁰¹²³⁴⁵⁶⁷⁸⁹'[+d];}).join(''),.4);t.position.set(X(e),-.4,2);});
+  [[-15,'ядро',3.4],[-10,'атом',3.4],[-6.3,'көрінетін жарық',5]].forEach(function(r){line([V3(X(r[0]),.55,0),V3(X(r[0]),r[2]-.6,0)],c.c2,.8);var t=tag(r[1],.42);t.position.set(X(r[0]),r[2],0);});
+  s.mk=sph(.5,c.c1,[0,1.2,0]);s.t1=tag('',.5);s.t1.position.set(0,6.4,0);
+  s.t2=tag('',.42);s.t2.position.set(0,9.2,0);
+  var pts=[];for(i=0;i<=120;i++)pts.push(V3(-6+i*.1,3.2+Math.sin(i/120*5*2*PI)*1.1,-4));
+  line(pts,c.c3);var tw=tag('λ',.5);tw.position.set(-6+2.4,5.2,-4);line([V3(-6,2,-4),V3(-6+2.4,2,-4)],c.neu);var tb=tag('бір толқын ұзындығы λ',.38);tb.position.set(-3.6,1.2,-4);
+  return s;
+ },
+ step:function(dt,p,s){var k=this.calc(p);s.k=k;s.mk.position.x=s.X(k.e);
+  setTag(s.t1,'λ = '+f(Math.pow(10,k.e%1<0?k.e%1+1:k.e%1),2)+' · 10^'+Math.floor(k.e)+' м');
+  var r=k.lam/2e-10;setTag(s.t2,r>.02&&r<50?'Кристалда дифракция байқалады':'Дифракция байқалмайды');},
+ read:function(p,s){var k=this.calc(p);return [['Жылдамдық v',sci(k.v,'м/с'),''],['Импульс p',sci(k.p,'кг·м/с'),''],['λ = h/p',sci(k.lam,'м'),''],['λ / (0,2 нм)',sci(k.lam/2e-10,''),''],['Толқындық қасиет',k.lam/2e-10>.02&&k.lam/2e-10<50?'байқалады':'сезілмейді','']];},
+ live:function(p){var k=this.calc(p);return R`\lambda=\frac{h}{mv}=\frac{6{,}63\cdot10^{-34}}{${f(p.m*1e30,2)}\cdot10^{-30}\cdot v}`;},
+ tips:['Электронды 10⁶ м/с жылдамдықпен алсаң, λ ≈ 0,7 нм: атомаралық қашықтықпен шамалас, дифракция мүмкін.','Теннис добы үшін λ шамамен 10⁻³⁴ м: ядродан да миллиард есе кіші, толқындық қасиетті байқау мүмкін емес.','Масса мен жылдамдық артқан сайын λ кемиді: p = mv үлкейеді.']
+});
+
+/* ---- Лазер ---- */
+add({id:'laser',grade:11,name:'Лазер. Мәжбүр сәулелену',hint:'«▶ Іске қосу» түймесін бас. Айдауды арттыр: белгілі шектен кейін лазер сәулесі пайда болады',
+ theory:{
+  def:'Лазер — мәжбүр (индукцияланған) сәулелену арқылы жарық күшейтетін құрылғы. Қозған атомға сол энергиялы фотон тисе, атом дәл сондай фотон шығарады: жаңа фотон бағыты, жиілігі, фазасы бойынша бірдей. Күшейту үшін қозған атомдар негізгі күйдегілерден көп болуы керек (инверсті толтырылу). Резонатор айналары фотондарды белсенді ортадан қайта-қайта өткізеді, ал жартылай мөлдір айна арқылы жіңішке когерентті сәуле шығады.',
+  formulas:[{tex:R`h\nu=E_2-E_1`,note:'шығарылатын фотон энергиясы'},{tex:R`N_2>N_1`,note:'инверсті толтырылу шарты'},{tex:R`\text{күшейту}>\text{шығын}`,note:'лазерлік генерация шарты'}],
+  vars:[['N_2','қозған күйдегі атомдар саны',''],['N_1','негізгі күйдегі атомдар саны',''],['\\nu','сәулелену жиілігі','Гц']],
+  sci:{name:'Чарльз Таунс, Николай Басов, Александр Прохоров',years:'1950–1960 жылдар',text:'Мәжбүр сәулелену ұғымын 1917 жылы Эйнштейн енгізді. Таунс, Басов және Прохоров кванттық күшейткіштер мен генераторлар принципін жасады, ол үшін 1964 жылы Нобель сыйлығын алды. Алғашқы лазерді 1960 жылы Теодор Майман жасады.'}},
+ params:[
+  {k:'pump',l:'Айдау қуаты',min:0,max:100,step:5,val:20,u:'%',hi:100,nr:true},
+  {k:'refl',l:'Шығу айнасының шағылдыруы',min:50,max:99,step:1,val:92,u:'%',hi:99,nr:true}],
+ cam:{th:.15,ph:1.0,r:32,t:[0,3,0]},
+ build:function(p){
+  var c=C(),s={at:[],ph:[],out:0,tt:0,cnt:0,rate:0,hist:[],rows:[-3,-1,1,3]},r,q;
+  box(34,.3,12,'pine',[0,-.2,0]);
+  box(26,5.6,9,0xcfe6ee,[0,3,0],{transparent:true,opacity:.12});
+  box(.5,5.6,9,0xb9c3c8,[-13.4,3,0],{metalness:.6});s.mr=box(.5,5.6,9,0xd9e6ea,[13.4,3,0],{transparent:true,opacity:.55,metalness:.4});
+  var tl=tag('айна 100 %',.38);tl.position.set(-13.4,6.6,0);var tr=tag('жартылай мөлдір айна',.38);tr.position.set(13.4,6.6,0);
+  s.rows.forEach(function(z,ri){for(q=0;q<12;q++){var a=sph(.34,0x7f8a86,[-9.9+q*1.8,3,z]);a.userData={on:0,x:-9.9+q*1.8,row:ri};s.at.push(a);}});
+  for(q=0;q<160;q++){var ph=sph(.2,0xffe9a8,[0,-9,0],{emissive:0xffe08a,emissiveIntensity:.9});ph.visible=false;ph.userData={a:false};s.ph.push(ph);}
+  s.beam=cyl(.5,.5,10,0xff5b4a,[19,3,0],{transparent:true,opacity:0,emissive:0xff3b2a,emissiveIntensity:.9});s.beam.rotation.z=PI/2;
+  s.tt1=tag('',.5);s.tt1.position.set(0,8.4,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var h=Math.min(dt,.05),i,j,n=0,ex=0;
+  if(h>0){
+   var rate=p.pump/100*1.2,R=p.refl/100;
+   s.at.forEach(function(a){var u=a.userData;
+    if(!u.on&&Math.random()<rate*h)u.on=1;
+    else if(u.on&&Math.random()<.35*h){u.on=0;if(Math.random()<.15){var f_=s.ph.filter(function(x){return !x.userData.a;})[0];if(f_){var d=Math.random()<.5?1:-1;f_.userData={a:true,x:u.x,row:u.row,d:d};}}}});
+   var emit=[];
+   s.ph.forEach(function(q){var u=q.userData;if(!u.a)return;var x0=u.x,x1=x0+u.d*30*h;if(Math.random()<.3*h){u.a=false;return;}
+    s.at.forEach(function(a){var au=a.userData;if(au.row!==u.row)return;var lo=Math.min(x0,x1),hi=Math.max(x0,x1);if(au.x<lo||au.x>hi||u.a===false)return;
+     if(au.on){if(Math.random()<.35){au.on=0;emit.push({x:au.x,row:au.row,d:u.d});}}
+     else if(Math.random()<.35){au.on=1;u.a=false;}});
+    if(!u.a)return;u.x=x1;
+    if(u.x>13){if(Math.random()<1-R){u.a=false;s.out++;s.cnt++;}else{u.x=26-u.x;u.d=-1;}}
+    else if(u.x<-13){u.x=-26-u.x;u.d=1;}});
+   emit.forEach(function(e){var f_=s.ph.filter(function(x){return !x.userData.a;})[0];if(f_)f_.userData={a:true,x:e.x+e.d*.3,row:e.row,d:e.d};});
+   s.tt+=h;if(s.tt>=1){s.rate=s.cnt/s.tt;s.cnt=0;s.tt=0;}
+  }
+  s.at.forEach(function(a){var on=a.userData.on;ex+=on;a.material.color.setHex(on?0xe0583d:0x7f8a86);a.material.emissive.setHex(on?0xe0583d:0x000000);a.material.emissiveIntensity=on?.7:0;});
+  s.ph.forEach(function(q){var u=q.userData;q.visible=!!u.a;if(u.a){n++;q.position.set(u.x,3,s.rows[u.row]);}});
+  s.nExc=ex;s.nPh=n;
+  var lvl=clamp(s.rate/3,0,1);s.beam.material.opacity=lvl*.8;s.beam.scale.x=s.beam.scale.z=.3+lvl;
+  setTag(s.tt1,'N₂ = '+ex+'   N₁ = '+(48-ex)+'   фотон: '+n);
+ },
+ read:function(p,s){var ex=s?s.nExc||0:0,n=s?s.nPh||0:0;return [['Қозған атомдар N₂',String(ex),'48-ден'],['Негізгі күйде N₁',String(48-ex),''],['Инверсия',ex>24?'бар (N₂ > N₁)':'жоқ',''],['Резонатордағы фотон',String(n),''],['Шығатын сәуле',f(s?s.rate||0:0,1),'фотон/с'],['Режим',n>20?'лазер генерациясы':(n>6?'күшейту':'өздігінен сәулелену'),'']];},
+ live:function(p,s){var ex=s?s.nExc||0:0;return R`N_2=${String(ex)},\;N_1=${String(48-ex)}`;},
+ tips:['Айдауды аз қойсаң, атомдар аз қозады және фотондар жоғалып кетеді: сәуле шықпайды.','Айдауды (шамамен 40–50 %-дан жоғары) арттырсаң, қозған атомдар көп болады да, бір фотон екіншісін туғызады: фотон саны қар көшкіні сияқты өседі.','Шығу айнасының шағылдыруын кемітсең, фотондар тез шығып кетеді де, генерация үшін көбірек айдау керек.']
+});
+
+/* ---- Конденсаторларды қосу ---- */
+add({id:'capser',grade:10,name:'Конденсаторларды қосу. Тізбектей және параллель',hint:'Қосылу түрін ауыстыр: жалпы сыйымдылық пен кернеудің таралуы өзгереді',
+ theory:{
+  def:'Конденсаторларды тізбектей қосқанда әр конденсатордың заряды бірдей, ал жалпы кернеу олардың кернеулерінің қосындысына тең. Параллель қосқанда әр конденсаторға түсетін кернеу бірдей, ал заряд қосылады. Параллель қосу сыйымдылықты арттырады, ал тізбектей қосу кемітеді: жалпы сыйымдылық ең кіші конденсатордан да аз болады.',
+  formulas:[{tex:R`C=\frac{q}{U}`,note:'сыйымдылық'},{tex:R`\frac{1}{C}=\frac{1}{C_1}+\frac{1}{C_2},\quad q_1=q_2,\; U=U_1+U_2`,note:'тізбектей'},{tex:R`C=C_1+C_2,\quad U_1=U_2,\; q=q_1+q_2`,note:'параллель'},{tex:R`W=\frac{CU^2}{2}`,note:'энергия'}],
+  vars:[['C','сыйымдылық','мкФ'],['q','заряд','мкКл'],['U','кернеу','В'],['W','электр өрісінің энергиясы','мДж']],
+  sci:{name:'Эвальд фон Клейст, Питер ван Мушенбрук',years:'1745–1746 жылдар',text:'Алғашқы конденсаторды — «лейден банкасын» — 1745 жылы Клейст, 1746 жылы Лейденде Мушенбрук тәуелсіз жасады. «Фарад» бірлігі Майкл Фарадейдің (1791–1867) құрметіне аталған.'}},
+ params:[
+  {k:'C1',l:'Сыйымдылық C₁',min:1,max:20,step:1,val:4,u:'мкФ',hi:1000},
+  {k:'C2',l:'Сыйымдылық C₂',min:1,max:20,step:1,val:12,u:'мкФ',hi:1000},
+  {k:'U',l:'Көз кернеуі U',min:2,max:60,step:2,val:24,u:'В',hi:1000},
+  {k:'mode',l:'Қосылу',sel:[['Тізбектей',0],['Параллель',1]],val:0}],
+ cam:{th:0,ph:1.2,r:34,t:[0,4,0]},
+ calc:function(p){var ser=!p.mode,C=ser?p.C1*p.C2/(p.C1+p.C2):p.C1+p.C2,Q=C*p.U,q1,q2,u1,u2;
+  if(ser){q1=q2=Q;u1=Q/p.C1;u2=Q/p.C2;}else{u1=u2=p.U;q1=p.C1*p.U;q2=p.C2*p.U;}
+  return {C:C,Q:Q,q1:q1,q2:q2,u1:u1,u2:u2,W:.5*C*p.U*p.U/1000};},
+ build:function(p){
+  var c=C(),k=this.calc(p),s={},ser=!p.mode,yT=5.6,yB=4.4,i;
+  box(36,.3,12,'pine',[0,-.2,0]);
+  var cap=function(x,Cc,q,nm){var w=1.4+Cc*.22,qm=1200,n=Math.round(clamp(q/qm,0,1)*18);
+   box(w,.18,5,c.c3,[x,yT,0]);box(w,.18,5,c.c3,[x,yB,0]);
+   for(i=0;i<n;i++){var u=(i%6+.5)/6-.5,v=(Math.floor(i/6)+.5)/3-.5;sph(.14,c.c1,[x+u*(w-.4),yT-.3,v*3.6]);sph(.14,c.c2,[x+u*(w-.4),yB+.3,v*3.6]);}
+   var t=tag(nm,.42);t.position.set(x,7.6,0);};
+  cap(-4,p.C1,k.q1,'C₁ = '+p.C1+' мкФ');cap(4.5,p.C2,k.q2,'C₂ = '+p.C2+' мкФ');
+  box(1.2,1.6,3,0x6d7a72,[-15,5,0]);var tb=tag('U = '+p.U+' В',.45);tb.position.set(-15,7.2,0);
+  var W=function(a){line(a.map(function(q){return V3(q[0],q[1],0);}),c.neu);};
+  if(ser){W([[-15,5.8],[-15,9],[-4,9],[-4,yT]]);W([[-4,yB],[-4,2.2],[4.5,2.2],[4.5,yT]]);W([[4.5,yB],[4.5,.8],[-15,.8],[-15,4.2]]);}
+  else{W([[-15,5.8],[-15,9],[-4,9],[-4,yT]]);W([[-4,9],[4.5,9],[4.5,yT]]);W([[-4,yB],[-4,.8],[-15,.8],[-15,4.2]]);W([[4.5,yB],[4.5,.8],[-4,.8]]);}
+  var q1=tag('q₁ = '+f(k.q1,0)+' мкКл   U₁ = '+f(k.u1,1)+' В',.4);q1.position.set(-4,3.4,0);
+  var q2=tag('q₂ = '+f(k.q2,0)+' мкКл   U₂ = '+f(k.u2,1)+' В',.4);q2.position.set(4.5,3.4,0);
+  return s;
+ },
+ step:function(){},
+ read:function(p){var k=this.calc(p);return [['Жалпы сыйымдылық C',f(k.C,2),'мкФ'],['Жалпы заряд q',f(k.Q,0),'мкКл'],['q₁ / q₂',f(k.q1,0)+' / '+f(k.q2,0),'мкКл'],['U₁ / U₂',f(k.u1,1)+' / '+f(k.u2,1),'В'],['Энергия W',f(k.W,2),'мДж']];},
+ live:function(p){var k=this.calc(p);return p.mode?R`C=C_1+C_2=${f(p.C1,0)}+${f(p.C2,0)}=${f(k.C,1)}\,\text{мкФ}`:R`\frac{1}{C}=\frac{1}{${f(p.C1,0)}}+\frac{1}{${f(p.C2,0)}}\;\Rightarrow\;C=${f(k.C,2)}\,\text{мкФ}`;},
+ tips:['Тізбектей қосқанда заряд (қызыл және көк нүктелер саны) екеуінде бірдей, ал кернеу кіші сыйымдылыққа көбірек түседі.','Параллель қосқанда кернеу бірдей, үлкен сыйымдылықты конденсатор көбірек заряд жинайды.','Тізбектей қосылғандағы C әрқашан ең кіші сыйымдылықтан кіші.']
+});
+
+/* ---- Денелердің жылулық ұлғаюы ---- */
+add({id:'expan',grade:8,name:'Жылулық ұлғаю. Биметалл пластина',hint:'«▶ Іске қосу» түймесін бас: стерженьдер қызады, ұзарады, биметалл пластина майысады',
+ theory:{
+  def:'Денелер қызғанда ұзарады және ұлғаяды, өйткені бөлшектер арасындағы орташа қашықтық артады. Қатты дененің ұзындығының өзгерісі бастапқы ұзындыққа және температура өзгерісіне пропорционал. Әр заттың өз сызықтық ұлғаю коэффициенті бар. Екі әртүрлі металды біріктірсе (биметалл пластина), қызғанда коэффициенті үлкені көбірек ұзарады да, пластина екінші металл жаққа майысады. Бұл термореле мен термометрлерде қолданылады.',
+  formulas:[{tex:R`\Delta l=\alpha\,l_0\,\Delta t`,note:'ұзындықтың өзгерісі'},{tex:R`l=l_0\,(1+\alpha\,\Delta t)`,note:'соңғы ұзындық'},{tex:R`\kappa\approx\frac{3\,(\alpha_1-\alpha_2)\,\Delta t}{2\,h}`,note:'биметалл иілу қисықтығы'}],
+  vars:[['\\alpha','сызықтық ұлғаю коэффициенті','1/°C'],['l_0','бастапқы ұзындық','м'],['\\Delta t','температура өзгерісі','°C'],['h','биметалл қалыңдығы','мм']],
+  sci:{name:'Пьер Дюлонг, Алексис Пти',years:'XIX ғасырдың басы',text:'Француз физиктері 1816–1819 жылдары қатты денелер мен сұйықтардың жылулық ұлғаюын дәл өлшеді. Биметалл термореле принципін Джон Гаррисон теңіз хронометрлерінің температуралық қателігін түзету үшін қолданған (XVIII ғасыр).'}},
+ params:[
+  {k:'al',l:'Стержень материалы',sel:[['Алюминий · α = 23·10⁻⁶',23],['Мыс · α = 17·10⁻⁶',17],['Болат · α = 12·10⁻⁶',12],['Шыны · α = 9·10⁻⁶',9]],val:23},
+  {k:'L0',l:'Бастапқы ұзындық l₀',min:.5,max:2,step:.1,val:1,u:'м',hi:5},
+  {k:'Tf',l:'Соңғы температура',min:50,max:500,step:10,val:300,u:'°C',hi:800}],
+ cam:{th:.2,ph:1.15,r:34,t:[0,3,0]},
+ build:function(p){
+  var c=C(),s={u:0},i;
+  box(34,.3,16,'pine',[0,-.2,0]);
+  box(1,4,10,0x6d7a72,[-13.5,2,-2.5]);box(1,4,8,0x6d7a72,[-13.5,2,6]);
+  s.A=box(1,.9,.9,0xb0b6bb,[0,2.5,-4],{metalness:.6});s.B=box(1,.9,.9,0x7d8790,[0,2.5,-1],{metalness:.6});
+  s.A.userData.c0=0xb0b6bb;s.B.userData.c0=0x7d8790;
+  s.fl=[];for(i=0;i<6;i++){var fl=sph(.45,0xe98a3a,[-9+i*3.2,.8,-2.5],{emissive:0xe98a3a,emissiveIntensity:.8,transparent:true,opacity:0});s.fl.push(fl);}
+  s.t1=tag('',.42);s.t2=tag('',.42);s.t3=tag('',.45);s.t3.position.set(0,7.4,0);
+  var ta=tag('сіз таңдаған',.38);ta.position.set(-12.4,3.8,-4);var tb2=tag('болат (салыстыру)',.38);tb2.position.set(-12.4,3.8,-1);
+  s.sA=[];s.sB=[];for(i=0;i<20;i++){s.sA.push(box(1,.3,1.3,0xc9784f,[0,0,6]));s.sB.push(box(1,.3,1.3,0x7d8790,[0,0,6]));}
+  var tbm=tag('биметалл: мыс (жоғары) + болат (төмен)',.4);tbm.position.set(-5,7.5,6);
+  s.t4=tag('',.42);s.t4.position.set(-2,.4,9.2);
+  return s;
+ },
+ step:function(dt,p,s){
+  if(dt>0)s.u=Math.min(1,s.u+Math.min(dt,.05)/9);var u=s.u,T=20+(p.Tf-20)*u,dT=T-20,ex=40,Ld=10*p.L0/1;
+  var dA=p.al*1e-6*p.L0*dT,dB=12e-6*p.L0*dT;
+  var wA=Math.max(.5,Ld+dA*ex*10),wB=Math.max(.5,Ld+dB*ex*10);
+  s.A.scale.x=wA;s.A.position.x=-13+wA/2;s.B.scale.x=wB;s.B.position.x=-13+wB/2;
+  var t=clamp(dT/480,0,1);s.A.material.color.setHex(mixHex(s.A.userData.c0,0xe0583d,t*.8));s.B.material.color.setHex(mixHex(s.B.userData.c0,0xe0583d,t*.8));
+  s.fl.forEach(function(fl,i){fl.material.opacity=u>0&&u<1?.55+.3*Math.sin(s.u*60+i):(u>=1?.25:0);fl.scale.y=1+.3*Math.sin(s.u*80+i*2);});
+  s.t1.position.set(-13+wA+1.5,3.8,-4);s.t2.position.set(-13+wB+1.5,3.8,-1);
+  setTag(s.t1,'Δl = '+f(dA*1000,2)+' мм');setTag(s.t2,'Δl = '+f(dB*1000,2)+' мм');
+  setTag(s.t3,'t = '+f(T,0)+' °C   (ұлғаю көрсетілімі 40 есе үлкейтілген)');
+  var kap=1.5*(17-12)*1e-6*dT/1e-3,len=.2,ang=kap*len,N=s.sA.length,seg=10/N,th=0,px=-13,py=2.5,h=.4,i;
+  for(i=0;i<N;i++){var dth=ang/N;th+=dth/2;var cx=px+Math.cos(th)*seg/2,cy=py+Math.sin(th)*seg/2,nx=-Math.sin(th),ny=Math.cos(th);
+   s.sA[i].scale.x=seg*1.02;s.sA[i].rotation.z=th;s.sA[i].position.set(cx+nx*.17,cy+ny*.17,6);
+   s.sB[i].scale.x=seg*1.02;s.sB[i].rotation.z=th;s.sB[i].position.set(cx-nx*.17,cy-ny*.17,6);
+   th+=dth/2;px+=Math.cos(th)*seg;py+=Math.sin(th)*seg;}
+  s.ang=ang;s.dT=dT;s.dA=dA;s.dB=dB;s.T=T;
+  setTag(s.t4,'иілу бұрышы ≈ '+f(ang*180/PI,1)+'°');
+ },
+ read:function(p,s){var dT=s?s.dT:0,dA=s?s.dA:0;return [['Температура t',f(s?s.T:20,0),'°C'],['Δt',f(dT,0),'°C'],['α (таңдалған)',f(p.al,0)+'·10⁻⁶','1/°C'],['Δl таңдалған',f(dA*1000,2),'мм'],['Δl болат',f(s?s.dB*1000:0,2),'мм'],['Биметалл иілуі',f(s?s.ang*180/PI:0,1),'°']];},
+ live:function(p,s){var dT=s?s.dT:0;return R`\Delta l=\alpha l_0\Delta t=${f(p.al,0)}\cdot10^{-6}\cdot${f(p.L0,1)}\cdot${f(dT,0)}=${f(p.al*1e-6*p.L0*dT*1000,2)}\,\text{мм}`;},
+ tips:['Алюминий мен мыс болаттан көбірек ұзарады, шыны азырақ. Мұны температураны ұстап, Δl мәндерін салыстырып көр.','Ұзындықты екі есе арттырсаң, Δl екі есе артады: Δl ~ l₀.','Биметалл пластинада мыс көбірек ұзарады, сондықтан ол болат жаққа иіледі. Суығанда түзу қалпына қайтады.']
+});
+
+/* ---- Газдардың көтеру күші: ауа шары ---- */
+add({id:'airbal',grade:7,name:'Ауа шары. Газдағы Архимед күші',hint:'«▶ Іске қосу» түймесін бас: шар көтеріле ме, жоқ па, күштерді салыстыр',
+ theory:{
+  def:'Газға да, сұйыққа да батырылған денеге Архимед күші әсер етеді. Ауадағы шарға көтеру күші шар алатын ауа көлемінің салмағына тең. Шар көтерілу үшін Архимед күші шардың толық салмағынан (газдың, қабықшаның және жүктің) артық болуы керек. Сондықтан шарға ауадан жеңіл газ (сутегі, гелий) немесе ыстық ауа толтырады.',
+  formulas:[{tex:R`F_A=\rho_{\text{ауа}}\,g\,V`,note:'Архимед күші'},{tex:R`F_{\text{ауыр}}=(\rho_{\text{газ}}V+m_{\text{қаб}}+m_{\text{жүк}})\,g`,note:'шардың салмағы'},{tex:R`F=F_A-F_{\text{ауыр}}`,note:'тең әсерлі күш'},{tex:R`m_{\max}=(\rho_{\text{ауа}}-\rho_{\text{газ}})V-m_{\text{қаб}}`,note:'көтеретін ең үлкен жүк'}],
+  vars:[['\\rho_{ауа}','ауа тығыздығы 1,29','кг/м³'],['V','шар көлемі','м³'],['m','масса','кг']],
+  sci:{name:'Жозеф және Жак Монгольфье',years:'1740–1810 және 1745–1799',text:'Француз ағайындылары 1783 жылы 5 маусымда ыстық ауа толтырылған алғашқы шарды көтерді. Сол жылы 27 тамызда Жак Шарль сутегі шарын ұшырды.'}},
+ params:[
+  {k:'rg',l:'Шардағы газ',sel:[['Сутегі · 0,09 кг/м³',.09],['Гелий · 0,18 кг/м³',.18],['Ыстық ауа (100 °C) · 0,95',.95],['Көмірқышқыл газы · 1,98',1.98]],val:.18},
+  {k:'V',l:'Шардың көлемі V',min:1,max:20,step:.5,val:6,u:'м³',hi:500},
+  {k:'ml',l:'Жүктің массасы',min:0,max:12,step:.5,val:2,u:'кг',hi:200}],
+ cam:{th:.3,ph:1.4,r:36,t:[0,12,0]},
+ calc:function(p){var ra=1.29,g=9.81,FA=ra*g*p.V,Fg=(p.rg*p.V+.4+p.ml)*g,mt=p.rg*p.V+.4+p.ml;return {FA:FA,Fg:Fg,F:FA-Fg,a:(FA-Fg)/mt,mt:mt,mmax:(ra-p.rg)*p.V-.4};},
+ build:function(p){
+  var c=C(),s={y:0,v:0},k=this.calc(p);
+  box(30,.3,16,'pine',[0,-.2,0]);
+  s.r=Math.pow(3*p.V/(4*PI),1/3)*1.6;
+  s.b=sph(s.r,p.rg<.5?c.c1:(p.rg<1.5?c.c2:c.c3),[0,3,0]);s.b.scale.y=1.15;
+  s.bk=box(1.2,.8,1.2,'pine',[0,0,0]);s.sl=[line([V3(0,0,0),V3(1,1,0)],c.neu),line([V3(0,0,0),V3(-1,1,0)],c.neu)];
+  s.aA=arrow(c.c3,'Fₐ');s.aG=arrow(c.c1,'mg');
+  var tg=tag('жер',.4);tg.position.set(8,.6,0);for(var q=0;q<=4;q++)line([V3(9,q*6,-3),V3(9.8,q*6,-3)],c.neu);
+  s.t1=tag('',.45);s.t1.position.set(-8,26,0);
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p),h=Math.min(dt,.05);s.k=k;
+  if(h>0){s.t=(s.t||0)+h;var a=k.a-.9*s.v;s.v+=a*h;s.y+=s.v*h;if(s.y<0){s.y=0;s.v=Math.max(0,s.v);if(k.F<=0)s.v=0;}if(s.y>30){s.y=30;s.v=0;}}
+  var yb=s.y+.8+s.r*1.15;s.b.position.y=yb;s.bk.position.y=s.y+.4;
+  var by=yb-s.r*1.1;setLine(s.sl[0],[V3(0,s.y+.8,0),V3(.6,by,0)]);setLine(s.sl[1],[V3(0,s.y+.8,0),V3(-.6,by,0)]);
+  setArrow(s.aA,V3(2.2,yb,0),V3(0,1,0),clamp(k.FA*.04,.1,5));setArrow(s.aG,V3(2.2,yb,0),V3(0,-1,0),clamp(k.Fg*.04,.1,5));
+  setTag(s.t1,'h = '+f(s.y,1)+' м   v = '+f(s.v,1)+' м/с');
+ },
+ read:function(p,s){var k=this.calc(p);return [['Уақыт t',f(s?s.t||0:0,1),'с'],['Биіктік h',f(s?s.y||0:0,1),'м'],['Жылдамдық v',f(s?s.v||0:0,2),'м/с'],['Архимед күші Fₐ',f(k.FA,1),'Н'],['Салмақ (газ+қабық+жүк)',f(k.Fg,1),'Н'],['Тең әсерлі F',f(k.F,1),'Н'],['Бастапқы үдеу',f(Math.max(k.a,0),2),'м/с²'],['Ең үлкен жүк',f(Math.max(k.mmax,0),1),'кг'],['Нәтиже',k.F>0?'көтеріледі':'көтерілмейді','']];},
+ live:function(p){var k=this.calc(p);return R`F=F_A-F_{\text{ауыр}}=${f(k.FA,1)}-${f(k.Fg,1)}=${f(k.F,1)}\,\text{Н}`;},
+ tips:['Көмірқышқыл газы ауадан ауыр: шар көтерілмейді, бұл жағдайда Архимед күші салмақтан аз.','Көлемді арттырсаң, Архимед күші V-ға пропорционал өседі: үлкен шар көп жүк көтереді.','Жоғарыда жылдамдық тұрақтанады, себебі ауаның кедергісі күшті теңестіреді.']
+});
+
+/* ---- Ай фазалары және тұтылу ---- */
+add({id:'moon',grade:9,name:'Ай фазалары. Күн және Ай тұтылуы',hint:'Айдың орнын ауыстыр: Жерден көрінетін фаза мен тұтылу шартын бақыла (схема, масштабсыз)',
+ theory:{
+  def:'Ай өздігінен жарық шығармайды, Күн сәулесін шағылыстырады. Күн әрқашан Айдың жарты шарын жарықтандырады, бірақ Жерден біз жарықталған бөліктің әртүрлі үлесін көреміз. Сондықтан Ай фазалары (жаңа ай, бірінші ширек, толған ай, соңғы ширек) ауысады, толық цикл шамамен 29,5 тәулік. Күн тұтылуы Ай Жер мен Күн арасында тұрғанда, ал Ай тұтылуы Ай Жердің көлеңкесіне түскенде болады. Ай орбитасы Жер орбитасына 5° еңкіш болғандықтан, тұтылулар әр айда емес, сирек болады.',
+  formulas:[{tex:R`f=\frac{1-\cos\varphi}{2}`,note:'жарықталған үлес (φ — Күн–Жер–Ай бұрышынан өлшенген орналасу бұрышы)'},{tex:R`T_{\text{синод}}\approx 29{,}5\ \text{тәулік}`,note:'фазалардың қайталану кезеңі'},{tex:R`T_{\text{сидер}}\approx 27{,}3\ \text{тәулік}`,note:'Айдың жұлдыздарға қатысты айналу кезеңі'}],
+  vars:[['\\varphi','Айдың орбитадағы орналасу бұрышы (0° — жаңа ай)','°'],['f','жарықталған үлес','%']],
+  sci:{name:'Аристарх Самосский',years:'б.з.д. ≈ 310–230',text:'Грек астрономы. Ай фазаларын Күн сәулесімен түсіндірді және Күннің Айдан әлдеқайда алыс екенін көрсетуге тырысты. Ай тұтылуындағы Жер көлеңкесінің пішіні Жердің шар тәрізді екенін дәлелдейді (Аристотель).'}},
+ params:[
+  {k:'ang',l:'Айдың орны φ',min:0,max:360,step:1,val:90,u:'°',hi:360,nr:true},
+  {k:'tilt',l:'Ай орбитасы',sel:[['Түйіндер Күн сызығында (тұтылу мүмкін)',0],['Түйіндер сызықтан тыс (еңкіш орбита)',1]],val:0}],
+ cam:{th:0,ph:.5,r:44,t:[-2,0,0]},
+ calc:function(p){var a=p.ang*PI/180,fr=(1-Math.cos(a))/2,Rm=9,u=-Rm*Math.cos(a),w=-Rm*Math.sin(a),y,z,x;
+  if(p.tilt){var i=5.1*PI/180*1.9;x=u*Math.cos(i);y=u*Math.sin(i);z=w;}else{var i2=5.1*PI/180*1.9;x=u;y=-w*Math.sin(i2);z=w*Math.cos(i2);}
+  var near=Math.min(p.ang%360,360-p.ang%360)<5,full=Math.abs(p.ang-180)<5;
+  var ecl=Math.abs(y)<.9&&(near||full);
+  return {fr:fr,x:x,y:y,z:z,ecl:ecl,kind:ecl?(full?'Ай тұтылуы':'Күн тұтылуы'):'жоқ'};},
+ build:function(p){
+  var c=C(),s={key:null},k=this.calc(p),i,ru=9;
+  box(60,.3,40,'pine',[-2,-.6,0]);
+  sph(4,0xf2c14e,[-28,0,0],{emissive:0xf2c14e,emissiveIntensity:.7});var ts=tag('Күн',.5);ts.position.set(-28,5.6,0);
+  [-6,0,6].forEach(function(z){var a=arrow(0xe9b84a,null);setArrow(a,V3(-22,.5,z),V3(1,0,0),5);});
+  var tr=tag('күн сәулелері',.4);tr.position.set(-18,2.2,-7.5);
+  sph(2,0x2f4a63,[0,0,0]);
+  var eh=add3(new T.SphereGeometry(2.03,28,16,0,PI),M(0xcfe8f2,{emissive:0xcfe8f2,emissiveIntensity:.25,side:T.DoubleSide}),[0,0,0]);eh.rotation.y=-PI/2;
+  var te=tag('Жер',.45);te.position.set(0,3.8,0);
+  var pts=[];for(i=0;i<=100;i++){var a=i/100*2*PI,u=-ru*Math.cos(a),w=-ru*Math.sin(a),x,y,z;
+   if(p.tilt){var t=5.1*PI/180*1.9;x=u*Math.cos(t);y=u*Math.sin(t);z=w;}else{var t2=5.1*PI/180*1.9;x=u;y=-w*Math.sin(t2);z=w*Math.cos(t2);}pts.push(V3(x,y,z));}
+  line(pts,c.neu,.6);
+  s.md=sph(.54,0x3a4450,[k.x,k.y,k.z]);
+  s.ml=add3(new T.SphereGeometry(.57,24,14,0,PI),M(0xf3ead2,{emissive:0xf3ead2,emissiveIntensity:.4,side:T.DoubleSide}),[k.x,k.y,k.z]);s.ml.rotation.y=-PI/2;
+  s.tm=tag('Ай',.42);
+  var cv=document.createElement('canvas');cv.width=256;cv.height=256;s.cv=cv;
+  s.sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(cv),transparent:true,depthTest:false}));s.sp.scale.set(9,9,1);s.sp.position.set(17,3,-12);world.add(s.sp);
+  s.tf=tag('Жерден көрінісі',.42);s.tf.position.set(17,9,-12);
+  s.te=tag('',.5);s.te.position.set(-2,.4,14);
+  return s;
+ },
+ step:function(dt,p,s){
+  var k=this.calc(p);s.k=k;s.md.position.set(k.x,k.y,k.z);s.ml.position.set(k.x,k.y,k.z);
+  s.tm.position.set(k.x,k.y+1.9,k.z);
+  setTag(s.te,k.ecl?k.kind+' болады':'');
+  if(s.key!==p.ang){s.key=p.ang;var ctx=s.cv.getContext('2d'),r=84,cx=128,cy=128,a=p.ang*PI/180,cs=Math.cos(a);
+   ctx.clearRect(0,0,256,256);ctx.fillStyle='#2b3440';ctx.beginPath();ctx.arc(cx,cy,r,0,2*PI);ctx.fill();
+   ctx.save();if(p.ang>180){ctx.translate(2*cx,0);ctx.scale(-1,1);}
+   ctx.fillStyle='#f3ead2';ctx.beginPath();ctx.arc(cx,cy,r,-PI/2,PI/2,false);
+   ctx.ellipse(cx,cy,Math.max(.5,r*Math.abs(cs)),r,0,PI/2,-PI/2,cs>0);ctx.closePath();ctx.fill();ctx.restore();
+   ctx.strokeStyle='rgba(120,130,140,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,r,0,2*PI);ctx.stroke();s.sp.material.map.needsUpdate=true;}
+ },
+ read:function(p,s){var k=this.calc(p),a=((p.ang%360)+360)%360,nm=a<10||a>350?'Жаңа ай':a<80?'Жас ай (орақ)':a<100?'Бірінші ширек':a<170?'Өсіп бара жатқан ай':a<190?'Толған ай':a<260?'Кеми бара жатқан ай':a<280?'Соңғы ширек':'Кәрі ай (орақ)';
+  return [['Фаза',nm,''],['Жарықталған үлес',f(k.fr*100,0),'%'],['Айдың «жасы»',f(a/360*29.53,1),'тәулік'],['Тұтылу',k.ecl?k.kind:'жоқ','']];},
+ live:function(p){var k=this.calc(p);return R`f=\frac{1-\cos\varphi}{2}=${f(k.fr*100,0)}\,\%`;},
+ tips:['Ай әрқашан жарты шары жарық: жарық жарты шарды Жерден қай бұрыштан көретініңе қарай фаза өзгереді.','φ = 0° болғанда Ай Күн мен Жердің арасында: жаңа ай, жарықталған жағы Жерге қарамайды.','Еңкіш орбитада Ай жаңа ай мен толған ай кезінде Жер–Күн сызығынан тыс өтеді, сондықтан тұтылу әр айда болмайды.']
+});
 /* ---------- Problems (Есеп) tab, section quizzes and manual-run helpers ---------- */
 var pk=function(a){return a[Math.floor(Math.random()*a.length)];};
 var pf=function(x,d){return (+x).toFixed(d==null?0:d).replace('.',',').replace('-','−');};
@@ -2671,7 +4232,7 @@ QUIZ[2]={name:'Электродинамика',q:[
  {q:'Электромагниттік индукцияда ЭҚК неге байланысты?',o:['Магнит ағынының өзгеру жылдамдығына','Магнит ағынының шамасына ғана','Катушка түсіне','Ток күшіне ғана'],a:0,e:'ε = −N·ΔΦ/Δt.'},
  {q:'Катушканың орам саны 2 есе артса, индукциялық ЭҚК қалай өзгереді?',o:['2 есе артады','2 есе азаяды','Өзгермейді','4 есе артады'],a:0,e:'ε = N·ΔΦ/Δt: N-ге тура пропорционал.'}]};
 /* ---------- Problems and quizzes: «Оптика», «Атом және ядро», «Кванттық физика» ---------- */
-DYN=DYN.concat(['decay']);
+DYN=DYN.concat(['decay','wave','echo','machine','pascal','cond','cap','lc','charge','grav','emwave','nuclear','measure','humid','engine','ac','relat','kepler','laser','expan','airbal']);
 var DEG=Math.PI/180;
 
 PROBS.lens=function(n){var t=n%4,pairs=[[4,12],[5,10],[6,12],[6,18],[8,24],[10,15],[5,20],[6,9]],pp=pk(pairs),F=pp[0],d=pp[1],h=pk([1,2,3]),fi=1/(1/F-1/d);
@@ -2859,7 +4420,7 @@ function load(id,showTheory){
 /* ---------- menu ---------- */
 var SEC=['Механика','МКТ және жылу','Электродинамика','Оптика','Атом және ядро','Кванттық физика'];
 var SECOF={unif:0,dens:0,hooke:0,fric:0,press1:0,press2:0,arch:0,work:0,lever:0,bio:0,energy:0,accel:0,fall:0,proj:0,incl:0,circ:0,imp:0,pend:0,spring:0,stat:0,blood:0,balance:0,
-  heat:1,gas:1,lung:1,diff:1,phase:1,thermo:1,ohm:2,build:2,coul:2,joule:2,efield:2,magnet:2,induct:2,lens:3,eye:3,refr:3,interf:3,decay:4,bohr:4,photo:5};
+  heat:1,gas:1,lung:1,diff:1,phase:1,thermo:1,ohm:2,build:2,coul:2,joule:2,efield:2,magnet:2,induct:2,lens:3,eye:3,refr:3,interf:3,decay:4,bohr:4,photo:5,wave:0,echo:0,machine:0,torr:0,pascal:0,cond:1,cap:2,emf:2,lc:2,charge:2,emag:2,mirror:3,grav:0,emwave:2,nuclear:4,measure:0,vessels:0,humid:1,engine:1,resist:2,shadow:3,ac:2,relat:5,kepler:0,kirch:2,transf:2,grating:3,polar:3,debro:5,laser:5,capser:2,expan:1,airbal:0,moon:0};
 function secOf(l){return l&&SECOF[l.id]!=null?SECOF[l.id]:0;}
 var menuSec=null,homeSec=0;
 function secCount(i){return LABS.filter(function(l){return secOf(l)===i;}).length;}
@@ -2927,12 +4488,13 @@ function tick(now){
     if(frame%6===0)drawReads();
   }
   var a=pgeo.attributes.position.array;for(var i=0;i<PN;i++){a[i*3+1]+=pv[i]*dt;if(a[i*3+1]>24)a[i*3+1]=0;}pgeo.attributes.position.needsUpdate=true;
-  frame++;placeCam();renderer.render(scene,camera);requestAnimationFrame(tick);
+  frame++;placeCam();fitTags();renderer.render(scene,camera);requestAnimationFrame(tick);
 }
 (function init(){
+  window.__h0=location.hash||'';
   var sp=LS.get('fizlab.pal2');if(sp&&PAL[sp])palKey=sp;
   applyPalette();buildPop();resize();
-  var id=(location.hash||'').slice(1),ok=function(x){return LABS.filter(function(l){return l.id===x;}).length>0;};
+  var id=(location.hash||'').slice(1).split('&')[0],ok=function(x){return LABS.filter(function(l){return l.id===x;}).length>0;};
   var first=ok(id)?id:(ok(LS.get('fizlab.last'))?LS.get('fizlab.last'):LABS[0].id);
   var small=innerWidth<900;
   var seen=!!id;
@@ -2942,6 +4504,175 @@ function tick(now){
   hide('right',small||LS.get('fizlab.right')==='0');
   requestAnimationFrame(tick);
 })();
-</script>
+/* ===== Оқу құралдары: журнал, график, жұмыс парағы, секундомер, болжам, мұғалім режимі, пернетақта ===== */
+(function(){
+var css=document.createElement('style');css.textContent=
+'.lg{display:grid;gap:10px}.lg .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.lg .mini{background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:7px 11px;font:500 13px var(--body)}.lg .mini.on{border-color:var(--acc);color:var(--acc)}'+
+'.lg .tw{overflow:auto;max-height:230px;border:1px solid var(--line);border-radius:10px}.lg table{border-collapse:collapse;font:12px var(--mono);width:100%}.lg th,.lg td{padding:4px 8px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:right}.lg th{position:sticky;top:0;background:var(--panel);color:var(--mut);font-weight:500}'+
+'.lg select{background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:5px 8px;font:13px var(--body);max-width:150px}.lg canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--soft)}.lg .mut{color:var(--mut);font-size:12px}'+
+'.tl{position:absolute;right:var(--gr);top:calc(var(--gt) + var(--bh) + 8px);z-index:9;width:290px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;backdrop-filter:blur(12px);display:grid;gap:10px;max-height:calc(100% - 110px);overflow:auto}.tl[hidden]{display:none}.tl h6{margin:0;color:var(--mut);font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase}.tl label{display:flex;gap:8px;align-items:center;font-size:13px}'+
+'.sw{font:600 30px var(--mono);text-align:center;letter-spacing:.02em}.tl .row{display:flex;gap:8px;flex-wrap:wrap}.tl .mini{flex:1;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font:500 13px var(--body)}'+
+'.md{position:absolute;inset:0;z-index:30;background:var(--veil);display:flex;align-items:center;justify-content:center;padding:16px}.md[hidden]{display:none}.md .bx{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:16px;padding:18px;width:min(460px,100%);display:grid;gap:12px}.md textarea{background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px;font:15px var(--body);min-height:90px;resize:vertical}'+
+'body.blind .reads b{filter:blur(7px);cursor:pointer}.tc{background:var(--soft);border-radius:10px;padding:8px 12px;margin:8px 0;font-size:13px}'+
+'#ws{position:fixed;inset:0;z-index:50;background:#fff;color:#111;overflow:auto;padding:24px;font:14px/1.5 "Times New Roman",serif}#ws[hidden]{display:none}#ws .doc{max-width:780px;margin:0 auto}#ws h1{font-size:22px;margin:0 0 4px}#ws h3{font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 4px;border-bottom:1px solid #999}#ws .ln{border-bottom:1px solid #777;height:24px}#ws table{border-collapse:collapse;width:100%;font-size:12px}#ws td,#ws th{border:1px solid #777;padding:3px 6px;text-align:right;height:22px}#ws .noprint{position:sticky;top:0;background:#fff;padding:8px 0;display:flex;gap:8px;z-index:2}#ws .fm{margin:2px 0}#ws .fm span{color:#555;margin-left:10px;font-size:12px}#ws img{max-width:100%}'+
+'@media print{body>*:not(#ws){display:none!important}#ws{position:static;padding:0;overflow:visible}#ws .noprint{display:none}}';
+document.head.appendChild(css);
+
+var rows=[],clock=0,auto=false,teacher=false,gx='t',gy='',lastAuto=0,sw={t:0,run:false};
+function clean(v){return String(v).replace(/<[^>]+>/g,'').replace(/&[a-z]+;/g,' ');}
+function num(v){var t=clean(v).replace(/\s/g,'').replace(',','.').replace('−','-'),m=t.match(/^-?\d*\.?\d+(e[+-]?\d+)?/i);return m?parseFloat(m[0]):NaN;}
+function copy(t,ok,bad){try{navigator.clipboard.writeText(t).then(ok,bad);}catch(e){bad();}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+
+/* ---- Журнал ---- */
+function cols(){var r=cur.read(P,S),pc=cur.params.filter(function(q){return !q.sel;}).map(function(q){return {n:q.l,u:q.u||'',p:q.k};});
+  return {p:pc,r:r.map(function(x){return {n:clean(x[0]),u:clean(x[2])};})};}
+function sample(){
+  if(!cur||!S)return;var rd=cur.read(P,S),c=cols();
+  rows.push({t:clock,p:c.p.map(function(q){return P[q.p];}),r:rd.map(function(x){return clean(x[1]);})});
+  if(rows.length>300)rows.shift();
+  if(!$('pLog').hidden)logRender();
+}
+function headers(){var c=cols(),h=['t, с'];c.p.forEach(function(q){h.push(q.n+(q.u?', '+q.u:''));});c.r.forEach(function(q){h.push(q.n+(q.u?', '+q.u:''));});return h;}
+function cells(r){var a=[f(r.t,1)];r.p.forEach(function(v){a.push(numFmt(v));});r.r.forEach(function(v){a.push(v);});return a;}
+function drawChart(cv,withTitle){
+  var h=headers(),xi=h.indexOf(gx),yi=h.indexOf(gy),W=cv.width,H=cv.height,x=cv.getContext('2d');
+  var st=getComputedStyle(document.documentElement),fg=withTitle?'#111':st.getPropertyValue('--fg').trim()||'#eee',ac=withTitle?'#1b7a8c':st.getPropertyValue('--acc').trim()||'#5ad1c0',mu=withTitle?'#666':st.getPropertyValue('--mut').trim()||'#999';
+  x.clearRect(0,0,W,H);if(withTitle){x.fillStyle='#fff';x.fillRect(0,0,W,H);}
+  var pts=rows.map(function(r){var c=cells(r);return [num(c[xi]),num(c[yi])];}).filter(function(q){return isFinite(q[0])&&isFinite(q[1]);});
+  x.font='17px sans-serif';x.fillStyle=mu;
+  if(pts.length<2){x.fillText('График үшін кемінде 2 өлшем жазыңыз (● Жазу)',16,H/2);return;}
+  var x0=Math.min.apply(0,pts.map(function(q){return q[0];})),x1=Math.max.apply(0,pts.map(function(q){return q[0];})),y0=Math.min.apply(0,pts.map(function(q){return q[1];})),y1=Math.max.apply(0,pts.map(function(q){return q[1];}));
+  if(x1===x0){x0-=1;x1+=1;}if(y1===y0){y0-=1;y1+=1;}var pd=(y1-y0)*.08;y0-=pd;y1+=pd;
+  var L=70,B=44,T=16,Rr=18,pw=W-L-Rr,ph=H-T-B;
+  var X=function(v){return L+(v-x0)/(x1-x0)*pw;},Y=function(v){return T+ph-(v-y0)/(y1-y0)*ph;};
+  x.strokeStyle=mu;x.lineWidth=1;x.beginPath();x.moveTo(L,T);x.lineTo(L,T+ph);x.lineTo(L+pw,T+ph);x.stroke();
+  var i;for(i=0;i<=4;i++){var vx=x0+(x1-x0)*i/4,vy=y0+(y1-y0)*i/4;x.fillStyle=mu;x.textAlign='center';x.fillText(numFmt(+vx.toPrecision(3)),X(vx),T+ph+20);x.textAlign='right';x.fillText(numFmt(+vy.toPrecision(3)),L-6,Y(vy)+4);
+   x.strokeStyle='rgba(128,128,128,.2)';x.beginPath();x.moveTo(L,Y(vy));x.lineTo(L+pw,Y(vy));x.stroke();}
+  x.textAlign='center';x.fillStyle=fg;x.fillText(h[xi],L+pw/2,H-6);x.save();x.translate(16,T+ph/2);x.rotate(-PI/2);x.fillText(h[yi],0,0);x.restore();
+  x.strokeStyle=ac;x.lineWidth=2;x.beginPath();pts.forEach(function(q,k){if(k)x.lineTo(X(q[0]),Y(q[1]));else x.moveTo(X(q[0]),Y(q[1]));});x.stroke();x.fillStyle=ac;pts.forEach(function(q){x.beginPath();x.arc(X(q[0]),Y(q[1]),3,0,2*PI);x.fill();});
+}
+function logRender(){
+  var h=headers(),box=$('pLog');
+  if(gx!==''&&h.indexOf(gx)<0)gx='t, с';if(h.indexOf(gx)<0)gx=h[0];if(h.indexOf(gy)<0)gy=h[Math.min(h.length-1,1+cols().p.length)]||h[1];
+  var opts=function(sel){return h.map(function(n){return '<option'+(n===sel?' selected':'')+'>'+esc(n)+'</option>';}).join('');};
+  box.innerHTML='<div class="lg"><div class="row"><button class="mini" id="lgRec" type="button">● Жазу</button><button class="mini'+(auto?' on':'')+'" id="lgAuto" type="button" aria-pressed="'+auto+'">Авто (1 с)</button><button class="mini" id="lgClr" type="button">Тазалау</button></div>'+
+  '<div class="tw"><table><thead><tr><th>№</th>'+h.map(function(n){return '<th>'+esc(n)+'</th>';}).join('')+'</tr></thead><tbody>'+(rows.length?rows.map(function(r,i){return '<tr><td>'+(i+1)+'</td>'+cells(r).map(function(c){return '<td>'+esc(c)+'</td>';}).join('')+'</tr>';}).join(''):'<tr><td colspan="'+(h.length+1)+'" style="text-align:left">Әзірге жазба жоқ. «● Жазу» түймесін басыңыз немесе «Авто» қосыңыз.</td></tr>')+'</tbody></table></div>'+
+  '<div class="row"><label class="mut">X: <select id="lgX">'+opts(gx)+'</select></label><label class="mut">Y: <select id="lgY">'+opts(gy)+'</select></label></div><canvas id="lgCv" width="640" height="360" aria-label="График"></canvas>'+
+  '<div class="tc" id="lgSt"></div><div class="row"><button class="mini" id="lgCsv" type="button">CSV көшіру</button><button class="mini" id="lgWs" type="button">Жұмыс парағы</button></div><div class="mut" id="lgMsg"></div></div>';
+  $('lgRec').onclick=sample;$('lgAuto').onclick=function(){auto=!auto;logRender();};$('lgClr').onclick=function(){rows=[];logRender();};
+  $('lgX').onchange=function(){gx=this.value;logRender();};$('lgY').onchange=function(){gy=this.value;logRender();};
+  $('lgCsv').onclick=function(){var t=[h.join(';')].concat(rows.map(function(r){return cells(r).join(';');})).join('\n');
+   var done=function(){$('lgMsg').textContent='Көшірілді: Excel немесе Google Кестеге қойыңыз.';};
+   copy(t,done,function(){$('lgMsg').textContent='Көшіру мүмкін болмады: кестені қолмен белгілеп көшіріңіз.';});};
+  $('lgWs').onclick=openWs;drawChart($('lgCv'),false);stats();
+}
+
+/* ---- Қателік ---- */
+var TS=[0,12.7,4.30,3.18,2.78,2.57,2.45,2.36,2.31,2.26,2.23];
+function stats(){
+  var el=$('lgSt');if(!el)return;var h=headers(),yi=h.indexOf(gy);
+  var v=rows.map(function(r){return num(cells(r)[yi]);}).filter(isFinite),n=v.length;
+  if(n<3){el.innerHTML='<b>Өлшеу қателігі</b><br>«'+esc(gy)+'» үшін кемінде 3 өлшем керек (бірдей жағдайда қайталап жазыңыз).';return;}
+  var m=v.reduce(function(a,b){return a+b;},0)/n,sd=Math.sqrt(v.reduce(function(a,b){return a+(b-m)*(b-m);},0)/(n-1)),t=TS[Math.min(n-1,10)]||2.0,d=t*sd/Math.sqrt(n);
+  el.innerHTML='<b>Өлшеу қателігі: '+esc(gy)+'</b><br>n = '+n+' · орташа x̄ = '+numFmt(+m.toPrecision(4))+' · стандартты ауытқу s = '+numFmt(+sd.toPrecision(3))+'<br>Абсолют қателік Δx = t·s/√n = '+numFmt(+d.toPrecision(2))+' (сенімділік 95 %)<br>Салыстырмалы қателік ε = '+(m?numFmt(+(d/Math.abs(m)*100).toPrecision(2)):'—')+' %<br><b>x = '+numFmt(+m.toPrecision(4))+' ± '+numFmt(+d.toPrecision(2))+'</b>';
+}
+/* ---- Экрандық сызғыш және транспортир ---- */
+var gadget=document.createElement('div');gadget.style.cssText='position:absolute;left:50%;top:40%;z-index:12;touch-action:none;display:none;cursor:move;user-select:none';
+$('app').appendChild(gadget);
+var gmode='',gang=0,gpos=null;
+function drawGadget(){
+  if(!gmode){gadget.style.display='none';return;}gadget.style.display='block';var h='';
+  if(gmode==='ruler'){var cm=15,px=37.8,i,tk='';for(i=0;i<=cm*10;i++){var L=i%10===0?16:(i%5===0?11:7);tk+='<line x1="'+(8+i*px/10)+'" y1="0" x2="'+(8+i*px/10)+'" y2="'+L+'" stroke="#222"/>';if(i%10===0&&i>0)tk+='<text x="'+(8+i*px/10)+'" y="30" font-size="11" text-anchor="middle" fill="#222">'+i/10+'</text>';}
+   h='<svg width="'+(cm*px+16)+'" height="38" style="transform:rotate('+gang+'deg);transform-origin:8px 19px"><rect x="0" y="0" width="'+(cm*px+16)+'" height="38" rx="4" fill="rgba(255,236,170,.78)" stroke="#8a7a3a"/>'+tk+'<text x="'+(cm*px-4)+'" y="32" font-size="10" fill="#222">см</text></svg>';}
+  else{var r=150,i2,t2='';for(i2=0;i2<=180;i2+=5){var a=i2*PI/180,l=i2%10===0?12:7;t2+='<line x1="'+(r+10+Math.cos(a)*r)+'" y1="'+(r+10-Math.sin(a)*r)+'" x2="'+(r+10+Math.cos(a)*(r-l))+'" y2="'+(r+10-Math.sin(a)*(r-l))+'" stroke="#222"/>';if(i2%30===0)t2+='<text x="'+(r+10+Math.cos(a)*(r-26))+'" y="'+(r+14-Math.sin(a)*(r-26))+'" font-size="11" text-anchor="middle" fill="#222">'+i2+'</text>';}
+   h='<svg width="'+(2*r+20)+'" height="'+(r+24)+'" style="transform:rotate('+gang+'deg);transform-origin:'+(r+10)+'px '+(r+10)+'px"><path d="M10 '+(r+10)+' A'+r+' '+r+' 0 0 1 '+(2*r+10)+' '+(r+10)+' Z" fill="rgba(190,225,240,.6)" stroke="#2c5b73"/>'+t2+'<circle cx="'+(r+10)+'" cy="'+(r+10)+'" r="3" fill="#222"/></svg>';}
+  gadget.innerHTML=h+'<div style="display:flex;gap:6px;align-items:center;margin-top:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 8px;font-size:12px;color:var(--fg)">Бұру <input type="range" min="-180" max="180" value="'+gang+'" id="gRot" style="width:110px"><span>'+gang+'°</span><button type="button" id="gX" class="mini" style="padding:2px 8px">✕</button></div>';
+  $('gRot').oninput=function(){gang=+this.value;var sv=gadget.querySelector('svg');sv.style.transform=sv.style.transform.replace(/rotate\([^)]*\)/,'rotate('+gang+'deg)');this.nextSibling.textContent=gang+'°';};
+  $('gX').onclick=function(){gmode='';drawGadget();};
+}
+var gd=null;gadget.addEventListener('pointerdown',function(e){if(e.target.closest('input,button'))return;gd={x:e.clientX,y:e.clientY,l:gadget.offsetLeft,t:gadget.offsetTop};gadget.setPointerCapture(e.pointerId);});
+gadget.addEventListener('pointermove',function(e){if(!gd)return;gadget.style.left=(gd.l+e.clientX-gd.x)+'px';gadget.style.top=(gd.t+e.clientY-gd.y)+'px';});
+gadget.addEventListener('pointerup',function(){gd=null;});
+/* ---- Жұмыс парағы ---- */
+function openWs(){
+  var th=cur.theory,h=headers(),ws=$('ws'),png='';
+  if(rows.length>=2){var cv=document.createElement('canvas');cv.width=700;cv.height=340;drawChart(cv,true);try{png='<img alt="график" src="'+cv.toDataURL('image/png')+'">';}catch(e){}}
+  var tb='<table><thead><tr>'+h.map(function(n){return '<th>'+esc(n)+'</th>';}).join('')+'</tr></thead><tbody>'+
+   (rows.length?rows.slice(-14).map(function(r){return '<tr>'+cells(r).map(function(c){return '<td>'+esc(c)+'</td>';}).join('')+'</tr>';}).join(''):[1,2,3,4,5,6,7].map(function(){return '<tr>'+h.map(function(){return '<td></td>';}).join('')+'</tr>';}).join(''))+'</tbody></table>';
+  var key='';if(teacher){var rd=cur.read(P,S);key='<h3>Мұғалімге: жауап кілті (қазіргі параметрлер)</h3><table><tbody>'+rd.map(function(x){return '<tr><td style="text-align:left">'+clean(x[0])+'</td><td>'+clean(x[1])+' '+clean(x[2])+'</td></tr>';}).join('')+'</tbody></table>';}
+  ws.innerHTML='<div class="doc"><div class="noprint"><button class="btn" id="wsPr" type="button">Басып шығару / PDF</button><button class="btn" id="wsCp" type="button">Мәтінді көшіру</button><button class="btn" id="wsCl" type="button">Жабу</button></div>'+
+   '<h1>Зертханалық жұмыс: '+esc(cur.name)+'</h1><div>Аты-жөні: ______________________ &nbsp; Сынып: ______ &nbsp; Күні: ____________</div>'+
+   '<h3>1. Мақсат</h3><div class="ln"></div><div class="ln"></div>'+
+   '<h3>2. Теория</h3><p>'+th.def+'</p>'+th.formulas.map(function(x){return '<div class="fm">'+tex(x.tex,false)+'<span>'+x.note+'</span></div>';}).join('')+
+   '<h3>3. Болжам (тәжірибеге дейін)</h3><div class="ln"></div><div class="ln"></div>'+
+   '<h3>4. Өлшеу нәтижелері</h3>'+tb+'<h3>5. График</h3>'+(png||'<div style="height:200px;border:1px solid #777"></div>')+
+   '<h3>6. Қорытынды</h3><div class="ln"></div><div class="ln"></div><div class="ln"></div>'+key+'</div>';
+  ws.hidden=false;
+  $('wsCl').onclick=function(){ws.hidden=true;};$('wsPr').onclick=function(){try{window.print();}catch(e){alert('Басып шығару осы терезеде қолжетімсіз. «Мәтінді көшіру» түймесін қолданыңыз.');}};
+  $('wsCp').onclick=function(){var t=ws.querySelector('.doc').innerText,b=this;copy(t,function(){b.textContent='Көшірілді';},function(){b.textContent='Көшіру мүмкін емес';});};
+}
+
+/* ---- Құралдар панелі ---- */
+var wsEl=document.createElement('div');wsEl.id='ws';wsEl.hidden=true;document.body.appendChild(wsEl);
+var tl=document.createElement('div');tl.className='tl';tl.id='tools';tl.hidden=true;tl.setAttribute('role','dialog');tl.setAttribute('aria-label','Құралдар');
+tl.innerHTML='<h6>Секундомер</h6><div class="sw" id="swT" aria-live="off">00:00,0</div><div class="row"><button class="mini" id="swGo" type="button">Бастау</button><button class="mini" id="swRs" type="button">Нөлге</button></div>'+
+ '<h6>Экрандық құрал</h6><div class="row"><button class="mini" id="gRu" type="button">Сызғыш (см)</button><button class="mini" id="gPr" type="button">Транспортир</button></div><div style="font-size:12px;color:var(--mut)">Сахна нақты масштабта емес: құрал бұрыштарды экраннан өлшеуге арналған. Сүйреп жылжытыңыз.</div>'+
+ '<h6>Сабақ</h6><label><input type="checkbox" id="oBlind"> Өлшемдерді жасыру (түртсе ашылады)</label><label><input type="checkbox" id="oTeach"> Мұғалім режимі</label>'+
+ '<div class="row"><button class="mini" id="tLink" type="button">Параметрлерімен сілтеме</button><button class="mini" id="tWs" type="button">Жұмыс парағы</button></div><div class="mut" id="tMsg" style="font-size:12px;color:var(--mut)"></div>'+
+ '<h6>Пернелер</h6><div style="font-size:12px;color:var(--mut)">Сахнаны басып, ← → ↑ ↓: айналдыру · + −: жақындату · Бос орын: іске қосу/тоқтату · R: қайта · P: панель</div>';
+$('app').appendChild(tl);
+var bt=document.createElement('button');bt.className='btn';bt.id='bTools';bt.type='button';bt.textContent='Құрал';bt.setAttribute('aria-expanded','false');
+$('bar').insertBefore(bt,$('bTheme'));
+bt.addEventListener('click',function(){tl.hidden=!tl.hidden;bt.setAttribute('aria-expanded',String(!tl.hidden));});
+
+
+function swFmt(t){var m=Math.floor(t/60),s=t-m*60;return ('0'+m).slice(-2)+':'+(s<10?'0':'')+f(s,1);}
+$('swGo').onclick=function(){sw.run=!sw.run;this.textContent=sw.run?'Тоқтату':'Бастау';};
+$('swRs').onclick=function(){sw.t=0;sw.run=false;$('swGo').textContent='Бастау';$('swT').textContent=swFmt(0);};
+$('oBlind').onchange=function(){document.body.classList.toggle('blind',this.checked);};
+$('oTeach').onchange=function(){teacher=this.checked;teachRender();};
+$('tWs').onclick=openWs;$('gRu').onclick=function(){gmode=gmode==='ruler'?'':'ruler';drawGadget();};$('gPr').onclick=function(){gmode=gmode==='prot'?'':'prot';drawGadget();};
+$('tLink').onclick=function(){var q=cur.params.map(function(x){return x.k+'='+P[x.k];}).join('&'),u=location.href.split('#')[0]+'#'+cur.id+'&'+q;
+  copy(u,function(){$('tMsg').textContent='Сілтеме көшірілді: оқушыға жіберіңіз.';},function(){$('tMsg').textContent=u;});};
+document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.reads')&&document.body.classList.contains('blind')){document.body.classList.remove('blind');$('oBlind').checked=false;}});
+
+/* ---- Мұғалім режимі ---- */
+function teachRender(){
+  var old=$('pExp').querySelector('.tc');if(old)old.remove();
+  if(!teacher||!cur)return;var d=document.createElement('div');d.className='tc';
+  d.innerHTML='<b>Мұғалімге</b><br>Сынып: '+cur.grade+' · Бөлім: '+SEC[secOf(cur)]+'<br>Сабақ жоспары: алдымен «Теория» терезесін талқылаңыз, оқушыдан болжам алыңыз, «Құрал» панелінен «Өлшемдерді жасыру» қосып, өлшеуді журналға жаздырыңыз, соңында жұмыс парағын басып шығарыңыз.<br>Дұрыс мәндер (қазіргі параметрлер): '+cur.read(P,S).map(function(x){return clean(x[0])+' = '+clean(x[1])+' '+clean(x[2]);}).join('; ');
+  $('pExp').appendChild(d);
+}
+
+/* ---- Жүктеу, құрылымдау, интервал ---- */
+var _load=load;load=function(id,sh){rows=[];clock=0;var r=_load(id,sh);if(!$('pLog').hidden)logRender();teachRender();return r;};
+var _setTab=setTab;setTab=function(t){_setTab(t);$('pLog').hidden=t!=='log';if(t==='log'){$('pCtl').hidden=true;$('pExp').hidden=true;$('pProb').hidden=true;logRender();}if(t==='exp')teachRender();};
+var tabBtn=document.createElement('button');tabBtn.type='button';tabBtn.setAttribute('role','tab');tabBtn.setAttribute('aria-selected','false');tabBtn.dataset.t='log';tabBtn.id='tLog';tabBtn.textContent='Журнал';
+document.querySelector('.tabs').appendChild(tabBtn);tabBtn.addEventListener('click',function(){setTab('log');});
+var pl=document.createElement('div');pl.className='pane';pl.id='pLog';pl.hidden=true;$('right').appendChild(pl);
+var _reset=$('bReset');_reset.addEventListener('click',function(){clock=0;});
+setInterval(function(){
+  var dt=.1;if(cur&&!paused&&started)clock+=dt;
+  if(sw.run){sw.t+=dt;$('swT').textContent=swFmt(sw.t);}
+  if(auto&&cur&&S&&!paused&&started&&clock-lastAuto>=1){lastAuto=clock;sample();}
+},100);
+
+/* ---- Пернетақта ---- */
+var cvs=$('gl');cvs.tabIndex=0;cvs.setAttribute('role','application');cvs.setAttribute('aria-label','3D зертхана. Көрінісін өзгерту үшін көрсеткі пернелерді қолданыңыз.');
+cvs.addEventListener('keydown',function(e){
+  var k=e.key,used=true;
+  if(k==='ArrowLeft')orb.th-=.08;else if(k==='ArrowRight')orb.th+=.08;else if(k==='ArrowUp')orb.ph=clamp(orb.ph-.06,.12,1.52);else if(k==='ArrowDown')orb.ph=clamp(orb.ph+.06,.12,1.52);
+  else if(k==='+'||k==='=')orb.r=clamp(orb.r*.92,8,80);else if(k==='-'||k==='_')orb.r=clamp(orb.r*1.08,8,80);
+  else if(k===' ')$('bPause').click();else if(k==='r'||k==='R')$('bReset').click();else if(k==='p'||k==='P')$('bPanel').click();else used=false;
+  if(used)e.preventDefault();
+});
+var lv=$('live');lv.setAttribute('role','status');lv.setAttribute('aria-live','off');lv.setAttribute('aria-label','Қазіргі формула');
+
+/* ---- Параметрлері бар сілтеме ---- */
+(function(){var h=(window.__h0||'').slice(1).split('&');if(h.length<2||!LABS.some(function(l){return l.id===h[0];}))return;
+  $('home').hidden=true;_load(h[0],false);var o={};h.slice(1).forEach(function(kv){var a=kv.split('=');if(qOf(a[0])&&isFinite(+a[1]))o[a[0]]=+a[1];});setP(o,true);$('intro').hidden=true;})();
+})();
+}</script>
 
 </body></html>
