@@ -10250,7 +10250,7 @@ function forcePw() {
         try {
           const d3 = await ai({ mode: 'qmj', turn: false, qmj: Object.assign({ part: 3, draft: JSON.stringify({ goals: data.goals, stages: data.stages, homework: data.homework }) }, base) });
           const j3 = jparse(d3.message.content);
-          if (Array.isArray(j3.stages) && j3.stages.length === 5) { j3.stages.forEach((x, i) => { const o = data.stages[i]; o.teacher = NZ(x.teacher || o.teacher); o.student = NZ(x.student || o.student); o.assess = tidy(NZ(x.assess || o.assess)); o.resources = tidy(NZ(x.resources || o.resources)); }); data.fixes = Array.isArray(j3.fixes) ? j3.fixes.map(String).filter(Boolean).slice(0, 8) : []; }
+          if (Array.isArray(j3.stages) && j3.stages.length === 5) { j3.stages.forEach((x, i) => { const o = data.stages[i]; o.teacher = NZ(x.teacher || o.teacher); o.student = NZ(x.student || o.student); o.assess = tidy(NZ(x.assess || o.assess)); o.resources = tidy(NZ(x.resources || o.resources)); }); data.fixes = Array.isArray(j3.fixes) ? j3.fixes.map(String).filter(Boolean).slice(0, 8) : []; try { data.fixes = data.fixes.concat(qmPost(data, j3)); } catch { } }
         } catch { data.fixes = null; }
         const minSum = t => (String(t || '').match(/(\d+)\s*мин/g) || []).reduce((a, m) => a + parseInt(m), 0);
         const over = [0, 1, 2, 4].filter(i => minSum(data.stages[i].teacher) > MIN[i] + 1);
@@ -10314,6 +10314,7 @@ function forcePw() {
             if (j3.homework) data.homework = 'Оқулық: ___ бет, №___.\n' + nz(String(j3.homework).replace(/^\s*Оқулық[^\n]*\n?/i, ''));
             fixes = Array.isArray(j3.fixes) ? j3.fixes.map(String).filter(Boolean).slice(0, 8) : [];
           }
+          try { const pn = qmPost(data, j3); if (fixes && pn.length) fixes = fixes.concat(pn); } catch { }
         } catch { fixes = null; }
         data.fixes = fixes;
         st.textContent = '⏳ Бос ұяшықтарды тексеріп жатыр…';
@@ -10338,6 +10339,52 @@ function forcePw() {
       gen.disabled = false;
     };
   };
+
+  // ---- Жасалғаннан кейінгі автоматты тексеру: емле, бөлім, есепті код арқылы қайта есептеу ----
+  const SUPD = { '⁰': 0, '¹': 1, '²': 2, '³': 3, '⁴': 4, '⁵': 5, '⁶': 6, '⁷': 7, '⁸': 8, '⁹': 9 }, SUPC = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+  const supNum = x => { const neg = /[⁻−-]/.test(x[0]); const d = [...x].filter(c => c in SUPD).map(c => SUPD[c]).join(''); return d ? (neg ? -1 : 1) * +d : NaN; };
+  const supStr = n => (n < 0 ? '⁻' : '') + String(Math.abs(n)).split('').map(c => SUPC[+c]).join('');
+  function parseWritten(w) {
+    w = String(w || '').replace(/\s/g, '').replace(/ /g, '');
+    let m = /^([\d.,]+)[·*×x]10([⁻−-]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)$/.exec(w); if (m) { const e = supNum(m[2]); return { v: parseFloat(m[1].replace(',', '.')) * Math.pow(10, e), sci: true }; }
+    m = /^([\d.,]+)[·*×x]10\^?\(?(-?\d+)\)?$/.exec(w); if (m) return { v: parseFloat(m[1].replace(',', '.')) * Math.pow(10, +m[2]), sci: true };
+    m = /^-?[\d.,]+$/.exec(w); if (m) return { v: parseFloat(w.replace(',', '.')), sci: false };
+    return null;
+  }
+  function fmtLike(v, sci) {
+    if (!isFinite(v)) return ''; if (v === 0) return '0';
+    const ab = Math.abs(v);
+    if (sci || ab < 1e-3 || ab >= 1e6) { let e = Math.floor(Math.log10(ab)), m = v / Math.pow(10, e); m = +m.toPrecision(3); if (Math.abs(m) >= 10) { m /= 10; e++; } return String(+m.toPrecision(3)).replace('.', ',') + '·10' + supStr(e); }
+    return String(+v.toPrecision(3)).replace('.', ',');
+  }
+  const safeEval = e => { e = String(e || '').replace(/\^/g, '**').replace(/\s+/g, ''); if (!/^(?:[\d.eE+\-*/(),]|Math\.(?:sqrt|pow|PI|abs|log10|log|exp|sin|cos))+$/.test(e) || e.length > 200) return NaN; try { const r = Function('"use strict";return (' + e + ')')(); return typeof r === 'number' ? r : NaN; } catch { return NaN; } };
+  const lev = (a, b) => { const d = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
+  function qmPost(d, j3) {
+    const notes = []; if (!d || !j3) return notes;
+    const mapAll = fn => { d.stages.forEach(o => { ['teacher', 'student', 'assess', 'resources'].forEach(k => { o[k] = fn(o[k]); }); }); d.homework = fn(d.homework); d.goals = (d.goals || []).map(fn); };
+    // 1) тақырып емлесі
+    const nt = String(j3.topic || '').trim();
+    if (nt && d.topic && nt !== d.topic && nt.length < 160 && lev(nt.toLowerCase(), String(d.topic).toLowerCase()) <= 4) {
+      const old = d.topic; d.topic = nt; const esc = old.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), re = new RegExp(esc, 'g'); mapAll(t => String(t || '').replace(re, nt));
+      (d.links ? [d] : []).forEach(x => { if (typeof x.links === 'string') x.links = x.links.replace(re, nt); }); notes.push('Тақырып емлесі: «' + old + '» → «' + nt + '»');
+    }
+    // 2) бөлім атауы
+    if (!String(d.section || '').trim() && j3.section && String(j3.section).length < 100) { d.section = String(j3.section).trim(); notes.push('«Бөлімі» ұяшығы толтырылды'); }
+    // 3) есепті код арқылы қайта есептеу
+    (Array.isArray(j3.calcs) ? j3.calcs : []).slice(0, 12).forEach(c => {
+      const calc = safeEval(c && c.expr), w = parseWritten(c && c.written); if (!isFinite(calc) || !w || !isFinite(w.v)) return;
+      const rel = Math.abs(calc - w.v) / (Math.abs(calc) || 1); if (rel <= 0.03) return;
+      const nv = fmtLike(calc, w.sci), wr = String(c.written).trim(); let hit = false;
+      mapAll(t => { const s2 = String(t || ''); if (s2.includes(wr)) { hit = true; return s2.split(wr).join(nv); } return s2; });
+      notes.push(hit ? 'Есеп қайта есептелді: ' + wr + ' → ' + nv : '⚠ Есептің жауабын қолмен тексер: жазылған ' + wr + ', есептелгені ' + nv);
+    });
+    // жиі кездесетін емле қателері
+    const TYPO = [[/электромагнитік/gi, m => m[0] === 'Э' ? 'Электромагниттік' : 'электромагниттік'], [/инфрақызыл\s+сәулеле(?!н)/gi, m => m]];
+    mapAll(t => { let x = String(t || ''); TYPO.forEach(([re, f]) => { x = x.replace(re, f); }); return x; }); if (d.topic) d.topic = d.topic.replace(/электромагнитік/gi, m => m[0] === 'Э' ? 'Электромагниттік' : 'электромагниттік');
+    // 4) «*» көбейту белгісін «·»-ға
+    mapAll(t => String(t || '').replace(/(\d|\)|[A-Za-zα-ωΑ-Ω_₀-₉²³])\s\*\s(?=[\d(A-Za-zα-ωΑ-Ω√])/g, '$1 · '));
+    return notes;
+  }
   const NZ = t => unTex(String(t || '')).replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').trim();
   const shortName = () => { const nm = (meName || '').trim().split(/\s+/); return nm.length > 1 ? nm[0] + ' ' + nm[1][0] + '.' : (nm[0] || ''); };
   window.qmjLoad = d => { data = d; last = d; ls.set(PK, JSON.stringify(d)); };
