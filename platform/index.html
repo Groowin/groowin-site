@@ -10205,7 +10205,7 @@ function forcePw() {
   const persist = () => { if (!data) return; try { const c = JSON.parse(JSON.stringify(data)); c._k = (c.topic || '') + '|' + (c.date || ''); c._t = Date.now(); ls.set(PK, JSON.stringify(c)); syncPut('qmj', c._k, c.topic, c); const a = lsj(AK, []), i = a.findIndex(x => x._k === c._k); if (i >= 0) a[i] = c; else a.unshift(c); ls.set(AK, JSON.stringify(a.slice(0, 20))); } catch { } };
   const words = t => String(t || '').toLowerCase().replace(/[^а-яәіңғүұқөһё\w\s]/gi, ' ').split(/\s+/).filter(w => w.length > 3).map(w => w.slice(0, 5));
   async function findRes(q, goals) {
-    const stems = [...new Set(words(q.topic + ' ' + q.section).concat(words((goals || []).join(' '))))]; const out = { games: [], sites: [], links: [] };
+    const tst = [...new Set(words(q.topic + ' ' + q.section))], stems = tst.length >= 2 ? tst : [...new Set(tst.concat(words((goals || []).join(' '))))]; const out = { games: [], sites: [], links: [] };
     if (!stems.length) return out;
     const sc = t => { t = String(t || '').toLowerCase(); return stems.reduce((n, w) => n + (t.includes(w) ? 1 : 0), 0); };
     const need = Math.min(2, stems.length), top = (arr, f) => arr.map(x => [sc(f(x)), x]).filter(z => z[0] >= need).sort((a, b) => b[0] - a[0]).slice(0, 2).map(z => z[1]);
@@ -10360,7 +10360,11 @@ function forcePw() {
         }
         addLinks(data, '', null, [], [], rs); data.quizId = rs.quiz ? rs.quiz.id : null; data.gameId = rs.bgame ? rs.bgame.id : null;
         data.autoWs = cW.checked;
-        { const o = data.stages[1]; let L = String(o.teacher || '').split('\n').filter(x => !/^\s*[–-]?\s*Үй жұмысын тексеру/i.test(x)); L.unshift('– Үй жұмысын тексеру: ___ бет, №___ (2 мин)'); o.teacher = L.join('\n'); }
+        { const o = data.stages[1]; let L = String(o.teacher || '').split('\n').filter(x => !/^\s*[–-]?\s*Үй жұмысын тексеру/i.test(x)); L.unshift('– Үй жұмысын тексеру: ___ бет, №___ (2 мин)');
+          { const tm = L.map((x, i) => [i, (x.match(/\((\d+)\s*мин\)/) || [])[1]]).filter(z => z[1] && z[0] > 0); let sum = 2 + tm.reduce((n, z) => n + +z[1], 0); const lim = MIN[1];
+            while (sum > lim && tm.length) { tm.sort((a, b) => b[1] - a[1]); const z = tm[0]; if (+z[1] <= 1) break; z[1] = String(+z[1] - 1); sum--; }
+            tm.forEach(z => { L[z[0]] = L[z[0]].replace(/\((\d+)\s*мин\)/, '(' + z[1] + ' мин)'); }); }
+          o.teacher = L.join('\n'); }
         const parts = String(q.topic).split(/[,;]|\s+және\s+/).filter(x => x.trim().length > 2);
         data.wide = parts.length > 3;
         st.hidden = true; persist(); paint(out); persist();
@@ -10406,7 +10410,9 @@ function forcePw() {
       const calc = safeEval(c && c.expr), w = parseWritten(c && c.written); if (!isFinite(calc) || !w || !isFinite(w.v)) return;
       const rel = Math.abs(calc - w.v) / (Math.abs(calc) || 1); if (rel <= 0.03) return;
       const nv = fmtLike(calc, w.sci), wr = String(c.written).trim(); let hit = false;
-      mapAll(t => { const s2 = String(t || ''); if (s2.includes(wr)) { hit = true; return s2.split(wr).join(nv); } return s2; });
+      const safeTok = wr.length >= 4 && /[·^⁰¹²³⁴⁵⁶⁷⁸⁹,.]|10/.test(wr) && /\d/.test(wr);
+      const escW = wr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), reW = new RegExp('(?<![\\d,.⁰¹²³⁴⁵⁶⁷⁸⁹⁻\\-])' + escW + '(?![\\d⁰¹²³⁴⁵⁶⁷⁸⁹]|[,.]\\d)', 'g');
+      if (safeTok) mapAll(t => { const s2 = String(t || ''); if (reW.test(s2)) { hit = true; reW.lastIndex = 0; return s2.replace(reW, nv); } reW.lastIndex = 0; return s2; });
       notes.push(hit ? 'Есеп қайта есептелді: ' + wr + ' → ' + nv : '⚠ Есептің жауабын қолмен тексер: жазылған ' + wr + ', есептелгені ' + nv);
     });
     // жиі кездесетін емле қателері
@@ -10506,7 +10512,12 @@ function forcePw() {
       dl.disabled = true; dl.querySelector('strong').textContent = 'Дайындалып жатыр…';
       try {
         sync(); void ({ section: rd(E.section), teacher: rd(E.teacher), date: rd(E.date), grade: rd(E.grade), topic: rd(E.topic), goal: rd(E.goal), goals: rd(E.goals).split(/\n/).map(x => x.trim()).filter(Boolean), homework: rd(HW), stages: S.map(o => ({ teacher: rd(o.teacher), student: rd(o.student), assess: rd(o.assess), resources: rd(o.resources), links: o.links })) });
-        const D = await loadDocx(), blob = await D.Packer.toBlob(qmjBuild(D, data));
+        const D = await loadDocx(); data.appx = [];
+        try {
+          if (data.gameId) { const g = await sb.from('board_sets').select('kind,title,data').eq('id', data.gameId).maybeSingle(); if (g.data && g.data.data && Array.isArray(g.data.data.list)) { const kk = g.data.kind, L = g.data.data.list; data.appx.push({ title: 'Қосымша 1. Ойын-сауық ойыны (Groowin): ' + g.data.title, lines: L.map((it, i) => (i + 1) + '. ' + (kk === 'words' ? it.w + (it.h ? ' — ' + it.h : '') : kk === 'pairs' ? it.a + '  ↔  ' + it.b : kk === 'sort' ? it.n + ': ' + (it.it || []).join(', ') : (kk === 'mill' || kk === 'bet') ? it.q + ' [' + (it.opts || []).map((o, j) => (j === it.c ? '✓ ' : '') + o).join(' | ') + ']' : it.q + (it.a ? '  →  ' + it.a : ''))) }); } }
+          if (data.quizId) { const z = await sb.from('quizzes').select('title,questions').eq('id', data.quizId).maybeSingle(); if (z.data && Array.isArray(z.data.questions)) data.appx.push({ title: 'Қосымша ' + (data.appx.length + 1) + '. Викторина (Groowin): ' + z.data.title, lines: z.data.questions.flatMap((x, i) => [(i + 1) + '. ' + x.t].concat((x.o || []).map((o, j) => '    ' + 'ABCD'[j] + ') ' + o + (j === x.c ? '  ✓' : '')))) }); }
+        } catch { }
+        const blob = await D.Packer.toBlob(qmjBuild(D, data)); delete data.appx;
         const fn = ('ҚМЖ ' + (data.topic || 'жоспар')).replace(/[\\/:*?"<>|]/g, '').slice(0, 60) + '.docx';
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
         saveMat(blob, fn, data.date).then(ok => notify(ok ? 'Материалдарға да сақталды: ' + (data.date || 'күні') : 'Файл жүктелді (Материалдарға сақталмады)'));
@@ -10619,7 +10630,7 @@ function qmjBuild(D, d) {
   const t1 = new Table({ width: { size: 10774, type: WidthType.DXA }, columnWidths: W1, rows });
   const doc = new Document({
     styles: { default: { document: { run: { font: F, size: SZ } } } },
-    sections: [{ properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 566, bottom: 566, left: 566, right: 566 } } }, children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 160 }, children: [run('Қысқа мерзімді жоспар', { bold: true, size: 28 })] }), t0, new Paragraph({ spacing: { after: 120 }, children: [] }), t1] }]
+    sections: [{ properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 566, bottom: 566, left: 566, right: 566 } } }, children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 160 }, children: [run('Қысқа мерзімді жоспар', { bold: true, size: 28 })] }), t0, new Paragraph({ spacing: { after: 120 }, children: [] }), t1].concat((d.appx || []).flatMap((a, k) => [new Paragraph({ pageBreakBefore: k === 0, spacing: { before: k ? 240 : 0, after: 120 }, children: [run(a.title, { bold: true, size: 26 })] })].concat(a.lines.map(l => new Paragraph({ spacing: { after: 60 }, children: [run(l)] }))))) }]
   });
   return doc;
 }
