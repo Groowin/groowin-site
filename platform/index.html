@@ -5238,6 +5238,16 @@ function folderModal(f) {
   nm.onkeydown = e => { if (e.key === 'Enter') ok.click(); }; b.append(nm, el('p', 'sub', 'Түсі'), sw, el('p', 'sub', 'Белгісі'), eg, pw, row); paintS(); setTimeout(() => nm.focus(), 50);
 }
 // LaTeX қалдықтарын қарапайым мәтінге айналдыру (ЖИ кейде $...$ жазып жібереді)
+// ҚМЖ деректері әр қолданушыға бөлек (ортақ компьютерде бір мұғалім екіншінің атын не жобасын көрмесін)
+const qk = k => k + '_' + (typeof meId !== 'undefined' && meId ? meId : '');
+function qmMigrate() {
+  try {
+    if (!meId || ls.get(qk('qmjMig'))) return; ls.set(qk('qmjMig'), '1');
+    const old = (ls.get(qk('qmjName')) || '').trim().toLowerCase(), me = (meName || '').trim().toLowerCase(); if (!old) return;
+    const same = old.split(/\s+/)[0] && me.startsWith(old.split(/\s+/)[0]);
+    if (same) ['qmjCur', 'qmjArch', 'qmjName', 'qmjAvoid'].forEach(k => { const v = ls.get(k); if (v && !ls.get(qk(k))) ls.set(qk(k), v); });
+  } catch { }
+}
 function unTex(t) {
   t = String(t == null ? '' : t); if (!/[\\$^_{}]/.test(t)) return t;
   const G = { lambda: 'λ', nu: 'ν', mu: 'μ', pi: 'π', Delta: 'Δ', delta: 'δ', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', omega: 'ω', Omega: 'Ω', rho: 'ρ', sigma: 'σ', tau: 'τ', phi: 'φ', epsilon: 'ε', eta: 'η', varepsilon: 'ε' };
@@ -9217,7 +9227,7 @@ async function takeShared(row) {
     return notify(ins.error ? 'Қате: ' + ins.error.message : 'Викторина «Викторина» бөліміне қосылды');
   }
   const d = JSON.parse(JSON.stringify(pl)); const q = d.quiz; delete d.quiz;
-  d.teacher = ls.get('qmjName') || meName || ''; d.date = today();
+  d.teacher = ls.get(qk('qmjName')) || meName || ''; d.date = today();
   if (q) { const ins = await sb.from('quizzes').insert({ title: q.title, questions: q.questions, updated_at: new Date().toISOString() }).select('id').single(); if (!ins.error && ins.data) { d.quizId = ins.data.id; (d.stages || []).forEach(o => (o.links || []).forEach(l => { if (q.oldId && String(l.url).includes('id=' + q.oldId)) l.url = String(l.url).replace(q.oldId, ins.data.id); })); } }
   window.qmjLoad(d); go('qmj'); notify('ҚМЖ өз бетіңе алынды, өңдей аласың');
 }
@@ -10181,8 +10191,8 @@ function forcePw() {
   document.head.appendChild(css);
   const MIN = [3, 7, 10, 22, 3], NAMES = ['Ұйымдастыру кезеңі', 'Білімді жаңарту', 'Жаңа білімді меңгеру', 'Практикалық тапсырмалар мен есептер', 'Рефлексия (кері байланыс)'];
   const today = () => { const d = new Date(); return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear(); };
-  let data = null, last = null;
-  const PK = 'qmjCur', AK = 'qmjArch';
+  let data = null, last = null, qmUid = null;
+  const PK = { toString() { return qk('qmjCur'); } }, AK = { toString() { return qk('qmjArch'); } };
   const lsj = (k, d) => { try { const v = JSON.parse(ls.get(k) || 'null'); return v || d; } catch { return d; } };
   const persist = () => { if (!data) return; try { const c = JSON.parse(JSON.stringify(data)); c._k = (c.topic || '') + '|' + (c.date || ''); c._t = Date.now(); ls.set(PK, JSON.stringify(c)); syncPut('qmj', c._k, c.topic, c); const a = lsj(AK, []), i = a.findIndex(x => x._k === c._k); if (i >= 0) a[i] = c; else a.unshift(c); ls.set(AK, JSON.stringify(a.slice(0, 20))); } catch { } };
   const words = t => String(t || '').toLowerCase().replace(/[^а-яәіңғүұқөһё\w\s]/gi, ' ').split(/\s+/).filter(w => w.length > 3).map(w => w.slice(0, 5));
@@ -10209,9 +10219,10 @@ function forcePw() {
     const v = $('v-qmj'); v.replaceChildren(); const w = el('div', 'qm-w'); v.appendChild(w);
     const back = el('button', 'go', '← Басты бет'); back.type = 'button'; back.style.cssText = 'width:auto;margin:0;justify-self:start;padding:8px 14px;background:transparent;color:var(--ink);border:1px solid var(--line)'; back.onclick = () => go('home');
     w.append(back);
+    if (qmUid !== meId) { qmUid = meId; data = null; last = null; } qmMigrate();
     if (!data) { const c = lsj(PK, null); if (c && Array.isArray(c.stages) && c.stages.length === 5) { data = c; last = c; } }
     const nm = (meName || '').trim().split(/\s+/); const short = nm.length > 1 ? nm[0] + ' ' + nm[1][0] + '.' : (nm[0] || '');
-    const fT = inp(last ? last.teacher : (ls.get('qmjName') || short)), fD = inp(last ? last.date : today()), fG = inp(last ? last.grade : '', '9'), fS = inp(last ? last.subject : 'Физика'), fSec = inp(last ? last.section : '', 'мысалы: Динамика негіздері'), fTop = inp(last ? last.topic : '', 'Дененің салмағы. Салмақсыздық');
+    const fT = inp(last ? last.teacher : (ls.get(qk('qmjName')) || short)), fD = inp(last ? last.date : today()), fG = inp(last ? last.grade : '', '9'), fS = inp(last ? last.subject : 'Физика'), fSec = inp(last ? last.section : '', 'мысалы: Динамика негіздері'), fTop = inp(last ? last.topic : '', 'Дененің салмағы. Салмақсыздық');
     const fGoal = document.createElement('textarea'); fGoal.value = last ? last.goal : ''; fGoal.placeholder = 'Бағдарламадағы оқу мақсатын өзің жаз. Бос қалдырсаң, кестеде бос болады.';
     const fLn = document.createElement('textarea'); fLn.value = last ? last.links : ''; fLn.placeholder = 'Әр жолға біреуі. Мысалы:\n5: https://forms.gle/...  (5 = кезең нөмірі)\nТопқа бөлу: https://...';
     const card = (cls, title, ...kids) => { const c = el('section', 'qm-card ' + cls), h = el('h3', '', title), i = el('div', 'in'); i.append(...kids); c.append(h, i); return c; };
@@ -10271,7 +10282,7 @@ function forcePw() {
     gen.onclick = async () => {
       const q = { teacher: fT.value.trim(), date: fD.value.trim(), grade: fG.value.trim(), subject: fS.value.trim(), section: fSec.value.trim(), topic: fTop.value.trim(), goal: fGoal.value.trim(), links: fLn.value.trim() };
       if (!q.topic) return notify('Сабақтың тақырыбын жаз', 'err');
-      last = q; ls.set('qmjName', q.teacher); let av = []; try { av = JSON.parse(ls.get('qmjAvoid') || '[]'); } catch { }
+      last = q; ls.set(qk('qmjName'), q.teacher); let av = []; try { av = JSON.parse(ls.get(qk('qmjAvoid')) || '[]'); } catch { }
       gen.disabled = true; st.hidden = false; st.textContent = '⏳ 1/2: мақсаттар мен алғашқы 3 кезең жазылып жатыр…'; out.replaceChildren();
       try {
         let facts = ''; try { st.textContent = '⏳ Тақырып бойынша дұрыс деректер жиналып жатыр…'; const df = await ai({ mode: 'qmj', turn: true, qmj: { part: 8, subject: q.subject, grade: q.grade, topic: q.topic, goal: q.goal } }); const jf = jparse(df.message.content); facts = Array.isArray(jf.facts) ? jf.facts.join('\n') : String(jf.facts || ''); } catch { }
@@ -10296,7 +10307,7 @@ function forcePw() {
         } else s45 = [j2.stage4 || (j2.stages || [])[0], j2.stage5 || (j2.stages || [])[1]];
         if (!s45[0] || !s45[1]) throw new Error('ЖИ 4–5 кезеңді жазбады, қайта бас');
         { const a = s45[0], b = s45[1]; if (/\d\s*-\s*тапсырма/i.test(String(b.teacher || ''))) { ['teacher', 'student', 'assess', 'resources'].forEach(k => { a[k] = String(a[k] || '').trim() + '\n' + String(b[k] || '').trim(); b[k] = ''; }); } }
-        if (Array.isArray(d1.methods)) ls.set('qmjAvoid', JSON.stringify(av.concat(d1.methods).slice(-30)));
+        if (Array.isArray(d1.methods)) ls.set(qk('qmjAvoid'), JSON.stringify(av.concat(d1.methods).slice(-30)));
         const nz = t => unTex(String(t || '')).replace(/^\s*[—-]\s+/gm, '– ').replace(/ — /g, ' – ').replace(/студент(тер)?/gi, m => m.length > 7 ? 'оқушылар' : 'оқушы').replace(/\b75\d\s*нм/g, '760 нм').trim();
         const stg = j1.stages.slice(0, 3).concat(s45).map(x => ({ teacher: nz(x.teacher), student: nz(x.student), assess: nz(x.assess), resources: nz(x.resources) }));
         const goals = (j1.goals || []).slice(0, 4).map(x => String(x).replace(/^\s*\d+[).]\s*/, '').replace(/^\s*Оқушылар\s*:?\s*/i, '').trim()).filter(Boolean);
@@ -10364,7 +10375,9 @@ function forcePw() {
     const mapAll = fn => { d.stages.forEach(o => { ['teacher', 'student', 'assess', 'resources'].forEach(k => { o[k] = fn(o[k]); }); }); d.homework = fn(d.homework); d.goals = (d.goals || []).map(fn); };
     // 1) тақырып емлесі
     const nt = String(j3.topic || '').trim();
-    if (nt && d.topic && nt !== d.topic && nt.length < 160 && lev(nt.toLowerCase(), String(d.topic).toLowerCase()) <= 4) {
+    if (nt && /^\s*\d+\.\d+\.\d+\.\d+/.test(String(d.topic || '')) && nt.length < 120 && !/^\d/.test(nt)) {
+      const old0 = d.topic; if (!d.goal) d.goal = old0; d.topic = nt; notes.push('Тақырып ретінде оқу мақсаты тұр екен, қысқа тақырып қойылды: «' + nt + '»');
+    } else if (nt && d.topic && nt !== d.topic && nt.length < 160 && lev(nt.toLowerCase(), String(d.topic).toLowerCase()) <= 4) {
       const old = d.topic; d.topic = nt; const esc = old.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), re = new RegExp(esc, 'g'); mapAll(t => String(t || '').replace(re, nt));
       (d.links ? [d] : []).forEach(x => { if (typeof x.links === 'string') x.links = x.links.replace(re, nt); }); notes.push('Тақырып емлесі: «' + old + '» → «' + nt + '»');
     }
@@ -10390,7 +10403,7 @@ function forcePw() {
   window.qmjLoad = d => { data = d; last = d; ls.set(PK, JSON.stringify(d)); };
   window.qmjGet = () => data;
   window.qmjAr = () => lsj(AK, []);
-  window.qmjPrefill = o => { last = { teacher: ls.get('qmjName') || shortName(), date: today(), grade: o.grade || '', subject: o.subject || 'Физика', section: '', topic: o.topic || '', goal: '', links: '' }; };
+  window.qmjPrefill = o => { last = { teacher: ls.get(qk('qmjName')) || shortName(), date: today(), grade: o.grade || '', subject: o.subject || 'Физика', section: '', topic: o.topic || '', goal: '', links: '' }; };
   const BASE = 'https://groowin.github.io/groowin-site/platform/';
   const short = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
   function addLinks(d, raw, methods, picks, quizzes, rs) {
@@ -10415,7 +10428,7 @@ function forcePw() {
         [[1, 'start'], [2, 'teach'], [3, 'fix']].forEach(([st, tag]) => { const t = pick(tag); if (t) add(st, 'Groowin → ' + t.t, BASE + '?go=tool&k=' + t.k); });
         add(4, 'Groowin → Рефлексия (12 тәсілдің бірі)', BASE + '?go=tool&k=refl');
       } catch { }
-      if (rs.quiz) add(4, 'Groowin → Рефлексия викторинасы: «' + (rs.quiz.title.length > 50 ? rs.quiz.title.slice(0, 48) + '…' : rs.quiz.title) + '»', BASE + '?go=quiz&id=' + rs.quiz.id);
+      if (rs.quiz) add(4, 'Groowin → Рефлексия викторинасы: «' + (rs.quiz.title.length > 80 ? rs.quiz.title.slice(0, 78).replace(/\s+\S*$/, '') + '…' : rs.quiz.title) + '»', BASE + '?go=quiz&id=' + rs.quiz.id);
     }
   }
   const tidy = t => { let seen = new Set(); return unTex(String(t || '')).split(/\n/).map(x => x.replace(/^\s*[–—-]\s+/, '').trim()).filter(x => { const k = x.toLowerCase(); if (/^\d\s*-\s*тапсырма/.test(k)) seen = new Set(); else if (/^(жалпы|барлығы)/.test(k)) return !!x; if (!x || seen.has(k)) return false; seen.add(k); return true; }).join('\n'); };
