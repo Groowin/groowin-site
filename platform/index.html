@@ -11,15 +11,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Groowin">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Groowin: физика мен математика ойындары, сабақ құралдары</title>
-<meta name="description" content="Groowin: 7–11 сынып физикасы және 5–11 сынып математикасы. Ойындар, викториналар, зертханалар, сабақ жоспарлары және мұғалімдерге арналған құралдар.">
+<title>Groowin — мұғалімге арналған экожүйе: ЖИ көмекші, ҚМЖ, викторина</title>
+<meta name="description" content="Groowin — мұғалім мен оқушыға арналған тегін экожүйе: телефон мен ноутбук бірге жұмыс істейді, ЖИ көмекші ҚМЖ, викторина және үй тапсырмасын дайындайды. Физика мен математика ойындары, зертханалар, сабақ жоспарлары.">
 <link rel="canonical" href="https://groowin.github.io/groowin-site/platform/">
 <meta name="robots" content="index, follow">
 <meta name="google-site-verification" content="00NA3zywnz0V-b5I63ROmxzVXJr4PMhiNQ5S2h6lzuE" />
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Groowin">
-<meta property="og:title" content="Groowin: физика мен математика">
-<meta property="og:description" content="Ойындар, викториналар, зертханалар және сабақ жоспарлары. Телефон мен ноутбукта бірге жұмыс істейді.">
+<meta property="og:title" content="Groowin — мұғалімге арналған экожүйе: ЖИ көмекші, ҚМЖ, викторина">
+<meta property="og:description" content="Groowin — мұғалім мен оқушыға арналған тегін экожүйе: телефон мен ноутбук бірге жұмыс істейді, ЖИ көмекші ҚМЖ, викторина және үй тапсырмасын дайындайды. Физика мен математика ойындары, зертханалар, сабақ жоспарлары.">
 <meta property="og:url" content="https://groowin.github.io/groowin-site/platform/">
 <meta property="og:image" content="https://groowin.github.io/groowin-site/platform/icon-512.png">
 <meta name="twitter:card" content="summary">
@@ -1786,6 +1786,16 @@ html[data-theme=amoled] #aiHist{background:#05060A}
 .ai-hbar{display:flex;gap:6px;margin:0 0 10px;flex-wrap:wrap}.ai-hbar button{border:1px solid rgba(127,127,127,.4);background:transparent;color:inherit;border-radius:99px;padding:6px 12px;font:inherit;font-size:.84rem;font-weight:600;cursor:pointer}
 .ai-hbar .dg{border-color:#E5484D;color:#E5484D}.ai-hbar .dg:disabled{opacity:.4}
 .ai-hi .ai-ck{width:20px;height:20px;accent-color:#E5484D;flex:none}
+
+.dg{margin-top:14px}.dg-gear{border:0;background:rgba(127,127,127,.18);color:inherit;border-radius:10px;width:34px;height:34px;font-size:1.05rem;cursor:pointer}
+.dg-body{display:grid;gap:12px}.dg-w{display:flex;gap:14px;align-items:center}.dg-ic{font-size:2.6rem;line-height:1}.dg-wt{display:grid;gap:2px}.dg-wt small,.dg-mute{opacity:.7;font-size:.84rem}
+.dg-tips{display:flex;flex-wrap:wrap;gap:6px}.dg-tips span{padding:6px 12px;border-radius:99px;background:color-mix(in srgb,var(--accent,#7C5CFF) 22%,transparent);font-size:.86rem;font-weight:600}
+.dg-pl{display:grid;gap:3px;padding:10px 12px;border-radius:14px;background:rgba(127,127,127,.12);font-size:.9rem}
+.dg-n h3{margin:0 0 6px;font-size:.95rem}.dg-nr{display:flex;flex-direction:column;padding:6px 0;border-top:1px solid rgba(127,127,127,.22)}.dg-nr a{color:inherit;font-weight:600;text-decoration:none}.dg-nr a:hover{text-decoration:underline}.dg-nr small{opacity:.6;font-size:.74rem}
+.dg-q{display:flex;flex-wrap:wrap;gap:8px}.dg-q a{padding:7px 14px;border-radius:99px;border:1px solid rgba(127,127,127,.4);color:inherit;text-decoration:none;font-size:.86rem;font-weight:600}
+.dg-rf{justify-self:start;border:1px solid rgba(127,127,127,.4);background:transparent;color:inherit;border-radius:99px;padding:6px 14px;font:inherit;font-size:.84rem;cursor:pointer}
+.dg-cont{margin-bottom:14px;display:grid;gap:8px}.dg-cont h2{margin:0;font-size:1.05rem}
+.dg-c{display:flex;flex-direction:column;gap:2px;text-align:left;border:1px solid color-mix(in srgb,var(--accent,#7C5CFF) 55%,transparent);background:color-mix(in srgb,var(--accent,#7C5CFF) 14%,transparent);color:inherit;border-radius:14px;padding:10px 14px;font:inherit;cursor:pointer}.dg-c small{opacity:.7}
 </style>
 </head>
 <body>
@@ -8916,6 +8926,90 @@ function renderPlan() {
   const hd = el('div', 'hm-hero'); hd.append(el('h1', '', '🗓 Жоспар'), el('p', 'sub', isStaff ? 'Жазбалар, еске салғыштар және сабақ кестесі.' : 'Жазбалар мен еске салғыштар.'));
   v.appendChild(hd); renderPlanner(v); if (isStaff) renderSchedule(v);
 }
+
+// ================= Күн дайджесті, синхрон =================
+const _sy = {};
+function syncPut(kind, key, title, data) {
+  if (typeof sb === 'undefined' || !meId || !isStaff || !key) return;
+  clearTimeout(_sy[kind + key]);
+  _sy[kind + key] = setTimeout(async () => { try { await sb.from('sync_items').upsert({ user_id: meId, kind, key: String(key).slice(0, 120), title: String(title || '').slice(0, 80), data: data || null, device: devId(), updated_at: new Date().toISOString() }); } catch { } }, 1500);
+}
+const DG_TOPICS = {
+  edu: { ic: '🎓', t: 'Білім', q: 'мұғалім OR "білім министрлігі" OR аттестация when:7d' },
+  law: { ic: '⚖️', t: 'Заң, жалақы', q: '"білім туралы" заң OR "педагог мәртебесі" OR мұғалім жалақы when:14d' },
+  deals: { ic: '🏷', t: 'Жеңілдік', q: 'жеңілдік OR акция OR скидка киім OR авиабилет OR "темір жол" Қазақстан when:3d' }
+};
+const dgCfg = () => { try { const c = JSON.parse(ls.get('dgCfg') || '{}'); return { city: c.city || '', on: Object.assign({ edu: true, law: true, deals: true }, c.on || {}), custom: c.custom || '' }; } catch { return { city: '', on: { edu: true, law: true, deals: true }, custom: '' }; } };
+const WX = c => c === 0 ? ['☀️', 'ашық'] : c <= 2 ? ['🌤', 'жартылай бұлтты'] : c === 3 ? ['☁️', 'бұлтты'] : c <= 48 ? ['🌫', 'тұман'] : c <= 57 ? ['🌦', 'сіркіреген жаңбыр'] : c <= 67 ? ['🌧', 'жаңбыр'] : c <= 77 ? ['❄️', 'қар'] : c <= 82 ? ['🌧', 'нөсер'] : c <= 86 ? ['❄️', 'қар'] : ['⛈', 'найзағай'];
+function dgTips(w) {
+  const t = [], d = w && w.daily; if (!d) return t; const c = w.current || {};
+  const mn = d.temperature_2m_min[0], mx = d.temperature_2m_max[0], rain = d.precipitation_probability_max[0], code = d.weather_code[0], wind = d.wind_speed_10m_max[0];
+  if (mn <= -15 || (c.temperature_2m != null && c.temperature_2m <= -12)) t.push('🧥 Қатты суық: оқушылар жылы киінсін');
+  else if (mn <= 0) t.push('🧣 Суық: жылы киім киіңіз');
+  if (mx >= 33) t.push('💧 Ыстық: су ішуді еске салыңыз');
+  if (rain >= 50 || (code >= 51 && code <= 67) || (code >= 80 && code <= 82)) t.push('☂️ Қолшатыр алыңыз');
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) t.push('⛄ Қар жауады, жол тайғақ болуы мүмкін');
+  if (wind >= 40) t.push('💨 Қатты жел');
+  if (d.temperature_2m_max[1] != null && mx - d.temperature_2m_max[1] >= 8) t.push('📉 Ертең күрт суиды');
+  return t;
+}
+const dgDay = off => { const n = new Date(); n.setDate(n.getDate() + off); return n.getDay() || 7; };
+const dgLessons = off => (typeof SC !== 'undefined' ? scSorted(dgDay(off)) : []).map(x => scT(x) + ' ' + (x.title || x.subject || 'Сабақ') + (x.class_name ? ' · ' + x.class_name : ''));
+const dgDue = () => (typeof PL !== 'undefined' ? PL.items : []).filter(x => !x.done && x.due_at && new Date(x.due_at) - Date.now() < 48 * 3600e3).slice(0, 5).map(x => x.title);
+async function dgLoad(force) {
+  const cfg = dgCfg(), key = JSON.stringify([cfg.city, cfg.on, cfg.custom]);
+  try { const c = JSON.parse(ls.get('dgCache') || 'null'); if (!force && c && c.key === key && Date.now() - c.t < 30 * 60e3) return c.data; } catch { }
+  const topics = Object.keys(DG_TOPICS).filter(k => cfg.on[k]).map(k => ({ k, q: DG_TOPICS[k].q }));
+  if (cfg.custom.trim()) topics.push({ k: 'custom', q: cfg.custom.trim() + ' when:7d' });
+  const r = await sb.functions.invoke('teacher-agent', { body: { mode: 'digest', digest: { city: cfg.city, topics } } });
+  if (r.error || !r.data || r.data.error) throw new Error((r.data && r.data.error) || 'Қосылмады');
+  ls.set('dgCache', JSON.stringify({ key, t: Date.now(), data: r.data })); return r.data;
+}
+function renderDigest(v) {
+  const sec = el('section', 'td dg'), hd = el('div', 'td-hd'), h = el('h2', '', '☀️ Күн дайджесті'), gear = el('button', 'dg-gear', '⚙'); gear.type = 'button'; gear.title = 'Баптау'; gear.setAttribute('aria-label', 'Дайджест баптауы');
+  hd.append(h, gear); const body = el('div', 'dg-body'); sec.append(hd, body); v.appendChild(sec);
+  const paint = d => {
+    body.replaceChildren();
+    const w = d.weather;
+    if (w && w.current) {
+      const c = w.current, dd = w.daily, [ic, tx] = WX(c.weather_code), [ic2, tx2] = WX(dd.weather_code[1] ?? c.weather_code);
+      const box = el('div', 'dg-w'); box.append(el('div', 'dg-ic', ic), el('div', 'dg-wt'));
+      box.lastChild.append(el('strong', '', d.city + ': ' + Math.round(c.temperature_2m) + '°, ' + tx), el('small', '', 'Бүгін ' + Math.round(dd.temperature_2m_min[0]) + '…' + Math.round(dd.temperature_2m_max[0]) + '° · жауын ' + (dd.precipitation_probability_max[0] ?? 0) + '% · ертең ' + ic2 + ' ' + Math.round(dd.temperature_2m_min[1]) + '…' + Math.round(dd.temperature_2m_max[1]) + '°'));
+      body.append(box); const tips = dgTips(w); if (tips.length) { const tp = el('div', 'dg-tips'); tips.forEach(x => tp.append(el('span', '', x))); body.append(tp); }
+    } else body.append(el('p', 'dg-mute', 'Ауа райы жүктелмеді'));
+    const L1 = dgLessons(1), D = dgDue();
+    if (L1.length || D.length) { const b = el('div', 'dg-pl'); if (L1.length) { b.append(el('b', '', '📚 Ертең сабақ'), el('span', '', L1.join('  ·  '))); } if (D.length) { b.append(el('b', '', '⏰ Жақын тапсырма'), el('span', '', D.join('  ·  '))); } body.append(b); }
+    const keys = Object.keys(d.news || {});
+    keys.forEach(k => { const arr = d.news[k]; const m = DG_TOPICS[k] || { ic: '🔎', t: dgCfg().custom || 'Өз тақырыбың' }; const bx = el('div', 'dg-n'); bx.append(el('h3', '', m.ic + ' ' + m.t));
+      if (!arr || !arr.length) bx.append(el('p', 'dg-mute', arr === null ? 'Жүктелмеді' : 'Жаңа хабар жоқ'));
+      else arr.slice(0, 3).forEach(n => { const a = el('a', '', n.title); a.href = n.link; a.target = '_blank'; a.rel = 'noopener noreferrer'; const s2 = el('small', '', n.src || ''); const row = el('div', 'dg-nr'); row.append(a, s2); bx.append(row); });
+      body.append(bx); });
+    if (keys.includes('deals')) body.append(el('p', 'dg-mute', 'Жеңілдік: тек хабар тақырыптары. Баға мен мерзімді сілтемеден тексеріңіз.'));
+    const q = el('div', 'dg-q'); [['✈️ Арзан авиабилет', 'арзан авиабилет'], ['🚆 Пойыз билеті', 'пойыз билеті Қазақстан'], ['👕 Киім жеңілдігі', 'киім жеңілдік акция']].forEach(([t, k]) => { const a = el('a', '', t); a.href = 'https://www.google.com/search?q=' + encodeURIComponent(k); a.target = '_blank'; a.rel = 'noopener noreferrer'; q.append(a); }); body.append(q);
+    const rf = el('button', 'dg-rf', '↻ Жаңарту'); rf.type = 'button'; rf.onclick = () => load(true); body.append(rf);
+  };
+  const load = async force => { body.replaceChildren(el('p', 'dg-mute', '⏳ Жүктеліп жатыр…')); try { paint(await dgLoad(force)); } catch (e) { body.replaceChildren(el('p', 'dg-mute', 'Жүктелмеді. Функцияны (teacher-agent) қайта deploy жасадыңыз ба?'), (() => { const b = el('button', 'dg-rf', '↻ Қайта көру'); b.type = 'button'; b.onclick = () => load(true); return b; })()); } };
+  gear.onclick = () => {
+    const cfg = dgCfg(), { box, close } = modal('⚙ Дайджест баптауы');
+    const ci = el('input'); ci.placeholder = 'Қала (мысалы: Астана)'; ci.value = cfg.city; ci.style.width = '100%';
+    box.append(el('label', 'hint', 'Қала (ауа райы үшін, бос болса Қызылорда)'), ci, el('p', 'hint', 'Жаңалық тақырыптары'));
+    const ck = {}; Object.keys(DG_TOPICS).forEach(k => { const l = el('label'); l.style.cssText = 'display:flex;gap:8px;align-items:center;margin:6px 0'; const c = el('input'); c.type = 'checkbox'; c.checked = !!cfg.on[k]; ck[k] = c; l.append(c, el('span', '', DG_TOPICS[k].ic + ' ' + DG_TOPICS[k].t)); box.append(l); });
+    const cu = el('input'); cu.placeholder = 'Өз тақырыбың (мысалы: физика олимпиадасы)'; cu.value = cfg.custom; cu.style.cssText = 'width:100%;margin-top:6px'; box.append(cu);
+    const sv = el('button', 'go2', 'Сақтау'); sv.type = 'button'; sv.style.marginTop = '12px'; sv.onclick = () => { const on = {}; Object.keys(ck).forEach(k => on[k] = ck[k].checked); ls.set('dgCfg', JSON.stringify({ city: ci.value.trim().slice(0, 60), on, custom: cu.value.trim().slice(0, 80) })); close(); load(true); }; box.append(sv);
+  };
+  load(false); if (typeof SC !== 'undefined' && !SC.loaded && isStaff) scLoad().then(() => { try { const d = JSON.parse(ls.get('dgCache') || 'null'); if (d) paint(d.data); } catch { } });
+}
+async function renderContinue(v) {
+  const box = el('section', 'td dg-cont'); box.hidden = true; v.appendChild(box);
+  try {
+    const r = await sb.from('sync_items').select('kind,key,title,data,device,updated_at').neq('device', devId()).gte('updated_at', new Date(Date.now() - 14 * 864e5).toISOString()).order('updated_at', { ascending: false }).limit(3);
+    if (r.error || !(r.data || []).length) return;
+    box.hidden = false; box.append(el('h2', '', '▶ Басқа құрылғыда бастағаныңды жалғастыр'));
+    r.data.forEach(it => { const b = el('button', 'dg-c'); b.type = 'button'; const ago = Math.max(1, Math.round((Date.now() - new Date(it.updated_at)) / 60000)); const t = ago < 60 ? ago + ' мин бұрын' : ago < 1440 ? Math.round(ago / 60) + ' сағат бұрын' : Math.round(ago / 1440) + ' күн бұрын';
+      b.append(el('strong', '', (it.kind === 'qmj' ? '📝 ҚМЖ: ' : '💬 ЖИ чат: ') + (it.title || 'Атаусыз')), el('small', '', t));
+      b.onclick = () => { if (it.kind === 'qmj' && it.data) { window.qmjLoad(it.data); go('qmj'); } else if (it.kind === 'chat' && window.aiOpenChat) window.aiOpenChat(it.key); }; box.append(b); });
+  } catch { }
+}
 function renderToday(v) {
   const sec = el('section', 'td'); sec.id = 'tdBox';
   const hd = el('div', 'td-hd'), h = el('h2', '', '🗓 Бүгін'), dt = el('small', ''); dt.id = 'tdDate'; hd.append(h, dt);
@@ -9114,7 +9208,9 @@ function renderHome() {
   v.appendChild(hd);
   const card = (cls, t, d, ic, fn) => { const b = el('button', 'hm-card ' + cls); b.type = 'button'; const i = el('span', 'hm-ic'); i.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + HM_ICON[ic] + '</svg>'; if (HM_3D[ic]) b.insertAdjacentHTML('beforeend', '<img class="hm-ill hm-3d" alt="" width="96" height="96" src="' + HM_3D[ic] + '">'); else if (HM_ILL[ic]) b.insertAdjacentHTML('beforeend', HM_ILL[ic]); b.append(i, el('strong', '', t), el('small', '', d), el('em', '', 'Ашу →')); b.onclick = fn; return b; };
   const st = el('div', 'td-stats'); st.id = 'tdStats'; v.appendChild(st);
+  if (isStaff) renderContinue(v);
   renderToday(v);
+  if (isStaff) renderDigest(v);
   if (isStaff) {
     v.appendChild(el('h2', 'hm-h', 'Жылдам бастау'));
     const g = el('div', 'hm-grid'), more = el('div', 'hm-grid hm-more'); more.hidden = true;
@@ -9381,6 +9477,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       const title = trunc((msgs.find(x => x.role === 'user') || {}).content, 50) || 'Әңгіме';
       if (!chatId) { const r = await sb.from('ai_chats').insert({ title, messages: m }).select('id').single(); if (r.data) chatId = r.data.id; }
       else await sb.from('ai_chats').update({ messages: m, updated_at: new Date().toISOString() }).eq('id', chatId);
+      if (chatId) syncPut('chat', chatId, title, null);
     } catch { }
   }
   async function toggleHist(selecting) {
@@ -9570,6 +9667,12 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       if (a.focus) { await wait(450); spot(a.focus); }
       return { ok: true, note: 'Бөлім ашылды' + (a.focus ? ', элемент жарқырап көрсетілді' : '') + '.' };
     },
+    async get_digest() {
+      let w = null, news = {}; try { const d = await dgLoad(false); w = d.weather; Object.keys(d.news || {}).forEach(k => { news[k] = (d.news[k] || []).slice(0, 3).map(x => x.title); }); } catch { }
+      const out = { bugin_sabak: dgLessons(0), erten_sabak: dgLessons(1), zhaqyn_tapsyrma: dgDue(), zhanalyq: news };
+      if (w && w.daily) { out.aua_rayy = { bugin: Math.round(w.daily.temperature_2m_min[0]) + '…' + Math.round(w.daily.temperature_2m_max[0]) + '°', zhauyn_pct: w.daily.precipitation_probability_max[0], erten: Math.round(w.daily.temperature_2m_min[1]) + '…' + Math.round(w.daily.temperature_2m_max[1]) + '°' }; out.kenes = dgTips(w); }
+      return out;
+    },
     async save_memory(a) {
       const f = trunc(a.fact, 200).trim(); if (!f) return { error: 'Бос' };
       const cur = await memLoad(); const lines = cur.split('\n').filter(Boolean);
@@ -9608,7 +9711,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       return { t, img: null, o, c, s: 20 };
     }).filter(q => q.t && (q.k === 'num' || (q.o.filter(Boolean).length >= 2 && q.o[q.c])));
   }
-  const LABEL = { save_memory: 'Есімде сақтап жатыр…', forget_memory: 'Жадыдан өшіріп жатыр…', open_qmj: 'ҚМЖ бетін ашып жатыр…', find_computer_files: 'Компьютерден іздеп жатыр…', add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+  const LABEL = { get_digest: 'Күн дайджестін жинап жатыр…', save_memory: 'Есімде сақтап жатыр…', forget_memory: 'Жадыдан өшіріп жатыр…', open_qmj: 'ҚМЖ бетін ашып жатыр…', find_computer_files: 'Компьютерден іздеп жатыр…', add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
 
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
@@ -9799,6 +9902,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     const n = pickNudge(); if (!n) return; ls.set(NK, JSON.stringify({ day: dayK(), id: n.id })); showNudge(n);
   }
 
+  window.aiOpenChat = id => { if (!built) build(); const p = g('aiPanel'); if (p.hidden) g('aiFab').click(); openChat(id); };
   window.aiInit = () => { setTimeout(() => { try { maybeNudge(); } catch { } }, 9000); if (!isStaff) { const f = g('aiFab'); if (f) f.hidden = true; return; } if (!built) build(); const p = g('aiPanel'); g('aiFab').hidden = !p.hidden; g('aiAdm').hidden = !isAdmin; memLoad(); if (firstTime()) setTimeout(() => { if (firstTime() && p.hidden) { g('aiFab').click(); ls.set(WK(), '1'); } }, 2500); };
 })();
 
@@ -10026,7 +10130,7 @@ function forcePw() {
   let data = null, last = null;
   const PK = 'qmjCur', AK = 'qmjArch';
   const lsj = (k, d) => { try { const v = JSON.parse(ls.get(k) || 'null'); return v || d; } catch { return d; } };
-  const persist = () => { if (!data) return; try { const c = JSON.parse(JSON.stringify(data)); c._k = (c.topic || '') + '|' + (c.date || ''); c._t = Date.now(); ls.set(PK, JSON.stringify(c)); const a = lsj(AK, []), i = a.findIndex(x => x._k === c._k); if (i >= 0) a[i] = c; else a.unshift(c); ls.set(AK, JSON.stringify(a.slice(0, 20))); } catch { } };
+  const persist = () => { if (!data) return; try { const c = JSON.parse(JSON.stringify(data)); c._k = (c.topic || '') + '|' + (c.date || ''); c._t = Date.now(); ls.set(PK, JSON.stringify(c)); syncPut('qmj', c._k, c.topic, c); const a = lsj(AK, []), i = a.findIndex(x => x._k === c._k); if (i >= 0) a[i] = c; else a.unshift(c); ls.set(AK, JSON.stringify(a.slice(0, 20))); } catch { } };
   const words = t => String(t || '').toLowerCase().replace(/[^а-яәіңғүұқөһё\w\s]/gi, ' ').split(/\s+/).filter(w => w.length > 3).map(w => w.slice(0, 5));
   async function findRes(q, goals) {
     const stems = [...new Set(words(q.topic + ' ' + q.section).concat(words((goals || []).join(' '))))]; const out = { games: [], sites: [], links: [] };
