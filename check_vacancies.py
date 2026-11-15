@@ -11,13 +11,15 @@ from pathlib import Path
 API = "https://hr.nobd.edu.kz/portal/jobs/api/jobs/all/filter/sign"
 SITE = "https://hr.nobd.edu.kz/"
 SEEN_FILE = Path("seen.json")
-PAGES = 5          # неше бет тексеру (әр бет PAGE_SIZE вакансия)
+PAGES = 2          # неше бет тексеру (әр бет PAGE_SIZE вакансия)
 PAGE_SIZE = 50
 
 # --- СҮЗГІ (өзгертуге болады) ---
 # Аймақ коды: 27 = Батыс Қазақстан облысы, 2710 = Орал қаласы,
 # 79 = Шымкент, 71 = Астана. Бос тізім [] = барлық аймақ.
-REGION_PREFIXES = ["271"]   # Орал қаласы
+KATO = "271010000"          # Орал қаласы (сайттың өз коды)
+SEARCH_TEXT = "Учитель физики"
+REGION_PREFIXES = []        # аймақты сервер өзі сүзеді
 # Лауазым атауындағы сөздер (кіші әріппен). Бос [] = барлық вакансия.
 KEYWORDS = ["физик"]  # Учитель физики / физика пәні мұғалімі
 
@@ -27,8 +29,9 @@ CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 def fetch_page(page):
     body = json.dumps({
-        "filter": {"ln": "ru", "educationLanguage": [], "educationType": [],
-                   "experienceType": [], "onlyNew": True},
+        "filter": {"kato": KATO, "specializationText": SEARCH_TEXT, "ln": "ru",
+                   "educationLanguage": [], "educationType": [],
+                   "experienceType": [], "onlyNew": False},
         "pagination": {"page": page, "size": PAGE_SIZE},
     }).encode()
     req = urllib.request.Request(API, data=body, method="POST", headers={
