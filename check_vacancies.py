@@ -74,9 +74,16 @@ def fmt(job):
             f"🔗 {SITE}")
 
 
-def send(text):
+BUTTON = "🔍 Жұмыс бар ма?"
+KEYBOARD = json.dumps({"keyboard": [[{"text": BUTTON}]], "resize_keyboard": True})
+
+
+def send(text, keyboard=False):
     url = f"https://api.telegram.org/bot{BOT_TOKEN.strip()}/sendMessage"
-    data = urllib.parse.urlencode({"chat_id": CHAT_ID.strip(), "text": text}).encode()
+    fields = {"chat_id": CHAT_ID.strip(), "text": text}
+    if keyboard:
+        fields["reply_markup"] = KEYBOARD
+    data = urllib.parse.urlencode(fields).encode()
     for attempt in range(1, 4):
         try:
             urllib.request.urlopen(url, data=data, timeout=30).read()
@@ -85,6 +92,43 @@ def send(text):
             print(f"Telegram қатесі ({attempt}/3): {exc}")
             time.sleep(5 * attempt)
     return False
+
+
+def handle_buttons(current):
+    """Батырма басылған/жазылған хабарламаларды оқып, жауап береді.
+    current = қазір ашық вакансиялар тізімі, не None (сайт қолжетімсіз)."""
+    base = f"https://api.telegram.org/bot{BOT_TOKEN.strip()}/getUpdates"
+    try:
+        updates = json.load(urllib.request.urlopen(base, timeout=30)).get("result", [])
+    except Exception as exc:
+        print("getUpdates қатесі:", exc)
+        return
+    if not updates:
+        return
+    asked = False
+    for u in updates:
+        msg = u.get("message") or {}
+        if str((msg.get("chat") or {}).get("id")) != CHAT_ID.strip():
+            continue  # басқа адамдарға жауап бермейміз
+        if (msg.get("text") or "").strip() in (BUTTON, "/start", "/jobs"):
+            asked = True
+    if asked:
+        if current is None:
+            send("⚠️ Сайт қазір қолжетімсіз (техжұмыс болуы мүмкін), кейінірек қайта сұра.",
+                 keyboard=True)
+        elif not current:
+            send("😕 Қазір Оралда физика мұғалімі вакансиясы жоқ. "
+                 "Жаңасы шықса, өзім хабарлаймын.", keyboard=True)
+        else:
+            send(f"📋 Қазір ашық: {len(current)} вакансия", keyboard=True)
+            for j in current[:10]:
+                send(fmt(j).replace("🆕", "📌", 1))
+    # Өңделген хабарламаларды Telegram-да «оқылды» деп белгілейміз
+    last = max(u["update_id"] for u in updates)
+    try:
+        urllib.request.urlopen(f"{base}?offset={last + 1}", timeout=30).read()
+    except Exception as exc:
+        print("offset қатесі:", exc)
 
 
 def main():
@@ -97,6 +141,8 @@ def main():
             jobs += page
     except Exception as exc:  # техжұмыс, желі қатесі — келесі жолы қайталаймыз
         print("Сұраныс қатесі:", exc)
+        if BOT_TOKEN and CHAT_ID:
+            handle_buttons(None)
         return 0
 
     first_run = not SEEN_FILE.exists()
@@ -107,7 +153,9 @@ def main():
         print(f"Бірінші іске қосу: {len(new)} вакансия белгіленді, хабарламасыз.")
         if BOT_TOKEN and CHAT_ID:
             send(f"✅ Бақылау қосылды. Қазір сүзгіге сай {len(new)} вакансия бар, "
-                 f"жаңалары шыққанда хабарлаймын.")
+                 f"жаңалары шыққанда хабарлаймын.\n"
+                 f"Төмендегі «{BUTTON}» батырмасын бассаң, ашық вакансияларды көрсетемін "
+                 f"(жауап 15 минутқа дейін кешігуі мүмкін).", keyboard=True)
             for j in new[:10]:
                 send(fmt(j))
     else:
@@ -118,6 +166,9 @@ def main():
 
     seen |= {j["id"] for j in jobs}
     SEEN_FILE.write_text(json.dumps(sorted(seen)))
+
+    if BOT_TOKEN and CHAT_ID:
+        handle_buttons([j for j in jobs if matches(j)])
     return 0
 
 
