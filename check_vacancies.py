@@ -17,9 +17,9 @@ PAGE_SIZE = 50
 # --- СҮЗГІ (өзгертуге болады) ---
 # Аймақ коды: 27 = Батыс Қазақстан облысы, 2710 = Орал қаласы,
 # 79 = Шымкент, 71 = Астана. Бос тізім [] = барлық аймақ.
-REGION_PREFIXES = ["27"]
+REGION_PREFIXES = ["271"]   # Орал қаласы
 # Лауазым атауындағы сөздер (кіші әріппен). Бос [] = барлық вакансия.
-KEYWORDS = []         # мысалы: ["физик", "информатик"]
+KEYWORDS = ["физик"]  # Учитель физики / физика пәні мұғалімі
 
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
@@ -105,6 +105,8 @@ def main():
         if BOT_TOKEN and CHAT_ID:
             send(f"✅ Бақылау қосылды. Қазір сүзгіге сай {len(new)} вакансия бар, "
                  f"жаңалары шыққанда хабарлаймын.")
+            for j in new[:10]:
+                send(fmt(j))
     else:
         for j in reversed(new):
             print("Жаңа:", j["id"], j["title"])
