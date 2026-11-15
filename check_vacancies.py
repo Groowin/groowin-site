@@ -3,6 +3,7 @@
 import json
 import os
 import sys
+import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -71,9 +72,16 @@ def fmt(job):
 
 
 def send(text):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    data = urllib.parse.urlencode({"chat_id": CHAT_ID, "text": text}).encode()
-    urllib.request.urlopen(url, data=data, timeout=30).read()
+    url = f"https://api.telegram.org/bot{BOT_TOKEN.strip()}/sendMessage"
+    data = urllib.parse.urlencode({"chat_id": CHAT_ID.strip(), "text": text}).encode()
+    for attempt in range(1, 4):
+        try:
+            urllib.request.urlopen(url, data=data, timeout=30).read()
+            return True
+        except Exception as exc:
+            print(f"Telegram қатесі ({attempt}/3): {exc}")
+            time.sleep(5 * attempt)
+    return False
 
 
 def main():
