@@ -1934,6 +1934,7 @@ html[data-theme=amoled] #aiHist{background:#05060A}
       <button data-v="sites" id="navSites" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span class="nl">Сайттар</span></button>
       <button type="button" id="navPult" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2M10 6h4"/></svg><span class="nl">Пульт</span></button>
       <button data-v="mats" id="navMats" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="nl">Менің материалдарым</span></button>
+      <button data-v="library" id="navLib" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h4v18H6a2 2 0 0 1-2-2z"/><path d="M10 3h4v18h-4z"/><path d="M14 5l4.5-1.2L21 18.5 16.5 20z"/></svg><span class="nl">Кітапхана</span></button>
       <button data-v="inbox" id="navInbox" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg><span class="nl">Хабарлар</span><span id="badge2" hidden></span></button>
       <button data-v="games" id="navGames" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.4 11.5 2 15.5 2 17a3 3 0 0 0 5 2.2L9 17h6l2 2.2A3 3 0 0 0 22 17c0-1.5-.4-5.5-.7-8.4A4 4 0 0 0 17.3 5z"/></svg><span class="nl">Ойындар</span></button>
       <button data-v="classes" id="navClasses" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nl">Мектеп сыныптары</span></button>
@@ -1954,6 +1955,7 @@ html[data-theme=amoled] #aiHist{background:#05060A}
     <div id="v-projects" hidden></div>
     <div id="v-qmj" hidden></div>
     <div id="v-gallery" hidden></div>
+    <div id="v-library" hidden></div>
     <div id="v-room" hidden></div>
 
     <div id="v-catalog">
@@ -2432,7 +2434,7 @@ async function showApp(session) {
   window.__myClass = me?.class_id || null; meRole = me?.role || ''; isAdmin = me?.role === 'admin'; isOwner = isAdmin && !!me?.is_owner; isStaff = isAdmin || me?.role === 'teacher'; meName = me?.full_name || ''; $('newsForm').hidden = !isStaff; $('nQuick').hidden = !isStaff;
   try { buildTabbar(); } catch { }
   setTimeout(() => { try { pushAuto(); } catch { } }, 2500);
-  $('navPlay').hidden = !isStaff; $('wxBtn').hidden = false; wxPaintChip(); $('spInbox').hidden = !isAdmin; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
+  $('navPlay').hidden = !isStaff; $('wxBtn').hidden = false; wxPaintChip(); $('spInbox').hidden = !isAdmin; $('navStudents').hidden = !isStaff; $('navMats').hidden = !isStaff; libNav(); $('navLessons').hidden = !isStaff; $('navSites').hidden = !isStaff; $('navFavs').hidden = !isStaff; $('navPult').hidden = !isStaff; window.__staff = isStaff; $('navPath').hidden = me?.role !== 'student'; $('navHw').hidden = false; hwBadge(); $('srchBtn').hidden = !isStaff; $('bkBox').hidden = !isStaff; $('orphBox').hidden = !isAdmin; if (isStaff) { loadFavs(); renderGames(); if (/[?&]pult=1/.test(location.search) && !window.__pultAuto) { window.__pultAuto = 1; setTimeout(pultOpen, 300); } } $('navStudents').querySelector('.nl').textContent = isAdmin ? 'Оқушылар' : 'Менің оқушыларым';
   if (isStaff) setTimeout(slidePre, 4000);
   try { window.aiInit && window.aiInit(); } catch (e) { }
   loadNews(); if (!newsTimer) newsTimer = setInterval(() => { loadNews(); if (isAdmin) loadReqs(); }, 60000);
@@ -2781,7 +2783,7 @@ $('vfs').onclick = () => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.body.classList.remove('vfake'); });
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 let rm = null; // Оқу бөлмесі күйі
-const VIEWS = ['home', 'plan', 'projects', 'qmj', 'gallery', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+const VIEWS = ['home', 'library', 'plan', 'projects', 'qmj', 'gallery', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined') { const w = $('msWrap'); if (w) w.hidden = !isStaff; } if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
 function go(key, keep) {
   document.body.classList.remove('sheet'); try { curView = key; tabSync(); } catch { }
@@ -2793,7 +2795,7 @@ function go(key, keep) {
   if (key === 'physics' || key === 'math') {
     subj = key; if (!keep) gradeSel = null;
     renderGames(); show('catalog');
-  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'projects') loadProjects(); if (key === 'qmj') renderQmj(); if (key === 'gallery') loadGallery(); if (key === 'sites') loadSites(); if (key === 'path') loadMyPath(); if (key === 'hw') loadHw(); if (key === 'favs') loadFavsView(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
+  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'projects') loadProjects(); if (key === 'qmj') renderQmj(); if (key === 'gallery') loadGallery(); if (key === 'sites') loadSites(); if (key === 'path') loadMyPath(); if (key === 'hw') loadHw(); if (key === 'favs') loadFavsView(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'library') libOpen(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
 }
 document.querySelectorAll('#nav button[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 $('subjHead').onclick = () => { const h = $('subjItems').hidden = !$('subjItems').hidden; $('subjHead').setAttribute('aria-expanded', String(!h)); $('subjArrow').textContent = h ? '▸' : '▾'; };
@@ -5921,7 +5923,9 @@ async function libUrl(b, dl) {
 }
 function libCoverEl(b, w, h) {
   const d = el('div', ''); d.style.cssText = 'width:' + w + ';aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,var(--accent,#6c5ce7),#00b8d9);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;text-align:center;padding:8px;font-size:.9rem;box-shadow:0 4px 14px rgba(0,0,0,.25)';
-  if (b.cover) { const im = new Image(); im.src = b.cover; im.alt = ''; im.style.cssText = 'width:100%;height:100%;object-fit:cover'; d.style.padding = '0'; d.appendChild(im); } else d.textContent = b.title; return d;
+  if (b.cover) { const im = new Image(); im.src = b.cover; im.alt = ''; im.style.cssText = 'width:100%;height:100%;object-fit:cover'; d.style.padding = '0'; d.appendChild(im); } else d.textContent = b.title;
+  if (isAdmin && b.visibility && b.visibility !== 'all') { d.style.position = 'relative'; const bg = el('span', '', b.visibility === 'admin' ? '🔒' : '👩‍🏫'); bg.style.cssText = 'position:absolute;top:6px;right:6px;background:rgba(0,0,0,.65);border-radius:999px;padding:2px 7px;font-size:.8rem'; d.appendChild(bg); }
+  return d;
 }
 async function libBook(b, after) {
   const m = modal(b.title), box = m.box; box.style.maxWidth = '640px';
@@ -5941,7 +5945,7 @@ async function libBook(b, after) {
     const sel = (o, v) => { const x = document.createElement('select'); x.style.width = '100%'; Object.entries(o).forEach(([k, t]) => x.appendChild(new Option(t, k))); x.value = v; return x; };
     const ti = document.createElement('input'); ti.type = 'text'; ti.value = b.title; ti.style.width = '100%'; const au = document.createElement('input'); au.type = 'text'; au.placeholder = 'Автор'; au.value = b.author || ''; au.style.width = '100%';
     const vis = sel(LIB_VIS, b.visibility), kd = sel(LIB_KIND, b.kind), sj = sel(LIB_SUBJ, b.subject);
-    const ai = document.createElement('input'); ai.type = 'checkbox'; ai.checked = !!b.ai_search; const al = el('label', ''); al.style.cssText = 'display:flex;gap:8px;align-items:center'; al.append(ai, document.createTextNode('ЖИ осы кітаптан іздесін (дереккөз)'));
+    const ai = document.createElement('input'); ai.type = 'checkbox'; ai.style.cssText = 'width:auto;flex:0 0 auto;margin:0'; ai.checked = !!b.ai_search; const al = el('label', ''); al.style.cssText = 'display:flex;gap:8px;align-items:center'; al.append(ai, document.createTextNode('ЖИ осы кітаптан іздесін (дереккөз)'));
     const ci = document.createElement('input'); ci.type = 'file'; ci.accept = 'image/*';
     const sv = el('button', 'go', 'Сақтау'), rm = el('button', 'out', 'Кітапты өшіру'); sv.type = rm.type = 'button';
     ed.append(el('b', '', 'Админ баптауы'), ti, au, sj, kd, vis, al, el('span', 'sub', 'Жаңа мұқаба (қаласаң):'), ci, el('div', 'mtools', ''));
@@ -5952,12 +5956,12 @@ async function libBook(b, after) {
   }
 }
 async function libOpen() {
-  const m = modal('📚 Кітапхана'), box = m.box; box.style.maxWidth = '860px';
-  const bar = el('div', ''); bar.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px';
-  const qi = document.createElement('input'); qi.type = 'search'; qi.placeholder = 'Атауы не авторы бойынша іздеу'; qi.style.cssText = 'flex:1;min-width:180px';
-  const kf = document.createElement('select'); kf.appendChild(new Option('Барлық түрі', '')); Object.entries(LIB_KIND).forEach(([k, v]) => kf.appendChild(new Option(v, k)));
-  bar.append(qi, kf); let addBtn = null; if (isAdmin) { addBtn = el('button', 'go', '＋ Кітап қосу'); addBtn.type = 'button'; addBtn.style.cssText = 'width:auto;padding:10px 18px'; bar.appendChild(addBtn); }
-  const shelf = el('div', ''); shelf.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px';
+  const box = $('v-library'); box.replaceChildren(); box.append(el('h2', 'hm-h', '📚 Кітапхана'), el('p', 'sub', isAdmin ? 'Оқулықтар мен кітаптар. Мұқабаның бұрышындағы белгі: 🔒 тек сен көресің, 👩‍🏫 мұғалімдерге көрінеді.' : 'Оқулықтар мен кітаптар. Басып, «Оқу» немесе «Жүктеп алу» таңда.'));
+  const bar = el('div', ''); bar.style.cssText = 'display:flex;gap:8px;align-items:center;margin:12px 0 16px';
+  const qi = document.createElement('input'); qi.type = 'search'; qi.placeholder = 'Атауы не авторы бойынша іздеу'; qi.style.cssText = 'flex:1;min-width:0;width:auto';
+  const kf = document.createElement('select'); kf.style.cssText = 'width:auto;flex:0 0 auto;max-width:180px'; kf.appendChild(new Option('Барлық түрі', '')); Object.entries(LIB_KIND).forEach(([k, v]) => kf.appendChild(new Option(v, k)));
+  bar.append(qi, kf); let addBtn = null; if (isAdmin) { addBtn = el('button', 'go', '＋ Кітап қосу'); addBtn.type = 'button'; addBtn.style.cssText = 'width:auto;flex:0 0 auto;padding:10px 18px;white-space:nowrap'; bar.appendChild(addBtn); }
+  const shelf = el('div', ''); shelf.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,140px));gap:20px 16px;justify-content:start';
   let all = [];
   const draw = () => {
     const q = qi.value.trim().toLowerCase(), k = kf.value; shelf.replaceChildren();
@@ -5966,7 +5970,7 @@ async function libOpen() {
     rows.forEach(b => {
       const c = el('button', ''); c.type = 'button'; c.style.cssText = 'all:unset;cursor:pointer;display:grid;gap:6px;text-align:left'; c.append(libCoverEl(b, '100%'));
       const t = el('div', ''); t.style.cssText = 'font-weight:600;font-size:.88rem;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden'; t.textContent = b.title;
-      const sb2 = el('div', 'sub', (isAdmin && b.visibility !== 'all' ? (b.visibility === 'admin' ? '🔒 ' : '👩‍🏫 ') : '') + [b.author, b.grade ? b.grade + '-сынып' : ''].filter(Boolean).join(' · ')); sb2.style.fontSize = '.78rem';
+      const sb2 = el('div', 'sub', [b.author, b.grade ? b.grade + '-сынып' : ''].filter(Boolean).join(' · ')); sb2.style.fontSize = '.78rem';
       c.append(t, sb2); c.onclick = () => libBook(b, refresh); shelf.appendChild(c);
     });
   };
@@ -5977,12 +5981,12 @@ async function libOpen() {
   qi.oninput = draw; kf.onchange = draw;
   box.append(bar);
   if (isAdmin) {
-    const form = el('div', ''); form.hidden = true; form.style.cssText = 'display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:14px';
+    const form = el('div', ''); form.hidden = true; form.style.cssText = 'max-width:640px;display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:14px';
     const sel = (o, ph) => { const x = document.createElement('select'); x.style.width = '100%'; if (ph) x.appendChild(new Option(ph, '')); Object.entries(o).forEach(([k, v]) => x.appendChild(new Option(v, k))); return x; };
     const inp = ph => { const x = document.createElement('input'); x.type = 'text'; x.placeholder = ph; x.style.width = '100%'; return x; };
     const ti = inp('Кітап атауы, мысалы: Физика 11 (жаратылыстану)'), au = inp('Автор (міндетті емес)');
     const kd = sel(LIB_KIND), sj = sel(LIB_SUBJ), gr = sel(Object.fromEntries([5, 6, 7, 8, 9, 10, 11].map(n => [n, n + '-сынып'])), 'Сынып'), tr = sel(LIB_TRACK), vis = sel(LIB_VIS); vis.value = 'admin';
-    const ai = document.createElement('input'); ai.type = 'checkbox'; ai.checked = true; const al = el('label', ''); al.style.cssText = 'display:flex;gap:8px;align-items:center'; al.append(ai, document.createTextNode('ЖИ осы кітаптан іздесін (дереккөз). Көркем кітапқа қоспаған дұрыс.'));
+    const ai = document.createElement('input'); ai.type = 'checkbox'; ai.style.cssText = 'width:auto;flex:0 0 auto;margin:0'; ai.checked = true; const al = el('label', ''); al.style.cssText = 'display:flex;gap:8px;align-items:center'; al.append(ai, document.createTextNode('ЖИ осы кітаптан іздесін (дереккөз). Көркем кітапқа қоспаған дұрыс.'));
     kd.onchange = () => { ai.checked = ['textbook', 'reference', 'method'].includes(kd.value); };
     const fi = document.createElement('input'); fi.type = 'file'; fi.accept = '.pdf,.txt,application/pdf,text/plain'; const ci = document.createElement('input'); ci.type = 'file'; ci.accept = 'image/*';
     const r1 = el('div', ''); r1.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px'; r1.append(kd, sj); const r2 = el('div', ''); r2.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px'; r2.append(gr, tr);
@@ -6000,11 +6004,14 @@ async function libOpen() {
   }
   box.appendChild(shelf);
   if (isAdmin) {
-    const chk = el('div', ''); chk.style.cssText = 'display:grid;gap:8px;margin-top:18px'; const ti2 = document.createElement('input'); ti2.type = 'text'; ti2.placeholder = 'Тексеру: ЖИ кітаптан не табады? Сөз жаз (мысалы: дисперсия)'; ti2.style.width = '100%'; const qo = el('div', ''); qo.style.cssText = 'display:grid;gap:6px;font-size:.9rem'; chk.append(el('b', '', 'ЖИ іздеуін тексеру'), ti2, qo);
+    const chk = el('details', ''); chk.style.cssText = 'display:grid;gap:8px;margin-top:24px'; const ti2 = document.createElement('input'); ti2.type = 'text'; ti2.placeholder = 'Тексеру: ЖИ кітаптан не табады? Сөз жаз (мысалы: дисперсия)'; ti2.style.width = '100%'; const qo = el('div', ''); qo.style.cssText = 'display:grid;gap:6px;font-size:.9rem'; chk.append(el('summary', '', 'ЖИ іздеуін тексеру'), ti2, qo);
     let qt = null; ti2.oninput = () => { clearTimeout(qt); qt = setTimeout(async () => { const q = ti2.value.trim(); if (q.length < 4) { qo.replaceChildren(); return; } const r = await sb.rpc('lib_search', { p_q: q, p_subj: null, p_grade: null, p_lim: 3 }); qo.replaceChildren(); if (r.error) { qo.appendChild(el('span', 'msg err', r.error.message)); return; } if (!(r.data || []).length) qo.appendChild(el('span', 'sub', 'Табылмады')); (r.data || []).forEach(x => { const d = el('div', ''); d.style.cssText = 'padding:8px 10px;border:1px solid var(--line);border-radius:10px'; d.append(el('b', '', x.title + (x.page ? ', ' + x.page + '-б.' : '')), el('div', 'sub', String(x.body).slice(0, 220) + '…')); qo.appendChild(d); }); }, 400); };
     box.appendChild(chk);
   }
   refresh();
+}
+async function libNav() {
+  try { const n = $('navLib'); if (!n) return; if (isAdmin) { n.hidden = false; return; } const r = await sb.from('library_books').select('id', { count: 'exact', head: true }); n.hidden = !!r.error || !r.count; } catch { }
 }
 async function libTile(g, mk) {
   try {
@@ -9424,7 +9431,7 @@ function renderHome() {
     HM_ICON.pcfind = '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><circle cx="11" cy="9.5" r="2.2"/><path d="M12.7 11.2L15 13.5"/>';
     HM_ICON.library = '<path d="M4 5a2 2 0 0 1 2-2h4v18H6a2 2 0 0 1-2-2z"/><path d="M10 3h4v18h-4z"/><path d="M14 5l4.5-1.2L21 18.5 16.5 20z"/>';
     main.forEach(([c, t, d, k]) => g.appendChild(card(c, t, d, k, () => homeAct(k))));
-    libTile(g, () => card('c-teal', 'Кітапхана', 'Оқулықтар мен кітаптар', 'library', () => libOpen()));
+    libTile(g, () => card('c-teal', 'Кітапхана', 'Оқулықтар мен кітаптар', 'library', () => go('library')));
     g.appendChild(card('c-green', 'Файл жүктеу', 'Фото, PDF — Материалдарға', 'upload', () => pickUpload()));
     if (window.showDirectoryPicker) g.appendChild(card('c-blue', 'Компьютерден іздеу', 'Рұқсат берген папкалардан', 'pcfind', () => pcSearch()));
     rest.forEach(([c, t, d, k]) => more.appendChild(card(c, t, d, k, () => homeAct(k))));
@@ -9435,7 +9442,7 @@ function renderHome() {
 
   } else {
     v.appendChild(el('h2', 'hm-h', 'Тапсырмалар'));
-    const g = el('div', 'hm-grid hm-two'); g.append(card('c-teal', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-orange', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g); libTile(g, () => card('c-pink', 'Кітапхана', 'Оқулықтар мен кітаптар', 'library', () => libOpen()));
+    const g = el('div', 'hm-grid hm-two'); g.append(card('c-teal', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-orange', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g); libTile(g, () => card('c-pink', 'Кітапхана', 'Оқулықтар мен кітаптар', 'library', () => go('library')));
   }
 }
 function verifyAnim() {
