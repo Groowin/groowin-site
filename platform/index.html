@@ -5885,62 +5885,133 @@ function libSplit(t, max) {
   while (t.length > max) { let k = t.lastIndexOf('. ', max); if (k < max * 0.5) k = t.lastIndexOf(' ', max); if (k < max * 0.3) k = max; out.push(t.slice(0, k + 1).trim()); t = t.slice(k + 1).trim(); }
   if (t) out.push(t); return out;
 }
-async function libAdd(f, meta, say) {
-  const pages = [];
-  if (/\.txt$/i.test(f.name)) { const t = libClean(await f.text()); libSplit(t, 1400).forEach(x => pages.push({ page: null, text: x })); }
+const LIB_KIND = { textbook: 'Оқулық', fiction: 'Көркем кітап', reference: 'Анықтамалық', method: 'Әдістемелік', other: 'Басқа' }, LIB_VIS = { admin: 'Тек мен (админ)', teachers: 'Мұғалімдерге', all: 'Оқушыларға да' };
+const libImgCover = f => new Promise((ok, no) => { const u = URL.createObjectURL(f), im = new Image(); im.onload = () => { const k = 280 / im.width, cv = document.createElement('canvas'); cv.width = 280; cv.height = Math.round(im.height * k); cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); URL.revokeObjectURL(u); ok(cv.toDataURL('image/jpeg', .75)); }; im.onerror = () => no(new Error('Сурет оқылмады')); im.src = u; });
+async function libPdfCover(f) {
+  await pdfLib(); const doc = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise, pg = await doc.getPage(1), v0 = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: 280 / v0.width }), cv = document.createElement('canvas');
+  cv.width = Math.round(vp.width); cv.height = Math.round(vp.height); await pg.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise; return cv.toDataURL('image/jpeg', .72);
+}
+const libColErr = m => /library_books|column|author|kind|cover|visibility|ai_search/i.test(m || '') ? 'Кітапхана кестесі жаңартылмаған. Алдымен update-50.sql және update-51.sql орындау керек.' : m;
+async function libAdd(f, meta, coverFile, say) {
+  const isPdf = !/\.txt$/i.test(f.name), pages = [];
+  if (!isPdf) { const t = libClean(await f.text()); libSplit(t, 1400).forEach(x => pages.push({ page: null, text: x })); }
   else {
+    if (f.size > 50 * 1024 * 1024) throw new Error('PDF 50 МБ-тан үлкен: Supabase тегін жоспары қабылдамайды. Оны қысып кішірейтіп жүкте.');
     await pdfLib(); const doc = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise, n = doc.numPages;
     for (let p = 1; p <= n; p++) { const pg = await doc.getPage(p), tc = await pg.getTextContent(); pages.push({ page: p, text: libClean(tc.items.map(x => x.str).join(' ')) }); pg.cleanup(); if (p % 10 === 0 || p === n) say('Оқып жатыр: ' + p + ' / ' + n + ' бет'); }
-    const withText = pages.filter(x => x.text.length > 80).length;
-    if (withText < Math.max(3, n * 0.3)) throw new Error('Бұл PDF-тің ішінде мәтін жоқ (сканер/сурет). Мәтіні бар PDF керек.');
   }
-  const rows = []; pages.forEach(x => { if (x.text.length < 40) return; libSplit(x.text, 1400).forEach(t => rows.push({ page: x.page, body: t })); });
-  if (!rows.length) throw new Error('Мәтін табылмады.');
+  const withText = pages.filter(x => x.text.length > 80).length, hasText = withText >= Math.max(3, pages.length * 0.3);
+  const rows = []; if (hasText) pages.forEach(x => { if (x.text.length < 40) return; libSplit(x.text, 1400).forEach(t => rows.push({ page: x.page, body: t })); });
   const chars = rows.reduce((a, x) => a + x.body.length, 0);
-  const bk = await sb.from('library_books').insert({ title: meta.title, subject: meta.subject, grade: meta.grade, track: meta.track, pages: pages.length, chars }).select('id').single();
-  if (bk.error) throw new Error(/library_books/.test(bk.error.message) ? 'Кітапхана кестесі жоқ. Алдымен update-50.sql орындау керек.' : bk.error.message);
+  let cover = null; try { say('Мұқаба жасап жатыр…'); cover = coverFile ? await libImgCover(coverFile) : (isPdf ? await libPdfCover(f) : null); } catch { }
+  const bk = await sb.from('library_books').insert({ title: meta.title, author: meta.author || null, subject: meta.subject, grade: meta.grade, track: meta.track, kind: meta.kind, visibility: meta.visibility, ai_search: !!meta.ai && hasText, pages: pages.length, chars, cover }).select('id').single();
+  if (bk.error) throw new Error(libColErr(bk.error.message));
+  const id = bk.data.id, path = 'books/' + id + (isPdf ? '.pdf' : '.txt');
   try {
-    for (let i = 0; i < rows.length; i += 120) {
-      say('Сақтап жатыр: ' + Math.min(i + 120, rows.length) + ' / ' + rows.length);
-      const r = await sb.from('library_chunks').insert(rows.slice(i, i + 120).map(x => ({ book_id: bk.data.id, page: x.page, body: x.body }))); if (r.error) throw r.error;
-    }
-  } catch (e) { await sb.from('library_books').delete().eq('id', bk.data.id); throw e; }
-  return { pages: pages.length, chunks: rows.length };
+    say('Файлды сақтап жатыр…');
+    const up = await sb.storage.from('library').upload(path, f, { contentType: isPdf ? 'application/pdf' : 'text/plain', upsert: true }); if (up.error) throw up.error;
+    const u2 = await sb.from('library_books').update({ file_path: path, file_size: f.size }).eq('id', id); if (u2.error) throw u2.error;
+    for (let i = 0; i < rows.length; i += 120) { say('Іздеу үшін сақтап жатыр: ' + Math.min(i + 120, rows.length) + ' / ' + rows.length); const r = await sb.from('library_chunks').insert(rows.slice(i, i + 120).map(x => ({ book_id: id, page: x.page, body: x.body }))); if (r.error) throw r.error; }
+  } catch (e) { await sb.from('library_books').delete().eq('id', id); try { await sb.storage.from('library').remove([path]); } catch { } throw new Error(/bucket|not found|storage/i.test(e.message || '') ? 'Storage дайын емес (update-51.sql орындалды ма?): ' + e.message : (e.message || String(e))); }
+  return { pages: pages.length, chunks: rows.length, hasText };
+}
+async function libUrl(b, dl) {
+  const r = await sb.storage.from('library').createSignedUrl(b.file_path, 3600, dl ? { download: (b.title || 'kitap').replace(/[\\/:*?"<>|]+/g, ' ') + (/\.txt$/.test(b.file_path) ? '.txt' : '.pdf') } : undefined);
+  if (r.error) throw r.error; return r.data.signedUrl;
+}
+function libCoverEl(b, w, h) {
+  const d = el('div', ''); d.style.cssText = 'width:' + w + ';aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,var(--accent,#6c5ce7),#00b8d9);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;text-align:center;padding:8px;font-size:.9rem;box-shadow:0 4px 14px rgba(0,0,0,.25)';
+  if (b.cover) { const im = new Image(); im.src = b.cover; im.alt = ''; im.style.cssText = 'width:100%;height:100%;object-fit:cover'; d.style.padding = '0'; d.appendChild(im); } else d.textContent = b.title; return d;
+}
+async function libBook(b, after) {
+  const m = modal(b.title), box = m.box; box.style.maxWidth = '640px';
+  const top = el('div', ''); top.style.cssText = 'display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap';
+  const info = el('div', ''); info.style.cssText = 'flex:1;min-width:200px;display:grid;gap:8px';
+  info.append(el('b', '', b.title), el('div', 'sub', [b.author, LIB_KIND[b.kind], LIB_SUBJ[b.subject], b.grade ? b.grade + '-сынып' : '', b.pages ? b.pages + ' бет' : ''].filter(Boolean).join(' · ')));
+  const msg = el('p', 'msg', ''), row = el('div', 'mtools');
+  if (b.file_path) {
+    const rd = el('button', 'go', 'Оқу'), dl = el('button', 'out', 'Жүктеп алу'); rd.type = dl.type = 'button';
+    rd.onclick = async () => { const w = window.open('', '_blank'); try { const u = await libUrl(b, false); if (w) w.location = u; else location.href = u; } catch (e) { if (w) w.close(); msg.className = 'msg err'; msg.textContent = e.message; } };
+    dl.onclick = async () => { try { const a = document.createElement('a'); a.href = await libUrl(b, true); a.download = ''; document.body.appendChild(a); a.click(); a.remove(); } catch (e) { msg.className = 'msg err'; msg.textContent = e.message; } };
+    row.append(rd, dl);
+  } else info.appendChild(el('p', 'sub', 'Бұл кітаптың файлы жоқ.'));
+  info.append(row, msg); top.append(libCoverEl(b, '150px'), info); box.appendChild(top);
+  if (isAdmin) {
+    const ed = el('div', ''); ed.style.cssText = 'display:grid;gap:8px;margin-top:16px;padding:12px;border:1px solid var(--line);border-radius:14px';
+    const sel = (o, v) => { const x = document.createElement('select'); x.style.width = '100%'; Object.entries(o).forEach(([k, t]) => x.appendChild(new Option(t, k))); x.value = v; return x; };
+    const ti = document.createElement('input'); ti.type = 'text'; ti.value = b.title; ti.style.width = '100%'; const au = document.createElement('input'); au.type = 'text'; au.placeholder = 'Автор'; au.value = b.author || ''; au.style.width = '100%';
+    const vis = sel(LIB_VIS, b.visibility), kd = sel(LIB_KIND, b.kind), sj = sel(LIB_SUBJ, b.subject);
+    const ai = document.createElement('input'); ai.type = 'checkbox'; ai.checked = !!b.ai_search; const al = el('label', ''); al.style.cssText = 'display:flex;gap:8px;align-items:center'; al.append(ai, document.createTextNode('ЖИ осы кітаптан іздесін (дереккөз)'));
+    const ci = document.createElement('input'); ci.type = 'file'; ci.accept = 'image/*';
+    const sv = el('button', 'go', 'Сақтау'), rm = el('button', 'out', 'Кітапты өшіру'); sv.type = rm.type = 'button';
+    ed.append(el('b', '', 'Админ баптауы'), ti, au, sj, kd, vis, al, el('span', 'sub', 'Жаңа мұқаба (қаласаң):'), ci, el('div', 'mtools', ''));
+    ed.lastChild.append(sv, rm);
+    sv.onclick = async () => { try { const up = { title: ti.value.trim() || b.title, author: au.value.trim() || null, subject: sj.value, kind: kd.value, visibility: vis.value, ai_search: ai.checked }; if (ci.files[0]) up.cover = await libImgCover(ci.files[0]); const r = await sb.from('library_books').update(up).eq('id', b.id); if (r.error) throw r.error; msg.className = 'msg ok'; msg.textContent = 'Сақталды'; after && after(); } catch (e) { msg.className = 'msg err'; msg.textContent = libColErr(e.message); } };
+    rm.onclick = async () => { if (!(await ask('«' + b.title + '» кітабы өшірілсін бе?', 'Өшіру'))) return; if (b.file_path) { try { await sb.storage.from('library').remove([b.file_path]); } catch { } } await sb.from('library_books').delete().eq('id', b.id); m.close(); after && after(); };
+    box.appendChild(ed);
+  }
 }
 async function libOpen() {
-  if (!isAdmin) return;
-  const m = modal('📚 Кітапхана'), box = m.box; box.style.maxWidth = '720px';
-  const info = el('p', 'sub', 'Оқулықтарды осында қос. ЖИ ҚМЖ жасағанда және сұрақтарға жауап бергенде осы кітаптардан іздеп, дереккөз ретінде көрсетеді. Бұл бөлім тек админге көрінеді, бірақ кітаптан ЖИ барлық мұғалімге дерек береді.');
-  const list = el('div', ''); list.style.cssText = 'display:grid;gap:8px;margin:12px 0';
-  const sel = (o, ph) => { const x = document.createElement('select'); x.style.width = '100%'; if (ph) x.appendChild(new Option(ph, '')); Object.entries(o).forEach(([k, v]) => x.appendChild(new Option(v, k))); return x; };
-  const ti = document.createElement('input'); ti.type = 'text'; ti.placeholder = 'Кітап атауы, мысалы: Физика 11 (жаратылыстану)'; ti.style.width = '100%';
-  const sj = sel(LIB_SUBJ), tr = sel(LIB_TRACK), gr = sel(Object.fromEntries([5, 6, 7, 8, 9, 10, 11].map(n => [n, n + '-сынып'])), 'Сынып'); gr.value = '';
-  const fi = document.createElement('input'); fi.type = 'file'; fi.accept = '.pdf,.txt,application/pdf,text/plain';
-  const go2 = el('button', 'go', 'Кітапты қосу'); go2.type = 'button'; const msg = el('p', 'msg', '');
-  const form = el('div', ''); form.style.cssText = 'display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:12px';
-  const r2 = el('div', ''); r2.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px'; r2.append(sj, gr, tr);
-  form.append(el('b', '', 'Жаңа кітап қосу'), ti, r2, fi, go2, msg);
-  const chk = el('div', ''); chk.style.cssText = 'display:grid;gap:8px;margin-top:14px'; const qi = document.createElement('input'); qi.type = 'text'; qi.placeholder = 'Тексеру: сөз жаз (мысалы: дисперсия)'; qi.style.width = '100%'; const qo = el('div', ''); qo.style.cssText = 'display:grid;gap:6px;font-size:.9rem'; chk.append(el('b', '', 'Іздеуді тексеру'), qi, qo);
-  let qt = null; qi.oninput = () => { clearTimeout(qt); qt = setTimeout(async () => { const q = qi.value.trim(); if (q.length < 4) { qo.replaceChildren(); return; } const r = await sb.rpc('lib_search', { p_q: q, p_subj: null, p_grade: null, p_lim: 3 }); qo.replaceChildren(); if (r.error) { qo.appendChild(el('span', 'msg err', r.error.message)); return; } if (!(r.data || []).length) qo.appendChild(el('span', 'sub', 'Табылмады')); (r.data || []).forEach(x => { const d = el('div', ''); d.style.cssText = 'padding:8px 10px;border:1px solid var(--line);border-radius:10px'; d.append(el('b', '', x.title + (x.page ? ', ' + x.page + '-б.' : '')), el('div', 'sub', String(x.body).slice(0, 220) + '…')); qo.appendChild(d); }); }, 400); };
-  async function refresh() {
-    const r = await sb.from('library_books').select('id,title,subject,grade,track,pages,chars,created_at').order('created_at', { ascending: false });
-    list.replaceChildren(); if (r.error) { list.appendChild(el('p', 'msg err', /library_books/.test(r.error.message) ? 'Кітапхана кестесі жоқ. Алдымен update-50.sql орындау керек.' : r.error.message)); return; }
-    if (!(r.data || []).length) list.appendChild(el('p', 'sub', 'Әзірге кітап жоқ.'));
-    (r.data || []).forEach(b => {
-      const row = el('div', ''); row.style.cssText = 'display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);border-radius:12px';
-      const tx = el('div', ''); tx.append(el('b', '', b.title), el('div', 'sub', [LIB_SUBJ[b.subject], b.grade ? b.grade + '-сынып' : '', LIB_TRACK[b.track], b.pages + ' бет', Math.round(b.chars / 1000) + ' мың таңба'].filter(Boolean).join(' · ')));
-      const del = el('button', 'out', 'Өшіру'); del.type = 'button'; del.onclick = async () => { if (!(await ask('«' + b.title + '» кітабы өшірілсін бе?', 'Өшіру'))) return; await sb.from('library_books').delete().eq('id', b.id); refresh(); };
-      row.append(tx, del); list.appendChild(row);
+  const m = modal('📚 Кітапхана'), box = m.box; box.style.maxWidth = '860px';
+  const bar = el('div', ''); bar.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px';
+  const qi = document.createElement('input'); qi.type = 'search'; qi.placeholder = 'Атауы не авторы бойынша іздеу'; qi.style.cssText = 'flex:1;min-width:180px';
+  const kf = document.createElement('select'); kf.appendChild(new Option('Барлық түрі', '')); Object.entries(LIB_KIND).forEach(([k, v]) => kf.appendChild(new Option(v, k)));
+  bar.append(qi, kf); let addBtn = null; if (isAdmin) { addBtn = el('button', 'go', '＋ Кітап қосу'); addBtn.type = 'button'; addBtn.style.cssText = 'width:auto;padding:10px 18px'; bar.appendChild(addBtn); }
+  const shelf = el('div', ''); shelf.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px';
+  let all = [];
+  const draw = () => {
+    const q = qi.value.trim().toLowerCase(), k = kf.value; shelf.replaceChildren();
+    const rows = all.filter(b => (!k || b.kind === k) && (!q || (b.title + ' ' + (b.author || '')).toLowerCase().includes(q)));
+    if (!rows.length) shelf.appendChild(el('p', 'sub', all.length ? 'Табылмады' : 'Әзірге кітап жоқ.'));
+    rows.forEach(b => {
+      const c = el('button', ''); c.type = 'button'; c.style.cssText = 'all:unset;cursor:pointer;display:grid;gap:6px;text-align:left'; c.append(libCoverEl(b, '100%'));
+      const t = el('div', ''); t.style.cssText = 'font-weight:600;font-size:.88rem;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden'; t.textContent = b.title;
+      const sb2 = el('div', 'sub', (isAdmin && b.visibility !== 'all' ? (b.visibility === 'admin' ? '🔒 ' : '👩‍🏫 ') : '') + [b.author, b.grade ? b.grade + '-сынып' : ''].filter(Boolean).join(' · ')); sb2.style.fontSize = '.78rem';
+      c.append(t, sb2); c.onclick = () => libBook(b, refresh); shelf.appendChild(c);
     });
-  }
-  go2.onclick = async () => {
-    const f = fi.files[0], title = ti.value.trim(); if (title.length < 2) { msg.className = 'msg err'; msg.textContent = 'Кітап атауын жаз'; return; } if (!f) { msg.className = 'msg err'; msg.textContent = 'Файл таңда (PDF не TXT)'; return; }
-    go2.disabled = true; msg.className = 'msg'; msg.textContent = 'Басталды…';
-    try { const r = await libAdd(f, { title, subject: sj.value, grade: gr.value ? +gr.value : null, track: tr.value }, t => { msg.textContent = t; }); msg.className = 'msg ok'; msg.textContent = 'Қосылды: ' + r.pages + ' бет, ' + r.chunks + ' үзінді'; ti.value = ''; fi.value = ''; refresh(); }
-    catch (e) { msg.className = 'msg err'; msg.textContent = e.message || String(e); }
-    go2.disabled = false;
   };
-  box.append(info, form, list, chk); refresh();
+  async function refresh() {
+    const r = await sb.from('library_books').select('id,title,author,subject,grade,track,kind,pages,chars,cover,file_path,visibility,ai_search,created_at').order('created_at', { ascending: false });
+    if (r.error) { shelf.replaceChildren(el('p', 'msg err', libColErr(r.error.message))); return; } all = r.data || []; draw();
+  }
+  qi.oninput = draw; kf.onchange = draw;
+  box.append(bar);
+  if (isAdmin) {
+    const form = el('div', ''); form.hidden = true; form.style.cssText = 'display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:14px';
+    const sel = (o, ph) => { const x = document.createElement('select'); x.style.width = '100%'; if (ph) x.appendChild(new Option(ph, '')); Object.entries(o).forEach(([k, v]) => x.appendChild(new Option(v, k))); return x; };
+    const inp = ph => { const x = document.createElement('input'); x.type = 'text'; x.placeholder = ph; x.style.width = '100%'; return x; };
+    const ti = inp('Кітап атауы, мысалы: Физика 11 (жаратылыстану)'), au = inp('Автор (міндетті емес)');
+    const kd = sel(LIB_KIND), sj = sel(LIB_SUBJ), gr = sel(Object.fromEntries([5, 6, 7, 8, 9, 10, 11].map(n => [n, n + '-сынып'])), 'Сынып'), tr = sel(LIB_TRACK), vis = sel(LIB_VIS); vis.value = 'admin';
+    const ai = document.createElement('input'); ai.type = 'checkbox'; ai.checked = true; const al = el('label', ''); al.style.cssText = 'display:flex;gap:8px;align-items:center'; al.append(ai, document.createTextNode('ЖИ осы кітаптан іздесін (дереккөз). Көркем кітапқа қоспаған дұрыс.'));
+    kd.onchange = () => { ai.checked = ['textbook', 'reference', 'method'].includes(kd.value); };
+    const fi = document.createElement('input'); fi.type = 'file'; fi.accept = '.pdf,.txt,application/pdf,text/plain'; const ci = document.createElement('input'); ci.type = 'file'; ci.accept = 'image/*';
+    const r1 = el('div', ''); r1.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px'; r1.append(kd, sj); const r2 = el('div', ''); r2.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px'; r2.append(gr, tr);
+    const go2 = el('button', 'go', 'Кітапты қосу'); go2.type = 'button'; const msg = el('p', 'msg', '');
+    form.append(el('b', '', 'Жаңа кітап'), ti, au, r1, r2, el('span', 'sub', 'Кімге көрінеді:'), vis, al, el('span', 'sub', 'Кітап файлы (PDF не TXT, 50 МБ дейін):'), fi, el('span', 'sub', 'Мұқаба (міндетті емес; болмаса PDF-тің 1-бетінен алынады):'), ci, go2, msg);
+    addBtn.onclick = () => { form.hidden = !form.hidden; };
+    go2.onclick = async () => {
+      const f = fi.files[0], title = ti.value.trim(); if (title.length < 2) { msg.className = 'msg err'; msg.textContent = 'Кітап атауын жаз'; return; } if (!f) { msg.className = 'msg err'; msg.textContent = 'Файл таңда (PDF не TXT)'; return; }
+      go2.disabled = true; msg.className = 'msg'; msg.textContent = 'Басталды…';
+      try { const r = await libAdd(f, { title, author: au.value.trim(), subject: sj.value, grade: gr.value ? +gr.value : null, track: tr.value, kind: kd.value, visibility: vis.value, ai: ai.checked }, ci.files[0] || null, t => { msg.textContent = t; }); msg.className = 'msg ok'; msg.textContent = r.hasText ? 'Қосылды: ' + r.pages + ' бет, ' + r.chunks + ' үзінді' : 'Қосылды, бірақ PDF-те мәтін жоқ (сканер): оқуға болады, ЖИ іздей алмайды.'; ti.value = au.value = ''; fi.value = ci.value = ''; refresh(); }
+      catch (e) { msg.className = 'msg err'; msg.textContent = e.message || String(e); }
+      go2.disabled = false;
+    };
+    box.appendChild(form);
+  }
+  box.appendChild(shelf);
+  if (isAdmin) {
+    const chk = el('div', ''); chk.style.cssText = 'display:grid;gap:8px;margin-top:18px'; const ti2 = document.createElement('input'); ti2.type = 'text'; ti2.placeholder = 'Тексеру: ЖИ кітаптан не табады? Сөз жаз (мысалы: дисперсия)'; ti2.style.width = '100%'; const qo = el('div', ''); qo.style.cssText = 'display:grid;gap:6px;font-size:.9rem'; chk.append(el('b', '', 'ЖИ іздеуін тексеру'), ti2, qo);
+    let qt = null; ti2.oninput = () => { clearTimeout(qt); qt = setTimeout(async () => { const q = ti2.value.trim(); if (q.length < 4) { qo.replaceChildren(); return; } const r = await sb.rpc('lib_search', { p_q: q, p_subj: null, p_grade: null, p_lim: 3 }); qo.replaceChildren(); if (r.error) { qo.appendChild(el('span', 'msg err', r.error.message)); return; } if (!(r.data || []).length) qo.appendChild(el('span', 'sub', 'Табылмады')); (r.data || []).forEach(x => { const d = el('div', ''); d.style.cssText = 'padding:8px 10px;border:1px solid var(--line);border-radius:10px'; d.append(el('b', '', x.title + (x.page ? ', ' + x.page + '-б.' : '')), el('div', 'sub', String(x.body).slice(0, 220) + '…')); qo.appendChild(d); }); }, 400); };
+    box.appendChild(chk);
+  }
+  refresh();
+}
+async function libTile(g, mk) {
+  try {
+    HM_ICON.library = HM_ICON.library || '<path d="M4 5a2 2 0 0 1 2-2h4v18H6a2 2 0 0 1-2-2z"/><path d="M10 3h4v18h-4z"/><path d="M14 5l4.5-1.2L21 18.5 16.5 20z"/>';
+    if (!isAdmin) { const r = await sb.from('library_books').select('id', { count: 'exact', head: true }); if (r.error || !r.count) return; }
+    g.appendChild(mk());
+  } catch { }
 }
 let pdfLibP = null;
 function pdfLib() {
@@ -9353,7 +9424,7 @@ function renderHome() {
     HM_ICON.pcfind = '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><circle cx="11" cy="9.5" r="2.2"/><path d="M12.7 11.2L15 13.5"/>';
     HM_ICON.library = '<path d="M4 5a2 2 0 0 1 2-2h4v18H6a2 2 0 0 1-2-2z"/><path d="M10 3h4v18h-4z"/><path d="M14 5l4.5-1.2L21 18.5 16.5 20z"/>';
     main.forEach(([c, t, d, k]) => g.appendChild(card(c, t, d, k, () => homeAct(k))));
-    if (isAdmin) g.appendChild(card('c-teal', 'Кітапхана', 'Оқулықтар — ЖИ-дың дереккөзі (тек админ)', 'library', () => libOpen()));
+    libTile(g, () => card('c-teal', 'Кітапхана', 'Оқулықтар мен кітаптар', 'library', () => libOpen()));
     g.appendChild(card('c-green', 'Файл жүктеу', 'Фото, PDF — Материалдарға', 'upload', () => pickUpload()));
     if (window.showDirectoryPicker) g.appendChild(card('c-blue', 'Компьютерден іздеу', 'Рұқсат берген папкалардан', 'pcfind', () => pcSearch()));
     rest.forEach(([c, t, d, k]) => more.appendChild(card(c, t, d, k, () => homeAct(k))));
@@ -9364,7 +9435,7 @@ function renderHome() {
 
   } else {
     v.appendChild(el('h2', 'hm-h', 'Тапсырмалар'));
-    const g = el('div', 'hm-grid hm-two'); g.append(card('c-teal', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-orange', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g);
+    const g = el('div', 'hm-grid hm-two'); g.append(card('c-teal', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-orange', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g); libTile(g, () => card('c-pink', 'Кітапхана', 'Оқулықтар мен кітаптар', 'library', () => libOpen()));
   }
 }
 function verifyAnim() {
