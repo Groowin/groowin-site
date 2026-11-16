@@ -6,12 +6,17 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 API = "https://hr.nobd.edu.kz/portal/jobs/api/jobs/all/filter/sign"
 SITE = "https://hr.nobd.edu.kz/"
 SEEN_FILE = Path("seen.json")
-PAGES = 2          # неше бет тексеру (әр бет PAGE_SIZE вакансия)
+OPEN_FILE = Path("open.json")   # қазір ашық вакансиялар (жабылуды анықтау үшін)
+REMIND_DAYS = 2                 # мерзім аяқталуына неше күн қалғанда ескерту
+MISS_LIMIT = 2                  # неше рет қатарынан жоғалса «жабылды» деп санау
+TZ = timezone(timedelta(hours=5))
+PAGES = 2         # неше бет тексеру (әр бет PAGE_SIZE вакансия)
 PAGE_SIZE = 50
 
 # --- СҮЗГІ (өзгертуге болады) ---
@@ -59,19 +64,72 @@ def matches(job):
     return True
 
 
+def map_links(address):
+    """Мекенжайдан 2ГИС және Google Maps іздеу сілтемелерін жасайды."""
+    if not address:
+        return ""
+    q = urllib.parse.quote(address)
+    return (f"🗺 2ГИС: https://2gis.kz/search/{q}\n"
+            f"🗺 Google: https://www.google.com/maps/search/?api=1&query={q}\n")
+
+
 def fmt(job):
     org = job.get("organization") or {}
     s, e = job.get("salaryStart"), job.get("salaryEnd")
     salary = f"{int(s):,}".replace(",", " ") if s else "көрсетілмеген"
     if e:
         salary += f" – {int(e):,}".replace(",", " ")
+    address = org.get("ruAddress") or org.get("address")
     return (f"🆕 {job.get('title')}\n"
             f"🏫 {org.get('kkName') or org.get('name')}\n"
-            f"📍 {org.get('ruAddress') or org.get('address')}\n"
+            f"📍 {address}\n"
+            f"{map_links(address)}"
             f"💰 {salary} ₸\n"
             f"📅 дейін: {(job.get('vacancyEndDate') or '')[:10]}\n"
             f"📞 {org.get('contactNumber') or ''}\n"
             f"🔗 {SITE}")
+
+
+def track_open(current):
+    """Ашық вакансиялар тізімін жүргізеді: жабылғанын және мерзім ескертуін жібереді."""
+    now = datetime.now(TZ).date()
+    notify = bool(BOT_TOKEN and CHAT_ID)
+    first = not OPEN_FILE.exists()
+    state = {} if first else json.loads(OPEN_FILE.read_text())
+    cur = {str(j["id"]): j for j in current}
+
+    # 1) Жабылған вакансиялар
+    if not first:
+        for jid in list(state):
+            if jid in cur:
+                state[jid]["miss"] = 0
+                continue
+            state[jid]["miss"] = state[jid].get("miss", 0) + 1
+            if state[jid]["miss"] >= MISS_LIMIT:
+                info = state.pop(jid)
+                print("Жабылды:", jid, info["title"])
+                if notify:
+                    send(f"❌ Вакансия жабылды: {info['title']}\n🏫 {info['org']}\n"
+                         f"Қазір ашық: {len(cur)}")
+
+    # 2) Жаңа вакансияларды тізімге қосу және мерзім ескертуі
+    for jid, j in cur.items():
+        org = j.get("organization") or {}
+        st = state.setdefault(jid, {"reminded": False, "miss": 0})
+        st.update(title=j.get("title"), org=org.get("kkName") or org.get("name"),
+                  end=(j.get("vacancyEndDate") or "")[:10])
+        try:
+            days_left = (datetime.strptime(st["end"], "%Y-%m-%d").date() - now).days
+        except ValueError:
+            continue
+        if 0 <= days_left <= REMIND_DAYS and not st["reminded"]:
+            st["reminded"] = True
+            if notify:
+                send(f"⏰ Мерзімі аяқталады ({days_left} күн қалды): {st['title']}\n"
+                     f"🏫 {st['org']}\n📅 дейін: {st['end']}\n"
+                     f"📞 {org.get('contactNumber') or ''}")
+
+    OPEN_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=1))
 
 
 USE_WORKER = True   # True: батырмаға Cloudflare Worker жауап береді (getUpdates өшеді)
@@ -170,8 +228,11 @@ def main():
     seen |= {j["id"] for j in jobs}
     SEEN_FILE.write_text(json.dumps(sorted(seen)))
 
+    current = [j for j in jobs if matches(j)]
+    track_open(current)
+
     if BOT_TOKEN and CHAT_ID:
-        handle_buttons([j for j in jobs if matches(j)])
+        handle_buttons(current)
     return 0
 
 
