@@ -87,6 +87,28 @@ def fmt(job):
             f"🔗 {SITE}")
 
 
+HEARTBEAT_CRON = "0 5 * * 0"   # жексенбі 05:00 UTC = 10:00 (UTC+5); vacancy.yml-мен бірдей болсын
+
+
+def heartbeat(current):
+    """Апта сайын «жүйе тірі» хабарламасы. current=None: сайт жауап бермеді."""
+    manual = os.environ.get("HEARTBEAT", "").lower() == "true"
+    scheduled = os.environ.get("EVENT_SCHEDULE", "") == HEARTBEAT_CRON
+    if not (BOT_TOKEN and CHAT_ID) or not (manual or scheduled):
+        return
+    if current is None:
+        send("⚠️ Апталық есеп: бот жұмыс істеп тұр, бірақ сайт қазір жауап бермейді "
+             "(техжұмыс не бұғат). Келесі тексеруде қайталап көремін.")
+        return
+    lines = []
+    for j in current[:10]:
+        org = j.get("organization") or {}
+        lines.append(f"• {org.get('kkName') or org.get('name')} — "
+                     f"дейін {(j.get('vacancyEndDate') or '')[:10]}")
+    send(f"✅ Апталық есеп: бақылау жұмыс істейді.\nҚазір ашық вакансия: {len(current)}"
+         + ("\n" + "\n".join(lines) if lines else ""))
+
+
 def track_open(current):
     """Ашық вакансиялар тізімін жүргізеді: жабылғанын және мерзім ескертуін жібереді."""
     now = datetime.now(TZ).date()
@@ -202,6 +224,7 @@ def main():
             jobs += page
     except Exception as exc:  # техжұмыс, желі қатесі — келесі жолы қайталаймыз
         print("Сұраныс қатесі:", exc)
+        heartbeat(None)
         if BOT_TOKEN and CHAT_ID:
             handle_buttons(None)
         return 0
@@ -230,6 +253,7 @@ def main():
 
     current = [j for j in jobs if matches(j)]
     track_open(current)
+    heartbeat(current)
 
     if BOT_TOKEN and CHAT_ID:
         handle_buttons(current)
