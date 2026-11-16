@@ -3,7 +3,13 @@ name: vacancy-check
 on:
   schedule:
     - cron: "*/15 * * * *"
+    - cron: "0 5 * * 0"   # жексенбі 10:00 (UTC+5): апталық «жүйе тірі» хабарламасы
   workflow_dispatch:
+    inputs:
+      heartbeat:
+        description: "Апталық есепті қазір жіберу"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -20,6 +26,8 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          HEARTBEAT: ${{ inputs.heartbeat }}
         run: python check_vacancies.py
       - name: Save seen list
         run: |
