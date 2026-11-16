@@ -74,6 +74,7 @@ def fmt(job):
             f"🔗 {SITE}")
 
 
+USE_WORKER = True   # True: батырмаға Cloudflare Worker жауап береді (getUpdates өшеді)
 BUTTON = "🔍 Жұмыс бар ма?"
 KEYBOARD = json.dumps({"keyboard": [[{"text": BUTTON}]], "resize_keyboard": True})
 
@@ -97,6 +98,8 @@ def send(text, keyboard=False):
 def handle_buttons(current):
     """Батырма басылған/жазылған хабарламаларды оқып, жауап береді.
     current = қазір ашық вакансиялар тізімі, не None (сайт қолжетімсіз)."""
+    if USE_WORKER:
+        return
     base = f"https://api.telegram.org/bot{BOT_TOKEN.strip()}/getUpdates"
     try:
         updates = json.load(urllib.request.urlopen(base, timeout=30)).get("result", [])
