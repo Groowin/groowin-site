@@ -1809,15 +1809,19 @@ html[data-season=newyear] #seasonFx::before{height:10px;background:radial-gradie
 @keyframes sGl{50%{filter:brightness(.6)}}
 #seasonFx i{color:var(--scol);position:absolute;top:-8%;font-style:normal;opacity:.75;animation:sFall linear infinite;will-change:transform}
 @keyframes sFall{to{transform:translate3d(var(--dx,20px),115vh,0) rotate(360deg)}}
-html[data-season] .hm-card{position:relative}
-html[data-season] .hm-card::after{content:var(--sdeco);position:absolute;top:6px;right:8px;font-size:1rem;opacity:.9;pointer-events:none}
-.rm-page{background:linear-gradient(rgba(6,9,24,.30),rgba(6,9,24,.52)),var(--rbg) center/cover no-repeat;border-radius:22px;padding:18px;min-height:calc(100vh - 110px)}
-.rm-page>h2,.rm-page>.sub,.rm-page>.hint,.rm-page>h3{color:#fff3e0;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.rm-page{background:linear-gradient(rgba(6,9,24,var(--rov,.25)),rgba(6,9,24,var(--rov,.25))),var(--rbg) top center/100% auto no-repeat,var(--rbc,#0d1426);border-radius:22px;padding:18px;min-height:calc(100vh - 110px)}
+@media (max-width:820px){.rm-page{background:linear-gradient(rgba(6,9,24,var(--rov,.25)),rgba(6,9,24,var(--rov,.25))),var(--rbg) center/cover no-repeat,var(--rbc,#0d1426)}}
+.rm-page :is(h1,h2,h3,p,label,.sub,.hint,.msg):not(.game *):not(.hm-card *):not(.gcard *):not(.td *){color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.7)}
+.rm-page>h2,.rm-page>.sub,.rm-page>p,.rm-page>h3{background:rgba(8,12,26,.55);padding:4px 12px;border-radius:12px;display:table;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.rm-page a:not(.game *){color:#ffd9a0!important}
+.rm-page :is(#gsSeg,.seg,[role=group]) button:not([aria-pressed=true]),.rm-page select,.rm-page .out{background:rgba(10,14,32,.72)!important;color:#fff!important;border-color:rgba(255,255,255,.35)!important}
+html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
+.rm-page .game,.rm-page .gcard{--ink:#1b2233;--muted:#4b5568;color:#1b2233;background:rgba(255,255,255,.93)!important;border-color:rgba(255,255,255,.7)!important}
 #siteAdm .sa-g{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
 #siteAdm .sa-g button{padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
 #siteAdm .sa-g button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
 #siteAdm .sa-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
-#siteAdm .sa-r b{min-width:120px}#siteAdm .sa-th{width:44px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--bg) center/cover}
+#siteAdm .sa-r b{min-width:110px}#siteAdm .sa-x{margin-left:auto;width:34px;height:34px;padding:0;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:1rem}#siteAdm .sa-x:disabled{opacity:.3;cursor:default}#siteAdm .sa-th{width:44px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--bg) center/cover}
 @media (prefers-reduced-motion:reduce){#seasonFx i{animation:none}}
 </style>
 </head>
@@ -2801,7 +2805,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') document.bod
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 let rm = null; // Оқу бөлмесі күйі
 const VIEWS = ['home', 'library', 'plan', 'projects', 'qmj', 'gallery', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
-function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined') { const w = $('msWrap'); if (w) w.hidden = !isStaff; } if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); }
+function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined') { const w = $('msWrap'); if (w) w.hidden = !isStaff; } if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); try { rmSync(v); } catch { } }
 function go(key, keep) {
   document.body.classList.remove('sheet'); try { curView = key; tabSync(); } catch { }
   closeGame(); $('meCard').classList.toggle('on', key === 'account');
@@ -2859,7 +2863,7 @@ function glassBgCss() {
   const g = GLASS_BGS.find(x => x[0] === k) || GLASS_BGS[0]; return g[2];
 }
 const isPhone = () => { try { return matchMedia('(max-width:820px)').matches; } catch { return false; } };
-function glassOn() { const v = ls.get('glass'); return v === null ? !isPhone() : v !== '0'; }
+function glassOn() { return ls.get('glass') === '1'; }
 function applyGlass() {
   const on = glassOn(), h = document.documentElement, inApp = document.body.classList.contains('in-app');
   if (on && inApp) { h.dataset.glass = '1'; h.dataset.gi = ['1', '2', '3'].includes(ls.get('glassi')) ? ls.get('glassi') : '2'; h.style.setProperty('--gbg', 'linear-gradient(rgba(8,12,26,.16),rgba(8,12,26,.44)),' + glassBgCss()); }
@@ -2903,7 +2907,7 @@ $('styleBtn').onclick = () => { const o = $('styleOpts'); o.hidden = !o.hidden; 
 applyStyle();
 
 // ===== Бүкіл сайтқа ортақ баптаулар (админ): бөлім фондары + мезгіл безендіруі =====
-const SITE = { bg: {}, season: 'auto' };
+const SITE = { bg: {}, meta: {}, season: 'auto' };
 const SITE_VIEWS = [['home', 'Басты бет'], ['library', 'Кітапхана'], ['plan', 'Жоспар'], ['play', 'Ойын-сауық'], ['quiz', 'Викторина'], ['qmj', 'ҚМЖ'], ['mats', 'Материалдар'], ['projects', 'Жобалар'], ['gallery', 'Галерея'], ['news', 'Жаңалықтар'], ['rank', 'Рейтинг']];
 const SEASONS = {
   autumn: ['🍂', ['🍁', '🍂', '🍁'], '#d2531a', 'Күз'], winter: ['❄️', ['❄', '❅', '❆'], '#69b7ff', 'Қыс'], spring: ['🌸', ['🌸', '🌿', '🌷'], '#e86fa3', 'Көктем'], summer: ['☀️', ['✨', '🦋', '🌼'], '#f0a000', 'Жаз'],
@@ -2915,18 +2919,27 @@ function seasonAuto(d) {
   return m === 11 || m < 2 ? 'winter' : m < 5 ? 'spring' : m < 8 ? 'summer' : 'autumn';
 }
 window.seasonNow = () => SITE.season === 'off' ? 'off' : (SEASONS[SITE.season] ? SITE.season : seasonAuto());
+function siteImgInfo(c) {
+  try {
+    const x = c.getContext('2d'), w = c.width, hh = c.height, d = x.getImageData(0, 0, w, hh, { willReadFrequently: true }).data; let L = 0, n = 0;
+    for (let i = 0; i < d.length; i += 4 * 97) { L += (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255; n++; }
+    const b = x.getImageData(0, hh - 2, w, 1).data; let r = 0, g = 0, bl = 0, m = 0; for (let i = 0; i < b.length; i += 16) { r += b[i]; g += b[i + 1]; bl += b[i + 2]; m++; }
+    return { lum: +(L / Math.max(1, n)).toFixed(2), c: 'rgb(' + Math.round(r / m) + ',' + Math.round(g / m) + ',' + Math.round(bl / m) + ')' };
+  } catch { return { lum: .5, c: '#0d1426' }; }
+}
 function siteImg(file, cb) {
   const im = new Image(), u = URL.createObjectURL(file);
-  im.onload = () => { const sc = Math.min(1, 1280 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u); cb(c.toDataURL('image/jpeg', .62)); };
+  im.onload = () => { const sc = Math.min(1, 1280 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u); cb(c.toDataURL('image/jpeg', .62), siteImgInfo(c)); };
   im.onerror = () => notify('Суретті ашу мүмкін болмады.'); im.src = u;
 }
+function rmSync(v) { const h = document.documentElement; if (v && SITE.bg[v] && document.body.classList.contains('in-app')) h.dataset.rm = '1'; else delete h.dataset.rm; }
 function applySite() {
   const h = document.documentElement, inApp = document.body.classList.contains('in-app');
   // бөлім фондары
   SITE_VIEWS.forEach(([v]) => {
     const d = SITE.bg[v], n = $('v-' + v); if (!n) return;
     if (v === 'library') { if (d && inApp) h.style.setProperty('--lib-bg', 'url("' + d + '")'); else h.style.removeProperty('--lib-bg'); return; }
-    if (d && inApp) { n.classList.add('rm-page'); n.style.setProperty('--rbg', 'url("' + d + '")'); } else { n.classList.remove('rm-page'); n.style.removeProperty('--rbg'); }
+    if (d && inApp) { const mt = SITE.meta[v] || { lum: .5, c: '#0d1426' }; n.classList.add('rm-page'); n.style.setProperty('--rbg', 'url("' + d + '")'); n.style.setProperty('--rbc', mt.c || '#0d1426'); n.style.setProperty('--rov', mt.lum > .62 ? .5 : mt.lum > .45 ? .34 : mt.lum > .3 ? .2 : .1); n.dataset.lum = mt.lum > .45 ? 'hi' : 'lo'; } else { n.classList.remove('rm-page'); n.style.removeProperty('--rbg'); }
   });
   // мезгіл
   const k = window.seasonNow(); let fx = $('seasonFx');
@@ -2934,12 +2947,10 @@ function applySite() {
   else {
     const S = SEASONS[k]; h.dataset.season = k; h.style.setProperty('--sdeco', '"' + S[0] + '"'); h.style.setProperty('--scol', S[2]);
     if (!fx) { fx = document.createElement('div'); fx.id = 'seasonFx'; fx.setAttribute('aria-hidden', 'true'); document.body.appendChild(fx); }
-    if (fx.dataset.k !== k) {
-      fx.dataset.k = k; fx.replaceChildren();
-      for (let i = 0; i < 14; i++) { const p = document.createElement('i'); p.textContent = S[1][i % S[1].length]; p.style.left = (Math.random() * 96) + '%'; p.style.fontSize = (12 + Math.random() * 12) + 'px'; p.style.animationDuration = (10 + Math.random() * 10) + 's'; p.style.animationDelay = (-Math.random() * 14) + 's'; p.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px'); fx.appendChild(p); }
-    }
+    fx.dataset.k = k; fx.replaceChildren();
   }
   try { window.paintBrand && window.paintBrand(); } catch { }
+  try { rmSync(typeof curView !== 'undefined' ? curView : ''); } catch { }
   renderSiteAdm();
 }
 function renderSiteAdm() {
@@ -2950,12 +2961,12 @@ function renderSiteAdm() {
   const g = el('div', 'sa-g'); const cur = SITE.season || 'auto';
   [['auto', '🗓️ Авто'], ...Object.entries(SEASONS).map(([k, v]) => [k, v[0] + ' ' + v[3]]), ['off', '🚫 Өшірулі']].forEach(([k, nm]) => { const b = el('button', '', nm); b.type = 'button'; b.setAttribute('aria-pressed', String(cur === k)); b.onclick = () => siteSave('season', { mode: k }); g.appendChild(b); });
   w.append(g); w.append(el('p', 'hint', 'Бөлім фондары'));
-  SITE_VIEWS.forEach(([v, nm]) => {
+  SITE_VIEWS.filter(x => x[0] !== 'library').forEach(([v, nm]) => {
     const r = el('div', 'sa-r'), th = el('span', 'sa-th'); if (SITE.bg[v]) th.style.backgroundImage = 'url("' + SITE.bg[v] + '")';
-    const up = el('label', 'out', '📷 Сурет'); up.style.cursor = 'pointer'; const fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.hidden = true;
-    fi.onchange = () => { const f = fi.files[0]; fi.value = ''; if (f) siteImg(f, d => siteSave('bg_' + v, { img: d })); }; up.appendChild(fi);
+    const up = el('label', 'out', SITE.bg[v] ? '🔄 Ауыстыру' : '📷 Сурет'); up.style.cursor = 'pointer'; const fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.hidden = true;
+    fi.onchange = () => { const f = fi.files[0]; fi.value = ''; if (f) siteImg(f, (d, info) => siteSave('bg_' + v, { img: d, lum: info.lum, c: info.c })); }; up.appendChild(fi);
     r.append(el('b', '', nm), th, up);
-    if (SITE.bg[v]) { const x = el('button', 'out', 'Алып тастау'); x.type = 'button'; x.onclick = () => siteSave('bg_' + v, null); r.appendChild(x); }
+    const x = el('button', 'sa-x', '✕'); x.type = 'button'; x.title = 'Алып тастау'; x.setAttribute('aria-label', nm + ': фонды алып тастау'); x.disabled = !SITE.bg[v]; x.onclick = () => siteSave('bg_' + v, null); r.appendChild(x);
     w.append(r);
   });
 }
@@ -2965,13 +2976,13 @@ async function siteSave(key, val) {
     const r = val === null ? await sb.from('site_settings').delete().eq('key', key) : await sb.from('site_settings').upsert({ key, value: val, updated_at: new Date().toISOString() });
     if (r.error) { notify(/site_settings/.test(r.error.message) ? 'Алдымен update-53.sql іске қосыңыз (Supabase → SQL Editor).' : r.error.message); return; }
   } catch (e) { notify('Сақталмады: ' + (e.message || e)); return; }
-  if (key === 'season') SITE.season = val.mode; else if (key.startsWith('bg_')) { if (val) SITE.bg[key.slice(3)] = val.img; else delete SITE.bg[key.slice(3)]; }
+  if (key === 'season') SITE.season = val.mode; else if (key.startsWith('bg_')) { if (val) { SITE.bg[key.slice(3)] = val.img; SITE.meta[key.slice(3)] = { lum: val.lum, c: val.c }; } else { delete SITE.bg[key.slice(3)]; delete SITE.meta[key.slice(3)]; } }
   applySite(); notify('Сақталды. Бәріне көрінеді.');
 }
 async function siteLoad() {
   try {
-    const r = await sb.from('site_settings').select('key,value'); SITE.bg = {}; SITE.season = 'auto';
-    (r.data || []).forEach(x => { if (x.key === 'season') SITE.season = (x.value && x.value.mode) || 'auto'; else if (x.key.startsWith('bg_') && x.value && x.value.img) SITE.bg[x.key.slice(3)] = x.value.img; });
+    const r = await sb.from('site_settings').select('key,value'); SITE.bg = {}; SITE.meta = {}; SITE.season = 'auto';
+    (r.data || []).forEach(x => { if (x.key === 'season') SITE.season = (x.value && x.value.mode) || 'auto'; else if (x.key.startsWith('bg_') && x.value && x.value.img) { SITE.bg[x.key.slice(3)] = x.value.img; SITE.meta[x.key.slice(3)] = { lum: x.value.lum, c: x.value.c }; } });
   } catch { }
   applySite();
 }
@@ -3227,6 +3238,7 @@ function renderNews() {
   if (!$('v-news').hidden) ls.set('newsSeen', Date.now());
   const seen = +ls.get('newsSeen') || 0;
   const unread = newsCache.filter(n => new Date(n.created_at).getTime() > seen).length;
+  if (window.__unr !== undefined && unread > window.__unr) { try { SFX.bell(); } catch { } } window.__unr = unread;
   $('badge').textContent = unread; $('badge').hidden = !unread;
   document.title = (unread ? '(' + unread + ') ' : '') + 'Groowin';
 }
@@ -3872,7 +3884,7 @@ const SFX = (() => {
     o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + d + .05);
   };
   const paint = () => document.querySelectorAll('.sfxToggle').forEach(b => { b.setAttribute('aria-pressed', String(!muted)); b.title = muted ? 'Дыбысты қосу' : 'Дыбысты өшіру'; b.classList.toggle('off', muted); });
-  let mode = (() => { try { return matchMedia('(max-width:820px)').matches ? 'soft' : 'classic'; } catch { return 'classic'; } })(), music = false, mIv = null, mStep = 0;
+  let mode = 'soft', music = false, mIv = null, mStep = 0;
   try { const m = localStorage.getItem('sfxMode'); if (['classic', 'arcade', 'soft'].includes(m)) mode = m; music = localStorage.getItem('sfxMusic') === '1'; } catch {}
   const PK = {
     classic: {
@@ -8404,7 +8416,7 @@ const NAV_EMO = { physics: '⚛️', math: '📐', play: '🎮', rank: '🏆', n
 const TOOL_EMO = { lessons: '🗓️', quiz: '❓', race: '🚀', cloud: '☁️', poll: '📊', ask: '💬', wheel: '🎡', potato: '🥔', random: '🎲', groups: '👥', timer: '⏱️', refl: '🪞', team: '🏅', games: '🎮', spy: '🕵️', detective: '🕵️', bet: '🎲' };
 const IC_PAL = ['#3B6BFF', '#1FA971', '#F28C28', '#E8559A', '#7C5CFF', '#19B5D6', '#E5484D', '#D89E00'];
 function applyIcons() {
-  let st = ls.get('icons'); if (!ICON_ST.includes(st)) st = isPhone() ? 'emoji' : 'color'; document.documentElement.dataset.icons = st;
+  let st = ls.get('icons'); if (!ICON_ST.includes(st)) st = 'emoji'; document.documentElement.dataset.icons = st;
   let n = 0;
   document.querySelectorAll('#nav button').forEach(btn => { const sv = btn.querySelector('svg.ni'); if (!sv) return; if (!btn.querySelector('.ne')) { const e = document.createElement('i'); e.className = 'ne'; e.textContent = NAV_EMO[btn.dataset.v] || (btn.id === 'navPult' ? '📱' : '•'); sv.after(e); } btn.style.setProperty('--ic', IC_PAL[n++ % IC_PAL.length]); });
   n = 0; document.querySelectorAll('#plGrid .gwrap').forEach(w => { const gi = w.querySelector('.gi'); if (!gi) return; const k = w.dataset.k; if (!gi.querySelector('.ne')) { const e = document.createElement('i'); e.className = 'ne'; e.textContent = TOOL_EMO[k] || (typeof BG !== 'undefined' && BG[k] ? BG[k].ic : '') || (typeof PLAY_TOOLS !== 'undefined' && k === 'croc' ? '🐊' : '✨'); gi.appendChild(e); } gi.style.setProperty('--ic', IC_PAL[n++ % IC_PAL.length]); });
@@ -9345,6 +9357,25 @@ async function wxOpen() {
     const ch = el('button', 'out', '📍 Қаланы өзгерту'); ch.type = 'button'; ch.style.marginTop = '12px'; ch.onclick = () => wxAsk(); box.append(ch);
   } catch { box.replaceChildren(el('p', 'msg err', 'Ауа райы жүктелмеді. Интернетті тексеріңіз.')); }
 }
+
+function kzEvents(y) {
+  const nth = (m, wd, n) => { const d = new Date(y, m, 1); const off = (wd - d.getDay() + 7) % 7; return 1 + off + (n - 1) * 7; }, last = (m, wd) => { const d = new Date(y, m + 1, 0); return d.getDate() - ((d.getDay() - wd + 7) % 7); };
+  return [[0, 1, 'Жаңа жыл', '🎄'], [0, 2, 'Жаңа жыл', '🎄'], [0, 7, 'Рождество', '⭐'], [1, 15, 'Ауғанстаннан әскер шығарылған күн', '🕯️'], [2, 1, 'Алғыс айту күні', '🙏'], [2, 8, 'Халықаралық әйелдер күні', '🌷'], [2, 21, 'Наурыз мейрамы', '🌿'], [2, 22, 'Наурыз мейрамы', '🌿'], [2, 23, 'Наурыз мейрамы', '🌿'],
+  [4, 1, 'Қазақстан халқының бірлігі күні', '🤝'], [4, 7, 'Отан қорғаушы күні', '🎖️'], [4, 9, 'Жеңіс күні', '🕊️'], [4, nth(4, 0, 2), 'Аналар күні', '💐'], [4, 31, 'Саяси қуғын-сүргін құрбандарын еске алу күні', '🕯️'], [5, 4, 'Мемлекеттік рәміздер күні', '🇰🇿'], [5, nth(5, 0, 3), 'Әкелер күні', '👨‍👧'],
+  [6, nth(6, 0, 1), 'Домбыра күні', '🎶'], [6, 6, 'Астана күні', '🏙️'], [7, 10, 'Абай күні', '📖'], [7, nth(7, 0, 3), 'Спорт күні', '🏅'], [7, 29, 'Семей полигонын жабу күні', '🕯️'], [7, 30, 'Конституция күні', '📜'], [8, 1, 'Білім күні', '🔔'], [8, 5, 'Қазақстан халқы тілдері күні', '🗣️'],
+  [8, nth(8, 0, 2), 'Отбасы күні', '🏡'], [8, last(8, 0), 'Еңбек күні', '🛠️'], [9, 1, 'Қарттар күні', '🧓'], [9, 5, 'Ұстаздар күні', '🍎'], [9, 16, 'Нан күні', '🍞'], [9, 25, 'Республика күні', '🇰🇿'], [10, 15, 'Ұлттық валюта — теңге күні', '💰'], [11, 1, 'Тұңғыш Президент күні', '🇰🇿'], [11, 16, 'Тәуелсіздік күні', '🇰🇿'], [11, 17, 'Тәуелсіздік күні', '🇰🇿']];
+}
+function kzEventLine() {
+  const now = new Date(), t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()); let best = null;
+  [now.getFullYear(), now.getFullYear() + 1].forEach(y => kzEvents(y).forEach(([m, d, nm, em]) => { const dt = new Date(y, m, d), n = Math.round((dt - t0) / 864e5); if (n >= 0 && n <= 14 && (!best || n < best.n)) best = { n, nm, em }; }));
+  if (!best) return '';
+  return best.n === 0 ? best.em + ' Бүгін — ' + best.nm + '! Құтты болсын!' : '📅 ' + best.n + ' күннен кейін — ' + best.nm + ' ' + best.em;
+}
+function homeSub(isStaff0) {
+  const ev = kzEventLine(); if (ev) return ev; const wd = new Date().getDay(), hr = new Date().getHours();
+  if (wd === 1 && hr < 14) return 'Жаңа апта — жаңа мүмкіндік! 💪'; if (wd === 5) return 'Жұма! Аптаны әдемі аяқтаймыз 🎉'; if (wd === 0 || wd === 6) return 'Демалыс күні де жоспарыңды ұмытпа 🌿';
+  return isStaff0 ? 'Бүгін сабақ жоспарың дайын ба? Керегін бір басумен аш.' : 'Бүгін не үйренеміз? Пән таңда не тапсырманы аш.';
+}
 async function renderContinue(v) {
   const box = el('section', 'td dg-cont'); box.hidden = true; v.appendChild(box);
   try {
@@ -9550,11 +9581,10 @@ function homeAct(k) {
 function renderHome() {
   const v = $('v-home'); v.replaceChildren(); const np = (meName || '').trim().split(/\s+/), nm = np[1] || np[0] || 'қонақ';
   const hd = el('div', 'hm-hero'); const hr = new Date().getHours(), gr = hr >= 5 && hr < 12 ? 'Қайырлы таң' : hr >= 12 && hr < 18 ? 'Қайырлы күн' : hr >= 18 && hr < 23 ? 'Қайырлы кеш' : 'Қайырлы түн';
-  hd.append(el('h1', '', gr + ', ' + nm + '! 👋'), el('p', '', isStaff ? 'Бүгін сабақты не істейміз? Ең керектісін бір басумен аш.' : 'Бүгін не үйренеміз? Пән таңда не тапсырманы аш.'));
+  hd.append(el('h1', '', gr + ', ' + nm + '! ' + (hr >= 5 && hr < 12 ? '🌅' : hr >= 12 && hr < 18 ? '☀️' : hr >= 18 && hr < 23 ? '🌇' : '🌙')), el('p', '', homeSub(isStaff)));
   v.appendChild(hd);
   const card = (cls, t, d, ic, fn) => { const b = el('button', 'hm-card ' + cls); b.type = 'button'; const i = el('span', 'hm-ic'); i.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + HM_ICON[ic] + '</svg>'; if (HM_3D[ic]) b.insertAdjacentHTML('beforeend', '<img class="hm-ill hm-3d" alt="" width="96" height="96" src="' + HM_3D[ic] + '">'); else if (HM_ILL[ic]) b.insertAdjacentHTML('beforeend', HM_ILL[ic]); b.append(i, el('strong', '', t), el('small', '', d), el('em', '', 'Ашу →')); b.onclick = fn; return b; };
   const st = el('div', 'td-stats'); st.id = 'tdStats'; v.appendChild(st);
-  if (isStaff) renderContinue(v);
   renderToday(v);
   if (isStaff) {
     v.appendChild(el('h2', 'hm-h', 'Жылдам бастау'));
