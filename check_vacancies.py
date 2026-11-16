@@ -7,6 +7,7 @@ import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
+from html import escape
 from pathlib import Path
 
 API = "https://hr.nobd.edu.kz/portal/jobs/api/jobs/all/filter/sign"
@@ -64,29 +65,25 @@ def matches(job):
     return True
 
 
-def map_links(address):
-    """Мекенжайдан 2ГИС және Google Maps іздеу сілтемелерін жасайды."""
-    if not address:
-        return ""
-    q = urllib.parse.quote(address)
-    return (f"🗺 2ГИС: https://2gis.kz/search/{q}\n"
-            f"🗺 Google: https://www.google.com/maps/search/?api=1&query={q}\n")
-
-
 def fmt(job):
+    """Вакансия мәтіні (Telegram HTML). Мекенжай 2ГИС картасына сілтеме болады."""
     org = job.get("organization") or {}
     s, e = job.get("salaryStart"), job.get("salaryEnd")
     salary = f"{int(s):,}".replace(",", " ") if s else "көрсетілмеген"
     if e:
         salary += f" – {int(e):,}".replace(",", " ")
-    address = org.get("ruAddress") or org.get("address")
-    return (f"🆕 {job.get('title')}\n"
-            f"🏫 {org.get('kkName') or org.get('name')}\n"
-            f"📍 {address}\n"
-            f"{map_links(address)}"
+    address = org.get("ruAddress") or org.get("address") or ""
+    if address:
+        link = "https://2gis.kz/search/" + urllib.parse.quote(address)
+        addr_line = f'📍 <a href="{escape(link)}">{escape(address)}</a>\n'
+    else:
+        addr_line = "📍 көрсетілмеген\n"
+    return (f"🆕 {escape(str(job.get('title')))}\n"
+            f"🏫 {escape(str(org.get('kkName') or org.get('name')))}\n"
+            f"{addr_line}"
             f"💰 {salary} ₸\n"
             f"📅 дейін: {(job.get('vacancyEndDate') or '')[:10]}\n"
-            f"📞 {org.get('contactNumber') or ''}\n"
+            f"📞 {escape(str(org.get('contactNumber') or ''))}\n"
             f"🔗 {SITE}")
 
 
@@ -137,11 +134,14 @@ BUTTON = "🔍 Жұмыс бар ма?"
 KEYBOARD = json.dumps({"keyboard": [[{"text": BUTTON}]], "resize_keyboard": True})
 
 
-def send(text, keyboard=False):
+def send(text, keyboard=False, html=False):
     url = f"https://api.telegram.org/bot{BOT_TOKEN.strip()}/sendMessage"
     fields = {"chat_id": CHAT_ID.strip(), "text": text}
     if keyboard:
         fields["reply_markup"] = KEYBOARD
+    if html:
+        fields["parse_mode"] = "HTML"
+        fields["disable_web_page_preview"] = "true"
     data = urllib.parse.urlencode(fields).encode()
     for attempt in range(1, 4):
         try:
@@ -183,7 +183,7 @@ def handle_buttons(current):
         else:
             send(f"📋 Қазір ашық: {len(current)} вакансия", keyboard=True)
             for j in current[:10]:
-                send(fmt(j).replace("🆕", "📌", 1))
+                send(fmt(j).replace("🆕", "📌", 1), html=True)
     # Өңделген хабарламаларды Telegram-да «оқылды» деп белгілейміз
     last = max(u["update_id"] for u in updates)
     try:
@@ -218,12 +218,12 @@ def main():
                  f"Төмендегі «{BUTTON}» батырмасын бассаң, ашық вакансияларды көрсетемін "
                  f"(жауап 15 минутқа дейін кешігуі мүмкін).", keyboard=True)
             for j in new[:10]:
-                send(fmt(j))
+                send(fmt(j), html=True)
     else:
         for j in reversed(new):
             print("Жаңа:", j["id"], j["title"])
             if BOT_TOKEN and CHAT_ID:
-                send(fmt(j))
+                send(fmt(j), html=True)
 
     seen |= {j["id"] for j in jobs}
     SEEN_FILE.write_text(json.dumps(sorted(seen)))
