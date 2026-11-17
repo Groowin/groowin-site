@@ -1979,6 +1979,7 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
     <div id="v-qmj" hidden></div>
     <div id="v-gallery" hidden></div>
     <div id="v-library" hidden></div>
+    <div id="v-brain" hidden></div>
     <div id="v-room" hidden></div>
 
     <div id="v-catalog">
@@ -2807,7 +2808,7 @@ $('vfs').onclick = () => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.body.classList.remove('vfake'); });
 [['#v-hw>h2', '📚', '#8B5CF6', '#C084FC'], ['#v-mats>h2', '🗂️', '#F59E0B', '#FCD34D'], ['#rsHome>h2', '👥', '#10B981', '#6EE7B7'], ['#v-news>h2', '📣', '#EC4899', '#F9A8D4'], ['#v-classes>h2', '🏫', '#0EA5E9', '#67E8F9']].forEach(([q, ic, a, b]) => { const h = document.querySelector(q); if (h) { h.classList.add('pg-h'); h.dataset.ic = ic; h.style.setProperty('--a', a); h.style.setProperty('--b', b); } });
 let rm = null; // Оқу бөлмесі күйі
-const VIEWS = ['home', 'library', 'plan', 'projects', 'qmj', 'gallery', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
+const VIEWS = ['home', 'library', 'brain', 'plan', 'projects', 'qmj', 'gallery', 'room', 'path', 'hw', 'sites', 'favs', 'lessons', 'play', 'quiz', 'catalog', 'viewer', 'mats', 'rosters', 'inbox', 'games', 'rank', 'news', 'account', 'classes', 'students'];
 function show(v) { trackView(v); if (v === 'account' && typeof isStaff !== 'undefined') { const w = $('msWrap'); if (w) w.hidden = !isStaff; } if (v === 'account') [...$('v-account').children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 14))); VIEWS.forEach(x => $('v-' + x).hidden = x !== v); if (v === 'room') roomEnter(); else if (rm) roomLeave(); try { rmSync(v); } catch { } }
 function go(key, keep) {
   document.body.classList.remove('sheet'); try { curView = key; tabSync(); } catch { }
@@ -2819,7 +2820,7 @@ function go(key, keep) {
   if (key === 'physics' || key === 'math') {
     subj = key; if (!keep) gradeSel = null;
     renderGames(); show('catalog');
-  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'projects') loadProjects(); if (key === 'qmj') renderQmj(); if (key === 'gallery') loadGallery(); if (key === 'sites') loadSites(); if (key === 'path') loadMyPath(); if (key === 'hw') loadHw(); if (key === 'favs') loadFavsView(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'library') libOpen(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
+  } else { show(key === 'teachers' ? 'students' : key); if (key === 'students' || key === 'teachers') setUserPage(key === 'teachers' ? 'teacher' : 'student'); if (key === 'news') markSeen(); if (key === 'rank') loadRank(); if (key === 'lessons') loadLessons(); if (key === 'projects') loadProjects(); if (key === 'qmj') renderQmj(); if (key === 'gallery') loadGallery(); if (key === 'sites') loadSites(); if (key === 'path') loadMyPath(); if (key === 'hw') loadHw(); if (key === 'favs') loadFavsView(); if (key === 'classes') loadClasses(); if (key === 'games') loadGameAdmin(); if (key === 'inbox') loadReqs(); if (key === 'rosters') showRosterHome(); if (key === 'mats') loadMats(); if (key === 'library') libOpen(); if (key === 'brain') brainOpen(); if (key === 'play') loadPlay(); if (key === 'quiz') loadQuizzes(); }
 }
 document.querySelectorAll('#nav button[data-v]').forEach(b => b.onclick = () => go(b.dataset.v));
 $('subjHead').onclick = () => { const h = $('subjItems').hidden = !$('subjItems').hidden; $('subjHead').setAttribute('aria-expanded', String(!h)); $('subjArrow').textContent = h ? '▸' : '▾'; };
@@ -5376,7 +5377,7 @@ function qmMigrate() {
   } catch { }
 }
 function unTex(t) {
-  t = String(t == null ? '' : t); if (!/[\\$^_{}]/.test(t)) return t;
+  t = String(t == null ? '' : t).replace(/ר/g, 'р').replace(/[\u0590-\u05ff\u0600-\u06ff\u3040-\u30ff\u4e00-\u9fff]/g, ''); if (!/[\\$^_{}]/.test(t)) return t;
   const G = { lambda: 'λ', nu: 'ν', mu: 'μ', pi: 'π', Delta: 'Δ', delta: 'δ', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', omega: 'ω', Omega: 'Ω', rho: 'ρ', sigma: 'σ', tau: 'τ', phi: 'φ', epsilon: 'ε', eta: 'η', varepsilon: 'ε' };
   const SUP = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻', '+': '⁺', '−': '⁻' };
   const SUB = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉' };
@@ -6118,6 +6119,55 @@ async function libBook(b, after) {
     rm.onclick = async () => { if (!(await ask('«' + b.title + '» кітабы өшірілсін бе?', 'Өшіру'))) return; if (b.file_path) { try { await sb.storage.from('library').remove([b.file_path]); } catch { } } await sb.from('library_books').delete().eq('id', b.id); m.close(); after && after(); };
     box.appendChild(ed);
   }
+}
+
+// ===== «Ми»: жазбалар, күнделік, тапсырмалар (тек өзіне көрінеді) =====
+const BR_KIND = { note: ['📝', 'Жазба'], diary: ['📔', 'Күнделік'], task: ['✅', 'Тапсырма'], link: ['🔗', 'Сілтеме'] };
+const brDay = () => new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10);
+const brDate = d => { const t = brDay(), y = new Date(Date.now() + 5 * 3600e3 - 864e5).toISOString().slice(0, 10); return d === t ? 'Бүгін' : d === y ? 'Кеше' : d.split('-').reverse().join('.'); };
+let brF = 'all', brQ = '';
+async function brainOpen() {
+  const root = $('v-brain'); if (!root) return; root.replaceChildren();
+  const h = el('h2', '', '🧠 Ми'); const sub = el('p', 'hint', 'Мұнда жазғаныңды тек өзің көресің. ЖИ-ға «менің жазбамнан тап» десең, осыдан да іздейді.'); sub.style.margin = '0 0 12px';
+  const f = el('div', 'qm-tx'); f.style.cssText = 'display:grid;gap:8px;margin-bottom:14px';
+  const kd = document.createElement('select'); Object.entries(BR_KIND).forEach(([k, v]) => kd.appendChild(new Option(v[0] + ' ' + v[1], k)));
+  const tt = document.createElement('input'); tt.type = 'text'; tt.placeholder = 'Тақырыбы (міндетті емес)'; tt.maxLength = 120;
+  const bd = document.createElement('textarea'); bd.rows = 3; bd.placeholder = 'Не жазамыз? Ой, тапсырма, сабақтан кейінгі есеп, сілтеме…'; bd.maxLength = 8000;
+  const dd = document.createElement('input'); dd.type = 'date'; dd.title = 'Мерзімі (тапсырмаға)'; dd.hidden = true; kd.onchange = () => { dd.hidden = kd.value !== 'task'; };
+  const sv = el('button', 'go', 'Сақтау'); sv.type = 'button'; sv.style.width = 'auto';
+  const rw = el('div', ''); rw.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center'; rw.append(kd, dd, sv); f.append(tt, bd, rw);
+  const bar = el('div', ''); bar.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px';
+  const q = document.createElement('input'); q.type = 'search'; q.placeholder = 'Іздеу…'; q.value = brQ; q.style.cssText = 'flex:1 1 180px;min-width:0';
+  const list = el('div', ''); list.style.display = 'grid'; list.style.gap = '8px';
+  const chips = [['all', 'Барлығы'], ...Object.entries(BR_KIND).map(([k, v]) => [k, v[0] + ' ' + v[1]])].map(([k, nm]) => { const b = el('button', '', nm); b.type = 'button'; b.setAttribute('aria-pressed', String(brF === k)); b.style.cssText = 'padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:' + (brF === k ? 'var(--accent)' : 'transparent') + ';color:' + (brF === k ? '#fff' : 'var(--ink)') + ';font:inherit;cursor:pointer'; b.onclick = () => { brF = k; brainOpen(); }; return b; });
+  bar.append(...chips, q); root.append(h, sub, f, bar, list);
+  async function load() {
+    list.replaceChildren(); let qq = sb.from('brain_notes').select('*').order('day', { ascending: false }).order('created_at', { ascending: false }).limit(200); if (brF !== 'all') qq = qq.eq('kind', brF);
+    const ws = brQ.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 5).map(w => w.replace(/[%,()]/g, '')); if (ws.length) qq = qq.or(ws.flatMap(w => ['title.ilike.%' + w + '%', 'body.ilike.%' + w + '%']).join(','));
+    const r = await qq; if (r.error) { list.append(el('p', 'msg err', /brain_notes/.test(r.error.message) ? 'Алдымен update-54.sql іске қосыңыз (Supabase → SQL Editor).' : r.error.message)); return; }
+    if (!(r.data || []).length) { list.append(el('div', 'qm-tx', brQ ? 'Ештеңе табылмады.' : 'Әзірге бос. Бірінші жазбаңды жоғарыдан қос.')); return; }
+    let cur = '';
+    r.data.forEach(n => {
+      if (n.day !== cur) { cur = n.day; const dh = el('b', '', brDate(cur)); dh.style.cssText = 'margin-top:8px;opacity:.8'; list.appendChild(dh); }
+      const c = el('div', 'qm-tx'); c.style.cssText = 'display:grid;gap:6px'; const top = el('div', ''); top.style.cssText = 'display:flex;gap:8px;align-items:flex-start';
+      if (n.kind === 'task') { const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = n.done; cb.style.cssText = 'width:20px;height:20px;flex:0 0 auto;margin-top:2px'; cb.setAttribute('aria-label', 'Орындалды'); cb.onchange = async () => { await sb.from('brain_notes').update({ done: cb.checked, updated_at: new Date().toISOString() }).eq('id', n.id); load(); }; top.appendChild(cb); }
+      const tl = el('div', ''); tl.style.cssText = 'flex:1;min-width:0'; const ti = el('b', '', (BR_KIND[n.kind] || ['📝'])[0] + ' ' + (n.title || (n.body || '').split('\n')[0].slice(0, 70) || 'Жазба')); if (n.done) ti.style.textDecoration = 'line-through';
+      tl.appendChild(ti); if (n.due) tl.appendChild(el('small', '', '  ⏰ ' + brDate(n.due)));
+      const bt = (n.title ? n.body : n.body.split('\n').slice(1).join('\n')).trim(); if (bt) { const p = el('div', ''); p.style.cssText = 'white-space:pre-wrap;word-break:break-word;margin-top:4px;opacity:.9'; p.textContent = bt; tl.appendChild(p); }
+      const ed = el('button', 'out', '✏️'), dl = el('button', 'out', '🗑️'); ed.type = dl.type = 'button'; ed.title = 'Өзгерту'; dl.title = 'Жою'; ed.style.cssText = dl.style.cssText = 'width:auto;padding:6px 10px';
+      ed.onclick = () => { const m = modal('Жазбаны өзгерту'), t2 = document.createElement('input'), b2 = document.createElement('textarea'), ok = el('button', 'go', 'Сақтау'); t2.value = n.title; b2.rows = 8; b2.value = n.body; ok.type = 'button'; m.box.append(t2, b2, ok); ok.onclick = async () => { await sb.from('brain_notes').update({ title: t2.value.trim(), body: b2.value.trim(), updated_at: new Date().toISOString() }).eq('id', n.id); m.close(); load(); }; };
+      dl.onclick = async () => { if (!await ask('Жазба жойылсын ба?', 'Иә, жою', 'Жоқ')) return; await sb.from('brain_notes').delete().eq('id', n.id); load(); };
+      top.append(tl, ed, dl); c.appendChild(top); list.appendChild(c);
+    });
+  }
+  sv.onclick = async () => {
+    const body = bd.value.trim(), title = tt.value.trim(); if (!body && !title) { notify('Бос жазба сақталмайды.'); return; }
+    sv.disabled = true; const r = await sb.from('brain_notes').insert({ kind: kd.value, title, body, due: kd.value === 'task' && dd.value ? dd.value : null }); sv.disabled = false;
+    if (r.error) { notify(/brain_notes/.test(r.error.message) ? 'Алдымен update-54.sql іске қосыңыз.' : r.error.message, 'err'); return; }
+    bd.value = tt.value = ''; notify('Миға сақталды 🧠'); load();
+  };
+  let qt = 0; q.oninput = () => { clearTimeout(qt); qt = setTimeout(() => { brQ = q.value; load(); }, 300); };
+  load();
 }
 async function libOpen() {
   libStyle();
@@ -9614,6 +9664,7 @@ function renderHome() {
     HM_ICON.library = '<path d="M4 5a2 2 0 0 1 2-2h4v18H6a2 2 0 0 1-2-2z"/><path d="M10 3h4v18h-4z"/><path d="M14 5l4.5-1.2L21 18.5 16.5 20z"/>';
     main.forEach(([c, t, d, k]) => g.appendChild(card(c, t, d, k, () => homeAct(k))));
     libTile(g, () => card('c-teal', 'Кітапхана', 'Оқулықтар мен кітаптар', 'library', () => go('library')));
+    if (isStaff) HM_ICON.brain = HM_ICON.brain || '<path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 5 1V4a3 3 0 0 0-2 0z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-5 1V4a3 3 0 0 1 2 0z"/>', isStaff && g.appendChild(card('c-amber', 'Ми', 'Жазба, күнделік, тапсырма — ЖИ біледі', 'brain', () => go('brain')));
     g.appendChild(card('c-green', 'Файл жүктеу', 'Фото, PDF — Материалдарға', 'upload', () => pickUpload()));
     if (window.showDirectoryPicker) g.appendChild(card('c-blue', 'Компьютерден іздеу', 'Рұқсат берген папкалардан', 'pcfind', () => pcSearch()));
     rest.forEach(([c, t, d, k]) => more.appendChild(card(c, t, d, k, () => homeAct(k))));
@@ -10036,6 +10087,18 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       const r = await sb.from('library_books').select('*').eq('id', String(a && a.id || '')).maybeSingle(); if (!r.data) return { error: 'Кітап табылмады' };
       go('library'); setTimeout(() => libBook(r.data, () => { const v = $('v-library'); if (v && !v.hidden) libOpen(); }), 350); return { ok: true, note: 'Кітап беті ашылды: «Оқу» басса болады.' };
     },
+    async save_to_brain(a) {
+      const kind = /^(note|diary|task|link)$/.test(String(a && a.kind)) ? a.kind : 'note', body = trunc(a && a.body, 4000).trim(), title = trunc(a && a.title, 120).trim(); if (!body && !title) return { error: 'Бос' };
+      const r = await sb.from('brain_notes').insert({ kind, title, body, due: /^\d{4}-\d\d-\d\d$/.test(String(a && a.due)) ? a.due : null }); if (r.error) return { error: /brain_notes/.test(r.error.message) ? 'Ми әлі орнатылмаған (update-54.sql керек).' : r.error.message };
+      return { ok: true, note: 'Миға сақталды. Мұғалімге қысқа айт.' };
+    },
+    async search_brain(a) {
+      const ws = String(a && a.query || '').trim().split(/\s+/).filter(w => w.length > 1).slice(0, 5).map(w => w.replace(/[%,()]/g, '')); let q = sb.from('brain_notes').select('kind,title,body,day,done,due').order('day', { ascending: false }).limit(8);
+      if (ws.length) q = q.or(ws.flatMap(w => ['title.ilike.%' + w + '%', 'body.ilike.%' + w + '%']).join(','));
+      const r = await q; if (r.error) return { error: /brain_notes/.test(r.error.message) ? 'Ми әлі орнатылмаған (update-54.sql керек).' : r.error.message };
+      if (!(r.data || []).length) return { found: 0, note: 'Миында табылмады. Материалдардан да іздеп көр.' };
+      return { found: r.data.length, notes: r.data.map(x => ({ type: x.kind, date: x.day, title: x.title, text: String(x.body).slice(0, 700), done: x.done, due: x.due })) };
+    },
     async search_library(a) {
       const sj = /^(physics|math)$/.test(String(a && a.subject)) ? a.subject : null;
       const r = await sb.rpc('lib_search', { p_q: String(a && a.query || ''), p_subj: sj, p_grade: parseInt(a && a.grade, 10) || null, p_lim: 5 });
@@ -10129,7 +10192,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       return { t, img: null, o, c, s: 20 };
     }).filter(q => q.t && (q.k === 'num' || (q.o.filter(Boolean).length >= 2 && q.o[q.c])));
   }
-  const LABEL = { get_digest: 'Күн дайджестін жинап жатыр…', search_library: 'Оқулықтан іздеп жатыр…', find_books: 'Кітапханадан іздеп жатыр…', open_book: 'Кітапты ашып жатыр…', save_memory: 'Есімде сақтап жатыр…', forget_memory: 'Жадыдан өшіріп жатыр…', open_qmj: 'ҚМЖ бетін ашып жатыр…', find_computer_files: 'Компьютерден іздеп жатыр…', add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+  const LABEL = { save_to_brain: 'Миға сақтап жатыр…', search_brain: 'Миынан іздеп жатыр…', get_digest: 'Күн дайджестін жинап жатыр…', search_library: 'Оқулықтан іздеп жатыр…', find_books: 'Кітапханадан іздеп жатыр…', open_book: 'Кітапты ашып жатыр…', save_memory: 'Есімде сақтап жатыр…', forget_memory: 'Жадыдан өшіріп жатыр…', open_qmj: 'ҚМЖ бетін ашып жатыр…', find_computer_files: 'Компьютерден іздеп жатыр…', add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
 
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
@@ -10591,8 +10654,14 @@ function forcePw() {
     const arBox = el('div'); arBox.hidden = true;
     nwB.onclick = () => { data = null; last = null; ls.set(PK, ''); renderQmj(); };
     const drawAr = () => { arBox.replaceChildren(); const a = lsj(AK, []); if (!a.length) { arBox.append(el('div', 'qm-tx', 'Әзірге сақталған ҚМЖ жоқ. Жасаған сайын осында автоматты түседі.')); return; } a.forEach((x, i) => { const r = el('div', 'qm-tx'); r.style.cssText = 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px'; const t = el('span', '', (x.date || '') + ' · ' + (x.grade || '') + ' сынып · ' + (x.topic || '')); t.style.flex = '1 1 200px'; const o = el('button', 'qm-rg', 'Ашу'), d = el('button', 'qm-rg', 'Жою'), sh = el('button', 'qm-rg', '🌐 Галереяға'); o.type = d.type = sh.type = 'button'; sh.onclick = () => shareQmj(x); o.onclick = () => { data = x; last = x; ls.set(PK, JSON.stringify(x)); renderQmj(); }; d.onclick = async () => { if (!(await ask('«' + (x.topic || '') + '» ҚМЖ-ны жоямыз ба? (үй тапсырмасы ҚМЖ-мен бірге кетеді)', 'Жою', 'Жоқ'))) return;
-          if ((x.quizId || x.gameId) && await ask('Осы ҚМЖ-мен жасалған ' + (x.gameId && x.quizId ? 'ойын мен викторинаны' : x.gameId ? 'ойынды' : 'викторинаны') + ' да жоямыз ба? (Groowin)', 'Иә, жою', 'Жоқ, қалсын')) { try { if (x.quizId) await sb.from('quizzes').delete().eq('id', x.quizId); } catch { } try { if (x.gameId) await sb.from('board_sets').delete().eq('id', x.gameId); } catch { } }
-          if (x.wsId && await ask('Жұмыс парағын да жоямыз ба? (Материалдар)', 'Иә, жою', 'Жоқ, қалсын')) { try { const r = await sb.from('mat_items').select('storage_path').eq('id', x.wsId).maybeSingle(); if (r.data && r.data.storage_path) await sb.storage.from('materials').remove([r.data.storage_path]); await sb.from('mat_items').delete().eq('id', x.wsId); try { if (curView === 'mats') loadMats(); } catch { } } catch { } } const b = lsj(AK, []).filter(z => z._k !== x._k); ls.set(AK, JSON.stringify(b)); if (data && data._k === x._k) { data = null; ls.set(PK, ''); } drawAr(); }; r.append(t, o, sh, d); arBox.appendChild(r); }); };
+          const lk = [x.gameId && 'ойын', x.quizId && 'викторина', x.matId && 'Word файл (Материалдар)', x.wsId && 'жұмыс парағы'].filter(Boolean);
+          if (lk.length && await ask('Осы ҚМЖ-мен бірге жасалғандарды да жоямыз ба? (' + lk.join(', ') + ')', 'Иә, бәрін жою', 'Жоқ, қалсын')) {
+            try { if (x.quizId) await sb.from('quizzes').delete().eq('id', x.quizId); } catch { }
+            try { if (x.gameId) await sb.from('board_sets').delete().eq('id', x.gameId); } catch { }
+            for (const mid of [x.matId, x.wsId].filter(Boolean)) { try { const r = await sb.from('mat_items').select('storage_path').eq('id', mid).maybeSingle(); if (r.data && r.data.storage_path) await sb.storage.from('materials').remove([r.data.storage_path]); await sb.from('mat_items').delete().eq('id', mid); } catch { } }
+            try { if (curView === 'mats') loadMats(); } catch { }
+          }
+          const b = lsj(AK, []).filter(z => z._k !== x._k); ls.set(AK, JSON.stringify(b)); if (data && data._k === x._k) { data = null; ls.set(PK, ''); } drawAr(); }; r.append(t, o, sh, d); arBox.appendChild(r); }); };
     arB.onclick = () => { arBox.hidden = !arBox.hidden; if (!arBox.hidden) drawAr(); };
     const out = el('div'), st = el('div', 'qm-tx'); st.hidden = true;
     impF.onchange = async () => {
@@ -10764,8 +10833,24 @@ function forcePw() {
       notes.push(hit ? 'Есеп қайта есептелді: ' + wr + ' → ' + nv : '⚠ Есептің жауабын қолмен тексер: жазылған ' + wr + ', есептелгені ' + nv);
     });
     // жиі кездесетін емле қателері
-    const TYPO = [[/электромагнитік/gi, m => m[0] === 'Э' ? 'Электромагниттік' : 'электромагниттік'], [/инфрақызыл\s+сәулеле(?!н)/gi, m => m]];
+    const TYPO = [[/(қызыл[,;]\s*)қызғылт(\s*[,;]\s*сары)/gi, (m, a, b) => a + 'қызғылт сары' + b], [/(\d[‑\-–]\s*)қызғылт(?=\s*[,;])/gi, (m, a) => a + 'қызғылт сары'], [/электромагнитік/gi, m => m[0] === 'Э' ? 'Электромагниттік' : 'электромагниттік'], [/инфрақызыл\s+сәулеле(?!н)/gi, m => m]];
     mapAll(t => { let x = String(t || ''); TYPO.forEach(([re, f]) => { x = x.replace(re, f); }); return x; }); if (d.topic) d.topic = d.topic.replace(/электромагнитік/gi, m => m[0] === 'Э' ? 'Электромагниттік' : 'электромагниттік');
+    // 3б) мәтіндегі қарапайым арифметиканы тексеру: «3·500 нм / 2 = 760 нм» → 750
+    const UN = /(\d)\s*(?:нм|мкм|мм|см|км|м|мс|с|мин|Гц|кГц|МГц|Дж|Н|кг|г|Вт|В|А|Ом|Кл|Тл|балл|%)(?![а-яәіңғүұқөһa-z])/g;
+    const arith = t => String(t || '').split('\n').map(line => {
+      if (!/[=≈]/.test(line) || /[⁰¹²³⁴⁵⁶⁷⁸⁹^]|10\s*[⁻-]/.test(line)) return line;
+      const parts = line.split(/(=|≈)/); let ch = false;
+      for (let i = 0; i + 2 < parts.length; i += 2) {
+        const L = parts[i].replace(UN, '$1'), R = parts[i + 2], mm = L.match(/([\d(][\d.,\s·*×/+\-()]*)\s*$/), rm = R.match(/^(\s*)(\d+(?:[.,]\d+)?)(?![\d.,]*[·×^⁰-⁹])/);
+        if (!mm || !rm || !/[·*×/+]|\d\s-\s\d/.test(mm[1])) continue;
+        let ex = mm[1].replace(/,/g, '.').replace(/[·×]/g, '*').replace(/\s+/g, ''); if ((ex.match(/\(/g) || []).length !== (ex.match(/\)/g) || []).length || !/^[\d.+\-*/()]+$/.test(ex)) continue;
+        let v; try { v = Function('return (' + ex + ')')(); } catch { continue; } if (!isFinite(v)) continue;
+        const w = parseFloat(rm[2].replace(',', '.')), tol = Math.max(Math.abs(v) * 0.006, 0.006);
+        if (Math.abs(v - w) > tol) { const nv = String(+v.toPrecision(4)).replace('.', rm[2].includes(',') || !rm[2].includes('.') ? ',' : '.'); parts[i + 2] = R.replace(rm[2], nv); ch = true; arithN++; }
+      }
+      return ch ? parts.join('') : line;
+    }).join('\n');
+    let arithN = 0; mapAll(arith); if (arithN) notes.push('Арифметика түзетілді: ' + arithN + ' жерде (мысалы, 3·500/2 = 750)');
     // 4) «*» көбейту белгісін «·»-ға
     mapAll(t => String(t || '').replace(/(\d|\)|[A-Za-zα-ωΑ-Ω_₀-₉²³])\s\*\s(?=[\d(A-Za-zα-ωΑ-Ω√])/g, '$1 · '));
     return notes;
@@ -10874,7 +10959,7 @@ function forcePw() {
         const blob = await D.Packer.toBlob(qmjBuild(D, data)); delete data.appx;
         const fn = ('ҚМЖ ' + (data.topic || 'жоспар')).replace(/[\\/:*?"<>|]/g, '').slice(0, 60) + '.docx';
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
-        saveMat(blob, fn, data.date).then(ok => notify(ok ? 'Материалдарға да сақталды: ' + (data.date || 'күні') : 'Файл жүктелді (Материалдарға сақталмады)'));
+        saveMat(blob, fn, data.date).then(ok => { if (ok && ok !== true) { data.matId = ok; persist(); } notify(ok ? 'Материалдарға да сақталды: ' + (data.date || 'күні') : 'Файл жүктелді (Материалдарға сақталмады)'); });
       } catch (e) { notify('Қате: ' + (e.message || e), 'err'); }
       dl.disabled = false; dl.querySelector('strong').textContent = '⬇ Word-ке жүктеу';
     };
@@ -10959,7 +11044,7 @@ async function qmjPickImg(data, persist, done) {
   const top = el('div', ''); top.style.cssText = 'display:flex;gap:8px;align-items:center'; top.append(q, gb);
   const msg = el('p', 'msg', ''), grid = el('div', ''), view = el('div', ''); view.hidden = true;
   grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:10px';
-  box.append(top, el('p', 'hint', 'Оқулықтан сәйкес беттер табылады. Бетті басып, керек суретті тіктөртбұрышпен белгіле. Керек емес болса, жаба сал.'), msg, grid, view);
+  box.append(top, el('p', 'sub', 'Оқулықтан сәйкес беттер табылады. Бетті басып, керек суретті тіктөртбұрышпен белгіле. Керек емес болса, жаба сал.'), msg, grid, view);
   const docs = new Map();
   const pdfOf = id => { if (!docs.has(id)) docs.set(id, (async () => { const r = await sb.from('library_books').select('id,title,file_path').eq('id', id).single(); if (r.error || !r.data || !/\.pdf$/i.test(r.data.file_path || '')) throw new Error('PDF емес'); await pdfLib(); const pdf = await pdfjsLib.getDocument(await libUrl(r.data, false)).promise; return { b: r.data, pdf }; })()); return docs.get(id); };
   const draw = async (o, pg, w) => { const page = await o.pdf.getPage(pg), v0 = page.getViewport({ scale: 1 }), vp = page.getViewport({ scale: w / v0.width }), c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height); await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise; return c; };
@@ -10985,8 +11070,8 @@ async function qmjPickImg(data, persist, done) {
       (data.imgs = data.imgs || []).push({ d: t.toDataURL('image/jpeg', .82), w: t.width, h: t.height, cap: cap.value.trim(), st: +tg.value }); persist(); done();
       notify('Сурет қосылды. Word-ке жүктегенде түседі.'); sel = null; rc.style.display = 'none'; ok.disabled = true;
     };
-    const ctl = el('div', ''); ctl.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0'; ctl.append(bk, pv, nx, el('span', 'sub', pg + ' / ' + o.pdf.numPages)); const c2 = el('div', ''); c2.style.cssText = 'display:grid;gap:8px;margin-top:10px'; c2.append(tg, cap, ok);
-    view.append(ctl, wrap, c2);
+    const ctl = el('div', ''); ctl.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0'; ctl.append(bk, pv, nx, el('span', 'sub', pg + ' / ' + o.pdf.numPages), ok); const c2 = el('div', ''); c2.style.cssText = 'display:grid;gap:8px;margin:0 0 10px'; c2.append(el('p', 'sub', 'Суретті тіктөртбұрышпен белгіле, сосын осы жердегі «✔ Қосу» батырмасын бас.'), tg, cap);
+    ok.style.marginLeft = 'auto'; view.append(ctl, c2, wrap);
   };
   const search = async () => {
     grid.replaceChildren(); msg.className = 'msg'; msg.textContent = 'Іздеп жатыр…';
