@@ -1810,6 +1810,7 @@ html[data-season=newyear] #seasonFx::before{height:10px;background:radial-gradie
 #seasonFx i{color:var(--scol);position:absolute;top:-8%;font-style:normal;opacity:.75;animation:sFall linear infinite;will-change:transform}
 @keyframes sFall{to{transform:translate3d(var(--dx,20px),115vh,0) rotate(360deg)}}
 #frameFx{position:fixed;inset:0;pointer-events:none;z-index:5;border:var(--frw) solid transparent;border-image-source:var(--fri);border-image-slice:var(--frs,19%);border-image-repeat:var(--frr,stretch)}
+@media (min-width:821px){#frameFx{position:absolute;inset:auto;top:0;left:0;right:0;height:var(--fh,100vh)}}
 :root{--frw:clamp(12px,1.5vw,22px)}
 .rm-page{background:linear-gradient(rgba(6,9,24,var(--rov,.25)),rgba(6,9,24,var(--rov,.25))),var(--rbg) top center/100% auto no-repeat,var(--rbc,#0d1426);border-radius:22px;padding:18px;min-height:calc(100vh - 110px)}
 @media (max-width:820px){.rm-page{background:linear-gradient(rgba(6,9,24,var(--rov,.25)),rgba(6,9,24,var(--rov,.25))),var(--rbg) center/cover no-repeat,var(--rbc,#0d1426)}}
@@ -2939,6 +2940,12 @@ function siteImg(file, cb) {
   im.onerror = () => notify('Суретті ашу мүмкін болмады.'); im.src = u;
 }
 function rmSync(v) { const h = document.documentElement; if (v && SITE.bg[v] && document.body.classList.contains('in-app')) h.dataset.rm = '1'; else delete h.dataset.rm; }
+function frameFit() {
+  const f = $('frameFx'); if (!f || !matchMedia('(min-width:821px)').matches) return;
+  f.style.setProperty('--fh', '0px'); const H = Math.max(document.documentElement.scrollHeight, innerHeight); f.style.setProperty('--fh', H + 'px');
+}
+let frameT = 0; const frameSoon = () => { cancelAnimationFrame(frameT); frameT = requestAnimationFrame(frameFit); };
+try { new ResizeObserver(frameSoon).observe(document.body); addEventListener('resize', frameSoon); } catch { }
 function applySite() {
   const h = document.documentElement, inApp = document.body.classList.contains('in-app');
   // бөлім фондары
@@ -2958,6 +2965,7 @@ function applySite() {
   const fr = k !== 'off' && SITE.frame !== false ? frameFor(k) : null;
   if (fr && inApp) { h.style.setProperty('--fri', 'url("' + fr.u + '")'); h.style.setProperty('--frs', fr.s); h.style.setProperty('--frr', fr.r); } else { h.style.removeProperty('--fri'); }
   let ff = $('frameFx'); if (fr && inApp) { if (!ff) { ff = document.createElement('div'); ff.id = 'frameFx'; ff.setAttribute('aria-hidden', 'true'); document.body.appendChild(ff); } } else if (ff) ff.remove();
+  frameSoon();
   try { window.paintBrand && window.paintBrand(); } catch { }
   try { rmSync(typeof curView !== 'undefined' ? curView : ''); } catch { }
   renderSiteAdm();
@@ -10816,6 +10824,10 @@ function forcePw() {
     else if (data.fixes) box.appendChild(el('div', 'qm-tx', data.fixes.length ? '✔ Тексеру: ' + data.fixes.length + ' түзету енгізілді:\n• ' + data.fixes.join('\n• ') : '✔ Тексеру өтті, түзетілетін қате табылмады. Бәрібір өзің қарап шық.')).style.whiteSpace = 'pre-line';
     box.appendChild(el('div', 'qm-tx', 'Кез келген ұяшықты басып өзгерте аласың. Өз ойын сілтемелерің болса, Материалдарға салып қой, содан аламын. Құндылық пен апта дәйексөзі бос қалады.'));
     const bt = el('div', 'qm-tiles'); bt.style.marginTop = '10px'; const dl = el('button', 'hm-card c-blue qm-t'), re = el('button', 'hm-card c-teal qm-t'); dl.type = re.type = 'button'; dl.append(el('strong', '', '⬇ Word-ке жүктеу'), el('small', '', 'A4, ақ-қара кесте')); re.append(el('strong', '', '↻ Қайта жаса'), el('small', '', 'толығымен жаңа жоспар')); bt.append(dl, re); box.appendChild(bt);
+    const pk = el('button', 'hm-card c-pink qm-t'); pk.type = 'button'; pk.append(el('strong', '', '📷 Оқулықтан сурет'), el('small', '', 'ЖИ бет тапсын, аумақты өзің белгіле')); bt.appendChild(pk);
+    const gi = el('div', ''); gi.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px'; box.appendChild(gi);
+    const drawImgs = () => { gi.replaceChildren(); (data.imgs || []).forEach((im, n) => { const w = el('div', ''); w.style.cssText = 'position:relative'; const t = new Image(); t.src = im.d; t.alt = ''; t.style.cssText = 'height:56px;border-radius:8px;border:1px solid var(--line);display:block'; const x = el('button', '', '✕'); x.type = 'button'; x.title = 'Алып тастау'; x.style.cssText = 'position:absolute;top:-6px;right:-6px;width:22px;height:22px;padding:0;border-radius:50%;border:0;background:#e5484d;color:#fff;cursor:pointer;font-size:.7rem'; x.onclick = () => { data.imgs.splice(n, 1); persist(); drawImgs(); }; w.append(t, x); gi.appendChild(w); }); };
+    pk.onclick = () => qmjPickImg(data, persist, drawImgs); drawImgs();
     re.onclick = () => $('v-qmj').querySelector('.qm-gen').click();
     const rd0 = e => (e ? e.innerText : '').replace(/\u00a0/g, ' ').trim();
     async function regen(i, btn) {
@@ -10940,6 +10952,54 @@ function forcePw() {
     } catch { return false; }
   }
 // qmjBuild(D, data) -> Document. data: {section,teacher,date,grade,topic,goal,goals[],stages[{teacher,student,assess,resources}],homework}
+async function qmjPickImg(data, persist, done) {
+  const m = modal('📷 Оқулықтан сурет'), box = m.box; box.style.maxWidth = '900px';
+  const q = document.createElement('input'); q.type = 'search'; q.value = data.topic || ''; q.placeholder = 'Тақырып не сөз'; q.style.flex = '1';
+  const gb = el('button', 'go', 'Іздеу'); gb.type = 'button'; gb.style.cssText = 'width:auto;flex:0 0 auto';
+  const top = el('div', ''); top.style.cssText = 'display:flex;gap:8px;align-items:center'; top.append(q, gb);
+  const msg = el('p', 'msg', ''), grid = el('div', ''), view = el('div', ''); view.hidden = true;
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:10px';
+  box.append(top, el('p', 'hint', 'Оқулықтан сәйкес беттер табылады. Бетті басып, керек суретті тіктөртбұрышпен белгіле. Керек емес болса, жаба сал.'), msg, grid, view);
+  const docs = new Map();
+  const pdfOf = id => { if (!docs.has(id)) docs.set(id, (async () => { const r = await sb.from('library_books').select('id,title,file_path').eq('id', id).single(); if (r.error || !r.data || !/\.pdf$/i.test(r.data.file_path || '')) throw new Error('PDF емес'); await pdfLib(); const pdf = await pdfjsLib.getDocument(await libUrl(r.data, false)).promise; return { b: r.data, pdf }; })()); return docs.get(id); };
+  const draw = async (o, pg, w) => { const page = await o.pdf.getPage(pg), v0 = page.getViewport({ scale: 1 }), vp = page.getViewport({ scale: w / v0.width }), c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height); await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise; return c; };
+  const TG = [['-1', 'Қосымша (құжат соңында)']].concat(['Ұйымдастыру', 'Жаңарту', 'Жаңа білім', 'Практика', 'Рефлексия'].map((n, i) => [String(i), (i + 1) + '-кезең «' + n + '»: мұғалім әрекеті'])).concat(['Ұйымдастыру', 'Жаңарту', 'Жаңа білім', 'Практика', 'Рефлексия'].map((n, i) => [String(10 + i), (i + 1) + '-кезең «' + n + '»: ресурстар']));
+  const showPage = async (o, pg) => {
+    grid.hidden = top.hidden = true; view.hidden = false; view.replaceChildren(); msg.className = 'msg'; msg.textContent = 'Бет ашылып жатыр…';
+    const W = Math.min(820, innerWidth - 70); let c; try { c = await draw(o, pg, W * 1.6); } catch (e) { msg.className = 'msg err'; msg.textContent = e.message; return; }
+    msg.textContent = '';
+    c.style.cssText = 'width:' + W + 'px;display:block;border-radius:6px;background:#fff'; const k = c.width / W;
+    const wrap = el('div', ''); wrap.style.cssText = 'position:relative;display:inline-block;touch-action:none;cursor:crosshair;max-width:100%'; const rc = el('div', ''); rc.style.cssText = 'position:absolute;border:2px dashed #ff9d2e;background:rgba(255,157,46,.2);display:none;pointer-events:none'; wrap.append(c, rc);
+    let a = null, sel = null; const ok = el('button', 'go', '✔ Қосу'); ok.type = 'button'; ok.disabled = true; ok.style.cssText = 'width:auto';
+    wrap.onpointerdown = e => { const r = wrap.getBoundingClientRect(); a = { x: e.clientX - r.left, y: e.clientY - r.top }; sel = null; ok.disabled = true; rc.style.display = 'none'; wrap.setPointerCapture(e.pointerId); };
+    wrap.onpointermove = e => { if (!a) return; const r = wrap.getBoundingClientRect(), x = Math.max(0, Math.min(W, e.clientX - r.left)), y = Math.max(0, Math.min(c.height / k, e.clientY - r.top)); sel = { x: Math.min(a.x, x), y: Math.min(a.y, y), w: Math.abs(x - a.x), h: Math.abs(y - a.y) }; rc.style.cssText += ';display:block;left:' + sel.x + 'px;top:' + sel.y + 'px;width:' + sel.w + 'px;height:' + sel.h + 'px'; };
+    wrap.onpointerup = () => { a = null; ok.disabled = !(sel && sel.w > 24 && sel.h > 24); };
+    const tg = document.createElement('select'); TG.forEach(([v, t]) => tg.appendChild(new Option(t, v))); tg.value = '2';
+    const cap = document.createElement('input'); cap.type = 'text'; cap.value = '«' + o.b.title + '» оқулығы, ' + pg + '-бет'; cap.style.cssText = 'flex:1;min-width:180px';
+    const bk = el('button', 'out', '← Беттерге'), pv = el('button', 'out', '◀'), nx = el('button', 'out', '▶'); bk.type = pv.type = nx.type = 'button'; pv.disabled = pg <= 1; nx.disabled = pg >= o.pdf.numPages;
+    bk.onclick = () => { view.hidden = true; grid.hidden = top.hidden = false; }; pv.onclick = () => showPage(o, pg - 1); nx.onclick = () => showPage(o, pg + 1);
+    ok.onclick = () => {
+      if ((data.imgs || []).length >= 6) { notify('Ең көбі 6 сурет.', 'err'); return; }
+      const sw = sel.w * k, sh = sel.h * k, sc = Math.min(1, 720 / sw), t = document.createElement('canvas'); t.width = Math.round(sw * sc); t.height = Math.round(sh * sc);
+      const x = t.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, t.width, t.height); x.drawImage(c, sel.x * k, sel.y * k, sw, sh, 0, 0, t.width, t.height);
+      (data.imgs = data.imgs || []).push({ d: t.toDataURL('image/jpeg', .82), w: t.width, h: t.height, cap: cap.value.trim(), st: +tg.value }); persist(); done();
+      notify('Сурет қосылды. Word-ке жүктегенде түседі.'); sel = null; rc.style.display = 'none'; ok.disabled = true;
+    };
+    const ctl = el('div', ''); ctl.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0'; ctl.append(bk, pv, nx, el('span', 'sub', pg + ' / ' + o.pdf.numPages)); const c2 = el('div', ''); c2.style.cssText = 'display:grid;gap:8px;margin-top:10px'; c2.append(tg, cap, ok);
+    view.append(ctl, wrap, c2);
+  };
+  const search = async () => {
+    grid.replaceChildren(); msg.className = 'msg'; msg.textContent = 'Іздеп жатыр…';
+    const r = await sb.rpc('lib_search', { p_q: q.value.trim(), p_subj: null, p_grade: null, p_lim: 10 });
+    if (r.error) { msg.className = 'msg err'; msg.textContent = r.error.message; return; }
+    const seen = new Set(), rows = (r.data || []).filter(x => { const kk = x.book_id + ':' + x.page; if (seen.has(kk)) return false; seen.add(kk); return true; }).slice(0, 8);
+    if (!rows.length) { msg.textContent = 'Табылмады. Басқа сөзбен іздеп көр.'; return; }
+    msg.textContent = '';
+    rows.forEach(x => { const cd = el('button', 'out', 'Жүктеліп жатыр…'); cd.type = 'button'; cd.style.cssText = 'padding:6px;display:grid;gap:4px;font-size:.78rem'; grid.appendChild(cd); (async () => { try { const o = await pdfOf(x.book_id), c = await draw(o, x.page, 260); c.style.cssText = 'width:100%;border-radius:6px;display:block;background:#fff'; cd.replaceChildren(c, el('small', '', o.b.title + ' · ' + x.page + ' бет')); cd.onclick = () => showPage(o, x.page); } catch { cd.remove(); } })(); });
+  };
+  gb.onclick = search; q.onkeydown = e => { if (e.key === 'Enter') search(); };
+  if (q.value.trim()) search();
+}
 function qmjBuild(D, d) {
   const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle, VerticalAlign } = D;
   const F = 'Times New Roman', SZ = 24;
@@ -10961,18 +11021,22 @@ function qmjBuild(D, d) {
       r0('Оқу бағдарламасына сәйкес оқу мақсаты', paras(d.goal)), r0('Сабақтың мақсаты', goalP),
       r0('Құндылықтарды дарыту', paras('')), r0('Апта дәйексөзі', paras(''))]
   });
+  const u8 = s => { const b = atob(s.split(',')[1]), a = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; };
+  const imgP = (im, mw) => { const sc = Math.min(1, mw / im.w); return [new Paragraph({ spacing: { before: 60, after: 20 }, children: [new D.ImageRun({ data: u8(im.d), type: 'jpg', transformation: { width: Math.round(im.w * sc), height: Math.round(im.h * sc) } })] }), new Paragraph({ spacing: { after: 80 }, children: [run(im.cap || '', { size: 18, italics: true })] })]; };
+  const imgs = d.imgs || [], atS = k => imgs.filter(x => x.st === k);
   const hd = ['Кезең (уақыты, 45 мин)', 'Мұғалімнің іс-әрекеті', 'Оқушының іс-әрекеті', 'Бағалау', 'Ресурстар'];
   const rows = [new TableRow({ tableHeader: true, children: hd.map((h, i) => cell(W1[i], [new Paragraph({ alignment: AlignmentType.CENTER, children: [run(h, { bold: true })] })])) })];
   const st = d.stages || [];
   for (let i = 0; i < 5; i++) {
     const s = st[i] || {};
-    rows.push(new TableRow({ cantSplit: false, children: [cell(W1[0], [new Paragraph({ children: [run((i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин)', { bold: true })] })]), cell(W1[1], paras(s.teacher)), cell(W1[2], paras(s.student)), cell(W1[3], paras(s.assess)), cell(W1[4], resP(s))] }));
+    rows.push(new TableRow({ cantSplit: false, children: [cell(W1[0], [new Paragraph({ children: [run((i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин)', { bold: true })] })]), cell(W1[1], paras(s.teacher).concat(atS(i).flatMap(x => imgP(x, 200)))), cell(W1[2], paras(s.student)), cell(W1[3], paras(s.assess)), cell(W1[4], resP(s).concat(atS(10 + i).flatMap(x => imgP(x, 92))))] }));
   }
   rows.push(new TableRow({ children: [cell(W1[0], [new Paragraph({ children: [run('6. Үй тапсырмасы', { bold: true })] })]), cell(W1[1], paras(d.homework)), cell(W1[2], paras('Тапсырманы дәптерге орындайды')), cell(W1[3], paras('—')), cell(W1[4], paras('Оқулық, дәптер'))] }));
   const t1 = new Table({ width: { size: 10774, type: WidthType.DXA }, columnWidths: W1, rows });
   const doc = new Document({
     styles: { default: { document: { run: { font: F, size: SZ } } } },
-    sections: [{ properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 566, bottom: 566, left: 566, right: 566 } } }, children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 160 }, children: [run('Қысқа мерзімді жоспар', { bold: true, size: 28 })] }), t0, new Paragraph({ spacing: { after: 120 }, children: [] }), t1].concat((d.appx || []).flatMap((a, k) => [new Paragraph({ pageBreakBefore: k === 0, spacing: { before: k ? 240 : 0, after: 120 }, children: [run(a.title, { bold: true, size: 26 })] })].concat(a.lines.map(l => new Paragraph({ spacing: { after: 60 }, children: [run(l)] }))))) }]
+    sections: [{ properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 566, bottom: 566, left: 566, right: 566 } } }, children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 160 }, children: [run('Қысқа мерзімді жоспар', { bold: true, size: 28 })] }), t0, new Paragraph({ spacing: { after: 120 }, children: [] }), t1].concat((d.appx || []).flatMap((a, k) => [new Paragraph({ pageBreakBefore: k === 0, spacing: { before: k ? 240 : 0, after: 120 }, children: [run(a.title, { bold: true, size: 26 })] })].concat(a.lines.map(l => new Paragraph({ spacing: { after: 60 }, children: [run(l)] })))))
+    .concat(atS(-1).length ? [new Paragraph({ pageBreakBefore: !(d.appx || []).length, spacing: { before: 240, after: 120 }, children: [run('Қосымша ' + ((d.appx || []).length + 1) + '. Оқулықтан суреттер', { bold: true, size: 26 })] })].concat(atS(-1).flatMap(x => imgP(x, 460))) : []) }]
   });
   return doc;
 }
