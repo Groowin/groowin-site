@@ -53,6 +53,40 @@ def fetch_page(page):
         return json.load(r).get("data") or []
 
 
+DETAIL_API = "https://hr.nobd.edu.kz/portal/jobs/api/jobs/"
+
+
+def fetch_detail(job_id):
+    """Вакансияның толық мәліметі (countHours, deletedDate). Қате болса None."""
+    req = urllib.request.Request(DETAIL_API + str(job_id), headers={
+        "Accept": "application/json, text/plain, */*",
+        "Origin": "https://hr.nobd.edu.kz",
+        "Referer": "https://hr.nobd.edu.kz/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/157.0.0.0 Safari/537.36",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.load(r).get("body") or None
+    except Exception as exc:
+        print(f"Толық мәлімет қатесі ({job_id}):", exc)
+        return None
+
+
+def enrich(matched):
+    """Әр вакансияға сағат санын қосады; жойылған/жабық вакансияларды алып тастайды.
+    Толық мәлімет алынбаса, вакансия сақталады (уақытша қате ашық вакансияны жоғалтпасын)."""
+    out = []
+    for j in matched:
+        d = fetch_detail(j["id"])
+        if d:
+            if d.get("deletedDate") or d.get("status") not in (None, "ACTIVE"):
+                print("Жабық не жойылған:", j["id"])
+                continue
+            j["countHours"] = d.get("countHours")
+        out.append(j)
+    return out
+
+
 def matches(job):
     org = job.get("organization") or {}
     if REGION_PREFIXES:
@@ -81,7 +115,7 @@ def workload(job):
     for k, v in job.items():
         kl = k.lower()
         if any(h in kl for h in HOUR_KEYS) and v not in (None, "", [], {}):
-            return str(v)
+            return f"{v} сағат" if isinstance(v, (int, float)) and "hour" in kl else str(v)
     text = " ".join(str(job.get(k) or "") for k in ("title", "description", "descriptionKz"))
     text = re.sub(r"<[^>]+>", " ", text)
     m = re.search(r"(\d{1,2}(?:[.,]\d+)?)\s*(?:часов|часа|час\b|сағат)", text, re.I)
@@ -91,6 +125,19 @@ def workload(job):
     if m:
         return f"{m.group(1)} ставка"
     return None
+
+
+EMPLOYMENT = {"FULL": "толық жұмыс күні", "PART_TIME": "жарты күн (жартылай жұмыс күні)"}
+
+
+def work_line(job):
+    """Жұмыс түрі (сайттағы «Тип занятости») + сипаттамада жазылған болса сағат саны."""
+    types = [EMPLOYMENT.get(t, t) for t in (job.get("experienceType") or [])]
+    line = "Жұмыс түрі: " + (", ".join(types) if types else "көрсетілмеген")
+    hours = workload(job)
+    if hours:
+        line += f" · жүктеме: {hours}"
+    return line
 
 
 def fmt(job):
@@ -110,7 +157,7 @@ def fmt(job):
             f"🏫 {escape(str(org.get('kkName') or org.get('name')))}\n"
             f"{addr_line}"
             f"💰 {salary} ₸\n"
-            f"⏱ Жүктеме: {escape(workload(job) or 'сайтта көрсетілмеген')}\n"
+            f"⏱ {escape(work_line(job))}\n"
             f"📅 дейін: {(job.get('vacancyEndDate') or '')[:10]}\n"
             f"📞 {escape(str(org.get('contactNumber') or ''))}\n"
             f"🔗 {SITE}")
@@ -271,9 +318,13 @@ def main():
             handle_buttons(None)
         return 0
 
+    matched = [j for j in jobs if matches(j)]
+    current = enrich(matched)   # сағат саны қосылады, жабылғандары алынады
+    print(f"API қайтарды: {len(jobs)} | сүзгіден өтті: {len(matched)} | ашық: {len(current)}")
+
     first_run = not SEEN_FILE.exists()
     seen = set(json.loads(SEEN_FILE.read_text())) if not first_run else set()
-    new = [j for j in jobs if j["id"] not in seen and matches(j)]
+    new = [j for j in current if j["id"] not in seen]
 
     if first_run:
         print(f"Бірінші іске қосу: {len(new)} вакансия белгіленді, хабарламасыз.")
@@ -293,9 +344,6 @@ def main():
     seen |= {j["id"] for j in jobs}
     SEEN_FILE.write_text(json.dumps(sorted(seen)))
 
-    current = [j for j in jobs if matches(j)]
-    print(f"API қайтарды: {len(jobs)} | сүзгіден өтті (ашық): {len(current)}")
-    dump_sample(jobs)
     track_open(current)
     heartbeat(current)
 
