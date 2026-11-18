@@ -6126,33 +6126,45 @@ const BR_KIND = { note: ['📝', 'Жазба'], diary: ['📔', 'Күнделі�
 const brDay = () => new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10);
 const brDate = d => { const t = brDay(), y = new Date(Date.now() + 5 * 3600e3 - 864e5).toISOString().slice(0, 10); return d === t ? 'Бүгін' : d === y ? 'Кеше' : d.split('-').reverse().join('.'); };
 let brF = 'all', brQ = '';
+// түрін, тақырыбын, мерзімін мәтіннен өзі анықтайды (күні — базада автомат)
+function brAuto(raw) {
+  const t = String(raw).trim(), low = t.toLowerCase(), url = /^https?:\/\/\S+$/.test(t);
+  const task = /(керек\b|ұмытпа|ұмытып қалма|дайында|істеу|тапсыр|жіберу|төлеу|өткізу|тексеру керек|не забыть|нужно|надо|сделать|подготов)/i.test(low) || /^(тапсырма|todo)\s*[:\-–]/i.test(low);
+  const diary = !task && !url && /(бүгін|кеше|сабақ|болды|өттім|өтті|көңіл|сегодня|вчера)/i.test(low);
+  const kind = url ? 'link' : task ? 'task' : diary ? 'diary' : 'note';
+  const clean = t.replace(/^(тапсырма|todo|күнделік|сілтеме)\s*[:\-–]\s*/i, '');
+  const first = clean.split('\n')[0].trim(); let title = first.length > 60 ? first.slice(0, 60).replace(/\s+\S*$/, '') + '…' : first;
+  const body = first.length > 60 ? clean : clean.split('\n').slice(1).join('\n').trim();
+  let due = null; const k = new Date(Date.now() + 5 * 3600e3), iso = d => d.toISOString().slice(0, 10);
+  const m = low.match(/(\d{4})-(\d\d)-(\d\d)/), m2 = low.match(/(\d{1,2})[.](\d{1,2})(?:[.](\d{2,4}))?/);
+  if (m) due = m[0]; else if (/ертең|завтра/.test(low)) due = iso(new Date(k.getTime() + 864e5)); else if (task && /бүгін|сегодня/.test(low)) due = iso(k);
+  else if (m2 && +m2[1] <= 31 && +m2[2] <= 12) { const y = m2[3] ? (m2[3].length === 2 ? 2000 + +m2[3] : +m2[3]) : k.getUTCFullYear(); due = y + '-' + String(m2[2]).padStart(2, '0') + '-' + String(m2[1]).padStart(2, '0'); }
+  return { kind, title, body, due: task ? due : null };
+}
 async function brainOpen() {
   const root = $('v-brain'); if (!root) return; root.replaceChildren();
-  const h = el('h2', '', '🧠 Ми'); const sub = el('p', 'hint', 'Мұнда жазғаныңды тек өзің көресің. ЖИ-ға «менің жазбамнан тап» десең, осыдан да іздейді.'); sub.style.margin = '0 0 12px';
+  const h = el('h2', '', '🧠 Ми'); const sub = el('p', 'hint', 'Жаза бер, күні, тақырыбы мен түрін өзім анықтаймын. Тек өзің көресің; ЖИ-ға «жазбамнан тап» десең, осыдан іздейді.'); sub.style.margin = '0 0 12px';
   const f = el('div', 'qm-tx'); f.style.cssText = 'display:grid;gap:8px;margin-bottom:14px';
-  const kd = document.createElement('select'); Object.entries(BR_KIND).forEach(([k, v]) => kd.appendChild(new Option(v[0] + ' ' + v[1], k)));
-  const tt = document.createElement('input'); tt.type = 'text'; tt.placeholder = 'Тақырыбы (міндетті емес)'; tt.maxLength = 120;
-  const bd = document.createElement('textarea'); bd.rows = 3; bd.placeholder = 'Не жазамыз? Ой, тапсырма, сабақтан кейінгі есеп, сілтеме…'; bd.maxLength = 8000;
-  const dd = document.createElement('input'); dd.type = 'date'; dd.title = 'Мерзімі (тапсырмаға)'; dd.hidden = true; kd.onchange = () => { dd.hidden = kd.value !== 'task'; };
-  const sv = el('button', 'go', 'Сақтау'); sv.type = 'button'; sv.style.width = 'auto';
-  const rw = el('div', ''); rw.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center'; rw.append(kd, dd, sv); f.append(tt, bd, rw);
+  const bd = document.createElement('textarea'); bd.rows = 3; bd.placeholder = 'Не болды? Жаз да сақта: ой, іс, сабақтан кейінгі есеп, сілтеме…'; bd.maxLength = 8000;
+  const sv = el('button', 'go', 'Сақтау'); sv.type = 'button'; sv.style.width = 'auto'; sv.style.justifySelf = 'start';
+  f.append(bd, sv);
   const bar = el('div', ''); bar.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px';
-  const q = document.createElement('input'); q.type = 'search'; q.placeholder = 'Іздеу…'; q.value = brQ; q.style.cssText = 'flex:1 1 180px;min-width:0';
+  const q = document.createElement('input'); q.type = 'search'; q.placeholder = 'Жазбалардан іздеу…'; q.value = brQ; q.style.cssText = 'flex:1 1 180px;min-width:0';
   const list = el('div', ''); list.style.display = 'grid'; list.style.gap = '8px';
   const chips = [['all', 'Барлығы'], ...Object.entries(BR_KIND).map(([k, v]) => [k, v[0] + ' ' + v[1]])].map(([k, nm]) => { const b = el('button', '', nm); b.type = 'button'; b.setAttribute('aria-pressed', String(brF === k)); b.style.cssText = 'padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:' + (brF === k ? 'var(--accent)' : 'transparent') + ';color:' + (brF === k ? '#fff' : 'var(--ink)') + ';font:inherit;cursor:pointer'; b.onclick = () => { brF = k; brainOpen(); }; return b; });
   const tgBox = el('div', 'qm-tx'); tgBox.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px';
   (async () => {
     const r = await sb.from('tg_links').select('user_id').maybeSingle(); tgBox.replaceChildren();
     if (r.error) return; // update-55 әлі жоқ — көрсетпейміз
-    if (r.data) { const ok = el('span', '', '✈️ Telegram қосулы — боттың өзіне жаз, «Миға» түседі'), off = el('button', 'out', 'Ажырату'); off.type = 'button'; off.style.width = 'auto'; off.onclick = async () => { await sb.from('tg_links').delete().eq('user_id', meId); brainOpen(); }; tgBox.append(ok, off); return; }
+    if (r.data) { const ok = el('span', '', '✈️ Telegram қосулы — ботқа жаз: ақылды жауап береді, жазбаң «Миға» түседі'), off = el('button', 'out', 'Ажырату'); off.type = 'button'; off.style.width = 'auto'; off.onclick = async () => { await sb.from('tg_links').delete().eq('user_id', meId); brainOpen(); }; tgBox.append(ok, off); return; }
     const b = el('button', 'out', '✈️ Telegram қосу'); b.type = 'button'; b.style.width = 'auto';
     const tip = el('span', 'hint', ''); tip.style.display = 'none';
     b.onclick = async () => { b.disabled = true; const c = await sb.rpc('tg_make_code'); b.disabled = false; if (c.error) { notify(c.error.message, 'err'); return; } tip.style.display = ''; tip.textContent = 'Telegram-да Groowin ботына мынаны жібер: /start ' + c.data + ' (15 минут жарамды)'; };
     tgBox.append(b, tip);
   })();
-  bar.append(...chips, q); root.append(h, sub, tgBox, f, bar, list);
+  bar.append(q); root.append(h, sub, tgBox, f, bar, list);
   async function load() {
-    list.replaceChildren(); let qq = sb.from('brain_notes').select('*').order('day', { ascending: false }).order('created_at', { ascending: false }).limit(200); if (brF !== 'all') qq = qq.eq('kind', brF);
+    list.replaceChildren(); let qq = sb.from('brain_notes').select('*').order('day', { ascending: false }).order('created_at', { ascending: false }).limit(200);
     const ws = brQ.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 5).map(w => w.replace(/[%,()]/g, '')); if (ws.length) qq = qq.or(ws.flatMap(w => ['title.ilike.%' + w + '%', 'body.ilike.%' + w + '%']).join(','));
     const r = await qq; if (r.error) { list.append(el('p', 'msg err', /brain_notes/.test(r.error.message) ? 'Алдымен update-54.sql іске қосыңыз (Supabase → SQL Editor).' : r.error.message)); return; }
     if (!(r.data || []).length) { list.append(el('div', 'qm-tx', brQ ? 'Ештеңе табылмады.' : 'Әзірге бос. Бірінші жазбаңды жоғарыдан қос.')); return; }
@@ -6171,10 +6183,10 @@ async function brainOpen() {
     });
   }
   sv.onclick = async () => {
-    const body = bd.value.trim(), title = tt.value.trim(); if (!body && !title) { notify('Бос жазба сақталмайды.'); return; }
-    sv.disabled = true; const r = await sb.from('brain_notes').insert({ kind: kd.value, title, body, due: kd.value === 'task' && dd.value ? dd.value : null }); sv.disabled = false;
+    const raw = bd.value.trim(); if (!raw) { notify('Бос жазба сақталмайды.'); return; }
+    const a = brAuto(raw); sv.disabled = true; const r = await sb.from('brain_notes').insert(a); sv.disabled = false;
     if (r.error) { notify(/brain_notes/.test(r.error.message) ? 'Алдымен update-54.sql іске қосыңыз.' : r.error.message, 'err'); return; }
-    bd.value = tt.value = ''; notify('Миға сақталды 🧠'); load();
+    bd.value = ''; notify('Сақталды: ' + BR_KIND[a.kind][1] + (a.due ? ' · мерзімі ' + brDate(a.due) : '')); load();
   };
   let qt = 0; q.oninput = () => { clearTimeout(qt); qt = setTimeout(() => { brQ = q.value; load(); }, 300); };
   load();
