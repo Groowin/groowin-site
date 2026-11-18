@@ -1,0 +1,67 @@
+{
+ "id": 173796,
+ "title": "Учитель физики",
+ "status": "ACTIVE",
+ "statusEnum": null,
+ "salaryStart": 130000.0,
+ "salaryEnd": null,
+ "salaryTerm": "",
+ "vacancyStartDate": "2026-11-10T00:00:00.000+05:00",
+ "vacancyEndDate": "2026-11-19T00:00:00.000+05:00",
+ "temporaryEndDate": null,
+ "respondCount": null,
+ "documentListDto": null,
+ "temporaryJob": false,
+ "inFavorite": null,
+ "hasAccept": null,
+ "userResponded": null,
+ "experienceType": [
+  "PART_TIME"
+ ],
+ "experienceYear": [],
+ "educationType": [
+  "HIGHER_PED"
+ ],
+ "educationLanguage": [
+  "RU"
+ ],
+ "organization": [
+  "address",
+  "affilation",
+  "areaCode",
+  "bin",
+  "contactEmail",
+  "contactNumber",
+  "createdBy",
+  "createdDate",
+  "id",
+  "kkAddress",
+  "kkFullName",
+  "kkName",
+  "lastModifiedBy",
+  "lastModifiedDate",
+  "locationCode",
+  "name",
+  "nobdSchoolId",
+  "postalAddress",
+  "regionCode",
+  "ruAddress",
+  "ruFullName",
+  "ruName",
+  "typeCode"
+ ],
+ "specialization": {
+  "id": 35,
+  "name": "Учитель физики",
+  "nameKz": "Физика пәнінің мұғалімі",
+  "type": "teacher",
+  "code": null
+ },
+ "winnerId": null,
+ "winnerTotalScore": null,
+ "winner": null,
+ "chairmanDataIin": null,
+ "chairmanCommitteeDataIin": null,
+ "chairmanSecretaryDataIin": null,
+ "interviewPlaceContains": null
+}
