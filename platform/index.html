@@ -2847,7 +2847,7 @@ function autoThemeRestore() {
   const b = ls.get('gwThemeBefore'); ls.set('gwAutoDark', ''); if (!THEMES.includes(b) || pref !== 'dark') return;
   setTheme(b); try { notify('Таң болды ☀️ тақырып бұрынғы күйіне қайтарылды'); } catch { }
 }
-setInterval(autoThemeRestore, 300000); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') autoThemeRestore(); });
+setInterval(autoThemeRestore, 300000); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { autoThemeRestore(); try { if (typeof plLoad === 'function' && meId && PL.loaded) plLoad().then(() => { if (typeof todayPaint === 'function') todayPaint(); if (curView === 'brain') brainOpen(); }); } catch (e) { } } });
 setTimeout(autoThemeRestore, 3000);
 $('themeBtn').onclick = () => setTheme(THEMES[(THEMES.indexOf(pref) + 1) % THEMES.length]);
 document.querySelectorAll('#themeSeg button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
@@ -6140,7 +6140,17 @@ async function brainOpen() {
   const q = document.createElement('input'); q.type = 'search'; q.placeholder = 'Іздеу…'; q.value = brQ; q.style.cssText = 'flex:1 1 180px;min-width:0';
   const list = el('div', ''); list.style.display = 'grid'; list.style.gap = '8px';
   const chips = [['all', 'Барлығы'], ...Object.entries(BR_KIND).map(([k, v]) => [k, v[0] + ' ' + v[1]])].map(([k, nm]) => { const b = el('button', '', nm); b.type = 'button'; b.setAttribute('aria-pressed', String(brF === k)); b.style.cssText = 'padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:' + (brF === k ? 'var(--accent)' : 'transparent') + ';color:' + (brF === k ? '#fff' : 'var(--ink)') + ';font:inherit;cursor:pointer'; b.onclick = () => { brF = k; brainOpen(); }; return b; });
-  bar.append(...chips, q); root.append(h, sub, f, bar, list);
+  const tgBox = el('div', 'qm-tx'); tgBox.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px';
+  (async () => {
+    const r = await sb.from('tg_links').select('user_id').maybeSingle(); tgBox.replaceChildren();
+    if (r.error) return; // update-55 әлі жоқ — көрсетпейміз
+    if (r.data) { const ok = el('span', '', '✈️ Telegram қосулы — боттың өзіне жаз, «Миға» түседі'), off = el('button', 'out', 'Ажырату'); off.type = 'button'; off.style.width = 'auto'; off.onclick = async () => { await sb.from('tg_links').delete().eq('user_id', meId); brainOpen(); }; tgBox.append(ok, off); return; }
+    const b = el('button', 'out', '✈️ Telegram қосу'); b.type = 'button'; b.style.width = 'auto';
+    const tip = el('span', 'hint', ''); tip.style.display = 'none';
+    b.onclick = async () => { b.disabled = true; const c = await sb.rpc('tg_make_code'); b.disabled = false; if (c.error) { notify(c.error.message, 'err'); return; } tip.style.display = ''; tip.textContent = 'Telegram-да Groowin ботына мынаны жібер: /start ' + c.data + ' (15 минут жарамды)'; };
+    tgBox.append(b, tip);
+  })();
+  bar.append(...chips, q); root.append(h, sub, tgBox, f, bar, list);
   async function load() {
     list.replaceChildren(); let qq = sb.from('brain_notes').select('*').order('day', { ascending: false }).order('created_at', { ascending: false }).limit(200); if (brF !== 'all') qq = qq.eq('kind', brF);
     const ws = brQ.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 5).map(w => w.replace(/[%,()]/g, '')); if (ws.length) qq = qq.or(ws.flatMap(w => ['title.ilike.%' + w + '%', 'body.ilike.%' + w + '%']).join(','));
@@ -10809,6 +10819,54 @@ function forcePw() {
   }
   const safeEval = e => { e = String(e || '').replace(/\^/g, '**').replace(/\s+/g, ''); if (!/^(?:[\d.eE+\-*/(),]|Math\.(?:sqrt|pow|PI|abs|log10|log|exp|sin|cos))+$/.test(e) || e.length > 200) return NaN; try { const r = Function('"use strict";return (' + e + ')')(); return typeof r === 'number' ? r : NaN; } catch { return NaN; } };
   const lev = (a, b) => { const d = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
+
+  // ===== ҚМЖ тексеруші: код арқылы (ЖИ емес), жасыл/қызыл тізім =====
+  function qmjCheck(d) {
+    const R = [], add = (lvl, t) => R.push({ lvl, t }), S = x => String(x || '').replace(/ /g, ' ');
+    const MINS = [3, 7, 10, 22, 3], NM = ['Ұйымдастыру', 'Білімді жаңарту', 'Жаңа білім', 'Практика', 'Рефлексия'], st = d.stages || [];
+    // 1) бос ұяшықтар
+    const empty = [];
+    if (!S(d.topic).trim()) empty.push('тақырып'); if (!S(d.goal).trim()) empty.push('оқу мақсаты'); if (!(d.goals || []).filter(x => S(x).trim()).length) empty.push('сабақ мақсаты'); if (!S(d.homework).replace(/[_\s]|Оқулық|бет|№|[:.,]/g, '').length) empty.push('үй тапсырмасы');
+    for (let i = 0; i < 5; i++) { const o = st[i] || {}; if (!S(o.teacher).trim()) empty.push(NM[i] + ': мұғалім'); if (!S(o.student).trim()) empty.push(NM[i] + ': оқушы'); }
+    empty.length ? add('bad', 'Бос ұяшық: ' + empty.join(', ')) : add('ok', 'Барлық негізгі ұяшық толған');
+    // 2) уақыт (45 мин)
+    const ms = t => (S(t).match(/(\d+)\s*мин/g) || []).reduce((a, m) => a + parseInt(m), 0); let tt = 0, tb = [];
+    for (let i = 0; i < 5; i++) { const m = ms((st[i] || {}).teacher); tt += m; if (m > MINS[i] + 1) tb.push(NM[i] + ' ' + m + ' мин (қажет ≤ ' + MINS[i] + ')'); }
+    tb.length ? add('bad', 'Уақыт асып кетті: ' + tb.join('; ')) : add('ok', 'Кезеңдердегі уақыт нормада' + (tt ? ' (барлығы ' + tt + ' мин)' : ''));
+    if (tt > 46) add('bad', 'Барлық кезеңнің қосындысы ' + tt + ' мин — 45-тен асады');
+    // 3) мақсат пен тапсырма сәйкестігі
+    const goals = (d.goals || []).map(S).filter(x => x.trim()), all = st.map(o => S(o.teacher) + ' ' + S(o.student) + ' ' + S(o.assess)).join(' ').toLowerCase();
+    const nTask = new Set((S((st[3] || {}).teacher).match(/\d\s*-\s*тапсырма/gi) || []).map(x => parseInt(x))).size;
+    const miss = goals.filter(g => { const w = g.toLowerCase().replace(/^\s*\d+[).]\s*/, '').match(/[а-яәіңғүұқөһё]{6,}/g) || []; return w.length && !w.some(x => all.includes(x.slice(0, 5))); });
+    if (goals.length && nTask && nTask < goals.length) add('warn', 'Мақсат ' + goals.length + ', ал практикада тапсырма ' + nTask + ' — әр мақсатқа тапсырма бар ма?');
+    miss.length ? add('warn', 'Мына мақсаттың негізгі сөзі кезеңдерде кездеспейді: «' + miss[0].replace(/^\s*\d+[).]\s*/, '').slice(0, 70) + '»') : add('ok', 'Мақсаттар кезеңдердегі іс-әрекетпен үйлеседі');
+    // 4) балл қосындысы
+    let sc = 0, bad = [];
+    for (let i = 0; i < 5; i++) {
+      const a = S((st[i] || {}).assess), nums = [...a.matchAll(/(\d+(?:[.,]\d+)?)\s*балл/gi)].map(m => parseFloat(m[1].replace(',', '.')));
+      const tot = a.match(/(?:барлығы|жиыны|жалпы|максимум|макс\.?)[^\d\n]{0,15}(\d+(?:[.,]\d+)?)\s*балл/i);
+      if (tot) { const T = parseFloat(tot[1].replace(',', '.')), idx = nums.indexOf(T), rest = nums.filter((_, k) => k !== idx), sum = rest.reduce((x, y) => x + y, 0); if (rest.length > 1 && Math.abs(sum - T) > 0.01) bad.push(NM[i] + ': ' + rest.join('+') + ' = ' + sum + ', ал жазылғаны ' + T); }
+      sc += nums.length ? Math.max(...nums) : 0;
+    }
+    bad.length ? add('bad', 'Балл қосындысы сәйкес емес: ' + bad.join('; ')) : add('ok', 'Балл есебі қайшылықсыз');
+    if (!/критери|дескриптор/i.test(S((st[2] || {}).assess))) add('warn', '«Жаңа білім» кезеңінде критерий/дескриптор жоқ');
+    // 5) қайталанған сөз/сөйлем
+    const rep = []; st.forEach((o, i) => { const w = {}; (S(o.teacher).toLowerCase().match(/[а-яәіңғүұқөһё]{7,}/g) || []).forEach(x => w[x] = (w[x] || 0) + 1); Object.entries(w).filter(([, n]) => n >= 5).slice(0, 2).forEach(([x, n]) => rep.push('«' + x + '» ×' + n + ' (' + NM[i] + ')')); });
+    const sents = {}; st.forEach(o => ['teacher', 'student'].forEach(k => S(o[k]).split(/[.!?\n]/).map(x => x.trim().toLowerCase()).filter(x => x.length > 30).forEach(x => sents[x] = (sents[x] || 0) + 1)));
+    const dup = Object.entries(sents).filter(([, n]) => n > 1); if (dup.length) rep.push('бірдей сөйлем екі рет: «' + dup[0][0].slice(0, 50) + '…»');
+    rep.length ? add('warn', 'Қайталау: ' + rep.join('; ')) : add('ok', 'Артық қайталау жоқ');
+    // 6) қалдық белгілер
+    const junk = /undefined|null|\[object|TODO|\\\(|\\frac|\$\$|\{\{|<br>|\*\*/; const whole = [d.topic, d.goal, d.homework].concat(goals, st.flatMap(o => [o.teacher, o.student, o.assess, o.resources])).map(S).join('\n');
+    junk.test(whole) ? add('bad', 'Мәтінде қалдық белгі бар (undefined, **, \\frac, <br> т.б.) — түзет') : add('ok', 'Қалдық белгі (**, \\frac, undefined) жоқ');
+    return R;
+  }
+  function qmjCheckCard(sync, data) {
+    const c = el('div', 'qm-nx'), h = el('h3', '', '✔ ҚМЖ тексеруші'), L = el('div', ''), b = el('button', 'out', '↻ Қайта тексеру'); b.type = 'button'; L.style.cssText = 'display:grid;gap:6px;margin:8px 0';
+    const paint = () => { try { sync(); } catch { } L.replaceChildren(); const R = qmjCheck(data), nb = R.filter(x => x.lvl === 'bad').length, nw = R.filter(x => x.lvl === 'warn').length;
+      R.sort((a, b) => ({ bad: 0, warn: 1, ok: 2 })[a.lvl] - ({ bad: 0, warn: 1, ok: 2 })[b.lvl]).forEach(x => { const r = el('div', 'qm-tx', (x.lvl === 'ok' ? '🟢 ' : x.lvl === 'warn' ? '🟡 ' : '🔴 ') + x.t); r.style.margin = '0'; L.appendChild(r); });
+      h.textContent = '✔ ҚМЖ тексеруші — ' + (nb ? nb + ' қате' : nw ? nw + ' ескерту' : 'бәрі дұрыс'); };
+    b.onclick = paint; c.append(h, L, b); setTimeout(paint, 0); return c;
+  }
   function qmPost(d, j3) {
     const notes = []; if (!d || !j3) return notes;
     const mapAll = fn => { d.stages.forEach(o => { ['teacher', 'student', 'assess', 'resources'].forEach(k => { o[k] = fn(o[k]); }); }); d.homework = fn(d.homework); d.goals = (d.goals || []).map(fn); };
@@ -10942,6 +11000,7 @@ function forcePw() {
     if (data.autoWs) setTimeout(() => { data.autoWs = false; persist(); run2(bW, 'Автоматты жасап жатыр', () => doWs(false))(); }, 80);
     bL.onclick = () => { sync(); const t = 'Мына ҚМЖ негізінде Groowin сабақ жоспарының жобасын жаса (8–10 қадам, барлығы дәл 45 мин, lesson_minutes: 45; кезеңдер уақыты сақталсын; таймер қосқың келсе, тек қысқа жұмыс таймері 5–10 мин, бүкіл сабаққа таймер қойма; ойын, топ не дауыс қадамдарын да қос). Тақырып: ' + data.topic + ', ' + data.grade + '-сынып, ' + data.subject + '. Кезеңдер:\n' + data.stages.map((o, i) => (i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин): ' + String(o.teacher).replace(/\s+/g, ' ').slice(0, 260)).join('\n'); if (window.aiAsk) window.aiAsk(t); };
     nx.append(nb, el('div', 'qm-tx', 'Өз ойын сілтемелерің болса, Материалдарға салып қой, содан аламын. Құндылық пен апта дәйексөзі бос қалады.'));
+    box.appendChild(qmjCheckCard(() => sync(), data));
     box.appendChild(nx);
     const rd = e => (e ? e.innerText : '').replace(/ /g, ' ').trim();
     const sync = () => Object.assign(data, { section: rd(E.section), teacher: rd(E.teacher), date: rd(E.date), grade: rd(E.grade), topic: rd(E.topic), goal: rd(E.goal), goals: rd(E.goals).split(/\n/).map(x => x.trim()).filter(Boolean), homework: rd(HW), stages: S.map(o => ({ teacher: rd(o.teacher), student: rd(o.student), assess: rd(o.assess), resources: rd(o.resources), links: o.links })) });
