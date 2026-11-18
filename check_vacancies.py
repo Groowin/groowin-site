@@ -2,6 +2,7 @@
 Тек стандартты кітапхана керек (pip install қажет емес)."""
 import json
 import os
+import re
 import sys
 import time
 import urllib.parse
@@ -14,6 +15,7 @@ API = "https://hr.nobd.edu.kz/portal/jobs/api/jobs/all/filter/sign"
 SITE = "https://hr.nobd.edu.kz/"
 SEEN_FILE = Path("seen.json")
 OPEN_FILE = Path("open.json")   # қазір ашық вакансиялар (жабылуды анықтау үшін)
+SAMPLE_FILE = Path("sample_job.json")   # диагностика: вакансия өрістерінің үлгісі
 REMIND_DAYS = 2                 # мерзім аяқталуына неше күн қалғанда ескерту
 MISS_LIMIT = 2                  # неше рет қатарынан жоғалса «жабылды» деп санау
 TZ = timezone(timedelta(hours=5))
@@ -62,7 +64,33 @@ def matches(job):
                 ((job.get("specialization") or {}).get("name") or "")).lower()
         if not any(k in text for k in KEYWORDS):
             return False
+    # Тек шынымен ашық вакансиялар: статусы ACTIVE және мерзімі өтпеген
+    if job.get("status") not in (None, "ACTIVE"):
+        return False
+    end = (job.get("vacancyEndDate") or "")[:10]
+    if end and end < datetime.now(TZ).date().isoformat():
+        return False
     return True
+
+
+HOUR_KEYS = ("hour", "workload", "stavk", "нагруз")
+
+
+def workload(job):
+    """Жүктеме (сағат/ставка): алдымен API өрістерінен, болмаса сипаттамадан."""
+    for k, v in job.items():
+        kl = k.lower()
+        if any(h in kl for h in HOUR_KEYS) and v not in (None, "", [], {}):
+            return str(v)
+    text = " ".join(str(job.get(k) or "") for k in ("title", "description", "descriptionKz"))
+    text = re.sub(r"<[^>]+>", " ", text)
+    m = re.search(r"(\d{1,2}(?:[.,]\d+)?)\s*(?:часов|часа|час\b|сағат)", text, re.I)
+    if m:
+        return f"{m.group(1)} сағат"
+    m = re.search(r"(\d(?:[.,]\d+)?)\s*ставк", text, re.I)
+    if m:
+        return f"{m.group(1)} ставка"
+    return None
 
 
 def fmt(job):
@@ -82,6 +110,7 @@ def fmt(job):
             f"🏫 {escape(str(org.get('kkName') or org.get('name')))}\n"
             f"{addr_line}"
             f"💰 {salary} ₸\n"
+            f"⏱ Жүктеме: {escape(workload(job) or 'сайтта көрсетілмеген')}\n"
             f"📅 дейін: {(job.get('vacancyEndDate') or '')[:10]}\n"
             f"📞 {escape(str(org.get('contactNumber') or ''))}\n"
             f"🔗 {SITE}")
@@ -149,6 +178,19 @@ def track_open(current):
                      f"📞 {org.get('contactNumber') or ''}")
 
     OPEN_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=1))
+    waiting = sum(1 for s in state.values() if s.get("miss", 0) > 0)
+    print(f"Ашық: {len(cur)} | тізімде: {len(state)} | жоғалып тұр (күтуде): {waiting}")
+
+
+def dump_sample(jobs):
+    """Диагностика: бірінші вакансияның өрістері (сағат өрісін табу үшін). Жеке деректерсіз."""
+    if not jobs:
+        return
+    j = dict(jobs[0])
+    for k in ("description", "descriptionKz", "createdBy"):
+        j.pop(k, None)
+    j["organization"] = sorted((jobs[0].get("organization") or {}).keys())
+    SAMPLE_FILE.write_text(json.dumps(j, ensure_ascii=False, indent=1))
 
 
 USE_WORKER = True   # True: батырмаға Cloudflare Worker жауап береді (getUpdates өшеді)
@@ -252,6 +294,8 @@ def main():
     SEEN_FILE.write_text(json.dumps(sorted(seen)))
 
     current = [j for j in jobs if matches(j)]
+    print(f"API қайтарды: {len(jobs)} | сүзгіден өтті (ашық): {len(current)}")
+    dump_sample(jobs)
     track_open(current)
     heartbeat(current)
 
