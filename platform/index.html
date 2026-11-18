@@ -6159,7 +6159,8 @@ async function brainOpen() {
     if (r.data) { const ok = el('span', '', '✈️ Telegram қосулы — ботқа жаз: ақылды жауап береді, жазбаң «Миға» түседі'), off = el('button', 'out', 'Ажырату'); off.type = 'button'; off.style.width = 'auto'; off.onclick = async () => { await sb.from('tg_links').delete().eq('user_id', meId); brainOpen(); }; tgBox.append(ok, off); return; }
     const b = el('button', 'out', '✈️ Telegram қосу'); b.type = 'button'; b.style.width = 'auto';
     const tip = el('span', 'hint', ''); tip.style.display = 'none';
-    b.onclick = async () => { b.disabled = true; const c = await sb.rpc('tg_make_code'); b.disabled = false; if (c.error) { notify(c.error.message, 'err'); return; } tip.style.display = ''; tip.textContent = 'Telegram-да Groowin ботына мынаны жібер: /start ' + c.data + ' (15 минут жарамды)'; };
+    b.onclick = async () => { b.disabled = true; const c = await sb.rpc('tg_make_code'); b.disabled = false; if (c.error) { notify(c.error.message, 'err'); return; } tip.style.display = ''; tip.textContent = 'Егер Telegram өзі ашылмаса, ботқа мынаны жібер: /start ' + c.data + ' (15 минут жарамды)';
+      try { const u = String(SUPABASE_URL).replace(/\/$/, ''); const j = await (await fetch(u + '/functions/v1/telegram-bot')).json(); if (j && j.username) window.open('https://t.me/' + j.username + '?start=' + c.data, '_blank'); } catch (e) { } };
     tgBox.append(b, tip);
   })();
   bar.append(q); root.append(h, sub, tgBox, f, bar, list);
