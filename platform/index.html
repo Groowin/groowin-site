@@ -5994,7 +5994,7 @@ $('siteAdd').onclick = async () => {
 function openSite(s) {
   SFX.unlock(); const b = stage(), bar = el('div', 'stbar');
   const fs = el('button', 'out', '⛶ Толық экран'), tab = el('a', 'out', '↗ Жаңа қойындыда'); tab.href = s.url; tab.target = '_blank'; tab.rel = 'noopener noreferrer';
-  const f = document.createElement('iframe'); f.title = s.title; f.src = embedUrl(s.url); f.allow = 'fullscreen; autoplay; clipboard-write'; f.allowFullscreen = true; f.referrerPolicy = 'strict-origin-when-cross-origin';
+  const f = document.createElement('iframe'); f.title = s.title; f.src = embedUrl(s.url); f.allow = 'fullscreen; autoplay; clipboard-write; geolocation'; f.allowFullscreen = true; f.referrerPolicy = 'strict-origin-when-cross-origin';
   f.style.cssText = 'width:100%;height:calc(100vh - 120px);border:0;border-radius:12px;background:#fff';
   fs.onclick = () => { const fn = f.requestFullscreen || f.webkitRequestFullscreen; if (fn) fn.call(f); };
   bar.append(el('strong', '', s.title), fs, tab, el('span', 'gm', 'Сайт ашылмаса, ол кірістіруге рұқсат бермейді: «Жаңа қойындыда» батырмасын бас.'));
