@@ -1826,6 +1826,10 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
 #siteAdm .sa-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
 #siteAdm .sa-r b{min-width:110px}#siteAdm .sa-x{margin-left:auto;width:34px;height:34px;padding:0;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:1rem}#siteAdm .sa-x:disabled{opacity:.3;cursor:default}#siteAdm .sa-th{width:44px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--bg) center/cover}
 @media (prefers-reduced-motion:reduce){#seasonFx i{animation:none}}
+.libform{color:#f4f1ea}.libform b{color:#fff}.libform .sub,.libform label{color:#cfd6ea}
+.libform input[type=text],.libform select,.libform input[type=file]{color:#1b1a17!important;background:#f6efe3!important;-webkit-text-fill-color:#1b1a17}
+.libform input::placeholder{color:#7a7468!important;-webkit-text-fill-color:#7a7468}
+.libform select option{color:#1b1a17;background:#fff}
 </style>
 </head>
 <body>
@@ -6230,7 +6234,7 @@ async function libOpen() {
   let rt = null, lastW = 0; if (window.ResizeObserver) new ResizeObserver(() => { const w = shelf.clientWidth; if (w && Math.abs(w - lastW) > 8) { lastW = w; clearTimeout(rt); rt = setTimeout(draw, 120); } }).observe(shelf);
   box.append(bar);
   if (isAdmin) {
-    const form = el('div', ''); form.hidden = true; form.style.cssText = 'max-width:640px;display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:18px;background:rgba(10,14,32,.82)';
+    const form = el('div', 'libform'); form.hidden = true; form.style.cssText = 'max-width:640px;display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:18px;background:rgba(10,14,32,.82)';
     const sel = (o, ph) => { const x = document.createElement('select'); x.style.width = '100%'; if (ph) x.appendChild(new Option(ph, '')); Object.entries(o).forEach(([k, v]) => x.appendChild(new Option(v, k))); return x; };
     const inp = ph => { const x = document.createElement('input'); x.type = 'text'; x.placeholder = ph; x.style.width = '100%'; return x; };
     const ti = inp('Кітап атауы, мысалы: Физика 11 (жаратылыстану)'), au = inp('Автор (міндетті емес)');
@@ -9836,9 +9840,60 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     while ((m = re.exec(s))) { if (m.index > last) par.append(s.slice(last, m.index)); const t = m[0]; par.append(el(t[0] === '`' ? 'code' : 'b', '', t.replace(/^(\*\*|`)|(\*\*|`)$/g, ''))); last = m.index + t.length; }
     if (last < s.length) par.append(s.slice(last));
   }
+  // LaTeX → оқылатын Юникод (Telegram және сайт чаты үшін)
+  function texToUni(src) {
+    let s = String(src == null ? '' : src);
+    if (!/[\\$^_]/.test(s)) return s;
+    const SUP = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '+': '⁺', '-': '⁻', '−': '⁻', '=': '⁼', '(': '⁽', ')': '⁾', n: 'ⁿ', i: 'ⁱ' };
+    const SUB = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉', '+': '₊', '-': '₋', '=': '₌', '(': '₍', ')': '₎', a: 'ₐ', e: 'ₑ', h: 'ₕ', i: 'ᵢ', j: 'ⱼ', k: 'ₖ', l: 'ₗ', m: 'ₘ', n: 'ₙ', o: 'ₒ', p: 'ₚ', r: 'ᵣ', s: 'ₛ', t: 'ₜ', u: 'ᵤ', v: 'ᵥ', x: 'ₓ' };
+    const G = { alpha: 'α', beta: 'β', gamma: 'γ', delta: 'δ', epsilon: 'ε', varepsilon: 'ε', zeta: 'ζ', eta: 'η', theta: 'θ', vartheta: 'θ', kappa: 'κ', lambda: 'λ', mu: 'μ', nu: 'ν', xi: 'ξ', pi: 'π', rho: 'ρ', sigma: 'σ', tau: 'τ', phi: 'φ', varphi: 'φ', chi: 'χ', psi: 'ψ', omega: 'ω', Gamma: 'Γ', Delta: 'Δ', Theta: 'Θ', Lambda: 'Λ', Xi: 'Ξ', Pi: 'Π', Sigma: 'Σ', Phi: 'Φ', Psi: 'Ψ', Omega: 'Ω' };
+    const SYM = { cdot: '·', times: '×', pm: '±', mp: '∓', approx: '≈', neq: '≠', ne: '≠', leq: '≤', le: '≤', geq: '≥', ge: '≥', to: '→', rightarrow: '→', Rightarrow: '⇒', leftarrow: '←', infty: '∞', circ: '°', degree: '°', sim: '∼', propto: '∝', div: '÷', partial: '∂', nabla: '∇', hbar: 'ħ', ell: 'ℓ', ldots: '…', dots: '…', cdots: '…', angle: '∠', perp: '⊥', parallel: '∥', int: '∫', sum: '∑', ll: '≪', gg: '≫', equiv: '≡', in: '∈' };
+    const grp = (t, i) => { // {...} тобының ішін алу, i — '{' орны
+      let d = 0; for (let j = i; j < t.length; j++) { if (t[j] === '{') d++; else if (t[j] === '}' && --d === 0) return [t.slice(i + 1, j), j + 1]; } return null;
+    };
+    // $$…$$, \[…\], \(…\), $…$ шектегіштерін алып тастау (ішінде LaTeX белгісі болса ғана)
+    s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_m, a) => ' ' + a + ' ').replace(/\\\[([\s\S]+?)\\\]/g, (_m, a) => ' ' + a + ' ').replace(/\\\(([\s\S]+?)\\\)/g, (_m, a) => a);
+    s = s.replace(/\$([^$\n]{1,200}?)\$/g, (m, a) => (/[\\^_{}=]/.test(a) || /^\s*[A-Za-zα-ωΑ-Ω]{1,3}\s*$/.test(a)) ? a : m);
+    // командалар (грек, белгілер) — басқа түрлендірулерден бұрын
+    s = s.replace(/\\([A-Za-z]+)([ ]?)(?=([A-Za-z]?))/g, (m, nm, sp, nx) => G[nm] ? G[nm] + (sp && nx ? '' : sp) : SYM[nm] ? SYM[nm] + sp : m);
+    s = s.replace(/\^\s*(?:\{\s*°\s*\}|°)/g, '°');
+    // \text{…}, \mathrm{…}, \mathbf{…}, \operatorname{…}, \left \right
+    for (let k = 0; k < 6; k++) s = s.replace(/\\(?:text|mathrm|mathbf|mathit|operatorname|textbf|boldsymbol|vec|bar|hat|overline)\s*\{([^{}]*)\}/g, '$1');
+    s = s.replace(/\\left|\\right|\\big|\\Big|\\bigg/g, '').replace(/\\[,;:! ]|\\quad|\\qquad/g, ' ').replace(/\\%/g, '%').replace(/\\&/g, '&').replace(/\\#/g, '#').replace(/\\\$/g, '$').replace(/\\\\/g, '\n');
+    // \frac{a}{b}, \dfrac, \tfrac
+    for (let n = 0; n < 8; n++) {
+      const m = /\\[dt]?frac\s*\{/.exec(s); if (!m) break;
+      const a = grp(s, m.index + m[0].length - 1); if (!a) break;
+      let b = null, j = a[1]; while (s[j] === ' ') j++; if (s[j] === '{') b = grp(s, j); if (!b) { s = s.slice(0, m.index) + a[0] + s.slice(a[1]); continue; }
+      const w = (x) => /^[\wα-ωΑ-Ω.,·]+$/.test(x.trim()) ? x.trim() : '(' + x.trim() + ')';
+      s = s.slice(0, m.index) + w(a[0]) + '/' + w(b[0]) + s.slice(b[1]);
+    }
+    // \sqrt{x}, \sqrt[n]{x}
+    for (let n = 0; n < 8; n++) {
+      const m = /\\sqrt\s*(?:\[([^\]]*)\])?\s*\{/.exec(s); if (!m) break;
+      const a = grp(s, m.index + m[0].length - 1); if (!a) break;
+      const inner = /^[\w.]+$/.test(a[0]) ? a[0] : '(' + a[0] + ')';
+      s = s.slice(0, m.index) + (m[1] ? (SUP[m[1]] || '^' + m[1]) : '') + '√' + inner + s.slice(a[1]);
+    }
+    // жоғарғы/төменгі индекстер
+    const conv = (body, map, mark) => { const ch = [...body.replace(/\s+/g, '')]; return ch.length && ch.every((c) => map[c]) ? ch.map((c) => map[c]).join('') : null; };
+    for (let n = 0; n < 30; n++) {
+      const m = /([\^_])\s*(\{|\\?[A-Za-z0-9+\-−])/.exec(s); if (!m) break;
+      let body, end;
+      if (m[2] === '{') { const a = grp(s, m.index + m[0].length - 1); if (!a) break; body = a[0]; end = a[1]; } else { body = m[2].replace(/^\\/, ''); end = m.index + m[0].length; }
+      body = body.replace(/\\([A-Za-z]+)/g, (_x, nm) => G[nm] || SYM[nm] || nm);
+      const u = conv(body, m[1] === '^' ? SUP : SUB);
+      const rep = u != null ? u : (m[1] === '^' ? '^' : '_') + (body.length > 1 && !/^[\wα-ω]+$/.test(body) ? '(' + body + ')' : body);
+      s = s.slice(0, m.index) + rep + s.slice(end);
+    }
+    // командалар: грек әріптері, белгілер
+    s = s.replace(/\\([A-Za-z]+)/g, (m, nm) => G[nm] || SYM[nm] || nm);
+    s = s.replace(/[{}]/g, (c, i) => '').replace(/[ \t]{2,}/g, ' ');
+    return s.trim() === '' ? s : s;
+  }
   function md(text) {
     const box = el('div', 'ai-md');
-    String(text || '').split('\n').forEach(line => {
+    texToUni(String(text || '')).split('\n').forEach(line => {
       const b = line.match(/^\s*(?:[*\-•]|(\d+)[.)])\s+(.*)$/);
       if (b) { const r = el('div', 'ai-li'); r.append(el('span', 'k', b[1] ? b[1] + '.' : '•')); const t = el('span'); inline(t, b[2]); r.append(t); box.append(r); }
       else if (!line.trim()) box.append(el('div', 'ai-gap'));
