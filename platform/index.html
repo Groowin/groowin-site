@@ -10753,13 +10753,19 @@ function forcePw() {
     const arBox = el('div'); arBox.hidden = true;
     nwB.onclick = () => { data = null; last = null; ls.set(PK, ''); renderQmj(); };
     const drawAr = () => { arBox.replaceChildren(); const a = lsj(AK, []); if (!a.length) { arBox.append(el('div', 'qm-tx', 'Әзірге сақталған ҚМЖ жоқ. Жасаған сайын осында автоматты түседі.')); return; } a.forEach((x, i) => { const r = el('div', 'qm-tx'); r.style.cssText = 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px'; const t = el('span', '', (x.date || '') + ' · ' + (x.grade || '') + ' сынып · ' + (x.topic || '')); t.style.flex = '1 1 200px'; const o = el('button', 'qm-rg', 'Ашу'), d = el('button', 'qm-rg', 'Жою'), sh = el('button', 'qm-rg', '🌐 Галереяға'); o.type = d.type = sh.type = 'button'; sh.onclick = () => shareQmj(x); o.onclick = () => { data = x; last = x; ls.set(PK, JSON.stringify(x)); renderQmj(); }; d.onclick = async () => { if (!(await ask('«' + (x.topic || '') + '» ҚМЖ-ны жоямыз ба? (үй тапсырмасы ҚМЖ-мен бірге кетеді)', 'Жою', 'Жоқ'))) return;
-          const lk = [x.gameId && 'ойын', x.quizId && 'викторина', x.matId && 'Word файл (Материалдар)', x.wsId && 'жұмыс парағы'].filter(Boolean);
-          if (lk.length && await ask('Осы ҚМЖ-мен бірге жасалғандарды да жоямыз ба? (' + lk.join(', ') + ')', 'Иә, бәрін жою', 'Жоқ, қалсын')) {
+          // Материалдардағы көшірмелерді (Word, жұмыс парағы) және бос күн-папканы өзі жою
+          try {
+            const fids = new Set();
+            for (const mid of [x.matId, x.wsId].filter(Boolean)) { try { const r = await sb.from('mat_items').select('storage_path,folder_id').eq('id', mid).maybeSingle(); if (r.data) { if (r.data.folder_id) fids.add(r.data.folder_id); if (r.data.storage_path) await sb.storage.from('materials').remove([r.data.storage_path]); } await sb.from('mat_items').delete().eq('id', mid); } catch { } }
+            try { const nm = String(x.date || '').slice(0, 40); if (nm) { const f = (await sb.from('mat_folders').select('id').eq('name', nm).is('parent_id', null)).data || []; f.forEach(z => fids.add(z.id)); } } catch { }
+            for (const fid of fids) { try { const [i2, s2] = await Promise.all([sb.from('mat_items').select('id', { count: 'exact', head: true }).eq('folder_id', fid), sb.from('mat_folders').select('id', { count: 'exact', head: true }).eq('parent_id', fid)]); if (!i2.error && !s2.error && !i2.count && !s2.count) await sb.from('mat_folders').delete().eq('id', fid); } catch { } }
+          } catch { }
+          const lk = [x.gameId && 'ойын', x.quizId && 'викторина'].filter(Boolean);
+          if (lk.length && await ask('Осы ҚМЖ-мен бірге жасалған ойын/викторинаны да жоямыз ба? (' + lk.join(', ') + ')', 'Иә, жою', 'Жоқ, қалсын')) {
             try { if (x.quizId) await sb.from('quizzes').delete().eq('id', x.quizId); } catch { }
             try { if (x.gameId) await sb.from('board_sets').delete().eq('id', x.gameId); } catch { }
-            for (const mid of [x.matId, x.wsId].filter(Boolean)) { try { const r = await sb.from('mat_items').select('storage_path').eq('id', mid).maybeSingle(); if (r.data && r.data.storage_path) await sb.storage.from('materials').remove([r.data.storage_path]); await sb.from('mat_items').delete().eq('id', mid); } catch { } }
-            try { if (curView === 'mats') loadMats(); } catch { }
           }
+          try { if (curView === 'mats') loadMats(); } catch { }
           const b = lsj(AK, []).filter(z => z._k !== x._k); ls.set(AK, JSON.stringify(b)); if (data && data._k === x._k) { data = null; ls.set(PK, ''); } drawAr(); }; r.append(t, o, sh, d); arBox.appendChild(r); }); };
     arB.onclick = () => { arBox.hidden = !arBox.hidden; if (!arBox.hidden) drawAr(); };
     const out = el('div'), st = el('div', 'qm-tx'); st.hidden = true;
@@ -11096,7 +11102,7 @@ function forcePw() {
     box.appendChild(el('div', 'qm-tx', 'Кез келген ұяшықты басып өзгерте аласың. Өз ойын сілтемелерің болса, Материалдарға салып қой, содан аламын. Құндылық пен апта дәйексөзі бос қалады.'));
     const bt = el('div', 'qm-tiles'); bt.style.marginTop = '10px'; const dl = el('button', 'hm-card c-blue qm-t'), re = el('button', 'hm-card c-teal qm-t'); dl.type = re.type = 'button'; dl.append(el('strong', '', '⬇ Word-ке жүктеу'), el('small', '', 'A4, ақ-қара кесте')); re.append(el('strong', '', '↻ Қайта жаса'), el('small', '', 'толығымен жаңа жоспар')); bt.append(dl, re); box.appendChild(bt);
     const pk = el('button', 'hm-card c-pink qm-t'); pk.type = 'button'; pk.append(el('strong', '', '📷 Оқулықтан сурет'), el('small', '', 'ЖИ бет тапсын, аумақты өзің белгіле')); bt.appendChild(pk);
-    const wk = el('button', 'hm-card c-teal qm-t'); wk.type = 'button'; wk.append(el('strong', '', '🌐 Wikimedia-дан сурет'), el('small', '', 'ЖИ ағылшынша өзі іздейді, лицензиясы ашық')); bt.appendChild(wk);
+    const wk = el('button', 'hm-card c-teal qm-t'); wk.type = 'button'; wk.append(el('strong', '', '🌐 Интернеттен сурет қосу'), el('small', '', 'ЖИ өзі іздейді, лицензиясы ашық суреттер')); bt.appendChild(wk);
     const gi = el('div', ''); gi.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px'; box.appendChild(gi);
     const drawImgs = () => { gi.replaceChildren(); (data.imgs || []).forEach((im, n) => { const w = el('div', ''); w.style.cssText = 'position:relative'; const t = new Image(); t.src = im.d; t.alt = ''; t.style.cssText = 'height:56px;border-radius:8px;border:1px solid var(--line);display:block'; const x = el('button', '', '✕'); x.type = 'button'; x.title = 'Алып тастау'; x.style.cssText = 'position:absolute;top:-6px;right:-6px;width:22px;height:22px;padding:0;border-radius:50%;border:0;background:#e5484d;color:#fff;cursor:pointer;font-size:.7rem'; x.onclick = () => { data.imgs.splice(n, 1); persist(); drawImgs(); }; w.append(t, x); gi.appendChild(w); }); };
     pk.onclick = () => qmjPickImg(data, persist, drawImgs); wk.onclick = () => qmjPickWiki(data, persist, drawImgs, ai); drawImgs();
@@ -11257,7 +11263,7 @@ function qmjSheetBuild(D, d, style) {
   const cell = (w, kids, o = {}) => new D.TableCell({ width: { size: w, type: D.WidthType.DXA }, children: [].concat(kids), margins: { top: 70, bottom: 70, left: 120, right: 120 }, verticalAlign: D.VerticalAlign.CENTER, borders: NOB, ...o });
   const fill = c => ({ type: D.ShadingType.CLEAR, color: 'auto', fill: c });
   const row = (cells, o = {}) => new D.TableRow({ children: cells, cantSplit: true, ...o });
-  const table = (w, cols, rows, o = {}) => new D.Table({ width: { size: w, type: D.WidthType.DXA }, columnWidths: cols, rows, borders: { ...NOB, insideHorizontal: NB, insideVertical: NB }, ...o });
+  const table = (w, cols, rows, o = {}) => new D.Table({ width: { size: w, type: D.WidthType.DXA }, layout: D.TableLayoutType.FIXED, columnWidths: cols, rows, borders: { ...NOB, insideHorizontal: NB, insideVertical: NB }, ...o });
   const C = D.AlignmentType.CENTER, topic = String(d.topic || '').trim(), date = String(d.date || '').trim(), cr = qmjCriteria(d), gap = (n = 120) => P(R(''), { spacing: { after: n } });
   const tot = cr.reduce((a, x) => a + x.p, 0);
   const land = style === 3, W = land ? 15538 : 10606, pg = { page: { size: { width: 11906, height: 16838, orientation: land ? D.PageOrientation.LANDSCAPE : D.PageOrientation.PORTRAIT }, margin: { top: 650, bottom: 650, left: 650, right: 650 } } };
@@ -11308,7 +11314,7 @@ function qmjSheetBuild(D, d, style) {
 }
 
 async function qmjPickWiki(data, persist, done, ai) {
-  const m = modal('🌐 Wikimedia Commons'), box = m.box; box.style.maxWidth = '900px';
+  const m = modal('🌐 Интернеттен сурет қосу'), box = m.box; box.style.maxWidth = '900px';
   const q = document.createElement('input'); q.type = 'search'; q.value = data.topic || ''; q.placeholder = 'Қазақша не орысша тақырып'; q.style.flex = '1';
   const gb = el('button', 'go', 'Іздеу'); gb.type = 'button'; gb.style.cssText = 'width:auto;flex:0 0 auto';
   const top = el('div', ''); top.style.cssText = 'display:flex;gap:8px;align-items:center'; top.append(q, gb);
@@ -11317,8 +11323,8 @@ async function qmjPickWiki(data, persist, done, ai) {
   box.append(top, enl, msg, grid, view);
   const DICT = { 'рентген': 'X-ray', 'инфрақызыл': 'infrared', 'ультракүлгін': 'ultraviolet', 'сәулелену': 'radiation', 'толқын': 'wave', 'электромагнитті': 'electromagnetic', 'спектр': 'spectrum', 'жарық': 'light', 'линза': 'lens', 'ток': 'electric current', 'магнит': 'magnet', 'атом': 'atom', 'ядро': 'nucleus', 'күн': 'sun', 'жылу': 'heat', 'қысым': 'pressure', 'дыбыс': 'sound', 'тербеліс': 'oscillation', 'үшбұрыш': 'triangle', 'шеңбер': 'circle', 'функция': 'function graph', 'рентгеновское': 'X-ray', 'излучение': 'radiation', 'инфракрасное': 'infrared', 'ультрафиолетовое': 'ultraviolet' };
   const toEn = async t => {
-    try { const d = await ai({ mode: 'translate', turn: false, messages: [{ role: 'user', content: t }] }); const x = String(d.message.content || '').replace(/["'\n]/g, ' ').trim(); if (x && x.length < 90 && /[a-z]/i.test(x)) return x; } catch (e) { }
-    const w = t.toLowerCase().split(/\s+/).map(z => { const k = Object.keys(DICT).find(y => z.startsWith(y.slice(0, Math.max(4, y.length - 2)))); return k ? DICT[k] : (/^[a-z0-9-]+$/i.test(z) ? z : ''); }).filter(Boolean); return w.join(' ') || t;
+    try { const d = await ai({ mode: 'translate', turn: false, messages: [{ role: 'user', content: (data.subject ? 'Subject: ' + data.subject + '. ' : '') + 'Topic: ' + t }] }); const x = String(d.message.content || '').replace(/["'\n]/g, ' ').replace(/\s+/g, ' ').trim(); if (x && x.length < 200 && /[a-z]/i.test(x)) return x.split('|').map(z => z.trim()).filter(Boolean).slice(0, 3); } catch (e) { }
+    const w = t.toLowerCase().split(/\s+/).map(z => { const k = Object.keys(DICT).find(y => z.startsWith(y.slice(0, Math.max(4, y.length - 2)))); return k ? DICT[k] : (/^[a-z0-9-]+$/i.test(z) ? z : ''); }).filter(Boolean); return [w.join(' ') || t];
   };
   const strip = h => String(h || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
   const OKL = /^(public domain|pd\b|cc0|cc[ -]by(?![ -]?(nc|nd))|attribution)/i;
@@ -11346,13 +11352,19 @@ async function qmjPickWiki(data, persist, done, ai) {
   };
   const search = async () => {
     grid.replaceChildren(); msg.className = 'msg'; msg.textContent = 'ЖИ аударып, іздеп жатыр…'; enl.textContent = '';
-    const en = await toEn(q.value.trim()); enl.textContent = 'Ағылшынша іздеу: ' + en; msg.textContent = 'Іздеп жатыр…';
-    let res; try {
-      const u = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=40&gsrsearch=' + encodeURIComponent(en + ' filetype:bitmap|drawing') + '&prop=imageinfo&iiprop=url|size|mime|extmetadata&iiurlwidth=500&iiextmetadatafilter=Artist|LicenseShortName';
-      res = await (await fetch(u)).json();
-    } catch (e) { msg.className = 'msg err'; msg.textContent = 'Wikimedia-ға қосылу мүмкін болмады.'; return; }
-    const pages = Object.values((res.query && res.query.pages) || {}).sort((a, b) => a.index - b.index);
-    const rows = pages.map(p => { const i = (p.imageinfo || [])[0]; if (!i || !/^image\/(jpeg|png|svg\+xml)$/.test(i.mime) || (i.width || 0) < 500) return null; const md = i.extmetadata || {}, lic = strip(md.LicenseShortName && md.LicenseShortName.value); if (!OKL.test(lic)) return null; const file = p.title.replace(/^File:/, ''); return { file, title: file.replace(/\.[a-z]+$/i, '').replace(/_/g, ' ').slice(0, 70), thumb: i.thumburl, full: ((i.width || 0) >= 1000 && /\/\d+px-/.test(i.thumburl || '')) ? String(i.thumburl).replace(/\/\d+px-/, '/960px-') : i.url, mime: i.mime, author: strip(md.Artist && md.Artist.value).slice(0, 60) || 'автор көрсетілмеген', lic }; }).filter(Boolean).slice(0, 12);
+    const qs = await toEn(q.value.trim()); enl.textContent = 'Іздеу: ' + qs.join(' · '); msg.textContent = 'Іздеп жатыр…';
+    const toks = [...new Set(qs.join(' ').toLowerCase().replace(/[^a-z0-9 -]/g, ' ').split(/\s+/).filter(z => z.length > 3 && !/^(diagram|physics|photo|image|picture|school|science|with|from|light)$/.test(z)))];
+    const got = new Map();
+    try {
+      await Promise.all(qs.map(async en => {
+        const u = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=30&gsrsearch=' + encodeURIComponent(en + ' filetype:bitmap|drawing') + '&prop=imageinfo&iiprop=url|size|mime|extmetadata&iiurlwidth=500&iiextmetadatafilter=Artist|LicenseShortName|ImageDescription|Categories';
+        const res = await (await fetch(u)).json();
+        Object.values((res.query && res.query.pages) || {}).forEach(p => { const o = got.get(p.title); if (o) o.hit++; else got.set(p.title, Object.assign(p, { hit: 1 })); });
+      }));
+    } catch (e) { msg.className = 'msg err'; msg.textContent = 'Интернетке қосылу мүмкін болмады.'; return; }
+    let rows = [...got.values()].map(p => { const i = (p.imageinfo || [])[0]; if (!i || !/^image\/(jpeg|png|svg\+xml)$/.test(i.mime) || (i.width || 0) < 500) return null; const md = i.extmetadata || {}, lic = strip(md.LicenseShortName && md.LicenseShortName.value); if (!OKL.test(lic)) return null; const file = p.title.replace(/^File:/, ''); const hay = (file + ' ' + strip(md.ImageDescription && md.ImageDescription.value) + ' ' + strip(md.Categories && md.Categories.value)).toLowerCase().replace(/[_|]/g, ' '); const sc = toks.filter(z => hay.includes(z)).length * 2 + p.hit; return { sc, ix: p.index || 0, file, title: file.replace(/\.[a-z]+$/i, '').replace(/_/g, ' ').slice(0, 70), thumb: i.thumburl, full: ((i.width || 0) >= 1000 && /\/\d+px-/.test(i.thumburl || '')) ? String(i.thumburl).replace(/\/\d+px-/, '/960px-') : i.url, mime: i.mime, author: strip(md.Artist && md.Artist.value).slice(0, 60) || 'автор көрсетілмеген', lic }; }).filter(Boolean);
+    rows.sort((a, b) => b.sc - a.sc || a.ix - b.ix);
+    const good = rows.filter(r => r.sc > 1); if (good.length >= 4) rows = good; rows = rows.slice(0, 12);
     if (!rows.length) { msg.textContent = 'Сәйкес ашық лицензиялы сурет табылмады. Басқа сөзбен іздеп көр.'; return; }
     msg.textContent = '';
     rows.forEach(r => { const c = el('button', ''); c.type = 'button'; c.style.cssText = 'padding:6px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;display:grid;gap:4px;text-align:left'; const im = new Image(); im.src = r.thumb; im.alt = ''; im.loading = 'lazy'; im.style.cssText = 'width:100%;height:110px;object-fit:contain'; const t = el('small', '', r.title); t.style.cssText = 'color:#333;font-size:11px;line-height:1.2'; c.append(im, t); c.onclick = () => show(r); grid.appendChild(c); });
@@ -11422,7 +11434,7 @@ function qmjBuild(D, d) {
   const goalP = [new Paragraph({ spacing: { after: 40 }, children: [run('Оқушылар:')] })].concat(goals.map((g, i) => new Paragraph({ spacing: { after: 40 }, children: [run((i + 1) + ') ' + String(g).replace(/^\s*\d+[).]\s*/, ''))] })));
   const r0 = (a, kids) => new TableRow({ children: [cell(W0[0], [new Paragraph({ children: [run(a, { bold: true })] })]), cell(W0[1], kids)] });
   const t0 = new Table({
-    width: { size: W0[0] + W0[1], type: WidthType.DXA }, columnWidths: W0, rows: [
+    width: { size: W0[0] + W0[1], type: WidthType.DXA }, layout: D.TableLayoutType.FIXED, columnWidths: W0, rows: [
       r0('Бөлімі', paras(d.section)), r0('Педагогтің аты-жөні', paras(d.teacher)), r0('Күні', paras(d.date)), r0('Сыныбы', paras(d.grade)),
       r0('Қатысушылар саны', paras('Қатысқандар: ___ / Қатыспағандар: ___')), r0('Сабақтың тақырыбы', paras(d.topic)),
       r0('Оқу бағдарламасына сәйкес оқу мақсаты', paras(d.goal)), r0('Сабақтың мақсаты', goalP),
@@ -11439,7 +11451,7 @@ function qmjBuild(D, d) {
     rows.push(new TableRow({ cantSplit: false, children: [cell(W1[0], [new Paragraph({ children: [run((i + 1) + '. ' + NAMES[i] + ' (' + MIN[i] + ' мин)', { bold: true })] })]), cell(W1[1], paras(s.teacher).concat(atS(i).flatMap(x => imgP(x, 200)))), cell(W1[2], paras(s.student)), cell(W1[3], paras(s.assess)), cell(W1[4], resP(s).concat(i === 2 && (d.sources || []).length ? [new Paragraph({ spacing: { before: 60, after: 40 }, children: [run('Дереккөз: ' + d.sources.join('; '), { italics: true })] })] : []).concat(atS(10 + i).flatMap(x => imgP(x, 92))))] }));
   }
   rows.push(new TableRow({ children: [cell(W1[0], [new Paragraph({ children: [run('6. Үй тапсырмасы', { bold: true })] })]), cell(W1[1], paras(d.homework)), cell(W1[2], paras('Тапсырманы дәптерге орындайды')), cell(W1[3], paras('—')), cell(W1[4], paras('Оқулық, дәптер'))] }));
-  const t1 = new Table({ width: { size: 10774, type: WidthType.DXA }, columnWidths: W1, rows });
+  const t1 = new Table({ width: { size: 10774, type: WidthType.DXA }, layout: D.TableLayoutType.FIXED, columnWidths: W1, rows });
   const doc = new Document({
     styles: { default: { document: { run: { font: F, size: SZ } } } },
     sections: [{ properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 566, bottom: 566, left: 566, right: 566 } } }, children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 160 }, children: [run('Қысқа мерзімді жоспар', { bold: true, size: 28 })] }), t0, new Paragraph({ spacing: { after: 120 }, children: [] }), t1].concat((d.appx || []).flatMap((a, k) => [new Paragraph({ pageBreakBefore: k === 0, spacing: { before: k ? 240 : 0, after: 120 }, children: [run(a.title, { bold: true, size: 26 })] })].concat(a.lines.map(l => new Paragraph({ spacing: { after: 60 }, children: [run(l)] })))))
