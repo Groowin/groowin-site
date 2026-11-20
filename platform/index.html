@@ -6408,8 +6408,15 @@ function pultPush() {
   const st = { lp: lessonRun ? { t: lessonRun.plan.title, i: lessonRun.i, n: lessonRun.plan.steps.length, s: cur ? (cur.t || STEP_TYPES[cur.k] || '') : '' } : null, nt: cur && cur.n ? cur.n : '', nx: lessonRun && lessonRun.plan.steps[lessonRun.i + 1] ? (lessonRun.plan.steps[lessonRun.i + 1].t || STEP_TYPES[lessonRun.plan.steps[lessonRun.i + 1].k]) : '', qz: !$('qzHost').hidden, qb: qb ? qb.textContent : '', stage: !$('stage').hidden, left: MT.left, mute: SFX.muted, sl: SL ? { t: SL.t, i: SL.i, n: SL.endAt || SL.n } : null, dk: SL ? [] : (pultHost.decks || []).map(d => ({ id: d.id, t: d.title })) };
   try { pultHost.ch.send({ type: 'broadcast', event: 'state', payload: st }); } catch {}
 }
+function pultFrame(m) { // ашық HTML-презентацияға/ойынға (iframe) команда жіберу
+  if (SL || !['lp', 'sl'].includes(m.a) || !['next', 'prev', 'black', 'first', 'last'].includes(m.v)) return false;
+  const fr = [...document.querySelectorAll('iframe')].filter(f => f.offsetParent && f.clientWidth > 300 && f.clientHeight > 200).pop();
+  if (!fr || !fr.contentWindow) return false;
+  try { fr.contentWindow.postMessage({ type: 'groowin-pult', v: m.v }, '*'); return true; } catch { return false; }
+}
 function pultCmd(m) {
   const qzOn = !$('qzHost').hidden;
+  if (pultFrame(m)) return;
   switch (m.a) {
     case 'lp': {
       if (SL && (m.v === 'next' || m.v === 'prev')) { m.v === 'next' ? SL.next() : SL.prev(); return; }
@@ -10097,6 +10104,14 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       const fold = f.find(x => latSk(x.name) === latSk(name)) || f.find(x => matHit(x.name, name.toLowerCase()));
       card_move({ items, folder: fold ? { id: fold.id, name: fold.name } : null, name }); return { ok: true, note: 'Жобасы көрсетілді, мұғалімнің растауын күтіп тұр. ' + (fold ? 'Бар папкаға салынады.' : 'Папка жаңадан жасалады.') };
     },
+    async search_library(a) {
+      const q = String(a.query || '').trim(); if (!q) return { error: 'Іздеу сөзі бос' };
+      const r = await sb.rpc('lib_search', { p_q: q, p_subj: a.subject === 'math' || a.subject === 'physics' ? a.subject : null, p_grade: Math.round(+a.grade) || null, p_lim: 6 });
+      if (r.error) return { error: r.error.message };
+      const rows = Array.isArray(r.data) ? r.data : []; if (!rows.length) return { found: 0, note: 'Кітапханада табылмады. Қысқа айт.' };
+      const ids = [...new Set(rows.map(x => x.book_id))], b = await sb.from('library_books').select('id,title,author').in('id', ids), bm = new Map((b.data || []).map(x => [x.id, x]));
+      return { found: rows.length, passages: rows.slice(0, 5).map(x => { const k = bm.get(x.book_id) || {}; return { book: k.title || 'кітап', author: k.author || 'автор көрсетілмеген', page: x.page || null, text: String(x.body || '').replace(/\s+/g, ' ').slice(0, 700) }; }), note: 'Әр фактіге: кітап атауы, автор, бет көрсет.' };
+    },
     async search_file_text(a) {
       const r = await txtSearch(a.query); if (r.error) return r; if (r.results.length) card_texthits(r.results);
       return { count: r.results.length, results: r.results.map(x => ({ id: x.id, title: x.title, folder: x.folder, hits: x.hits.map(h => ({ page: h.page, text: h.text.slice(0, 160) })) })), note: r.results.length ? 'PDF-те page — бет нөмірі, Word-та — бөлім нөмірі.' : 'Дайындалған PDF/Word файлдардың ішінен табылмады. Файлдар «Материалдар → Іздеуге дайындау» арқылы дайындалуы керек, сканерленген PDF-те мәтін болмайды.' };
@@ -10276,7 +10291,7 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       return { t, img: null, o, c, s: 20 };
     }).filter(q => q.t && (q.k === 'num' || (q.o.filter(Boolean).length >= 2 && q.o[q.c])));
   }
-  const LABEL = { save_to_brain: 'Миға сақтап жатыр…', search_brain: 'Миынан іздеп жатыр…', get_digest: 'Күн дайджестін жинап жатыр…', search_library: 'Оқулықтан іздеп жатыр…', find_books: 'Кітапханадан іздеп жатыр…', open_book: 'Кітапты ашып жатыр…', save_memory: 'Есімде сақтап жатыр…', forget_memory: 'Жадыдан өшіріп жатыр…', open_qmj: 'ҚМЖ бетін ашып жатыр…', find_computer_files: 'Компьютерден іздеп жатыр…', add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
+  const LABEL = { search_library: 'Кітапханадан іздеп жатыр…', save_to_brain: 'Миға сақтап жатыр…', search_brain: 'Миынан іздеп жатыр…', get_digest: 'Күн дайджестін жинап жатыр…', search_library: 'Оқулықтан іздеп жатыр…', find_books: 'Кітапханадан іздеп жатыр…', open_book: 'Кітапты ашып жатыр…', save_memory: 'Есімде сақтап жатыр…', forget_memory: 'Жадыдан өшіріп жатыр…', open_qmj: 'ҚМЖ бетін ашып жатыр…', find_computer_files: 'Компьютерден іздеп жатыр…', add_schedule_slot: 'Кестеге жазып жатыр…', add_planner_item: 'Жоспарыңа жазып жатыр…', list_planner_items: 'Жоспарыңды қарап жатыр…', list_catalog_games: 'Ойындар мен зертханаларды қарап жатыр…', list_lesson_plans: 'Сабақ жоспарларын қарап жатыр…', create_lesson_plan_draft: 'Сабақ жоспарын жасап жатыр…', search_materials: 'Материалдардан іздеп жатыр…', search_file_text: 'Файл ішінен іздеп жатыр…', read_file_text: 'Файлды оқып жатыр…', move_materials_draft: 'Жылжыту жобасын жасап жатыр…', open_material: 'Материалды ашып жатыр…', list_classes: 'Сыныптарды қарап жатыр…', create_homework_draft: 'Тапсырма жобасын жасап жатыр…', create_quiz_draft: 'Викторина жобасын жасап жатыр…', create_game_draft: 'Ойын жобасын жасап жатыр…', go_to: 'Бөлімді ашып жатыр…' };
 
   async function openMat(id) {
     const { f, i } = await fetchMats(), isF = String(id).startsWith('f:'), rid = String(id).replace(/^f:/, '');
