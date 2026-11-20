@@ -8,8 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="config.js" onerror="void 0"></script>
 <style>
-:root,[data-th=dark]{--bg:#0d1117;--card:#151b23;--line:#262e3a;--tx:#e9edf3;--mu:#8a94a4;--ok:#22c3a6;--hot:#ff7a45;--inp:#0d1117;--on:#04130f;--f:'Noto Sans','Segoe UI',system-ui,sans-serif}
-[data-th=light]{--bg:#f5f6f8;--card:#ffffff;--line:#e2e5ea;--tx:#151a22;--mu:#677183;--ok:#0e9f85;--hot:#e5602a;--inp:#f5f6f8;--on:#ffffff}
+:root,[data-th=light]{--bg:#f7f2ea;--card:#fffaf3;--line:#e9dfd0;--tx:#2d2822;--mu:#8a7f70;--ok:#4f8a6e;--hot:#d9703c;--inp:#f3ece1;--on:#ffffff;--f:'Noto Sans','Segoe UI',system-ui,sans-serif}
+[data-th=dark]{--bg:#1c1915;--card:#26221c;--line:#38322a;--tx:#f1eadf;--mu:#a09585;--ok:#7bb897;--hot:#f08a55;--inp:#1c1915;--on:#14110d}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--tx);font:400 16px/1.45 var(--f);-webkit-font-smoothing:antialiased}
@@ -18,11 +18,11 @@ button{cursor:pointer}
 :focus-visible{outline:2px solid var(--ok);outline-offset:2px}
 .wrap{max-width:1500px;margin:0 auto;padding:22px clamp(14px,3vw,36px) 40px}
 .top{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-.logo{width:36px;height:36px;border-radius:10px;background:var(--tx);color:var(--bg);display:grid;place-items:center;font-weight:700;font-size:18px}
+.logo{width:36px;height:36px;border-radius:12px;background:var(--ok);color:var(--on);display:grid;place-items:center;font-weight:700;font-size:18px}
 .top h1{margin:0;font:700 20px/1.1 var(--f)}
 .top small{display:block;color:var(--mu);font-weight:400;font-size:13px;margin-top:2px}
 .sp{flex:1}
-.tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 6px 24px rgba(90,70,40,.06)}
 .tile h2{margin:0 0 14px;font:600 12px var(--f);letter-spacing:.09em;text-transform:uppercase;color:var(--mu)}
 .btn{border-radius:12px;padding:12px 20px;font-weight:600;background:transparent;border:1px solid var(--line);transition:background .15s,border-color .15s}
 .btn:hover{border-color:var(--mu)}
@@ -100,6 +100,14 @@ body.fs .ring{width:min(100%,80vh)}
 @keyframes sp{to{transform:rotate(360deg)}}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:50;padding:16px}
 .modal .tile{width:min(560px,100%);max-height:92vh;overflow:auto}
+.gh{display:flex;align-items:baseline;gap:10px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.gh:first-child{margin-top:0}
+.gh b{font:700 20px var(--f)}
+.gh span{color:var(--mu);font-size:14px}
+.gh i{font-style:normal;margin-left:auto;font-weight:700;color:var(--ok)}
+.gtile{padding:22px 20px}
+.sn small{color:var(--mu);font-weight:400;font-size:13px}
+.bk{background:none;border:0;color:var(--mu);padding:4px 0;margin-bottom:6px;font-size:14px}
 @media (max-width:900px){.setup{grid-template-columns:1fr}.live{grid-template-columns:1fr;grid-template-areas:"qr" "stat" "roster"}.statT{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -1732,7 +1740,7 @@ var SB_KEY = (typeof SUPABASE_KEY !== 'undefined' && SUPABASE_KEY.indexOf('ANON_
 var app = document.getElementById('app');
 var selG = new Set([0]);
 function setTh(t){ document.documentElement.setAttribute('data-th', t); }
-setTh((function(){ try { return localStorage.getItem('att_th'); } catch (e) { return null; } })() || (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'));
+setTh((function(){ try { return localStorage.getItem('att_th'); } catch (e) { return null; } })() || 'light');
 function $(t, c, x){ var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
 function clear(n){ while (n.firstChild) n.removeChild(n.firstChild); }
 function store(k, v){ try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } }
@@ -1764,11 +1772,11 @@ function teacher(){
   if (live) return liveView(live);
   setupView();
 }
+function splitN(n){ var i = n.lastIndexOf(' · '); return i < 0 ? { g: '', n: n } : { g: n.slice(i + 3), n: n.slice(0, i) }; }
 function curGroup(g){
   var ix = Array.from(selG).filter(function(i){ return g[i]; }).sort(function(x, y){ return x - y; });
   if (!ix.length && g.length) { ix = [0]; selG = new Set(ix); }
   if (!ix.length) return null;
-  if (ix.length === 1) return { name: g[ix[0]].name, names: g[ix[0]].names };
   var names = []; ix.forEach(function(i){ g[i].names.forEach(function(n){ names.push(n + ' · ' + g[i].name); }); });
   return { name: ix.map(function(i){ return g[i].name; }).join(' + '), names: names };
 }
@@ -1855,7 +1863,7 @@ function liveView(s){
   b.append(bFs, bCsv, bPause, bEnd);
   st.append(a, b);
   var rt = $('div', 'tile rosterT'), rh = $('h2', '', 'Студенттер'); rh.append(tip('Жасыл: қатысып отыр. Қызыл: аумақтан тыс. Үзік сызық: орынға рұқсат бермеген. Тақтайшаны бассаңыз, мұғалім қолмен белгілейді немесе алып тастайды.')); rt.append(rh);
-  var stu = $('div', 'stu'); rt.append(stu);
+  var stu = $('div'); rt.append(stu);
   live.append(qt, st, rt); if (!s.geo) { var nt = $('div', 'note', 'Орын тексерілмейді: геолокацияға рұқсат берілмеді немесе өшірулі. Кез келген жерден белгілеуге болады.'); w.append(nt); } else if (s.rad && s.want && s.rad > s.want) { w.append($('div', 'note', 'Бұл құрылғының орны шамамен ±' + s.acc + ' м дәл, сондықтан радиус ' + s.rad + ' м-ге үлкейтілді. Дәлірек болу үшін телефоннан бастаңыз.')); }
   w.append(live); app.append(w);
   var stopped = false, closed = false, marks = {}, roster = [], nextAt = 0, curTok = '';
@@ -1874,18 +1882,25 @@ function liveView(s){
   function render(r){
     roster = r.roster; marks = {}; r.marks.forEach(function(m){ marks[m.name] = m; });
     var ok = 0, far = 0, ng = 0; clear(stu);
-    roster.forEach(function(n){
-      var m = marks[n], t = $('button', 'st' + (m ? ' ' + m.status : ''));
-      if (m) { if (m.status === 'ok') ok++; else if (m.status === 'far') far++; else ng++; }
-      var sub = !m ? 'күтілуде' : m.status === 'ok' ? '✓ ' + new Date(m.at).toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }) + (m.manual ? ' · қолмен' : '') : m.status === 'far' ? 'алыс' + (m.dist != null ? ' · ' + m.dist + ' м' : '') : 'орын жоқ';
-      t.append($('b', '', n), $('span', '', sub));
-      t.onclick = function(){ rpc('att_manual', { p_id: s.id, p_key: s.key, p_name: n, p_status: (m && m.status === 'ok') ? 'del' : 'ok' }).then(poll); };
-      stu.append(t);
+    var order = [], by = {};
+    roster.forEach(function(n){ var s2 = splitN(n); if (!by[s2.g]) { by[s2.g] = []; order.push(s2.g); } by[s2.g].push(n); });
+    order.forEach(function(gn){
+      var okG = by[gn].filter(function(n){ return marks[n] && marks[n].status === 'ok'; }).length;
+      if (gn) { var hd = $('div', 'gh'); hd.append($('b', '', gn), $('span', '', by[gn].length + ' студент'), $('i', '', okG + ' / ' + by[gn].length)); stu.append(hd); }
+      var gridG = $('div', 'stu'); stu.append(gridG);
+      by[gn].forEach(function(n){
+        var m = marks[n], t = $('button', 'st' + (m ? ' ' + m.status : ''));
+        if (m) { if (m.status === 'ok') ok++; else if (m.status === 'far') far++; else ng++; }
+        var sub = !m ? 'күтілуде' : m.status === 'ok' ? '✓ ' + new Date(m.at).toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }) + (m.manual ? ' · қолмен' : '') : m.status === 'far' ? 'алыс' + (m.dist != null ? ' · ' + m.dist + ' м' : '') : 'орын жоқ';
+        t.append($('b', '', splitN(n).n), $('span', '', sub));
+        t.onclick = function(){ rpc('att_manual', { p_id: s.id, p_key: s.key, p_name: n, p_status: (m && m.status === 'ok') ? 'del' : 'ok' }).then(poll); };
+        gridG.append(t);
+      });
     });
     big.textContent = ''; big.append(document.createTextNode(ok), Object.assign($('small'), { textContent: ' / ' + roster.length }));
     bi.style.width = (roster.length ? ok / roster.length * 100 : 0) + '%';
     clear(lg);
-    [['var(--ok)', 'Қатысты', ok], ['var(--hot)', 'Алыс', far], ['rgba(255,255,255,.4)', 'Орын жоқ', ng], ['rgba(255,255,255,.2)', 'Күтілуде', roster.length - ok - far - ng]].forEach(function(x){
+    [['var(--ok)', 'Қатысты', ok], ['var(--hot)', 'Алыс', far], ['var(--mu)', 'Орын жоқ', ng], ['var(--line)', 'Күтілуде', roster.length - ok - far - ng]].forEach(function(x){
       var sp = $('span'), d = $('span', 'dot'); d.style.background = x[0]; var bb = $('b', '', String(x[2])); sp.append(d, document.createTextNode(x[1] + ': '), bb); lg.append(sp);
     });
     if (!r.open && !closed) { closed = true; bPause.textContent = '▶ Қабылдауды жалғастыру'; } else if (r.open && closed) { closed = false; bPause.textContent = '⏸ Қабылдауды тоқтату'; }
@@ -1926,14 +1941,32 @@ function student(code, token){
     pick(r);
   }).catch(function(){ msg('!', 'Байланыс жоқ', 'Интернетті тексеріп, QR-ды қайта сканерлеңіз.'); });
   function pick(r){
-    var w = shell(); w.append($('div', 'hintx', 'Groowin · QR-қатысу'), $('div', 'sbig', r.title || 'Сабақ'), $('div', 'hintx', 'Өз атыңды таңда'));
-    var list = $('div', 'stn'); var taken = {}; (r.taken || []).forEach(function(n){ taken[n] = 1; });
-    r.roster.forEach(function(n){
-      var b = $('button', 'sn'); b.append($('span', '', n)); if (taken[n]) { b.disabled = true; b.append($('span', 'hintx', 'белгіленген')); }
-      b.onclick = function(){ go(r, n); }; list.append(b);
-    });
-    w.append(list);
-    if (inApp()) { var wn = $('div', 'note', 'Бұл Telegram/Instagram ішіндегі браузер: орын жұмыс істемеуі мүмкін. Сілтемені Chrome немесе Safari-де ашқан дұрыс.'); wn.style.marginTop = '14px'; w.append(wn); }
+    var taken = {}; (r.taken || []).forEach(function(n){ taken[n] = 1; });
+    var order = [], by = {};
+    r.roster.forEach(function(n){ var s2 = splitN(n); if (!by[s2.g]) { by[s2.g] = []; order.push(s2.g); } by[s2.g].push(n); });
+    function foot(w){ if (inApp()) { var wn = $('div', 'note', 'Бұл Telegram/Instagram ішіндегі браузер: орын жұмыс істемеуі мүмкін. Сілтемені Chrome немесе Safari-де ашқан дұрыс.'); wn.style.marginTop = '14px'; w.append(wn); } }
+    function names(gn){
+      var w = shell(); w.append($('div', 'hintx', 'Groowin · QR-қатысу'));
+      if (order.length > 1) { var bk = $('button', 'bk', '← Топты өзгерту'); bk.onclick = groups; w.append(bk); }
+      w.append($('div', 'sbig', gn || r.title || 'Сабақ'), $('div', 'hintx', 'Өз атыңды таңда'));
+      var list = $('div', 'stn');
+      by[gn].forEach(function(n){
+        var b = $('button', 'sn'); b.append($('span', '', splitN(n).n)); if (taken[n]) { b.disabled = true; b.append($('small', '', 'белгіленген')); }
+        b.onclick = function(){ go(r, n); }; list.append(b);
+      });
+      w.append(list); foot(w);
+    }
+    function groups(){
+      var w = shell(); w.append($('div', 'hintx', 'Groowin · QR-қатысу'), $('div', 'sbig', r.title || 'Сабақ'), $('div', 'hintx', 'Алдымен тобыңды таңда'));
+      var list = $('div', 'stn');
+      order.forEach(function(gn){
+        var done = by[gn].filter(function(n){ return taken[n]; }).length;
+        var b = $('button', 'sn gtile'); b.append($('span', '', gn || 'Топ'), $('small', '', done + ' / ' + by[gn].length));
+        b.onclick = function(){ names(gn); }; list.append(b);
+      });
+      w.append(list); foot(w);
+    }
+    if (order.length > 1) groups(); else names(order[0]);
   }
   function go(r, name){
     var w = shell(); w.append($('div', 'spin'), Object.assign($('p', 'hintx'), { textContent: 'Орын анықталуда… рұқсат сұралса, «Рұқсат ету» басыңыз' })); w.lastChild.style.textAlign = 'center';
