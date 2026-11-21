@@ -708,7 +708,12 @@ html[data-theme] body.in-app :is(.game,.plc,.gradeBtn):hover{border-color:var(--
 #slides canvas{max-width:100%;max-height:100%;display:block}
 #slides .sl-x,#slides .sl-n{position:fixed;top:12px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.55);color:#fff;border-radius:99px;padding:8px 14px;font:inherit;transition:opacity .4s}
 #slides .sl-x{right:12px;cursor:pointer}#slides .sl-n{left:12px}
-#slides.idle .sl-x,#slides.idle .sl-n{opacity:0}
+#slides .sl-zoom{position:fixed;bottom:14px;right:12px;display:flex;gap:6px;align-items:center;transition:opacity .4s}
+#slides .sl-zoom button{border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.55);color:#fff;border-radius:99px;min-width:40px;height:40px;padding:0 12px;font:inherit;font-size:1.1rem;cursor:pointer}
+#slides .sl-zoom span{color:#fff;font-size:.85rem;min-width:3.2em;text-align:center;background:rgba(0,0,0,.55);border-radius:99px;padding:8px 8px}
+#slides canvas{transform-origin:50% 50%;will-change:transform}
+#slides.zm{cursor:grab}#slides.zm.pan{cursor:grabbing}
+#slides.idle .sl-x,#slides.idle .sl-n,#slides.idle .sl-zoom{opacity:0}
 #slides.idle{cursor:none}
 #slides .sl-dot{position:fixed;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:radial-gradient(circle,#ff2d2d 0 35%,rgba(255,45,45,.35) 36% 100%);box-shadow:0 0 16px 6px rgba(255,40,40,.6);pointer-events:none;opacity:0;transition:opacity .15s,left .09s linear,top .09s linear}
 #slides .sl-dot.on{opacity:1}
@@ -1211,6 +1216,14 @@ html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-
 .ai-m.a{background:rgba(128,150,200,.16);border-bottom-left-radius:5px;min-width:0}
 .ai-m.e{align-self:flex-start;max-width:92%;white-space:pre-wrap;background:rgba(255,100,90,.15);color:var(--err);border:1px solid rgba(255,100,90,.3)}
 .ai-md>div{margin:0}.ai-md .ai-gap{height:6px}.ai-md .ai-li{display:flex;gap:8px;margin:2px 0}.ai-md .ai-li .k{color:var(--blue);font-weight:700;min-width:1.1em}
+.ai-opts{display:flex;flex-wrap:wrap;gap:0 16px;padding:2px 12px;border-bottom:1px solid rgba(170,200,255,.12)}.ai-opts .ai-proc{border:0;padding:4px 0;font-size:.78rem}
+.ai-m{line-height:1.62;font-size:.97rem;padding:10px 15px}
+.ai-m.u{background:color-mix(in srgb,var(--accent,#3B6BFF) 78%,#1a2a4a);box-shadow:none}
+.ai-m.a{background:color-mix(in srgb,var(--ink,#E6E9EF) 7%,transparent)}
+.ai-md .ai-gap{height:9px}.ai-md .ai-li{margin:4px 0}
+.ai-fx{display:flex;align-items:center;gap:8px;margin:8px 0;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--ink,#E6E9EF) 6%,transparent);font-size:1.08rem;overflow-x:auto;width:fit-content;max-width:100%}
+.ai-fx .fr{display:inline-flex;flex-direction:column;align-items:center;text-align:center}
+.ai-fx .fr i{font-style:normal;padding:0 6px;line-height:1.35;white-space:nowrap}.ai-fx .fr i:first-child{border-bottom:1.5px solid currentColor}
 .ai-md code{background:rgba(128,150,200,.25);border-radius:6px;padding:1px 5px;font-size:.88em}
 .ai-st{align-self:flex-start;font-size:.8rem;color:var(--mute);display:flex;gap:6px;align-items:center;padding:2px 4px 2px 36px;animation:aiMsg .25s ease backwards}
 .ai-st .sp{width:12px;height:12px;border:2px solid rgba(150,170,220,.4);border-top-color:var(--blue);border-radius:50%;animation:aiSpin .8s linear infinite;flex:none}
@@ -3024,6 +3037,8 @@ const CHANGELOG = [
     ['📖', 'Бетке өту', 'Кітап пен PDF-те бет нөмірін жазып, сол бетке бірден өтесің. Слайд көрінісінде жоғарыдағы нөмірді бассаң болды.'],
     ['🤝', 'Ақылдырақ ЖИ', 'Қарапайым тілмен әңгімелеседі, формулаларды жеке жолға жазып түсіндіреді, кітапханадан бет нөмірімен дәлелдейді.'],
     ['🥛', 'Сүтті стиль', 'Жаңа бастапқы тема: жұмсақ крем түс пен жасыл акцент. Аккаунт → Көрініс бөлімінде ауыстыруға болады.'],
+    ['🔍', 'PDF үлкейту', 'Материалдағы PDF-ті «Үлкейтіп оқу» арқылы ашып, + / − не тінтуір дөңгелегімен үлкейтіп, сүйреп жылжытасың.'],
+    ['➗', 'Бөлшек формулалар', 'ЖИ мен Telegram формуланы алымы үстінде, бөлімі астында жазады.'],
     ['🧾', 'QR-қатысу', 'Бірнеше топты таңдау, топ бойынша бөлінген тізім, үлкен QR.']
   ] },
   { ver: '5.8', date: '11.11.2026', items: [
@@ -5759,7 +5774,9 @@ async function showMat(it) {
   else if (k === 'pdf') {
     node = el('iframe', 'demo'); node.src = src;
     const pr = el('div', 'bar'); pr.style.cssText = 'display:flex;gap:8px;align-items:center;margin:0 0 8px'; const pi = document.createElement('input'); pi.type = 'number'; pi.min = 1; pi.placeholder = 'Бет №'; pi.style.cssText = 'width:96px'; const pb = el('button', 'out', 'Бетке өту →'); pb.type = 'button';
-    const goPg = () => { const v = parseInt(pi.value, 10); if (!(v >= 1)) { pi.focus(); return; } const nf = el('iframe', 'demo'); nf.src = src + '#page=' + v; node.replaceWith(nf); node = nf; }; pb.onclick = goPg; pi.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); goPg(); } }; pr.append(pi, pb); b.append(pr);
+    const goPg = () => { const v = parseInt(pi.value, 10); if (!(v >= 1)) { pi.focus(); return; } const nf = el('iframe', 'demo'); nf.src = src + '#page=' + v; node.replaceWith(nf); node = nf; }; pb.onclick = goPg; pi.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); goPg(); } };
+    const zm = el('button', 'out', '🔍 Үлкейтіп оқу'); zm.type = 'button'; zm.title = 'Толық экранда ашады: + / − немесе тінтуір дөңгелегімен үлкейтіп, сүйреп жылжытасың'; zm.onclick = () => openSlides(it, +pi.value || 1);
+    pr.append(pi, pb, zm); b.append(pr);
   }
   else { node = el('p', '', 'Бұл файл түрін осы жерде көрсету мүмкін емес. «Жүктеп алу» батырмасын қолдан.'); }
   b.append(node);
@@ -6322,7 +6339,7 @@ async function slideData(it, onp) {
 const slidePrefetch = it => { try { if (it && it.storage_path) slideData(it, null).catch(() => { }); } catch { } };
 function closeSlides() {
   if (!SL) return; const o = SL; SL = null;
-  document.removeEventListener('keydown', o.key, true); removeEventListener('resize', o.rs); clearTimeout(o.idle);
+  document.removeEventListener('keydown', o.key, true); removeEventListener('resize', o.rs); removeEventListener('pointermove', o.pm); removeEventListener('pointerup', o.pu); clearTimeout(o.idle); clearTimeout(o.zt);
   try { o.pdf.destroy(); } catch {} o.ov.remove();
   if (fsAuto()) setTimeout(enterFS, 60); else if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   try { pultPush(); } catch {}
@@ -6330,7 +6347,8 @@ function closeSlides() {
 async function openSlides(it, startAt) {
   closeSlides(); SFX.unlock();
   const ov = el('div', ''); ov.id = 'slides'; const cv = document.createElement('canvas'), msg = el('div', 'sl-msg', 'Жүктелуде…'), nn = el('div', 'sl-n', ''), x = el('button', 'sl-x', '✕ Жабу'), dot = el('div', 'sl-dot'), blk = el('div', 'sl-blk');
-  x.type = 'button'; blk.hidden = true; ov.append(cv, msg, nn, x, dot, blk); document.body.appendChild(ov);
+  x.type = 'button'; blk.hidden = true; const zb = el('div', 'sl-zoom'), zOut = el('button', '', '−'), zIn = el('button', '', '+'), zLb = el('span', '', '1×'); zOut.type = zIn.type = 'button'; zOut.title = 'Кішірейту (–)'; zIn.title = 'Үлкейту (+). Дөңгелекті де айналдыруға болады'; zb.append(zOut, zLb, zIn);
+  ov.append(cv, msg, nn, x, zb, dot, blk); document.body.appendChild(ov);
   try { const rf = ov.requestFullscreen || ov.webkitRequestFullscreen; const pr = rf && rf.call(ov); pr && pr.catch && pr.catch(() => {}); } catch {}
   let pdf;
   try {
@@ -6339,7 +6357,7 @@ async function openSlides(it, startAt) {
     pdf = await pdfjsLib.getDocument({ data }).promise;
   } catch (e) { ov.remove(); if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); alert('Презентация ашылмады: ' + (e.message || e)); return; }
   msg.remove();
-  const o = SL = { pdf, ov, cv, dot, blk, nn, t: it.title, i: Math.min(Math.max(+startAt || 1, 1), pdf.numPages), n: pdf.numPages, tok: 0 };
+  const o = SL = { z: 1, px: 0, py: 0, pdf, ov, cv, dot, blk, nn, t: it.title, i: Math.min(Math.max(+startAt || 1, 1), pdf.numPages), n: pdf.numPages, tok: 0 };
   const cache = new Map(); // бет нөмірі -> дайын сурет (келесі бет лезде ашылу үшін)
   const paint = async i => {
     const key = innerWidth + 'x' + innerHeight, c = cache.get(i); if (c && c.key === key) return c;
@@ -6350,21 +6368,42 @@ async function openSlides(it, startAt) {
     if (cache.size > 6) { for (const kk of cache.keys()) { if (Math.abs(kk - i) > 2) { cache.delete(kk); break; } } }
     return r;
   };
+  const paintZ = async (i, z) => {
+    const pg = await pdf.getPage(i), dpr = Math.min(window.devicePixelRatio || 1, 2), v0 = pg.getViewport({ scale: 1 }), k = Math.min(innerWidth / v0.width, innerHeight / v0.height);
+    let sc = k * dpr * Math.min(z, 3.5); const mx = 5000 / Math.max(v0.width, v0.height); if (sc > mx) sc = mx;
+    const vp = pg.getViewport({ scale: sc }), tmp = document.createElement('canvas'); tmp.width = Math.floor(vp.width); tmp.height = Math.floor(vp.height);
+    await pg.render({ canvasContext: tmp.getContext('2d'), viewport: vp }).promise;
+    return { tmp, w: Math.floor(v0.width * k), h: Math.floor(v0.height * k) };
+  };
+  const applyT = () => {
+    const w = parseFloat(cv.style.width) || innerWidth, h = parseFloat(cv.style.height) || innerHeight, mx = Math.max(0, (w * o.z - innerWidth) / 2), my = Math.max(0, (h * o.z - innerHeight) / 2);
+    o.px = Math.min(mx, Math.max(-mx, o.px)); o.py = Math.min(my, Math.max(-my, o.py));
+    cv.style.transform = o.z > 1 ? 'translate(' + o.px + 'px,' + o.py + 'px) scale(' + o.z + ')' : ''; ov.classList.toggle('zm', o.z > 1); zLb.textContent = (Math.round(o.z * 10) / 10) + '×';
+  };
   const render = async () => {
-    const tok = ++o.tok, i = o.i, r = await paint(i); if (tok !== o.tok || SL !== o) return;
-    cv.width = r.tmp.width; cv.height = r.tmp.height; cv.style.width = r.w + 'px'; cv.style.height = r.h + 'px'; cv.getContext('2d').drawImage(r.tmp, 0, 0);
+    const tok = ++o.tok, i = o.i, zz = o.z, r = zz > 1 ? await paintZ(i, zz) : await paint(i); if (tok !== o.tok || SL !== o) return;
+    cv.width = r.tmp.width; cv.height = r.tmp.height; cv.style.width = r.w + 'px'; cv.style.height = r.h + 'px'; cv.getContext('2d').drawImage(r.tmp, 0, 0); applyT();
     nn.textContent = o.i + ' / ' + o.n; try { pultPush(); } catch {}
     setTimeout(() => { if (SL !== o || o.i !== i) return; (i < o.n ? paint(i + 1) : Promise.resolve()).then(() => { if (SL === o && o.i === i && i > 1) paint(i - 1); }).catch(() => { }); }, 60);
   };
   o.next = () => { if (o.i < (o.endAt || o.n)) o.go(1); else if (lessonRun) { closeSlides(); lessonStepBy(1); } };
   o.prev = () => { if (o.i > (o.startAt || 1)) o.go(-1); else if (lessonRun && lessonRun.i > 0) { closeSlides(); lessonStepBy(-1); } };
-  o.go = d => { const n = Math.min(Math.max(o.i + d, 1), o.n); if (n === o.i) return; o.i = n; render(); };
+  o.go = d => { const n = Math.min(Math.max(o.i + d, 1), o.n); if (n === o.i) return; o.i = n; o.z = 1; o.px = o.py = 0; render(); };
+  o.setZ = nz => { nz = Math.min(5, Math.max(1, nz)); if (nz === o.z) return; o.z = nz; if (nz === 1) o.px = o.py = 0; applyT(); clearTimeout(o.zt); o.zt = setTimeout(() => { if (SL === o) render(); }, 180); };
+  zIn.onclick = e => { e.stopPropagation(); o.setZ(o.z * 1.4); }; zOut.onclick = e => { e.stopPropagation(); o.setZ(o.z / 1.4); }; zLb.onclick = e => { e.stopPropagation(); o.setZ(1); }; zb.onclick = e => e.stopPropagation();
+  ov.addEventListener('wheel', e => { e.preventDefault(); o.setZ(o.z * (e.deltaY < 0 ? 1.15 : 1 / 1.15)); o.wake(); }, { passive: false });
+  ov.addEventListener('dblclick', e => { if (e.target.closest && e.target.closest('.sl-zoom,.sl-x')) return; e.stopPropagation(); o.setZ(o.z > 1 ? 1 : 2.5); });
+  let drag = null; o.dragged = false;
+  ov.addEventListener('pointerdown', e => { if (o.z > 1 && !(e.target.closest && e.target.closest('.sl-zoom,.sl-x'))) { drag = { x: e.clientX, y: e.clientY, px: o.px, py: o.py }; o.dragged = false; } });
+  addEventListener('pointermove', o.pm = e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 5) { o.dragged = true; ov.classList.add('pan'); } if (o.dragged) { o.px = drag.px + dx / 1; o.py = drag.py + dy / 1; applyT(); } });
+  addEventListener('pointerup', o.pu = () => { drag = null; ov.classList.remove('pan'); setTimeout(() => { o.dragged = false; }, 0); });
   o.black = f => { blk.hidden = f === undefined ? !blk.hidden : !f; };
   o.laser = (px, py, on) => { const r = cv.getBoundingClientRect(); dot.style.left = (r.left + px * r.width) + 'px'; dot.style.top = (r.top + py * r.height) + 'px'; dot.classList.toggle('on', !!on); };
   o.key = e => {
     if (e.target && e.target.id === 'slPg') return;
     const k = e.key; if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(k)) { o.next(); e.preventDefault(); e.stopPropagation(); }
     else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { o.prev(); e.preventDefault(); e.stopPropagation(); }
+    else if (k === '+' || k === '=') { o.setZ(o.z * 1.4); e.stopPropagation(); } else if (k === '-' || k === '_') { o.setZ(o.z / 1.4); e.stopPropagation(); } else if (k === '0') { o.setZ(1); e.stopPropagation(); }
     else if (k === 'b' || k === 'B' || k === '.') { o.black(); e.stopPropagation(); } else if (k === 'Escape') { closeSlides(); e.stopPropagation(); }
   };
   o.rs = () => render(); o.wake = () => { ov.classList.remove('idle'); clearTimeout(o.idle); o.idle = setTimeout(() => ov.classList.add('idle'), 2500); };
@@ -6380,7 +6419,7 @@ async function openSlides(it, startAt) {
     inp.onblur = () => done(true); inp.onclick = ev => ev.stopPropagation();
   };
   x.onclick = e => { e.stopPropagation(); closeSlides(); };
-  ov.addEventListener('click', e => { if (e.target === x) return; (e.clientX < innerWidth / 3 ? o.prev() : o.next()); o.wake(); });
+  ov.addEventListener('click', e => { if (e.target === x || o.z > 1 || o.dragged) return; (e.clientX < innerWidth / 3 ? o.prev() : o.next()); o.wake(); });
   document.addEventListener('fullscreenchange', function f() { if (!document.fullscreenElement) { document.removeEventListener('fullscreenchange', f); if (SL === o) closeSlides(); } });
   await render();
 }
@@ -9928,10 +9967,19 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     s = s.replace(/[{}]/g, (c, i) => '').replace(/[ \t]{2,}/g, ' ');
     return s.trim() === '' ? s : s;
   }
+  function fracLine(line) {
+    const t = line.trim(); if (t.length > 80 || !/^[^\s=]{1,8}\s*=/.test(t) || /[А-Яа-яӘәҒғҚқҢңӨөҰұҮүҺһІі]{4,}/.test(t)) return null;
+    let d = 0, ix = -1, n = 0; for (let i = 0; i < t.length; i++) { const c = t[i]; if (c === '(') d++; else if (c === ')') d--; else if (c === '/' && d === 0) { n++; ix = i; } }
+    const eq = t.indexOf('='); if (n !== 1 || eq > ix) return null;
+    const strip = x => { x = x.trim(); if (/^\(.*\)$/.test(x)) { const y = x.slice(1, -1); let q = 0, ok = true; for (const c of y) { if (c === '(') q++; else if (c === ')') { q--; if (q < 0) ok = false; } } if (ok && q === 0) return y.trim(); } return x; };
+    const up = strip(t.slice(eq + 1, ix)), dn = strip(t.slice(ix + 1)); if (!up || !dn) return null;
+    const r = el('div', 'ai-fx'), fr = el('span', 'fr'); fr.append(el('i', '', up), el('i', '', dn)); r.append(el('span', '', t.slice(0, eq + 1)), fr); return r;
+  }
   function md(text) {
     const box = el('div', 'ai-md');
     texToUni(String(text || '')).split('\n').forEach(line => {
       const b = line.match(/^\s*(?:[*\-•]|(\d+)[.)])\s+(.*)$/);
+      const fx = fracLine(line); if (fx) { box.append(fx); return; }
       if (b) { const r = el('div', 'ai-li'); r.append(el('span', 'k', b[1] ? b[1] + '.' : '•')); const t = el('span'); inline(t, b[2]); r.append(t); box.append(r); }
       else if (!line.trim()) box.append(el('div', 'ai-gap'));
       else { const p = el('div'); inline(p, line.replace(/^#+\s*/, '')); box.append(p); }
@@ -9952,8 +10000,8 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
     const fab = el('button'); fab.id = 'aiFab'; fab.type = 'button'; fab.innerHTML = PANDA; fab.setAttribute('aria-label', 'Groowin ЖИ ашу'); fab.hidden = true;
     const p = el('div'); p.id = 'aiPanel'; p.hidden = true; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Groowin ЖИ');
     p.innerHTML = '<div class="ai-h"><div class="av">' + PANDA + '</div><div class="tt"><b>Groowin ЖИ</b><small>Мұғалім көмекшісі</small></div><button type="button" id="aiHis" title="Тарих" aria-label="Әңгіме тарихы">🕘</button><button type="button" id="aiClr" title="Жаңа әңгіме" aria-label="Жаңа әңгіме">＋</button><button type="button" id="aiMem" title="ЖИ мені не біледі" aria-label="ЖИ жадысы">🧠</button><button type="button" id="aiX" aria-label="Жабу">✕</button></div>' +
-      '<label class="ai-proc" title="Қосулы болса, ЖИ сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді"><input type="checkbox" id="aiProc"> Процесті көрсету</label>' +
-      '<label class="ai-proc" title="ЖИ сенің уақытыңа қарай кейде ұсыныс айтады (күніне бір реттен көп емес)"><input type="checkbox" id="aiNg"> Ұсыныстар айтып тұр</label>' +
+      '<div class="ai-opts"><label class="ai-proc" title="Қосулы болса, ЖИ сайттың бөлімдерін өзі ашып жұмыс істеп жатқанын көрсетеді"><input type="checkbox" id="aiProc"> Процесті көрсету</label>' +
+      '<label class="ai-proc" title="ЖИ сенің уақытыңа қарай кейде ұсыныс айтады (күніне бір реттен көп емес)"><input type="checkbox" id="aiNg"> Ұсыныстар айтып тұр</label></div>' +
       '<div id="aiLog" aria-live="polite"></div><div id="aiHist" hidden></div>' +
       '<div class="ai-foot"><span id="aiStat"></span><button type="button" id="aiAdm" hidden>Статистика</button></div>' +
       '<form class="ai-f" id="aiForm"><textarea id="aiIn" rows="1" maxlength="2000" placeholder="Не істеу керек?" aria-label="Хабарлама"></textarea><button type="submit" id="aiSend" aria-label="Жіберу">➤</button></form>';
