@@ -108,6 +108,23 @@ body.fs .ring{width:min(100%,80vh)}
 .gtile{padding:22px 20px}
 .sn small{color:var(--mu);font-weight:400;font-size:13px}
 .bk{background:none;border:0;color:var(--mu);padding:4px 0;margin-bottom:6px;font-size:14px}
+.dtop{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.dtop select{padding:9px 12px;border-radius:10px;background:var(--inp);border:1px solid var(--line);color:var(--tx)}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:16px}
+.kp .tile{padding:18px}.kp .v{font:700 40px/1.1 var(--f);letter-spacing:-.02em}.kp .l{color:var(--mu);font-size:13px;margin-top:4px}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.hb{display:grid;gap:12px}.hb .r{display:grid;grid-template-columns:90px 1fr 54px;gap:10px;align-items:center;font-size:14px}
+.hb .t{height:10px;border-radius:6px;background:var(--line);overflow:hidden}.hb .t i{display:block;height:100%;background:var(--ok)}
+.hb .r.low .t i{background:var(--hot)}.hb b{text-align:right}
+.trend{display:flex;align-items:flex-end;gap:8px;height:170px;padding-top:10px;overflow-x:auto}
+.trend .c{flex:1;min-width:34px;display:grid;grid-template-rows:1fr auto auto;gap:4px;height:100%;text-align:center;font-size:11px;color:var(--mu)}
+.trend .c .bx{align-self:end;border-radius:8px 8px 3px 3px;background:var(--ok);min-height:3px}
+.trend .c .bx.low{background:var(--hot)}.trend .c b{color:var(--tx);font-size:12px}
+.tw{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:12px}
+table.tb{width:100%;border-collapse:collapse;font-size:14px}table.tb th{position:sticky;top:0;background:var(--card);text-align:left;color:var(--mu);font:600 12px var(--f);letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;border-bottom:1px solid var(--line)}
+table.tb td{padding:9px 12px;border-bottom:1px solid var(--line)}table.tb tr:last-child td{border-bottom:0}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-weight:700;font-size:13px;background:var(--ok);color:var(--on)}.pill.low{background:var(--hot);color:#fff}.pill.mid{background:transparent;border:1px solid var(--hot);color:var(--hot)}
+@media (max-width:900px){.dg{grid-template-columns:1fr}}
 @media (max-width:900px){.setup{grid-template-columns:1fr}.live{grid-template-columns:1fr;grid-template-areas:"qr" "stat" "roster"}.statT{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -1753,7 +1770,7 @@ function tip(t){ var s = $('span', 'tip', '!'); s.tabIndex = 0; s.setAttribute('
 function header(sub){
   var t = $('div', 'top'), l = $('div', 'logo', 'G'), h = $('div'); h.append($('h1', '', 'QR-қатысу'), $('small', '', sub || 'Groowin · Smart Mugalim'));
   var tb = $('button', 'btn sm', 'Тема'); tb.title = 'Тема'; tb.setAttribute('aria-label', 'Тема'); tb.onclick = function(){ var n = document.documentElement.getAttribute('data-th') === 'light' ? 'dark' : 'light'; setTh(n); store('att_th', n); };
-  t.append(l, h, $('div', 'sp'), tb); return t;
+  var db = $('button', 'btn sm', '📊 Есеп'); db.onclick = function(){ dashView(); }; t.append(l, h, $('div', 'sp'), db, tb); return t;
 }
 function noConfig(){
   clear(app); var w = $('div', 'wrap'); w.append(header());
@@ -1812,7 +1829,7 @@ function setupView(){
     var start = function(lat, lng, acc){
       var rad = Math.min(2000, Math.max(+rg.value, acc ? Math.ceil(acc) : 0));
       rpc('att_new', { p_title: inT.value || cur.name, p_roster: cur.names, p_lat: lat, p_lng: lng, p_radius: rad }).then(function(r){
-        var s = { id: r.id, key: r.key, code: r.code, title: inT.value || cur.name, geo: lat != null, acc: acc ? Math.round(acc) : 0, rad: rad, want: +rg.value }; store('att_live', s); liveView(s);
+        var s = { id: r.id, key: r.key, code: r.code, title: inT.value || cur.name, geo: lat != null, acc: acc ? Math.round(acc) : 0, rad: rad, want: +rg.value }; s.t = Date.now(); store('att_live', s); liveView(s);
       }).catch(function(){ go.disabled = false; go.textContent = 'Қате. SQL (update-59) орындалғанын тексеріңіз'; });
     };
     if (!cb.checked || !navigator.geolocation) return start(null, null, 0);
@@ -1859,8 +1876,8 @@ function liveView(s){
   var lg = $('div', 'legend'); a.append(big, bar, lg);
   var warn = $('div'); 
   b.append($('h2', '', 'Басқару'));
-  var bFs = $('button', 'btn', '⛶ Толық экран'), bCsv = $('button', 'btn', '⬇ Тізімді жүктеу (CSV)'), bPause = $('button', 'btn', '⏸ Қабылдауды тоқтату'), bEnd = $('button', 'btn hot', 'Сабақты аяқтау');
-  b.append(bFs, bCsv, bPause, bEnd);
+  var bFs = $('button', 'btn', '⛶ Толық экран'), bCsv = $('button', 'btn', '⬇ CSV'), bXls = $('button', 'btn', '⬇ Excel'), bPdf = $('button', 'btn', '🖨 PDF'), bPause = $('button', 'btn', '⏸ Қабылдауды тоқтату'), bEnd = $('button', 'btn hot', 'Сабақты аяқтау');
+  b.append(bFs, bXls, bPdf, bCsv, bPause, bEnd);
   st.append(a, b);
   var rt = $('div', 'tile rosterT'), rh = $('h2', '', 'Студенттер'); rh.append(tip('Жасыл: қатысып отыр. Қызыл: аумақтан тыс. Үзік сызық: орынға рұқсат бермеген. Тақтайшаны бассаңыз, мұғалім қолмен белгілейді немесе алып тастайды.')); rt.append(rh);
   var stu = $('div'); rt.append(stu);
@@ -1897,6 +1914,7 @@ function liveView(s){
         gridG.append(t);
       });
     });
+    histSave(s, roster, marks);
     big.textContent = ''; big.append(document.createTextNode(ok), Object.assign($('small'), { textContent: ' / ' + roster.length }));
     bi.style.width = (roster.length ? ok / roster.length * 100 : 0) + '%';
     clear(lg);
@@ -1915,8 +1933,88 @@ function liveView(s){
     var csv = '﻿' + rows.map(function(r){ return r.map(function(c){ return '"' + String(c).replace(/"/g, '""') + '"'; }).join(';'); }).join('\r\n');
     var a2 = $('a'); a2.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a2.download = 'qatysu-' + s.code + '.csv'; a2.click();
   };
-  bEnd.onclick = function(){ if (!confirm('Сабақты аяқтап, жаңасын бастау керек пе? Алдымен CSV жүктеп алыңыз.')) return; stopped = true; clearInterval(iv); rpc('att_close', { p_id: s.id, p_key: s.key, p_open: false }).catch(function(){}); store('att_live', null); setupView(); };
+  function repRows(){ return roster.map(function(n){ var x = splitN(n), m = marks[n]; return { g: x.g, n: x.n, st: m ? m.status : 'none', at: m ? m.at : null, d: m && m.dist != null ? m.dist : null }; }); }
+  bXls.onclick = function(){ dlXls('qatysu-' + s.code + '.xls', lessonHtml(s.title, s.t || Date.now(), repRows())); };
+  bPdf.onclick = function(){ printHtml(lessonHtml(s.title, s.t || Date.now(), repRows())); };
+  bEnd.onclick = function(){ if (!confirm('Сабақты аяқтап, жаңасын бастау керек пе? Алдымен Excel не PDF жүктеп алыңыз.')) return; stopped = true; clearInterval(iv); rpc('att_close', { p_id: s.id, p_key: s.key, p_open: false }).catch(function(){}); store('att_live', null); setupView(); };
   tok(); poll(); requestAnimationFrame(frame);
+}
+
+
+// =================== ТАРИХ, ЕСЕП, ЭКСПОРТ ===================
+var ST = { ok: 'қатысты', far: 'алыс', nogeo: 'орын жоқ', none: 'жоқ' };
+function histGet(){ return store('att_hist') || []; }
+function histSave(s, roster, marks){
+  var h = histGet(), rows = roster.map(function(n){ var x = splitN(n), m = marks[n]; return { n: x.n, g: x.g, st: m ? m.status : 'none' }; });
+  var i = -1; h.forEach(function(e, k){ if (e.id === s.id) i = k; });
+  var e = { id: s.id, t: i >= 0 ? h[i].t : (s.t || Date.now()), title: s.title, rows: rows };
+  if (i >= 0) h[i] = e; else h.push(e);
+  store('att_hist', h.slice(-300));
+}
+function esc(x){ return String(x == null ? '' : x).replace(/[&<>"]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+var DOC_CSS = 'body{font-family:Arial,Helvetica,sans-serif;color:#2d2822;margin:24px}h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:22px 0 6px}.s{color:#7a6f60;font-size:12px;margin-bottom:14px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #d9cfbf;padding:6px 9px;font-size:13px;text-align:left}th{background:#f3ece0}.ok{color:#2f6e52;font-weight:700}.bad{color:#c4561f;font-weight:700}@media print{h2{break-after:avoid}tr{break-inside:avoid}}';
+function docWrap(title, body){ return '<!doctype html><html lang="kk"><head><meta charset="utf-8"><title>' + esc(title) + '</title><style>' + DOC_CSS + '</style></head><body>' + body + '</body></html>'; }
+function lessonHtml(title, t, rows){
+  var by = {}, order = []; rows.forEach(function(r){ if (!by[r.g]) { by[r.g] = []; order.push(r.g); } by[r.g].push(r); });
+  var ok = rows.filter(function(r){ return r.st === 'ok'; }).length;
+  var b = '<h1>' + esc(title) + '</h1><div class="s">' + new Date(t).toLocaleString('kk-KZ') + ' · Қатысты: ' + ok + ' / ' + rows.length + ' (' + (rows.length ? Math.round(ok / rows.length * 100) : 0) + '%)</div>';
+  order.forEach(function(g){
+    var l = by[g], o = l.filter(function(r){ return r.st === 'ok'; }).length;
+    b += '<h2>' + esc(g || 'Топ') + ' — ' + o + ' / ' + l.length + '</h2><table><tr><th>№</th><th>Аты-жөні</th><th>Күйі</th><th>Уақыты</th></tr>';
+    l.forEach(function(r, i){ b += '<tr><td>' + (i + 1) + '</td><td>' + esc(r.n) + '</td><td class="' + (r.st === 'ok' ? 'ok' : 'bad') + '">' + ST[r.st] + (r.st === 'far' && r.d != null ? ' (' + r.d + ' м)' : '') + '</td><td>' + (r.at ? new Date(r.at).toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }) : '') + '</td></tr>'; });
+    b += '</table>';
+  });
+  return docWrap(title, b);
+}
+function dlXls(name, html){ var a = $('a'); a.href = URL.createObjectURL(new Blob(['﻿' + html], { type: 'application/vnd.ms-excel;charset=utf-8' })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+function printHtml(html){ var w = window.open('', '_blank'); if (!w) { alert('Жаңа терезеге рұқсат беріңіз'); return; } w.document.write(html); w.document.close(); w.focus(); setTimeout(function(){ w.print(); }, 350); }
+function pct(a, b){ return b ? Math.round(a / b * 100) : 0; }
+function dashView(){
+  clear(app); var w = $('div', 'wrap'); w.append(header('Қатысу есебі'));
+  var all = histGet().filter(function(e){ return e.rows && e.rows.length; }).sort(function(a, b){ return a.t - b.t; });
+  var top = $('div', 'dtop'), back = $('button', 'btn', '← Артқа'); back.onclick = function(){ teacher(); };
+  var gs = {}; all.forEach(function(e){ e.rows.forEach(function(r){ gs[r.g] = 1; }); });
+  var sg = $('select'); sg.append(Object.assign($('option'), { value: '*', textContent: 'Барлық топ' })); Object.keys(gs).forEach(function(g){ sg.append(Object.assign($('option'), { value: g, textContent: g || 'Топсыз' })); });
+  var sp = $('select'); [['0', 'Барлық уақыт'], ['30', 'Соңғы 30 күн'], ['7', 'Соңғы 7 күн']].forEach(function(x){ sp.append(Object.assign($('option'), { value: x[0], textContent: x[1] })); });
+  var bx = $('button', 'btn', '⬇ Excel'), bp = $('button', 'btn', '🖨 PDF'), bc = $('button', 'btn hot', 'Тарихты тазалау');
+  top.append(back, sg, sp, $('div', 'sp'), bx, bp, bc); w.append(top);
+  var body = $('div'); w.append(body); app.append(w);
+  if (!all.length) { clear(body); var em = $('div', 'tile'); em.append($('h2', '', 'Әзірге бос'), $('p', 'hintx', 'Сабақты QR арқылы өткізгеннен кейін, қатысу осында автоматты жиналады. Деректер осы құрылғының браузерінде сақталады.')); body.append(em); bx.disabled = bp.disabled = bc.disabled = true; return; }
+  var cur = null;
+  function calc(){
+    var g = sg.value, days = +sp.value, from = days ? Date.now() - days * 864e5 : 0;
+    var ss = all.filter(function(e){ return e.t >= from; }).map(function(e){ return { e: e, rows: e.rows.filter(function(r){ return g === '*' || r.g === g; }) }; }).filter(function(x){ return x.rows.length; });
+    var stu = {}, grp = {}, tot = 0, okT = 0, sus = 0;
+    ss.forEach(function(x){ x.rows.forEach(function(r){ var k = r.g + '|' + r.n, o = stu[k] || (stu[k] = { n: r.n, g: r.g, c: 0, ok: 0 }), gg = grp[r.g] || (grp[r.g] = { c: 0, ok: 0 }); o.c++; gg.c++; tot++; if (r.st === 'ok') { o.ok++; gg.ok++; okT++; } else if (r.st !== 'none') sus++; }); });
+    return { ss: ss, stu: Object.keys(stu).map(function(k){ return stu[k]; }).sort(function(a, b){ return pct(a.ok, a.c) - pct(b.ok, b.c) || a.n.localeCompare(b.n); }), grp: grp, tot: tot, okT: okT, sus: sus };
+  }
+  function draw(){
+    var d = cur = calc(); clear(body);
+    var kp = $('div', 'kp');
+    [[d.ss.length, 'Сабақ саны'], [pct(d.okT, d.tot) + '%', 'Орташа қатысу'], [d.stu.filter(function(s){ return pct(s.ok, s.c) < 70; }).length, 'Қатысуы 70%-дан төмен студент'], [d.sus, 'Күмәнді белгілеу (алыс / орын жоқ)']].forEach(function(x){ var t = $('div', 'tile'); t.append($('div', 'v', String(x[0])), $('div', 'l', x[1])); kp.append(t); });
+    body.append(kp);
+    var dg = $('div', 'dg'), t1 = $('div', 'tile'), t2 = $('div', 'tile');
+    t1.append($('h2', '', 'Топтар бойынша қатысу')); var hb = $('div', 'hb');
+    Object.keys(d.grp).sort().forEach(function(g){ var p = pct(d.grp[g].ok, d.grp[g].c), r = $('div', 'r' + (p < 70 ? ' low' : '')), t = $('div', 't'), i = $('i'); i.style.width = p + '%'; t.append(i); r.append($('span', '', g || 'Топсыз'), t, $('b', '', p + '%')); hb.append(r); });
+    t1.append(hb);
+    t2.append($('h2', '', 'Сабақтар динамикасы')); var tr = $('div', 'trend');
+    d.ss.slice(-14).forEach(function(x){ var o = x.rows.filter(function(r){ return r.st === 'ok'; }).length, p = pct(o, x.rows.length), c = $('div', 'c'), bxx = $('div', 'bx' + (p < 70 ? ' low' : '')); bxx.style.height = Math.max(p, 2) + '%'; bxx.title = x.e.title + ': ' + p + '%'; c.append(bxx, $('b', '', p + '%'), $('span', '', new Date(x.e.t).toLocaleDateString('kk-KZ', { day: '2-digit', month: '2-digit' }))); tr.append(c); });
+    t2.append(tr); dg.append(t1, t2); body.append(dg);
+    var t3 = $('div', 'tile'); t3.append($('h2', '', 'Студенттер (қатысуы төмені алдымен)'));
+    var wr = $('div', 'tw'), tb = $('table', 'tb'); tb.innerHTML = '<tr><th>Аты-жөні</th><th>Топ</th><th>Сабақ</th><th>Қатысты</th><th>%</th></tr>';
+    d.stu.forEach(function(s){ var p = pct(s.ok, s.c), tr2 = $('tr'); [s.n, s.g, s.c, s.ok].forEach(function(x){ tr2.append($('td', '', String(x))); }); var td = $('td'), pl = $('span', 'pill' + (p < 50 ? ' low' : p < 80 ? ' mid' : ''), p + '%'); td.append(pl); tr2.append(td); tb.append(tr2); });
+    wr.append(tb); t3.append(wr); body.append(t3);
+  }
+  function docHtml(){
+    var d = cur, b = '<h1>Қатысу есебі</h1><div class="s">' + new Date().toLocaleDateString('kk-KZ') + ' · Сабақ: ' + d.ss.length + ' · Орташа қатысу: ' + pct(d.okT, d.tot) + '%</div><h2>Студенттер</h2><table><tr><th>Аты-жөні</th><th>Топ</th><th>Сабақ</th><th>Қатысты</th><th>%</th></tr>';
+    d.stu.forEach(function(s){ var p = pct(s.ok, s.c); b += '<tr><td>' + esc(s.n) + '</td><td>' + esc(s.g) + '</td><td>' + s.c + '</td><td>' + s.ok + '</td><td class="' + (p < 70 ? 'bad' : 'ok') + '">' + p + '%</td></tr>'; });
+    b += '</table><h2>Сабақтар</h2><table><tr><th>Күні</th><th>Тақырып</th><th>Қатысты</th></tr>';
+    d.ss.forEach(function(x){ var o = x.rows.filter(function(r){ return r.st === 'ok'; }).length; b += '<tr><td>' + new Date(x.e.t).toLocaleString('kk-KZ') + '</td><td>' + esc(x.e.title) + '</td><td>' + o + ' / ' + x.rows.length + ' (' + pct(o, x.rows.length) + '%)</td></tr>'; });
+    return docWrap('Қатысу есебі', b + '</table>');
+  }
+  sg.onchange = sp.onchange = draw; bx.onclick = function(){ dlXls('qatysu-esep.xls', docHtml()); }; bp.onclick = function(){ printHtml(docHtml()); };
+  bc.onclick = function(){ if (confirm('Бүкіл қатысу тарихы осы құрылғыдан өшеді. Жалғастыру керек пе?')) { store('att_hist', null); dashView(); } };
+  draw();
 }
 
 // =================== СТУДЕНТ ===================
