@@ -397,12 +397,12 @@ html[data-theme=light] .light-hide{display:none}
 
 /* ===== UI v2: минимал дизайн (қараңғы / жарық / сүтті + акцент) ===== */
 :root{--accent:#3B6BFF;--accent-soft:color-mix(in srgb,var(--accent) 14%,transparent)}
-html[data-accent=blue]{--accent:#3B6BFF}html[data-accent=green]{--accent:#1FA971}html[data-accent=violet]{--accent:#7C5CFF}html[data-accent=orange]{--accent:#F28C28}
+html[data-accent=blue]{--accent:#3B6BFF}html[data-accent=green]{--accent:#1FA971}html[data-accent=violet]{--accent:#7C5CFF}html[data-accent=orange]{--accent:#F28C28}html[data-accent=sage]{--accent:#4F8A6E}
 html[data-theme]{--blue:var(--accent);--sun:var(--accent)}
 html[data-theme=dark]{--bg:#0E1117;--surf:#151A23;--paper:#1B212C;--card:#151A23;--line:rgba(255,255,255,.09);--grid:rgba(255,255,255,.08);--ink:#E6E9EF;--mute:#8B93A3;--err:#FF8A80;--hover:rgba(255,255,255,.05)}
 html[data-theme=light]{--bg:#F6F7F9;--surf:#fff;--paper:#F1F3F6;--card:#fff;--line:#E5E7EB;--grid:#E5E7EB;--ink:#14171F;--mute:#6B7280;--err:#C62828;--hover:rgba(20,23,31,.05)}
-html[data-theme=milk]{--bg:#FAF5EC;--surf:#FFFDF8;--paper:#F4EDE0;--card:#FFFDF8;--line:#E9E0D0;--grid:#E9E0D0;--ink:#2B2620;--mute:#8A7F70;--err:#C0392B;--hover:rgba(43,38,32,.05)}
-html[data-theme=milk] body.in-app .ni{color:#F28C28}
+html[data-theme=milk]{--bg:#F7F2EA;--surf:#FFFAF3;--paper:#F3ECE0;--card:#FFFAF3;--line:#E9DFD0;--grid:#E9DFD0;--ink:#2D2822;--mute:#8A7F70;--err:#C0392B;--hover:rgba(43,38,32,.05)}
+html[data-theme=milk] body.in-app .ni{color:var(--accent)}
 
 html[data-theme=ocean]{--bg:#06161F;--surf:#0C2330;--paper:#112C3B;--card:#0C2330;--line:rgba(120,220,255,.15);--grid:rgba(120,220,255,.08);--ink:#E3F4FA;--mute:#80A5B5;--err:#FF8A80;--hover:rgba(120,220,255,.07)}
 html[data-theme=sunset]{--bg:#1A0F1F;--surf:#251529;--paper:#2F1B35;--card:#251529;--line:rgba(255,170,140,.16);--grid:rgba(255,170,140,.08);--ink:#FCEBE6;--mute:#B99CA8;--err:#FF9A8A;--hover:rgba(255,170,140,.07)}
@@ -1179,6 +1179,11 @@ html[data-glass] ::-webkit-scrollbar{width:10px;height:10px}html[data-glass] ::-
 #aiFab svg{width:48px;height:48px;overflow:visible}
 #aiPanel{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:61;width:min(420px,calc(100vw - 24px));height:min(660px,calc(100vh - 110px));display:flex;flex-direction:column;border-radius:24px;border:1px solid rgba(170,200,255,.35);background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden;transform-origin:100% 100%;animation:aiIn .3s cubic-bezier(.2,.9,.3,1.2)}
 #aiPanel[hidden]{display:none}
+#aiBack{position:fixed;inset:0;z-index:59;background:rgba(30,24,16,.38);animation:aiBk .25s ease}#aiBack[hidden]{display:none}
+@keyframes aiBk{from{opacity:0}}
+@keyframes aiPop{from{opacity:0;transform:translate(-50%,-47%) scale(.94)}}
+@media (min-width:761px){#aiPanel{right:auto;bottom:auto;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1080px,92vw,calc((100vh - 48px)*1.7778));height:auto;aspect-ratio:16/9;max-height:calc(100vh - 48px);transform-origin:50% 50%;animation:aiPop .28s cubic-bezier(.2,.9,.3,1.1)}}
+
 @keyframes aiIn{from{opacity:0;transform:scale(.85) translateY(20px)}}
 .ai-h{display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid rgba(170,200,255,.2);background:linear-gradient(160deg,rgba(77,124,255,.28),rgba(25,176,221,.08))}
 .ai-h .av{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(150,190,255,.55),rgba(40,70,170,.7) 75%);border:1px solid rgba(190,215,255,.55);display:grid;place-items:center;flex:none}
@@ -2261,7 +2266,7 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
       <h3 style="margin:22px 0 8px;font-size:1.05rem">Көрініс</h3>
       <div class="thm" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="fresh" style="--tb:#EEF6F8;--ts:#FFFFFF;--ta:#7C5CFF"><span class="pv"></span>Fresh</button><button type="button" data-t="dark" style="--tb:#0E1117;--ts:#151A23;--ta:#3B6BFF"><span class="pv"></span>Қараңғы</button><button type="button" data-t="light" style="--tb:#F6F7F9;--ts:#FFFFFF;--ta:#3B6BFF"><span class="pv"></span>Жарық</button><button type="button" data-t="milk" style="--tb:#FAF5EC;--ts:#FFFDF8;--ta:#F28C28"><span class="pv"></span>Сүтті</button><button type="button" data-t="ocean" style="--tb:#06161F;--ts:#0C2330;--ta:#19B5D6"><span class="pv"></span>Теңіз</button><button type="button" data-t="sunset" style="--tb:#1A0F1F;--ts:#251529;--ta:#FF7A5A"><span class="pv"></span>Күннің батуы</button><button type="button" data-t="forest" style="--tb:#0A1510;--ts:#112019;--ta:#1FA971"><span class="pv"></span>Орман</button><button type="button" data-t="amoled" style="--tb:#000000;--ts:#0A0A0A;--ta:#7C5CFF"><span class="pv"></span>Қара</button></div>
       <p class="hint" style="margin:14px 0 8px">Акцент түсі</p>
-      <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button><button type="button" data-a="cyan" style="--c:#19B5D6" aria-label="Көгілдір"></button><button type="button" data-a="pink" style="--c:#E8559A" aria-label="Қызғылт"></button></div>
+      <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="sage" style="--c:#4F8A6E" aria-label="Шалфей"></button><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button><button type="button" data-a="cyan" style="--c:#19B5D6" aria-label="Көгілдір"></button><button type="button" data-a="pink" style="--c:#E8559A" aria-label="Қызғылт"></button></div>
       
       <p class="hint" style="margin:14px 0 8px">Шыны режимі: фонда сурет, үстінде бұлыңғыр шыны панельдер</p>
       <div class="st-row"><button type="button" id="glassBtn" aria-pressed="false">🪟 Шыны режимі: өшірулі</button><button type="button" id="styleBtn" aria-expanded="false">🎨 Стиль: Әдепкі</button></div>
@@ -2832,9 +2837,9 @@ renderGames();
 
 // ===== Тема =====
 const ls = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
-const THEMES = ['fresh', 'dark', 'light', 'milk', 'ocean', 'sunset', 'forest', 'amoled'], ACCENTS = ['blue', 'green', 'violet', 'orange', 'cyan', 'pink'];
-let pref = ls.get('theme'); if (!THEMES.includes(pref)) pref = 'fresh';
-let acc = ls.get('accent'); if (!ACCENTS.includes(acc)) acc = pref === 'milk' ? 'orange' : pref === 'fresh' ? 'violet' : 'blue';
+const THEMES = ['fresh', 'dark', 'light', 'milk', 'ocean', 'sunset', 'forest', 'amoled'], ACCENTS = ['sage', 'blue', 'green', 'violet', 'orange', 'cyan', 'pink'];
+let pref = ls.get('theme'); if (!THEMES.includes(pref)) pref = 'milk';
+let acc = ls.get('accent'); if (!ACCENTS.includes(acc)) acc = pref === 'milk' ? 'sage' : pref === 'fresh' ? 'violet' : 'blue';
 function applyIllu() { document.documentElement.dataset.illu = 'on'; }
 function applyTheme(inApp) {
   applyIllu();
@@ -2843,7 +2848,7 @@ function applyTheme(inApp) {
   document.querySelectorAll('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === pref)));
   document.querySelectorAll('#accSw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.a === acc)));
 }
-function setTheme(t) { ls.set('gwAutoDark', ''); pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'orange'; if (t === 'fresh' && !ls.get('accent')) acc = 'violet'; applyTheme(true); }
+function setTheme(t) { ls.set('gwAutoDark', ''); pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'sage'; if (t === 'fresh' && !ls.get('accent')) acc = 'violet'; applyTheme(true); }
 // Кешке ЖИ қараңғыға ауыстырса, таңертең бұрынғы тақырыпты өзі қайтарады. Күй localStorage-та, сондықтан сеанс аяқталып, қайта кірсең де жұмыс істейді.
 window.autoDarkOn = () => { const b = pref; setTheme('dark'); ls.set('gwAutoDark', '1'); ls.set('gwThemeBefore', b === 'dark' ? 'light' : b); };
 function autoThemeRestore() {
@@ -3013,6 +3018,14 @@ async function siteLoad() {
 // ===== «Не жаңа?»: жаңа нұсқа шыққанда бір рет көрсетіледі =====
 // Әр жаңартуда ЕҢ ЖОҒАРЫҒА жаңа жол қос (ver өзгерсе, терезе бәріне қайта шығады).
 const CHANGELOG = [
+  { ver: '5.9', date: '21.11.2026', items: [
+    ['🪟', 'ЖИ терезесі ортада', 'Компьютерде ЖИ экран ортасында 16:9 терезе болып ашылады. Сыртын бассаң, жабылады.'],
+    ['🌐', 'Интернеттен сурет қосу', 'ҚМЖ-ға сурет енді Wikimedia және Openverse-тен ізделеді, тақырыпқа сәйкестігі бойынша сұрыпталады.'],
+    ['📖', 'Бетке өту', 'Кітап пен PDF-те бет нөмірін жазып, сол бетке бірден өтесің. Слайд көрінісінде жоғарыдағы нөмірді бассаң болды.'],
+    ['🤝', 'Ақылдырақ ЖИ', 'Қарапайым тілмен әңгімелеседі, формулаларды жеке жолға жазып түсіндіреді, кітапханадан бет нөмірімен дәлелдейді.'],
+    ['🥛', 'Сүтті стиль', 'Жаңа бастапқы тема: жұмсақ крем түс пен жасыл акцент. Аккаунт → Көрініс бөлімінде ауыстыруға болады.'],
+    ['🧾', 'QR-қатысу', 'Бірнеше топты таңдау, топ бойынша бөлінген тізім, үлкен QR.']
+  ] },
   { ver: '5.8', date: '11.11.2026', items: [
     ['📄', 'ҚМЖ жасау', 'Басты беттегі жаңа батырма: тақырып пен сыныпты жазасың, ЖИ қысқа мерзімді жоспарды жазады. Ақ-қара кесте, Word файл болып жүктеледі де күн атты папкамен Материалдарға түседі.'],
     ['🖼', 'Оқушылар жобасы', 'Жаңа «Жобалар» бөлімі: оқушы сурет пен сипаттама жібереді, мұғалім «Жарияла» басқанда галереяға түседі.'],
@@ -5743,7 +5756,11 @@ async function showMat(it) {
   else if (k === 'audio') { node = el('audio', 'demo'); node.src = src; node.controls = true; }
   else if (k === 'office') { node = el('iframe', 'demo'); node.src = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(src); if (/^pptx?$/.test(extOf(it.title))) b.append(el('p', 'sub', 'PowerPoint осылай ашылады, бірақ телефон-пультпен басқарылмайды. Пультпен басқару үшін PowerPoint-те «Файл → Экспорт → PDF» жасап, PDF-ті жүкте.')); }
   else if (k === 'link') { node = el('iframe', 'demo'); node.src = embedUrl(src); node.allow = 'fullscreen; autoplay'; node.allowFullscreen = true; node.referrerPolicy = 'strict-origin-when-cross-origin'; node.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-presentation allow-modals'); }
-  else if (k === 'pdf') { node = el('iframe', 'demo'); node.src = src; }
+  else if (k === 'pdf') {
+    node = el('iframe', 'demo'); node.src = src;
+    const pr = el('div', 'bar'); pr.style.cssText = 'display:flex;gap:8px;align-items:center;margin:0 0 8px'; const pi = document.createElement('input'); pi.type = 'number'; pi.min = 1; pi.placeholder = 'Бет №'; pi.style.cssText = 'width:96px'; const pb = el('button', 'out', 'Бетке өту →'); pb.type = 'button';
+    const goPg = () => { const v = parseInt(pi.value, 10); if (!(v >= 1)) { pi.focus(); return; } const nf = el('iframe', 'demo'); nf.src = src + '#page=' + v; node.replaceWith(nf); node = nf; }; pb.onclick = goPg; pi.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); goPg(); } }; pr.append(pi, pb); b.append(pr);
+  }
   else { node = el('p', '', 'Бұл файл түрін осы жерде көрсету мүмкін емес. «Жүктеп алу» батырмасын қолдан.'); }
   b.append(node);
   if (k === 'link') {
@@ -6091,6 +6108,8 @@ async function libBook(b, after) {
     rd.onclick = () => openAt(0);
     dl.onclick = async () => { try { const a = document.createElement('a'); a.href = await libUrl(b, true); a.download = ''; document.body.appendChild(a); a.click(); a.remove(); } catch (e) { msg.className = 'msg err'; msg.textContent = e.message; } };
     row.append(rd, dl);
+    const gp = el('div', ''); gp.style.cssText = 'display:flex;gap:8px;align-items:center;margin-top:2px'; const pi = document.createElement('input'); pi.type = 'number'; pi.min = 1; if (b.pages) pi.max = b.pages; pi.placeholder = 'Бет №'; pi.style.cssText = 'width:96px'; const pb = el('button', 'out', 'Бетке өту →'); pb.type = 'button';
+    const goPg = () => { const v = parseInt(pi.value, 10); if (v >= 1) openAt(v); else pi.focus(); }; pb.onclick = goPg; pi.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); goPg(); } }; gp.append(pi, pb); info.appendChild(gp);
   } else info.appendChild(el('p', 'sub', 'Бұл кітаптың файлы жоқ.'));
   if (isStaff && b.ai_search) { const ai = el('button', 'out', '✨ ЖИ-дан сұра'); ai.type = 'button'; ai.onclick = () => { m.close(); askAI('«' + b.title + '» кітабы бойынша: '); }; row.appendChild(ai); }
   info.append(row, msg); top.append(tilt, info); box.appendChild(top);
@@ -6343,12 +6362,23 @@ async function openSlides(it, startAt) {
   o.black = f => { blk.hidden = f === undefined ? !blk.hidden : !f; };
   o.laser = (px, py, on) => { const r = cv.getBoundingClientRect(); dot.style.left = (r.left + px * r.width) + 'px'; dot.style.top = (r.top + py * r.height) + 'px'; dot.classList.toggle('on', !!on); };
   o.key = e => {
+    if (e.target && e.target.id === 'slPg') return;
     const k = e.key; if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(k)) { o.next(); e.preventDefault(); e.stopPropagation(); }
     else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { o.prev(); e.preventDefault(); e.stopPropagation(); }
     else if (k === 'b' || k === 'B' || k === '.') { o.black(); e.stopPropagation(); } else if (k === 'Escape') { closeSlides(); e.stopPropagation(); }
   };
   o.rs = () => render(); o.wake = () => { ov.classList.remove('idle'); clearTimeout(o.idle); o.idle = setTimeout(() => ov.classList.add('idle'), 2500); };
   document.addEventListener('keydown', o.key, true); addEventListener('resize', o.rs); ov.addEventListener('pointermove', o.wake); o.wake();
+  nn.title = 'Бетке өту: басып, нөмірін жаз'; nn.style.cursor = 'pointer';
+  nn.onclick = e => {
+    e.stopPropagation(); if (nn.querySelector('input')) return;
+    const inp = document.createElement('input'); inp.id = 'slPg'; inp.type = 'number'; inp.min = 1; inp.max = o.n; inp.value = o.i;
+    inp.style.cssText = 'width:64px;font:inherit;color:#fff;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.5);border-radius:8px;padding:2px 6px;text-align:center';
+    nn.replaceChildren(inp, document.createTextNode(' / ' + o.n)); inp.focus(); inp.select();
+    let fin = false; const done = go => { if (fin) return; fin = true; const v = parseInt(inp.value, 10); if (go && v >= 1 && v <= o.n) o.i = v; render(); };
+    inp.onkeydown = ev => { ev.stopPropagation(); if (ev.key === 'Enter') { ev.preventDefault(); done(true); } else if (ev.key === 'Escape') { ev.preventDefault(); done(false); } };
+    inp.onblur = () => done(true); inp.onclick = ev => ev.stopPropagation();
+  };
   x.onclick = e => { e.stopPropagation(); closeSlides(); };
   ov.addEventListener('click', e => { if (e.target === x) return; (e.clientX < innerWidth / 3 ? o.prev() : o.next()); o.wake(); });
   document.addEventListener('fullscreenchange', function f() { if (!document.fullscreenElement) { document.removeEventListener('fullscreenchange', f); if (SL === o) closeSlides(); } });
@@ -9937,7 +9967,8 @@ addEventListener('load', () => { try { const r = document.getElementById('pdSvg'
       if (kb > 100) { p.style.bottom = (kb + 8) + 'px'; p.style.height = Math.max(260, vv.height - 16) + 'px'; } else { p.style.bottom = ''; p.style.height = ''; }
     }
     if (window.visualViewport) { visualViewport.addEventListener('resize', fit); visualViewport.addEventListener('scroll', fit); }
-    const open = o => { p.hidden = !o; fab.hidden = o; setTimeout(fit, 0); if (o) hideNudge(); if (o) { if (!g('aiLog').children.length) welcome(); ls.set(WK(), '1'); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
+    const bd = el('div'); bd.id = 'aiBack'; bd.hidden = true; document.body.appendChild(bd); bd.onclick = () => open(false);
+    const open = o => { p.hidden = !o; fab.hidden = o; bd.hidden = !o; setTimeout(fit, 0); if (o) hideNudge(); if (o) { if (!g('aiLog').children.length) welcome(); ls.set(WK(), '1'); refreshStats(); setTimeout(() => g('aiIn').focus(), 50); } };
     fab.onclick = () => open(true); g('aiX').onclick = () => open(false);
     p.addEventListener('keydown', e => { if (e.key === 'Escape') { if (!g('aiHist').hidden) g('aiHist').hidden = true; else open(false); } });
     g('aiClr').onclick = newChat; g('aiHis').onclick = () => toggleHist(); g('aiMem').onclick = memEditor;
@@ -11332,7 +11363,7 @@ async function qmjPickWiki(data, persist, done, ai) {
   const show = r => {
     grid.hidden = top.hidden = enl.hidden = true; view.hidden = false; view.replaceChildren(); msg.textContent = '';
     const im = el('img', ''); im.src = r.thumb; im.alt = ''; im.style.cssText = 'max-width:100%;max-height:340px;display:block;margin:0 auto;border-radius:6px;background:#fff';
-    const cap = document.createElement('input'); cap.type = 'text'; cap.value = 'Сурет: ' + r.title + ', ' + r.author + ', ' + r.lic + ' (Wikimedia Commons)'; cap.style.cssText = 'width:100%';
+    const cap = document.createElement('input'); cap.type = 'text'; cap.value = 'Сурет: ' + r.title + ', ' + r.author + ', ' + r.lic + ' (' + (r.src || 'Wikimedia Commons') + ')'; cap.style.cssText = 'width:100%';
     const tg = document.createElement('select'); TG.forEach(([v, t]) => tg.appendChild(new Option(t, v))); tg.value = '2';
     const bk = el('button', 'out', '← Нәтижелер'), ok = el('button', 'go', '✔ Қосу'); bk.type = ok.type = 'button'; ok.style.cssText = 'width:auto;margin-left:auto';
     bk.onclick = () => { view.hidden = true; grid.hidden = top.hidden = enl.hidden = false; };
@@ -11362,12 +11393,22 @@ async function qmjPickWiki(data, persist, done, ai) {
         Object.values((res.query && res.query.pages) || {}).forEach(p => { const o = got.get(p.title); if (o) o.hit++; else got.set(p.title, Object.assign(p, { hit: 1 })); });
       }));
     } catch (e) { msg.className = 'msg err'; msg.textContent = 'Интернетке қосылу мүмкін болмады.'; return; }
-    let rows = [...got.values()].map(p => { const i = (p.imageinfo || [])[0]; if (!i || !/^image\/(jpeg|png|svg\+xml)$/.test(i.mime) || (i.width || 0) < 500) return null; const md = i.extmetadata || {}, lic = strip(md.LicenseShortName && md.LicenseShortName.value); if (!OKL.test(lic)) return null; const file = p.title.replace(/^File:/, ''); const hay = (file + ' ' + strip(md.ImageDescription && md.ImageDescription.value) + ' ' + strip(md.Categories && md.Categories.value)).toLowerCase().replace(/[_|]/g, ' '); const sc = toks.filter(z => hay.includes(z)).length * 2 + p.hit; return { sc, ix: p.index || 0, file, title: file.replace(/\.[a-z]+$/i, '').replace(/_/g, ' ').slice(0, 70), thumb: i.thumburl, full: ((i.width || 0) >= 1000 && /\/\d+px-/.test(i.thumburl || '')) ? String(i.thumburl).replace(/\/\d+px-/, '/960px-') : i.url, mime: i.mime, author: strip(md.Artist && md.Artist.value).slice(0, 60) || 'автор көрсетілмеген', lic }; }).filter(Boolean);
+    let rows = [...got.values()].map(p => { const i = (p.imageinfo || [])[0]; if (!i || !/^image\/(jpeg|png|svg\+xml)$/.test(i.mime) || (i.width || 0) < 500) return null; const md = i.extmetadata || {}, lic = strip(md.LicenseShortName && md.LicenseShortName.value); if (!OKL.test(lic)) return null; const file = p.title.replace(/^File:/, ''); const hay = (file + ' ' + strip(md.ImageDescription && md.ImageDescription.value) + ' ' + strip(md.Categories && md.Categories.value)).toLowerCase().replace(/[_|]/g, ' '); const sc = toks.filter(z => hay.includes(z)).length * 2 + p.hit; return { sc, ix: p.index || 0, file, title: file.replace(/\.[a-z]+$/i, '').replace(/_/g, ' ').slice(0, 70), thumb: i.thumburl, full: ((i.width || 0) >= 1000 && /\/\d+px-/.test(i.thumburl || '')) ? String(i.thumburl).replace(/\/\d+px-/, '/960px-') : i.url, mime: i.mime, author: strip(md.Artist && md.Artist.value).slice(0, 60) || 'автор көрсетілмеген', lic, src: 'Wikimedia Commons' }; }).filter(Boolean);
+    try {
+      const ov = await Promise.all(qs.slice(0, 2).map(async en => { const r = await fetch('https://api.openverse.org/v1/images/?q=' + encodeURIComponent(en) + '&license=cc0,pdm,by,by-sa&page_size=20&extension=jpg,png,svg&mature=false'); return r.ok ? (await r.json()).results || [] : []; }));
+      const seenO = new Set();
+      ov.flat().forEach((x, n) => {
+        if (!x || !x.id || seenO.has(x.id) || !x.thumbnail || (x.width && x.width < 400)) return; seenO.add(x.id);
+        const L = String(x.license || '').toLowerCase(), v = x.license_version ? ' ' + x.license_version : '', lic = L === 'cc0' ? 'CC0' : L === 'pdm' ? 'Public domain' : 'CC ' + L.toUpperCase() + v;
+        const hay = ((x.title || '') + ' ' + (x.tags || []).map(t => t && t.name).join(' ')).toLowerCase(), sc = toks.filter(z => hay.includes(z)).length * 2 + 1;
+        rows.push({ sc, ix: 1000 + n, file: x.title || '', title: String(x.title || 'Сурет').slice(0, 70), thumb: x.thumbnail, full: x.thumbnail, mime: 'image/jpeg', author: String(x.creator || 'автор көрсетілмеген').slice(0, 60), lic, src: 'Openverse' + (x.source ? ' / ' + x.source : '') });
+      });
+    } catch (e) { }
     rows.sort((a, b) => b.sc - a.sc || a.ix - b.ix);
     const good = rows.filter(r => r.sc > 1); if (good.length >= 4) rows = good; rows = rows.slice(0, 12);
     if (!rows.length) { msg.textContent = 'Сәйкес ашық лицензиялы сурет табылмады. Басқа сөзбен іздеп көр.'; return; }
     msg.textContent = '';
-    rows.forEach(r => { const c = el('button', ''); c.type = 'button'; c.style.cssText = 'padding:6px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;display:grid;gap:4px;text-align:left'; const im = new Image(); im.src = r.thumb; im.alt = ''; im.loading = 'lazy'; im.style.cssText = 'width:100%;height:110px;object-fit:contain'; const t = el('small', '', r.title); t.style.cssText = 'color:#333;font-size:11px;line-height:1.2'; c.append(im, t); c.onclick = () => show(r); grid.appendChild(c); });
+    rows.forEach(r => { const c = el('button', ''); c.type = 'button'; c.style.cssText = 'padding:6px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;display:grid;gap:4px;text-align:left'; const im = new Image(); im.src = r.thumb; im.alt = ''; im.loading = 'lazy'; im.style.cssText = 'width:100%;height:110px;object-fit:contain'; const t = el('small', '', r.title); t.style.cssText = 'color:#333;font-size:11px;line-height:1.2'; const sb2 = el('small', '', /^Openverse/.test(r.src || '') ? 'Openverse' : 'Wikimedia'); sb2.style.cssText = 'color:#888;font-size:10px'; c.append(im, t, sb2); c.onclick = () => show(r); grid.appendChild(c); });
   };
   gb.onclick = search; q.onkeydown = e => { if (e.key === 'Enter') search(); }; if (q.value.trim()) search();
 }
