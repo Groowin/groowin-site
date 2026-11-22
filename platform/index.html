@@ -9841,6 +9841,7 @@ function renderHome() {
     main.forEach(([c, t, d, k]) => g.appendChild(card(c, t, d, k, () => homeAct(k))));
     libTile(g, () => card('c-teal', 'Кітапхана', 'Оқулықтар мен кітаптар', 'library', () => go('library')));
     if (isStaff) HM_ICON.brain = HM_ICON.brain || '<path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 5 1V4a3 3 0 0 0-2 0z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-5 1V4a3 3 0 0 1 2 0z"/>', isStaff && g.appendChild(card('c-amber', 'Ми', 'Жазба, күнделік, тапсырма — ЖИ біледі', 'brain', () => go('brain')));
+    if (isStaff) { HM_ICON.plug = '<path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v4"/>'; g.appendChild(card('c-violet', 'ЖИ плагині', 'ChatGPT/Claude-ты қос', 'plug', () => mcpModal())); }
     g.appendChild(card('c-green', 'Файл жүктеу', 'Фото, PDF — Материалдарға', 'upload', () => pickUpload()));
     if (window.showDirectoryPicker) g.appendChild(card('c-blue', 'Компьютерден іздеу', 'Рұқсат берген папкалардан', 'pcfind', () => pcSearch()));
     rest.forEach(([c, t, d, k]) => more.appendChild(card(c, t, d, k, () => homeAct(k))));
@@ -9853,6 +9854,51 @@ function renderHome() {
     v.appendChild(el('h2', 'hm-h', 'Тапсырмалар'));
     const g = el('div', 'hm-grid hm-two'); g.append(card('c-teal', 'Оқу бөлмесі', 'Сыныптастарыңмен бірге отырып оқы', 'room', () => go('room')), card('c-orange', 'Үй тапсырмасы', 'Мұғалім берген тапсырмалар', 'hw', () => go('hw'))); v.appendChild(g); libTile(g, () => card('c-pink', 'Кітапхана', 'Оқулықтар мен кітаптар', 'library', () => go('library')));
   }
+}
+
+// ===== ЖИ плагині: ChatGPT/Claude-ты Groowin-ге қосу (MCP) =====
+async function mcpModal() {
+  const m = modal('ЖИ плагині'), b = m.box;
+  b.append(el('p', '', 'Өз ChatGPT немесе Claude-ыңды Groowin-ге қос. Содан кейін чатта «11-сыныпқа викторина жаса» десең, ол тікелей Groowin-ге түседі.'));
+  const out = el('div', ''), list = el('div', ''), gen = el('button', 'go', 'Жаңа сілтеме жасау'); gen.type = 'button';
+  const steps = el('details', ''); steps.style.margin = '14px 0';
+  const sm = el('summary', '', 'Қалай қосамын?'); sm.style.cssText = 'cursor:pointer;font-weight:600';
+  const ol = el('ol', ''); ol.style.cssText = 'margin:8px 0 0;padding-left:20px;line-height:1.6';
+  ['«Жаңа сілтеме жасау» бас да, сілтемені көшіріп ал. Ол тек бір рет көрінеді.',
+   'ChatGPT: Плагиндер (Plugins) → Қосу (Add) → өз MCP-серверіңді қос, мекенжай ретінде сілтемені қой. Авторизация: «жоқ» (No authentication).',
+   'Claude: Settings → Connectors → Add custom connector, сілтемені қой.',
+   'Чатта: «Groowin-де 5 сұрақтан викторина жаса: рентген сәулелері» деп жаз. Викторина Ойын-сауық бөлімінде шығады.',
+   'Мүмкіндіктер: викторина жасау, жоспарға жазба қосу, Миға жазба салу. ЖИ-дың өзі нені істегенін чатта жазады.',
+   'Сілтеме = кілт. Ешкімге берме. Жоғалтсаң, төмендегі «Өшіру» бас та, жаңасын жаса.'].forEach(t => ol.append(el('li', '', t)));
+  steps.append(sm, ol);
+  b.append(gen, out, el('h3', '', 'Белсенді сілтемелер'), list, steps);
+  async function load() {
+    list.replaceChildren();
+    const r = await sb.rpc('mcp_token_list');
+    if (r.error) { list.append(el('p', 'msg err', /mcp_token/.test(r.error.message) ? 'Алдымен update-61.sql іске қос (Supabase → SQL Editor).' : r.error.message)); return; }
+    if (!r.data.length) { list.append(el('p', '', 'Әзірге жоқ.')); return; }
+    r.data.forEach(t => {
+      const row = el('div', ''); row.style.cssText = 'display:flex;align-items:center;gap:10px;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)';
+      const d = new Date(t.created_at).toLocaleDateString('kk-KZ'), u = t.last_used_at ? 'соңғы қолдану: ' + new Date(t.last_used_at).toLocaleDateString('kk-KZ') : 'әлі қолданылмаған';
+      const x = el('span', '', (t.label || 'Сілтеме') + ' · ' + d + ' · ' + u), del = el('button', 'qh-btn2', 'Өшіру'); del.type = 'button';
+      del.onclick = async () => { if (!(await ask('Бұл сілтеме өшірілсін бе? ChatGPT/Claude-тағы қосылым жұмысын тоқтатады.'))) return; await sb.rpc('mcp_token_revoke', { p_id: t.id }); load(); };
+      row.append(x, del); list.append(row);
+    });
+  }
+  gen.onclick = async () => {
+    gen.disabled = true;
+    const r = await sb.rpc('mcp_token_new', { p_label: 'ChatGPT/Claude' }); gen.disabled = false;
+    if (r.error) { notify(/too many/.test(r.error.message) ? 'Ең көбі 3 сілтеме. Біреуін өшір.' : /mcp_token/.test(r.error.message) ? 'Алдымен update-61.sql іске қос' : r.error.message, 'err'); return; }
+    const url = String(SUPABASE_URL).replace(/\/$/, '') + '/functions/v1/groowin-mcp/' + r.data;
+    out.replaceChildren();
+    const inp = document.createElement('input'); inp.readOnly = true; inp.value = url; inp.setAttribute('aria-label', 'MCP сілтемесі'); inp.onfocus = () => inp.select();
+    const cp = el('button', 'qh-btn2', 'Көшіру'); cp.type = 'button';
+    cp.onclick = async () => { try { await navigator.clipboard.writeText(url); cp.textContent = 'Көшірілді ✓'; } catch { inp.select(); cp.textContent = 'Белгіленді, Ctrl+C бас'; } };
+    const w = el('p', '', 'Сілтемені қазір көшіріп ал: ол қайта көрсетілмейді. Ешкімге берме.'); w.style.cssText = 'color:var(--mute);font-size:.9rem';
+    const rw = el('div', ''); rw.style.cssText = 'display:flex;gap:8px;margin:12px 0 4px'; rw.append(inp, cp);
+    out.append(rw, w); load();
+  };
+  load();
 }
 function verifyAnim() {
   return new Promise(res => {
