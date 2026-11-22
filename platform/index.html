@@ -1852,6 +1852,49 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
 .libform input[type=text],.libform select,.libform input[type=file]{color:#1b1a17!important;background:#f6efe3!important;-webkit-text-fill-color:#1b1a17}
 .libform input::placeholder{color:#7a7468!important;-webkit-text-fill-color:#7a7468}
 .libform select option{color:#1b1a17;background:#fff}
+
+/* ===== Дизайн жүйесі (ортақ өлшемдер, қозғалыс, белгішелер) ===== */
+:root{--ds-r-s:10px;--ds-r-m:14px;--ds-r-l:20px;--ds-sh-1:0 1px 2px rgba(20,24,31,.06),0 8px 20px -12px rgba(20,24,31,.28);--ds-sh-2:0 16px 36px -16px rgba(20,24,31,.45);--ds-ease:cubic-bezier(.2,.8,.2,1);--ds-t:.18s}
+html[data-theme] #app :is(.out,.go){min-height:44px;border-radius:var(--ds-r-m);font-weight:650;line-height:1.25}
+html[data-theme] #app :is(.out,.go,.icon-btn,.tabs button,#icSeg button,#gsSeg button,#sfxSeg button,#qtSeg button,#glassBtn,#styleBtn,#musBtn){transition:transform .12s var(--ds-ease),filter .15s,background-color var(--ds-t),border-color var(--ds-t),box-shadow var(--ds-t),color var(--ds-t)}
+html[data-theme] #app :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),select,textarea),html[data-theme] .qh-mc :is(input,select,textarea){border-radius:var(--ds-r-s);transition:border-color var(--ds-t),box-shadow var(--ds-t),background-color var(--ds-t)}
+html[data-theme] #app :is(input,select,textarea):focus-visible,html[data-theme] .qh-mc :is(input,select,textarea):focus-visible{outline:2px solid transparent;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+html[data-theme] #app :is(.out,.go,.icon-btn,.tabs button):focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+html[data-theme]:not([data-glass]) #app :is(.game,.plc,.news,.qc,.qcard,.mt-it,.lpcard,.gcard){border-radius:var(--ds-r-l);box-shadow:var(--ds-sh-1);transition:transform var(--ds-t) var(--ds-ease),box-shadow var(--ds-t),border-color var(--ds-t)}
+html[data-theme] .qh-mc{border-radius:var(--ds-r-l);box-shadow:var(--ds-sh-2)}
+html[data-theme] .toast{border-radius:var(--ds-r-m);box-shadow:var(--ds-sh-2)}
+@media (hover:hover){html[data-theme]:not([data-glass]) #app :is(.game,.plc,.lpcard,.gcard):hover{transform:translateY(-2px);box-shadow:var(--ds-sh-2)}}
+@keyframes dsPop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes dsIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){
+  html[data-theme] body,html[data-theme] #app .side.card{transition:background-color .3s,color .3s,border-color .3s}
+  .qh-modal{animation:vfade .18s ease both}
+  .qh-mc{animation:dsPop .26s var(--ds-ease) both}
+  html[data-theme] #app :is(.plc,.game,.lpcard){animation:dsIn .32s var(--ds-ease) both}
+  html[data-theme] #app :is(.plc,.game,.lpcard):nth-child(2){animation-delay:.04s}
+  html[data-theme] #app :is(.plc,.game,.lpcard):nth-child(3){animation-delay:.08s}
+  html[data-theme] #app :is(.plc,.game,.lpcard):nth-child(4){animation-delay:.12s}
+  html[data-theme] #app :is(.plc,.game,.lpcard):nth-child(n+5){animation-delay:.16s}
+}
+@media (prefers-reduced-motion:reduce){html[data-theme] #app *{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+/* бір үлгідегі сызықтық белгішелер */
+.ico{display:inline-block;width:1.15em;height:1.15em;margin-right:.5em;vertical-align:-.2em;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;flex:none}
+.i-phone{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Crect%20x%3D%277%27%20y%3D%272.5%27%20width%3D%2710%27%20height%3D%2719%27%20rx%3D%272.2%27%2F%3E%3Cpath%20d%3D%27M11%2018.2h2%27%2F%3E%3C%2Fsvg%3E")}
+.i-expand{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%209V4h5M20%209V4h-5M4%2015v5h5M20%2015v5h-5%27%2F%3E%3C%2Fsvg%3E")}
+.i-flask{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M9%203h6M10%203v6L4.6%2018.6a1.6%201.6%200%200%200%201.4%202.4h12a1.6%201.6%200%200%200%201.4-2.4L14%209V3M7.6%2015h8.8%27%2F%3E%3C%2Fsvg%3E")}
+.i-palette{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M12%203a9%209%200%201%200%200%2018c1.1%200%201.8-.8%201.8-1.7%200-.5-.2-.9-.5-1.3-.3-.4-.5-.8-.5-1.3%200-1%20.8-1.7%201.8-1.7H17a4%204%200%200%200%204-4C21%206.6%2016.9%203%2012%203z%27%2F%3E%3Cpath%20d%3D%27M7.5%2011h.01M10%207.5h.01M14.5%207.5h.01%27%2F%3E%3C%2Fsvg%3E")}
+.i-link{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M10%2014a4%204%200%200%200%205.7%200l3-3a4%204%200%200%200-5.7-5.7l-1%201M14%2010a4%204%200%200%200-5.7%200l-3%203a4%204%200%200%200%205.7%205.7l1-1%27%2F%3E%3C%2Fsvg%3E")}
+.i-search{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Ccircle%20cx%3D%2711%27%20cy%3D%2711%27%20r%3D%276.5%27%2F%3E%3Cpath%20d%3D%27M20%2020l-4.2-4.2%27%2F%3E%3C%2Fsvg%3E")}
+.i-sliders{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%207h9M19%207h1M4%2017h1M11%2017h9%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%277%27%20r%3D%272.2%27%2F%3E%3Ccircle%20cx%3D%278%27%20cy%3D%2717%27%20r%3D%272.2%27%2F%3E%3C%2Fsvg%3E")}
+.i-chart{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%204v16h16%27%2F%3E%3Cpath%20d%3D%27M7.5%2015l3.5-4%203%203%205-6%27%2F%3E%3C%2Fsvg%3E")}
+.i-download{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M12%204v11M7.5%2010.5L12%2015l4.5-4.5M5%2020h14%27%2F%3E%3C%2Fsvg%3E")}
+.i-dice{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Crect%20x%3D%274%27%20y%3D%274%27%20width%3D%2716%27%20height%3D%2716%27%20rx%3D%273.5%27%2F%3E%3Cpath%20d%3D%27M9%209h.01M15%209h.01M12%2012h.01M9%2015h.01M15%2015h.01%27%2F%3E%3C%2Fsvg%3E")}
+.i-megaphone{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%2010v4h3l6%204V6l-6%204H4z%27%2F%3E%3Cpath%20d%3D%27M17%209a4%204%200%200%201%200%206%27%2F%3E%3C%2Fsvg%3E")}
+.i-trash{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%207h16M9%207V4h6v3M6%207l1%2013h10l1-13M10%2011v5M14%2011v5%27%2F%3E%3C%2Fsvg%3E")}
+.i-camera{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%208h3l2-3h6l2%203h3v11H4z%27%2F%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2713.5%27%20r%3D%273.2%27%2F%3E%3C%2Fsvg%3E")}
+.i-sparkle{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M11%203l1.9%205.1L18%2010l-5.1%201.9L11%2017l-1.9-5.1L4%2010l5.1-1.9z%27%2F%3E%3Cpath%20d%3D%27M18.5%2015.5l.6%201.6%201.6.6-1.6.6-.6%201.6-.6-1.6-1.6-.6%201.6-.6z%27%2F%3E%3C%2Fsvg%3E")}
+.i-inbox{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%2013l2-8h12l2%208v6H4z%27%2F%3E%3Cpath%20d%3D%27M4%2013h5l1%202h4l1-2h5%27%2F%3E%3C%2Fsvg%3E")}
+.i-file{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M7%203h7l5%205v13H7z%27%2F%3E%3Cpath%20d%3D%27M14%203v5h5M10%2013h6M10%2017h6%27%2F%3E%3C%2Fsvg%3E")}
 </style>
 </head>
 <body>
@@ -1931,7 +1974,7 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
     </div>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
     <div class="orl"><span>немесе</span></div>
-    <button class="qrb" id="qrLoginBtn" type="button">📱 QR Groowin-Web (үлкен экранға)</button>
+    <button class="qrb" id="qrLoginBtn" type="button"><i class="ico i-phone" aria-hidden="true"></i>QR Groowin-Web (үлкен экранға)</button>
 
     
     <div id="qrBox">
@@ -2014,7 +2057,7 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
     </div>
 
     <div id="v-viewer" hidden>
-      <div class="vbar"><button class="out" id="back">← Артқа</button><strong id="vtitle"></strong><span class="sub" id="vmsg" style="margin:0 0 0 auto"></span><button class="out" id="vfs" type="button" title="Ойынды толық экранда ашу">⛶ Толық экран</button></div>
+      <div class="vbar"><button class="out" id="back">← Артқа</button><strong id="vtitle"></strong><span class="sub" id="vmsg" style="margin:0 0 0 auto"></span><button class="out" id="vfs" type="button" title="Ойынды толық экранда ашу"><i class="ico i-expand" aria-hidden="true"></i>Толық экран</button></div>
       <iframe id="frame" title="Ойын" allow="fullscreen"></iframe>
     </div>
 
@@ -2065,7 +2108,7 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
         <label for="hwDue">Мерзімі</label><input id="hwDue" type="date" style="width:auto">
         <label for="hwFiles">Файл не сурет қосу (міндетті емес)</label><input id="hwFiles" type="file" multiple accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip">
         <div id="hwFPrev" class="hw-th"></div><small class="gm">5 файлға дейін, әрқайсысы 10 МБ-қа дейін. Оқушылар көреді және жүктеп алады.</small>
-        <div class="hw-tq"><button type="button" class="out" id="hwTestBtn">🧪 Тест қосу (автотексеру)</button>
+        <div class="hw-tq"><button type="button" class="out" id="hwTestBtn"><i class="ico i-flask" aria-hidden="true"></i>Тест қосу (автотексеру)</button>
           <div id="hwTest" hidden><div id="hwQList"></div><button type="button" class="out" id="hwQAdd">+ Сұрақ қосу</button>
           <small class="gm" style="display:block;margin-top:6px">Дұрыс жауапты дөңгелекпен белгіле. Оқушы тапсырғанда баға автоматты қойылады, дұрыс жауап оқушыға тапсырғанға дейін көрінбейді.</small></div></div>
         <div style="margin-top:12px"><button class="go" id="hwAdd" style="width:auto;padding:10px 22px">Тапсырма қою</button></div>
@@ -2079,10 +2122,10 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
       <p class="sub" style="font-size:.9rem">Жеке бетің: папка жасап, файл (сурет, бейне, слайд, құжат) жүктеп, интернеттен сілтеме қосасың. Оларды тек өзің көресің, сабақта проекторға шығарасың.</p>
       <div class="crumbs" id="mCrumbs"></div>
       <div class="mt-add">
-        <div class="mtools"><input id="mFolder" placeholder="Жаңа папка атауы"><button class="out" id="mFolderAdd">Папка жасау</button><button class="out" id="mFolderPro" type="button">🎨 Түсімен, белгісімен</button></div>
+        <div class="mtools"><input id="mFolder" placeholder="Жаңа папка атауы"><button class="out" id="mFolderAdd">Папка жасау</button><button class="out" id="mFolderPro" type="button"><i class="ico i-palette" aria-hidden="true"></i>Түсімен, белгісімен</button></div>
         <div class="mtools up"><label class="out upl">⬆ Файл жүктеу<input type="file" id="mFile" multiple hidden></label><span class="sub" style="margin:0;font-size:.85rem">Бір файл 50 МБ-қа дейін. Файлды осы бетке сүйреп әкелуге де болады.</span></div>
-        <div class="mtools lk"><input id="mLTitle" spellcheck="false" placeholder="Сілтеме атауы (мысалы, PhET маятник)"><input id="mLUrl" spellcheck="false" placeholder="https://..."><button class="out" id="mLinkAdd">🔗 Сілтеме қосу</button></div>
-        <div class="mtools"><input id="mTextQ" placeholder="Файл ішінен іздеу (мысалы: Ньютон заңдары)" maxlength="80"><button class="out" id="mTextGo" type="button">🔎 Файл ішінен іздеу</button><button class="out" id="mTextIdx" type="button">⚙️ Іздеуге дайындау</button></div>
+        <div class="mtools lk"><input id="mLTitle" spellcheck="false" placeholder="Сілтеме атауы (мысалы, PhET маятник)"><input id="mLUrl" spellcheck="false" placeholder="https://..."><button class="out" id="mLinkAdd"><i class="ico i-link" aria-hidden="true"></i>Сілтеме қосу</button></div>
+        <div class="mtools"><input id="mTextQ" placeholder="Файл ішінен іздеу (мысалы: Ньютон заңдары)" maxlength="80"><button class="out" id="mTextGo" type="button"><i class="ico i-search" aria-hidden="true"></i>Файл ішінен іздеу</button><button class="out" id="mTextIdx" type="button"><i class="ico i-sliders" aria-hidden="true"></i>Іздеуге дайындау</button></div>
         <p class="sub" style="margin:2px 0 0;font-size:.82rem">PDF және Word (.docx) ішінен мәтін іздейді, қай бетте екенін көрсетеді. Жаңа жүктелген файл өзі дайындалады. Сканерленген (сурет) PDF-те мәтін болмайды.</p>
       </div>
       <p class="msg" id="mMsg" role="status" aria-live="polite"></p>
@@ -2095,7 +2138,7 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
       <div id="rsHome">
         <h2 style="margin:0 0 6px;font-size:1.2rem">Менің тізімдерім</h2>
         <p class="sub" style="font-size:.9rem">Өз жеке тізімдерің: оқушы аттарын осында сақтайсың (кездейсоқ оқушы, топтар, ойындар үшін), тізімді тек өзің көресің. Аккаунт керек емес. Үй тапсырмасы тек мектеп сыныптарына беріледі.</p>
-        <button class="out ms-btn" id="rsStat" type="button" style="margin:0 0 12px">📈 Оқушылар статистикасы</button>
+        <button class="out ms-btn" id="rsStat" type="button" style="margin:0 0 12px"><i class="ico i-chart" aria-hidden="true"></i>Оқушылар статистикасы</button>
         <label for="rsName">Жаңа сынып</label>
         <input id="rsName" placeholder="Мысалы: 7А, содан кейін Enter">
         <button class="go" id="rsAdd">Сынып жасау</button>
@@ -2107,7 +2150,7 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
           <button class="go" id="tRandom">Кездейсоқ оқушы</button><button class="go" id="tGroups">Топқа бөлу</button>
           <button class="go" id="tTimer">Таймер</button><button class="go" id="tRefl">Рефлексия</button>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px"><button class="out" id="rsXls" type="button">📥 Excel-ден оқушы жүктеу</button><button class="out" id="rsTpl" type="button">Үлгіні жүктеу</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px"><button class="out" id="rsXls" type="button"><i class="ico i-download" aria-hidden="true"></i>Excel-ден оқушы жүктеу</button><button class="out" id="rsTpl" type="button">Үлгіні жүктеу</button></div>
         <label for="stName">Оқушы қосу</label>
         <input id="stName" placeholder="Аты-жөнін жазып Enter бас. Тізімді қойсаң, бәрі бірден қосылады">
         <p class="sub" id="stCount" style="margin:8px 0;font-size:.9rem"></p>
@@ -2125,7 +2168,7 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
       <select id="plClass"></select>
       <button class="lk" id="plNoClass" type="button" hidden>Сынып әлі жоқ. «Менің тізімдерім» бөлімінде жаса</button>
       <div class="stgbar" id="plStages" role="tablist"></div>
-      <button class="go" id="plPick" type="button" style="width:auto;margin-top:12px">🎲 Бүгін не ойнаймыз?</button>
+      <button class="go" id="plPick" type="button" style="width:auto;margin-top:12px"><i class="ico i-dice" aria-hidden="true"></i>Бүгін не ойнаймыз?</button>
       <div class="grid" id="plGrid" style="margin-top:16px"></div>
     </div>
     <div id="v-quiz" hidden>
@@ -2212,7 +2255,7 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
         <button data-k="info" aria-selected="false">Хабарландыру</button>
         <button data-k="homework" aria-selected="false">Үй тапсырмасы</button>
       </div>
-      <button class="go" id="nQuick" hidden type="button" style="width:auto;padding:10px 22px;margin:10px 0 0">📣 Сыныпқа хабарлама (бір басумен)</button>
+      <button class="go" id="nQuick" hidden type="button" style="width:auto;padding:10px 22px;margin:10px 0 0"><i class="ico i-megaphone" aria-hidden="true"></i>Сыныпқа хабарлама (бір басумен)</button>
       <details id="newsForm" hidden style="margin:14px 0">
         <summary style="cursor:pointer;font-weight:500">+ Жаңа жариялау</summary>
         <label for="nKind">Түрі</label>
@@ -2245,13 +2288,13 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
       <button class="go" id="accSave" style="width:auto;padding:10px 22px">Сақтау</button>
       <p class="msg" id="accMsg" role="status" aria-live="polite"></p>
       <div id="msWrap" hidden>
-        <button class="out ms-btn" id="msBtn" type="button" aria-expanded="false">📈 Менің статистикам</button>
+        <button class="out ms-btn" id="msBtn" type="button" aria-expanded="false"><i class="ico i-chart" aria-hidden="true"></i>Менің статистикам</button>
         <div id="myStats" hidden></div>
       </div>
       <div id="orphBox" hidden>
         <h3 style="margin:14px 0 0;font-size:1.05rem">Қойманы тазалау</h3>
         <p class="sub" style="font-size:.9rem">Жойылған ойын, материал, тапсырмалардан қалған, ешқайда қолданылмай жатқан файлдарды табады (1 тәуліктен ескілерін).</p>
-        <button class="out" id="orphGo">🧹 Артық файлдарды іздеу</button>
+        <button class="out" id="orphGo"><i class="ico i-trash" aria-hidden="true"></i>Артық файлдарды іздеу</button>
         <div id="orphOut" style="margin-top:8px"></div>
       </div>
       <div id="bkBox" hidden>
@@ -2261,12 +2304,12 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
         <p class="msg" id="bkMsg" role="status" aria-live="polite"></p>
       </div>
       <div id="gLinkBox"></div>
-      <h3 style="margin:14px 0 0;font-size:1.05rem">📱 Менің құрылғыларым</h3>
+      <h3 style="margin:14px 0 0;font-size:1.05rem"><i class="ico i-phone" aria-hidden="true"></i>Менің құрылғыларым</h3>
       <p class="sub" style="font-size:.9rem">Аккаунтқа кірген құрылғылар. Біреуін басқа құрылғыдан (мысалы телефоннан) шығарып жіберуге болады. Ол құрылғы ашық болса, ~1 минутта шығады, жабық болса келесі ашқанда шығады.</p>
       <div id="devBox"></div>
       <h3 style="margin:14px 0 0;font-size:1.05rem">Үлкен экранға кіру (QR)</h3>
       <p class="sub" style="font-size:.9rem">Үлкен экранда сайтты ашып, «QR арқылы кіру» бас. Мына түймемен экрандағы QR-ды сканерле: нөмір мен құпия сөз экранда көрінбейді. Телефоннан кез келген уақытта экрандан шығара аласың.</p>
-      <button class="go" id="qrScan" style="width:auto;padding:10px 22px">📷 QR сканерлеу</button>
+      <button class="go" id="qrScan" style="width:auto;padding:10px 22px"><i class="ico i-camera" aria-hidden="true"></i>QR сканерлеу</button>
       <div id="qrDev" style="margin-top:10px"></div>
       <h3 style="margin:14px 0 0;font-size:1.05rem">Телефонға орнату</h3>
       <p class="sub" style="font-size:.9rem" id="pwaHint">Сайтты қосымша сияқты орнат: басты экранда иконка болады, толық экранда ашылады.</p>
@@ -2301,16 +2344,16 @@ html[data-rm][data-glass]{--gbg:linear-gradient(#0d1426,#0d1426)!important}
       <button type="button" id="musBtn" style="margin-top:10px">🎵 Фондық музыка: өшірулі</button>
       <div id="siteAdm" hidden></div>
       <hr style="border:0;border-top:1px solid var(--line);margin:22px 0 6px;max-width:460px">
-      <button class="out" id="wnBtn" type="button" style="margin-right:8px">✨ Не жаңа?</button>
-      <button class="out" id="spBtn" type="button" style="margin-right:8px">🆘 Қолдау қызметі</button><button class="out" id="spInbox" type="button" style="margin-right:8px" hidden>📥 Қолдау хабарлары</button>
+      <button class="out" id="wnBtn" type="button" style="margin-right:8px"><i class="ico i-sparkle" aria-hidden="true"></i>Не жаңа?</button>
+      <button class="out" id="spBtn" type="button" style="margin-right:8px">🆘 Қолдау қызметі</button><button class="out" id="spInbox" type="button" style="margin-right:8px" hidden><i class="ico i-inbox" aria-hidden="true"></i>Қолдау хабарлары</button>
       <button class="out" id="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:8px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Шығу</button>
     </div>
 
     <div id="v-students" hidden>
       <h2 id="uTitle" style="margin:0 0 4px;font-size:1.2rem">Оқушылар</h2>
-      <div id="sdWrap"><button class="out ms-btn" id="sdBtn" type="button" aria-expanded="false">📈 Оқушылар статистикасы</button><div id="staffDash" hidden></div></div>
+      <div id="sdWrap"><button class="out ms-btn" id="sdBtn" type="button" aria-expanded="false"><i class="ico i-chart" aria-hidden="true"></i>Оқушылар статистикасы</button><div id="staffDash" hidden></div></div>
       <p class="sub" id="uHelp" style="margin-bottom:8px"></p>
-      <button class="out ms-btn" id="credBtn" type="button" hidden>📄 Логин парағы (<span id="credN">0</span>)</button>
+      <button class="out ms-btn" id="credBtn" type="button" hidden><i class="ico i-file" aria-hidden="true"></i>Логин парағы (<span id="credN">0</span>)</button>
       <label for="aName">Аты-жөні</label>
       <input id="aName">
       <label for="aPhone" id="aPhoneLab">Gmail</label>
@@ -3219,7 +3262,7 @@ function showWhatsNew(all) {
 }
 function maybeWhatsNew() { if ($('app').hidden || document.querySelector('.qh-modal')) return; if (ls.get('seenVer') !== WN_VER) showWhatsNew(false); else maybeInstall(); }
 $('wnBtn').onclick = () => showWhatsNew(true);
-$('wnBtn').textContent = '✨ Не жаңа?';
+$('wnBtn').innerHTML = '<i class="ico i-sparkle" aria-hidden="true"></i>Не жаңа?';
 
 // ===== Аватар: эмодзи + түс. Серверде profiles.avatar (update-15.sql), қосымша осы құрылғыда сақталады =====
 const AV_E = ['🦊','🐼','🐯','🦁','🐸','🐵','🐧','🦉','🐙','🦄','🐲','🐬','🦋','🐢','🐰','🐨','🦖','🚀','👽','🤖','🧙','🥷','🦸','⚡','🔥','🌟','🎧','🎮','🧠','🍉','🌈','🪐'];
