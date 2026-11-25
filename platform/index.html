@@ -23,7 +23,7 @@
 <meta property="og:url" content="https://groowin.github.io/groowin-site/platform/">
 <meta property="og:image" content="https://groowin.github.io/groowin-site/platform/icon-512.png">
 <meta name="twitter:card" content="summary">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -31,7 +31,7 @@
 :root{--paper:#070B1E;--grid:rgba(160,190,255,.2);--ink:#E8EEFF;--blue:#4D7CFF;--sun:#FFC83D;--card:rgba(10,18,40,.58);--err:#FF8A80;--mute:#9AAEDB}
 *{box-sizing:border-box}
 html{background:#050816}
-body{margin:0;min-height:100vh;font:16px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 50% 55%,#10193d 0%,#050816 72%);display:grid;place-items:center;padding:20px}
+body{margin:0;min-height:100vh;font:16px/1.5 var(--font,Inter,system-ui,-apple-system,Segoe UI,sans-serif);color:var(--ink);background:radial-gradient(ellipse at 50% 55%,#10193d 0%,#050816 72%);display:grid;place-items:center;padding:20px}
 #sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .wrap{width:100%;max-width:420px}
 h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.02em}
@@ -1778,7 +1778,7 @@ html[data-illu=off] .hm-ill{display:none}
 
 /* ===== ЖИ: мөлдір емес панель, жарқырату, тазалау ===== */
 #aiPanel{background:#fff;color:#12233D}
-html[data-theme=dark] #aiPanel,html[data-theme=ocean] #aiPanel,html[data-theme=sunset] #aiPanel,html[data-theme=forest] #aiPanel,html[data-theme=amoled] #aiPanel,html[data-glass] #aiPanel{background:#141A2E;color:#ECF1FF;-webkit-backdrop-filter:none;backdrop-filter:none}
+html[data-theme=dark] #aiPanel,html[data-theme=ocean] #aiPanel,html[data-theme=sunset] #aiPanel,html[data-theme=forest] #aiPanel,html[data-theme=amoled] #aiPanel,html[data-theme=halo] #aiPanel,html[data-glass] #aiPanel{background:#141A2E;color:#ECF1FF;-webkit-backdrop-filter:none;backdrop-filter:none}
 html[data-theme=amoled] #aiPanel{background:#05060A}
 #aiDel,#aiMem{border:0;background:transparent;font-size:1.05rem;cursor:pointer;padding:6px;border-radius:10px;color:inherit}
 #aiDel:hover,#aiMem:hover{background:rgba(127,127,127,.18)}
@@ -1804,7 +1804,7 @@ html[data-theme=amoled] #aiPanel{background:#05060A}
 @media (max-width:760px){.hm-3d{width:64px!important;height:64px!important}}
 
 #aiHist{background:#fff;color:#12233D}
-html[data-theme=dark] #aiHist,html[data-theme=ocean] #aiHist,html[data-theme=sunset] #aiHist,html[data-theme=forest] #aiHist,html[data-theme=amoled] #aiHist,html[data-glass] #aiHist{background:#141A2E;color:#ECF1FF}
+html[data-theme=dark] #aiHist,html[data-theme=ocean] #aiHist,html[data-theme=sunset] #aiHist,html[data-theme=forest] #aiHist,html[data-theme=amoled] #aiHist,html[data-theme=halo] #aiHist,html[data-glass] #aiHist{background:#141A2E;color:#ECF1FF}
 html[data-theme=amoled] #aiHist{background:#05060A}
 .ai-hbar{display:flex;gap:6px;margin:0 0 10px;flex-wrap:wrap}.ai-hbar button{border:1px solid rgba(127,127,127,.4);background:transparent;color:inherit;border-radius:99px;padding:6px 12px;font:inherit;font-size:.84rem;font-weight:600;cursor:pointer}
 .ai-hbar .dg{border-color:#E5484D;color:#E5484D}.ai-hbar .dg:disabled{opacity:.4}
@@ -1895,6 +1895,75 @@ html[data-theme] .toast{border-radius:var(--ds-r-m);box-shadow:var(--ds-sh-2)}
 .i-sparkle{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M11%203l1.9%205.1L18%2010l-5.1%201.9L11%2017l-1.9-5.1L4%2010l5.1-1.9z%27%2F%3E%3Cpath%20d%3D%27M18.5%2015.5l.6%201.6%201.6.6-1.6.6-.6%201.6-.6-1.6-1.6-.6%201.6-.6z%27%2F%3E%3C%2Fsvg%3E")}
 .i-inbox{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%2013l2-8h12l2%208v6H4z%27%2F%3E%3Cpath%20d%3D%27M4%2013h5l1%202h4l1-2h5%27%2F%3E%3C%2Fsvg%3E")}
 .i-file{--m:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M7%203h7l5%205v13H7z%27%2F%3E%3Cpath%20d%3D%27M14%203v5h5M10%2013h6M10%2017h6%27%2F%3E%3C%2Fsvg%3E")}
+
+/* ===== Apple шрифт · Halo қара шыны · панель (rail, топтар, user menu) ===== */
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,"Segoe UI",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+body,button,input,select,textarea{font-family:var(--font)}
+body{letter-spacing:-.011em}
+body.in-app :is(h1,h2,h3,h4){font-weight:700;letter-spacing:-.022em}
+body.in-app .mainhead h1{font-size:1.85rem;font-weight:800;letter-spacing:-.034em}
+body.in-app .brand{font-weight:800;letter-spacing:-.03em;font-size:1.2rem}
+body.in-app .go,body.in-app .out{font-weight:600;letter-spacing:-.01em}
+.ngl{display:none}.sbsrch{display:none}
+html[data-theme=halo]{--bg:#05060B;--surf:#13151D;--paper:#1A1D27;--card:#13151D;--line:rgba(255,255,255,.14);--grid:rgba(255,255,255,.07);--ink:#F5F5F7;--mute:#9EA1AE;--err:#FF8A80;--hover:rgba(255,255,255,.08);--rail:88px;color-scheme:dark}
+html[data-glass]{--rail:88px}
+html[data-theme=halo] body.in-app{background:radial-gradient(900px 560px at 8% -12%,rgba(110,125,255,.24),transparent 62%),radial-gradient(760px 520px at 100% 108%,rgba(190,120,255,.15),transparent 62%),radial-gradient(520px 380px at 72% 18%,rgba(255,255,255,.04),transparent 70%),#05060B!important;background-attachment:fixed}
+html[data-theme=halo] body.in-app #sky{display:none}
+html[data-theme=halo] body.in-app :is(.game,.gradeBtn,.news,.gcard,.plc,.qc,.qcard,.lpcard,.lpc2,.ak-item,.pth-card,.mt-it,.mt-fold,.hw-card,.pl-row,.bg-card){background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(18,20,28,.72);border:1px solid var(--line);border-radius:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 12px 32px rgba(0,0,0,.42);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6)}
+html[data-theme=halo] body.in-app :is(.game,.gradeBtn,.plc,.lpcard,.lpc2,.mt-it,.gcard,.hw-card):hover{transform:translateY(-3px);border-color:rgba(255,255,255,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 18px 44px rgba(0,0,0,.5),0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent)}
+html[data-theme=halo] body.in-app :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea){background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:12px;color:var(--ink)}
+html[data-theme=halo] body.in-app :is(input,select,textarea):focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+html[data-theme=halo] body.in-app :is(.out,.tabs button,.seg button,.icon-btn){background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:12px;color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+html[data-theme=halo] body.in-app :is(.out,.tabs button,.seg button,.icon-btn):hover{background:rgba(255,255,255,.14)}
+html[data-theme=halo] body.in-app :is(.tabs button[aria-selected=true],.seg button[aria-pressed=true]){background:var(--accent);border-color:transparent;color:var(--on-acc,#fff)}
+html[data-theme=halo] body.in-app .go{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 82%,#fff),var(--accent));border:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 26px -8px var(--accent)}
+html[data-theme=halo] body.in-app table{background:rgba(18,20,28,.55);border-radius:14px;overflow:hidden}
+html[data-theme=halo] :is(.qh-mc,#dlg .dbox,.ctxm,.gs-pop,.toast,#srch .sb,#meMenu){background:rgba(18,20,28,.88);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 30px 80px rgba(0,0,0,.6);-webkit-backdrop-filter:blur(30px) saturate(1.8);backdrop-filter:blur(30px) saturate(1.8)}
+html[data-theme=halo] #aiPanel,html[data-theme=halo] #aiHist{background:#0A0B11}
+html[data-theme=halo] ::-webkit-scrollbar{width:10px;height:10px}html[data-theme=halo] ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+html[data-theme=halo] body.in-app #nav button .ni{color:#C3C6D4}
+html[data-theme=halo] body.in-app #nav button.on{background:rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(255,255,255,.1)}
+html[data-theme=halo] body.in-app #nav button.on .ni{color:var(--accent);filter:drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 80%,transparent))}
+#railTip{position:fixed;z-index:100002;pointer-events:none;padding:6px 11px;border-radius:9px;background:#15171E;color:#F5F5F7;border:1px solid rgba(255,255,255,.16);font-size:.82rem;font-weight:600;letter-spacing:-.005em;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transform:translate(-4px,-50%);transition:opacity .12s,transform .12s}
+#railTip.on{opacity:1;transform:translate(0,-50%)}
+#meMenu{position:fixed;z-index:100001;min-width:236px;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--surf);color:var(--ink);box-shadow:0 18px 50px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(24px) saturate(1.6);backdrop-filter:blur(24px) saturate(1.6);animation:mmIn .14s ease both}
+@keyframes mmIn{from{opacity:0;transform:translateY(6px) scale(.98)}}
+#meMenu[hidden]{display:none}
+#meMenu .mmh{display:flex;gap:10px;align-items:center;padding:8px 10px 10px;border-bottom:1px solid var(--line);margin-bottom:4px}
+#meMenu .mmh .mt strong{font-weight:700}
+#meMenu button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;border-radius:9px;background:transparent;color:var(--ink);font:inherit;font-weight:500;text-align:left;cursor:pointer}
+#meMenu button:hover,#meMenu button:focus-visible{background:var(--hover);outline:0}
+#meMenu button kbd{margin-left:auto;font:inherit;font-size:.72rem;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:0 6px}
+#meMenu .dng{color:var(--err)}
+#meMenu hr{border:0;border-top:1px solid var(--line);margin:4px 0}
+@media (min-width:761px){
+  #srchBtn{display:none!important}
+  .ngl:not([hidden]){display:block;padding:14px 12px 4px;font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mute)}
+  .sbsrch:not([hidden]){display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;border:1px solid var(--line);background:var(--hover);color:var(--mute);border-radius:10px;font:inherit;font-weight:500;cursor:pointer}
+  .sbsrch:hover{color:var(--ink)}
+  .sbsrch kbd{margin-left:auto;font:inherit;font-size:.72rem;border:1px solid var(--line);border-radius:6px;padding:0 6px}
+  .mecard::after{content:"\22EF";color:var(--mute);font-size:1.1rem;line-height:1;margin-left:2px}
+  html[data-theme=halo] #app .side.card{position:sticky;top:12px;height:calc(100dvh - 24px);margin:12px 0 12px 12px;border:1px solid rgba(255,255,255,.14)!important;border-radius:24px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(16,18,26,.72);-webkit-backdrop-filter:blur(28px) saturate(1.8);backdrop-filter:blur(28px) saturate(1.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 24px 60px rgba(0,0,0,.55)}
+  html[data-theme=halo] #app .main.card{background:transparent}
+  html #app.collapsed,html[data-glass] #app.collapsed{grid-template-columns:var(--rail,72px) 1fr}
+  html #app.collapsed .side,html[data-glass][data-theme] #app.collapsed .side.card,html[data-theme=halo] #app.collapsed .side.card{visibility:visible;transition:none;padding:14px 10px}
+  html[data-glass][data-theme] #app.collapsed .side.card{margin:14px 0 14px 14px;border:1px solid rgba(255,255,255,.22)!important}
+  html[data-theme=halo] #app.collapsed .side.card{margin:12px 0 12px 12px;border:1px solid rgba(255,255,255,.14)!important}
+  #app.collapsed .side>*{min-width:0}
+  #app.collapsed :is(.nl,#subjArrow,.mt,.od,.bw,.sbsrch kbd,.ngl span,#themeBtn,#subjHead){display:none!important}
+  #app.collapsed .brand{justify-content:center}
+  #app.collapsed #sideClose{transform:rotate(180deg)}
+  #app.collapsed #subjItems{display:flex!important;flex-direction:column;gap:2px;border:0!important;margin:0!important;padding:0!important}
+  #app.collapsed .ngl{padding:0;margin:8px 10px;height:1px;background:var(--line)}
+  #app.collapsed #nav{scrollbar-width:none}#app.collapsed #nav::-webkit-scrollbar{display:none}
+  body.in-app #app.collapsed :is(#nav button,.sbsrch:not([hidden])){justify-content:center;padding:11px 0;gap:0;position:relative}
+  body.in-app #app.collapsed :is(#badge,#badge2){position:absolute;top:3px;right:8px;margin:0;min-width:0;padding:0 5px;font-size:.62rem}
+  #app.collapsed .me{flex-direction:column;align-items:center;padding-top:12px}
+  #app.collapsed .mecard{justify-content:center;padding:6px;width:auto;flex:none}
+  #app.collapsed .mecard::after{display:none}
+}
+@media (max-width:760px){body.in-app .side .me #meCard::after{display:none}}
 </style>
 </head>
 <body>
@@ -2007,26 +2076,31 @@ html[data-theme] .toast{border-radius:var(--ds-r-m);box-shadow:var(--ds-sh-2)}
   <div id="sheetBg"></div>
   <aside class="side card">
     <div class="brand"><span class="bw" id="brandW"><b class="bt">Groowin</b></span><button class="icon-btn" id="sideClose" aria-label="Панельді жасыру" style="width:34px;height:34px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>
+    <button type="button" class="sbsrch" id="sbSrch" hidden aria-label="Іздеу"><svg class="ni" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="nl">Іздеу</span><kbd id="sbKbd">Ctrl K</kbd></button>
     <nav id="nav">
       <button data-v="home" id="navHome"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Басты бет</span></button>
       <button data-v="plan" id="navPlan"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg><span class="nl">Жоспар</span></button>
+      <div class="ngl" role="presentation"><span>Оқу</span></div>
       <button type="button" class="grphead" id="subjHead" aria-expanded="true"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2zM22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg><span class="nl">Пәндер</span><span id="subjArrow">▾</span></button>
       <div id="subjItems">
         <button data-v="physics" class="on"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1.4"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg><span class="nl">Физика</span></button>
         <button data-v="math"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h3l3 7 5-16h7"/></svg><span class="nl">Математика</span></button>
       </div>
+      <div class="ngl" role="presentation"><span>Белсенділік</span></div>
       <button data-v="play" id="navPlay" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg><span class="nl">Ойын-сауық</span></button>
       <button data-v="rank" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20V11M12 20V4M18 20v-6"/></svg><span class="nl">Рейтинг</span></button>
       <button data-v="news"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg><span class="nl">Хабарландыру</span><span id="badge" hidden></span></button>
       <button data-v="path" id="navPath" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span class="nl">Менің жолым</span></button>
       <button data-v="hw" id="navHw" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1zM8 6H6a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2M9 14l2 2 4-4"/></svg><span class="nl">Үй тапсырмасы</span><span id="hwBadge" hidden></span></button>
       <button data-v="room" id="navRoom"><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/></svg><span class="nl">Оқу бөлмесі</span></button>
+      <div class="ngl" role="presentation"><span>Мұғалім құралдары</span></div>
       <button data-v="rosters" id="navRosters" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span class="nl">Менің тізімдерім</span></button>
       <button data-v="lessons" id="navLessons" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h16"/><path d="m17 10 3 2-3 2z"/></svg><span class="nl">Сабақ жоспары</span></button>
       <button data-v="favs" id="navFavs" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span class="nl">Таңдаулылар</span></button>
       <button data-v="sites" id="navSites" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span class="nl">Сайттар</span></button>
       <button type="button" id="navPult" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2M10 6h4"/></svg><span class="nl">Пульт</span></button>
       <button data-v="mats" id="navMats" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="nl">Менің материалдарым</span></button>
+      <div class="ngl" role="presentation"><span>Басқару</span></div>
       <button data-v="inbox" id="navInbox" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg><span class="nl">Хабарлар</span><span id="badge2" hidden></span></button>
       <button data-v="games" id="navGames" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.4 11.5 2 15.5 2 17a3 3 0 0 0 5 2.2L9 17h6l2 2.2A3 3 0 0 0 22 17c0-1.5-.4-5.5-.7-8.4A4 4 0 0 0 17.3 5z"/></svg><span class="nl">Ойындар</span></button>
       <button data-v="classes" id="navClasses" hidden><svg class="ni" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nl">Мектеп сыныптары</span></button>
@@ -2324,7 +2398,7 @@ html[data-theme] .toast{border-radius:var(--ds-r-m);box-shadow:var(--ds-sh-2)}
       <h3 style="margin:22px 0 8px;font-size:1.05rem">Аватар</h3>
       <div id="accAv" style="display:flex;align-items:center;gap:14px;margin:0 0 4px"></div>
       <h3 style="margin:22px 0 8px;font-size:1.05rem">Көрініс</h3>
-      <div class="thm" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="fresh" style="--tb:#EEF6F8;--ts:#FFFFFF;--ta:#7C5CFF"><span class="pv"></span>Fresh</button><button type="button" data-t="dark" style="--tb:#0E1117;--ts:#151A23;--ta:#3B6BFF"><span class="pv"></span>Қараңғы</button><button type="button" data-t="light" style="--tb:#F6F7F9;--ts:#FFFFFF;--ta:#3B6BFF"><span class="pv"></span>Жарық</button><button type="button" data-t="milk" style="--tb:#FAF5EC;--ts:#FFFDF8;--ta:#F28C28"><span class="pv"></span>Сүтті</button><button type="button" data-t="ocean" style="--tb:#06161F;--ts:#0C2330;--ta:#19B5D6"><span class="pv"></span>Теңіз</button><button type="button" data-t="sunset" style="--tb:#1A0F1F;--ts:#251529;--ta:#FF7A5A"><span class="pv"></span>Күннің батуы</button><button type="button" data-t="forest" style="--tb:#0A1510;--ts:#112019;--ta:#1FA971"><span class="pv"></span>Орман</button><button type="button" data-t="amoled" style="--tb:#000000;--ts:#0A0A0A;--ta:#7C5CFF"><span class="pv"></span>Қара</button></div>
+      <div class="thm" id="themeSeg" role="group" aria-label="Тема"><button type="button" data-t="fresh" style="--tb:#EEF6F8;--ts:#FFFFFF;--ta:#7C5CFF"><span class="pv"></span>Fresh</button><button type="button" data-t="dark" style="--tb:#0E1117;--ts:#151A23;--ta:#3B6BFF"><span class="pv"></span>Қараңғы</button><button type="button" data-t="light" style="--tb:#F6F7F9;--ts:#FFFFFF;--ta:#3B6BFF"><span class="pv"></span>Жарық</button><button type="button" data-t="milk" style="--tb:#FAF5EC;--ts:#FFFDF8;--ta:#F28C28"><span class="pv"></span>Сүтті</button><button type="button" data-t="ocean" style="--tb:#06161F;--ts:#0C2330;--ta:#19B5D6"><span class="pv"></span>Теңіз</button><button type="button" data-t="sunset" style="--tb:#1A0F1F;--ts:#251529;--ta:#FF7A5A"><span class="pv"></span>Күннің батуы</button><button type="button" data-t="forest" style="--tb:#0A1510;--ts:#112019;--ta:#1FA971"><span class="pv"></span>Орман</button><button type="button" data-t="amoled" style="--tb:#000000;--ts:#0A0A0A;--ta:#7C5CFF"><span class="pv"></span>Қара</button><button type="button" data-t="halo" style="--tb:#05060B;--ts:#1E2130;--ta:#8E9BFF"><span class="pv"></span>Қара шыны</button></div>
       <p class="hint" style="margin:14px 0 8px">Акцент түсі</p>
       <div class="sw" id="accSw" role="group" aria-label="Акцент түсі"><button type="button" data-a="sage" style="--c:#3F7A5E" aria-label="Шалфей"></button><button type="button" data-a="blue" style="--c:#3B6BFF" aria-label="Көк"></button><button type="button" data-a="green" style="--c:#1FA971" aria-label="Жасыл"></button><button type="button" data-a="violet" style="--c:#7C5CFF" aria-label="Күлгін"></button><button type="button" data-a="orange" style="--c:#F28C28" aria-label="Қызғылт сары"></button><button type="button" data-a="cyan" style="--c:#19B5D6" aria-label="Көгілдір"></button><button type="button" data-a="pink" style="--c:#E8559A" aria-label="Қызғылт"></button></div>
       
@@ -2897,9 +2971,9 @@ renderGames();
 
 // ===== Тема =====
 const ls = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
-const THEMES = ['fresh', 'dark', 'light', 'milk', 'ocean', 'sunset', 'forest', 'amoled'], ACCENTS = ['sage', 'blue', 'green', 'violet', 'orange', 'cyan', 'pink'];
+const THEMES = ['fresh', 'dark', 'light', 'milk', 'ocean', 'sunset', 'forest', 'amoled', 'halo'], ACCENTS = ['sage', 'blue', 'green', 'violet', 'orange', 'cyan', 'pink'];
 let pref = ls.get('theme'); if (!THEMES.includes(pref)) pref = 'milk';
-let acc = ls.get('accent'); if (!ACCENTS.includes(acc)) acc = pref === 'milk' ? 'sage' : pref === 'fresh' ? 'violet' : 'blue';
+let acc = ls.get('accent'); if (!ACCENTS.includes(acc)) acc = pref === 'milk' ? 'sage' : (pref === 'fresh' || pref === 'halo') ? 'violet' : 'blue';
 function applyIllu() { document.documentElement.dataset.illu = 'on'; }
 function applyTheme(inApp) {
   applyIllu();
@@ -2908,7 +2982,7 @@ function applyTheme(inApp) {
   document.querySelectorAll('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === pref)));
   document.querySelectorAll('#accSw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.a === acc)));
 }
-function setTheme(t) { ls.set('gwAutoDark', ''); pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'sage'; if (t === 'fresh' && !ls.get('accent')) acc = 'violet'; applyTheme(true); }
+function setTheme(t) { ls.set('gwAutoDark', ''); pref = t; ls.set('theme', t); if (t === 'milk' && !ls.get('accent')) acc = 'sage'; if ((t === 'fresh' || t === 'halo') && !ls.get('accent')) acc = 'violet'; applyTheme(true); }
 // Кешке ЖИ қараңғыға ауыстырса, таңертең бұрынғы тақырыпты өзі қайтарады. Күй localStorage-та, сондықтан сеанс аяқталып, қайта кірсең де жұмыс істейді.
 window.autoDarkOn = () => { const b = pref; setTheme('dark'); ls.set('gwAutoDark', '1'); ls.set('gwThemeBefore', b === 'dark' ? 'light' : b); };
 function autoThemeRestore() {
@@ -3377,6 +3451,62 @@ $('sideBtn').onclick = () => {
 };
 $('sideClose').onclick = () => $('sideBtn').click();
 if (ls.get('sideCollapsed')) { $('app').classList.add('collapsed'); $('sideBtn').setAttribute('aria-expanded', 'false'); }
+// ===== Панель: топтар, rail-тақсырма, user menu, іздеу =====
+(() => {
+  const desk = () => matchMedia('(min-width:761px)').matches, col = () => $('app').classList.contains('collapsed');
+  const nav = $('nav'), kb = $('sbKbd'); if (kb && /Mac|iPhone|iPad/.test(navigator.platform || '')) kb.textContent = '⌘K';
+  function sbSync() {
+    nav.querySelectorAll('.ngl').forEach(l => {
+      let on = false, n = l.nextElementSibling;
+      while (n && !n.classList.contains('ngl')) { if (!n.hidden && !n.classList.contains('phoneOnly')) { on = true; break; } n = n.nextElementSibling; }
+      if (l.hidden === on) l.hidden = !on;
+    });
+    const s = $('srchBtn'), b = $('sbSrch'); if (s && b && b.hidden !== s.hidden) b.hidden = s.hidden;
+  }
+  new MutationObserver(sbSync).observe(nav, { subtree: true, attributes: true, attributeFilter: ['hidden'] });
+  if ($('srchBtn')) new MutationObserver(sbSync).observe($('srchBtn'), { attributes: true, attributeFilter: ['hidden'] });
+  sbSync(); setTimeout(sbSync, 1500);
+  $('sbSrch').onclick = () => { if (typeof openSearch === 'function') openSearch(); };
+
+  const tip = document.createElement('div'); tip.id = 'railTip'; document.body.appendChild(tip);
+  const tipHide = () => tip.classList.remove('on');
+  const side = document.querySelector('#app .side');
+  side.addEventListener('mouseover', e => {
+    if (!desk() || !col()) return tipHide();
+    const t = e.target.closest('#nav button,.sbsrch,#meCard,#sideClose'); if (!t) return tipHide();
+    const txt = t.id === 'sideClose' ? 'Панельді ашу' : t.id === 'meCard' ? ($('meNm').textContent || 'Аккаунт') : (t.querySelector('.nl') || {}).textContent;
+    if (!txt) return tipHide();
+    const r = t.getBoundingClientRect(); tip.textContent = txt; tip.style.left = (r.right + 12) + 'px'; tip.style.top = (r.top + r.height / 2) + 'px'; tip.classList.add('on');
+  });
+  side.addEventListener('mouseleave', tipHide); side.addEventListener('click', tipHide); nav.addEventListener('scroll', tipHide);
+
+  const mm = document.createElement('div'); mm.id = 'meMenu'; mm.hidden = true; mm.setAttribute('role', 'menu'); document.body.appendChild(mm);
+  const mmClose = () => { mm.hidden = true; $('meCard').setAttribute('aria-expanded', 'false'); document.removeEventListener('mousedown', mmOut, true); document.removeEventListener('keydown', mmKey, true); };
+  const mmOut = e => { if (!mm.contains(e.target) && !$('meCard').contains(e.target)) mmClose(); };
+  const mmKey = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); mmClose(); $('meCard').focus(); } };
+  function mmOpen() {
+    mm.replaceChildren(); tipHide();
+    const h = document.createElement('div'); h.className = 'mmh';
+    const av = document.createElement('span'); av.className = 'av'; av.textContent = $('meAv').textContent;
+    const mt = document.createElement('span'); mt.className = 'mt'; const st = document.createElement('strong'), sm = document.createElement('small'); st.textContent = $('meNm').textContent; sm.textContent = $('meRl').textContent; mt.append(st, sm); h.append(av, mt); mm.appendChild(h);
+    const add = (t, f, k, cls) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); if (cls) b.className = cls; b.append(t); if (k) { const x = document.createElement('kbd'); x.textContent = k; b.appendChild(x); } b.onclick = () => { mmClose(); f(); }; mm.appendChild(b); };
+    add('Менің аккаунтым', () => go('account'));
+    add('Тақырыпты ауыстыру', () => $('themeBtn').click());
+    if ($('srchBtn') && !$('srchBtn').hidden) add('Іздеу', () => openSearch(), kb ? kb.textContent : '');
+    add(col() ? 'Панельді ашу' : 'Панельді жию', () => $('sideBtn').click());
+    mm.appendChild(document.createElement('hr'));
+    add('Шығу', () => $('logout').click(), '', 'dng');
+    mm.hidden = false; $('meCard').setAttribute('aria-expanded', 'true');
+    const r = $('meCard').getBoundingClientRect();
+    if (col()) { mm.style.left = (r.right + 12) + 'px'; mm.style.bottom = Math.max(8, innerHeight - r.bottom) + 'px'; mm.style.width = ''; }
+    else { mm.style.left = r.left + 'px'; mm.style.bottom = (innerHeight - r.top + 8) + 'px'; mm.style.width = Math.max(236, r.width) + 'px'; }
+    document.addEventListener('mousedown', mmOut, true); document.addEventListener('keydown', mmKey, true);
+    const f = mm.querySelector('button'); if (f) f.focus();
+  }
+  window.meMenuToggle = () => { if (mm.hidden) mmOpen(); else mmClose(); };
+  addEventListener('resize', mmClose);
+})();
+
 
 const fs = $('fsBtn'), FS_IN = fs.innerHTML;
 const FS_OUT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg>';
@@ -5891,7 +6021,7 @@ function setUserPage(role) {
   loadUsers();
 }
 $('byFilter').onchange = loadUsers;
-$('meCard').onclick = () => go('account');
+$('meCard').onclick = () => { if (matchMedia('(min-width:761px)').matches && window.meMenuToggle) window.meMenuToggle(); else go('account'); };
 $('pwShow').onchange = () => { $('pw1').type = $('pwShow').checked ? 'text' : 'password'; };
 document.querySelectorAll('#inTabs button').forEach(b => b.onclick = () => { inKind = b.dataset.k; loadReqs(); });
 
