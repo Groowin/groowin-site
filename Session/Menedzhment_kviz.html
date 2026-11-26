@@ -354,6 +354,7 @@ function drawRanges(){
   const box = $('ranges'); box.innerHTML = '';
   const bq = basketQs();
   if (sel === -2 && !bq.length) sel = 0;
+  { const t = document.createElement('button'); t.className = 'rt' + (sel === -3 ? ' sel' : ''); t.innerHTML = '<span>🎲 Тест 30</span><small>кездейсоқ</small>'; t.onclick = () => { sel = -3; drawRanges(); }; box.appendChild(t); }
   if (bq.length) {
     const b = document.createElement('button');
     b.className = 'rt basket' + (sel === -2 ? ' sel' : '');
@@ -375,7 +376,7 @@ function drawRanges(){
   all.innerHTML = '<span>Барлығы</span><small>' + totalM + ' / ' + N + '</small><i class="pg" style="--p:' + (totalM/N*100) + '%"><b></b></i>';
   all.onclick = () => { sel = -1; drawRanges(); };
   box.appendChild(all);
-  const lab = sel === -2 ? '🧺 ' + bq.length : sel === -1 ? 'барлығы' : (ranges[sel].s+1) + '–' + ranges[sel].e;
+  const lab = sel === -3 ? '🎲 30' : sel === -2 ? '🧺 ' + bq.length : sel === -1 ? 'барлығы' : (ranges[sel].s+1) + '–' + ranges[sel].e;
   $('goBtn').innerHTML = '<span>▶ Бастау</span><em>' + lab + '</em>';
 }
 
@@ -389,7 +390,8 @@ function begin(list, mode, r){
   show('quiz'); updateAutoBtn(); render();
 }
 function startSelected(){
-  if (sel === -2) begin(shuffle(basketQs()), 'basket', -1);
+  if (sel === -3) begin(shuffle(ALL).slice(0, 30), 'test', -1);
+  else if (sel === -2) begin(shuffle(basketQs()), 'basket', -1);
   else if (sel === -1) begin(shuffle(ALL), 'all', -1);
   else begin(shuffle(ALL.slice(ranges[sel].s, ranges[sel].e)), 'range', sel);
 }
@@ -445,9 +447,10 @@ function pick(idx){
   const q = S.queue[S.i], o = S.cur[idx];
   let [ps, pw] = P[q.id] || [0, 0];
   if (o.ok) ps++; else { ps = 0; pw++; }
-  P[q.id] = [ps, pw]; saveP();
+  const TEST = S.mode === 'test';
+  if (!TEST) { P[q.id] = [ps, pw]; saveP(); }
   // қате болса 4–6 сұрақтан кейін қайтады; бұрын қателескен сұрақ дұрыс болса, 2-ге жеткенше тағы бір рет
-  const gap = o.ok ? (pw > 0 && ps < 2 ? 6 + (Math.random()*3|0) : -1) : 4 + (Math.random()*3|0);
+  const gap = TEST ? -1 : o.ok ? (pw > 0 && ps < 2 ? 6 + (Math.random()*3|0) : -1) : 4 + (Math.random()*3|0);
   if (gap > 0) { S.queue.splice(Math.min(S.queue.length, S.i + 1 + gap), 0, q); S.n = S.queue.length; }
   document.querySelectorAll('.opt').forEach((b, k) => {
     b.disabled = true;
@@ -500,7 +503,7 @@ document.addEventListener('keydown', e => {
 function finish(){
   const pct = Math.round(S.ok / Math.max(1, S.ok + S.no) * 100);
   const left = basketQs().length;
-  const mchip = (S.mode === 'range' ? '<div class="chip">🧠 Жаттап алынды: ' + rangeMastered(S.r) + ' / ' + (ranges[S.r].e - ranges[S.r].s) + '</div>' : '') + '<div class="chip">🧺 Қоржында: ' + left + '</div>';
+  const mchip = S.mode === 'test' ? '<div class="chip">🎯 Таза тест: ' + S.n + ' сұрақ</div>' : ((S.mode === 'range' ? '<div class="chip">🧠 Жаттап алынды: ' + rangeMastered(S.r) + ' / ' + (ranges[S.r].e - ranges[S.r].s) + '</div>' : '') + '<div class="chip">🧺 Қоржында: ' + left + '</div>');
   let emoji='💪', title='Тағы бір рет көрейік', sub='Қателерді қайталап шық — келесі жолы шығады.';
   if (pct>=90){emoji='🏆';title='Тамаша нәтиже!';sub='Бұл аралықты жақсы жаттап алдың.';}
   else if (pct>=75){emoji='🌟';title='Өте жақсы!';sub='Аздап қана қалды.';}
@@ -531,7 +534,8 @@ function finish(){
     const nr = ranges[S.r + 1];
     mk('Келесі аралық: ' + (nr.s+1) + '–' + nr.e, () => { sel = S.r + 1; startSelected(); }, true);
   }
-  if (left) mk('🧺 Қателер қоржынын жаттау (' + left + ')', () => { sel = -2; startSelected(); }, !hasNext);
+  if (S.mode === 'test') mk('🎲 Жаңа 30 сұрақ', () => { sel = -3; startSelected(); }, true);
+  if (left && S.mode !== 'test') mk('🧺 Қателер қоржынын жаттау (' + left + ')', () => { sel = -2; startSelected(); }, !hasNext);
   if (S.mode === 'range') mk('Осы аралықты қайта', () => { sel = S.r; startSelected(); });
   mk('Аралық таңдау', goHome);
   if (S.mistakes.length) {
