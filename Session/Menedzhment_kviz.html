@@ -196,6 +196,10 @@ canvas#conf{position:fixed;inset:0;pointer-events:none;z-index:40}
 .sbtn.confirm{background:var(--bad);color:var(--onbad);border-color:var(--bad)}
 .pwrow{flex:1 1 100%;display:flex;gap:.5rem}
 .pwrow .inp{padding:.5rem .8rem;font-size:.95rem}
+.subjgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem;margin:0 auto;max-width:44rem}
+.subj{display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:2rem 1rem;border-radius:1.2rem;background:var(--surface2);border:1px solid var(--line);transition:.18s;font-size:1.25rem}
+.subj .si{font-size:2.4rem}.subj small{color:var(--muted);font-size:.9rem;font-weight:500}
+.subj:hover{border-color:var(--accent);transform:translateY(-3px);background:color-mix(in srgb,var(--accent) 10%,var(--surface2))}
 .empty{color:var(--muted);padding:1rem 0;text-align:center}
 @media(max-width:700px){.addrow{grid-template-columns:1fr 1fr}.addrow .cta{grid-column:1/-1}.adm{padding:1.2rem .9rem}.login{padding:1.6rem 1.1rem}}
 @media(max-width:900px){.ranges{grid-template-columns:repeat(4,1fr)}.opts.tiles .opt{flex-basis:calc(50% - .45rem)}}
@@ -220,9 +224,10 @@ canvas#conf{position:fixed;inset:0;pointer-events:none;z-index:40}
 
 <div class="app">
   <div class="head">
-    <div class="brand">🎓 Менеджмент</div>
+    <div class="brand" id="brand">🎓 Квиз</div>
     <div class="meChip hidden" id="meChip"></div>
     <div class="spacer"></div>
+    <button class="ibtn hidden" id="subjBtn" title="Пән таңдау" aria-label="Пән таңдау">📚</button>
     <button class="ibtn hidden" id="adminBtn" title="Админ панелі" aria-label="Админ панелі">🛠</button>
     <button class="ibtn" id="layoutBtn"></button>
     <button class="ibtn" id="themeBtn"></button>
@@ -258,6 +263,13 @@ canvas#conf{position:fixed;inset:0;pointer-events:none;z-index:40}
     <div class="err hidden" id="admErr" role="alert"></div>
     <div class="cred hidden" id="credBox"></div>
     <div id="ulist"></div>
+  </section>
+
+  <!-- SUBJECTS -->
+  <section id="subjects" class="panel start hidden">
+    <h1>Қай пән?</h1>
+    <p class="sub">Алдымен пәнді таңда, содан кейін аралықты таңдайсың.</p>
+    <div class="subjgrid" id="subjgrid"></div>
   </section>
 
   <!-- START -->
@@ -382,8 +394,8 @@ function drawRanges(){
 
 let S = { queue:[], i:0, ok:0, no:0, streak:0, maxStreak:0, mistakes:[], answered:false, auto:true, timer:null, n:0, locked:false, mode:'all', r:-1 };
 
-function show(id){ ['login','start','quiz','result','admin'].forEach(x => $(x).classList.toggle('hidden', x!==id)); window.scrollTo({top:0}); }
-function goHome(){ clearTimeout(S.timer); drawRanges(); show('start'); }
+function show(id){ ['login','subjects','start','quiz','result','admin'].forEach(x => $(x).classList.toggle('hidden', x!==id)); window.scrollTo({top:0}); }
+function goHome(){ clearTimeout(S.timer); if (!ALL.length) return openSubjects(); drawRanges(); show('start'); }
 
 function begin(list, mode, r){
   S = { queue:list, i:0, ok:0, no:0, streak:0, maxStreak:0, mistakes:[], answered:false, auto:$('autoChk').checked, timer:null, n:list.length, locked:false, mode, r, seen:new Set() };
@@ -611,11 +623,40 @@ const ERR = {
 };
 const errText = e => ERR[e] || ('Қате: ' + e);
 
-let TOKEN = null, ME = null, chkTimer = null;
+let TOKEN = null, ME = null, chkTimer = null, ITEMS = [];
+const SUBJECTS = [['mgmt','Менеджмент','🧭'],['tech','Заманауи технология','🎓']];
+let curSubj = null;
+function subjList(){ return SUBJECTS.map(x => ({ key:x[0], name:x[1], icon:x[2], n:ITEMS.filter(q => (q.s || 'mgmt') === x[0]).length })).filter(x => x.n); }
+function openSubjects(){
+  clearTimeout(S.timer);
+  const L = subjList();
+  if (L.length === 1) return openSubject(L[0].key);
+  ALL = []; N = 0; ranges = []; curSubj = null; $('brand').textContent = '🎓 Квиз';
+  const box = $('subjgrid'); box.innerHTML = '';
+  L.forEach(x => {
+    const b = document.createElement('button'); b.className = 'subj';
+    b.innerHTML = '<span class="si">' + x.icon + '</span><b></b><small>' + x.n + ' сұрақ</small>';
+    b.querySelector('b').textContent = x.name;
+    b.onclick = () => openSubject(x.key);
+    box.appendChild(b);
+  });
+  setChrome(true); show('subjects');
+}
+function openSubject(key){
+  const info = SUBJECTS.find(x => x[0] === key); curSubj = key;
+  ALL = ITEMS.filter(q => (q.s || 'mgmt') === key).sort((a, b) => (a.gid ?? a.id) - (b.gid ?? b.id));
+  ALL.forEach((q, i) => { if (q.gid === undefined) q.gid = q.id; q.id = i; });
+  N = ALL.length;
+  progKey = key === 'mgmt' ? 'mgmt_prog_' + ME.login : 'mgmt_prog_' + ME.login + '_' + key; loadP();
+  $('brand').textContent = info[2] + ' ' + info[1];
+  buildRanges(); setChrome(true); drawRanges(); show('start');
+}
+$('subjBtn').onclick = openSubjects;
 function setChrome(on){
   $('meChip').classList.toggle('hidden', !on);
   $('logoutBtn').classList.toggle('hidden', !on);
   $('adminBtn').classList.toggle('hidden', !(on && ME && ME.is_admin));
+  $('subjBtn').classList.toggle('hidden', !(on && subjList().length > 1));
   if (on && ME) $('meChip').textContent = '👤 ' + ME.login;
 }
 function showLogin(msg){
@@ -626,7 +667,7 @@ function showLogin(msg){
 }
 function forceLogout(msg){
   clearInterval(chkTimer); clearTimeout(S.timer);
-  TOKEN = null; ME = null; ALL = []; N = 0; ranges = [];
+  TOKEN = null; ME = null; ALL = []; ITEMS = []; N = 0; ranges = [];
   store.set('mgmt_tok', '');
   $('lgPass').value = '';
   showLogin(msg);
@@ -639,8 +680,8 @@ async function enter(s, tok){
     if (r.error === 'no_session') return forceLogout('Сессия аяқталды. Қайта кіріңіз.');
     return showLogin(errText(r.error));
   }
-  ALL = r.items; N = ALL.length; buildRanges();
-  setChrome(true); drawRanges(); show('start');
+  ITEMS = r.items; ALL = []; N = 0; ranges = [];
+  setChrome(true); openSubjects();
   clearInterval(chkTimer); chkTimer = setInterval(checkSession, 45000);
 }
 async function checkSession(){
