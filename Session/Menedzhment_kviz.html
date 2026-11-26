@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Менеджмент · Квиз</title>
+<title>Сессияға дайындық</title>
 <style>
 :root{
   --c0:#6554e8;--c1:#0d86a3;--c2:#b86d00;--c3:#cc2f73;--c4:#0c8f62;
@@ -218,13 +218,13 @@ canvas#conf{position:fixed;inset:0;pointer-events:none;z-index:40}
 <div id="intro" role="presentation">
   <div class="who" id="who"></div>
   <div class="rule"></div>
-  <div class="cap">Менеджмент квизі</div>
+  <div class="cap">Сессияға дайындық</div>
 </div>
 <canvas id="conf"></canvas>
 
 <div class="app">
   <div class="head">
-    <div class="brand" id="brand">🎓 Квиз</div>
+    <div class="brand" id="brand">🎓 Сессияға дайындық</div>
     <div class="meChip hidden" id="meChip"></div>
     <div class="spacer"></div>
     <button class="ibtn hidden" id="subjBtn" title="Пән таңдау" aria-label="Пән таңдау">📚</button>
@@ -631,7 +631,7 @@ function openSubjects(){
   clearTimeout(S.timer);
   const L = subjList();
   if (L.length === 1) return openSubject(L[0].key);
-  ALL = []; N = 0; ranges = []; curSubj = null; $('brand').textContent = '🎓 Квиз';
+  ALL = []; N = 0; ranges = []; curSubj = null; $('brand').textContent = '🎓 Сессияға дайындық';
   const box = $('subjgrid'); box.innerHTML = '';
   L.forEach(x => {
     const b = document.createElement('button'); b.className = 'subj';
